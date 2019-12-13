@@ -1,0 +1,345 @@
+      subroutine netz_lesen()
+      implicit none
+
+      !!call points(vorhanden)
+      if(points())then
+         print*,"netz_lesen() aus points + file.elements"
+         if(.not. elements())then
+            write(fehler,*)'wenn points da ist, müsste es auch ein file.elements geben !!'
+            call qerror(fehler)
+         end if !! elements()
+         kanten_vorhanden = edges()
+      else
+         if( netz_gr3()) then
+            print*,"netz_lesen() aus ecirc .gr3 Datei"
+         else
+            call qerror("netz_lesen() findet kein Netz, weder in points noch in .gr3")
+         endif !netz_gr3
+      endif ! points
+
+      END subroutine netz_lesen
+!----+-----+----
+!> Die suboutine netz_gr3() ließt das Netz aus der GR3-Datei: ## noch nicht implementiert ##
+      logical function netz_gr3()
+      implicit none
+      call qerror('netz_gr3 noch nicht implementiert')
+      netz_gr3=.true.
+      return      
+      end function netz_gr3
+
+!----+-----+----
+!> Die suboutine points() ließt die Datei points:
+!! diese enthält die horizontalen Knotenorte, die Knotenhöhen und die Zonen-Nummern der Knoten.\n
+!! <a href="../../exp/points" target="_blank">Beispiel</a> \n
+!! Die Datei points wird von <a href="http://www.wasserimunterricht.de/wyrwa/casu12.html"  target="_blank">casu</a>
+!! in das transinfo Verzeichnis ausgegeben. \n
+!! generiert wird points auch von casu:out dir t. 
+!! \n\n
+!! Dateiaufbau:\n
+!! In der ersten Zeile steht die Anzahl der Knoten; in den Folgezeilen je ein Knoten.
+!! die ersten drei Zahlen in einer Knotenzeile sind die beiden horizontalen Koordinaten und die Sohlhöhe (x,y,z) \n
+!! danach Folgen Zonennummer und Randnummer; 
+!! als letztes ist die horizontale Fläche der Finite-Volumen Zelle aufgeführt, die von dem Knoten repräsentiert wird.
+!! \n\n
+!! aus Datei module_modell.f95 ; zurück zu \ref Netz
+      logical function points()
+      implicit none
+      character (len=100) :: dateiname
+      integer :: open_error, string_read_error, ion, nknot, n, alloc_status, anzrand
+      real :: xmax, xmin, ymax, ymin, zmax, zmin
+!
+      modell_flaeche=0.0
+
+      print*,'Netzknoten aus Datei'
+      write(dateiname,'(2A)')trim(modellverzeichnis),'points'
+      print*,trim(dateiname)
+      ion=103
+      open ( unit =ion , file = dateiname, status ='old', action ='read ', iostat = open_error )
+      if(open_error.ne.0) then
+         !write(fehler,*)'open_error points'
+         !call qerror(fehler)
+         points=.false.
+         print*,'points open error; Annahme: nicht vorhanden.'
+         return
+      else
+         points=.true.
+      end if ! open_error.ne.0
+  777 continue
+      if(zeile(ion))then
+         if(ctext(1:1).eq.'#')then
+            print*,trim(ctext)
+            goto 777
+         endif 
+         read(ctext, *, iostat = string_read_error ) knotenanzahl2D
+         if(string_read_error.ne.0) then
+           write(fehler,*)'string_read_error SUBROUTINE points nknot'
+            call qerror(fehler)
+         end if ! open_error.ne.0
+         print*,knotenanzahl2D, 'Knoten sollen in points sein'
+      else
+         write(fehler,*)'Lesen der knotenanzahl2D im Kopf von point fehlgeschlagen'
+         call qerror(fehler)
+      end if !erste zeilen aus points gelesen
+
+      !knotenanzahl2D=knotenanzahl3D
+      print*,'Momentan noch 2D-Tiefengemittelt'
+
+      allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_x(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+      allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_y(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+      allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+      allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_rand(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+      allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_zone(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+      allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
+      if(alloc_status.ne.0)then
+         write(fehler,*)' Rueckgabewert   von   allocate knoten_flaeche(knotenanzahl2D) :', alloc_status
+         call qerror(fehler)
+      end if 
+
+      ! Knotenzeilen nacheinander einlesen
+      n=0
+      do while( zeile(ion))
+         n=n+1
+         read(ctext(1:2000), *, iostat = string_read_error ) &
+             knoten_x(n), knoten_y(n), knoten_z(n),          & 
+             knoten_zone(n), knoten_rand(n), knoten_flaeche(n)
+
+         if(string_read_error.ne.0)then
+            write(fehler,*)'Lesen fehlgeschlagen aus points an knoten #', n,' read_error:', string_read_error, &
+     &                     ' points wird von casu auf /transinfo ausgegeben. Nicht die converti-Version verwenden!'
+            call qerror(fehler)
+         end if 
+         if(knoten_zone(n).lt.0)then
+            write(fehler,*)' knoten #',n,': Zonennummer darf nicht negativ sein'
+            call qerror(fehler)
+         end if
+         if(knoten_rand(n).lt.0)then
+            write(fehler,*)' knoten #',n,': Randnummer darf nicht negativ sein'
+            call qerror(fehler)
+         end if
+         if(knoten_flaeche(n).le.0.0)then
+            write(fehler,*)' knoten #',n,': Knotenfläche muss größer Null sein'
+            call qerror(fehler)
+         end if
+         modell_flaeche=modell_flaeche+knoten_flaeche(n)
+      end do ! zeile
+      if(n.ne.knotenanzahl2D)then
+         write(fehler,*)'Zeilenzahl falsch in Datei points'
+         call qerror(fehler)
+      end if
+      close (ion)
+!!
+      xmax=-999999999999.9 
+      xmin=999999999999.9  
+      ymax=-999999999999.9  
+      ymin=999999999999.9  
+      zmax=-999999999999.9  
+      zmin=999999999999.9 
+      min_rand=9999
+      min_zone=9999
+      max_rand=-9999
+      max_zone=-9999
+      anzrand=0
+      do n=1,knotenanzahl2D
+         if(xmax.le.knoten_x(n))xmax=knoten_x(n)
+         if(xmin.ge.knoten_x(n))xmin=knoten_x(n)  
+         if(ymax.le.knoten_y(n))ymax=knoten_y(n)  
+         if(ymin.ge.knoten_y(n))ymin=knoten_y(n) 
+         if(zmax.le.knoten_z(n))zmax=knoten_z(n)
+         if(zmin.ge.knoten_z(n))zmin=knoten_z(n)
+         if(knoten_zone(n).lt.min_zone)min_zone=knoten_zone(n)
+         if(knoten_zone(n).gt.max_zone)max_zone=knoten_zone(n)
+         if(knoten_rand(n).lt.min_rand)min_rand=knoten_rand(n)
+         if(knoten_rand(n).gt.max_rand)max_rand=knoten_rand(n)
+         if(knoten_rand(n).gt. 0)anzrand=anzrand+1
+      end do ! alle Knoten
+      print*,'x-koordinate max+min', xmax, xmin
+      print*,'y-koordinate max+min', ymax, ymin
+      print*,'Sohlhöhe max+min', zmax, zmin 
+      print*,'Zonen# von ', min_zone, ' bis ', max_zone
+      print*,'Rand# von ', min_rand, ' bis ', max_rand
+      print*,'modell_flaeche= ',modell_flaeche
+      print*,'Von ',knotenanzahl2D,' Knoten sind ',anzrand ,' Randknoten'
+
+      mittelflaech=0.0
+      mittelvolumen=0.0
+      return      
+      end function points
+!----+-----+----
+
+!> Die suboutine elements() ließt Vermaschung von der Datei
+!! <a href="../../exp/file.elements" target="_blank">file.elements</a>.\n
+!! In der ersten Zeile steht die Anzahl der Elemente,
+!! in den folgezeilen steht je ein Element . der erste Integer in der Zeile ist 3 oder 4 und gibt an, ob es 
+!! sich um ein Drei- oder Vieleck handelt. Danach folgen 3 oder 4 Knotennummern\n
+!! ## ACHTUNG ## Knotennummerierung beginnt bei Null
+!! \n\n
+!! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+      logical function elements()
+      implicit none
+      character (len=500) :: dateiname, systemaufruf
+      integer :: ndumm, n, j, alloc_status, ion, open_error, string_read_error, system_error
+      logical zeile_vorhanden
+
+!     Datei file.elements lesen falls vorhanden
+      element_vorhanden=.false.
+      write(dateiname,'(2A)')trim(modellverzeichnis),'file.elements'
+      write(systemaufruf,'(3A)')'stat ',trim(dateiname),' >/dev/null 2>/dev/null'
+      call system(systemaufruf,system_error)
+      !print*,'systemaufruf :',trim(systemaufruf),' system_error=',system_error
+      if(system_error.eq.0) then
+         element_vorhanden=.true.
+         ion=101
+         open ( unit =ion , file = dateiname, status ='old', action ='read ', iostat = open_error )
+         zeile_vorhanden=zeile(ion)
+         read(ctext, *, iostat = string_read_error ) n_elemente
+         if(string_read_error.eq.0) then
+            print*,'file.elements mit ',n_elemente,' Elementen'
+         else
+            write(fehler,*)'string_read_error ausgabe.f95, file.elements'
+            call qerror(fehler)
+         end if ! string_read_error.ne.0
+         allocate (cornernumber(n_elemente), stat = alloc_status )
+         allocate (elementnodes(n_elemente,4), stat = alloc_status )
+         summ_ne=0
+         do n=1,n_elemente
+            if(zeile(ion))then
+               read(ctext, *, iostat = string_read_error ) cornernumber(n)
+               if (cornernumber(n).eq.3)then ! Dreieck
+                  read(ctext, *, iostat = string_read_error ) ndumm, &
+                  elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+               else ! nicht dreieck
+                  if(cornernumber(n).eq.4)then ! Vieleck
+                     read(ctext, *, iostat = string_read_error ) ndumm, &
+                     elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+                  else ! weder Drei- noch Viereck
+                     write(fehler,*)'weder Drei- noch Viereck ',n
+                     call qerror(fehler)
+                  end if !Viereck
+               end if !Dreieck
+            else ! Zeile nicht lesbar
+               write(fehler,*)'Lesen aus file.elements fehlgeschlagen'
+               call qerror(fehler)
+            end if !Zeile gelesen
+            do j=1,cornernumber(n)
+               elementnodes(n,j)=elementnodes(n,j)+1
+            end do ! alle Knoten im Element
+            summ_ne=summ_ne+cornernumber(n)+1
+         end do ! alle elemente
+         close (ion) 
+      else
+         write(fehler,*)'Datenausgabe ohne file.elements sieht nicht gut aus'
+         call qerror(fehler)
+      end if ! end if file.elements vorhanden
+
+      elements=.true.
+      print*,'logical function elements(), module_modell.f95, hat aus file.elements ',n_elemente,' Elemente gelesen'
+      return
+      end function elements
+!----+-----+----
+
+!> function edges() 
+!! liesst die Datei edges, falls vorhanden:
+!! Informationen zu den Elementkanten\n
+!! die Zonen-Nummern der Knoten.\n
+!! <a href="../../exp/edges" target="_blank">Beispiel</a> \n
+!! Ausschnitt:\n
+!!  casu Modell: /mreferate/wyrwa/casulli/test08/ue4\n
+!!  casu Version 5. 5. 2015  edgenumber=\n
+!! 141544\n
+!!  top_node,bottom_node ; left_element,right_element ; edge_length,ground ; cell_bound_length,dist_left,dist_right,false_dist ; e.x,e.y 
+!! ; boundary_type,boundary_face,boundary_number ; zone\n
+!! 12  16  0  3769  4.78167  -0.42545  11.0632  5.78884  5.27436  3.31291e-12  0.836527 -0.547925  -1  -1  -1  5\n
+!! 4517  12  0  3763  11.8354  -0.48355  3.87221  2.05119  1.82102  -5.05151e-13  0.498503 0.866888  -1  -1  -1  5\n
+!! ...\n
+!! \n\n
+!! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+      logical function edges()
+      character (len=100) :: dateiname
+      integer :: n, ion, alloc_status, io_error
+      real :: ground, dist_left, dist_right, false_dist
+      integer :: boundary_type, boundary_face
+
+      write(dateiname,'(2A)')trim(modellverzeichnis),'edges'
+      print*,trim(dateiname)
+      ion=109
+      open ( unit =ion , file = dateiname, status ='old', action ='read ', iostat = io_error )
+      if(io_error.ne.0) then
+         edges=.false.
+         print*,'edges open error; wohl keine kanteninformationen vorhanden'
+         return
+      else
+         edges=.true.
+         print*,'Datei edges vorhanden'
+      end if ! open_error.ne.0
+
+      if(zeile(ion))read(ctext, *) kantenanzahl
+      n=0
+      do while( zeile(ion))
+         n=n+1
+      end do ! nächste zeile vorhanden
+      print*,"edges: kantenanzahl=",kantenanzahl," n=",n
+
+      allocate (top_node(kantenanzahl), stat = io_error )
+      allocate (bottom_node(kantenanzahl), stat = io_error )
+      allocate (left_element(kantenanzahl), stat = io_error )
+      allocate (right_element(kantenanzahl), stat = io_error )
+      allocate (edge_length(kantenanzahl), stat = io_error )
+      allocate (cell_bound_length(kantenanzahl), stat = io_error )
+      allocate (ex(kantenanzahl), stat = io_error )
+      allocate (ey(kantenanzahl), stat = io_error )
+      allocate (boundary_number(kantenanzahl), stat = io_error )
+      allocate (zone(kantenanzahl), stat = io_error )
+      if(io_error.ne.0) then
+         edges=.false.
+         write(fehler,*)'alloc_error in edges =', io_error
+         call qerror(fehler)
+      end if !! alloc_error
+
+      rewind(ion) !! nochmal von vorne:
+      if(zeile(ion))read(ctext, *) kantenanzahl
+      n=0
+      do while( zeile(ion))
+         n=n+1
+         read(ctext, *, iostat = io_error ) top_node(n), bottom_node(n), left_element(n), right_element(n),  &
+     &                  edge_length(n), ground, cell_bound_length(n), dist_left, dist_right, false_dist,  &
+     &                  ex(n),ey(n),boundary_type,boundary_face,boundary_number(n),zone(n)
+         if(io_error.ne.0) then
+            edges=.false.
+            write(fehler,*)'io_error in edges =', io_error,' edge #',n
+            call qerror(fehler)
+         end if !! io_error
+         top_node(n)=top_node(n) + 1 !! Zählweise Fortran ab 1, C++ ab 0
+         bottom_node(n)=bottom_node(n) + 1
+         left_element(n)=left_element(n) + 1
+         right_element(n)=right_element(n) + 1
+         if((top_node(n).eq.kontrollknoten).or.(bottom_node(n).eq.kontrollknoten))then
+            print*,'Kante #', n, "hat den kontrollknoten # ",kontrollknoten," als Top oder Bottom",top_node(n),bottom_node(n)
+            print*,"edge_length cell_bound_length =",edge_length(n),cell_bound_length(n)
+            print*,"left_element right_element =",left_element(n), right_element(n)
+            print*,"boundary_number zone =",boundary_number(n),zone(n)
+         endif !! kontrrollknoten
+      end do ! nächste zeile vorhanden
+      
+      return
+      end function edges
+!----+-----+----

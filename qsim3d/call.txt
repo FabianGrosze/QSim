@@ -1,0 +1,34 @@
+algae_huelle.f95:      call algaeski(SCHWI,TFLIE,TEMPW,tempwz                                            &
+algae_huelle.f95:      call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                              &
+algae_huelle.f95:      call algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                    &
+?? initialisieren.f95:    call ini_algae(akchl,abchl,agchl,Cagr,Caki,Cabl,CZoo,a1Ki,a2Ki,a3Ki,a1Bl,a2Bl,a3Bl,a1Gr,a2Gr,a3Gr) ! Konstanten aus QSimDatenfelder für Algen belegen
+konsum_huelle.f95:     call konsum(vkigr,TEMPW,VO2,TFLIE                                  &
+ncyc_huelle.f95:            call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,flag,elen,ior,anze                 &                 
+orgc_huelle.f95:       call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze             &                   
+oxygen_huelle.f95:         call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,rhyd,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4   &
+ph_huelle.f95:      call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbt,dalgki        &
+ph_huelle.f95:      call pwert(mws,vphs,lfs,tempws,pws,  1,  mstr,  azStrs) ! mRB=1
+po4s_huelle.f95:      call po4s(gelp,flag,elen,ior,tiefe                                &
+randbedingungen.f95:      call algae_start(                     &
+randbedingungen.f95:      call orgc_start(                      &
+randbedingungen.f95:      call naehr_start(                     &
+randbedingungen.f95:      call pwert(                           &
+randbedingungen.f95:      call e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
+?? randbedingungen.f95:            call flux(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
+?? schnitt.f95:            call flux(deltax,d1,d2,u1,u2,c1,c2,p(bt),p(tp),u(bt),u(tp),la,flae,vox,pox,kix,masx)
+sedflux_huelle.f95:!      call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs                   &
+sedflux_huelle.f95:!      call sedflux(tiefe,vmitt,rau,hw2,hSedOM,hBedGS,hdKorn,vO2,vNO3,vNH4,gelP              &
+silikat_huelle.f95:      call silikat(si,flag,elen,ior,esi,qeinl,vabfl,anze,tflie,jiein,aki         &
+temperw_huelle.f95:      call temperw(       RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl   &
+
+wetter.f95:!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
+wetter.f95:!2527      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj) 
+wetter.f95:!2546      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
+wetter.f95:!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
+wetter.f95:!4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
+
+wetter.f95:      call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt
+wetter.f95:      call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
+wetter.f95:      call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
+wetter.f95:        call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl) 
+wetter.f95:         call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   & 

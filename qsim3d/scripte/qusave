@@ -1,0 +1,126 @@
+#! /bin/bash
+
+echo "bash-script qusave saves complete input of qsim3d model including code source archive if available."
+echo "call sequence >qusave /modeldirectory"
+
+s="/"
+# echo "s=$s"
+# P=`pwd -P`
+
+DIR="$1"
+
+if [ ! -d $DIR ]
+then
+  echo -e "model directory >$DIR< does not exist"
+  exit 2
+else
+  echo -e "model directory >$DIR< existing"
+fi
+
+lang=${#DIR} 
+lang=$[$lang-1]
+#echo -e "lang=$lang"
+fund="0"
+b=${DIR:$lang:1}
+if [ $b == $s ]
+then
+   lang=$[$lang-1]
+   #echo "trailing /"
+fi
+   
+i=$[$lang+1]
+
+while [ $fund -eq  0 ]
+do
+   i=$[$i-1]
+   if [ $i -le 1 ] 
+   then
+      fund="-1"
+   fi
+   b=${DIR:$i:1}
+   #echo "i=$i ; b=$b"
+   if [ $b == $s ] 
+   then
+      fund="1"
+      #echo "i=$i"
+   fi
+done
+
+if [ $fund == "1" ]
+then
+   #echo "DIR= $DIR; i=$i, lang=$lang"
+   lang=$[$lang-$i]
+   i=$[$i+1]
+   #echo "... i=$i, lang=$lang"
+   model=${DIR:$i:$lang}
+   echo "going to save model named: $model"
+else
+   echo "no model name perceivable in >$DIR<"
+   exit 1
+fi
+
+FD="qsim3d_modell_"$model"_`date +%d%b%y`.taz"
+echo "saving into compressed archive $FD"
+
+cd $DIR
+
+ls -thora transinfo >list1
+ls -thora transport.nc >list2
+ls -thora outputs_schism >list3
+pwd -P >tmp
+cat tmp list1 list2 list3 >ls_transinfo
+rm tmp list1 list2 list3
+cp transinfo/meta transinfo_meta
+
+# echo "QSim-3D Model $DIR will be saved into $FD"
+
+CONT="Anmerkungen gnplt *.R"
+CONT="$CONT EREIGG.txt"
+CONT="$CONT WETTER.txt"
+CONT="$CONT MODELLA.txt"
+CONT="$CONT MODELLG.3D.txt"
+CONT="$CONT APARAM.txt"
+CONT="$CONT e_extnct.dat"
+CONT="$CONT points"
+CONT="$CONT file.elements"
+CONT="$CONT ELEMENTE.txt"
+CONT="$CONT ausgabezeitpunkte.txt"
+CONT="$CONT ganglinien_knoten.txt"
+CONT="$CONT ausgabekonzentrationen.txt"
+CONT="$CONT email.txt"
+CONT="$CONT alter.txt"
+CONT="$CONT trafo"
+CONT="$CONT ls_transinfo"
+CONT="$CONT transinfo_meta"
+CONT="$CONT qsim3d_source_*.taz"
+CONT="$CONT *.qsub"
+CONT="$CONT *.sbatch"
+# echo "CONT = $CONT"
+
+tar cvfz $FD $CONT
+
+if [ $? -ne 0 ]
+then
+   # die with unsuccessful shell script termination exit status # 3
+   echo "tar model archive not successfull".
+   exit 3 
+fi
+# command
+# if [ "$?"-ne 0]; then echo "command failed"; exit 1; fi
+
+# SICHERUNG="/srv/cifs-freigaben/wyrwa-ich/sicherung"
+# cp $FD $SICHERUNG
+# cp $FD $archiv
+
+echo "QSim-3D Model $DIR was saved to $FD and stored in $DIR."
+#  in $SICHERUNG and $archiv"
+
+rm ls_transinfo start ende lauf
+rm transinfo_meta
+rm qsim3d_source_*.taz
+
+#cd $P
+echo "qusave regular exit"
+
+exit 0
+

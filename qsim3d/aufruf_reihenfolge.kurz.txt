@@ -1,0 +1,47 @@
+qsim.f90 13.00
+
+  Sediment
+  sysgen
+  funkstar
+  pwert
+  sasu
+  WEHRLES
+  wettles
+
+!...Strangschleife
+
+  WEHR
+  sys_z_Gitter
+  strahlg
+  Temperl
+
+  sedflux
+  konsum
+  coroph
+  dreissen
+  HNF
+  algaeski
+  algaesbl
+  algaesgr
+  albenth
+  mphyt
+  orgC
+  ncyc
+  ph
+  temperw
+  po4s
+  silikat
+  oxygen
+  SCHWEB
+  COLIFORM
+  erosion
+
+  k_eps
+  Transport
+  Transportz
+
+!.....Ende Strangschleife                                               
+
+  anztag
+  funkstar
+

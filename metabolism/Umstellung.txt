@@ -1,0 +1,91 @@
+
+Umstellung von QSim 1D, so dass die Stoffumsetzungs-Subroutinen von QSim3D unter Linux mitbenutzt werden können:
+Juni 2018, Jens Wyrwa
+
+
+Ausgangspunkt war die QSim1D-Version  13.301_28mae18
+
+Alle Änderungen sind mit !!wy gekennzeichnet
+
+Die folgenden Quellcode-Dateien werden von QSim3D mitbenutzt:
+albenth.f90
+algaesbl.f90
+algaesgr.f90
+algaeski.f90
+cbsb5.f90
+C_Chla.f90
+coliform.f90
+COROPH.f90
+Dichte.f90
+dreissen.f90
+e_extnct_lesen.f90
+einleiter_Misch.f90
+erosion.f90
+funkstar.f90
+hnf.f90
+konsum.f90
+lichthemmung.f90
+lin_spline.f90
+mphyt.f90
+ncyc.f90
+orgc.f90
+oxygen.f90
+ph.f90
+pweinl.f90
+pwert.f90
+phstart.f90
+po4s.f90
+pro_Runge_Kutta.f90
+runge_kutta.f90
+sasu.f90
+schiff.f90
+schweb.f90
+Sed_DiffK.f90
+SedFlux.f90
+Sedimentation.f90
+sediment.f90
+sed_pom.f90
+silikat.f90
+strahlg.f90
+tage.f90
+temperl.f90
+TEMPERW.f90
+uptake.f90
+ANZTAG.f90
+zuflussrand.f90
+
+Die letzte, zuflussrand.f90, ist neu entstanden durch 
+Auslagerung des "Setzen von Werten am Startprofil" aus qsim.f90.
+Es geht dabei um die Aufteilung der Konzentrationen an Zuflussrändern.
+
+Die Datei e_extnct_lesen.f90 ist ebenfalls neu entstanden, weil das Lesen der
+Extinktionskoeffizienten von e_extnct.dat jetzt ausserhalb der Algenroutinen und der Zeitschleife
+vorgenommen wird.
+
+In folgenden Subroutinen wurden Aufruf-Parameter geändert:
+algaesbl.f90
+algaesgr.f90
+algaeski.f90
+konsum.f90
+ncyc.f90
+orgc.f90
+oxygen.f90
+ph.f90
+po4s.f90
+pwert.f90
+Sedimentation.f90
+silikat.f90
+strahlg.f90
+TEMPERW.f90
+
+Linux unterscheidet, anders als Windows, Groß- und Kleinschreibung von Dateinamen.
+Alle Dateinamen des Modells werden jetzt in der Schreibweise:
+ABLAUF.txt erwartet. (Die Schreibweise Ablauf.txt wird von Linux nicht erkannt)
+
+Mindestwassertiefe bei der Temperaturberechnung jetzt 5 cm.
+
+!    iverfahren = 3   ! ultimate Quickest 
+funktionierte im 1D-Testfall /home/Wyrwa/qmodelle/1d.jens.test/EQ99 nicht
+!    iverfahren = 1   ! cip  geht.
+
+

@@ -1,0 +1,36 @@
+#! /bin/bash
+
+echo "bash-script quzip saves vtk-output of qsim3d model."
+echo "call sequence >quzip /modeldirectory"
+
+s="/"
+# echo "s=$s"
+# P=`pwd -P`
+
+DIR="$1"
+
+if [ ! -d $DIR ]
+then
+  echo -e "model directory >$DIR< does not exist"
+  exit 2
+else
+  echo -e "model directory >$DIR< existing"
+fi
+
+cd $DIR
+
+rm -rf vtk.zip
+
+#zip --no-dir-entries vtk.zip *.vtk >/dev/null 2>/dev/null
+zip --no-dir-entries vtk.zip *.vtk
+
+echo "vtk output of Model $DIR was zipped to vtk.zip."
+
+#rm -rf *.vtk >/dev/null 2>/dev/null
+rm -rf *.vtk
+
+# cd $P
+
+echo "quzip regular exit"
+
+exit 0

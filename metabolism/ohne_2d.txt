@@ -1,0 +1,36 @@
+      if(ilbuhn==1)then
+        nkzs(ior) = 1
+          else if(flag(ior)/=4)then
+            else                        ! Berücksichtigung der Einleitungen
+              m = 1
+              ihcQ = 0.0
+              if(vabfl(ior-1)<0.0.and.vabfl(ior)<0.0)m = -1
+              if(vabfl(ior-1)<0.0.and.vabfl(ior)>0.0)ihcQ = 1 ! Konzentration an der Einleitstelle 
+                                                              ! ist gleich der Konzentration der Einleitung 
+
+              
+              hcvO2 = vo2(ior-m)     ! Umbenennen der benötigten Variablen; 1D
+              hcQ = vabfl(ior-m)
+              if(hcQ<0.0)hcQ = abs(hcQ)
+              if(hcQ==0.0.or.ihcQ==1)hcQ = 1.e-10
+              
+              do ji=1,jiein(ior)   ! Beginn Einleitungsschleife  
+              hcQE = max(0.0,qeinl(iein))
+              if(hcQE==0.0)itrein(mstr,2,iein) = 1 
+
+              hco2E = eo2(iein)
+
+              if(hco2E<0.0)then            ! 1D
+                hco2E = hcvo2
+                itrein(mstr,2,iein) = 1  
+              endif
+
+             vo2(ior) = (hcQ*hcvo2+hcQE*hco2E)/(hcQ+hcQE) 
+
+             hcQ = hcQ+qeinl(iein) 
+             iein = iein+1 
+
+             hcvo2 = vo2(ior) 
+           enddo                        ! Ende Einleitungsschleife
+    endif                               ! Ende Einleitungs-flag                                                                  
+            

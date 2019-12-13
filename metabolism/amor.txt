@@ -1,0 +1,105 @@
+
+algaeski:
+      akmomi = 0.02
+      agmomi = 0.02
+      abmomi = 0.02
+      akmoma = 0.8
+...
+!     neu!! algenmortalitaet                                            
+!                                                                       
+      akmor = akmomi
+
+      fmor1 = f51 
+      fmor2 = f52 
+      fmor3 = f53 
+
+      if((Qmx_NK/Qmn_NK)>=1.25)then 
+        fmor1 = (Q_NKt-Qmn_NK)/(Qmx_NK-Qmn_NK)
+      endif
+ 
+      if((Qmx_PK/Qmn_PK)>=1.25)then 
+        fmor2 = (Q_PKt-Qmn_PK)/(Qmx_PK-Qmn_PK) 
+      endif
+
+      fmor = min(fmor1,fmor2)
+      akmor_1v = akmor_1(mstr,ior)
+
+      akmor = akmomi+akmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+       
+     if(akmor<akmor_1(mstr,ior))then
+        akmor = akmor_1(mstr,ior)
+        akmor_1t = akmor_1(mstr,ior)
+          else
+            akmor_1t = akmor
+      endif
+                                                                       
+      dkimor(ior) = akit*(1.-(exp(-akmor*tflie)))
+
+------------------------------------------------------------------------------------------------------
+algaesbl:
+!     neu!! algenmortalitaet                                            
+                                                                       
+      abmomi = 0.02 
+      abmoma = 0.8
+      abmor = abmomi
+      
+      fmor0 = 0.05
+                                                                       
+      fmor1 = f51 
+      fmor2 = f52 
+
+      if((Qmx_NB/Qmn_NB)>=1.25)then
+        fmor1 = (Q_NB(ior)-Qmn_NB)/(Qmx_NB-Qmn_NB)
+        if(ifix==1)fmor1 = 1.
+      endif
+                                         
+      if((Qmx_PB/Qmn_PB)>=1.25)then 
+        fmor2 = (Q_PB(ior)-Qmn_PB)/(Qmx_PB-Qmn_PB)
+      endif
+                                         
+      fmor = min(fmor1,fmor2) 
+
+      abmor = abmomi+abmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+
+      if(abmor<abmor_1(mstr,ior))then
+        abmor = abmor_1(mstr,ior)
+          else
+            abmor_1(mstr,ior) = abmor
+      endif 
+
+      dblmor(ior) = ablt*(1.-(exp(-abmor*tflie))) 
+
+------------------------------------------------------------------------------------------------------
+algaesgr:
+!****** algenmortalitaet, abhängig vom Nährstoffgehalt der Zelle, bzw. Nährstoffangebot ******                                            
+!                                                                       
+      agmomi = 0.02 
+      agmoma = 0.8 
+      agmor = agmomi 
+ 
+      fmor0 = 0.05
+
+      fmor1 = f51 
+      fmor2 = f52 
+
+      if((Qmx_NG/Qmn_NG)>=1.25)then
+        fmor1 = (Q_NG(ior)-Qmn_NG)/(Qmx_NG-Qmn_NG)
+      endif 
+
+      if((Qmx_PG/Qmn_PG)>=1.25)then
+        fmor2 = (Q_PG(ior)-Qmn_PG)/(Qmx_PG-Qmn_PG)
+      endif
+   
+      fmor = min(fmor1,fmor2)
+
+      agmor = agmomi+agmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+
+      if(agmor<agmor_1(mstr,ior))then
+        agmor = agmor_1(mstr,ior)
+          else
+            agmor_1(mstr,ior) = agmor
+      endif 
+
+      dgrmor(ior) = agrt*(1.-(exp(-agmor*tflie))) 
+
+

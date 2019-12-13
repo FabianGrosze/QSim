@@ -1,0 +1,75 @@
+ subroutine ErgebTParam(cpfad1,j1)
+
+!  Ausgabe der Definition von ErgebT
+
+  character(255)  :: cpfad1
+  character (len=275)         :: pfadstring
+
+  write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'ErgebTParam.xml'
+  open(unit=1, file=pfadstring)
+  
+  WRITE(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
+  WRITE(1, '(A)') '<GerrisParam FileType="ErgebT" QsimVersion="13.10">'  
+  WRITE(1, '(A)') '<ParamSetDef Ident="ErgebT" Text="Zeitschritt-Ergebnisparameter" Help="Die von QSim in Zeitschritt-Auflösung berechneten Parameter">'
+  WRITE(1, '(A)') '  <Parameter Ident="VBSB" Text="C-BSB5" Unit="mg/l" Format="F6.2" Help="C-BSB5" Group="1" Quantity="BSB5" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VCSB" Text="CSB" Unit="mg/l" Format="F6.2" Help="CSB" Group="1" Quantity="CSB" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VNH4" Text="NH4-N" Unit="mg/l" Format="F6.2" Help="NH4-N" Group="1" Quantity="NH4" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VNO2" Text="NO2-N" Unit="mg/l" Format="F6.3" Help="NO2-N" Group="1" Quantity="NO2" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VNO3" Text="NO3-N" Unit="mg/l" Format="F9.6" Help="NO3-N" Group="1" Quantity="NO3" />'
+  WRITE(1, '(A)') '  <Parameter Ident="GSNY" Text="Gesamt N" Unit="mg/l" Format="F5.2" Help="Gesamt N" Group="1" Quantity="GSNY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="GELP" Text="o-PO4-P" Unit="mg/l" Format="F6.3" Help="o-PO4-P" Group="1" Quantity="GELP" />'
+  WRITE(1, '(A)') '  <Parameter Ident="GSPY" Text="Gesamt P" Unit="mg/l" Format="F5.2" Help="Gesamt P" Group="1" Quantity="GSPY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="SI" Text="Gelöstes Si" Unit="mg/l" Format="F5.2" Help="Gelöstes Si" Group="1" Quantity="SI" />'
+  WRITE(1, '(A)') '  <Parameter Ident="CHLA" Text="Chlorophyll-a-Gehalt" Unit="µg/l" Format="F6.2" Help="Chlorophyll-a-Gehalt" Group="1" Quantity="CHLA" />'
+  WRITE(1, '(A)') '  <Parameter Ident="ZOOIND" Text="Zooplanktondichte" Unit="Ind/l" Format="F7.1" Help="Zooplanktondichte" Group="1" Quantity="ZOOIND" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VPH" Text="pH-Wert" Unit="" Format="F5.2" Help="pH-Wert" Group="1" Quantity="PH" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MW" Text="m-Wert" Unit="mmol/l" Format="F5.2" Help="m-Wert" Group="1" Quantity="MW" />'
+  WRITE(1, '(A)') '  <Parameter Ident="CA" Text="Ca-Konzentration" Unit="mg/l" Format="F5.1" Help="Ca-Konzentration" Group="1" Quantity="CA" />'
+  WRITE(1, '(A)') '  <Parameter Ident="LF" Text="Leitfähigkeit" Unit="µS/cm" Format="F8.1" Help="Leitfähigkeit" Group="1" Quantity="LF" />'
+  WRITE(1, '(A)') '  <Parameter Ident="SSALG" Text="Schwebstoffgehalt" Unit="mg/l" Format="F6.2" Help="Schwebstoffgehalt" Group="1" Quantity="SSALG" />'
+  WRITE(1, '(A)') '  <Parameter Ident="TEMPW" Text="Wassertemperatur" Unit="°C" Format="F5.2" Help="Wassertemperatur" Group="1" Quantity="TEMPW" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VO2" Text="Sauerstoffgehalt" Unit="mg/l" Format="F5.2" Help="Sauerstoffgehalt" Group="1" Quantity="O2" />'
+  WRITE(1, '(A)') '  <Parameter Ident="CHNF" Text="Heterotrophe Nanoflagellaten" Unit="Ind/ml" Format="F8.1" Help="Heterotrophe Nanoflagellaten" Group="1" Quantity="CHNF" />'
+  WRITE(1, '(A)') '  <Parameter Ident="COLIY" Text="Fäkalcoliforme Bakterien" Unit="Ind/100 ml" Format="E9.2" Help="Fäkalcoliforme Bakterien" Group="1" Quantity="COLIY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="DLY" Text="longitudinale Dispersion" Unit="m/s2" Format="F7.2" Help="longitudinale Dispersion" Group="1" Quantity="DLY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="SEDHG" Text="Sedimentdicke" Unit="mm" Format="F12.6" Help="Sedimentdicke" Group="1" Quantity="SEDHG" />'
+  WRITE(1, '(A)') '  <Parameter Ident="TRACER" Text="Tracerkonzentration" Unit="µg/l" Format="F9.3" Help="" Group="1" Quantity="TRACER" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BSBtY" Text="Sauerstoffverbrauch d. Kohlenstoffabbau in der Wassersäule" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="susNOy" Text="Sauerstoffverbr. d. Nitrifik. in der Wassersäule" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="O2ei1y" Text="physikalischer Sauerstoffeintrag" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="dalgoy" Text="BruttoO2-Prod. d. Algen" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="cchlky" Text="C:Chla-Verhältnis Kieselalgen" Unit="mg/mg" Format="F6.2" Help="" Group="1" Quantity="cchlky" />'
+  WRITE(1, '(A)') '  <Parameter Ident="cchlkg" Text="C:Chla-Verhältnis Grünalgen" Unit="mg/mg" Format="F6.2" Help="" Group="1" Quantity="cchlgy" />'
+  WRITE(1, '(A)') '  <Parameter Ident="cchlkb" Text="C:Chla-Verhältnis Blaualgen" Unit="mg/mg" Format="F6.2" Help="" Group="1" Quantity="cchlby" />'
+  WRITE(1, '(A)') '  <Parameter Ident="zoro2y" Text="O2-Verbr. durch Rotatorien" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="schlry" Text="O2-Flux in das Sediment" Unit="mgO2/(l*h)" Format="F10.8" Help="" Group="Raten (O2)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="bettny" Text="AmmoniumFlux Wasser/Sediment (-)" Unit="mgN/(l*h)" Format="F8.6" Help="" Min="0" Group="Raten (N)" Quantity="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BVBSBY" Text="C-BSB5 im Buhnenfeld" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld" Group="2" Quantity="BBSB5Y" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BVCSBY" Text="CSB im Buhnenfeld" Unit="mg/l" Format="F6.2" Help="CSB im Buhnenfeld" Group="2" Quantity="BCSBY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BNH4Y" Text="NH4-N im Buhnenfeld" Unit="mg/l" Format="F6.2" Help="NH4-N im Buhnenfeld" Group="2" Quantity="BNH4Y" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BNO2Y" Text="NO2-N im Buhnenfeld" Unit="mg/l" Format="F6.3" Help="NO2-N im Buhnenfeld" Group="2" Quantity="BNO2Y" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BNO3Y" Text="NO3-N im Buhnenfeld" Unit="mg/l" Format="F9.6" Help="NO3-N im Buhnenfeld" Group="2" Quantity="BNO3Y" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BGSNY" Text="Gesamt N im Buhnenfeld" Unit="mg/l" Format="F5.2" Help="Gesamt N im Buhnenfeld" Group="2" Quantity="BGSNY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BGELPY" Text="o-PO4-P im Buhnenfeld" Unit="mg/l" Format="F5.3" Help="o-PO4-P im Buhnenfeld" Group="2" Quantity="BGELPY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BGSPY" Text="Gesamt P im Buhnenfeld" Unit="mg/l" Format="F5.2" Help="Gesamt P im Buhnenfeld" Group="2" Quantity="BGSPY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BSIY" Text="Gelöstes Si im Buhnenfeld" Unit="mg/l" Format="F5.2" Help="Gelöstes Si im Buhnenfeld" Group="2" Quantity="BSIY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BCHLAY" Text="Chlorophyll-a-Gehalt im Buhnenfeld" Unit="µg/l" Format="F6.2" Help="Chlorophyll-a-Gehalt im Buhnenfeld" Group="2" Quantity="BCHLAY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BZOOIY" Text="Zooplanktondichte im Buhnenfeld" Unit="Ind/l" Format="F7.1" Help="Zooplanktondichte im Buhnenfeld" Group="2" Quantity="BZOOIY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BPHY" Text="pH-Wert im Buhnenfeld" Unit="" Format="F5.2" Help="pH-Wert im Buhnenfeld" Group="2" Quantity="BPHY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BMWY" Text="m-Wert im Buhnenfeld" Unit="mmol/l" Format="F5.2" Help="m-Wert im Buhnenfeld" Group="2" Quantity="BMWY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BCAY" Text="Ca-Konzentration im Buhnenfeld" Unit="mg/l" Format="F5.1" Help="Ca-Konzentration im Buhnenfeld" Group="2" Quantity="BCAY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BLFY" Text="Leitfähigkeit im Buhnenfeld" Unit="µS/cm" Format="F6.1" Help="Leitfähigkeit im Buhnenfeld" Group="2" Quantity="BLFY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BSSALY" Text="Schwebstoffgehalt im Buhnenfeld" Unit="mg/l" Format="F6.2" Help="Schwebstoffgehalt im Buhnenfeld" Group="2" Quantity="BSSALY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BTEMPY" Text="Wassertemperatur im Buhnenfeld" Unit="°C" Format="F5.2" Help="Wassertemperatur im Buhnenfeld" Group="2" Quantity="BTEMPY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BO2Y" Text="Sauerstoffgehalt im Buhnenfeld" Unit="mg/l" Format="F5.2" Help="Sauerstoffgehalt im Buhnenfeld" Group="2" Quantity="BO2Y" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BHNFY" Text="Heterotrophe Nanoflagellaten im Buhnenfeld" Unit="Ind/ml" Format="F8.1" Help="Heterotrophe Nanoflagellaten im Buhnenfeld" Group="2" Quantity="BHNFY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BCOLIY" Text="Fäkalcoliforme Bakterien im Buhnenfeld" Unit="Ind/100 ml" Format="F8.0" Help="Fäkalcoliforme Bakterien im Buhnenfeld" Group="2" Quantity="BCOLIY" />'
+  WRITE(1, '(A)') '  <Parameter Ident="TAU2" Text="Austauschzeit" Unit="h" Format="F7.3" Help="" Group="2" Quantity="TAU2" />'
+  WRITE(1, '(A)') '  <Parameter Ident="bTRACER" Text="" Unit="µg/l" Format="F9.3" Help="" Group="2" Quantity="BTRACER" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '</GerrisParam>'
+  
+  CLOSE(1)
+
+ END subroutine ErgebTParam
+

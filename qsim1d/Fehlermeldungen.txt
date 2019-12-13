@@ -1,0 +1,20 @@
+Die Tiefe am Profil ist kleiner oder gleich 0.0 m (Strang Profil):
+maximale Anzahl (1000) der Gitterpunkte wurde ueberschritten!
+die Eingabe der Modellkonstanten fehlt oder ist unvollständig. Eingabe im GerrisMe unter Projekt/QSim
+für Wetterstation wurde keine Minimum-Temperaturen eingegeben! (Wetterstation):  
+Die Anteile der Kiesel- und Blaualgen sind zusammen größer 1 (Strang):
+Es fehlt die Eingabe der Nitrosomonas-Konzentration an den Rändern! 
+Es fehlt die Eingabe der Nitrobacter-Konzentration an den Rändern! 
+Es fehlt die Eingabe des Kieselalgenanteils am Chla an den Rändern!
+Es fehlt die Eingabe des Blaualgenanteils am Chla an den Rändern!
+Es fehlt die Eingabe der Silikatwerte an den Rändern!
+Der Bedeckungsgrad ist groesser als 8/8 oder kleiner als 0
+Es fehlt die Zuordnung einer Wetterstation zum Strang: 
+Die Eingabe Laubwald rechtes und Laubwald linkes Ufer ist so nicht zulässig <Laubwald beidseitig>; Strang:
+Die Eingabe Nadelwald rechtes und Nadelwald linkes Ufer ist so nicht zulässig <Nadelwald beidseitig>; Strang:
+Der Vegetationsanteil am linken Ufer liegt über 100% für Strang:
+Der Vegetationsanteil am rechten Ufer liegt über 100 für Strang:
+Die Zeitpunkte fuer das Makrophythenwachstum sind nicht oder unvollstaendig eingegeben für Strang:
+Es erfolgte keine Eingabe für die Austauschzeit zwischen Buhnfeld und Hauptstrom
+Es wurde am Startprofil kein m-Wert eingegeben!
+Es wurde am Startprofil kein Ca-Wert eingegeben!

@@ -1,0 +1,14 @@
+
+Compilieren und Übersetzen von QSim3D:
+
+es werden folgende Umgebungsvariablen benötigt: 
+   MY_BIN als Pfad zum Verzeichnis, in dem das ausführbare Programm abgelegt werden soll (muss in PATH enthalten sien)
+   MY_ARC als Pfad zum Verzeichnis, in dem Sicherungskopien von make save abgelegt werden können.
+Üblicherweise werden die Variablen in ~/.bashrc mit export MY_BIN=/home/beispiel/bin gesetzt.
+
+> make  ... compiliert und installiert
+
+> make save  ... legt eine Sicherungskopie der Programmquelle an.
+
+> make clean ... bereinigt das Verzeichnis, so dass beim nächsten make alle Dateien neu compiliert werden.
+

@@ -1,0 +1,68 @@
+  subroutine lin_spline (dz_alt,dz_neu,n_alt_s,n_neu_s,Y, YY,i_zeiger,iaus,ior)                             
+                                                            
+                                                            
+                                                            
+!   AUTOR:VOLKER KIRCHESCH                                 
+                                                            
+!   STAND:27.07.2012                                       
+                                                            
+                                                            
+
+!   Ein Programm zur Berechnung eines linearen Splines 
+
+
+
+    integer, Dimension (50)              :: m
+    real, Dimension(50)                  :: y, yy, aa, bb, ddx
+ 
+    open(unit=114,file='lin_Spline.tst')
+
+    x_neu = 0.0
+    x_alt = -dz_alt
+    if(i_zeiger==1)x_alt = 0.0
+    n_alt = 1
+
+    do n = 1,n_neu_s                         ! Schleife neues Gitter
+      if(n>1)x_neu = x_neu + dz_neu
+       
+        do nn = n_alt,n_alt_s                ! Schleife altes Gitter
+          x_alt = x_alt + dz_alt
+!          if(iaus==0.and.ior==4)write(96,*)x_alt,x_neu
+         if(x_alt>=x_neu)then
+            m(n) = nn
+            ddx(m(n)) = x_neu - (x_alt-dz_alt)
+            n_alt = nn
+            x_alt = x_alt - dz_alt
+            exit
+          endif
+        enddo
+    enddo    
+      
+    aa(1) = y(1)
+    bb(1) = 0.0
+
+    n_alt = 1
+
+   do n = 1,n_neu_s
+     do nn = n_alt,n_alt_s
+       if(nn==1)then
+         else
+           aa(nn) = y(nn-1)
+           bb(nn) = (Y(nn)-Y(nn-1))/dz_alt
+       endif
+
+       if(m(n)==0)exit 
+       if(nn==m(n))then
+         yy(n) = aa(nn) + bb(nn) * ddx(m(n))
+!          if(iaus==0.and.ior==4)write(96,*)n,m(n),yy(n),ddx(m(n))
+
+         n_alt = nn
+         n_ist = n
+         exit
+       endif
+     enddo
+   enddo
+
+   if(n_ist<n_neu_s)YY(n_neu_s) = Y(n_alt_s)
+
+  end subroutine lin_spline

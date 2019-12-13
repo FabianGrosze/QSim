@@ -1,0 +1,16 @@
+
+Beschreibung der Ergänzung von nicht vorhandenen Randwerten in funkstar.f90
+Übernahme von funkstar.f90 zum Einlesen von EREIGG.txt ??
+
+Aufteilung Randwerte-Transportvariablen - wie aus QSim übernehmen?
+
+Einleitung - Randwert ?? wie hängt das in QSim zusammen??
+
+--------------------------------------------
+Anforderungen:
+
+Filme von Tiedenmittelwerten als erste Sichtung der Ergebnisse.
+
+Ganglinien (An vorgegebenen Punkten)
+Minimal/Maximalwerte und Mittelwert (2Tiden und/oder Tag?) + Zeitschritt(takt)werte
+
