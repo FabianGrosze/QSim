@@ -39,7 +39,7 @@
 # PV=qsim3d_ohnehnf
 # PV=qsim3d_albenth
 # PV=qsim3d_mphyt
-PV=qsim3d_voll
+PV=qsim3d_voll2
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 

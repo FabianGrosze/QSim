@@ -68,6 +68,7 @@ qsim1d:	$(Q1)
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod
+	rm -f ../metabolism/*.o ../metabolism/*.a
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 

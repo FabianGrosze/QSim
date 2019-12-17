@@ -36,7 +36,8 @@
           exit
         endif  
         if(z_neu(nkz_neu)>=zStern_alt(nkz_alt).and.z_neu(nkz_neu)<=zStern_alt(nkz_alt-1))then
-          y_var(nkz_neu) = Y_alt(nkz_alt)+((Y_alt(nkz_alt-1)-Y_alt(nkz_alt))/(zStern_alt(nkz_alt-1)-zStern_alt(nkz_alt)))*(z_neu(nkz_neu)-zStern_alt(nkz_alt))
+          y_var(nkz_neu) = Y_alt(nkz_alt)+((Y_alt(nkz_alt-1)-Y_alt(nkz_alt))/(zStern_alt(nkz_alt-1)-zStern_alt(nkz_alt)))*  &
+      &                    (z_neu(nkz_neu)-zStern_alt(nkz_alt))
           exit
             else
               cycle
