@@ -3,7 +3,7 @@
                                                                        
                                                                        
 !      izdt Einheiten min oder Stunden Beruecksichtigung bei itime      
-!      Bei Tracerrechnung wird f¸r die Variable tempw mit der Tracermenge belegt!!!
+!      Bei Tracerrechnung wird f√ºr die Variable tempw mit der Tracermenge belegt!!!
 !.....testen: WEHRO2                                                    
 
       character                               :: ckenn,cpoint,CST_end 
@@ -15,8 +15,8 @@
       character (len = 200)                   :: ctext 
       character (len = 255)                   :: cpfad,cpfad1,cpfad2,filestring
       character (len=275)                     :: pfadstring
-      logical kontroll, einmalig !!wy
-      integer iglob !!wy
+      logical kontroll, einmalig, linux !!wy
+      integer iglob, open_error !!wy
       character (len = 120)                   :: cfehlr 
       
       character (len = 50), Dimension(50,100) :: CEname  
@@ -315,11 +315,12 @@
 !###### VERSIONSNUMMER ################
 
       VERSIO = 14.00
- 
+      linux  = .true.
+      kontroll= .false.
 !######################################
                                        
 !                                                                       
-!.....Schalter f¸r "Regeln bei Kraftwerksbetrieb"                       
+!.....Schalter f√ºr "Regeln bei Kraftwerksbetrieb"                       
 !               iRHKW = 1 > Betrieb der HKW's unterliegt gewissen Regeln
       iRHKW = 0 
 !                                                                       
@@ -362,6 +363,7 @@
 
       j = i
       cpfad1(j:j) = '\'
+      if (linux) cpfad1(j:j) = '/' 
       cpfad1 = cpfad1(1:j)
       j1 = j
 
@@ -391,6 +393,7 @@
 
       j = i
       cpfad(j:j) = '\'
+      if (linux) cpfad(j:j) = '/' 
       cpfad = cpfad(1:j)
       j1 = j
 
@@ -400,12 +403,13 @@
 
       j = i
       cpfad1(j:j) = '\'
+      if (linux) cpfad1(j:j) = '/'
       cpfad1 = cpfad1(1:j)
       j2 = j
 
         endif
         
-        !!wy print*,'cpfad=',cpfad,' cpfad1=', cpfad1,' cpfad2=', cpfad2 !!wy
+        print*,'cpfad=',j1,cpfad;print*,'cpfad1=',cpfad1;print*,'versio=',versio
 
         call fehlermeldungen(cpfad,j1)
 
@@ -482,7 +486,6 @@
 
               rewind(299)
               write(299,'(f5.2)')versio
-
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'qsim.tst' 
         open(unit=89, file=pfadstring)
@@ -878,7 +881,7 @@
 
      izufluss(mstr) = izufluss(mstr) + 1                                                                      
       
-!......Bestimmung der Wirkl‰nge der Diffusen Einleitung                 
+!......Bestimmung der Wirkl√§nge der Diffusen Einleitung                 
                                                                        
       if(mstrLe(mstr,mRB)<0)cycle 
       ieinL = ieinL+1 
@@ -1140,7 +1143,7 @@
                                                                        
 !****************************************************************       
                                                                        
-!**** Erstellung des Gitters f¸r ortsfeste Kenngrˆﬂen und Organismen****                 
+!**** Erstellung des Gitters f√ºr ortsfeste Kenngr√∂√üen und Organismen****                 
 !*****Lesen aus der Datei MODELLG.txt                                   
 !                                                                       
       dlmax1 = 0.0 
@@ -1599,7 +1602,7 @@
       xsedvvertz = -1.0 
 
       do mZ = 1,mZs(mstr) !alle Z-Zeilen (ModellG.txt) in diesem Strang (Sedimenteigenschaften)
-      if(abfr(mstr)==0)then  ! Kilometrierung gegen Flieﬂrichtung 
+      if(abfr(mstr)==0)then  ! Kilometrierung gegen Flie√ürichtung 
         if(fkmgit<=aPOM(mstr,mZ).and.fkmgit>=ePOM(mstr,mZ))then
           POM_sed = POMz(mstr,mZ)
           BedGS = BedGSz(mstr,mZ)
@@ -1737,18 +1740,18 @@
       hcoro2(mstr,mSta,ico) = coro1 
   689 hcos2(mstr,mSta,ico) = coro1 
 
-      sedOM(mstr,kSta+1) = POM_sed                    ! "flag6-Knoten wird in sysgen ber¸cksichtigt.
+      sedOM(mstr,kSta+1) = POM_sed                    ! "flag6-Knoten wird in sysgen ber√ºcksichtigt.
       BedGSed(mstr,kSta+1) = BedGS
       sedvvert(mstr,kSta+1) = xsedvvertz
       sedOMb(mstr,kSta+1) = POM_sedb
 
-      SPEWKSuS(mstr,kSta+1) = SPEWKSx1  ! Nomenklatur: spezifische W‰rmekapazit‰t an den urspr¸nglichen Stationen  
+      SPEWKSuS(mstr,kSta+1) = SPEWKSx1  ! Nomenklatur: spezifische W√§rmekapazit√§t an den urspr√ºnglichen Stationen  
       WUEBKuS(mstr,kSta+1) = WUEBKx1
       PSREFSuS(mstr,kSta+1) = PSREFSx1
       extkuS(mstr,kSta+1) = extkx1
 
       if(kSta.eq.0)goto 337 
-      if(kSta.gt.0.and.hflag(mstr,kSta).eq.4)then     ! Ber¸cksichtigung des "flag6"-Knotens
+      if(kSta.gt.0.and.hflag(mstr,kSta).eq.4)then     ! Ber√ºcksichtigung des "flag6"-Knotens
       mSta = mSta+1 
       idWe(mstr,mSta) = ikWSta(mstr,mWe) 
       Wlage(mstr,mSta) = yWlage(mstr,mWe) 
@@ -1805,7 +1808,11 @@
   712 continue 
 !...EREIGH.txt                                                          
       write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'EREIGH.txt' 
-      open(unit=110, file=pfadstring)
+      open(unit=110, file=pfadstring, iostat = open_error)
+      if(open_error.ne. 0) then
+         print*,'open_error EREIGH.txt',cpfad1
+         stop 2
+      end if
       rewind (110)
       read(110,'(A2)')ckenn_vers1
       if(ckenn_vers1/='*V')then
@@ -1821,7 +1828,7 @@
               read(110,'(2x)') 
       endif  
                                                                        
-! ###### Festlegung der max. Tiefenschichtenanzahl f¸r jeden Ortspunkt bei 2D ######
+! ###### Festlegung der max. Tiefenschichtenanzahl f√ºr jeden Ortspunkt bei 2D ######
                                                                        
 
       nkztot_max = 1
@@ -1903,7 +1910,7 @@
 
   9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
 
-!##### Test ob an einem Ortspunkt der vertikale Schichtenanzahl grˆﬂer als 50 ist (DIM = 50) ####
+!##### Test ob an einem Ortspunkt der vertikale Schichtenanzahl gr√∂√üer als 50 ist (DIM = 50) ####
 
        if(nkztot_max>50)then
          Hmaxtot2D = nkztot_max * dH2D
@@ -1919,8 +1926,8 @@
 
   706 continue 
 
-      izaehlN = 0   ! Laufvariable f¸r Anzahl der Warnungen gesN 
-      izaehlP = 0   ! Laufvariable f¸r Anzahl der Warnungen gesP
+      izaehlN = 0   ! Laufvariable f√ºr Anzahl der Warnungen gesN 
+      izaehlP = 0   ! Laufvariable f√ºr Anzahl der Warnungen gesP
 
                                                                     
 ! ##### lesen der Vorzeilen in ABLAUF.txt ######                                                        
@@ -1991,7 +1998,8 @@
                   ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS             & 
                   ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
       if(ifehl.gt.0)goto 989 
-                                                                       
+
+                                                                      
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou' 
       open(unit=11, file=pfadstring)
       rewind (11) 
@@ -2072,7 +2080,7 @@
       itimeh = nint(hcontm) 
       itimeb = itimeh-1 
 !                                                                       
-!...Anzahl der Zeitschritte f¸r ersten Simulationstag (itimea)          
+!...Anzahl der Zeitschritte f√ºr ersten Simulationstag (itimea)          
 !..und letzen Simulationstag (itimee)                                   
 !... Umrechnen der End-Uhrzeit in Dezimalschreibweise Uhren in hcUhre   
 !                                                                       
@@ -2096,7 +2104,7 @@
                                                                        
 !#### Berechnen der Startwerte #####                                         
                                                                        
-!## zu Beginn der Simulation werden die Anzahl der Randbedimgungen und die maximale L‰nge eines Datensatzes bestimmt ##
+!## zu Beginn der Simulation werden die Anzahl der Randbedimgungen und die maximale L√§nge eines Datensatzes bestimmt ##
 
      if(iwied==0)call Randbedingungen(cpfad, i_Rands, iw_max)
 
@@ -2114,13 +2122,13 @@
 
       write(89,*)itags,monats,aggmax,akgmax
 
-! ##### Ber¸cksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorstr‰ngen 1D-Fall#####
+! ##### Ber√ºcksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorstr√§ngen 1D-Fall#####
       do azStr = 1,azStrs !Strangschleife ANFANG
         mstr = mstra(azStr)
         if(iwied==0)exit
         if(iRB_K1(mstr)<=1)cycle
 
-!.or.nnStrs(mstr)==0)cycle ! noch ¸berpr¸fen
+!.or.nnStrs(mstr)==0)cycle ! noch √ºberpr√ºfen
 
         sum_QEinl = 0.0
 
@@ -2667,7 +2675,7 @@
       goto 732 
       endif
 
-      if(CHNFs(mstr,mRB)>0.0.and.BVHNFs(mstr,mRB)<=0.0)BVHNFs(mstr,mRB) = 25.      ! in µm3 
+      if(CHNFs(mstr,mRB)>0.0.and.BVHNFs(mstr,mRB)<=0.0)BVHNFs(mstr,mRB) = 25.      ! in ¬µm3 
       CHNFs(mstr,mRB) = CHNFs(mstr,mRB)*BVHNFs(mstr,mRB)*0.22 
 !.......Umrechnung von pg in mg /1.e9; Angabe CHNFs pro ml ergibt /1.e6 
 !       bezogen auf ein Liter                                           
@@ -2733,7 +2741,7 @@
 !                                                                         
       call ini_algae(akchl,abchl,agchl, Cagr,Caki,Cabl,CZoo, a1Ki,a2Ki,a3Ki, a1Bl,a2Bl,a3Bl, a1Gr,a2Gr,a3Gr)  !!wy jetzt in zuflussrand.f90
 
-!.....Temperaturabh‰ngigkeit des C:Chla-Verh‰ltnisses   !....ag(k,b)chl gilt f¸r 20∞C  in mgC/mgChla       ! mg Algenbiomasse, Chla in µg/l
+!.....Temperaturabh√§ngigkeit des C:Chla-Verh√§ltnisses   !....ag(k,b)chl gilt f√ºr 20¬∞C  in mgC/mgChla       ! mg Algenbiomasse, Chla in ¬µg/l
       !!wy jetzt in zuflussrand.f90          
       call algae_start(                                                       &
      &     chlas(mstr,mRB),vkigrs(mstr,mRB),antbls(mstr,mRB),tempws(mstr,mRB),&
@@ -2755,7 +2763,7 @@
      &     ssalgs(mstr,mRB),frfgrs(mstr,mRB),BACs(mstr,mRB),CHNFs(mstr,mRB),               &
      &     CPges,CDges,Cref,TOC )
 
-!!....zellul‰re N‰hrstoffgehalte 
+!!....zellul√§re N√§hrstoffgehalte 
        call naehr_start(                                                                   &
      &     akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                                   &
      &     vnh4s(mstr,mRB),vNO3s(mstr,mRB),vno2s(mstr,mRB),gesNs(mstr,mRB),                &
@@ -2806,14 +2814,14 @@
 !     Berechnung des p-Wertes am Start (ohne Algen)                     
 !                                                                       
       !!wy call pwert(mws,vphs,lfs,tempws,pws,mRB,mstr,azStrs) 
-      call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB),mRB,mstr) !!wy ‹bergabe Einzelwerte, nicht Felder
+      call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB),mRB,mstr) !!wy √úbergabe Einzelwerte, nicht Felder
 !                                                                       
 !     Berechnung des pH-Wertes und p-Wertes am Start unter Algeneinfluss
 !                                                                       
 !      call phstart(mws,pws,lfs,chlas,vkigrs,agbcms,akbcms,vphs         
 !     *,tempws,abbcms,antbls,mstr,mRB,azStrs)                                  
 !                                                                       
-!##### Belegen des 1. Knotens eines Strangs, wenn Vorstr‰nge und Einleitung am 1. Knoten #####
+!##### Belegen des 1. Knotens eines Strangs, wenn Vorstr√§nge und Einleitung am 1. Knoten #####
 
     if(nnstrs(mstr)>0)then 
       hgesN(mstr,1) = gesNs(mstr,mRB) 
@@ -2881,7 +2889,7 @@
 
 
 !.....2D-Modellierung                                                   
-!.....Ermittlung der Anzahl der vertikalen Schichten fÅr jeden          
+!.....Ermittlung der Anzahl der vertikalen Schichten f¬År jeden          
 !.....Knotenpunkt in jedem Strang                                       
 
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou' 
@@ -2972,7 +2980,7 @@
       call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj,ifehl)
       if(ifehl>0)goto 989 
                                                                       
-!...  Ermittlung der Kenngroessen zur Ber¸cksichtigung des Wehrueberfalls           
+!...  Ermittlung der Kenngroessen zur Ber√ºcksichtigung des Wehrueberfalls           
                                                                        
       if(iwsim==2.or.iwsim==5)then
         else 
@@ -3057,9 +3065,9 @@
       ieinsh(mstr) = 0 
       iflRi(mstr) = iflRi_l(istr)
 
-      j_ist = 1 ! Zuflieﬂende Straenge sind mit Randbedingungen belegt
+      j_ist = 1 ! Zuflie√üende Straenge sind mit Randbedingungen belegt
 
-      if(iwied==0)then  ! Test, ob zu Beginn der Simulation die zuflieﬂenden Str‰nge mit Anfangsbedingungen belegt sind
+      if(iwied==0)then  ! Test, ob zu Beginn der Simulation die zuflie√üenden Str√§nge mit Anfangsbedingungen belegt sind
       j_ist = 0
         if(nstrs(istr)==0)then
           else 
@@ -3085,7 +3093,7 @@
                                                                       
       if(iwied==1)mRB_1 = 0     ! Nr der Randbedingung bei Randbedingungstyp 0 und 2    
                                                                         
-      mRand = 0                 ! Schalter zur ‹berpr¸fung ob am ersten Ortspunkt eines 
+      mRand = 0                 ! Schalter zur √úberpr√ºfung ob am ersten Ortspunkt eines 
                                 ! Strangs Randbedingungen vorliegen (Datei Ereigg.txt)
  
       do mRB = 1,mRBs(mstr) ! RandbedingungsSchleife fuer Strang mstr
@@ -3178,7 +3186,7 @@
               if(iFlRi(mstr)==1.and.RBtyp(mstr,mRB)==0.and.nStrs(istr)==0)then  ! nStrs(mstr) Es gibt eine Randbedingung am 1. Ortspunkt eines Strangs
                 mRand = 1
                 mstrRB = mstr                                         ! mstrRB: StrangNummer mit Randbedingung am 1. Ortspunkt 
-                mRB_1 = mRB                                           ! Nummer der Randbedingung f¸r den ersten (letzten)Ortspunkt eines Strangs
+                mRB_1 = mRB                                           ! Nummer der Randbedingung f√ºr den ersten (letzten)Ortspunkt eines Strangs
               endif
       
               if(iFlRi(mstr)==-1.and.RBtyp(mstr,mRB)==2)then
@@ -3197,7 +3205,7 @@
       iwahl = 1 
 
 !      if(nstrs(istr)==0)iwahl = 1  
-      if(nstrs(istr)>0.and.j_ist==1) iwahl = 2 ! j_ist: gilt nur bei iwied=0. Zuflieﬂende Straenge sind bereits mit
+      if(nstrs(istr)>0.and.j_ist==1) iwahl = 2 ! j_ist: gilt nur bei iwied=0. Zuflie√üende Straenge sind bereits mit
                                                ! Randedingungen belegt 
       Rand_Wahl: select case (iwahl)
        
@@ -3329,7 +3337,7 @@
        if(gsNis(mstr1,mRB).ge.Wtst)hgsNi(mstr,ior) = gsNis(mstr1,mRB) 
        if(glNis(mstr1,mRB).ge.Wtst)hglNi(mstr,ior) = glNis(mstr1,mRB) 
 
-       if(iwsim==4)cycle  ! bei Tracer wird dieser Programmteil nicht ausgef¸hrt!
+       if(iwsim==4)cycle  ! bei Tracer wird dieser Programmteil nicht ausgef√ºhrt!
        algb5 = haki(mstr,ior)*Caki*bsbki+hagr(mstr,ior)*Cagr*bsbgr+habl(mstr,ior)*Cabl*bsbbl
        hvbsb(mstr,ior) = hbsb(mstr,ior)+algb5 
 
@@ -3455,10 +3463,10 @@
        bgsNi(mstr,ior) = hgsNi(mstr,ior) 
        bglNi(mstr,ior) = hglNi(mstr,ior) 
                                                                 
-      enddo ! Ende Schleife ¸ber die Ortspunkte 
+      enddo ! Ende Schleife √ºber die Ortspunkte 
      cycle 
 
-      case(2) ! Strang hat Vor- bzw. Nachstr‰nge
+      case(2) ! Strang hat Vor- bzw. Nachstr√§nge
       if(iwied==0)ianze(mstr) = hanze(mstr)+1 
      
       hcs1 = 0.0 
@@ -3615,7 +3623,7 @@
 
       if(iwied==0.and.iwsim/=4)then
 !    2D-Modellierung (Gitterbelegung zu Beginn der Simulation)          
-!......wird sonst ¸bersprungen, ebenso bei Tracer 
+!......wird sonst √ºbersprungen, ebenso bei Tracer 
                                                                        
       kanz2 = 1
       jnkz2 = 1
@@ -3841,7 +3849,7 @@
                                                                        
 !......2D-Modellierung                                                  
 
-!    2D-Gitterbelegung des Strangs mit Werten der Vor- bzw. Nachstr‰ngen
+!    2D-Gitterbelegung des Strangs mit Werten der Vor- bzw. Nachstr√§ngen
 
 
          nkzs_hc = hnkzs(mstr,iB)   
@@ -3883,19 +3891,19 @@
        hcq = hcq+abs(hqaus(ESTRNR(istr,nstr),iSta)) 
                                                                        
 !...Umspeichern der Daten am Ende des Wehrstrangs                       
-!....Wehrbel¸ftung wird am letzten Knoten des oberstromigen Strangs (OW)
+!....Wehrbel√ºftung wird am letzten Knoten des oberstromigen Strangs (OW)
 !..(Berechnung erfolgt in der Subroutine <WEHR>                         
-!... nach ‹bergabe an den unterstromigen Strang (UW) m¸ssen die Werte ohne
-! ...Wehr¸berfall wieder am letzten Knoten im oberstromigen Strang gesetzt werden
+!... nach √úbergabe an den unterstromigen Strang (UW) m√ºssen die Werte ohne
+! ...Wehr√ºberfall wieder am letzten Knoten im oberstromigen Strang gesetzt werden
 !....ho2_z in hO2                                                       
 
-!..Bei Tracer-Berechnung werden die Wehre nicht ber¸cksichtigt          
+!..Bei Tracer-Berechnung werden die Wehre nicht ber√ºcksichtigt          
       if(iwsim==4)cycle 
       htempw(ESTRNR(istr,nstr),kanz) = hte_z(ESTRNR(istr,nstr)) 
       ho2(ESTRNR(istr,nstr),kanz) = ho2_z(ESTRNR(istr,nstr)) 
       hph(ESTRNR(istr,nstr),kanz) = hph_z(ESTRNR(istr,nstr)) 
 !                                                                       
-      do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz)  ! Schleifenbeginn; falls ein Strang in mehrere Str‰nge m¸ndet
+      do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz)  ! Schleifenbeginn; falls ein Strang in mehrere Str√§nge m√ºndet
 
         Tzt(ESTRNR(istr,nstr),nkz,jnkz) = htez_z(ESTRNR(istr,nstr),nkz) 
         o2zt(ESTRNR(istr,nstr),nkz,jnkz) = ho2z_z(ESTRNR(istr,nstr),nkz) 
@@ -4271,7 +4279,7 @@
 
       if(jlauf.eq.1)goto 7777 ! Ablegen der berechneten Werte aus dem Zeitschritt t-1 und den Randbedingungen zum Zeitpunkt t   
 
- 9998 continue  ! Sprungziel nach Ablegen der Werte f¸r jeden Ortspunkt 
+ 9998 continue  ! Sprungziel nach Ablegen der Werte f√ºr jeden Ortspunkt 
 
   
 !.....Vorlauf ilang = 0                                                 
@@ -4312,7 +4320,7 @@
 
        imac(mstr) = 0
        if(hflag(mstr,ior)==4.and.hvmitt(mstr,ior)<0.0)imac(mstr) = 1 !falls Fliessumkehr an einer Einleiterstelle
-                                                                     !wird zur Lˆsung des Dispersionsterms das McCormack-
+                                                                     !wird zur L√∂sung des Dispersionsterms das McCormack-
                                                                      !Verfahren benutzt   
 
 
@@ -4372,7 +4380,7 @@
 !                                                                       
  5555 continue
 
-! ##### Ber¸cksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorstr‰ngen (2D-Fall) ##### 
+! ##### Ber√ºcksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorstr√§ngen (2D-Fall) ##### 
 
       do azStr = 1,azStrs  ! Strangschleife ANFANG
         if(iwied==0.or.i2Daus==0)exit
@@ -4627,7 +4635,7 @@
       !!wy write(222,6163)ij,itags,monats,jahrs,Uhrzhm 
  6163 format(2x,'Zeitschritt: ',I4,2x,i2,'.',i2,'.',I4,2x,F5.2) 
                                                                        
-!....Strangschleife fÅr Berechnung
+!....Strangschleife f¬År Berechnung
 
       if(iwsim==4)sumTracer = 0.0  ! Aufsummierung der "Tracermasse" 
                                      
@@ -4702,7 +4710,7 @@
         iorLe(ieinL) = iorLeh(mstr,kein) 
       enddo 
 !                                                                       
-!.....Kenngroessen f¸r Pflanzenwachstum,und Dreissenawachstum           
+!.....Kenngroessen f√ºr Pflanzenwachstum,und Dreissenawachstum           
 !.....nur strangweise nicht Abschnittsweise                             
       itstart = itsts(mstr) 
       mstart = msts(mstr) 
@@ -7384,8 +7392,8 @@
                     ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                                 &
                     ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z                  &
                     ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                     &
-                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,chlagr,zooind,GRote,iphy          &
-                    ,.false.,0)     !!wy kontroll,iglob
+                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GRote,iphy                 &  ! chlagr unbenutzt
+                    ,kontroll,0)     !!wy ,iglob=0
       if(ifehl>0)goto 989 
                                                           
       if(nbuhn(mstr)==0)goto 1518 
@@ -8318,7 +8326,7 @@
       BACmua(anze+1) = BACmua(anze) 
       ffood(anze+1) = ffood(anze) 
       extk(anze+1) = extk(anze) 
-!...hier auch Belegung f¸r alle anderen Groessen!!!                     
+!...hier auch Belegung f√ºr alle anderen Groessen!!!                     
 !                                                                       
 !..Buhnenfelder                                                         
       if(nbuhn(mstr).eq.0)goto 981 
@@ -8671,7 +8679,7 @@
       hdl(mstr,ior) = dl(ior) 
       htiefe(mstr,ior) = tiefe(ior) 
 !                                                                       
-      if(iwsim/=4)then        ! wird bei Tracer ¸bersprungen 
+      if(iwsim/=4)then        ! wird bei Tracer √ºbersprungen 
                                                         
 !  2D-Modellierung                                                      
       hnkzs(mstr,ior) = nkzs(ior)
@@ -8965,7 +8973,7 @@
                                                                        
       endif 
 !                                                                       
-!.....Null setzen der Summen fÅr Mittelwertberechnung der Ausgaben      
+!.....Null setzen der Summen f¬År Mittelwertberechnung der Ausgaben      
 !                                                                       
       sumte(mstr,ior) = 0.0 
       sCHNF(mstr,ior) = 0.0 
@@ -9639,7 +9647,7 @@
                                                                        
       do iior = 1,mStas(mstr)      ! Beginn Stationenschleife
 !                                                                       
-!....Ausschreiben der StÅndlichen Werte (FALLS imitt = 1)               
+!....Ausschreiben der St¬Åndlichen Werte (FALLS imitt = 1)               
 !                                                                       
 !                                                                       
                                                                         
@@ -9778,7 +9786,7 @@
                      ,CChlagzy(nkz,iior),hgesPz(mstr,nkz,iior),hgesNz(mstr,nkz,iior)                
       ztiefa = ztiefa+dH2D 
                                                                        
-!     Ermittlung der min- und max-Werte der einzelnen Parameter f¸r die 
+!     Ermittlung der min- und max-Werte der einzelnen Parameter f√ºr die 
                                                                        
       if(vNH4zy(nkz,iior).gt.Ymax(mstr,161))Ymax(mstr,161) = vNH4zy(nkz,iior)                                 
       if(vNH4zy(nkz,iior).lt.Ymin(mstr,161))Ymin(mstr,161) = vNH4zy(nkz,iior)                                 
@@ -9974,7 +9982,7 @@
       sumpfl(mstr,iior) = sumpfl(mstr,iior)+pfly(iior) 
       sumbal(mstr,iior) = sumbal(mstr,iior)+alby(iior) 
 !                                                                       
-      snaehr(mstr,iior) = snaehr(mstr,iior)+tpkiy(iior) !*vkigry(iior)+tpgry(iior)*(1.-vkigry(iior)-antbly(iior))+tpbly(iior)*antbly(iior) !lˆschen !                                        
+      snaehr(mstr,iior) = snaehr(mstr,iior)+tpkiy(iior) !*vkigry(iior)+tpgry(iior)*(1.-vkigry(iior)-antbly(iior))+tpbly(iior)*antbly(iior) !l√∂schen !                                        
                                                                        
       ssusn(mstr,iior) = ssusn(mstr,iior)+susny(iior) 
       sbettn(mstr,iior) = sbettn(mstr,iior)+bettny(iior) 
@@ -10237,7 +10245,7 @@
 !                                                                       
       endif 
 !                                                                       
-!...Ymax/Ymin-Bildung f¸r grafische Ausgabe                             
+!...Ymax/Ymin-Bildung f√ºr grafische Ausgabe                             
 !                                                                       
 !      
       if(vbsby(iior).gt.Ymax(mstr,1))Ymax(mstr,1) = vbsby(iior) 
@@ -10766,7 +10774,7 @@
       xmw = summw(mstr,iior)/itime 
       xlf = sumlf(mstr,iior)/itime 
       xcoli = scoli(mstr,iior)/itime 
-!....Der Grenzwert fÅr BadegewÑsser (EG-Richtlinie 76/160)              
+!....Der Grenzwert f¬År Badegew¬Ñsser (EG-Richtlinie 76/160)              
       BGGRW = 2000. 
 
       xgsZn = sumgsZn(mstr,iior)/itime 
@@ -10911,7 +10919,7 @@
 !.....Umrechnung in Zellzahlen                                          
 !                                                                       
       xCHNFi = xCHNF*1.e6/(xBVHNF*0.22) 
-!.....xCHNF in Êg/l                                                     
+!.....xCHNF in √¶g/l                                                     
       xCHNF = xCHNF*1000. 
 !                                                                       
 !                                                                       
@@ -11118,7 +11126,7 @@
                                                                        
     endif 
                                                                        
-!....Ausgabe Dreissena Bîschung                                         
+!....Ausgabe Dreissena B¬îschung                                         
       if(xdrbio(2).eq.0.0.and.xdbios(2).gt.0.0)then 
       xdrbio(1) = xdbios(1) 
       xdrbio(2) = xdbios(2) 
@@ -11264,7 +11272,7 @@
                                                                         
 !                                                                       
   999 continue 
-!...Ausschreiben der Min/Max-Blˆcke zur grafischen Darstellung in Gerris
+!...Ausschreiben der Min/Max-Bl√∂cke zur grafischen Darstellung in Gerris
 !                                                                       
       do 211 azStr = 1,azStrs 
       mstr = mstra(azStr) 

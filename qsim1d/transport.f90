@@ -49,7 +49,7 @@
       isub_dtx = isub_dt(mstr)
       if(imac(mstr)==1)isub_dtx = isub_dt_Mac(mstr)  
 
-      kktrans = 69
+      kktrans = 77 !! nötig??? kktrans = 69
       if(ischwer==1)kktrans = 77
 
       do 1811 itime = 1,izeits 
@@ -70,7 +70,9 @@
 !      if(iflRi(mstr).eq.0)goto 911
 
      if(U(1)<0.0.and.ktrans/=1.and.ktrans/=57)goto 911
- 
+
+       !print*,"Transport: ktrans,anze,ianze_max,azStrs,kktrans,iverfahren=",ktrans,anze,ianze_max,azStrs,kktrans,iverfahren
+
       call AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                           &
                   ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                            &
                   ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,azStrs,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)                               

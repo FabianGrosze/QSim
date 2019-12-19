@@ -3,7 +3,7 @@
                    ,ianze_max,mtracer,iwsim,uhrz)                                
                                                              
                                                            
-!     Lösungsverfahren RCIP nach:    F. Xiao et al., Constructing oscillation preventing
+!     LÃ¶sungsverfahren RCIP nach:    F. Xiao et al., Constructing oscillation preventing
 !                                    scheme for advection equation by rational function.
 !                                    Computer Physics Communications 93, 1-12 (1996)
 
@@ -31,6 +31,8 @@
     real, allocatable, Dimension(:,:,:,:) :: CUz 
 
     save CUz, vmittt_1, Uvertt_1, isgn, m, CUx, xpoint, CU
+
+      !print*,"AdvDiff: ktrans,kktrans,anze,ianze_max,azStrs,iverfahren=",ktrans,kktrans,anze,ianze_max,azStrs,iverfahren
 
 !    open(unit=765,file='advDiff.tst')
       
@@ -201,7 +203,7 @@
 !    endif
 !    endif
 
-  if(itime==izeits)then   ! löschen
+  if(itime==izeits)then   ! lÃ¶schen
 !     if(isgn(2,nkz)==1)U(1) = temp0
 !     if(isgn(anze,nkz)==-1)U(anze+1) = tempn  
   endif
@@ -1144,19 +1146,21 @@
       Crr(i) = abs(vr(i))*deltat/dx(i)
 
       if(isgn(i,nkz)==1)then
-         S1 = U(i-1)
-         dx_m1 = dx(i-1)
-         if(i==1.or.flag(i)==4)then
-           S1 = U(i)
-           dx_m1 = dx(i)
+         if(i== 1 .or.flag(i)== 4)then
+            S1 = U(i)
+            dx_m1 = dx(i)
+         else
+            S1 = U(i-1)
+            dx_m1 = dx(i-1)
          endif  
 
          S2 = U(i)
-         S3 = U(i+1)
          if(i==nx+1.or.flag(i+1)==4)then
-           S3 = U(i)
+            S3 = U(i)
+         else
+            S3 = U(i+1)
          endif
-           else           ! vr ist kleiner 0.0
+     else           ! vr ist kleiner 0.0
 
 
             S1 = U(i)
