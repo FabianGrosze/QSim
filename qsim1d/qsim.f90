@@ -414,7 +414,7 @@
         call fehlermeldungen(cpfad,j1)
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file1.err' 
-        open(unit=199, file=pfadstring)
+        open(unit=199, file=pfadstring, iostat = open_error)
       
       rewind (199) 
       write(199,'(a2)')cerrts 
@@ -422,7 +422,7 @@
 !                                                                       
 !...Ausgabe von Bemerkungen
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file2.err' 
-        open(unit=299, file=pfadstring)
+        open(unit=299, file=pfadstring, iostat = open_error)
       rewind (299)
 
       read(299,'(f5.2)',iostat=read_error)Version_alt
@@ -488,11 +488,11 @@
               write(299,'(f5.2)')versio
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'qsim.tst' 
-        open(unit=89, file=pfadstring)
+        open(unit=89, file=pfadstring, iostat = open_error)
                                                                        
       if(iRHKW.eq.1)then
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'Red_HKW.txt' 
-        open(unit=177, file=pfadstring)
+        open(unit=177, file=pfadstring, iostat = open_error)
       endif            
                                                                        
 !.....nndr : Anzahl der Kohorten                                        
@@ -500,7 +500,7 @@
                                                                        
 !.....Einlesen aus ModellA                                              
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLA.txt' 
-      open(unit=10, file=pfadstring)
+      open(unit=10, file=pfadstring, iostat = open_error)
       rewind (10) 
       jStr = 0 
       read(10,'(2a)')ckenn_vers
@@ -910,7 +910,7 @@
 
 !                                                                       
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'km_sys.dat' 
-      open(unit=391, file=pfadstring)
+      open(unit=391, file=pfadstring, iostat = open_error)
       rewind (391) 
       do azStr = 1,azStrs 
         mstr = mstra(azStr) 
@@ -925,7 +925,7 @@
                                                                        
 !.....Einlesen aus EREIGG                                               
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt'
-      open(unit=92, file=pfadstring)
+      open(unit=92, file=pfadstring, iostat = open_error)
       rewind (92) 
 !                                                                       
       read(92,'(A2)')ckenn_vers1
@@ -990,7 +990,7 @@
                                                                        
 !....APARAM.txt                                                         
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'APARAM.txt'
-      open(unit=55, file=pfadstring)
+      open(unit=55, file=pfadstring, iostat = open_error)
                                                                         
       read(55,5500,iostat=read_error)agchl,aggmax,IKge,agksn,agksp 
       read(55,5502,iostat=read_error)agremi,frmuge,bsbgr,csbgr,Qmx_NG 
@@ -1093,7 +1093,7 @@
       if(ischwa.eq.0)goto 681 
 !                                                                       
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'eingenhr.dat'
-      open(unit=421, file=pfadstring)
+      open(unit=421, file=pfadstring, iostat = open_error)
       rewind(421) 
       read(421,'(A2)')ckenn_vers1
       if(ckenn_vers1/='*V')then
@@ -1154,10 +1154,10 @@
       i2Daus = 0 
 
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLG.txt' 
-      open(unit=103, file=pfadstring)
+      open(unit=103, file=pfadstring, iostat = open_error)
       rewind(103)
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'temp.dat'
-      open(unit=77, file=pfadstring)
+      open(unit=77, file=pfadstring, iostat = open_error)
       rewind(77)
       read(103,'(A2)')ckenn_vers1
         if(ckenn_vers1/='*V')then
@@ -1933,7 +1933,7 @@
 ! ##### lesen der Vorzeilen in ABLAUF.txt ######                                                        
 
       write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'ABLAUF.txt'
-      open(unit=97, file=pfadstring)
+      open(unit=97, file=pfadstring, iostat = open_error)
       rewind (97)
       read(97,'(A2)')ckenn_vers1 
       if(ckenn_vers1/='*V')then
@@ -2001,7 +2001,7 @@
 
                                                                       
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou' 
-      open(unit=11, file=pfadstring)
+      open(unit=11, file=pfadstring, iostat = open_error)
       rewind (11) 
 
       anzema = 0 
@@ -2893,7 +2893,7 @@
 !.....Knotenpunkt in jedem Strang                                       
 
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou' 
-      open(unit=11, file=pfadstring)
+      open(unit=11, file=pfadstring, iostat = open_error)
       rewind (11) 
 !                                                                       
       nkzsmx = 0 
@@ -4289,7 +4289,7 @@
 !.........Einlesen der hydraulischen Daten aus sysgenou                 
 !                                                                       
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou'
-      open(unit=11, file=pfadstring)
+      open(unit=11, file=pfadstring, iostat = open_error)
       rewind (11) 
 !                                                                       
       do 773 azStr = 1,azStrs 
@@ -9203,27 +9203,39 @@
 !                                                                       
       if(iergeb.eq.1)goto 190 
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ERGEBM.txt' 
-      open(unit=45, file=pfadstring)
+      open(unit=45, file=pfadstring, iostat = open_error)
+      if(open_error.ne. 0) then
+         print*,'unit=45 open_error ERGEBM.txt ',cpfad,pfadstring
+         stop 2
+      end if
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ERGEBT.txt'
-      open(unit=155, file=pfadstring)
+      open(unit=155, file=pfadstring, iostat = open_error)
+      if(open_error.ne. 0) then
+         print*,'unit=155 open_error ERGEBT.txt ',cpfad,pfadstring
+         stop 2
+      end if
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ERGEB2D.txt'
-      open(unit=255, file=pfadstring)
+      open(unit=255, file=pfadstring, iostat = open_error)
+      if(open_error.ne. 0) then
+         print*,'unit=255 open_error ERGEB2D.txt ',cpfad,pfadstring
+         stop 2
+      end if
       
       if(ckenn_vers=='*V')then
         write(45,4555)Versio
-        4555 format('*V  QSim  ErgebM',2x,F5.2)  
+        4555 format('*V  QSim  ERGEBM',2x,F5.2)  
           call ergebMFormat() 
         write(45,'(a50)')modell 
         write(45,'(a255)')cEreig
 
         write(155,4556)Versio
-        4556 format('*V  QSim  ErgebT',2x,F5.2)  
+        4556 format('*V  QSim  ERGEBT',2x,F5.2)  
           call ergebTFormat() 
         write(155,'(a50)')modell 
         write(155,'(a255)')cEreig 
 
         write(255,4557)Versio
-        4557 format('*V  QSim  Ergeb2D',2x,F5.2)  
+        4557 format('*V  QSim  ERGEB2D',2x,F5.2)  
           call ergeb2DFormat()
         write(255,'(a50)')modell 
         write(255,'(a255)')cEreig
