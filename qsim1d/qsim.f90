@@ -377,7 +377,7 @@
         call ErgebMParam(cpfad1,j1)
         call ErgebTParam(cpfad1,j1)
         call WetterParam(cpfad1,j1)
-          else
+          else! if(cpfad=='/F')
            j1 = 0
            j2 = 0
       if(cpfad(1:5)==' ')then
@@ -407,7 +407,8 @@
       cpfad1 = cpfad1(1:j)
       j2 = j
 
-        endif
+        print*,'qsim Param: cpfad=',j1,cpfad;print*,'cpfad1=',cpfad1
+      endif ! if(cpfad(1:5)==' ')
         
         print*,'cpfad=',j1,cpfad;print*,'cpfad1=',cpfad1;print*,'versio=',versio
 
@@ -11697,7 +11698,7 @@
       write(*,*)ifehl
          stop 0 
       endif 
-  endif     
+  endif     ! if(cpfad=='/F')
                                                                        
       END  Program QSIM
                                          

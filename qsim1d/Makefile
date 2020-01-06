@@ -15,11 +15,13 @@ FC              = gfortran
 
 #compiler-flags:
 CFLAGS2             = -O -g -fbounds-check ## develop ## 
+#CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 CCLAGS       = $(CFLAGS2)
 
 #loader-flags:
 LDFLAGS = -lc -lstdc++ -g -fbounds-check ## develop ## 
+#LDFLAGS = -lc -lstdc++ ## run fast ## 
 
 #Stoffumsatz als library
 QSIM_LIB           = -L../metabolism -lqsim

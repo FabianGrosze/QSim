@@ -16,7 +16,9 @@ FC              = mpif90
 
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
-CFLAGS2         = -O -g -fbounds-check
+CFLAGS2         = -O -g -fbounds-check ## develop ## 
+#CFLAGS2             = -O3 ## run fast ## 
+
 #FFLAGS          =  -c -g -ffree-line-length-none
 #FFLAGS          =  $(CFLAGS2) -c -ffixed-line-length-none -finit-local-zero
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero

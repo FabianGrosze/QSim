@@ -60,6 +60,8 @@
       character(300) systemaufruf
       logical :: raus, jetzt_ausgeben, only
 
+! testweise huhu
+
       !----initialize parallel computing:
       call parallel_ini()
 

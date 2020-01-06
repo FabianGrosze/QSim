@@ -100,6 +100,8 @@
 !! <h2>Dokumentation</h2>
 !! Bisher existiert eine Dokumentation des Stickstoff-Moduls als Kapitel 10 der
 !! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
+!! \n\n
+!! Dazu auch das <a href="./pdf/NITROLIMIT2014diskpapier3.pdf" target="_blank">Diskussionspapier</a> aus NITROLIMIT zu gelösten organischen Stickstoffverbinungen.
 !!\n\n
 !! zurück: \ref Stoffumsatz ; Code: ncyc_huelle.f95
 

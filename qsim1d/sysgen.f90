@@ -141,6 +141,7 @@
 !....Systemgenerierung der einzelnen Stränge                            
                                                                        
       read(110,'(I5)')SCHRNR 
+      !print*,'sysgen: SCHRNR',SCHRNR 
                                                                      
       do 215 azStr = 1,azStrs 
       khyd = 1 
@@ -164,9 +165,11 @@
        if(htiefa(mstrl,khyd).le.0.0)then 
           ifehl = 1 
           ifhStr = mstrl 
-          ifhprof = hkmhyd(mstrl,khyd) 
-           goto 888 
-            endif 
+          ifhprof = hkmhyd(mstrl,khyd)
+          print*,'sysgen: 1 htiefa kleiner 0',htiefa(mstrl,khyd),mstrl,khyd 
+          print*,'kmhyd,WSP,Q=',hkmhyd(mstrl,khyd),hWSP(mstrl,khyd),hQaus(mstrl,khyd)
+          goto 888 
+       endif 
 !                                                                       
       if(hlboea(mstrl,khyd).gt.boeamq(mstrl,khyd))                      &
      &hlboea(mstrl,khyd) = boeamq(mstrl,khyd)                           
@@ -213,8 +216,10 @@
           ifehl = 1 
           ifhStr = mstrl 
           fhprof = hkmhyd(mstrl,khyd) 
+          print*,'sysgen: 2 htiefa kleiner 0',htiefa(mstrl,khyd),mstrl,khyd
+          print*,'kmhyd,WSP,Q=',hkmhyd(mstrl,khyd),hWSP(mstrl,khyd),hQaus(mstrl,khyd)
           goto 888 
-            endif 
+       endif 
                                                                        
       if(hlboea(mstrl,khyd).gt.boeamq(mstrl,khyd))hlboea(mstrl,khyd) = boeamq(mstrl,khyd)                           
                                                                        
