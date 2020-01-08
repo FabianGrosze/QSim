@@ -4,6 +4,7 @@
                                                                        
 !      izdt Einheiten min oder Stunden Beruecksichtigung bei itime      
 !      Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
+!      jetzt ins git
 !.....testen: WEHRO2                                                    
 
       character                               :: ckenn,cpoint,CST_end 
