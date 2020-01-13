@@ -42,7 +42,7 @@
       real, Dimension(azStrs,50,2)           :: CChlbzt, CChlgzt    
       real, Dimension(azStrs,1000)           :: hQaus, ho2, htempw, hlf, hpw, hmw, hph   
 
-
+      !print*,"WEHR kanz",kanz
       ilwo2 = 0
       oein = 0.0 
       mstep0 = 0

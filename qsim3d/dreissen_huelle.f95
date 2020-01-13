@@ -28,7 +28,8 @@
 !! </ul>
 !! 
 !! <h2>Dokumentation und Veröffentlichungen</h2>
-!! <a href="./pdf/QSimDoku_dreissen.pdf" target="_blank"> Dokumentationsfragment </a>\n 
+!! <a href="./pdf/QSimDoku_dreissen.pdf" target="_blank"> Dokumentationsfragment </a>\n
+!! <a href="./pdf/2002Schoel_etal_river_Rhine_QSIM_model_algae_dreissena_food-web.pdf" target="_blank"> Veröffentlichung 2002Schoel_etal</a>\n
 !! 
 !! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
 !! SUBROUTINE dreissen( \ref zdrei, \ref zdreis, \ref tempw, \ref flae, \ref elen, \ref anze              &\n

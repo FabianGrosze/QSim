@@ -691,7 +691,13 @@
 
       vnh4t = vnh4(ior)-susN(ior)+hJNH4(mstr,ior)*tflie/Tiefe(ior)-PFLN1+doN(ior)+dzN+ddrN       &
              -agrnh4(ior)-akinh4(ior)-ablnh4(ior)+arN4m 
-
+      !if(ISNAN(vnh4t))then
+      !   print*,"ISNAN(vnh4t) ... mstr,ior=",mstr,ior
+      !   print*,"vnh4(ior)-susN(ior)+hJNH4(mstr,ior)*tflie/Tiefe(ior)"
+      !   print*,"-PFLN1+doN(ior)+dzN+ddrN-agrnh4(ior)-akinh4(ior)-ablnh4(ior)+arN4m" 
+      !   print*,vnh4(ior),susN(ior),hJNH4(mstr,ior),tflie,Tiefe(ior)
+      !   print*,PFLN1,doN(ior),dzN,ddrN,agrnh4(ior),akinh4(ior),ablnh4(ior),arN4m
+      !end if ! ISNAN(vnh4t)
       delnh4 = vnh4t-vnh4(ior) 
       if(vnh4t<0.0)vnh4t = (vnh4(ior)/(vnh4(ior)+abs(delnh4)))*vnh4(ior)                         
       if(vnh4t<0.0001)vnh4t = 0.0001

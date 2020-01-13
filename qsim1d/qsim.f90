@@ -427,6 +427,7 @@
       rewind (299)
 
       read(299,'(f5.2)',iostat=read_error)Version_alt
+      print*,"Version_alt=",Version_alt
       if(read_error<0)then
         if(versio>=13.20)then
           write(*,1200)
@@ -487,6 +488,7 @@
 
               rewind(299)
               write(299,'(f5.2)')versio
+              close (299)
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'qsim.tst' 
         open(unit=89, file=pfadstring, iostat = open_error)
@@ -1479,9 +1481,9 @@
       endif 
 !                                                                       
       if(fkmgit.ge.ekdrei(mstr,mD).and.fkmgit.ge.akdrei(mstr,mD+1))then 
-  199 mD = mD+1 
+ 1199 mD = mD+1 
       if(mD.gt.mDs(mstr))goto 59 
-      if(ekdrei(mstr,mD).lt.fkmgit.and.mD.lt.mDs(mstr))goto 199 
+      if(ekdrei(mstr,mD).lt.fkmgit.and.mD.lt.mDs(mstr))goto 1199 
       do 180 ndr=1,nndr 
       zdreie(ndr) = zdrs(mstr,mD,ndr) 
       zdrese(ndr) = zdrss(mstr,mD,ndr) 
@@ -2443,7 +2445,8 @@
           if(i_K119>0)lfs(mstr,mRB) = hc19/hcq19
           if(i_K120>0)ssalgs(mstr,mRB) = hc20/hcq20
           if(i_K121>0)tempws(mstr,mRB) = hc21/hcq21
-!          if(i_K122>0)vo2s(mstr,mRB) = hc22/hcq22
+          ! if(i_K122>0)vo2s(mstr,mRB) = hc22/hcq22
+      !####test_wy print*,"vo2s(mstr,mRB) = hc22/hcq22",vo2s(mstr,mRB),hc22,hcq22
           if(i_K123>0)CHNFs(mstr,mRB) = hc23/hcq23
           if(i_K124>0)BVHNFs(mstr,mRB) = hc24/hcq24
  
@@ -2841,6 +2844,7 @@
       hCM(mstr,1) = CMs(mstr,mRB) 
       hBAC(mstr,1) = BACs(mstr,mRB) 
       hnh4(mstr,1) = vNH4s(mstr,mRB) 
+      if(isnan(vo2s(mstr,mRB)))print*,"isnan(vo2s",mstr,mRB
       ho2(mstr,1) = vo2s(mstr,mRB) 
       hno3(mstr,1) = vno3s(mstr,mRB) 
       hno2(mstr,1) = vnO2s(mstr,mRB) 
@@ -3297,6 +3301,7 @@
        if(BACs(mstr1,mRB).ge.Wtst)hBAC(mstr,ior) = BACs(mstr1,mRB) 
        if(vnh4s(mstr1,mRB).ge.Wtst)hnh4(mstr,ior) = vnh4s(mstr1,mRB) 
        if(vo2s(mstr1,mRB).ge.Wtst)ho2(mstr,ior) = vo2s(mstr1,mRB) 
+       if(isnan(ho2(mstr,ior)))print*,"ho2(mstr,ior) = vo2s(mstr1,mRB)",ho2(mstr,ior),mstr,ior,vo2s(mstr1,mRB),mstr1,mRB
        if(vno3s(mstr1,mRB).ge.Wtst)hno3(mstr,ior) = vno3s(mstr1,mRB) 
        if(vno2s(mstr1,mRB).ge.Wtst)hno2(mstr,ior) = vno2s(mstr1,mRB) 
        if(vx0s(mstr1,mRB).ge.Wtst)hx0(mstr,ior) = vx0s(mstr1,mRB) 
@@ -3689,7 +3694,9 @@
 
       if(iwsim/=4)then
 
-! ....Einfluss der Wehre auf O2,pH und Temperatur,Chla,Algen,Stickstoff und Phosphor                       
+! ....Einfluss der Wehre auf O2,pH und Temperatur,Chla,Algen,Stickstoff und Phosphor
+
+      !print*,"qsim vor WEHR mstr,kanz,ho2(mstr,kanz)",mstr,kanz,ho2(mstr,kanz)                     
 !                                                                       
       call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                   &                                   
           ,tzt,hte_z,htez_z,chlazt,hchlaz_z,akizt,hakiz_z,agrzt,hagrz_z,ablzt,hablz_z                      &
@@ -3697,7 +3704,10 @@
           ,chlgzt,hchlgz_z,chlbzt,hchlbz_z,gesPzt,hgesPz_z,gesNzt,hgesNz_z,Q_NKzt,hQ_NKz_z                 &
           ,Q_NBzt,hQ_NBz_z,Q_NGzt,hQ_NGz_z,dH2D,ESTRNR,kanz,inkzmx,iSta,nstr,istr,jnkz,iflRi,jlWO2         &
           ,CChlkzt,hCChlkz_z,CChlbzt,hCChlbz_z,CChlgzt,hCChlgz_z,janzWS,janzWt,hnkzs,mwehr,mstr            &
-          ,WSP_UW,WSP_OW,iB,azStrs)                                                           
+          ,WSP_UW,WSP_OW,iB,azStrs)   
+
+      !print*,"qsim nach WEHR mstr,kanz,ho2(mstr,kanz)",mstr,kanz,ho2(mstr,kanz)                     
+
     endif
 
       hcs1 = hcs1+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
@@ -3750,8 +3760,16 @@
      &*hBAC(ESTRNR(istr,nstr),kanz)                                     
       hcs39 = hcs39+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*hnh4(ESTRNR(istr,nstr),kanz)
+      if(isnan(hcs40))then
+         print*,"ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)="&
+     &         ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
+         print*,"ESTRNR(istr,nstr),istr,nstr,kanz,iSt",ESTRNR(istr,nstr),istr,nstr,kanz,iSta
+      endif
+      if(isnan(ho2(ESTRNR(istr,nstr),kanz)))print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
       hcs40 = hcs40+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-     &*ho2(ESTRNR(istr,nstr),kanz)                                      
+     &*ho2(ESTRNR(istr,nstr),kanz) 
+     ! print*,"qsim hcs40,hQaus,ho2,ESTRNR,istr,nstr,iSta,kanz",hcs40,              &
+     !&hQaus(ESTRNR(istr,nstr),iSta),ho2(ESTRNR(istr,nstr),kanz),ESTRNR(istr,nstr),istr,nstr,iSta,kanz
       hcs41 = hcs41+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*hno3(ESTRNR(istr,nstr),kanz)                                     
       hcs42 = hcs42+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
@@ -4075,6 +4093,9 @@
       hBAC(mstr,ior) = hcs35 
       hnh4(mstr,ior) = hcs39 
       ho2(mstr,ior) = hcs40 
+
+      !print*,"qsim Nachstraenge mstr,ior,ho2(mstr,ior),hcs40,hcq",mstr,ior,ho2(mstr,ior),hcs40,hcq
+
       hno3(mstr,ior) = hcs41 
       hno2(mstr,ior) = hcs42 
       hx0(mstr,ior) = hcs43 
@@ -4213,6 +4234,7 @@
       bcsb(mstr,ior) = hcsb(mstr,ior) 
       bnh4(mstr,ior) = hnh4(mstr,ior) 
       bo2(mstr,ior) = ho2(mstr,ior) 
+      print*,"qsim bo2(mstr,ior) = ho2 mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
       bno3(mstr,ior) = hno3(mstr,ior) 
       bno2(mstr,ior) = hno2(mstr,ior) 
       bx0(mstr,ior) = hx0(mstr,ior) 
@@ -4635,7 +4657,7 @@
       write(*,6163)ij,itags,monats,jahrs,Uhrzhm 
       !!wy write(222,6163)ij,itags,monats,jahrs,Uhrzhm 
  6163 format(2x,'Zeitschritt: ',I4,2x,i2,'.',i2,'.',I4,2x,F5.2) 
-                                                                       
+                                  
 !....Strangschleife fr Berechnung
 
       if(iwsim==4)sumTracer = 0.0  ! Aufsummierung der "Tracermasse" 
@@ -4644,7 +4666,7 @@
       mstr = mstra(azStr) 
       anze = hanze(mstr) 
       iein = 0
-                                                                    
+                                                              
       do kein=1,ieinsh(mstr) ! Einleiter
         iein = iein+1 
         einlk(iein) = einlkh(mstr,kein) 
@@ -4709,7 +4731,12 @@
                                                                        
         iorLa(ieinL) = iorLah(mstr,kein) 
         iorLe(ieinL) = iorLeh(mstr,kein) 
-      enddo 
+      enddo
+
+     Do ior = 1, anze + 1 
+     if(ISNAN(ho2(mstr,ior)))print*,"qsim Linienquellen mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
+     enddo 
+ 
 !                                                                       
 !.....Kenngroessen für Pflanzenwachstum,und Dreissenawachstum           
 !.....nur strangweise nicht Abschnittsweise                             
@@ -4862,7 +4889,7 @@
         enddo
       endif                                                                     
    enddo
-                                                                       
+                                                                
       dtmin = Strdt(mstr)
       dtmin_Mac = Strdt(mstr) 
 
@@ -4973,7 +5000,7 @@
 
 !..........................................                             
 !..         BAUSTEINE                    ..                             
-!..........................................                             
+!.......................................... 
 !                                                                       
 !...nur Tracer                                                          
   615 if(iwsim==4.or.iwsim==5)goto 705
@@ -5003,7 +5030,7 @@
   709 if(iwsim==2.or.iwsim==5.or.iwsim==4)goto 113 
                                                                        
 !***************Sediment-Stofffluxe********                             
- 1712 continue     
+ 1712 continue 
  
        call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
@@ -6496,7 +6523,7 @@
      &,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl              &
      &,ifhstr,azStrs                                                    &
      &,.false.,0)     !!wy kontroll,iglob
-      if(ifehl>0)goto 989 
+      if(ifehl>0)goto 989
 
       if(nbuhn(mstr)==0)goto 1515 
       if(ilbuhn==0)then 

@@ -24,8 +24,8 @@
 !! Kapitel <a href="./pdf/HNF_QSimDoku.pdf" target="_blank">8.Heterotrophe Nanoflagellaten</a> Ausschnitt aus:\n
 !! "QSim - Das Gewässergütemodell der Bundesanstalt für Gewässerkunde" (QSimDoku_Kap7bis8bearbeiten.docx)\n
 !! Änderungsstand 20. Juni 2018\n\n
-!! <a href="https://idw-online.de/de/news58555" target="_blank">Promotionen 2003 Köln???</a>\n
-!!
+!! <a href="./pdf/2002_Bergfeld_Dissertation_RhMoSa.pdf" target="_blank">Dissertation Tanja Bergfeld</a>\n
+!! 
 !! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
 !!      subroutine hnf(\ref chnf,\ref bvhnf,\ref bac,\ref tempw,\ref vo2,\ref tflie                     &\n
 !!     &,\ref echnf,\ref ebvhnf,\ref flag,\ref elen,\ref ior,\ref anze,\ref qeinl,\ref vabfl                      &\n

@@ -49,7 +49,6 @@ real, Dimension(azStrs,2,1000) :: hCD
 
  save anzZschritt, izaehl_Str
 
-
  If (.Not.allocated(sumPOCsed)) allocate(sumPOCsed(azStrs,1000))
  If (.Not.allocated(sumPONsed)) allocate(sumPONsed(azStrs,1000))
  If (.Not.allocated(sumPOPsed)) allocate(sumPOPsed(azStrs,1000))
@@ -106,6 +105,7 @@ real, Dimension(azStrs,2,1000) :: hCD
          print*,'POC1(),POC2()',POC1(:),POC2(:)
       endif
 
+      !print*,"sedflux mstr,ior,vo2(ior)",mstr,ior,vo2(ior)
 
     if(iwied==0)then
       sumPOCsed(mstr,ior) = 0.0
@@ -181,6 +181,7 @@ real, Dimension(azStrs,2,1000) :: hCD
   O20 = vo2(ior)
   if(nkzs(ior)>1)O20 = vo2z(nkzs(ior),ior)
   if(O20<0.1)O20 = 0.1
+  !if(ISNAN(fd1))print*,"sedflux ior,nkzs(ior),O20,vo2(ior),vo2z(nkzs(ior),ior)",ior,nkzs(ior),O20,vo2(ior),vo2z(nkzs(ior),ior)
 
   NO30 = vNO3(ior)
 !  if(nkzs(ior)>1)NO30 = vNO3z(nkzs(ior),ior)
@@ -313,6 +314,7 @@ real, Dimension(azStrs,2,1000) :: hCD
 !  Berechnung der partikulären und gelösten Fraktion für Ammonium in Schicht1 und 2
 !
   fd1 = 1./(1.+m1*KdNH31)
+  !if(ISNAN(fd1))print*,"sedflux m1*KdNH31",m1,KdNH31
   fp1 = 1.-fd1
   fd2 = 1./(1.+m2*KdNH32)
   fp2 = 1.-fd2
@@ -488,6 +490,8 @@ real, Dimension(azStrs,2,1000) :: hCD
 !
      !if(kontroll)print*,'sedflux: SOD/O20',SOD,O20
  s = SOD/O20
+   !if(ISNAN(s))print*,"Sedflux SOD/O20",SOD,O20
+ !s = 777.777 !! test
  H1 = 0.5
  if(s.ne. 0.0)H1 = DiffK1*ThtaD**(Temps-20.)/s ! Neuberechnung der Dicke der aeroben Schicht
      !if(kontroll)print*,'sedflux: H1 = DiffK1*ThtaD**(Temps-20.)/s',H1,DiffK1,ThtaD,Temps,s
@@ -521,6 +525,7 @@ real, Dimension(azStrs,2,1000) :: hCD
   
       !if(kontroll)print*,'sedflux: NH4(1) = NH4T(1),NH4T(2),fd1,fd2',NH4T(1),NH4T(2),fd1,fd2
  NH4(1) = NH4T(1)*fd1
+ !if(ISNAN(NH4(1)))print*,"Sedflux NH4T(1)*fd1",NH4T(1),fd1
  NH4(2) = NH4T(2)*fd2 
  fd1_aus = fd1 
 
@@ -842,6 +847,9 @@ KL01P = (DifKP1/H1)*ThtaD**(Temps-20.)
        !if(kontroll)print*,'sedflux Stoffflüsse in den Wasserkörper, s,Sipor(1),Si0=',s,Sipor(1),Si0
  hJNO3(mstr,ior) = s * (NO3(1) - NO30) ! + Flux vom Sediment in den Wasserkörper
  hJNH4(mstr,ior) = s * (NH4(1) - NH40)
+ !if(ISNAN(hJNH4(mstr,ior)))then
+ !   print*,"sedflux: ISNAN(hJNH4  mstr,ior,s,NH4(1),NH40=",mstr,ior,s,NH4(1),NH40
+ !endif
  hJPO4(mstr,ior) = s * (PO4(1) - PO40)
  JDOC1(ior) = s * (DOC1(1) - DOC0(1))
  JDOC2(ior) = s * (DOC1(2) - DOC0(2))
@@ -893,6 +901,9 @@ KL01P = (DifKP1/H1)*ThtaD**(Temps-20.)
 
          hJNO3(mstr,ior) = hJNO3(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJNO3z*hBedGS(mstr,ior)
          hJNH4(mstr,ior) = hJNH4(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJNH4z*hBedGS(mstr,ior)
+ !if(ISNAN(hJNH4(mstr,ior)))then
+ !   print*,"sedflux2: ISNAN(hJNH4  mstr,ior,hBedGS(mstr,ior),hJNH4z=",mstr,ior,hBedGS(mstr,ior),hJNH4
+ !endif
          hJPO4(mstr,ior) = hJPO4(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJPO4z*hBedGS(mstr,ior)
          hJO2(mstr,ior) = hJO2(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJO2z*hBedGS(mstr,ior)
          JCH4aq(ior) = JCH4aq(ior)*(1.-hBedGS(mstr,ior)) + hJCH4aqz*hBedGS(mstr,ior)
