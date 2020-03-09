@@ -100,8 +100,8 @@ end if !! prozess 0 only
             read(14,*)n,knoten_x(i),knoten_y(i),rzone
             if(n.ne.i) call qerror('reading zone.gr3 nodes: something gone wrong')
             knoten_zone(i)=int(rzone)
-            if(knoten_zone(i).lt.0)then
-               write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ sein',knoten_zone(i)
+            if((knoten_zone(i).lt. 0).or.(knoten_zone(i).gt. 300))then
+               write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ oder größer als 300 sein; ist aber=',knoten_zone(i)
                call qerror(fehler)
             end if
          enddo

@@ -725,13 +725,13 @@
       fmor = min(fmor1,fmor2)
 
       agmor = agmomi+agmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+      agmor = min(max(agmor,agmomi),agmoma) !!wy stay within limits
 
-!!##      if(agmor<agmor_1(mstr,ior))then
-!!##        agmor = agmor_1(mstr,ior)
-!!##          else
-!!##            agmor_1(mstr,ior) = agmor
-!!##      endif 
-      agmor_1(mstr,ior) = agmor  !!wy
+      if(agmor<agmor_1(mstr,ior))then
+         agmor = agmor_1(mstr,ior)
+      else
+         agmor_1(mstr,ior) = agmor
+      endif 
 
       dgrmor(ior) = agrt*(1.-(exp(-agmor*tflie))) 
                                                                        
@@ -807,7 +807,8 @@
 
 !...Fehlermeldung                                                       
       ifehl = 0
-      if(ISNAN(chla(ior)))then 
+      if(ISNAN(chla(ior)))then
+        print*,'algaesgr ISNAN(chla)',mstr,ior,chlaki(ior),chlabl(ior),chlagrt
         ifehl = 25 
         ifhStr = mstr 
         exit 

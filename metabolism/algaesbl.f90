@@ -727,13 +727,13 @@
       fmor = min(fmor1,fmor2) 
 
       abmor = abmomi+abmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+      abmor = min(max(abmor,abmomi),abmoma) !!wy stay within limits
 
-!!##      if(abmor<abmor_1(mstr,ior))then
-!!##        abmor = abmor_1(mstr,ior)
-!!##          else
-!!##            abmor_1(mstr,ior) = abmor
-!!##      endif 
-      abmor_1(mstr,ior) = abmor  !!wy
+      if(abmor<abmor_1(mstr,ior))then
+         abmor = abmor_1(mstr,ior)
+      else
+         abmor_1(mstr,ior) = abmor
+      endif 
 
       dblmor(ior) = ablt*(1.-(exp(-abmor*tflie))) 
                                                                        

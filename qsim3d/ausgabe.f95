@@ -1210,9 +1210,11 @@ endif ! Tageswechsel
       end do ! no further line
       close (ion)
 
-      if(nur_alter)then ! tracer und alter immer schreiben, egal ob gewählt
+      if(nur_alter)then ! allways write age concentrations in age simulation
          output_plankt(71)=.true. ! Tracer
-         output_plankt(73)=.true. ! alter
+         output_plankt(73)=.true. ! age_decay
+         output_plankt(74)=.true. ! age_arith
+         output_plankt(75)=.true. ! age_growth
       end if ! nuralter
 
 !     writing output variable list moved to SUBROUTINE eingabe()

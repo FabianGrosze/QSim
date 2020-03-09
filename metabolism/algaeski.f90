@@ -777,6 +777,9 @@
       dalgak(ior) = akit*(1.-(exp(-akres*tflie)))
       akit = akit - dalgak(ior)
 
+      if(akit.gt.huge(akit))then
+         print*,'algaeski:Biomassezuwachses akit,dalgak,akgrow,akres=',akit,dalgak,akgrow,akres
+      end if ! INF
 
       if(nkzs(ior)>1)then   ! 2D-Fall
                                                                        
@@ -1035,16 +1038,23 @@
       akmor_1v = akmor_1(mstr,ior)
 
       akmor = akmomi+akmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)
+      akmor = min(max(akmor,akmomi),akmoma) !!wy stay within limits
        
-!!##     if(akmor<akmor_1(mstr,ior))then
-!!##        akmor = akmor_1(mstr,ior)
-!!##        akmor_1t = akmor_1(mstr,ior)
-!!##          else
-!!##            akmor_1t = akmor
-!!##      endif
-      akmor_1(mstr,ior) = akmor  !!wy
+      if(akmor<akmor_1(mstr,ior))then
+         akmor = akmor_1(mstr,ior)
+         akmor_1t = akmor_1(mstr,ior)
+      else
+         akmor_1t = akmor
+      endif
                                                         
       dkimor(ior) = akit*(1.-(exp(-akmor*tflie)))
+
+      if((dkimor(ior).gt.huge(dkimor(ior))).or.(dkimor(ior).lt.-1*huge(dkimor(ior))))then
+         print*,'akit*(1.-(exp(-akmor*tflie)))',akit,akmor,tflie
+         print*,'fmor = min(fmor1,fmor2) ; akmor = akmomi+akmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)'
+         print*,'akmomi,akmoma,fmor,fmor0,fmor2=',akmomi,akmoma,fmor,fmor0,fmor1,fmor2,fmor3
+         print*,'akmor_1(mstr,ior),akmor_1v,akmor_1t=',akmor_1(mstr,ior),akmor_1v,akmor_1t
+      end if ! INF
 
 !      SKmor - aufsummierte abgestorbene Kieselalgen im Wasserkörper
 
@@ -1079,6 +1089,13 @@
       if(akit<0.0)then
         akit = (aki(ior)/(aki(ior)+daki))*aki(ior)
       endif
+      if(akit.gt.huge(akit))then
+         print*,'akit INF',mstr,ior,aki(ior),daki,akit
+         print*,'hconql = dalgki(ior)+cmatki(ior)'
+         print*,hconql,dalgki(ior),cmatki(ior)
+         print*,'hconsk = dkimor(ior)+dalgak(ior)+sedalk(ior)+algzok(ior)+algdrk(ior)+algcok(ior)'
+         print*,hconsk,dkimor(ior),dalgak(ior),sedalk(ior),algzok(ior),algdrk(ior),algcok(ior)
+      end if ! INF
 
      Chlakit =  akit*Caki*1000./CChlaz(1)
 

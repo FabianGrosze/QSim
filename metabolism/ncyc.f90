@@ -29,7 +29,7 @@
     integer, Dimension(1000)            :: flag, jiein, ischif, nkzs
 
     real                                :: nzoo, NDR, KD_N2, KNH3_X1, KHNO2_X1, KNH3_X2, KHNO2_X2, KMO_NO3, KM_NO3
-    real                                :: nwgr, nwki, nhno, nreski, nresgr, nbiogr, nresbl, nl0t  
+    real                                :: nwgr, nwki, nhno, nreski, nresgr, nbiogr, nresbl, nl0t  , suma
 
     real, Dimension(50)                 :: vnh4zt, vno2zt, vno3zt, nwgrz, nwkiz, nwblz, vxzt, susNz
     real, Dimension(50)                 :: nresgz, nreskz, nresbz, hcvNH4z, hcvNO2z, hcvNO3z, hcgesNz, dNO3Denz, susN2z, vx2zt    
@@ -564,19 +564,41 @@
 !   ddrN		Ammoniumfreisetzung durch Grund- und aktive Respiration der benthischen Filtrierer (Dreissena)
                                                                     
 !******* Zooplankton **************
-    if(aki(ior)==0.0.and.agr(ior)==0.0.and.abl(ior)==0.0)then                                              
-      hconki = 0.0 
-      hcongr = 0.0 
-      hconbl = 0.0 
-        else 
-          hconKi = aki(ior)/(aki(ior)+agr(ior)+abl(ior)) 
-          hcongr = agr(ior)/(aki(ior)+agr(ior)+abl(ior)) 
-          hconbl = abl(ior)/(aki(ior)+agr(ior)+abl(ior)) 
+    !if(aki(ior)==0.0.and.agr(ior)==0.0.and.abl(ior)==0.0)then
+      suma =  aki(ior)+agr(ior)+abl(ior)                                       
+      hconki = 0.3333 
+      hcongr = 0.3333 
+      hconbl = 0.3333 
+    !if(ISNAN(aki(ior)))print*,"ISNAN aki(ior)",aki(ior)
+    !if(ISNAN(agr(ior)))print*,"ISNAN agr(ior)",agr(ior)
+    !if(ISNAN(abl(ior)))print*,"ISNAN abl(ior)",abl(ior)
+    !if(aki(ior).gt.huge(aki(ior)))print*,"infinity aki(ior)",aki(ior)
+    !if(agr(ior).gt.huge(agr(ior)))print*,"infinity agr(ior)",agr(ior)
+    !if(abl(ior).gt.huge(abl(ior)))print*,"infinity abl(ior)",abl(ior)
+    !if( (aki(ior)+agr(ior)+abl(ior)) .eq. 0.0)then                                              
+    !  hconki = 0.0 
+    !  hcongr = 0.0 
+    !  hconbl = 0.0 
+    !  print*,"ncyc algen-summe null, mstr,ior=",mstr,ior
+    if( (suma.gt. 0.0) .and. (suma.lt.huge(suma)) )then 
+      hconKi = aki(ior)/(aki(ior)+agr(ior)+abl(ior)) 
+      hcongr = agr(ior)/(aki(ior)+agr(ior)+abl(ior)) 
+      hconbl = abl(ior)/(aki(ior)+agr(ior)+abl(ior)) 
     endif
                                                                        
       dzn = dzres1(ior)*Nzoo+(dzres2(ior)*hconKi*Q_NK(ior))+(dzres2(ior)*hcongr*Q_NG(ior))    &
            +(dzres2(ior)*hconbl*Q_NB(ior))                                    
-                                                                       
+      if(ISNAN(dzn))then
+         print*,"ISNAN(dzn) ... mstr,ior=",mstr,ior
+         print*,"dzres1(ior)*Nzoo+(dzres2(ior)*hconKi*Q_NK(ior))+(dzres2(ior)*hcongr*Q_NG(ior))"
+         print*,"  +(dzres2(ior)*hconbl*Q_NB(ior)"
+         print*,dzres1(ior),Nzoo
+         print*,dzres2(ior),hconKi,Q_NK(ior)
+         print*,dzres2(ior),hcongr,Q_NG(ior)
+         print*,dzres2(ior),hconbl,Q_NB(ior)
+         print*,"aki(ior),agr(ior),abl(ior)=",aki(ior),agr(ior),abl(ior)
+      end if ! ISNAN(dzn)
+                                                                 
 !******* benthische Filtrierer*************                                    
       ddrn = resdr(ior)*NDR+exdrvk(ior)*Q_NK(ior)+exdrvg(ior)*Q_NG(ior)+exdrvb(ior)*Q_NB(ior)                                  
 !                                                                       
@@ -691,13 +713,13 @@
 
       vnh4t = vnh4(ior)-susN(ior)+hJNH4(mstr,ior)*tflie/Tiefe(ior)-PFLN1+doN(ior)+dzN+ddrN       &
              -agrnh4(ior)-akinh4(ior)-ablnh4(ior)+arN4m 
-      !if(ISNAN(vnh4t))then
-      !   print*,"ISNAN(vnh4t) ... mstr,ior=",mstr,ior
-      !   print*,"vnh4(ior)-susN(ior)+hJNH4(mstr,ior)*tflie/Tiefe(ior)"
-      !   print*,"-PFLN1+doN(ior)+dzN+ddrN-agrnh4(ior)-akinh4(ior)-ablnh4(ior)+arN4m" 
-      !   print*,vnh4(ior),susN(ior),hJNH4(mstr,ior),tflie,Tiefe(ior)
-      !   print*,PFLN1,doN(ior),dzN,ddrN,agrnh4(ior),akinh4(ior),ablnh4(ior),arN4m
-      !end if ! ISNAN(vnh4t)
+      if(ISNAN(vnh4t))then
+         print*,"ISNAN(vnh4t) ... mstr,ior=",mstr,ior
+         print*,"vnh4(ior)-susN(ior)+hJNH4(mstr,ior)*tflie/Tiefe(ior)"
+         print*,"-PFLN1+doN(ior)+dzN+ddrN-agrnh4(ior)-akinh4(ior)-ablnh4(ior)+arN4m" 
+         print*,vnh4(ior),susN(ior),hJNH4(mstr,ior),tflie,Tiefe(ior)
+         print*,PFLN1,doN(ior),dzN,ddrN,agrnh4(ior),akinh4(ior),ablnh4(ior),arN4m
+      end if ! ISNAN(vnh4t)
       delnh4 = vnh4t-vnh4(ior) 
       if(vnh4t<0.0)vnh4t = (vnh4(ior)/(vnh4(ior)+abs(delnh4)))*vnh4(ior)                         
       if(vnh4t<0.0001)vnh4t = 0.0001
@@ -724,10 +746,15 @@
 !       *********************************                               
                                                                        
       if(vx02(ior)>0.0)then 
-        vno3t = vno3(ior)+SUSN2+PflN2+hJNO3(mstr,ior)*tflie/Tiefe(ior) 
-         else 
-           vno3t = vno3(ior)+SUSN(ior)+PFLN1+hJNO3(mstr,ior)*tflie/Tiefe(ior) 
-         endif 
+         vno3t = vno3(ior)+SUSN2+PflN2+hJNO3(mstr,ior)*tflie/Tiefe(ior) 
+      else 
+         vno3t = vno3(ior)+SUSN(ior)+PFLN1+hJNO3(mstr,ior)*tflie/Tiefe(ior) 
+      endif 
+      if(ISNAN(vno3t))then
+         print*,"ISNAN(vno3t) ... mstr,ior=",mstr,ior
+         print*,"vno3(ior)+SUSN2+PflN2+hJNO3(mstr,ior)*tflie/Tiefe(ior)"
+         print*,vno3(ior),SUSN2,PflN2,hJNO3(mstr,ior),tflie,Tiefe(ior)
+      end if ! ISNAN(vno3t)
 
 !...hFluN3     
 !      hFluN3(mstr,ior) = hJNO3(mstr,ior)*tflie/((tflie*24.)*tiefe(ior))  ! Ausgabewert des NitratFluxes Wasser/Sediment in mgN/(l*h)
@@ -796,10 +823,12 @@
       endif 
                                                                    
       vno3t = vno3t-algN3m - dNO3Den
+      if(ISNAN(vno3t))print*,"NCYC: vno3t-algN3m-dNO3Den",vno3t,algN3m,dNO3Den
       dC_DenW(ior) = dNO3Den/0.93               ! C-Abbau durch Denitrifikation in der Wassersäule  
                                                                        
       delno3 = vno3t-vno3(ior) 
       if(vno3t<0.0)vno3t = (vno3(ior)/(vno3(ior)+abs(delno3)))*vno3(ior)             
+      if(ISNAN(vno3t))print*,"NCYC: (vno3(ior)/(vno3(ior)+abs(delno3)))*vno3(ior)",vno3(ior),abs(delno3)
       if(vno3t<0.000002)vno3t = 0.000002 
                                                                        
 !****Veraenderung des gesN durch Sedimentation, Denitrifikation und Fluxe in und aus dem Sediment****
@@ -837,11 +866,13 @@
 !...Fehlermeldung                                                       
       ifehl = 0
       if(ISNAN(vnh4t))then 
+        print*,"NCYC: ISNAN(vnh4t)"
         ifehl = 22 
         ifhStr = mstr 
         exit 
       endif 
       if(ISNAN(vno3t))then 
+        print*,"NCYC: ISNAN(vno3t)"
         ifehl = 22 
         ifhStr = mstr 
         exit 

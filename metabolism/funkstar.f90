@@ -76,10 +76,10 @@
         read(92,'(2x)') 
                                                                         
         do i_Rand = 1, 200                 ! Randbedingungsschleife Beginn     
-          read(92,9230,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
-
+          ! read(92,9230,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
+          read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
           if(read_error<0.0)exit
-                                                                       
+          print*,'funkstar read(92 mstr,RBNR,istund,NrSchr',mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                                      
 !....Fehlermeldung                                                      
           if(NrSchr(mstr,RBNR).gt.40000)then 
             write(199,1899)RBNR,mstr 
@@ -96,8 +96,11 @@
           do iwe = 1,NrSchr(mstr,RBNR)      ! Einlesen der Randbedingungswerte für den Strang <mstr>, hier Schleifenbeginn 
 
             if(ischwer==0)then
-              read(92,9240)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
-                           ,(werts(ianzRB,ixpp,iwe),ixpp=1,29)
+              ! read(92,9240,iostat=read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
+              !              ,(werts(ianzRB,ixpp,iwe),ixpp=1,29)
+              read(92,*,iostat=read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
+                           ,(werts(ianzRB,ixpp,iwe),ixpp=1,28)
+              if(read_error<0.0)print*,'funkstar() Einlesen der Randbedingungswerte für den Strang',ianzRB,iwe,mstr,RBNR,NrSchr(mstr,RBNR)
               if(iwsim==4.and.werts(ianzRB,28,iwe)<0.0)werts(ianzRB,28,iwe) = 0.0
                
                 else

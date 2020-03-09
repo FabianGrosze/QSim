@@ -198,7 +198,8 @@
 
             ! Randbedingungen:
             u_gang(i,izeit_gang)= rb_hydraul_p(1+(nk-1)*number_rb_hydraul) !u(knot_gangl(i))  randbedingungen.f95
-            t_gang(i,izeit_gang)= rb_hydraul_p(2+(nk-1)*number_rb_hydraul) !tief(knot_gangl(i))   randbedingungen.f95
+            !t_gang(i,izeit_gang)= rb_hydraul_p(2+(nk-1)*number_rb_hydraul) !tief(knot_gangl(i))   randbedingungen.f95
+            t_gang(i,izeit_gang)= rb_hydraul_p(3+(nk-1)*number_rb_hydraul) !wsp
 
             !planktonic_variable
             n=0
@@ -330,7 +331,9 @@ if(meinrang.eq.0)then ! prozess 0 only
    
          select case (time_style)                                                                                             
             case(0) !  Gerris
-               write(beschriftung,'(A)')"#            Datum|    Zeitpunkt|     Tiefe004|   Geschw.005|"
+               write(beschriftung,'(A)')"#   Datum| Uhrzeit|    Zeitpunkt|       WSP004|   Geschw.005|"
+               !                         2011-03-01 00:03:00      36622980          1.43          0.27 
+               !write(beschriftung,'(A)')"#            Datum|    Zeitpunkt|     Tiefe004|   Geschw.005|"
                !write(beschriftung,'(A)')"#        Zeitpunkt|     Tiefe003|   Geschw.004|"
                ! write(beschriftung,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
                !&                     jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
@@ -353,13 +356,15 @@ if(meinrang.eq.0)then ! prozess 0 only
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//planktonic_variable_name(i)//spalte//"|"
+               !print*,"output_plankt:",i,ngnu,trim(beschriftung)
             end if
          end do
-            do i=1,number_plankt_vari_vert
-               if(output_plankt_vert(i))then ! planktic_vert output conc.
+         do i=1,number_plankt_vari_vert
+            if(output_plankt_vert(i))then ! planktic_vert output conc.
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//plankt_vari_vert_name(i)//spalte//"|"
+               !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
             end if
          end do
 
@@ -369,6 +374,7 @@ if(meinrang.eq.0)then ! prozess 0 only
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//benth_distr_name(i)//spalte//"|"
+               !print*,"output_benth_distr:",i,ngnu,trim(beschriftung)
             end if
          end do
 
@@ -378,6 +384,7 @@ if(meinrang.eq.0)then ! prozess 0 only
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//trans_val_name(i)//spalte//"|"
+               !print*,"output_trans_val:",i,ngnu,trim(beschriftung)
             end if
          end do
          do i=1,number_trans_quant
@@ -385,6 +392,7 @@ if(meinrang.eq.0)then ! prozess 0 only
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//trans_quant_name(i)//spalte//"|"
+               !print*,"output_trans_quant:",i,ngnu,trim(beschriftung)
             end if
          end do
          do i=1,number_trans_quant_vert
@@ -392,6 +400,7 @@ if(meinrang.eq.0)then ! prozess 0 only
                ngnu=ngnu+1
                write(spalte,'(I3.3)')ngnu
                beschriftung=trim(beschriftung)//trans_quant_vert_name(i)//spalte//"|"
+               !print*,"output_trans_quant_vert:",i,ngnu,trim(beschriftung)
             end if
          end do
 

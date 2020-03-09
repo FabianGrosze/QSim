@@ -2513,6 +2513,7 @@
 !... m-Wert
 
       if(iph==1.and.mws(mstr,mRB)<=0.0)then
+        print*,'m-Wert falsch',iph,mws(mstr,mRB),mstr,mRB
         ifehl = 19
         ifhstr = mstr
         goto 989
@@ -5031,7 +5032,7 @@
                                                                        
 !***************Sediment-Stofffluxe********                             
  1712 continue 
- 
+      !!wygoto 1612 !!wy vorübergehend ausgeschaltet.####      
        call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
                    ,sedalb,sedSS_MQ,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
@@ -6523,7 +6524,10 @@
      &,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl              &
      &,ifhstr,azStrs                                                    &
      &,.false.,0)     !!wy kontroll,iglob
-      if(ifehl>0)goto 989
+      if(ifehl>0)then
+         print*,'qsim ifehl ncyc, aki,agr,abl=',aki,agr,abl
+         goto 989
+      end if !ifehl
 
       if(nbuhn(mstr)==0)goto 1515 
       if(ilbuhn==0)then 

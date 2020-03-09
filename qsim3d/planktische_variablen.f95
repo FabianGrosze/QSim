@@ -29,7 +29,7 @@
 !! Die QSim-3D Nummer bezieht sich auf die Datenfelder modell::planktonic_variable und  modell::planktonic_variable_p\n 
 !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n 
 !!<table planktonic_variable>
-!!<tr><th> Nr. QSim-3D </th><th> Name QSim-1D 	</th><th> Beschreibung 								</th><th> Dimension	</th><th> Wertebereich</th></tr>
+!!<tr><th> Nr. QSim-3D </th><th> Name QSim-1D 	</th><th> Beschreibung 								</th><th> Dimension	</th></tr>
 !!<tr><td>  1 </td><td> \anchor tempw tempw	</td><td> Wasser-Temperatur							</td><td> Grad Celsius	</td></tr>
 !!<tr><td>  2 </td><td> \anchor vo2 vo2		</td><td> Sauerstoff	 							</td><td> mg O2 / l	</td></tr>
 !!<tr><td>  3 </td><td> \anchor vnh4 vnh4	</td><td> Ammonium-Sticktoff							</td><td> mg NH4-N / l	</td></tr>
@@ -47,7 +47,7 @@
 !!
 !!<tr><td> 15 </td><td> \anchor vx0 vx0		</td><td> Biomasse der Nitrosomonas						</td><td> mgBio/l	</td></tr>
 !!<tr><td> 16 </td><td> \anchor vx02 vx02	</td><td> Biomasse der Nitrobacter						</td><td> mgBio/l	</td></tr>
-!!<tr><td> 17 </td><td> \anchor obsb obsb	</td><td> C-BSB5 ohne lebende Organismen, biologischer Sauerstoffbedarf in 5 Tage der organischen Kohlenstoffverbindungen</td><td> mgO2/l	</td><td> 0.0 ... ?.?</td></tr>
+!!<tr><td> 17 </td><td> \anchor obsb obsb	</td><td> C-BSB5 ohne lebende Organismen, biologischer Sauerstoffbedarf in 5 Tage der organischen Kohlenstoffverbindungen</td><td> mgO2/l	</td></tr>
 !!<tr><td> 18 </td><td> \anchor ocsb ocsb	</td><td> C-CSB, chemischer Sauerstoffbedarf der organischen Kohlenstoffverbindungen			</td><td> mgO2/l	</td></tr>
 !!<tr><td> 19 </td><td> \anchor vkigr vkigr	</td><td> Anteil Kiesela. an Gesamtalgenmasse					</td><td> -		</td></tr>
 !!<tr><td> 20 </td><td> \anchor antbl antbl	</td><td> Anteil Blau an Gesamtalgenmasse					</td><td> -		</td></tr>
@@ -82,11 +82,11 @@
 !!<tr><td> 49 </td><td> \anchor bvhnf bvhnf	</td><td> Biovolumen der HNF ??							</td><td> µm3 ??	</td></tr>
 !!<tr><td> 50 </td><td> \anchor zooind zooind	</td><td> Anzahl der Rotatorien							</td><td> Ind/l		</td></tr>
 !!<tr><td> 51 </td><td> \anchor abrzo abrzo1	</td><td> leer ?								</td><td>		</td></tr>
-!!<tr><td> 52 </td><td> \anchor ssalg ssalg	</td><td> GESAMTSCHWEBSTOFFE ss+Algen+Rotatorien 				</td><td>		</td></tr>
-!!<tr><td> 53 </td><td> \anchor ss ss		</td><td> Schwebstoffgehalt	 						</td><td> mg/l		</td></tr>
+!!<tr><td> 52 </td><td> \anchor ssalg ssalg	</td><td> GESAMTSCHWEBSTOFFE ss+Algen+Rotatorien 				</td><td> mg/l		</td></tr>
+!!<tr><td> 53 </td><td> \anchor ss ss		</td><td> mineralischer Schwebstoffgehalt	 				</td><td> mg/l		</td></tr>
 !!<tr><td> 54 </td><td> \anchor fssgr fssgr	</td><td> zu schweb()  								</td><td>		</td></tr>
 !!<tr><td> 55 </td><td> \anchor fbsgr fbsgr	</td><td> Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von zehrungsfähigem, organischem Material ???? siehe: \ref Sediorgc </td><td> - </td></tr>
-!!<tr><td> 56 </td><td> \anchor frfgr frfgr	</td><td> Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von refraktärem, organischem Material ???? siehe: \ref Sediorgc</td><td> - /td></tr>
+!!<tr><td> 56 </td><td> \anchor frfgr frfgr	</td><td> Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von refraktärem, organischem Material ???? siehe: \ref Sediorgc</td><td> - </td></tr>
 !!<tr><td> 57 </td><td> \anchor nl0 nl0		</td><td> N/C Verhältnis von Stickstoff zu Kohlenstoff in organischem Material	</td><td> mg N / mg C	</td></tr>
 !!<tr><td> 58 </td><td> \anchor pl0 pl0		</td><td> P/C Verhältnis von Phosphor zu Kohlenstoff in organischem Material	</td><td> mg P / mg C	</td></tr>
 !!<tr><td> 59 </td><td> \anchor stind stind	</td><td> ph() ???? Minutenzähler; Versuch einer Altersvariablen ?		</td><td>		</td></tr>
@@ -334,8 +334,11 @@ if(meinrang.eq.0)then ! prozess 0 only
             do ini=1,number_plankt_point
                point_zone(ini)=element_zone(ini)
             end do
-         case(3) ! SCHISM netCDF
-            call qerror('ini_planktkon0: SCHISM zone not yet worked out')
+         case(3) ! SCHISM netCDF (doch noch von zone.gr3)
+            do ini=1,number_plankt_point
+               point_zone(ini)=knoten_zone(ini)
+            end do
+            !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
          case default
             call qerror('ini_planktkon0: unknown hydraulic driver')
          end select
