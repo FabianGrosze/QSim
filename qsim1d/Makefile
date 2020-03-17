@@ -6,7 +6,8 @@
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
-PV= qsim1d_formatfrei
+# PV= qsim1d_formatfrei
+PV= qsim1d_ohne_sedflux
 
 #====================================================================
 
