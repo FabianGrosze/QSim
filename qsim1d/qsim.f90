@@ -5032,8 +5032,8 @@
                                                                        
 !***************Sediment-Stofffluxe********                             
  1712 continue 
-      !!wy  goto 1612 !!wy vorübergehend ausgeschaltet.####  !!wy     
-       call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
+      goto 1612 !!wy vorübergehend ausgeschaltet.####  !!wy     
+      call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
                    ,sedalb,sedSS_MQ,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
                    ,vnh4z,vno3z,gelpz,nkzs,SorpCape,Klange,KdNh3e,fPOC1e,fPOC2e                               &
