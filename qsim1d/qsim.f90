@@ -743,6 +743,7 @@
       allocate(hdl(azStrs,ialloc2), htau2(azStrs,ialloc2), hgesP(azStrs,ialloc2), hgesN(azStrs,ialloc2))
       allocate(hCD1(azStrs,ialloc2), hCD2(azStrs,ialloc2), hCP1(azStrs,ialloc2), hCP2(azStrs,ialloc2))
       allocate(hvo2(azStrs,ialloc2), hextk(azStrs,ialloc2), hJNO3(azStrs,ialloc2), hJNH4(azStrs,ialloc2))
+      hJNH4(:,:)=0.0 ; hJNO3(:,:)=0.0 ; hJPO4(:,:)=0.0 ; hJSi(:,:)=0.0 ; hJO2(:,:)=0.0
       allocate(hJPO4(azStrs,ialloc2), hJSi(azStrs,ialloc2), hJO2(azStrs,ialloc2), hFluN3(azStrs,ialloc2))
       allocate(SedOM(azStrs,ialloc2), BedGSed(azStrs,ialloc2), SPEWKSuS(azStrs,ialloc2), WUEBKuS(azStrs,ialloc2))
       allocate(extkuS(azStrs,ialloc2), Sedvvert(azStrs,ialloc2), hJN2(azStrs,ialloc2), bJN2(azStrs,ialloc2))
@@ -6502,7 +6503,8 @@
           alberk(ior) = 0.0
         enddo
       endif
-
+      !if(mstr==1)print*,'vor ncyc vnh4', vnh4(1),vnh4(2),vnh4(3)
+      
       call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2           &
      &,go2n,vno3,dC_DenW,flag,elen,ior,anze                             &
      &,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
@@ -6524,6 +6526,14 @@
      &,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl              &
      &,ifhstr,azStrs                                                    &
      &,.false.,0)     !!wy kontroll,iglob
+      !if(mstr==1)then
+      !   print*,'vnh4', vnh4(1),vnh4(2),vnh4(3)
+      !   print*,' vx0', vx0(3) 
+      !   print*,'vno3', vno3(3) 
+      !   print*,'vno2', vno2(3) 
+      !   print*,'vx02', vx02(3)
+      !   print*,'gesN', gesN(3)
+      !endif
       if(ifehl>0)then
          print*,'qsim ifehl ncyc, aki,agr,abl=',aki,agr,abl
          goto 989
@@ -7415,7 +7425,7 @@
        ro2dr(ior) = 0.0
      enddo
      endif
-
+     !kontroll=.true.
   call               oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,RHYD,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4    &
                     ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                      &
                     ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein                     &
