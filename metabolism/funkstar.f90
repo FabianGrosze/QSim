@@ -1,4 +1,4 @@
-  subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs               &
+subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs               &
                     ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &         
                     ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,istund                                 &
                     ,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands               &
@@ -83,7 +83,7 @@
 !....Fehlermeldung                                                      
           if(NrSchr(mstr,RBNR).gt.40000)then 
             write(199,1899)RBNR,mstr 
-            1899 format(2x,'fuer die ',I3,'.Randbedingung des ',I2,'. Strangs existieren mehr als 8800 Datensaetze')              
+            1899 format(2x,'fuer die ',I3,'.Randbedingung des ',I2,'. Strangs existieren mehr als 40000 Datensaetze')              
           endif 
                                                                        
           if(NrSchr(mstr,RBNR).eq.0)cycle 
@@ -414,4 +414,3 @@
  
 
  End subroutine funkstar
-
