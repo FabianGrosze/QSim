@@ -39,9 +39,7 @@
 # PV=qsim3d_ohnehnf
 # PV=qsim3d_albenth
 # PV=qsim3d_mphyt
-# PV=qsim3d_voll2
-# PV=qsim3d_wsp
-PV=qsim3d_schism
+PV=qsim3d_voll2
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -248,11 +246,11 @@ doc:
 	cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
 	cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
 	cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
-	rsync -ua ./dox/html/* /home/Wyrwa/public_html/dokuport
+	rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
 
 # 	@echo "type > fm to view new build html-doku , or:"
 # 	@echo "type >"
-# 	@echo "rsync -ua ./dox/html/* Wyrwa@hpc-service:/home/Wyrwa/public_html/dokuport"
+# 	@echo "rsync -ua ./dox/html/* Frassl@hpc-service:/home/Frassl/public_html/dokuport"
 # 	@echo "to publish doku on hpc-service (local webserver)"
 
 # Wyrwa@hpc-worker.bafg.de:~/qsource> module load i4/applications/doxygen-1.8.13

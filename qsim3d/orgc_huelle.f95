@@ -119,7 +119,7 @@
 !! Bei der Hydrolyse (Umwandlung, Zerfall) von partikulären organischen C-Verbindungen in
 !! gelöste organische C-Verbindungen wird eine temperaturabhängige Hydrolyserate angesetzt.\n
 !! In Q-Sim werden 2 Fraktionen unterschieden, 1. leicht und 2. schwer abbaubare C-Verbindungen.
-!! Dabei wird angenommen, dass sich schwer abbaubare partikuläre C-Verbindungen nur und 
+!! Dabei wird angenommen, dass sich schwer abbaubare partikuläre C-Verbindungen nur in 
 !! schwer abbaubare gelöste C-Verbindungen umwandeln; analog wandeln sich leichtabbaubare 
 !! partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste C-Verbindungen um:
 !! \f[ 
@@ -130,14 +130,14 @@
 !! \f[ 
 !! \frac{\partial CP_i}{\partial t}_{hyp} = -\frac{\partial CD_i}{\partial t}_{hyp}
 !! \f]
-!! Bei der Temperaturabhängigkeit wird angenommen, dass sich bei 25 C° ein Optimum ergibt:                                         
+!! Bei der Temperaturabhängigkeit wird angenommen, dass sich bei 25 °C ein Optimum ergibt:                                         
 !! \f[ 
 !! f_T= e^{ -\frac{ {(T-T_{opt})}^2}{dti^2} }
 !! \f]
 !! \image html ftemp.svg 
 !! \image latex ftemp.eps 
 !!
-!! Die Hydrolyseraten (bei Optimumstemperatur) für die partikuläre organische C-Verbindungen 
+!! Die Hydrolyseraten (bei Optimumstemperatur) für die partikulären organischen C-Verbindungen 
 !! werden bei leicht und schwer abbaubaren C-Verbindungen unterschiedlich bestimmt:
 !! Bei den 1. leicht abbaubaren C-Verbindungen wird eine Konstante angesetzt, die vorgegeben werden muss (APARAM.txt);
 !! bei den 2. schwer abbaubare C-Verbindungen wird eine Abhängigkeit vom Verhältnis des 
@@ -161,9 +161,9 @@
 !!<tr><td> \f$  hy_{P,i} \f$  </td><td> hyP(i) </td><td> Hydrolyserate für die partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> 1/d </td><td> 0.12 </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit </td><td> - </td><td> 0.2 ... 1 </td></tr>
 !!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ T \f$  </td><td> \ref tempw </td><td> Wassertemperatur </td><td> C° </td><td> 0 ... 30 </td></tr>
-!!<tr><td> \f$ T_{opt} \f$  </td><td> Topt </td><td> optimale Temperatur </td><td>  C°  </td><td>  25 hartcodiert  </td></tr>
-!!<tr><td> \f$ dti \f$  </td><td> dti </td><td> Bezugs-Temperatur </td><td>  C°  </td><td> 20 hartcodiert </td></tr>
+!!<tr><td> \f$ T \f$  </td><td> \ref tempw </td><td> Wassertemperatur </td><td> °C </td><td> 0 ... 30 </td></tr>
+!!<tr><td> \f$ T_{opt} \f$  </td><td> Topt </td><td> optimale Temperatur </td><td>  °C  </td><td>  25 hartcodiert  </td></tr>
+!!<tr><td> \f$ dti \f$  </td><td> dti </td><td> Bezugs-Temperatur </td><td>  °C  </td><td> 20 hartcodiert </td></tr>
 !!<tr><td> \f$ hy_{P,e} \f$  </td><td> \ref hyPe </td><td> Parameter (APARAM.txt 17|4) </td><td> 1/d </td><td>  </td></tr>
 !!<tr><td> \f$ C-BSB_5 \f$  </td><td> \ref obsb </td><td> biologischer Sauerstoffbedarf siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> chemischer Sauerstoffbedarf  siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
@@ -522,7 +522,7 @@
 ! -----------------------------------------------------------------------------------------------Auswirkungen----------
 !> \page o2zehr Sauerstoff-Verbrauch
 !! <h1> aktuell stattfindender Sauerstoff-Verbrauch </h1>
-!! bei den folgenden Prozesse beim Umsatz von C-Verbindungen kommt es zum Verbrauch von Sauerstoff:
+!! bei den folgenden Prozessen beim Umsatz von C-Verbindungen kommt es zum Verbrauch von Sauerstoff:
 !! <ul> <li> \ref BACm und </li>
 !! <li> \ref fluxmaphy. </li></ul>\n\n
 !! \f[ 

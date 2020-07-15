@@ -70,7 +70,7 @@
 !! \n\n
 !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n 
 !! \n\n
-!! Die Tiefenverteilung von QSim1D (welche dort als 2D bezeichnet wird) ist dort nicht komplett für ale Konzentrationen formuliert. 
+!! Die Tiefenverteilung von QSim1D (welche dort als 2D bezeichnet wird) ist dort nicht komplett für alle Konzentrationen formuliert. 
 !! Eine Übernahme ins mehrdimensionale ist nicht geplant.
 !! QSim3D arbeitet z. Zt. (Mai 2018) noch durchgängig tiefenintegriert.
 !! \n\n 
@@ -392,7 +392,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:,:,:) :: wertw_T
 !> Zeitpunkt des Wetterwertes
       integer , allocatable , dimension (:,:) :: zeitpunktw
-!> Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
+!> Interpolierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
       real , allocatable , dimension (:) :: glob_T,  tlmax_T,  tlmin_T, tlmed_T
       real , allocatable , dimension (:) :: ro_T,  wge_T,  cloud_T,  typw_T
 !> lokale Strahlung ?:

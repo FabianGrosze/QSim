@@ -10,7 +10,7 @@
 !!<table >
 !!<tr><th>Spalte WETTER.txt</th><th> 1D-Name </th><th> 3D-Stationswert 		</th><th> Nr. \ref uebergabe_werte 	</th><th> Beschreibung 		</th><th> Einheit </th></tr>
 !!<tr><td>1</td><td>\anchor glob glob	</td><td> 				</td><td> -			 	</td><td>  
-!!                                                                                                              Globalstrahlung von strahlg() berechnet </td><td> cal/(cm2*h) </td></tr>
+!!                                                                                                              Tagessumme der Globalstrahlung oder Globalstrahlungsintensität </td><td> J/cm² oder J/(cm²*h) </td></tr>
 !!<tr><td>2</td><td> tlmax 		</td><td> \anchor tlmax_T tlmax_T	</td><td> -				</td><td> 
 !!                                                            Tagesmaximum der Lufttemperatur (bei der Verwendung von Tagesmittelwerten sonst Zeitwert) </td><td>  Grad Celsius  </td></tr>
 !!<tr><td>3</td><td> tlmin  		</td><td> \anchor tlmin_T tlmin_T	</td><td> -				</td><td> 

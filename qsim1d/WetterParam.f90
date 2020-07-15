@@ -12,7 +12,7 @@
   WRITE(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
   WRITE(1, '(A)') '<GerrisParam FileType="Wetter" QsimVersion="13.10">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="Wetter" Text="Wetterdaten" Help="Parameter des Wetters">'
-  WRITE(1, '(A)') '  <Parameter Ident="GStrahl" Text="Globalstrahlung" Help="Globalstrahlung im Messzeitraum" Unit="J/(cm²*d)" Format="F7.2" Null="-1" Default="" Min="" Max="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="GStrahl" Text="Globalstrahlung" Help="Tagessumme der Globalstrahlung oder Globalstrahlungsintensität" Unit="J/cm² oder J/(cm²*h)" Format="F7.2" Null="-1" Default="" Min="" Max="" />'
   WRITE(1, '(A)') '  <Parameter Ident="MaxTemp" Text="Max.Lufttemp." Help="Maximale Lufttemperatur im Messzeitraum" Unit="°C" Format="F6.2" Null="-99.99" Default="" Min="" Max="" />'
   WRITE(1, '(A)') '  <Parameter Ident="MinTemp" Text="Min.Lufttemp." Help="Minimale Lufttemperatur im Messzeitraum" Unit="°C" Format="F6.2" Null="-99.99" Default="" Min="" Max="" />'
   WRITE(1, '(A)') '  <Parameter Ident="Feuchte" Text="Rel.Feuchte" Help="Relative Luftfeuchtigkeit" Unit="%" Format="F6.2" Null="-1" Default="" Min="" Max="" />'
