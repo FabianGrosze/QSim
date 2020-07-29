@@ -1,50 +1,61 @@
-subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs               &
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
+    subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs               &
                     ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &         
                     ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,istund                                 &
                     ,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands               &
                     ,iw_max,iformVert,ifehl,ifmRB,ifmstr)
 
-
-                                                                        
-                                                                       
 !   UNTERPROGRAMM ZUR Interpolation der Randbedingungen                   
-                                                                       
-                                                                        
 !   AUTOR: VOLKER KIRCHESCH                                           
-!                                                                       
-!   STAND: 03.01.2013                                                 
-                                                                       
-
-
-                                                                       
+!   STAND: 03.01.2013  
+!   variable Anzahl Randbedingungszeilen. Wyrwa Juli 2020
+                 
+      integer, parameter :: maxstrang_rb=100
       character (len = 255)                       :: cpfad 
-      character (len=275)                         :: pfadstring 
-      
+      character (len=275)                         :: pfadstring , dummy
       integer                                     :: azStrs,RBNR, read_error
-      integer, Dimension(40000)                   :: imstr, iRBNR, ianzW 
-      integer, Dimension(azStrs,100)              :: istund, RBtyp, NRSchr 
-      integer, Dimension(200,40000)               :: itagl, monatl, jahrl 
+      integer, Dimension(azStrs,maxstrang_rb)     :: istund, RBtyp, NRSchr 
 !      integer, Dimension(50,200,30)              :: mREC 
+      integer, Dimension(:,:,:), allocatable      :: mREC 
+      real, Dimension(2)                          :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
+      real, Dimension(azStrs,maxstrang_rb)                 :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesNs, vx0s, vx02s
+      real, Dimension(azStrs,maxstrang_rb)                 :: gelps, gesPs, sis, chlas, waers 
+      real, Dimension(azStrs,maxstrang_rb)                 :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
+      real, Dimension(azStrs,maxstrang_rb)                 :: tempws, vo2s, CHNFs, BVHNFs, colis, DOSCFs, abfls  
+      real, Dimension(azStrs,maxstrang_rb)                 :: glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis  
 
-     integer, Dimension(:,:,:), allocatable       :: mREC 
-
-     real, Dimension(2)                           :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
-
-      real, Dimension(azStrs,100)                 :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesNs, vx0s, vx02s
-      real, Dimension(azStrs,100)                 :: gelps, gesPs, sis, chlas, waers 
-      real, Dimension(azStrs,100)                 :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
-      real, Dimension(azStrs,100)                 :: tempws, vo2s, CHNFs, BVHNFs, colis, DOSCFs, abfls  
-      real, Dimension(azStrs,100)                 :: glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis  
-
-      real, Dimension(200,40000)                  :: uhrl 
+      integer:: maxlines_bc, num
+      !real, Dimension(200,40000)                 :: uhrl 
+      real, Dimension(:,:), allocatable           :: uhrl 
+      !integer, Dimension(200,40000)              :: itagl, monatl, jahrl 
+      integer, Dimension(:,:) , allocatable       :: itagl, monatl, jahrl 
       real, Dimension(:,:,:), allocatable         :: werts
+      !integer, Dimension(40000)                  :: imstr, iRBNR, ianzW 
+      integer, Dimension(:) , allocatable         :: imstr, iRBNR, ianzW 
       double precision                            :: R_NRS, R_NRS2, R_NRS1
 
-                                                                     
       save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS, R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
 
-
-                                                                       
 !   Anmerkung ipp=28 ist die Tracerkonzentration. Wird auf den Parameter tempw gelegt
 !   Anmerkung ipp=29 konserv. Substanz wird auf tempw gelegt 
 !   Anmerkung ipps=37 Schwermetalle   
@@ -53,83 +64,103 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                                                                        
 !      open(unit=19,file='funkstar.tst') 
 
-        ianzRB = 0
-        ipps = 29
-        if(ischwer==1)ipps = 37
+      ianzRB = 0
+      maxlines_bc = 0
+      ipps = 29
+      if(ischwer==1)ipps = 37
+      if(.not.allocated(mREC))allocate(mREC(1:azStrs,1:i_Rands,1:ipps))
+      
+!.....Einlesen aus EREIGG / read steering parameters and boundary conditions from file EREIGG.txt
+      if(ilang==0)then
+         close (92) 
+         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt'
+         open(unit=92, file=pfadstring)
+         ! first read to evaluate block size...
+         rewind (92) 
+         read(92,'(2x)')  ! neglect header
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         do i_Rand = 1, 200 ! Randbedingungsschleife Beginn  / all boundary conditions    
+            ! read(92,9230,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
+            read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
+            if(read_error<0.0)exit ! no further boundary
+            print*,'funkstar read(92 mstr,RBNR,istund,NrSchr',mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR) 
+            !....warning                                                    
+            if(NrSchr(mstr,RBNR).gt.40000)then 
+               write(199,1899)RBNR,mstr 
+               1899 format(2x,'Warnung: fuer die ',I3,'.Randbedingung des ',I2,'. Strangs existieren mehr als 40000 Datensaetze')              
+            endif 
+            if(NrSchr(mstr,RBNR).gt.maxlines_bc)maxlines_bc=NrSchr(mstr,RBNR)
+            if(NrSchr(mstr,RBNR).le.0)cycle 
+            do iwe = 1,NrSchr(mstr,RBNR)      ! spool through   
+               read(92,*,iostat=read_error)dummy
+            enddo
+         enddo ! all i boundary conditions / Randbedingungsschleife Ende 
 
-        if(.not.allocated(werts))allocate(werts(1:i_Rands,1:ipps,1:iw_max))
-        if(.not.allocated(mREC))allocate(mREC(1:azStrs,1:i_Rands,1:ipps))
+         !allocate bc-arrays
+         if(.not.allocated(imstr))allocate(imstr(i_Rands))
+         if(.not.allocated(iRBNR))allocate(iRBNR(i_Rands))
+         if(.not.allocated(ianzW))allocate(ianzW(i_Rands))
+         if(.not.allocated(werts))allocate(werts(i_Rands,ipps,maxlines_bc))
+         if(.not.allocated(itagl))allocate(itagl(i_Rands,maxlines_bc))
+         if(.not.allocated(monatl))allocate(monatl(i_Rands,maxlines_bc))
+         if(.not.allocated(jahrl))allocate(jahrl(i_Rands,maxlines_bc))
+         if(.not.allocated(uhrl))allocate(uhrl(i_Rands,maxlines_bc))
 
-!.....Einlesen aus EREIGG                                               
-
-    if(ilang==0)then
-        close (92) 
-        write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt'
-        open(unit=92, file=pfadstring)
-        rewind (92) 
-                                                                       
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-                                                                        
-        do i_Rand = 1, 200                 ! Randbedingungsschleife Beginn     
-          ! read(92,9230,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
-          read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
-          if(read_error<0.0)exit
-          print*,'funkstar read(92 mstr,RBNR,istund,NrSchr',mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                                      
-!....Fehlermeldung                                                      
-          if(NrSchr(mstr,RBNR).gt.40000)then 
-            write(199,1899)RBNR,mstr 
-            1899 format(2x,'fuer die ',I3,'.Randbedingung des ',I2,'. Strangs existieren mehr als 40000 Datensaetze')              
-          endif 
-                                                                       
-          if(NrSchr(mstr,RBNR).eq.0)cycle 
-
-          ianzRB = ianzRB+1                 ! Summenbildung der Randbedingungen  
-          imstr(ianzRB) = mstr                
-          iRBNR(ianzRB) = RBNR 
-          ianzW(ianzRB) = NrSchr(mstr,RBNR) 
-                                                                       
-          do iwe = 1,NrSchr(mstr,RBNR)      ! Einlesen der Randbedingungswerte für den Strang <mstr>, hier Schleifenbeginn 
-
-            if(ischwer==0)then
-              ! read(92,9240,iostat=read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
-              !              ,(werts(ianzRB,ixpp,iwe),ixpp=1,29)
-              read(92,*,iostat=read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
-                           ,(werts(ianzRB,ixpp,iwe),ixpp=1,28)
-              if(read_error<0.0)print*,'funkstar() Einlesen der Randbedingungswerte für den Strang',ianzRB,iwe,mstr,RBNR,NrSchr(mstr,RBNR)
-              if(iwsim==4.and.werts(ianzRB,28,iwe)<0.0)werts(ianzRB,28,iwe) = 0.0
-               
-                else
+         ! second read to evaluate block size...
+         NrSchr(:,:)=-1 ! initialize
+         rewind (92)
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)') 
+         read(92,'(2x)')
+         do i_Rand = 1, 200 ! Randbedingungsschleife Beginn  / all boundary conditions  
+### doppelbelegung einer Randbedingung abfangen !!       NrSchr      
+            read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),num                                                
+            if(read_error<0.0) exit ! no further boundary
+            if(mstr.gt.azStrs)stop 77
+            if(RBNR.gt.maxstrang_rb)stop 78
+            if(NrSchr(mstr,RBNR).eq.-1)then ! boundary only once
+                NrSchr(mstr,RBNR)=num
+            else
+               print*,"funkstar: Randbedingung doppelt"
+               stop 79 
+            endif! =num
+            if(NrSchr(mstr,RBNR).le.0)cycle 
+            ianzRB = ianzRB+1                 ! Summenbildung der Randbedingungen  
+            if(ianzRB.gt.i_Rands)stop 80
+            imstr(ianzRB) = mstr                
+            iRBNR(ianzRB) = RBNR 
+            ianzW(ianzRB) = NrSchr(mstr,RBNR) 
+            do iwe = 1,NrSchr(mstr,RBNR)      ! Einlesen der Randbedingungswerte für den Strang <mstr>, hier Schleifenbeginn 
+               if(ischwer==0)then !without heavy metals
+                  read(92,*,iostat=read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
+                              ,(werts(ianzRB,ixpp,iwe),ixpp=1,28)
+                  if(read_error<0.0)print*,'funkstar() Einlesen der Randbedingungswerte für den Strang',ianzRB,iwe,mstr,RBNR,NrSchr(mstr,RBNR)
+                  if(iwsim==4.and.werts(ianzRB,28,iwe)<0.0)werts(ianzRB,28,iwe) = 0.0
+               else ! ischwer!=0
                   read(92,9240)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
                                ,(werts(ianzRB,ixpp,iwe),ixpp=1,ipps)
-            endif
-               
-                 
-            uhrl(ianzRB,iwe) = int(uhrl(ianzRB,iwe))+((uhrl(ianzRB,iwe)-int(uhrl(ianzRB,iwe)))/0.6)  !Umrechnung der "Messwert-Uhrzeit" in Dezimalschreibweise            
+               endif
+               uhrl(ianzRB,iwe) = int(uhrl(ianzRB,iwe))+((uhrl(ianzRB,iwe)-int(uhrl(ianzRB,iwe)))/0.6)  !Umrechnung der "Messwert-Uhrzeit" in Dezimalschreibweise
+            enddo ! all iwe bc-lines
+            mREC(mstr,ianzRB,:) = 0 ! initialize
+         enddo                                 ! Randbedingungsschleife Ende 
+         ianRBs = ianzRB 
 
-          enddo                             ! Schleifenende
-            do ixpp = 1,ipps
-              mREC(mstr,ianzRB,ixpp) = 0
-            enddo
-
-        enddo                                 ! Randbedingungsschleife Ende 
-                                                                       
-        ianRBs = ianzRB 
-
-
-   9230 format(I5,2x,I5,2x,I1,2x,I5) 
-   9240 format(i2,2x,i2,2x,I4,2x,f5.2,2x,f13.6,2x,f6.2,2x,f6.2,2x,f6.2,2x                 &
+ 9230    format(I5,2x,I5,2x,I1,2x,I5) 
+ 9240    format(i2,2x,i2,2x,I4,2x,f5.2,2x,f13.6,2x,f6.2,2x,f6.2,2x,f6.2,2x                 &
               ,f6.3,2x,f5.2,2x,f5.2,2x,f8.5,2x,f8.5,2x,f6.3,2x,f5.2,2x,f5.2               &
               ,2x,f6.2,2x,f5.2,2x,f5.2,2x,f7.1,2x,f5.2,2x,f5.2,2x,f5.1,2x                 &
               ,f8.1,2x,f7.2,2x,f5.2,2x,f5.2,2x,f8.1,2x,f6.1,2x,E9.2,2x,f7.1               &
               ,2x,f9.3,2x,f7.1,2x,F9.2,2x,F9.2,2x,F8.4,2x,F8.4,2x,F7.3,2x                 &
               ,F7.3,2x,F7.3,2x,F7.3)                                                         
-                                                                       
-   endif
+      endif ! ilang==0
 
         if(monats>2)then 
           NRS = (ITAGS+31*(MONATS-1)-INT(0.4*MONATS+2.3)) 
