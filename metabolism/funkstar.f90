@@ -120,7 +120,7 @@
          read(92,'(2x)') 
          read(92,'(2x)')
          do i_Rand = 1, 200 ! Randbedingungsschleife Beginn  / all boundary conditions  
-### doppelbelegung einer Randbedingung abfangen !!       NrSchr      
+            !cdoppelbelegung einer Randbedingung abfangen !!       NrSchr      
             read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),num                                                
             if(read_error<0.0) exit ! no further boundary
             if(mstr.gt.azStrs)stop 77
