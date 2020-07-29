@@ -1,6 +1,25 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
   Program QSIM     
-                                                                        
-                                                                       
                                                                        
 !      izdt Einheiten min oder Stunden Beruecksichtigung bei itime      
 !      Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
@@ -15,7 +34,7 @@
       character (len = 200)                   :: ctext 
       character (len = 255)                   :: cpfad,cpfad1,cpfad2,filestring
       character (len=275)                     :: pfadstring
-      logical kontroll, einmalig, linux !!wy
+      logical kontroll, einmalig, linux,mitsedflux  !!wy
       integer iglob, open_error !!wy
       character (len = 120)                   :: cfehlr 
       
@@ -743,7 +762,6 @@
       allocate(hdl(azStrs,ialloc2), htau2(azStrs,ialloc2), hgesP(azStrs,ialloc2), hgesN(azStrs,ialloc2))
       allocate(hCD1(azStrs,ialloc2), hCD2(azStrs,ialloc2), hCP1(azStrs,ialloc2), hCP2(azStrs,ialloc2))
       allocate(hvo2(azStrs,ialloc2), hextk(azStrs,ialloc2), hJNO3(azStrs,ialloc2), hJNH4(azStrs,ialloc2))
-      hJNH4(:,:)=0.0 ; hJNO3(:,:)=0.0 ; hJPO4(:,:)=0.0 ; hJSi(:,:)=0.0 ; hJO2(:,:)=0.0
       allocate(hJPO4(azStrs,ialloc2), hJSi(azStrs,ialloc2), hJO2(azStrs,ialloc2), hFluN3(azStrs,ialloc2))
       allocate(SedOM(azStrs,ialloc2), BedGSed(azStrs,ialloc2), SPEWKSuS(azStrs,ialloc2), WUEBKuS(azStrs,ialloc2))
       allocate(extkuS(azStrs,ialloc2), Sedvvert(azStrs,ialloc2), hJN2(azStrs,ialloc2), bJN2(azStrs,ialloc2))
@@ -5033,7 +5051,8 @@
                                                                        
 !***************Sediment-Stofffluxe********                             
  1712 continue 
-      goto 1612 !!wy vorübergehend ausgeschaltet.####  !!wy     
+      mitsedflux=.false. !!wy sedimnt fluxes switched off temporarily
+      if(mitsedflux)then     
       call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
                    ,sedalb,sedSS_MQ,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
@@ -5041,6 +5060,16 @@
                    ,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB,Q_PB,pl0,nl0,Si,hSised,hJSi           &
                    ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,yNmx1e,Stks1e,obsb,ocsb        &
                    , .FALSE., 0) !!wy ,kontroll, iglob 3D
+	  else ! without sedflux(), fluxes need to be set zero
+         hJNO3(:,:)=0.0
+         hJNH4(:,:)=0.0
+         hJPO4(:,:)=0.0
+         hJO2(:,:)=0.0
+         hJSi(:,:)=0.0
+		 hJN2(:,:)=0.0
+		 JDOC1(:)=0.0
+		 JDOC2(:)=0.0
+	  endif ! mitsedflux
       if(nbuhn(mstr).eq.0)goto 1612 
       if(ilbuhn.eq.0)then 
       do 1710 ior=1,anze+1 
@@ -6503,8 +6532,7 @@
           alberk(ior) = 0.0
         enddo
       endif
-      !if(mstr==1)print*,'vor ncyc vnh4', vnh4(1),vnh4(2),vnh4(3)
-      
+
       call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2           &
      &,go2n,vno3,dC_DenW,flag,elen,ior,anze                             &
      &,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
@@ -6526,14 +6554,6 @@
      &,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl              &
      &,ifhstr,azStrs                                                    &
      &,.false.,0)     !!wy kontroll,iglob
-      !if(mstr==1)then
-      !   print*,'vnh4', vnh4(1),vnh4(2),vnh4(3)
-      !   print*,' vx0', vx0(3) 
-      !   print*,'vno3', vno3(3) 
-      !   print*,'vno2', vno2(3) 
-      !   print*,'vx02', vx02(3)
-      !   print*,'gesN', gesN(3)
-      !endif
       if(ifehl>0)then
          print*,'qsim ifehl ncyc, aki,agr,abl=',aki,agr,abl
          goto 989
@@ -7425,7 +7445,7 @@
        ro2dr(ior) = 0.0
      enddo
      endif
-     !kontroll=.true.
+
   call               oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,RHYD,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4    &
                     ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                      &
                     ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein                     &
