@@ -39,6 +39,7 @@
       character (len = 120)                   :: cfehlr 
       
       character (len = 50), Dimension(50,100) :: CEname  
+	  character (len = 40), Dimension(:), allocatable      :: strname,strnumm 
 
       integer                                 :: maus, read_error, anze, azstr, azstrs, anzej, Stunde,STRiz_2D, anzema  
       integer                                 :: tdj, SCHRNR, zabfr, RBNR
@@ -333,9 +334,11 @@
 
 !###### VERSIONSNUMMER ################
 
-      VERSIO = 14.00
+      VERSIO = 14.02
       linux  = .true.
       kontroll= .false.
+	  !open(unit=345, file="test.txt", iostat = open_error)
+
 !######################################
                                        
 !                                                                       
@@ -551,6 +554,7 @@
       allocate(strNr(nazStrs), mstra(azStrs), ieinsh(azStrs), ieinLs(azStrs), nbuhn(azStrs), iFlRi(nazStrs), isegs(azStrs))
       allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs), hte_z(azStrs), izufluss(azStrs))
       allocate(hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
+      allocate(strname(azStrs),strnumm(azStrs))
 
       allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs), i2Ds(azStrs))
       allocate(mWes(azStrs), mVs(azStrs), mZs(azStrs), mAs(azStrs), itsts(azStrs), msts(azStrs), itmaxs(azStrs))
@@ -868,7 +872,8 @@
       isumAnzSta = 0
       do azStr = 1,azStrs                         ! Beginn Strangschleife  10=MODELLA.txt
       ieinL = 0 
-      read(10,'(I5,2x,I5,2x,I5,2x,I5,2x,I5)')mstr,mStas(mstr),mRBs(mstr),mwehr(mstr),STRID(mstr)               
+      !read(10,'(I5,2x,I5,2x,I5,2x,I5,2x,I5)')mstr,mStas(mstr),mRBs(mstr),mwehr(mstr),STRID(mstr)               
+      read(10,*)mstr,mStas(mstr),mRBs(mstr),mwehr(mstr),STRID(mstr),strnumm(mstr),strname(mstr)
       mstra(azStr) = mstr
       isumAnzSta = isumAnzSta+mStas(mstr)
 
@@ -912,8 +917,11 @@
  
       if(startkm(mstr).gt.endkm(mstr))abfr(mstr) = 0 
       if(startkm(mstr).lt.endkm(mstr))abfr(mstr) = 1 
+	  	  
+      print*,mstr,trim(strnumm(mstr))," ",trim(strname(mstr)),"start-,endkm mstas,mwehr,mRBs",startkm(mstr),endkm(mstr),mStas(mstr),mwehr(mstr),mRBs(mstr)
+	  
       if(abfr(mstr).eq.0)cycle 
-
+	  
     enddo          ! Ende Strangschleife
  
                                                                        
@@ -923,8 +931,7 @@
  1003 format(I5,2x,f8.3,2x,i1,2x,i1,2x,I5,2x,F8.3,6x,50a) 
 !.................................                                      
       close (10) 
-                                                                       
-                                                                       
+                                                                                                                                    
 !...Ermittlung der Berechnungsgitterpunkte                              
                                                                         
       call km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs             &
@@ -1108,6 +1115,7 @@
       hcUhrz = int(uhrz)+hcmin 
       Uhrz = hcUhrz 
       ij = 1 
+	  
 !.....Tracer                                                            
       if(iwsim==4)goto 681 
 !                                                                       
@@ -1832,7 +1840,7 @@
       write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'EREIGH.txt' 
       open(unit=110, file=pfadstring, iostat = open_error)
       if(open_error.ne. 0) then
-         print*,'open_error EREIGH.txt',cpfad1
+         print*,'open_error EREIGH.txt ',cpfad1
          stop 2
       end if
       rewind (110)
@@ -1951,7 +1959,7 @@
       izaehlN = 0   ! Laufvariable für Anzahl der Warnungen gesN 
       izaehlP = 0   ! Laufvariable für Anzahl der Warnungen gesP
 
-                                                                    
+                                                                  
 ! ##### lesen der Vorzeilen in ABLAUF.txt ######                                                        
 
       write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'ABLAUF.txt'
@@ -1964,7 +1972,8 @@
             read(97,'(A40)')MODNAME 
             read(97,'(A40)')ERENAME
       endif
-                                                                     
+	  print*,"ABLAUF.txt ERENAME=",trim(ERENAME)
+	  
 ! ############################################
 !   Beginn eines neuen Zeitschritts                                    
 ! ############################################
@@ -1980,7 +1989,7 @@
         endif
         enddo
 
- 9999 continue
+ 9999 continue ! Rücksprunglabel Zeitschleife
 
     do istr = 1,(2*azStrs)
       read(97,9700,iostat=read_error)STRNR(istr),iFlRi_l(istr),(ESTRNR(istr,nstr),nstr=1,azStrs)
@@ -2001,11 +2010,12 @@
  9700 format(I5,2x,I2,500(2x,I5)) 
  9705 format(I5,2x,i2,2x,i2,2x,i2,2x,i4,2x,f5.2)                                                                     
       istrs = istr-1 
-                                                                       
+	  
 !     ***************************************                           
 !     Einteilung der Flussstrecke in Segmente                           
 !     ***************************************                           
-!                                                                       
+!   
+                                                                    
 !...Bildschirmausgabe                                                   
       write(*,6109) 
  6109 format(2x,'SYSTEMGENERIERUNG') 
@@ -2101,7 +2111,7 @@
       hcontm = 24./hcon 
       itimeh = nint(hcontm) 
       itimeb = itimeh-1 
-!                                                                       
+!                                                    
 !...Anzahl der Zeitschritte für ersten Simulationstag (itimea)          
 !..und letzen Simulationstag (itimee)                                   
 !... Umrechnen der End-Uhrzeit in Dezimalschreibweise Uhren in hcUhre   
@@ -2123,7 +2133,7 @@
                                                                         
       itime = itimeb 
       endif 
-                                                                       
+	  
 !#### Berechnen der Startwerte #####                                         
                                                                        
 !## zu Beginn der Simulation werden die Anzahl der Randbedimgungen und die maximale Länge eines Datensatzes bestimmt ##
@@ -2131,7 +2141,7 @@
      if(iwied==0)call Randbedingungen(cpfad, i_Rands, iw_max)
 
       istr = 0 
-                                                                      
+	  
       call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs                 &
                     ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &         
                     ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,istund                                 &
@@ -2147,8 +2157,11 @@
 ! ##### Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall#####
       do azStr = 1,azStrs !Strangschleife ANFANG
         mstr = mstra(azStr)
-        if(iwied==0)exit
-        if(iRB_K1(mstr)<=1)cycle
+        if(iwied==0)then
+		   exit
+		endif
+ 
+       if(iRB_K1(mstr)<=1)cycle
 
 !.or.nnStrs(mstr)==0)cycle ! noch überprüfen
 
@@ -2865,6 +2878,7 @@
       hBAC(mstr,1) = BACs(mstr,mRB) 
       hnh4(mstr,1) = vNH4s(mstr,mRB) 
       if(isnan(vo2s(mstr,mRB)))print*,"isnan(vo2s",mstr,mRB
+      if(vo2s(mstr,mRB).le. 0.0)print*,"vo2s.le.0.0 vo2s(mstr,mRB)=",vo2s(mstr,mRB),mstr,mRB
       ho2(mstr,1) = vo2s(mstr,mRB) 
       hno3(mstr,1) = vno3s(mstr,mRB) 
       hno2(mstr,1) = vnO2s(mstr,mRB) 
@@ -2908,8 +2922,8 @@
   721 continue 
 
   720 continue
- 
-                                                                       
+
+  
   396 continue
 
 
@@ -3013,7 +3027,7 @@
       endif                                                                       
                                                                       
 ! ..Ermittlung der Wetterdaten fuer den Zeitschritt                      
-                                                                        
+                                    
  9191 continue
 
       if(iwsim==4.or.iwsim==5)then
@@ -3053,7 +3067,6 @@
     enddo
 
     endif
-
 !######################################################################################                                                                       
 !...Strangschleife  fuer alle Straenge: Einlesen der Einleiterdaten und Randbedingungen 
 !######################################################################################                                                                       
@@ -3065,24 +3078,25 @@
       mRB_1 = 0
       j = 0
       do istr = 1,azStrs
-        mstr = STRNR(istr)
-          do mRB = 1,mRBs(mstr)
-            if(RBtyp(mstr,mRB)==0.or.RBtyp(mstr,mRB)==2)then
+         mstr = STRNR(istr)
+         !write(345,*)istr,mstr,trim(strname(mstr))," hat ",mRBs(mstr)," Randbedingungen ",hanze(mstr)
+         do mRB = 1,mRBs(mstr)
+            if(RBtyp(mstr,mRB)==0 .or. RBtyp(mstr,mRB)==2)then
               if(mRB_1==0)then
                 mstrRB = mstr
                 mRB_1 = mRB
               endif
             endif
-            if(RBtyp(mstr,mRB)==0.and.nstrs(istr)==0)then
+            if(RBtyp(mstr,mRB)==0 .and. nstrs(istr)==0)then
               j = j+1
               mstr_ist(j) = mstr
-              endif
-           enddo
+            endif
          enddo
+      enddo
 
-     endif
+    endif
 
-     if(iwied==0)j = 0
+    if(iwied==0)j = 0
 
     do istr = 1,istrs  ! Beginn Strangschleife
 
@@ -3093,22 +3107,22 @@
       j_ist = 1 ! Zufließende Straenge sind mit Randbedingungen belegt
 
       if(iwied==0)then  ! Test, ob zu Beginn der Simulation die zufließenden Stränge mit Anfangsbedingungen belegt sind
-      j_ist = 0
+        j_ist = 0
         if(nstrs(istr)==0)then
-          else 
+           else  
            do nstr = 1,nstrs(istr)
              do jj = 1,azStrs    !js 
-             if(ESTRNR(istr,nstr)==mstr_ist(jj))then
-               j_ist = 1
-               exit
-             endif
+               if(ESTRNR(istr,nstr)==mstr_ist(jj))then
+                 j_ist = 1
+                 exit
+               endif
+             enddo
            enddo
-          enddo
         endif
-     j = j+1
-     mstr_ist(j) = mstr
-     js = j
-     endif
+        j = j+1
+        mstr_ist(j) = mstr
+        js = j
+      endif
 
      if(iFlRi(mstr)==0.and.iwied==1)cycle   
 
@@ -3122,8 +3136,7 @@
                                 ! Strangs Randbedingungen vorliegen (Datei Ereigg.txt)
  
       do mRB = 1,mRBs(mstr) ! RandbedingungsSchleife fuer Strang mstr
-
-       if(RBtyp(mstr,mRB).ne.0.and.RBtyp(mstr,mRB).ne.2)then                                      
+       if(RBtyp(mstr,mRB).ne.0 .and. RBtyp(mstr,mRB).ne.2)then                                      
                                         
           if(mstrLe(mstr,mRB)<0)then ! Abfrage ob Diffuse Einleitung  
             iein = iein+1 
@@ -3221,8 +3234,9 @@
               endif                                                    
                                                           
         endif 
-
+		
       enddo  ! Randbedingungsschleife 
+
                                                                        
       ieinsh(mstr) = iein 
       ieinLs(mstr)= ieinL 
@@ -3232,6 +3246,7 @@
 !      if(nstrs(istr)==0)iwahl = 1  
       if(nstrs(istr)>0.and.j_ist==1) iwahl = 2 ! j_ist: gilt nur bei iwied=0. Zufließende Straenge sind bereits mit
                                                ! Randedingungen belegt 
+ 
       Rand_Wahl: select case (iwahl)
        
         case (1)
@@ -3407,7 +3422,7 @@
          hCChlgz(mstr,nkz,ior) = agbcms(mstr1,mRB) 
        endif
 
-      enddo   ! Schleifenende 
+      enddo   ! Schleifenende nkz
 
        if(nbuhn(mstr)==0.or.iwied==1)cycle 
 !   Buhnenfelder                                                      
@@ -3489,7 +3504,10 @@
        bgsNi(mstr,ior) = hgsNi(mstr,ior) 
        bglNi(mstr,ior) = hglNi(mstr,ior) 
                                                                 
-      enddo ! Ende Schleife über die Ortspunkte 
+      enddo ! Ende Schleife über die Ortspunkte ior
+	  
+      !write(345,*)iwied,ilang,"Startwert rbs o2 ",mstr1,mRB,strname(mstr1),ho2(mstr1,1),ij,uhrz
+                                    
      cycle 
 
       case(2) ! Strang hat Vor- bzw. Nachstränge
@@ -3602,10 +3620,9 @@
       hcs112 = 0.0 
                                                                        
       hcq = 0.0 
-
+	  
       do nstr = 1,nstrs(istr)  !Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge 
-
-                                                                      
+                                                                     
 !....jnkz = 1 > Werte am ersten Knoten im Strang                        
 !....jnkz = 2 > Werte am letzten Knoten im Strang                       
 !++++von Hier
@@ -3716,7 +3733,6 @@
 
 ! ....Einfluss der Wehre auf O2,pH und Temperatur,Chla,Algen,Stickstoff und Phosphor
 
-      !print*,"qsim vor WEHR mstr,kanz,ho2(mstr,kanz)",mstr,kanz,ho2(mstr,kanz)                     
 !                                                                       
       call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                   &                                   
           ,tzt,hte_z,htez_z,chlazt,hchlaz_z,akizt,hakiz_z,agrzt,hagrz_z,ablzt,hablz_z                      &
@@ -3725,8 +3741,6 @@
           ,Q_NBzt,hQ_NBz_z,Q_NGzt,hQ_NGz_z,dH2D,ESTRNR,kanz,inkzmx,iSta,nstr,istr,jnkz,iflRi,jlWO2         &
           ,CChlkzt,hCChlkz_z,CChlbzt,hCChlbz_z,CChlgzt,hCChlgz_z,janzWS,janzWt,hnkzs,mwehr,mstr            &
           ,WSP_UW,WSP_OW,iB,azStrs)   
-
-      !print*,"qsim nach WEHR mstr,kanz,ho2(mstr,kanz)",mstr,kanz,ho2(mstr,kanz)                     
 
     endif
 
@@ -3784,12 +3798,16 @@
          print*,"ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)="&
      &         ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
          print*,"ESTRNR(istr,nstr),istr,nstr,kanz,iSt",ESTRNR(istr,nstr),istr,nstr,kanz,iSta
+		 stop 12
       endif
-      if(isnan(ho2(ESTRNR(istr,nstr),kanz)))print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
+      if(isnan(ho2(ESTRNR(istr,nstr),kanz)))then
+	     print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
+		 stop 13
+	  endif
       hcs40 = hcs40+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*ho2(ESTRNR(istr,nstr),kanz) 
-     ! print*,"qsim hcs40,hQaus,ho2,ESTRNR,istr,nstr,iSta,kanz",hcs40,              &
-     !&hQaus(ESTRNR(istr,nstr),iSta),ho2(ESTRNR(istr,nstr),kanz),ESTRNR(istr,nstr),istr,nstr,iSta,kanz
+	  !write(345,*)"istr,nstr,kanz,iSta,ESTRNR,ho2,hQaus"  &
+	  !&,istr,nstr,kanz,iSta,ESTRNR(istr,nstr),ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
       hcs41 = hcs41+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*hno3(ESTRNR(istr,nstr),kanz)                                     
       hcs42 = hcs42+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
@@ -3968,7 +3986,7 @@
         CChlgzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlgz_z(ESTRNR(istr,nstr),nkz) 
 
       enddo  ! Schleifenende
-                                                                        
+	  
    enddo  ! Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge 
                                                                        
       if(hcq>0.0)then
@@ -4113,9 +4131,6 @@
       hBAC(mstr,ior) = hcs35 
       hnh4(mstr,ior) = hcs39 
       ho2(mstr,ior) = hcs40 
-
-      !print*,"qsim Nachstraenge mstr,ior,ho2(mstr,ior),hcs40,hcq",mstr,ior,ho2(mstr,ior),hcs40,hcq
-
       hno3(mstr,ior) = hcs41 
       hno2(mstr,ior) = hcs42 
       hx0(mstr,ior) = hcs43 
@@ -4314,16 +4329,21 @@
       bgsNi(mstr,ior) = hgsNi(mstr,ior)
       bglNi(mstr,ior) = hglNi(mstr,ior)
                                                                        
-   enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs      
+   enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs 
+                      
+      else !  Abfluss hcq <= 0.0  
+	     print*, "Strang ",mstr, " ",trim(strnumm(mstr)),"  ",trim(strname(mstr))
+		 print*, "hat weder eine Randbedingung, noch einen zu ihm gerichteten Zufluss."
+		 print*, "### Abbruch ###"		 
+	     stop 11 ! 
       endif ! Abfluss >0.0
    end select Rand_Wahl
        
       enddo ! Ende Schleife ueber alle Straenge 
-
+	  
       if(jlauf.eq.1)goto 7777 ! Ablegen der berechneten Werte aus dem Zeitschritt t-1 und den Randbedingungen zum Zeitpunkt t   
-
+	  
  9998 continue  ! Sprungziel nach Ablegen der Werte für jeden Ortspunkt 
-
   
 !.....Vorlauf ilang = 0                                                 
 !      if(iwied.eq.1.and.ilang.eq.0)goto 5555 
@@ -4362,10 +4382,10 @@
      &,f7.2,2x,f7.2,2x,f7.2,2x,f7.4,2x,f8.5,2x,E11.5,2x,E11.5,2x,f6.2)  
 
        imac(mstr) = 0
-       if(hflag(mstr,ior)==4.and.hvmitt(mstr,ior)<0.0)imac(mstr) = 1 !falls Fliessumkehr an einer Einleiterstelle
-                                                                     !wird zur Lösung des Dispersionsterms das McCormack-
-                                                                     !Verfahren benutzt   
-
+       if(hflag(mstr,ior)==4.and.hvmitt(mstr,ior)<0.0)then  !falls Fliessumkehr an einer Einleiterstelle
+          imac(mstr) = 1                                    !wird zur Lösung des Dispersionsterms das McCormack-
+                                                            !Verfahren benutzt   
+        endif
 
         if(hvmitt(mstr,ior)<0.0)imac(mstr) = 1
 
@@ -4422,7 +4442,7 @@
 !     Zeitschleife                                                      
 !                                                                       
  5555 continue
-
+ 
 ! ##### Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen (2D-Fall) ##### 
 
       do azStr = 1,azStrs  ! Strangschleife ANFANG
@@ -4675,6 +4695,7 @@
       write(*,6162)itime 
  6162 format(2x,'Anzahl der Zeitschritte: ',I4) 
       write(*,6163)ij,itags,monats,jahrs,Uhrzhm 
+      !write(345,6163)ij,itags,monats,jahrs,Uhrzhm 
       !!wy write(222,6163)ij,itags,monats,jahrs,Uhrzhm 
  6163 format(2x,'Zeitschritt: ',I4,2x,i2,'.',i2,'.',I4,2x,F5.2) 
                                   
@@ -4686,7 +4707,7 @@
       mstr = mstra(azStr) 
       anze = hanze(mstr) 
       iein = 0
-                                                              
+	  
       do kein=1,ieinsh(mstr) ! Einleiter
         iein = iein+1 
         einlk(iein) = einlkh(mstr,kein) 
@@ -5049,11 +5070,12 @@
 
   709 if(iwsim==2.or.iwsim==5.or.iwsim==4)goto 113 
                                                                        
-!***************Sediment-Stofffluxe********                             
+!***************Sediment-Stofffluxe******** 
+                            
  1712 continue 
       mitsedflux=.false. !!wy sedimnt fluxes switched off temporarily
       if(mitsedflux)then     
-      call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP           &
+      call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP            &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
                    ,sedalb,sedSS_MQ,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
                    ,vnh4z,vno3z,gelpz,nkzs,SorpCape,Klange,KdNh3e,fPOC1e,fPOC2e                               &
@@ -5518,6 +5540,7 @@
 !***************hetrero. Nanoflagelaten (HNF)********                   
                                                                        
   218 continue 
+
       if(CHNF(1)<=0.0)then
         if(nbuhn(mstr)>0)then
           do ior=1,anze+1
@@ -6252,8 +6275,8 @@
      &,.false.,0)     !!wy kontroll,iglob
       if(ifehl.gt.0)goto 989 
 !                                                                       
-!*************orgC********************************                      
-                                                                       
+!*************orgC********************************    
+                                                                     
       if(nbuhn(mstr)>0)then
         do ior=1,anze+1
           bpfl(mstr,ior) = pfl(ior)
@@ -6262,7 +6285,7 @@
       endif   
                                                                        
  1530 continue 
-      if(vbsb(1).lt.0.0.and.vbsb(1).lt.0.0)goto 1514
+      if(vbsb(1).lt.0.0 .and. vbsb(1).lt.0.0)goto 1514
       call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze              &                   
                 ,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor,jiein,bsbgr,bsbki,akbcm             &
                 ,agbcm,pfl,ezind,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb,csbki,csbgr,ischif,echla               &
@@ -6515,7 +6538,6 @@
                                                                        
  1514 continue
 
-                                                                           
       if(vnh4(1).lt.0.0)goto 1515 
 
       if(nbuhn(mstr)>0.and.ilbuhn==0)then
@@ -6532,7 +6554,7 @@
           alberk(ior) = 0.0
         enddo
       endif
-
+	  
       call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2           &
      &,go2n,vno3,dC_DenW,flag,elen,ior,anze                             &
      &,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
@@ -6554,6 +6576,7 @@
      &,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl              &
      &,ifhstr,azStrs                                                    &
      &,.false.,0)     !!wy kontroll,iglob
+
       if(ifehl>0)then
          print*,'qsim ifehl ncyc, aki,agr,abl=',aki,agr,abl
          goto 989
@@ -6885,7 +6908,7 @@
       ilbuhn = 0 
       endif 
 !                                                                       
-!*****************pH-Wert***********************                        
+!***************** pH-Wert ***********************                        
 !                                                                       
  1515 continue 
 
@@ -7052,7 +7075,7 @@
 !****************Temperatur*******************                          
 !                                                                       
   113 continue 
-                                                                       
+                                                                    
       if(iwsim/=4)goto 408 
 
       call CTracer(TEMPW,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs,itags,uhrz,mstr)
@@ -7446,7 +7469,7 @@
      enddo
      endif
 
-  call               oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,RHYD,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4    &
+      call    oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,RHYD,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4           &
                     ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                      &
                     ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein                     &
                     ,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg,opblmi,opblma,ablnh4                &
@@ -7456,6 +7479,7 @@
                     ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                     &
                     ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GRote,iphy                 &  ! chlagr unbenutzt
                     ,kontroll,0)     !!wy ,iglob=0
+	  
       if(ifehl>0)goto 989 
                                                           
       if(nbuhn(mstr)==0)goto 1518 
@@ -7862,8 +7886,17 @@
       enddo
 
       ilbuhn = 0 
-      endif 
-   endif
+      endif ! ilbuhn==1
+   else ! no heavy metals
+      hgsZn(mstr,:)=0.0
+      hglZn(mstr,:)=0.0
+      hgsCad(mstr,:)=0.0
+      hglCad(mstr,:)=0.0
+      hgsCu(mstr,:)=0.0
+      hglCu(mstr,:)=0.0
+      hgsNi(mstr,:)=0.0
+      hglNi(mstr,:)=0.0
+   endif ! ischwer==1
 
                                                                        
 !********Coliform***********                                            
@@ -8112,7 +8145,7 @@
                 ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1,GRote                                           &
                 ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,mtracer,nkztot_max,ischwer)
 
-       !!wy write(222,*)'nach Transport DL(',anze,')=',DL(anze),' Verfahren=',ilongDis,' strang=',mstr 
+       !print*,"nach Transport DL(",anze,")=",DL(anze)," Verfahren=",ilongDis," strang=",mstr 
 
 !     if(mstr==17)then
 !        do ior=1,anze+1
@@ -8766,8 +8799,8 @@
                                                                        
   enddo ! Ende Hauptschleife
                                                                        
- 8888 continue   !### Ende Strangschleife####
-                                                                       
+8888  continue   !### Ende Strangschleife #### 
+
  7777 continue 
 
 ! ### iwied = 0 : allererster Zeitschritt, danach iwied = 1 ###                  
@@ -8780,7 +8813,7 @@
         uhrsv = uhrs
         iwied = 1 
       endif 
-                                                                       
+	  
       if(jlauf==0)then ! Berechnung der neuen Uhrzeit und des neuen Datums
                   
         Uhrz = Uhrz+tflie*24. 
@@ -8807,10 +8840,13 @@
 !                                                                       
 !....Vorlauf ilang = 0; Werte werden nicht abgelegt!!                   
 
-
       if(ilang==0.and.ij<itime)then 
+	    do azStr = 1,azStrs 
+           mstr = mstra(azStr)
+		   !write(345,*)iwied,ilang,"Vorlauf",mstr,strname(mstr),ho2(mstr,1),ij,itime,uhrz
+	    enddo
         ij = ij+1 
-        istr = 0 
+        istr = 0
         goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
       endif 
                                                                         
@@ -11752,6 +11788,7 @@
       close (155) 
       close (255) 
       close (199) 
+	  !close (345) 
       if(iRHKW.eq.1)close (177) 
       if(ifehl.ne.0)then 
       stop 1 
