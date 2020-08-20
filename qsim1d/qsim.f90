@@ -4331,11 +4331,13 @@
                                                                        
    enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs 
                       
-      else !  Abfluss hcq <= 0.0  
-	     print*, "Strang ",mstr, " ",trim(strnumm(mstr)),"  ",trim(strname(mstr))
-		 print*, "hat weder eine Randbedingung, noch einen zu ihm gerichteten Zufluss."
-		 print*, "### Abbruch ###"		 
-	     stop 11 ! 
+      else !  Abfluss hcq <= 0.0
+         if(ilang == 0 )then ! Vorlauf	  
+	        print*, "Strang ",mstr, " ",trim(strnumm(mstr)),"  ",trim(strname(mstr))
+		    print*, "hat weder eine Randbedingung, noch einen zu ihm gerichteten Zufluss."
+		    print*, "### Abbruch ###" 
+	        stop 11 !
+         endif ! Vorlauf		 
       endif ! Abfluss >0.0
    end select Rand_Wahl
        
@@ -8841,12 +8843,10 @@
 !....Vorlauf ilang = 0; Werte werden nicht abgelegt!!                   
 
       if(ilang==0.and.ij<itime)then 
-	    do azStr = 1,azStrs 
-           mstr = mstra(azStr)
-		   !write(345,*)iwied,ilang,"Vorlauf",mstr,strname(mstr),ho2(mstr,1),ij,itime,uhrz
-	    enddo
+		print*," Vorlauf ", ilang, iwied, ij
         ij = ij+1 
         istr = 0
+		!write(345,*)"Vorlauf ho2 strang 6",strname(6),ho2(6,1:hanze(6)+1)
         goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
       endif 
                                                                         
@@ -8919,7 +8919,8 @@
                                                           
       if(ilang==0)then 
       ilang = 1 
-      jtag = 1 
+      jtag = 1
+      print*," Vorlauf letztmalig ",ilang, iwied, ij
       goto 9191  ! Es werden keine neuen Randwerte gelesen
       endif 
 
