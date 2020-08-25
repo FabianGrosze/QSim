@@ -335,9 +335,10 @@
 !###### VERSIONSNUMMER ################
 
       VERSIO = 14.02
-      linux  = .true.
+      linux  = .false.
       kontroll= .false.
 	  !open(unit=345, file="test.txt", iostat = open_error)
+      print*,"QSim1D starting ..."
 
 !######################################
                                        
@@ -429,15 +430,14 @@
       cpfad1 = cpfad1(1:j)
       j2 = j
 
-        print*,'qsim Param: cpfad=',j1,cpfad;print*,'cpfad1=',cpfad1
       endif ! if(cpfad(1:5)==' ')
         
-        print*,'cpfad=',j1,cpfad;print*,'cpfad1=',cpfad1;print*,'versio=',versio
+      print*,j1,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' versio=',versio
 
-        call fehlermeldungen(cpfad,j1)
+      call fehlermeldungen(cpfad,j1)
 
-        write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file1.err' 
-        open(unit=199, file=pfadstring, iostat = open_error)
+      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file1.err' 
+      open(unit=199, file=pfadstring, iostat = open_error)
       
       rewind (199) 
       write(199,'(a2)')cerrts 
@@ -2015,12 +2015,10 @@
 !     Einteilung der Flussstrecke in Segmente                           
 !     ***************************************                           
 !   
-                                                                    
 !...Bildschirmausgabe                                                   
-      write(*,6109) 
- 6109 format(2x,'SYSTEMGENERIERUNG') 
-!                                                                       
-!                                                                       
+!      write(*,6109) 
+! 6109 format(2x,'SYSTEMGENERIERUNG') 
+                                                                        
       dt = tflie*86400. 
                                                                        
       call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                             &
@@ -4692,16 +4690,10 @@
       Uhrzhm = Stunde+rmin 
 
 !##### Bildschirmausgabe #####                                                                       
-      write(*,6161) 
- 6161 format(2x,'GUETESIMULATION') 
-      write(*,6162)itime 
- 6162 format(2x,'Anzahl der Zeitschritte: ',I4) 
       write(*,6163)ij,itags,monats,jahrs,Uhrzhm 
-      !write(345,6163)ij,itags,monats,jahrs,Uhrzhm 
-      !!wy write(222,6163)ij,itags,monats,jahrs,Uhrzhm 
  6163 format(2x,'Zeitschritt: ',I4,2x,i2,'.',i2,'.',I4,2x,F5.2) 
                                   
-!....Strangschleife fr Berechnung
+!....Strangschleife fuer Berechnung
 
       if(iwsim==4)sumTracer = 0.0  ! Aufsummierung der "Tracermasse" 
                                      
@@ -9072,7 +9064,7 @@
                                                                        
       endif 
 !                                                                       
-!.....Null setzen der Summen fr Mittelwertberechnung der Ausgaben      
+!.....Null setzen der Summen für Mittelwertberechnung der Ausgaben      
 !                                                                       
       sumte(mstr,ior) = 0.0 
       sCHNF(mstr,ior) = 0.0 

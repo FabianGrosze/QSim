@@ -5,8 +5,8 @@
 //
 
 1 VERSIONINFO
- FILEVERSION 14,00,0,0
- PRODUCTVERSION 14,00,0,0
+ FILEVERSION 14,02,0,0
+ PRODUCTVERSION 14,02,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -23,12 +23,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "BfG"
             VALUE "FileDescription", "1D Güteberechnung"
-            VALUE "FileVersion", "14, 00, 0, 0"
+            VALUE "FileVersion", "14, 02, 0, 0"
             VALUE "InternalName", "QSim, 64 Bit"
             VALUE "LegalCopyright", "Copyright © Bundesanstalt für Gewässerkunde. Alle Rechte vorbehalten."
-            VALUE "OriginalFilename", "qsim14_00.exe"
+            VALUE "OriginalFilename", "qsim14.02.exe"
             VALUE "ProductName", "QSim, 64 Bit"
-            VALUE "ProductVersion", "14, 00, 0, 0"
+            VALUE "ProductVersion", "14, 02, 0, 0"
         END
     END
     BLOCK "VarFileInfo"

@@ -317,19 +317,13 @@ subroutine naehr_start(                                                         
         hcon2 = orgN-hcon1
         nl0s = nl0s*hcon2/orgN
         if((nl0s<0.01).and.(einmalig))then 
-!          izaehlN = izaehlN +1
-!          if(izaehlN<=10)then      
-
 ! ......Fehlermeldung .........     
-            write(*,1420) !write(199,1420)                    
-            1420 format(2x,'Summe aus orgN und NH4, NO2,NO3 ist größer als der Wert für gesN')
-            write(*,1405)itags,monats !write(199,1405)itags,monats
-            write(*,1410)mstr,mRB !write(199,1410)mstr,mRB
-            write(*,*)'jjj=',jjj !3D knotennummer
-            einmalig=.false.
-          !endif
-          nl0s = 0.01
-          exit
+           write(*,1405)mRB,mstr,jjj   ! jjj-3D knotennummer
+           1405 format('  Zufluss:',i3,'  Strang-Nr.:',i3,'   jjj=',I8)
+           write(*,*) "  Summe aus orgN und NH4, NO2 und NO3 ist groesser als der Wert fuer gesN"                 
+           einmalig=.false.
+           nl0s = 0.01
+           exit
         endif
       enddo  
 
@@ -390,16 +384,9 @@ subroutine naehr_start(                                                         
         pl0s = pl0s*hcon2/orgP
 
         if(pl0s<0.0001)then
-          !izaehlP = izaehlP + 1
-          !if(izaehlP<=10)then
-! ...... Fehlermeldung .........     
-            write(*,1400) !write(199,1400)                    
-            1400 format(2x,'Summe aus orgP und gelP ist größer als der Wert für gesP')
-            write(*,1405)itags,monats !write(199,1405)itags,monats
-            1405 format(2x,'Zeitpunkt:',I2,'.',I2,'.')
-            write(*,1410)mstr,mRB !write(199,1410)mstr,mRB
-            1410 format(2x,'Strang-Nr.:',i3,';  Zufluss:',i3 )
-          !endif
+! ......Fehlermeldung .........
+            write(*,1405)mRB,mstr,itags,monats,jjj   ! jjj-3D knotennummer
+            write(*,*) "  Summe aus orgP und gelP ist groesser als der Wert fuer gesP"                  
             pl0s = 0.001
           exit
         endif
