@@ -463,7 +463,7 @@
 !! <li> QSim1D Windows-executabels  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
 !! <li> QSim3D Linux-executabels  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> 
 !! </ul><h3>Dokumentation</h3><ul>
-!! <li> <a href="./taz/qsim3d_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li>
+!! <li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li>
 !! </ul><h3>Archiv</h3><ul>
 !! <li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li>
 !! </ul>

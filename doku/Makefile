@@ -5,7 +5,7 @@
 #====================================================================
 
 CONFIG=./confi
-INSTALL=/home/Wyrwa/public_html/dokutest
+INSTALL=/home/Wyrwa/public_html/dokuport
 
 #------------------------------------------------------------- -------
 
@@ -45,7 +45,7 @@ doc:
 	cp -r ./html ./dox/html
 	cp -r ./pdf ./dox/html
 	cp -r ./taz ./dox/html
-	cp qsim_doku_*.taz ./dox/html/taz/qsim3d_doku.taz
+	cp qsim_doku_*.taz ./dox/html/taz/qsim_doku.taz
 	rsync -ua ./dox/html/* $(INSTALL)
 	find $(INSTALL) -type d -exec chmod 755 {} \;
 	find $(INSTALL) -type f -exec chmod 644 {} \;
