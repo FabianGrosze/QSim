@@ -40,7 +40,7 @@
 !!<tr><td> 23 </td><td> \anchor dalgak dalgak	</td><td> Abnahme infolge \ref Algen-Respiration, Kiesel-Algen-Biomasse		</td><td> mgBio/l je Zeitschritt 	</td><td> algaeski -> oxygen 	</td></tr>
 !!<tr><td> 24 </td><td> \anchor dalgag dalgag	</td><td> Abnahme infolge \ref Algen-Respiration, Grün-Algen 			</td><td> mgBio/l je Zeitschritt 	</td><td> algaesgr -> oxygen 	</td></tr>
 !!<tr><td> 25 </td><td> \anchor dalgab dalgab	</td><td> Abnahme infolge \ref Algen-Respiration, Blau-Algen 			</td><td> mgBio/l je Zeitschritt 	</td><td> algaesbl -> oxygen 	</td></tr>
-!!<tr><td> 26 </td><td> \anchor vco2 vco2	</td><td> Kohlendioxyd 								</td><td> ??				</td><td> algaeski -> ph  	</td></tr>
+!!<tr><td> 26 </td><td> \anchor vco2 vco2	</td><td> Kohlendioxyd 								</td><td> mg/l				</td><td> algaeski -> ph  	</td></tr>
 !!<tr><td> 27 </td><td> \anchor dzres1 dzres1	</td><td> Grund-Respiration des Zoo-Planktons					</td><td> mgBio/(l*d)			</td><td> konsum -> ph,ncyc,po4s</td></tr>
 !!<tr><td> 28 </td><td> \anchor dzres2 dzres2	</td><td> Fraßabhängige Respirationsrate des Zoo-Planktons 			</td><td> mgBio/(l*d)			</td><td> konsum -> ph,ncyc,po4s</td></tr>
 !!<tr><td> 29 </td><td> \anchor susn susn	</td><td> Durch SUSPendierte NITRIFikanten OXIDIERTE AMMONIUMMENGE 		</td><td> ? 				</td><td> ncyc -> ph 		</td></tr>
@@ -943,9 +943,11 @@ end if !! nur prozessor 0
          if(io_error.ne.0) goto 198
          read(ctext,*,iostat=io_error)dummy,ratecde,etacde,ratecie,xnuece
          if(io_error.eq.0)then
-            print*,'coliform parameters present'
+            print*,'APARAM.txt coliform parameters present'
             if(zeile(55))read(ctext,*,iostat=io_error)ratecge,ratecse
             !if(io_error.ne.0) goto 198
+		 else
+            print*,'APARAM.txt coliform parameters missing'
          endif ! coliformpresent
       end if !zeile 21
 
@@ -1101,8 +1103,8 @@ end if !! nur prozessor 0
       if( ratecie .lt. 0.0)call qerror('APARAM.txt ratecie negativ (nicht zulässig in QSim3D)')
       if( xnuece .lt. 0.0)call qerror('APARAM.txt xnuece negativ (nicht zulässig in QSim3D)')
 
-      if( ratecge .lt. 0.0)call qerror('APARAM.txt ratecge negativ (nicht zulässig in QSim3D)')
-      if( ratecse .lt. 0.0)call qerror('APARAM.txt ratecse negativ (nicht zulässig in QSim3D)')
+      if( ratecge .lt. -1.0)call qerror('APARAM.txt ratecge kleiner -1 (nicht zulässig in QSim3D)')
+      if( ratecse .lt. -1.0)call qerror('APARAM.txt ratecse kleiner -1 (nicht zulässig in QSim3D)')
 
       close (55)
       RETURN

@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page Modell_Benutzung Modell-Bedienung
 !! die Modellbedienung setzt sich zusammen aus den 3 Bestandteilen:
 !! <ol>
@@ -473,7 +494,7 @@
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         call nc_sc_sichten()
+         call screen_schism_nc()
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select
@@ -489,7 +510,7 @@
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
 !
-      call transinfo_schritte(startzeitpunkt, startzeitpunkt+dt) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
+      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
 
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
@@ -571,18 +592,18 @@
       uhren=uhrzeit_stunde
       print*,'EREIGG.txt,   Berechnungsende: tag,monat,jahr, Uhrzeit, Endzeitpunkt' &
      &      , itage, monate, jahre, uhren, endzeitpunkt
-      dt=int(dt_min*60)
-      if(dt.le.0) then
-         write(fehler,*)'ereigg_modell: zeitschrittweite=',dt,' , und das ist falsch!'
+      deltat=int(dt_min*60)
+      if(deltat.le.0) then
+         write(fehler,*)'ereigg_modell: zeitschrittweite=',deltat,' , und das ist falsch!'
          call qerror(fehler)
-      end if ! zeitschrittweite dt ist falsch
-      if(abs(real(dt)-(dt_min*60)) .gt. 0.01) then
+      end if ! zeitschrittweite deltat ist falsch
+      if(abs(real(deltat)-(dt_min*60)) .gt. 0.01) then
          write(fehler,*)'ereigg_modell: angegebene zeitschrittweite=',dt_min,' minuten d.h.',(dt_min*60)  &
      &                 ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
          call qerror(fehler)
       end if ! Zeitschritt als ganze sekunden
-      zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/(dt)
-      print*,'zeitschrittanzahl, startzeitpunkt, endzeitpunkt, dt=',zeitschrittanzahl, startzeitpunkt, endzeitpunkt, dt
+      zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/(deltat)
+      print*,'zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat=',zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat
       if(zeitschrittanzahl.le.0) then
          print*,'WARNUNG zeitschrittanzahl=',zeitschrittanzahl,' , wollen Sie das wirklich ????'
          !! zeitschrittanzahl=null durchlaufen lassen, um Initialisierung ausgeben zu können 
@@ -591,16 +612,17 @@
          end if ! zeitschrittanzahl.lt.0
       end if ! zeitschrittanzahl.le.0
       !if(hydro_trieb.eq. 3)then !## preliminary SCHISM all hydro steps
-      !   dt=dttrans
+      !   deltat=dttrans
       !   startzeitpunkt=transinfo_zeit(transinfo_zuord(1))
       !   endzeitpunkt  =transinfo_zeit(transinfo_zuord(transinfo_anzahl))
-      !   zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/dt
-      !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' dt=',dt
+      !   zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/deltat
+      !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' deltat=',deltat
       !end if !SCHISM
 
       print*,"hydro_trieb=",hydro_trieb      !case(2) ! Untrim² netCDF
-      if((hydro_trieb.eq. 2).and.(dt.ne. 1200))then
-            call qerror('Untrim-Läufe bisher nur mit Zeitschrittweite 20 min. möglich')
+      if((hydro_trieb.eq. 2).and.(deltat.ne. 1200))then
+         !call qerror('Untrim-Läufe bisher nur mit Zeitschrittweite 20 min. möglich')
+         print*,"Untrim Lauf hydro_trieb=",hydro_trieb," deltat=",deltat, "sollte jetzt (okt20) eigentlich gehen"
       endif
 
       print*,'transinfo_zeit,Anfang+Ende=',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
@@ -612,7 +634,7 @@
       if(endzeitpunkt.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))  &
          call qerror('### Abbruch ### zum endzeitpunkt liegen keine Transportinformationen mehr vor')
       print*,'EREIGG.txt, Berechnungs-Zeitraum von ',startzeitpunkt,' bis ', endzeitpunkt  &
-            ,' mit zeitschrittweite ',dt  &
+            ,' mit zeitschrittweite ',deltat  &
             ,' liegt innerhalb des Zeitraums ',transinfo_zeit(transinfo_zuord(1)),' bis '  &
             ,transinfo_zeit(transinfo_zuord(transinfo_anzahl)),', in dem Transportinformationen vorliegen.'
 

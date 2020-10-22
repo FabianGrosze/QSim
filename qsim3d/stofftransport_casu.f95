@@ -353,7 +353,7 @@
          !ne_transinfo=3 !! einde: 3*300s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
          !ne_transinfo=6 !! einde: 6*150s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
          !ne_transinfo=1 !! einde: 1*900s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
-         ne_transinfo=dt/dttrans
+         ne_transinfo=deltat/dttrans
          gefunden=.true.
       end if
       if(ne_transinfo.lt.na_transinfo) ne_transinfo=na_transinfo
@@ -367,13 +367,13 @@
          deti=transinfo_zeit(transinfo_zuord(ne_transinfo))-transinfo_zeit(transinfo_zuord(na_transinfo))
          deti=deti+dttrans
       end if
-      if(deti.ne.dt)then
-         print*,'Zeitschrittweiten Transport=',dttrans,' - Güte=',dt,' passen nicht zueinander.' 
+      if(deti.ne.deltat)then
+         print*,'Zeitschrittweiten Transport=',dttrans,' - Güte=',deltat,' passen nicht zueinander.' 
          print*,'ganzzahlige Vielfache erforderlich.'
          print*,'deti=',deti
          print*,'anfang ',na_transinfo, transinfo_zuord(na_transinfo), transinfo_zeit(transinfo_zuord(na_transinfo))
          print*,'  ende ',ne_transinfo, transinfo_zuord(ne_transinfo), transinfo_zeit(transinfo_zuord(ne_transinfo))
-         if(hydro_trieb.eq.1)call qerror('deti.ne.dt')!! nur bei casu-Strombahnen abbrechen
+         if(hydro_trieb.eq.1)call qerror('deti.ne.deltat')!! nur bei casu-Strombahnen abbrechen
       end if
 
       print*," Für den Transport im Gütezeitschritt von ",start_zeitschritt," bis ", ende_zeitschritt  &

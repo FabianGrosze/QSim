@@ -1,3 +1,23 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 ! \page Datentechnik Informationstechnische Umsetzung und Parallelisierung
 ! \page numerik Numerik und Datentechnik
@@ -40,6 +60,7 @@
       subroutine parallel_ini()
       use modell
       use QSimDatenfelder
+	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
 
       call mpi_init(ierr)
@@ -48,6 +69,7 @@
       call mpi_comm_size(mpi_komm_welt,proz_anz, ierr)
       if (ierr.ne.0)call qerror('mpi_comm_size(mpi_komm_welt,proz_anz, ierr).ne.0')
       call mpi_comm_rank(mpi_komm_welt,meinrang,ierr)
+	  myrank=meinrang
       if (ierr.ne.0)call qerror('mpi_comm_rank(mpi_komm_welt,meinrang,ierr).ne.0')
       write(*,*)'Prozess #',meinrang,' started mit PID=',getpid()
 
@@ -63,6 +85,7 @@
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
+	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
       integer kontroll_lokal
 
@@ -125,7 +148,7 @@
       integer n, alloc_status
       !print*,meinrang," modell_parallel() ... startet"
 
-         call MPI_Bcast(dt,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierr)
          call MPI_Bcast(rechenzeit,1,MPI_INT,0,mpi_komm_welt,ierr)
          zeitpunkt=rechenzeit
          call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)

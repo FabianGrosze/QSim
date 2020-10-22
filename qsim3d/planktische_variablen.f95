@@ -92,11 +92,11 @@
 !!<tr><td> 59 </td><td> \anchor stind stind	</td><td> ph() ???? Minutenzähler; Versuch einer Altersvariablen ?		</td><td>		</td></tr>
 !!<tr><td> 60 </td><td> \anchor dlarvn dlarvn	</td><td> Anzahl der Dreissena-Larven 						</td><td> Ind/l 	</td></tr>
 !!<tr><td> 61 </td><td> \anchor coli coli	</td><td> Fäkalcoliforme Bakterien						</td><td> Ind/100 ml	</td></tr>
-!!<tr><td> 62 </td><td> \anchor mw mw		</td><td> Säurekapazität ?							</td><td> mmol/l	</td></tr>
-!!<tr><td> 63 </td><td> \anchor pw pw		</td><td> P-Wert ?								</td><td>		</td></tr>
+!!<tr><td> 62 </td><td> \anchor mw mw		</td><td> Säurekapazität (m-Wert) 						</td><td> mmol/l	</td></tr>
+!!<tr><td> 63 </td><td> \anchor pw pw		</td><td> Basenkapazität (p-wert)						</td><td> mmol/l	</td></tr>
 !!<tr><td> 64 </td><td> \anchor ca ca		</td><td> Calciumkonzentration							</td><td> mg Ca /l	</td></tr>
-!!<tr><td> 65 </td><td> \anchor lf lf		</td><td> Leitfähigkeit								</td><td>		</td></tr>
-!!<tr><td> 66 </td><td> \anchor vph vph 	</td><td> pH-Wert								</td><td>		</td></tr>
+!!<tr><td> 65 </td><td> \anchor lf lf		</td><td> Leitfähigkeit									</td><td> µS/cm		</td></tr>
+!!<tr><td> 66 </td><td> \anchor vph vph 	</td><td> pH-Wert										</td><td>	-		</td></tr>
 !!<tr><td> 67 </td><td> \anchor gesn gesn	</td><td> Gesamt-Stickstoff							</td><td> mg N / l	</td></tr>
 !!<tr><td> 68 </td><td> \anchor gesp gesp	</td><td> Gesamt-Phosphor 							</td><td> mg PO4-P / l	</td></tr>
 !!<tr><td> 69 </td><td> \anchor skmor skmor	</td><td> Silizium in schwebenden, abgestorbenen Kieselalgen			</td><td>		</td></tr>
@@ -173,11 +173,12 @@
             write(fehler,*)' return value allocate planktonic_variable_p :', as
             call qerror(fehler)
          end if 
-         do k=1,part ! i
-            do j=1,number_plankt_vari ! initialise all concentrations to -1
-               planktonic_variable_p(j+(k-1)*number_plankt_vari)=-1.0
-            end do
-         end do
+         !do k=1,part ! i
+         !   do j=1,number_plankt_vari ! initialise all concentrations to -1
+         !      planktonic_variable_p(j+(k-1)*number_plankt_vari)=-1.0
+         !   end do
+         !end do
+		 planktonic_variable_p(:)=-2.0
 
          ! vertical profiles i.e. full 3D
          allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )

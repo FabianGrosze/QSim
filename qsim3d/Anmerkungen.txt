@@ -1,4 +1,11 @@
 
+!-----------------------------------------------------------
+! Wyrwa@voss-cln-preprocess:~/sqsource> ssh oss-cln51
+! make clean, make pschism
+! cd QSim/qsim3d , make clean , make all
+!-----------------------------------------------------------
+
+
 Beschreibung der Ergänzung von nicht vorhandenen Randwerten in funkstar.f90
 Übernahme von funkstar.f90 zum Einlesen von EREIGG.txt ??
 

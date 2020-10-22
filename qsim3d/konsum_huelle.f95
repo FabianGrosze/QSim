@@ -59,7 +59,7 @@
 !!<tr><td> vkigr	</td><td> \ref tiefengemittelte_planktische_variable 19 </td><td> Anteil Kieselalgen </td><td> - </td></tr>
 !!<tr><td> TEMPW	</td><td> \ref tiefengemittelte_planktische_variable 1 </td><td> Wasser-Temperatur </td><td> °C </td></tr>
 !!<tr><td> VO2		</td><td> \ref tiefengemittelte_planktische_variable 2 </td><td> Sauerstoff </td><td> mg/l </td></tr>
-!!<tr><td> TFLIE	</td><td>  real(dt)/86400  </td><td> Zeitschritt </td><td> TFLIE in d; dt in s  </td></tr>
+!!<tr><td> TFLIE	</td><td>  real(deltatt)/86400  </td><td> Zeitschritt </td><td> TFLIE in d; deltat in s  </td></tr>
 !!<tr><td> </td><td> </td><td> </td><td> </td></tr>
 !!<tr><td> ezind	</td><td> - </td><td> keine Einleitungen in QSim-3D </td><td> - </td></tr>
 !!<tr><td> ZOOIND	</td><td> \ref tiefengemittelte_planktische_variable 50 </td><td> Individuendichte </td><td> 1/l </td></tr>
@@ -149,11 +149,6 @@
       integer :: i,j
 
       iglob=(i+meinrang*part)
-      if (iglob.gt. knotenanzahl2D) then
-         write(fehler,*)'konsum_huelle: iglob.gt. knotenanzahl2D ; knotenanzahl2D,i,meinrang,part,iglob' &
-     &                 ,knotenanzahl2D,i,meinrang,part,iglob
-         call qerror(fehler)
-      endif
 
 !! aus module::aparam
 !! , irmaxe, GRote
@@ -167,7 +162,7 @@
       tempw(2) = tempw(1)
       vo2(1) = planktonic_variable_p( 2+(i-1)*number_plankt_vari) ! Sauerstoffgehalt tiefengemittelt
       vo2(2) = vo2(1)
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
 
  ! ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl
       ezind = 0.0  ! Einleitungswert (keine Einleitungen in QSim-3D)

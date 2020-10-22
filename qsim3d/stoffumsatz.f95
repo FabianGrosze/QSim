@@ -58,7 +58,7 @@
 
       implicit none
       integer :: i, j , i1, i2, i3, n,k,nk
-      logical :: printi, nix
+      logical :: printi, nix, fehler_nan
       integer :: ilast, i1last
       real :: rlast,rcount
       real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
@@ -153,9 +153,10 @@
             if(isnan(transfer_quantity_p(k+(i-1)*number_trans_quant)))then
                print*,'nach ncyc_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang=',meinrang
                if(meinrang==0)print*,'trans_quant_name:',trans_quant_name(k)
-               !fehler_nan=.true.
+               fehler_nan=.true.
             endif
          end do
+		 if(fehler_nan)call qerror("nach ncyc_huelle: isnan(transfer_quantity_p")
 
          !------------------------------------------------------------------------ PH-Wert (falls gewünscht
          if(ipH.eq. 1) call ph_huelle(i)

@@ -492,7 +492,7 @@ end if !! alle Prozesse ausser 0
             read(ctext(2:2000), *, iostat = string_read_error ) &
      &           zone(izoni)%reib
             if(string_read_error.ne.0) call qerror('Lesefehler R-Zeile MODELLG.3D.txt')
-            print*,'MODELLG.3D.txt:','Sand-Rauheit ',zone(izoni)%reib,' in m zur '  &
+            print*,'MODELLG.3D.txt: Sand-Rauheit ',zone(izoni)%reib,' in m zur '  &
                   ,izoni,'. Zone mit Nummer ',zone(izoni)%zonen_nummer
             if(zone(izoni)%reib.le. 0.0)call qerror('Reibungsbeiwert unzulässig')
             rfolgt=rfolgt+1

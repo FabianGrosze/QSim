@@ -544,7 +544,7 @@ end if ! only prozessor 0
          do i=1,anz_gangl
          if(knot_gangl(i).gt.0)then !Knoten auf diesem Prozess
             close (ionumber+i) ! Dateien glk... schließen
-            !print*,'IntAmmonium(',knot_gangl(i),')=',(IntAmmonium(i)*real(dt)), dt
+            !print*,'IntAmmonium(',knot_gangl(i),')=',(IntAmmonium(i)*real(deltat)), deltat
             !print*,' ganglinien_schliessen ',knot_gangl(i) , ionumber+i,' meinrang=',meinrang
          end if ! knoten auf diesem Prozess
          end do ! alle Ausgabe-Knoten

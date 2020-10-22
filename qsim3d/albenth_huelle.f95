@@ -62,7 +62,7 @@
       if(kontroll)print*,'albenth_huelle  iglob,i,nk,meinrang=',iglob,i,nk,meinrang
 
       schwi(1:2)=schwi_T(zone(point_zone(iglob))%wettstat%wetterstations_nummer)    ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
       tempw(1:2)=planktonic_variable_p(1+nk)    ! Wasser-Temperatur
       tiefe(1:2)= rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
       vmitt(1:2) = rb_hydraul_p(1+(i-1)*number_rb_hydraul) ! Geschwindigkeitsbetrag; randbedingungen.h

@@ -29,7 +29,7 @@ clean:
 FD=qsim_doku_`date +%d%b%y`.taz
 
 save:
-	@/bin/rm -f qsim_doku_*.taz
+	@/bin/rm -f qsim_doku*.taz
 	@tar cvfz $(FD) ./img ./exp ./html ./pdf ./taz
 	@cp $(FD) $(MY_ARC)
 	@echo "saved $(FD) to $(MY_ARC)"
@@ -45,7 +45,7 @@ doc:
 	cp -r ./html ./dox/html
 	cp -r ./pdf ./dox/html
 	cp -r ./taz ./dox/html
-	cp qsim_doku_*.taz ./dox/html/taz/qsim_doku.taz
+	cp qsim_doku.taz ./dox/html/taz/qsim_doku.taz
 	rsync -ua ./dox/html/* $(INSTALL)
 	find $(INSTALL) -type d -exec chmod 755 {} \;
 	find $(INSTALL) -type f -exec chmod 644 {} \;

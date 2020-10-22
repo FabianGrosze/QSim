@@ -822,7 +822,7 @@
 
       schwi(1)=schwi_T(i2)    ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
       schwi(2)=schwi(1)
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       tempw(1)=planktonic_variable_p(1+nk)    ! Wasser-Temperatur
       tempw(2)=tempw(1)
 
@@ -1741,7 +1741,7 @@
 !!<table >
 !!<tr><th> Variablen-Name QSim-1D </th><th> Daten-Feld QSim-3D </th><th> Beschreibung </th><th> Einheit </th></tr>
 !!<tr><td> \ref schwi	</td><td> aus \ref wetter_rb </td><td> Globalstrahlung von strahlg_wetter() berechnet </td><td> cal/(cm2*h) </td></tr>
-!!<tr><td> \ref tflie	</td><td> real(dt)/86400 </td><td> Umwandlung des Zeitschritt </td><td> sekunden (QSim-3D) Tage (QSim-1D)</td></tr>
+!!<tr><td> \ref tflie	</td><td> real(deltat)/86400 </td><td> Umwandlung des Zeitschritt </td><td> sekunden (QSim-3D) Tage (QSim-1D)</td></tr>
 !!<tr><td> \ref tempw	</td><td> \ref tiefengemittelte_planktische_variable 1 </td><td> Wasser-Temperatur </td><td> °C </td></tr>
 !!<tr><td> \ref tempwz	</td><td> \ref tiefenaufgelöste_planktische_variable 1 </td><td> Wassertemperatur tiefenaufgelöst  </td><td> </td></tr>
 !!<tr><td> </td><td> </td><td>  </td><td> </td></tr>

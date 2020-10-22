@@ -130,7 +130,7 @@
 !!<tr><td> tempw(1) </td><td> \ref planktische_variablen 1 </td><td> aktuelle, lokale Wassertemperatur </td></tr>
 !!<tr><td> vx0(1)  </td><td> planktische_variablen::planktonic_variable_p (15+nk)  </td><td> nitrosomonas </td></tr>
 !!<tr><td> vNH4(1) </td><td> \ref planktische_variablen 3 </td><td> ammonium </td></tr>
-!!<tr><td> tflie </td><td> real(dt)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
+!!<tr><td> tflie </td><td> real(deltat)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
 !!<tr><td> rau(1)</td><td>benthische_verteilungen::benthic_distribution_p (5+(i-1)*number_benth_distr) </td><td> Strickler Reibungsbeiwert </td></tr>
 !!<tr><td> tiefe(1) </td><td> randbedingungen rb_hydraul_p (2+(i-1)*number_rb_hydraul) </td><td> Wassertiefe </td></tr>
 !!<tr><td> vmitt(1) </td><td> randbedingungen rb_hydraul_p (1+(i-1)*number_rb_hydraul) </td><td> Geschwindigkeitsbetrag | für die ABHAENGIGKEIT DER NITRIFIKATIONSLEISTUNG SESSILER NITRIFIKANTEN VON DER FLIESSGESCHWINDIGKEIT: </td></tr>
@@ -422,7 +422,7 @@
       vx0(2)  = vx0(1)
       vNH4(1) = planktonic_variable_p(3+nk)  ! ammonium
       vNH4(2) = vNH4(1)
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe
       if(tiefe(1).le.min_tief)print*,'ncyc_huelle: tiefe(1).le.min_tief,iglob,meinrang',tiefe(1),iglob,meinrang
       rau(1:2)= strickler( zone(point_zone(iglob))%reib , tiefe(1) ) ! Strickler Reibungsbeiwert

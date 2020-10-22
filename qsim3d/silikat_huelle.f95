@@ -56,7 +56,7 @@
 !!<tr><td> qeinl(1)</td><td> 0.0      </td><td> kein Abfluss Einleitung </td></tr>
 !!<tr><td> vabfl(1) </td><td> 2.5     </td><td> wird nur bei Einleitungen verwendet, die sind aber ausgeschaltet. </td></tr>
 !!<tr><td> anze</td><td>1            </td><td> Anzahl der Profile im aktuellen Strang </td></tr>
-!!<tr><td> tflie </td><td> real(dt)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
+!!<tr><td> tflie </td><td> real(deltat)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
 !!<tr><td> jiein(1)</td><td>0        </td><td> null Punkt-Einleitungen </td></tr>
 !!<tr><td> aki(1) </td><td> planktische_variablen::planktonic_variable_p (8+(i-1)*number_plankt_vari) </td><td> Anteil kiesel-Algen (wird nicht verwendet) </td></tr>
 !!<tr><td> </td><td> </td><td> </td></tr>
@@ -182,7 +182,7 @@
       vabfl(1) = 2.5     ! wird nur bei Einleitungen verwendet, die sind aber ausgeschaltet.
       vabfl(2) = vabfl(1)
       anze=1            ! Anzahl der Profile im aktuellen Strang
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       jiein(1)=0        ! null Punkt-Einleitungen
       aki(1) = planktonic_variable_p(8+(i-1)*number_plankt_vari) ! Anteil kiesel-Algen (wird nicht verwendet)
       aki(2) = aki(1)

@@ -1,3 +1,23 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> \page Transport_Untrim Transportinformationen von Untrim (Zellrandflüsse)
 !! dargestellt im Vortrag Wyrwa QSimworkshop 2017.
@@ -12,6 +32,7 @@
       integer :: start3(3), count3(3)
       integer :: start2(2), count2(2)
       integer nt, n,j,k, varid, alloc_status
+	  real c
 
          !---------------elemente
          print*,'holen_trans_untrim: zeitpunkt,nt=',transinfo_zeit(transinfo_zuord(nt)),nt
@@ -40,6 +61,7 @@
          !print*,'stofftransport_untrim: got Mesh2_face_Wasserflaeche_2d'
 
          !---------------kanten
+		 ed_vel_x(:)=0.0;ed_vel_y(:)=0.0
          start3 = (/ 1, 1, nt /)
          count3 = (/ kantenanzahl, 1, 1 /)
          !float Mesh2_edge_Durchflussflaeche_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
@@ -50,6 +72,7 @@
          call check_err( nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
+	     !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
          do n=1,kantenanzahl
             !Mesh2_edge_Durchflussflaeche_2d:_FillValue = 1.e+31f ; 
             if ((ed_area(n).le. 0.0).or.(ed_area(n).gt. 1.e+30)) then ! Kante trocken ?
@@ -57,14 +80,25 @@
                ed_vel_x(n)=0.0
                ed_vel_y(n)=0.0
             end if ! Kante trocken
+			!print*,n,ed_vel_x(n),ed_vel_y(n)
+		    ! Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d:_FillValue = 1.e+31f ;
+			if(ed_vel_x(n)>100.0)ed_vel_x(n)=0.0
+			if(ed_vel_y(n)>100.0)ed_vel_y(n)=0.0
          end do ! alle n kanten
 
          do n=1,n_elemente ! mean velocity magnitude in element
             u(n)= 0.0
             do k=1,cornernumber(n) 
                u(n)= u(n)+ (ed_vel_x(elementedges(n,k))**2 + ed_vel_y(elementedges(n,k))**2)**0.5
+			   if(u(n)>huge(u(n)))then
+			      print*,"ed_vel_x,y,elementedges,n,k=",  &
+     &   		  ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
+			      call qerror("holen_trans_untrim u infinity")
+               endif
             end do ! alle k Kanten im Element
-            u(n)= u(n)/real(cornernumber(n))
+			c=real(cornernumber(n))
+			if(c .le. 0.0)call qerror("cornernumber(n) ist null ???")
+            u(n)= u(n)/c
 
             inflow(n)=.false.
             if(element_rand(n).gt. 0) inflow(n)=.true.
@@ -103,9 +137,9 @@
       allocate (zwischen(number_plankt_vari, number_plankt_point), stat = alloc_status )
       if(alloc_status.ne.0) call qerror('allocate (zwischen(number_plankt_vari failed')
 
-      print*,'stofftransport_untrim: startzeitpunkt, zeitpunkt, dt, endzeitpunkt' &
-     &        ,startzeitpunkt, zeitpunkt, dt, endzeitpunkt
-      dt_sub=real(dt)/real(num_sub)
+      print*,'stofftransport_untrim: startzeitpunkt, zeitpunkt, deltat, endzeitpunkt' &
+     &        ,startzeitpunkt, zeitpunkt, deltat, endzeitpunkt
+      dt_sub=real(deltat)/real(num_sub)
       print*,'stofftransport_untrim:',num_sub,' Sub-zeitschritte von der Länge=',dt_sub
 
       do nt=1,num_sub ! alle Transport (zwischen) Zeitschritte
@@ -116,7 +150,7 @@
      &      ,' Tracer=', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
          end if !kontrollknoten
 
-         subtim=startzeitpunkt + int( real((2*nt-1)*dt)/real(num_sub*2) )
+         subtim=startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
 
          if(subtim.lt.transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
          if(subtim.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
@@ -203,7 +237,7 @@
                end do !alle 5
             endif ! sumwicht.gt.0.0
          end do ! alle n Elemente
-         print*,'stofftransport_untrim: cu_max,cu_min,dt=',cu_max ,cu_min, dt
+         print*,'stofftransport_untrim: cu_max,cu_min,deltat=',cu_max ,cu_min, deltat
 
          do j=1,number_plankt_point ! all j elements (*levels?)
             do n=1,number_plankt_vari ! all transported concentrations i.e. variables
@@ -592,7 +626,7 @@
       end do ! alle n Elemente
 
       !----------------------------------------------------------------------  Ränder,boundaries
-      ! Die Varablen sind bei Untrim-Antrieb an den Elementen definiert, daher müssen doert auch die Randbedingungen angebracht werden.
+      ! Die Variablen sind bei Untrim-Antrieb an den Elementen definiert, daher müssen doert auch die Randbedingungen angebracht werden.
       ! Zuflussränder sind aber nur an den Kanten erkennbar, daher müssen sie hier jetzt in element_rand eingearbeitet werden:
       do n=1,n_elemente ! alle Elemente
          ndumm=element_rand(n)
@@ -714,25 +748,43 @@
       include 'netcdf.inc'
       integer, parameter :: attstrlen=2000
       CHARACTER(attstrlen) :: attstring
-      integer i,j,k,n, alloc_status, didi, io_error, nnn
+      CHARACTER(256) :: aname
+      integer i,j,k,n, alloc_status, didi, io_error, nnn, timesteps
       real delt, parttime
+	  real , allocatable , dimension (:) :: zeitstunde, secuz
+
 if(meinrang.eq.0)then ! prozess 0 only
+      !! nMesh2_time ist leer
+      ! call check_err( nf90_inq_dimid(ncid, "nMesh2_time", didi) )
+      ! call check_err( nf90_Inquire_Dimension(ncid, didi, aname, timesteps) )
+      ! print*,"read_mesh_nc: nMesh2_time zeitschritte=",timesteps," ",trim(aname)
+      ! call check_err(  nf90_inq_varid(ncid,"nMesh2_time", didi) )
+      ! allocate (secuz(timesteps), stat = alloc_status )
+      ! call check_err(  nf90_get_var(ncid, didi, secuz) )
+      ! print*,"netcdf nMesh2_time",timesteps," Zeitschritte von: ",secuz(1)," bis: " &
+      !&      ,secuz(timesteps)," Sekunden"
 
       ! transinfo_anzahl bereits bekannt
       if(transinfo_anzahl.lt. 1)call qerror('No transport info')
+      allocate (zeitstunde(transinfo_anzahl), stat = alloc_status )
+      if(alloc_status.ne.0) call qerror("allocate (zeitstunde(transinfo_anzahl) failed")
       allocate (transinfo_zeit(transinfo_anzahl),transinfo_zuord(transinfo_anzahl), stat = alloc_status )
       if(alloc_status.ne.0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")
-      call check_err(  nf90_inq_varid(ncid,'nMesh2_data_time', didi) )
-      call check_err(  nf90_get_var(ncid, didi, transinfo_zeit) )
-      print*,'netcdf ',transinfo_anzahl,' Zeitschritte von: ',transinfo_zeit(1)," bis: " &
-     &      ,transinfo_zeit(transinfo_anzahl)," Stunden"
-      do n=1,transinfo_anzahl ! Stunden in Sekunden
-         transinfo_zeit(n)= transinfo_zeit(n)*3600
+      call check_err( nf90_inq_dimid(ncid,"nMesh2_data_time", didi) )
+      call check_err( nf90_inq_varid(ncid,"nMesh2_data_time", didi) )
+      call check_err( nf90_get_var(ncid, didi, zeitstunde) )
+      print*,'netcdf nMesh2_data_time',transinfo_anzahl,' Zeitschritte von: ',zeitstunde(1)," bis: " &
+     &      ,zeitstunde(transinfo_anzahl)," Stunden"
+	  !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
+	  delt=(zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
+      print*,'nc_sichten: delt=',delt,(delt*3600.0),int(delt*3600.0)
+      do n=1,transinfo_anzahl ! Stunden in Sekunden, regelmäßige integer Zeitpunkte
+         transinfo_zeit(n)= (n-1)*int(delt*3600.0) + int(zeitstunde(1)*3600.0)
          transinfo_zuord(n)=n
-         nnn=n-1-(((n-1)/3)*3)
-         transinfo_zeit(n)= transinfo_zeit(n)+ 1200.0*real(nnn)
+         !nnn=n-1-(((n-1)/3)*3)
+         !transinfo_zeit(n)= transinfo_zeit(n)+ 1200.0*real(nnn) !Elbe
+         !transinfo_zeit(n)= transinfo_zeit(n)+ 600.0*real(nnn) !Weser
       end do ! alle Transportzeitschritte
-      print*,'########################## Warnung nur für nc-Datei mit 1200sek. Zeitschritt ##########################'
       do i=1,attstrlen
          attstring(i:i)=' '
       end do                                     
@@ -761,12 +813,13 @@ if(meinrang.eq.0)then ! prozess 0 only
       !end do ! alle Transportzeitschritte
 
       dttrans=transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
-      print*,'netcdf erste Zeitschritt-Länge=',dttrans," zuord:",transinfo_zuord(2),transinfo_zuord(1)
+      print*,'netcdf erste Zeitschritt-Länge=',dttrans," zuord(2und1):",transinfo_zuord(2),transinfo_zuord(1)
       do n=3,transinfo_anzahl,1
          delt=transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
-         if(delt.ne.dttrans)then
+         if((delt.ne.dttrans).or.(delt.lt.1.0))then
             print*,n,'=n dttrans=',dttrans," transinfos_zeit (n) und (n-1) ="  &
-     &            ,transinfo_zeit(transinfo_zuord(n)),transinfo_zeit(transinfo_zuord(n-1))
+     &            ,transinfo_zeit(transinfo_zuord(n)),transinfo_zeit(transinfo_zuord(n-1))  &
+	 &            ,"transinfo_zuord(n)und(n-1)=",transinfo_zuord(n),transinfo_zuord(n-1)
             print*,'transinfo_zuord(n),transinfo_zuord(n-1)=',transinfo_zuord(n),transinfo_zuord(n-1)
             do nnn=1,15,1
                print*,nnn,'=n transinfo_zeit=',transinfo_zeit(transinfo_zuord(nnn)),transinfo_zuord(nnn)
@@ -786,6 +839,7 @@ if(meinrang.eq.0)then ! prozess 0 only
       write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
       print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
+      deallocate(zeitstunde) !,secuz)
 
 end if ! only prozessor 0
       call mpi_barrier (mpi_komm_welt, ierr)

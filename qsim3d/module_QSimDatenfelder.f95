@@ -5,7 +5,7 @@
 !! QSim3D ist in Fortran95 geschrieben. Darin ist es gleichgültig, ob ein Variablenname mit Groß- oder Kleinbuchstaben geschrieben wird.
 !! z. B. bezeichnet Q_NK den gleichen Speicherplatz wie q_nk.\n
 !! In dieser Doxygen-Dokumentation werden alle Variablennamen klein geschrieben, weil Groß/Kleinschreibung für Doxygen signifikant ist und
-!! die Verweise innerhalb der Dokumentation anders nicht funktionieren. Beim Lesen ist daher leider etwas Umdenken erforderlich, weil bestimmte
+!! die Verweise innerhalb der Dokumentation anders nicht funktionieren. Beil Lesen ist daher leider etwas Umdenken erforderlich, weil bestimmte
 !! Groß- und Klein-Schreibungen bei QSim1D-Variablen üblich sind.
 !!\n\n
 !! zurück zu: \ref hüllen
@@ -57,8 +57,8 @@
     integer, Dimension(1000)            :: ischif
 !> \anchor nkzs Anzahl Tiefenschichten (tiefenaufgelöste Variante von QSim1D). In QSim3d momentan immer 1. Siehe dazu auch \ref hüllen.
     integer, Dimension(1000)            :: nkzs
-!>  \anchor tflie Zeitschrittlänge in Tagen in QSim3D berechnet aus dem Zeitschritt in Sekunden \ref dt \n
-!!  tflie = real(dt)/86400
+!>  \anchor tflie Zeitschrittlänge in Tagen in QSim3D berechnet aus dem Zeitschritt in Sekunden \ref deltat \n
+!!  tflie = real(deltat)/86400
     real                                :: TFLIE
 !> \anchor dh2d dH2D = 0.25 ! Dicke Tiefenschicht ??? Siehe dazu auch \ref hüllen.
     real                                :: dh2d
@@ -377,7 +377,7 @@
     real, Dimension(50,1000)       :: algzkz, algzgz, algzbz 
 
 ! algae...
-!> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum Einlesen von e_extnct.dat,  siehe auch \ref extnct_rb 
+!> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref extnct_rb 
       character(255) cpfad
       REAL LNQ,ir(1000)
 !> \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref hüllen.

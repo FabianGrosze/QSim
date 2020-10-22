@@ -70,7 +70,7 @@
 !! \n\n
 !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n 
 !! \n\n
-!! Die Tiefenverteilung von QSim1D (welche dort als 2D bezeichnet wird) ist dort nicht komplett für alle Konzentrationen formuliert. 
+!! Die Tiefenverteilung von QSim1D (welche dort als 2D bezeichnet wird) ist dort nicht komplett für ale Konzentrationen formuliert. 
 !! Eine Übernahme ins mehrdimensionale ist nicht geplant.
 !! QSim3D arbeitet z. Zt. (Mai 2018) noch durchgängig tiefenintegriert.
 !! \n\n 
@@ -182,8 +182,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 
 !> \anchor rechenzeit aktuelle rechenzeit in ganzen Sekunden
       integer :: rechenzeit
-!> \anchor dt Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
-      integer :: dt !! in ganzen Sekunden
+!> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
+      integer :: deltat !! in ganzen Sekunden
 !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
       integer :: zeitschrittanzahl
 !> \anchor izeit izeit Zeitschrittzähler
@@ -237,7 +237,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:) :: edge_normal_x,edge_normal_y
       real , allocatable , dimension (:) :: edge_ground, cell_bound_length
       integer , allocatable , dimension (:) :: top_node,bottom_node,left_element,right_element, boundary_number, zon_num
-      real , allocatable , dimension (:) :: edge_mid_x,edge_mid_y ! mid-side location of edges
+      real , allocatable , dimension (:) :: edge_mid_x, edge_mid_y ! mid-side location of edges
 
 !> toleranzen und clipping-Werte
       real , parameter :: min_tief=0.01
@@ -392,7 +392,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:,:,:) :: wertw_T
 !> Zeitpunkt des Wetterwertes
       integer , allocatable , dimension (:,:) :: zeitpunktw
-!> Interpolierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
+!> Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
       real , allocatable , dimension (:) :: glob_T,  tlmax_T,  tlmin_T, tlmed_T
       real , allocatable , dimension (:) :: ro_T,  wge_T,  cloud_T,  typw_T
 !> lokale Strahlung ?:
@@ -431,8 +431,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       integer transinfo_anzahl, maxstack
       integer,allocatable :: ne_sc(:),np_sc(:),ns_sc(:) ! all numbers on process 0
       integer,allocatable :: ielg_sc(:,:),iplg_sc(:,:),islg_sc(:,:) ! global numbers all ranks on process 0
-      real , allocatable , dimension (:) :: var_p ! array to read stored variables from .nc files, each process its part
-      real , allocatable , dimension (:) :: var_g ! array into which var_p variables are gathered (recombined) on process 0
+
       integer :: nst_prev ! stack number of preveously read timestep
 !> Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
       integer :: na_transinfo, ne_transinfo, anz_transinfo
@@ -446,7 +445,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:) :: ur_x, ur_y, ur_z
 !> Felder für Untrim, elemente/faces=Zellen 
       real , allocatable , dimension (:) :: el_vol, el_area
-      real , allocatable , dimension (:) :: ed_vel_x, ed_vel_y, ed_flux, ed_area
+!> Felder für (untrim), edges
+      double precision , allocatable , dimension (:) :: ed_vel_x, ed_vel_y, ed_flux, ed_area
 !> annahme stationäres Strömungsfeld, nur eine transportinfo-datei verwenden.
       logical , parameter  :: stationaer=.false.
 !> Einströmränder detektieren.
@@ -918,14 +918,14 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !! \n\n
       subroutine zeitschritt_halb(vorher)
          logical :: vorher
-         rechenzeit=rechenzeit+(dt/2)
-         uhrzeit_stunde=uhrzeit_stunde+(real((dt/2))/3600.0)
+         rechenzeit=rechenzeit+(deltat/2)
+         uhrzeit_stunde=uhrzeit_stunde+(real((deltat/2))/3600.0)
          if(uhrzeit_stunde.ge.24.0)uhrzeit_stunde=uhrzeit_stunde-24.0
          zeitpunkt=rechenzeit
          !call zeitsekunde()
          if(vorher)then ! vor dem Zeitschritt
-            startzeitpunkt=rechenzeit-(dt/2)
-            endzeitpunkt=startzeitpunkt+dt 
+            startzeitpunkt=rechenzeit-(deltat/2)
+            endzeitpunkt=startzeitpunkt+deltat 
          end if
       END subroutine zeitschritt_halb
 
@@ -937,8 +937,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
          !rechenzeit=252590400  ! 2008
          !rechenzeit=189432000  ! 2006
          rechenzeit=0
-         !dt=900 !3600
-         dt=3600
+         !deltat=900 !3600
+         deltat=3600
          uhrzeit_stunde=12.0
          izeit=0
          zeitschrittanzahl=1

@@ -1,3 +1,23 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> \page Ergebnisse Ergebnisse ausgeben, darstellen und auswerten
 !!
@@ -91,8 +111,6 @@
 !! zurück: \ref Modell_Benutzung ; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
 
 
-
-
 !> macht nur Verzweigung nach hydraulischem treiber wegen deren unterschiedlichen Datenstrukturen 
 !! \n\n
 !! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
@@ -122,820 +140,6 @@ end if ! nur Prozessor 0
       RETURN
       END subroutine ausgeben
 !----+-----+----+-----+----+-----+----+-----+----
-
-      SUBROUTINE ausgeben_schism(itime)
-      use modell                                                   
-      implicit none
-      character(len=longname) :: dateiname, systemaufruf, zahl
-      integer :: i,j,k,n, istat, ion, errcode
-      integer :: sysa, itime
-      real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy, vx, vy, vz
-      real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
-      real , allocatable , dimension (:) :: output
-
-      if(meinrang.ne.0)call qerror('ausgeben_schism() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
-      write(zahl,*)itime
-      zahl=adjustl(zahl)
-      print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime=',trim(zahl), rechenzeit, itime
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'results_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_schism writing filename results_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_schism writing system call rm -rf dateiname failed')
-      call system(systemaufruf)
-      ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = istat )
-      if(istat.ne. 0) then
-         write(fehler,*)'open_error results_.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-
-      !! mesh
-      call mesh_output(ion)
-
-      !! hydraulic
-      write(ion,'(A)')'SCALARS WSP float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') p(n)
-         !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-      end do
-      write(ion,'(A)')'SCALARS tief float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-      end do ! alle Knoten
-      write(ion,'(A)')'SCALARS vel_norm float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') u(n)
-      end do 
-      write(ion,'(A)')'VECTORS vel float'
-      !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      do n=1,number_plankt_point
-         !   vel_x(j)=u(j)
-         !   vel_y(j)=dir(j) 
-         !vx=u(n)*cos(dir(n))*(-1.0)
-         !vy=u(n)*sin(dir(n))*(-1.0)
-         vz=0.0
-         write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') vel_x(n), vel_y(n), vz
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS rang float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') real( knoten_rang(n) )
-      end do ! alle Knoten
-
-      !! planktonic variables
-      do j=1,number_plankt_vari ! all depth averaged planktonic variables
-         if(output_plankt(j))then ! output requested
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,number_plankt_point ! all nodes
-               aus=planktonic_variable(j+(n-1)*number_plankt_vari)
-               write(ion,'(f27.6)') aus
-            end do ! all nodes
-         end if ! output requested
-      end do ! all planktonic_variable
-
-      close (ion)
-      RETURN
-      END subroutine ausgeben_schism
-!----+-----+----+-----+----+-----+----+-----+----
-
-      SUBROUTINE ausgeben_untrim(itime)
-      use modell                                                   
-      implicit none
-      character(len=longname) :: dateiname, systemaufruf, zahl
-      integer :: i,j,k,n, open_error, ion, system_error, string_read_error, alloc_status
-      integer :: sysa, itime, errcode
-      real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy
-      real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al,aufenthaltszeit
-      real , allocatable , dimension (:) :: output
-
-      if(meinrang.ne.0)call qerror('ausgeben_untrim() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
-      write(zahl,*)itime
-      zahl=adjustl(zahl)
-      print*,'ausgeben_untrim aufgerufen für t, rechenzeit=',trim(zahl), rechenzeit
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'elemente_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing filename elemente_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname failed')
-      call system(systemaufruf)
-      ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
-      if(open_error.ne.0) then
-         write(fehler,*)'open_error elemente_.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-
-      write(ion,'(A)')'# vtk DataFile Version 3.0'
-      write(ion,'(A)')'Simlation QSim3D untrim'
-      write(ion,'(A)')'ASCII'
-      write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12,2x,A)')'POINTS ',number_plankt_point, ' float'
-      do n=1,number_plankt_point
-         write(ion,'(f17.5,2x,f17.5,2x,f8.3)') element_x(n), element_y(n), 0.0
-      end do ! alle Knoten
-
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12,2x,I12)')'CELLS ', number_plankt_point, number_plankt_point*2
-      do n=1,number_plankt_point
-         write(ion,'(A,2x,I12)')'1',n
-      end do ! alle Knoten
-
-      write(ion,'(A)')' ' ! vtk-vertex
-      write(ion,'(A,2x,I12)')'CELL_TYPES ', number_plankt_point
-      do n=1,number_plankt_point
-         write(ion,'(A)')'1'
-      end do ! alle Knoten
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12)')'POINT_DATA ', number_plankt_point
-      write(ion,'(A)')'SCALARS Rang float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') real(n/part)
-      end do ! all elements
-
-      write(ion,'(A)')'SCALARS tiefe_rb2 float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS WSP float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') p(n)
-         !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-      end do ! all elements
-      write(ion,'(A)')'SCALARS vel float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') u(n)
-      end do 
-      write(ion,'(A)')'SCALARS dt_max float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         dummy= 1.0-wicht((n-1)*5+1)
-         if(dummy.gt. 0.0) then
-            dummy=real(dt)/dummy
-            write(ion,'(f27.6)') dummy
-         else
-            write(ion,'(f27.6)') 0.0
-         end if
-     end do ! alle n Elemente
-      write(ion,'(A)')'SCALARS Cu float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(f27.6)') cu(n)
-     end do ! alle n Elemente
-         !dummy=0.0
-         ! im Element vorhandenes Volumen geteilt durch den Ausfluss = Zeit innerhalb der das Elementvolumen ganz aus ihm entschwindet
-         !if(wicht((n-1)*5+1).gt. 0.0) dummy=el_vol(n)/wicht((n-1)*5+1)
-         !write(ion,'(f27.6)') dummy
- 
-      !write(ion,'(A)')'SCALARS Randnummer float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,number_plankt_point
-      !   write(ion,'(f27.6)') real( rabe(element_rand(n))%nr_rb )
-      !end do 
-      write(ion,'(A)')'SCALARS element_rand float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') real( element_rand(n) )
-      end do 
-      write(ion,'(A)')'SCALARS element_zone float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') real( element_zone(n) )
-      end do 
-      write(ion,'(A)')'SCALARS point_zone float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') real( point_zone(n) )
-      end do 
-
-      write(ion,'(A)')'SCALARS rau float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') zone(point_zone(n))%reib
-      end do 
-      write(ion,'(A)')'SCALARS strickler float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') strickler( zone(point_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
-      end do 
-
-
-      write(ion,'(A)')'SCALARS inflow float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         if(inflow(n))then
-            write(ion,'(A)') '1.0'
-         else
-            write(ion,'(A)') '0.0'
-         endif
-      end do 
-
-      if(nur_alter) then ! Aufenthaltszeit in Tagen ! Altersberechnung wie in Shen&Wang 2007 
-         write(ion,'(A)')'SCALARS age_arith float 1'
-         write(ion,'(A)')'LOOKUP_TABLE default'
-         do n=1,number_plankt_point
-            tr=planktonic_variable(71+(n-1)*number_plankt_vari)
-            al=planktonic_variable(74+(n-1)*number_plankt_vari)
-            aus = 0.0
-            if(tr .gt. 0.00001 ) aus= al / tr
-            write(ion,'(6x,f27.6)') aus
-         end do ! alle Knoten
-      end if !nur_alter
-
-      ! planktische, transportierte Konzentrationen entsprechend ausgabeflag 
-      do j=1,number_plankt_vari ! alle tiefengemittelten 
-         if(output_plankt(j))then ! zur ausgabe vorgesehen
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,number_plankt_point ! alle Knoten
-               aus=planktonic_variable(j+(n-1)*number_plankt_vari)
-               write(ion,'(f27.6)') aus
-            end do ! alle Elemente
-         !   print*,'ausgeben_untrim: done output for ',ADJUSTL(trim(planktonic_variable_name(j)))
-         !else
-         !   print*,'ausgeben_untrim: no output for ',ADJUSTL(trim(planktonic_variable_name(j)))
-         end if ! zur ausgabe vorgesehen
-      end do ! alle planktonic_variable
-
-      close (ion)
-      print*,'elemente_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing filename kanten_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname kanten_ failed')
-      call system(systemaufruf)
-      ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
-      if(open_error.ne.0) then
-         write(fehler,*)'open_error elemente_.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-
-      write(ion,'(A)')'# vtk DataFile Version 3.0'
-      write(ion,'(A)')'Simlation QSim3D untrim'
-      write(ion,'(A)')'ASCII'
-      write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12,2x,A)')'POINTS ',kantenanzahl, ' float'
-      do n=1,kantenanzahl
-         write(ion,'(f17.5,2x,f17.5,2x,f8.3)') 0.5*(knoten_x(top_node(n))+knoten_x(bottom_node(n)))  &
-                                             , 0.5*(knoten_y(top_node(n))+knoten_y(bottom_node(n))), 0.0
-      end do ! alle kanten
-
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*2
-      do n=1,kantenanzahl
-         write(ion,'(A,2x,I12)')'1',n
-      end do ! alle kanten
-
-      write(ion,'(A)')' ' ! vtk-vertex
-      write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
-      do n=1,kantenanzahl
-         write(ion,'(A)')'1'
-      end do ! alle kanten
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl
-      write(ion,'(A)')'SCALARS flux_area float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,kantenanzahl
-         write(ion,'(f27.6)') ed_area(n)
-      end do ! alle kanten
-      write(ion,'(A)')'SCALARS volume_flux float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,kantenanzahl
-         write(ion,'(f27.6)') ed_flux(n)
-      end do ! alle kanten
-      write(ion,'(A)')'SCALARS boundary float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,kantenanzahl
-         write(ion,'(f27.6)') real(boundary_number(n))
-      end do ! alle kanten
-
-      write(ion,'(A)')'VECTORS vel float'
-      !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      do n=1,kantenanzahl
-         write(ion,'(6x, f11.6, 2x, f11.6, A)') ed_vel_x(n), ed_vel_y(n),'   0.0'
-      end do ! alle Knoten
-
-      write(ion,'(A)')'VECTORS normal float'
-      !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      do n=1,kantenanzahl
-         write(ion,'(6x, f11.6, 2x, f11.6, A)') edge_normal_x(n), edge_normal_y(n),'   0.0'
-      end do ! alle Knoten
-
-      close (ion)
-      print*,'kanten_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'knoten_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing filename knoten_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname knoten_ failed')
-      call system(systemaufruf)
-      ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
-      if(open_error.ne.0) then
-         write(fehler,*)'open_error knoten_.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-
-      write(ion,'(A)')'# vtk DataFile Version 3.0'
-      write(ion,'(A)')'Simlation QSim3D untrim'
-      write(ion,'(A)')'ASCII'
-      write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
-      do n=1,knotenanzahl2D
-         write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), 0.0
-      end do ! alle knoten
-
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente, summ_ne
-      do n=1,n_elemente ! alle Elemente
-         if (cornernumber(n).eq.3)then
-            write(ion,'(4(I8,2x))') & 
-            cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
-         end if
-         if (cornernumber(n).eq.4)then
-            write(ion,'(5(I8,2x))') &
-            cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
-         end if
-      end do ! alle Elemente
-
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12)')'CELL_TYPES ', n_elemente
-      do n=1,n_elemente ! alle Elemente
-         if (cornernumber(n).eq.3)write(ion,'(A)') '5' 
-         if (cornernumber(n).eq.4)write(ion,'(A)') '9' 
-      end do ! alle Elemente
-
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
-      write(ion,'(A)')'SCALARS knot_ele float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         write(ion,'(f27.6)') real(knot_ele(n))
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS knoten_rand float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         write(ion,'(6x,f27.6)') real( knoten_rand(n) )
-      end do 
-      write(ion,'(A)')'SCALARS knoten_zone float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         write(ion,'(6x,f27.6)') real( knoten_zone(n) )
-      end do 
-
-      allocate (output(knotenanzahl2D), stat = alloc_status )
-
-      ! planktische, transportierte Konzentrationen entsprechend ausgabeflag 
-      do j=1,number_plankt_vari ! alle tiefengemittelten 
-         if(output_plankt(j))then ! zur ausgabe vorgesehen
-            do n=1,knotenanzahl2D
-               output(n)=0.0
-            end do ! alle Knoten
-            do n=1,n_elemente ! alle Elemente
-               do k=1,cornernumber(n)
-                  output(elementnodes(n,k))=output(elementnodes(n,k))+planktonic_variable(j+(n-1)*number_plankt_vari)
-               end do ! alle ecken
-            end do ! alle Elemente
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,knotenanzahl2D
-               write(ion,'(f27.6)') output(n)/real(knot_ele(n))
-            end do ! alle Knoten
-         end if ! zur ausgabe vorgesehen
-      end do ! alle planktonic_variable
-
-      if(nur_alter) then ! Aufenthaltszeit in Tagen ! Altersberechnung wie in Shen&Wang 2007 mit real function aufenthaltszeit (tracer,alter)
-         write(ion,'(A)')'SCALARS Tage_Aufenthalt float 1'
-         write(ion,'(A)')'LOOKUP_TABLE default'
-         do n=1,knotenanzahl2D
-            output(n)=0.0
-         end do ! alle Knoten
-         do n=1,number_plankt_point
-            tr=planktonic_variable(71+(n-1)*number_plankt_vari)
-            al=planktonic_variable(73+(n-1)*number_plankt_vari)
-            aus = 0.0
-            if(tr .gt. 0.00001 ) aus= al / tr
-            do k=1,cornernumber(n)
-               output(elementnodes(n,k))=output(elementnodes(n,k))+aus
-            end do ! alle ecken
-         end do ! alle Elemente
-         do n=1,knotenanzahl2D
-            write(ion,'(f27.6)') output(n)/real(knot_ele(n))
-         end do ! alle Knoten
-      end if !nur_alter
-
-      deallocate (output, stat = alloc_status )
-      close (ion)
-      print*,'knoten_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      RETURN
-      END subroutine ausgeben_untrim
-
-!----+-----+----
-
-!> Ausgabe in Dateien, die von Paraview dargestellt werden können ??\n
-!! zunächst Visualisierung der Ergebnisse mit Paraview\n 
-!! (casu: Ausgabe der Datei output.vtk mittels Aufruf des Programms >out08 [modell], paraview starten mit >para) 
-!! \n\n
-!! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
-      SUBROUTINE ausgeben_casu()
-      use modell                                                   
-      implicit none
-      character(len=longname) :: dateiname, systemaufruf, zahl
-      integer :: i,j,n, open_error, ion, system_error, string_read_error, alloc_status
-      integer :: sysa, errcode
-      real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, summwicht
-      real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al,aufenthaltszeit
-
-      !bali=.false. !! z. Z. Keine bahnlinien_ausgabe
-      !bali=.true.  jetzt in jetzt_ausgeben !! bahnlinien_ausgabe bitte
-
-      if(meinrang.ne.0)call qerror('ausgeben_casu sollte eigentlich nur von Prozessor 0 aufgerufen werden')
-
-      if(knotenanzahl2D.ne.number_plankt_point)then
-         write(fehler,*)'knotenanzahl2D.ne.number_plankt_point ',knotenanzahl2D, number_plankt_point
-         call qerror(fehler)
-      end if
-      if(knotenanzahl2D.ne.number_trans_quant_points)then
-         write(fehler,*)'knotenanzahl2D.ne.number_trans_quant_points'
-         call qerror(fehler)
-      end if
-      if(knotenanzahl2D.ne.number_benthic_points)then
-         write(fehler,*)'knotenanzahl2D.ne.number_benthic_points ... full 3D output not yet implemented'
-         call qerror(fehler)
-      end if
-
-      write(zahl,*)rechenzeit
-      zahl=adjustl(zahl)
-
-!-------------------------------------
-if(bali) then !! kontrollausgabe der Bahnlinien
-      print*,'Ausgabe bahnlinien/stromstriche'
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'bahnlinien_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_casu writing filename bahnlinien_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_casu writing system call rm -rf dateiname bahnlinien_ failed')
-      call system(systemaufruf)
-      ion=104
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
-      if(open_error.ne.0) then
-         write(fehler,*)'open_error bahnlinien.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-      !write(ion,*)'huhu ausgabe'
-      write(ion,'(A)')'# vtk DataFile Version 3.0'
-      write(ion,'(A)')'Simulation QSim3D casu'
-      write(ion,'(A)')'ASCII'
-      !write(ion,'(A)')'DATASET POLYDATA'
-      write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-!
-      write(ion,'(A)')' '
-      write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D*2, ' float'
-      do n=1,knotenanzahl2D
-         write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-      end do ! alle Knoten
-      do n=1,knotenanzahl2D
-         write(ion,'(f17.5,2x,f17.5,2x,f8.3)') ur_x(n), ur_y(n), ur_z(n)
-      end do ! alle Knoten
-
-      ! Punkte als vtk-vertices
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12,2x,I12)')'CELLS ', knotenanzahl2D, 3*knotenanzahl2D
-      do n=1,knotenanzahl2D
-         write(ion,'(A,2x,I8,2x,I8)')'2', n-1, knotenanzahl2D+(n-1)
-      end do ! alle Knoten
-
-      write(ion,'(A)')' ' 
-      write(ion,'(A,2x,I12)')'CELL_TYPES ', knotenanzahl2D
-      do n=1,knotenanzahl2D
-         write(ion,'(A)')'3'
-      end do ! alle Knoten
-
-      !print*,"-------- Bahnlinien gemacht, jetzt beginnen Randnormalvektoren ---------------",ianz_rb
-      !write(ion,'(A)')' '
-      !write(ion,'(A,2x,I12)')'POINT_DATA ',knotenanzahl2D*2
-
- 222  continue
-      close (ion) 
-end if ! bali
-!-------------------------------------
-      !print*,"Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte1234567890123"
-      print*,"Ausgabe Knotenpunkte"
-
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ausgabe_',trim(zahl),'.vtk'
-      if(errcode .ne. 0)call qerror('ausgeben_casu writing filename ausgabe_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if(errcode .ne. 0)call qerror('ausgeben_casu writing system call rm -rf dateiname ausgabe_ failed')
-      call system(systemaufruf)
-      ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
-      if(open_error.ne.0) then
-         write(fehler,*)'open_error ausgabe.vtk'
-         call qerror(fehler)
-      end if ! open_error.ne.0
-      if(knotenanzahl2D .ne. number_benthic_points) then
-         write(fehler,*)'3D noch nicht vorgesehen hier'
-         call qerror(fehler)
-      end if ! 
-      if(number_plankt_point .ne. knotenanzahl2D) then
-         write(fehler,*)'number_plankt_point und knotenanzahl2D passen nicht zusammen ???'
-         call qerror(fehler)
-      end if ! 
-      call mesh_output(ion)
-
-      write(ion,'(A)')'SCALARS WSP float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         !write(ion,'(f27.6)') p(n)
-         write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS tief float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         !write(ion,'(f27.6)') tief(n) 
-         write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS summwicht float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         summwicht=0.0
-         do j=1,4
-            summwicht=summwicht + wicht((n-1)*4+j)
-         end do ! alle Ecken im Herkunftselement der Bahnlinie
-         write(ion,'(f27.6)') summwicht
-      end do ! alle Knoten
-      write(ion,'(A)')'SCALARS Rang float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         !write(ion,'(f27.6)') tief(n) 
-         write(ion,'(f27.6)') real(n/part) 
-      end do ! alle Knoten
-
-! Birte Anfang 17.02.2016
-      write(ion,'(A)')'SCALARS flaeche float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         !write(ion,'(f27.6)') tief(n) 
-         write(ion,'(f27.6)') knoten_flaeche(n)
-      end do ! alle Knoten
-! Birte Ende
-
-      write(ion,'(A)')'VECTORS u float'
-      !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      do n=1,knotenanzahl2D
-         nx=u(n)*cos(dir(n))
-         ny=u(n)*sin(dir(n))
-         nz=0.0
-         write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS Geschwindigkeitsbetrag float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         !write(ion,'(f27.6)') u(n)
-         write(ion,'(f27.6)') rb_hydraul(1+(n-1)*number_rb_hydraul)
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS rau float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') zone(point_zone(n))%reib
-      end do 
-      write(ion,'(A)')'SCALARS strickler float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,number_plankt_point
-         write(ion,'(6x,f27.6)') strickler( zone(point_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
-      end do 
-
-      !write(ion,'(A)')'SCALARS Utau float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   write(ion,'(f27.6)') rb_hydraul(4+(n-1)*number_rb_hydraul)
-      !end do ! alle Knoten
-
-      !write(ion,'(A)')'SCALARS Ks float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   write(ion,'(f27.6)') reib_ks(knoten_zone(n))
-      !end do ! alle Knoten
-
-      !write(ion,'(A)')'SCALARS Kst float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   sandrauh=reib_ks(knoten_zone(n))
-      !   wati=rb_hydraul(2+(n-1)*number_rb_hydraul)
-      !   write(ion,'(f27.6)') strickler(sandrauh,wati)
-      !end do ! alle Knoten
-
-!> \page numdiff numerische Diffusion
-!! Abschätzung maximale numerische Diffusion Bezogen auf die Elder Diffusivität\n
-!! \f[ 
-!! \frac{\nu_{numerisch}}{\nu_{Elder}} \leq \frac{(0.25 ... 0.5) \cdot (\Delta x)^2 / \Delta t}{5.93 \cdot u_{\tau} \cdot h}
-!! \f]
-!! \n\n
-!! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
-      write(ion,'(A)')'SCALARS numDiff.rel float 1'
-      !write(ion,'(A)')'SCALARS nue_elder float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         relnumdiff=10000.0
-         nue_num=0.25*(knoten_flaeche(n)/real(dt))
-         reibgesch=benthic_distribution(45+(n-1)*number_benth_distr)
-         wati=rb_hydraul(2+(n-1)*number_rb_hydraul)
-         nue_elder=5.93*reibgesch*wati
-         if(nue_elder.gt. 0.0) relnumdiff=nue_num/nue_elder
-         write(ion,'(6x,f27.6)')relnumdiff
-         !write(ion,'(6x,f27.6)')nue_elder
-      end do ! alle Knoten
-
-      write(ion,'(A)')'SCALARS Randnummer float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         if((knoten_rand(n).ge.1).and.(knoten_rand(n).le.ianz_rb))then
-            write(ion,'(6x,f27.6)') real( rabe(knoten_rand(n))%nr_rb )
-         else
-            write(ion,'(6x,f27.6)') real( knoten_rand(n) )
-         endif
-      end do ! alle Knoten
-
-      !write(ion,'(A)')'SCALARS inflow float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   infl=0.0
-      !   if(inflow(n))infl=1.0
-      !   write(ion,'(f27.6)') infl
-      !end do ! alle Knoten
-
-      if(nur_alter) then ! Aufenthaltszeit in Tagen ! Altersberechnung wie in Shen&Wang 2007 mit real function aufenthaltszeit (tracer,alter)
-         write(ion,'(A)')'SCALARS Tage_Aufenthalt float 1'
-         write(ion,'(A)')'LOOKUP_TABLE default'
-         do n=1,knotenanzahl2D
-            tr=planktonic_variable(71+(n-1)*number_plankt_vari)
-            al=planktonic_variable(73+(n-1)*number_plankt_vari)
-            aufenthaltszeit = 0.0
-            if(tr .gt. 0.00001 ) aufenthaltszeit= al / tr
-            write(ion,'(6x,f27.6)') aufenthaltszeit
-         end do ! alle Knoten
-      end if !nur_alter
-
-      ! planktische, transportierte Konzentrationen entsprechend ausgabeflag 
-      do j=1,number_plankt_vari ! alle tiefengemittelten 
-         if(output_plankt(j))then ! zur ausgabe vorgesehen
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,knotenanzahl2D ! alle Knoten
-               aus=planktonic_variable(j+(n-1)*number_plankt_vari)
-               !if (tief(n).le.0.05)aus=-999.999
-               write(ion,'(f27.6)') aus
-            end do ! alle Knoten
-         end if ! zur ausgabe vorgesehen
-      end do ! alle planktonic_variable
-      do j=1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
-         if(output_plankt_vert(j))then ! zur ausgabe vorgesehen
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,knotenanzahl2D ! alle Knoten
-               aus=plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
-               write(ion,'(f27.6)') aus
-            end do ! alle Knoten
-         end if ! zur ausgabe vorgesehen
-      end do ! done all plankt_vari_vert
-
-
-      ! Übergabe_Konzentrationen entsprechend ausgabeflag 
-      do j=1,number_trans_quant ! alle tiefengemittelten
-         if(output_trans_quant(j))then ! zur ausgabe vorgesehen
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,knotenanzahl2D
-               write(ion,'(f27.6)') transfer_quantity(j+(n-1)*number_trans_quant)
-            end do ! alle Knoten
-         end if ! zur ausgabe vorgesehen
-      end do ! alle transkon
-      do j=1,number_trans_quant_vert ! alle tiefenaufgelösten z.Z. nur level 1
-         if(output_trans_quant_vert(j))then ! zur ausgabe vorgesehen
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_vert_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,knotenanzahl2D
-               aus=trans_quant_vert(1+(j-1)*num_lev_trans+(n-1)*num_lev_trans*number_trans_quant_vert)
-               write(ion,'(f27.6)') aus
-            end do ! alle Knoten
-         end if ! zur ausgabe vorgesehen
-      end do ! done all vertically distributed transfer quantities
-
-
-      ! benthic distributions according to output flag
-      do j=1,number_benth_distr ! all benthic distributions
-         if(output_benth_distr(j))then ! flagged?
-            write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(benth_distr_name(j))),' float 1'
-            write(ion,'(A)')'LOOKUP_TABLE default'
-            do n=1,number_benthic_points ! all nodes
-               write(ion,'(f27.6)') benthic_distribution(j+(n-1)*number_benth_distr)
-
-            end do ! all nodes
-         end if ! flagged
-      end do ! all benthic distributions
-
-!>
-!!
-
-      ! Benthische_verteilungen entsprechend ausgabeflag 
-      !write(ion,'(A)')'SCALARS Temperatur_Sediment float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   write(ion,'(f27.6)') benthische_verteilung(1,n)
-      !end do
-
-      ! write(ion,'(A)')'VECTORS normaltop float'
-      ! !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      ! do n=1,knotenanzahl2D
-      !    nx=0.0
-      !    ny=0.0
-      !    nz=0.0
-      !    if((knoten_rand(n).gt.0).and.(knoten_rand(n).le.ianz_rb)) then
-      !       do i=1,rabe(knoten_rand(n))%randlinie%anzkanten ! alle i Kanten an diesem Rand
-      !       if(rabe(knoten_rand(n))%randlinie%kante(i)%top .eq. n)then
-      !          nx=rabe(knoten_rand(n))%randlinie%kante(i)%normal_x
-      !          ny=rabe(knoten_rand(n))%randlinie%kante(i)%normal_y
-      !       endif !top
-      !       end do ! alle i Kanten
-      !    end if ! randknoten 
-      !    write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-      ! end do ! alle Knoten
-
-      ! write(ion,'(A)')'VECTORS normalbottom float'
-      ! !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-      ! do n=1,knotenanzahl2D
-      !    nx=0.0
-      !    ny=0.0
-      !    nz=0.0
-      !    if((knoten_rand(n).gt.0).and.(knoten_rand(n).le.ianz_rb)) then
-      !       do i=1,rabe(knoten_rand(n))%randlinie%anzkanten ! alle i Kanten an diesem Rand
-      !       if(rabe(knoten_rand(n))%randlinie%kante(i)%bottom .eq. n)then
-      !          nx=rabe(knoten_rand(n))%randlinie%kante(i)%normal_x
-      !          ny=rabe(knoten_rand(n))%randlinie%kante(i)%normal_y
-      !       endif !bottom
-      !       end do ! alle i Kanten
-      !    end if ! randknoten 
-      !    write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-      ! end do ! alle Knoten
-
-      ! write(ion,'(A)')'SCALARS tief_diff float 1'
-      ! write(ion,'(A)')'LOOKUP_TABLE default'
-      ! do n=1,knotenanzahl2D
-      !    aus=p(n)-knoten_z(n)
-      !    write(ion,'(f27.6)') aus 
-      ! end do ! alle Knoten
-
-      !! Kontrollwerte wg. Zuflussrandermittlung:
-      !goto 777 ! z. Z. nicht ausgeben:
-      !write(ion,'(A)')'SCALARS ubetr float 1'
-      !write(ion,'(A)')'LOOKUP_TABLE default'
-      !do n=1,knotenanzahl2D
-      !   ubetr=(((knoten_x(n)-ur_x(n))**2 + (knoten_y(n)-ur_y(n))**2 + (knoten_z(n)-ur_z(n))**2)**0.5)/dttrans
-      !   write(ion,'(f27.6)') ubetr
-      !end do ! alle Knoten
-      !777  continue
-
-      close (ion)
-
-      ! Visualisierung anwerfen ...
-      ! write(systemaufruf,*)trim(modellverzeichnis),'visu/visu ',trim(modellverzeichnis),'  ', trim(zahl)
-      ! call system(systemaufruf,sysa)
-      ! if(sysa.ne.0) then
-      !    print*,'Aufruf von visu fehlgeschalgen'
-      !    ! call qerror(fehler) 7
-      ! end if ! systemaufruf fehlgeschlagen
-
-      ! call aus_grd() !! Ausgabe als Janet-lesbare Datei
-
-      RETURN
-      END subroutine ausgeben_casu
-!----+-----+----+-----+----+-----+----+-----+----+-----+----
 
 !> Suboutine tagesmittelwert() macht tagesmittelwerte
 !! \n\n
@@ -1081,7 +285,7 @@ if(uhrzeit_stunde .lt. uhrzeit_stunde_vorher)then ! Tageswechsel
       close(ion)
 endif ! Tageswechsel
 
-      tagesanteil = real(dt)/real(86400)
+      tagesanteil = real(deltat)/real(86400)
       do n=1,knotenanzahl2D  !!!!!!!!!!!  mittelwerte aufsummieren
          transfer_quantity_p(68+(n-1)*number_trans_quant) = transfer_quantity_p(68+(n-1)*number_trans_quant)  &
          + (planktonic_variable_p(1+(n-1)*number_plankt_vari)  * tagesanteil) ! Wasser-Temperatur Rückgabewert
@@ -1405,13 +609,13 @@ endif ! Tageswechsel
                  
       do n=1,n_ausgabe,1
          diff=ausgabe_zeitpunkt(n)-rechenzeit
-         if( (diff.ge.(-1*(dt/2))) .and. (diff.lt.(dt/2)) )then
+         if( (diff.ge.(-1*(deltat/2))) .and. (diff.lt.(deltat/2)) )then
             jetzt_ausgeben=.TRUE.
             if (ausgabe_bahnlinie(n).ne. 0) bali=.TRUE.
          end if !
-         !print*,'ausgeben? ', rechenzeit, ausgabe_punkt(n), dt, (rechenzeit-ausgabe_punkt(n))
-         !if(((rechenzeit-ausgabe_punkt(n)).lt.dt).and.((rechenzeit-ausgabe_punkt(n)).ge.0))then
-         !if(((rechenzeit-ausgabe_punkt(1)).lt.dt).and.((rechenzeit-ausgabe_punkt(1)).ge.0))then
+         !print*,'ausgeben? ', rechenzeit, ausgabe_punkt(n), deltat, (rechenzeit-ausgabe_punkt(n))
+         !if(((rechenzeit-ausgabe_punkt(n)).lt.deltat).and.((rechenzeit-ausgabe_punkt(n)).ge.0))then
+         !if(((rechenzeit-ausgabe_punkt(1)).lt.deltat).and.((rechenzeit-ausgabe_punkt(1)).ge.0))then
          !   print*,'jetzt jede Stunde ausgeben'
          !   ausgabe_punkt(1)=ausgabe_punkt(1)+3600
          !   jetzt_ausgeben=.TRUE.
@@ -1622,21 +826,128 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
       if(errcode .ne. 0)call qerror('show_mesh writing system call rm -rf dateiname mesh_node failed')
       call system(systemaufruf)
       ion=106
-      open ( unit =ion , file = dateiname, status ='unknown', action ='write ', iostat = open_error )
+      open ( unit =ion , file = dateiname, status ='new', action ='write ', iostat = open_error )
       if(open_error.ne.0) then
          write(fehler,*)'open_error mesh_node.vtk'
          call qerror(fehler)
       end if ! open_error.ne.0
       call mesh_output(ion)
-
-      write(ion,'(A)')'SCALARS rand float 1'
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n=1,knotenanzahl2D
-         write(ion,'(f27.6)') real(knoten_rand(n))
-      end do ! alle Knoten
-
       print*,'show_mesh:mesh_node.vtk done'
       close (ion)
+!-------------------------------------------------------------------------------------------- edges=sides
+
+      if(hydro_trieb.eq. 3)then ! schism
+         write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'mesh_midedge.vtk'
+         if(errcode .ne. 0)call qerror('show_mesh writing filename mesh_midedge failed')
+         write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+         if(errcode .ne. 0)call qerror('show_mesh writing system call rm -rf dateiname mesh_midedge failed')
+         call system(systemaufruf)
+         open ( unit =ion , file = dateiname, status ='new', action ='write', iostat = open_error )
+         if(open_error.ne.0) then
+            write(fehler,*)'open_error mesh_midedge.vtk'
+            call qerror(fehler)
+         end if ! open_error.ne.0
+		 print*,
+
+         write(ion,'(A)')'# vtk DataFile Version 3.0'
+         write(ion,'(A)')'Simlation QSim3D SCHISM'
+         write(ion,'(A)')'ASCII'
+         write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
+
+         write(ion,'(A)')' '
+         write(ion,'(A,2x,I12,2x,A)')'POINTS ',kantenanzahl, ' float'
+         do n=1,kantenanzahl
+            write(ion,'(f17.5,2x,f17.5,2x,f8.3)') 0.5*(knoten_x(top_node(n))+knoten_x(bottom_node(n)))  &
+                                                , 0.5*(knoten_y(top_node(n))+knoten_y(bottom_node(n))), 0.0
+         end do ! alle kanten
+
+         write(ion,'(A)')' ' 
+         write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*2
+         do n=1,kantenanzahl
+            write(ion,'(A,2x,I12)')'1',n-1
+         end do ! alle kanten
+
+         write(ion,'(A)')' ' ! vtk-vertex
+         write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
+         do n=1,kantenanzahl
+            write(ion,'(A)')'1'
+         end do ! alle kanten
+
+         write(ion,'(A)')' '
+         write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl
+         write(ion,'(A)')'SCALARS length float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n=1,kantenanzahl
+            write(ion,'(f27.6)') cell_bound_length(n) ! real(n) ! ed_area(n)
+         end do ! alle kanten
+        ! write(ion,'(A)')'SCALARS volume_flux float 1'
+        ! write(ion,'(A)')'LOOKUP_TABLE default'
+        ! do n=1,kantenanzahl
+        !    write(ion,'(f27.6)') ed_flux(n)
+        ! end do ! alle kanten
+		dummy=0.0
+         write(ion,'(A)')'VECTORS normal float'
+         do n=1,kantenanzahl
+            write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') edge_normal_x(n),edge_normal_y(n),dummy
+
+         end do ! all edges/sides
+
+         close (ion)
+		 print*,'show_mesh:mesh_midedge.vtk schism done',kantenanzahl
+		 
+		 write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'mesh_side.vtk'
+         if(errcode .ne. 0)call qerror('show_mesh writing filename mesh_side failed')
+         write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+         if(errcode .ne. 0)call qerror('show_mesh writing system call rm -rf dateiname mesh_side failed')
+         call system(systemaufruf)
+         open ( unit =ion , file = dateiname, status ='new', action ='write', iostat = open_error )
+         if(open_error.ne.0) then
+            write(fehler,*)'open_error mesh_side.vtk'
+            call qerror(fehler)
+         end if ! open_error.ne.0
+		 print*,
+
+         write(ion,'(A)')'# vtk DataFile Version 3.0'
+         write(ion,'(A)')'Simlation QSim3D SCHISM'
+         write(ion,'(A)')'ASCII'
+         write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
+
+         write(ion,'(A)')' '
+         write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
+         do n=1,knotenanzahl2D
+		    write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
+         end do ! alle kanten
+
+         write(ion,'(A)')' ' 
+         write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*3
+         do n=1,kantenanzahl
+            write(ion,'(A,2x,I12,2x,I12)')'2',top_node(n)-1,bottom_node(n)-1
+         end do ! alle kanten
+
+         write(ion,'(A)')' ' ! vtk-vertex
+         write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
+         do n=1,kantenanzahl
+            write(ion,'(A)')'3'
+         end do ! alle kanten
+
+         dummy=123.4
+         write(ion,'(A)')' '
+         write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
+         write(ion,'(A)')'SCALARS dummy float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n=1,knotenanzahl2D
+            write(ion,'(f27.6)') dummy ! real(n) ! ed_area(n)
+         end do ! alle kanten
+        ! write(ion,'(A)')'SCALARS volume_flux float 1'
+        ! write(ion,'(A)')'LOOKUP_TABLE default'
+        ! do n=1,kantenanzahl
+        !    write(ion,'(f27.6)') ed_flux(n)
+        ! end do ! alle kanten
+
+         close (ion)
+		 print*,'show_mesh:mesh_side.vtk schism done',kantenanzahl
+
+	  end if ! schism
 
 !-------------------------------------------------------------------------------------------- faces=elements
       kanten_vorhanden=.false. !! geht schief bei casu ????

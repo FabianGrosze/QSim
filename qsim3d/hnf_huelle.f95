@@ -54,7 +54,7 @@
       BAC(1:2)   = planktonic_variable_p(42+(i-1)*number_plankt_vari) ! Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
       tempw(1:2) = planktonic_variable_p( 1+(i-1)*number_plankt_vari) ! Wassertemperatur
       vo2(1:2)   = planktonic_variable_p( 2+(i-1)*number_plankt_vari) ! Sauerstoffgehalt tiefengemittelt
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
 
       eCHNF(1) = 0.0    ! Einleitungswert (keine Einleitungen in QSim3D)
       eBVHNF(1) = 0.0   ! Einleitungswert (keine Einleitungen in QSim3D)

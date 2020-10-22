@@ -69,7 +69,7 @@
       elen(1:2)=1    ! Elementlänge (nicht verwendet)
       FLAE(1:2)=tiefe(1)*500.0 !! Breite konstant 500 m ; wird nur für Linienquelle verwendet, die in 3D nicht existiert. wie oxygen_huelle.f95
       flag(1:2)=0    ! keine Einleitungen
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
       schwi(1:2)=schwi_T(zone(point_zone(iglob))%wettstat%wetterstations_nummer)    ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
       ss(1:2) = planktonic_variable_p(53+nk) ! ORG. UND ANORG. SCHWEBSTOFFE(OHNE ALGEN UND ZOOPLANKTER) schweb()
       zooind(1:2) = planktonic_variable_p(50+(i-1)*number_plankt_vari) ! Anzahl der Rotatorien in Ind/l

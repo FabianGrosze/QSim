@@ -33,8 +33,6 @@ M="/home/Wyrwa/qmodelle/definitionen/ModellG3Param.xml"
 cp $M $DIR
 W="/home/Wyrwa/qmodelle/definitionen/WetterParam.xml"
 cp $W $DIR
-X="/home/Wyrwa/qmodelle/definitionen/e_extnct.dat"
-cp $X $DIR
 
 echo "qsim3ddefinitionen regulär beendet." 
 exit 0

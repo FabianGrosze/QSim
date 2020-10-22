@@ -97,7 +97,7 @@
 !!<tr><td> schwi(1)</td><td>schwi_T (i2)    </td><td> Globalstrahlung in cal/(cm2*h) von strahlg() berechnet 1,0 cal/(cm2*h) ~ 11,6 W/m²</td></tr>
 !!<tr><td> wge(1)</td><td>wge_T (i2) </td><td> Windgeschwindigkeit  aus Wetterstationsdaten </td></tr>
 !!<tr><td> tiefe(1)</td><td> rb_hydraul_p (2+(i-1)*number_rb_hydraul) </td><td> Wassertiefe aus randbedingungen.h </td></tr>
-!!<tr><td> tflie </td><td> real(dt)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
+!!<tr><td> tflie </td><td> real(deltat)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
 !!<tr><td> flag(1)</td><td>0 </td><td> keine Einleitungen </td></tr>
 !!<tr><td> elen(1)</td><td>1 </td><td> Elementlänge (nicht verwendet) </td></tr>
 !!<tr><td> ior</td><td>1 </td><td> Laufindex im Strang (T-QSim verwendet nur erstes Profil(Punkt) im Strang) </td></tr>
@@ -301,7 +301,7 @@
       !rb_hydraul_p(2+(i-1)*number_rb_hydraul)=tiefe(1) ! #### test
       if(tiefe(1).lt. min_tief )tiefe(1)=min_tief ! Minimaltiefe an trockenen Knoten
       tiefe(2)= tiefe(1)
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       flag(1)=0         ! keine Einleitungen
       flag(2)=flag(1)
       elen(1)=1         ! Elementlänge (nicht verwendet)

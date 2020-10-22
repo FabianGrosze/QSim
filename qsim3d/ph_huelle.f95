@@ -150,7 +150,7 @@
       use modell                                                 
       use QSimDatenfelder
       implicit none
-      integer :: i, i2
+      integer :: i, i2, iii
 
 !> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
       iglob=(i+meinrang*part)
@@ -171,7 +171,7 @@
       tempw(1) = planktonic_variable_p( 1+(i-1)*number_plankt_vari)  ! Wassertemperatur
       !tflie = 1      ! Zeitschrittdauer in d
 
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
 
       susn(1) = transfer_quantity_p(29+(i-1)*number_trans_quant) ! Durch SUSPendierte NITRIFikanten OXIDIERTE AMMONIUMMENGE
       susn(2) = susn(1)
@@ -275,7 +275,24 @@
       ! azStrs=1 - aus QSimDatenfelder
       ! iphy direkt aus module_modell
       kontroll=iglob.eq.kontrollknoten
-      if(kontroll) print*,'ph vorher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
+	  iii=20; if(kontroll) iii=0
+      do 
+	  	 mw(1:2)=planktonic_variable_p(62+(i-1)*number_plankt_vari)
+		 pw(1:2 )=planktonic_variable_p(63+(i-1)*number_plankt_vari)
+         ca(1:2) =(real(iii)/20.0)*planktonic_variable_p(64+(i-1)*number_plankt_vari)
+         lf(1:2) =planktonic_variable_p(65+(i-1)*number_plankt_vari)
+         vph(1:2)=planktonic_variable_p(66+(i-1)*number_plankt_vari)
+         if(kontroll) print*,'ph  vorher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
+	  
+	  ! vph,mw,(pw),ca,vco2
+	  ! lf,tempw
+	  ! rau,vmitt,tiefe,flae,vabfl,wge # Belüftung
+	  ! po2p,po2r # produktion und respiration der Macrophyten
+	  ! bsbt # bakterieller Abbau org. Kohlenstoffe
+	  ! dalgki,dalggr,dalgbl | dalgak,dalgag,dalgab
+	  ! albewg,alberg,albewk,alberk
+	  ! dzres1,dzres2,resdr
+	  ! susn
 
 !qsim13.40 15okt18 ###############################################################################################
       call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbt,dalgki        &
@@ -292,6 +309,11 @@
      &,azStrs,iphy   ,kontroll ,iglob )
              
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Daten-rückgabe: 
+	     if(kontroll) print*,'ph nachher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
+		 iii=iii+1
+		 if (iii.gt.20)exit
+      enddo !permutation am Kontrollknoten
+
       ! Transportkonzentrationen zurückschreiben
       planktonic_variable_p(62+(i-1)*number_plankt_vari) = mw(1) !
       planktonic_variable_p(63+(i-1)*number_plankt_vari) = pw(1) ! 
@@ -301,8 +323,6 @@
       planktonic_variable_p(59+(i-1)*number_plankt_vari) = stind(1) ! ??? Minutenzähler Bedeutung sehr unklar; Versuch einer Altersvariablen?
       ! Übergabekonzentrationen Rückgabewerte
       transfer_quantity_p(26+(i-1)*number_trans_quant) = vco2(1) ! Kohlendioxyd
-
-      if(kontroll) print*,'ph nachher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
 
       RETURN 
       END subroutine ph_huelle

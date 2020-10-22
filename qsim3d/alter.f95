@@ -20,7 +20,7 @@
       real :: depth 
       real , parameter :: rate=0.1 ! 1/d
 
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim1D)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim1D)
 
 !     i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
       iglob=(i+meinrang*part) ! globale Knotennummer 

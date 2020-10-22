@@ -175,7 +175,7 @@
       ! direkt aus QSimDatenfelder knh4e   !  NH4-Umsatzgeschw. im Sediment 
       ! direkt aus QSimDatenfelder kapn3e  !  Denitrifikationsgeschw. im Sediment 
 !!\ref tflie,\ref ilbuhn,\ref itags,\ref monats,\ref uhrz,\ref vo2z,\ref vnh4z,\ref vno3z
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       ilbuhn=0          ! keine Buhnen
       itags=tag           ! Tag im Monat module::modell zeitsekunde()
       monats=monat        ! Monat im Jahr module::modell zeitsekunde()

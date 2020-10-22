@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page Anfangsbedingungen Anfangsbedingungen
 !! Die Setzung der Startwerte für \ref planktische_variablen wird zonenweise als \ref lokaleParameter vorgenommen.\n
 !! Zur Initilisierung werden die Werte aus einer, der jeweiligen Zone zugeordneten Randbedingung verwendet.\n
@@ -141,9 +162,9 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
       case(2) ! untrim                                           
          call holen_trans_untrim(na_transinfo)
          print*,'initialisieren(): holen_trans_untrim fetching step= ',na_transinfo
-      case(3) ! SCHISM                                           
-         print*,'initialisieren(): holen_trans_schism fetching step= ',na_transinfo, ' in parallel'
+      case(3) ! SCHISM                                        
          nt=na_transinfo
+		 ! don't call get_schism_step(nt) here only on rank 0
       case default
          call qerror('initialisieren: Hydraulischer Antrieb unbekannt')
       end select
@@ -192,7 +213,10 @@ end if !! nur prozessor 0
       call mpi_barrier (mpi_komm_welt, ierr)
       call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
       call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
-      if(hydro_trieb.eq. 3)call holen_trans_schism(nt)
+      if(hydro_trieb.eq. 3)then ! get first schism flowfield for initialization in parallel
+	     !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
+         call get_schism_step(nt)
+	  end if ! hydro_trieb=SCHISM,3
       call mpi_barrier (mpi_komm_welt, ierr)
 
       RETURN

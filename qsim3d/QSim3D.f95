@@ -1,3 +1,23 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> \mainpage QSim-3D Dokumentations-Portal
 !! <center>
@@ -455,17 +475,25 @@
 !--------------------------------------------------------------------------------------------------------------
 
 !> \page Download Download
-!! </ul><h3>Versionierungs-System</h3><ul>
-!! <li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
-!! der aktuelle Quellcode von QSim verfügbar:\n
-!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li>
-!! </ul><h3>ausführbare Programme</h3><ul>
-!! <li> QSim1D Windows-executabels  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
-!! <li> QSim3D Linux-executabels  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> 
-!! </ul><h3>Dokumentation</h3><ul>
-!! <li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li>
+!! <h3>Aktuell</h3>
+!! <ul>
+!! <li> <a href="./taz/qsim3d_source.taz"> Programm-Quellen QSim3D (aktuell+komplett)</a> \n </li> 
+!! <li> <a href="./taz/qsim3d_doku.taz"  > ergänzendes Material zur Dokumentation</a> \n </li>
+!! <li> latest tag: rumpf_03sep19 \n <a href="./taz/qsim1d_rumpf_03sep19.exe"> qsim1d executable </a> \n
+!!      ggf. erforderliche <a href="./taz/intel_compiler_dll.zip"> ergänzende dll's </a> \n
+!!      <a href="./taz/qsim1dpasst_fuer3d-master_rumpf.zip"> kompletter Quellcode rumpf_03sep19 </a> \n </li> 
 !! </ul><h3>Archiv</h3><ul>
 !! <li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li>
+!! <li> <a href="./taz/qsim13.30vom27sep2017_aktuell.zip"> QSim1D-source-code (7.9.2016)</a>\n
+!!      (Versionsnummer 13.30.01 , Verzeichnis vom 27.9.2017 , neueste Dateien vom 7.9.2016 )\n</li>
+!! <li> <a href="./taz/qsim13_30vom2018_03_28.origVolker.zip">qsim13_30vom2018_03_28.origVolker</a>\n
+!!      (Versionsnummer 13.30.01 vom 28. März 2018 )\n</li>
+!! </ul><h3>Versionierungs-System</h3><ul>
+!! <li> <a href="http://voss-ansible-test1.bafg.de/gitlab/Wyrwa/qsim1dpasst_fuer3d"> Testinstallation GITlab</a>\n</li> 
+!! <li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist\n
+!! der aktuelle Quellcode von QSim1D und QSim3D inclusive der ausführbaren Programme folgender Versionen verfügbar:\n
+!! <ol><li>QSim1D für Windows,</li><li>QSim1D für Linux und</li><li>QSim3D für Linux</li></ol>
+!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li>
 !! </ul>
 !! aus Datei QSim3D.f95 ; zurück zu \ref index
 

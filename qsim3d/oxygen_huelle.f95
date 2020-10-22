@@ -101,7 +101,7 @@
 !! <tr><td>  vmitt(1)  </td><td>  randbedingungen rb_hydraul_p (1+(i-1)*number_rb_hydraul) </td><td> Geschwindigkeitsbetrag </td></tr>
 !! <tr><td>  tiefe(1)  </td><td>  randbedingungen rb_hydraul_p (2+(i-1)*number_rb_hydraul) </td><td> Wassertiefe </td></tr>
 !! <tr><td>  FLAE(1) </td><td> tiefe(1)*500.0 </td><td>  Breite konstant 500 m ; wird in der Belüftungsformel verwendet,  </td></tr>
-!! <tr><td>  tflie  </td><td>  real(dt)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
+!! <tr><td>  tflie  </td><td>  real(deltat)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
 !! <tr><td>  go2n(1)  </td><td>  uebergabe_werte::transfer_quantity_p (32+(i-1)*number_trans_quant) </td><td> FUER DIE STICKSTOFFOXYDATION VERBRAUCHTE SAUERSTOFFMENGE </td></tr>
 !! <tr><td>   </td><td>  </td><td>  </td></tr>
 !! <tr><td> dalgki(1)  </td><td>  uebergabe_werte::transfer_quantity_p (20+(i-1)*number_trans_quant) </td><td> Zuwachs Kiesel-Algen </td></tr>
@@ -475,7 +475,7 @@
       FLAE(1)=tiefe(1)*500.0 !! Breite konstant 500 m ; wird in der Belüftungsformel verwendet, 
       ! hat aber keine Entsprechung im Mehrdimensionalen, daher sinnvoller Wert fürs Ästuar
       FLAE(2)=FLAE(1)
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim-3D) in real Tage (QSim-1D)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim-3D) in real Tage (QSim-1D)
       go2n(1) = transfer_quantity_p(32+(i-1)*number_trans_quant) ! FUER DIE STICKSTOFFOXYDATION VERBRAUCHTE SAUERSTOFFMENGE
       go2n(2) = go2n(1)
 

@@ -80,7 +80,7 @@
       po2p(1:2) = transfer_quantity_p(30+(i-1)*number_trans_quant) ! Sauerstoffproduktion durch Makrophyten in mgO2/l je Zeitschritt
       po2r(1:2) = transfer_quantity_p(31+(i-1)*number_trans_quant) ! Sauerstoffverbrauch durch Makrophyten in mgO2/l je Zeitschritt
       pfldalg(1:2) = 0.0 ! unbenutzte Variable
-      tflie = real(dt)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim-3D) in real Tage (QSim-1D)
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim-3D) in real Tage (QSim-1D)
 
       itags=tag             ! Tag im Monat  module::modell zeitsekunde()
       monats=monat          ! Monat im Jahr module::modell zeitsekunde()

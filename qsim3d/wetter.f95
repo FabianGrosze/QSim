@@ -10,7 +10,7 @@
 !!<table >
 !!<tr><th>Spalte WETTER.txt</th><th> 1D-Name </th><th> 3D-Stationswert 		</th><th> Nr. \ref uebergabe_werte 	</th><th> Beschreibung 		</th><th> Einheit </th></tr>
 !!<tr><td>1</td><td>\anchor glob glob	</td><td> 				</td><td> -			 	</td><td>  
-!!                                                                                                              Tagessumme der Globalstrahlung oder Globalstrahlungsintensität </td><td> J/cm² oder J/(cm²*h) </td></tr>
+!!                                                                                                              Globalstrahlung von strahlg() berechnet </td><td> cal/(cm2*h) </td></tr>
 !!<tr><td>2</td><td> tlmax 		</td><td> \anchor tlmax_T tlmax_T	</td><td> -				</td><td> 
 !!                                                            Tagesmaximum der Lufttemperatur (bei der Verwendung von Tagesmittelwerten sonst Zeitwert) </td><td>  Grad Celsius  </td></tr>
 !!<tr><td>3</td><td> tlmin  		</td><td> \anchor tlmin_T tlmin_T	</td><td> -				</td><td> 
@@ -825,12 +825,13 @@ end if !! nur prozessor 0
         call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl) 
      !    print*,'SASU nachher tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl=' &
      !&                       ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+		if (ifehl.ne. 0)call qerror("SASU fehlgeschlagen")
          !if(meinrang.ge.(proz_anz-3)) then
          !   print*,'strahlg_wetter,sasu: meinrang,Wetterstationen, tag, monat, geob, geol, sa, su, zg, zlk, dk, tagdesjahres'
          !   print*,meinrang,i,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tagdesjahres
          !end if
          schwi(1)=0.0     ! Rückgabewert initialisiert
-         tflie=real(dt)/3600.0 ! Zeitschrittweite von integer-Sekunden in real-Stunden umrechnen
+         tflie=real(deltat)/3600.0 ! Zeitschrittweite von integer-Sekunden in real-Stunden umrechnen
          dk=0.0     !
          cloud(1)= cloud_T(i)   ! Bewölkung
          schwia=0.0     !
@@ -853,6 +854,7 @@ end if !! nur prozessor 0
          call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   & 
      &               ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
      &               ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
+	     !print*,meinrang," strahlg_wetter glob,uhrz,sa,su,schwi",glob(1),uhrz,sa,su,schwi(1)
 
 !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &                                           
 !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr
