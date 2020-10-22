@@ -452,7 +452,7 @@
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(3) ! SCHISM netCDF
-         call read_mesh_nc_sc()
+         !!!### call read_mesh_nc_sc()
          n_cal=n_elemente !!??
          n_cal=knotenanzahl2D
          if(meinrang.eq.0)print*,'got SCHISM netCDF mesh ##### but n_cal=knotenanzahl2D ?????????########'
@@ -494,7 +494,7 @@
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         call screen_schism_nc()
+         !!!### call screen_schism_nc()
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select

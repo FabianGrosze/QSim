@@ -24,7 +24,7 @@ date:
 
 clean:	
 	@echo "cleaning ..."
-	rm -rf ./dox
+	rm -rf ./dox ./exp ./html ./img ./pdf ./qsim_doku.taz ./taz
 
 FD=qsim_doku_`date +%d%b%y`.taz
 

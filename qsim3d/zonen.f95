@@ -718,7 +718,7 @@ end if !! alle Prozesse ausser 0
      &            ,'heißt: ',trim(zone(i)%zonen_name)  &
      &            ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
          end do ! alle i Zonen
-         call sc_read_rough()
+         !!!### call sc_read_rough()
       case default
          call qerror('modellg Hydraulischer Antrieb unbekannt')
       end select

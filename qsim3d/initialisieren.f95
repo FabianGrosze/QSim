@@ -215,7 +215,7 @@ end if !! nur prozessor 0
       call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
       if(hydro_trieb.eq. 3)then ! get first schism flowfield for initialization in parallel
 	     !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
-         call get_schism_step(nt)
+         !!!### call get_schism_step(nt)
 	  end if ! hydro_trieb=SCHISM,3
       call mpi_barrier (mpi_komm_welt, ierr)
 
