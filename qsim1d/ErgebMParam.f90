@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
  subroutine ErgebMParam(cpfad1,j1)
 
 !  Ausgabe der Definition von ErgebM
@@ -6,10 +27,10 @@
   character (len=275)         :: pfadstring
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'ErgebMParam.xml'
-  open(unit=1, file=pfadstring)
+  open(unit=1, file=pfadstring, encoding='UTF-8')
   
-  WRITE(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="ErgebM" QsimVersion="13.10">'  
+  WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+  WRITE(1, '(A)') '<GerrisParam FileType="ErgebM" QsimVersion="14.02">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="ErgebM" Text="Tageswert-Ergebnis-Parameter" Help="Die von QSim als Tageswerte berechneten Parameter">'
   WRITE(1, '(A)') '  <Parameter Ident="MIB5" Text="C-BSB5, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5, Tages-Minimum" Group="Haupt" Quantity="BSB5" Aggregat="Min" />'
   WRITE(1, '(A)') '  <Parameter Ident="XBSB5" Text="C-BSB5, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5, Tagesmittelwert" Group="Haupt" Quantity="BSB5" Aggregat="Avg" />'
