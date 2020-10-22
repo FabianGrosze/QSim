@@ -60,7 +60,7 @@
       subroutine parallel_ini()
       use modell
       use QSimDatenfelder
-	  use schism_msgp, only: myrank,parallel_abort !,nproc
+!!!####	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
 
       call mpi_init(ierr)
@@ -69,7 +69,7 @@
       call mpi_comm_size(mpi_komm_welt,proz_anz, ierr)
       if (ierr.ne.0)call qerror('mpi_comm_size(mpi_komm_welt,proz_anz, ierr).ne.0')
       call mpi_comm_rank(mpi_komm_welt,meinrang,ierr)
-	  myrank=meinrang
+!!!####	  myrank=meinrang
       if (ierr.ne.0)call qerror('mpi_comm_rank(mpi_komm_welt,meinrang,ierr).ne.0')
       write(*,*)'Prozess #',meinrang,' started mit PID=',getpid()
 
@@ -85,7 +85,7 @@
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
-	  use schism_msgp, only: myrank,parallel_abort !,nproc
+!!!###	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
       integer kontroll_lokal
 

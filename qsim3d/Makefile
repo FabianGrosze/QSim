@@ -62,7 +62,8 @@
 # PV=qsim3d_voll2
 # PV=qsim3d_wsp
 # PV=qsim3d_schismQ
-PV=qsim3d_untrimWeser
+# PV=qsim3d_untrimWeser
+PV=qsim3d_unterweser
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -139,7 +140,8 @@ endif
 #--------------------------------------------------------------------
 
 #usual: modu check date qsim qsim3d
-usual: check date schism qsim qsim3d
+#usual: check date schism qsim qsim3d
+usual: check date qsim qsim3d
 
 modu:
 	/usr/bin/modulecmd bash purge
@@ -153,8 +155,8 @@ check:
 	if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) vorhanden"; else exit 1 ; fi;
 	if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) vorhanden"; else exit 1 ; fi;
 	if test -d $(METABO); then echo "Directory ../metabolism $(METABO) vorhanden"; else echo "$(METABO)" ; fi;
-	if test -d $(SCHISM_HYDRO); then echo "Directory $(SCHISM_HYDRO) vorhanden"; else exit 1 ; fi;
-	if test -d $(SCHISM_CORE); then echo "Directory $(SCHISM_CORE) vorhanden"; else exit 1 ; fi;
+	#if test -d $(SCHISM_HYDRO); then echo "Directory $(SCHISM_HYDRO) vorhanden"; else exit 1 ; fi;
+	#if test -d $(SCHISM_CORE); then echo "Directory $(SCHISM_CORE) vorhanden"; else exit 1 ; fi;
 	#@echo $(HIER) $(JETZT) $(METABO)
 
 all: usual exe save
@@ -210,19 +212,21 @@ Q3 = version.co trans_read.co \
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
      oxygen_huelle.o orgc_huelle.o ph_huelle.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
-     ausgeben_casu.o ausgeben_untrim.o ausgeben_schism.o ausgabe.o \
+     ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
 	 eingabe.o initialisieren.o randbedingungen.o\
      stofftransport_casu.o \
-	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o \
 	 stofftransport_untrim.o stofftransport.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
      stoffumsatz.o \
      QSim3D.o
 
-#
+#	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
+
 
 qsim3d:	$(Q3)
-	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
+	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) -o $(PV)
+
+#	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
 	cp -f $(PV) $(MY_BIN)/$(PV)
