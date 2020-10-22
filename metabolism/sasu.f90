@@ -19,10 +19,10 @@
                                                                        
     CALL TAGE(ITAGs,MONATs,ANZT) 
                                                                        
-                                                                       
-    if(geoB<=0.0.or.geoL<=0.0)then
+    ifehl = 0                                                                   
+    if((geoB<-90.0 .or. geoB>90.0).or.(geoL< -180.0 .or. geoL> 180.0))then
       ifehl = 21
-        else
+    else
          PI = 22./7. 
          INEG = 0 
          tdj = anzt+80 
@@ -50,7 +50,7 @@
          ZLK = (15.-GEOL)*4. 
          SA = (720.-T0-ZG+ZLK)/60. 
          SU = (720.+T0-ZG+ZLK)/60. 
-       endif                                                              
+    endif                                                              
 
-       RETURN 
-       END subroutine sasu                                           
+    RETURN 
+    END subroutine sasu                                           
