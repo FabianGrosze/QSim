@@ -2844,17 +2844,13 @@
 !                                                                       
       if(iph.eq.0)goto 721 
 !                                                                       
-      if(RBtyp(mstr,mRB).gt.0.or.NRschr(mstr,mRB).eq.0)goto 721 
+      !!wy if(RBtyp(mstr,mRB).gt.0.or.NRschr(mstr,mRB).eq.0)goto 721 
+	  ! auch an Tide- und Ausflussrändern p-Wert berechnen.
+      if(NRschr(mstr,mRB).eq.0)goto 721 
                                                                         
 !     Berechnung des p-Wertes am Start (ohne Algen)                     
 !                                                                       
-      !!wy call pwert(mws,vphs,lfs,tempws,pws,mRB,mstr,azStrs) 
       call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB),mRB,mstr) !!wy Übergabe Einzelwerte, nicht Felder
-!                                                                       
-!     Berechnung des pH-Wertes und p-Wertes am Start unter Algeneinfluss
-!                                                                       
-!      call phstart(mws,pws,lfs,chlas,vkigrs,agbcms,akbcms,vphs         
-!     *,tempws,abbcms,antbls,mstr,mRB,azStrs)                                  
 !                                                                       
 !##### Belegen des 1. Knotens eines Strangs, wenn Vorstränge und Einleitung am 1. Knoten #####
 
@@ -4377,9 +4373,9 @@
                                                                      
  1010 format(f8.3,2x,i1,2x,i2                                                           &
      &,2x,f9.3,2x,f7.4,2x,f5.2,2x,f5.2,2x,f5.2                                          &
-     &,2x,f8.5,2x,e11.5,2x,f5.2,2x,f9.4,2x,E11.5,2x,f8.2,2x,f9.4,2x,i1,2x,f9.4          &
+     &,2x,f8.5,2x,e12.5,2x,f5.2,2x,f9.4,2x,e12.5,2x,f8.2,2x,f9.4,2x,i1,2x,f9.4          &
      &,2x,f9.4,2x,f14.6,2x,f5.2,2x,f7.2,2x,f7.2,2x,f7.2,2x                              &
-     &,f7.2,2x,f7.2,2x,f7.2,2x,f7.4,2x,f8.5,2x,E11.5,2x,E11.5,2x,f6.2)  
+     &,f7.2,2x,f7.2,2x,f7.2,2x,f7.4,2x,f8.5,2x,e12.5,2x,e12.5,2x,f6.2)  
 
        imac(mstr) = 0
        if(hflag(mstr,ior)==4.and.hvmitt(mstr,ior)<0.0)then  !falls Fliessumkehr an einer Einleiterstelle
