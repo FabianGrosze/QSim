@@ -332,17 +332,19 @@
       real, Dimension(:,:,:), allocatable     :: chlazt, chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt
       real, Dimension(:,:,:), allocatable     :: CChlkzt, CChlbzt, CChlgzt
 
-!###### VERSIONSNUMMER ################
+      real :: Cagr,Caki,Cabl,CZoo  ! werden in ini_algae (zuflussrand.f90) gesetzt
+	  character (len = 8)                     :: versionstext
+	  real                                    :: versio
 
-      VERSIO = 14.02
+!###### setting ################
       linux  = .false.
       kontroll= .false.
-	  !open(unit=345, file="test.txt", iostat = open_error)
-      print*,"QSim1D starting ..."
 
-!######################################
-                                       
-!                                                                       
+!##### version #################################
+      call version_string(versionstext)
+	  read(versionstext,*)versio
+	  print*,"QSim1D Version ",versionstext," starting ..."
+                                    
 !.....Schalter für "Regeln bei Kraftwerksbetrieb"                       
 !               iRHKW = 1 > Betrieb der HKW's unterliegt gewissen Regeln
       iRHKW = 0 
@@ -918,7 +920,8 @@
       if(startkm(mstr).gt.endkm(mstr))abfr(mstr) = 0 
       if(startkm(mstr).lt.endkm(mstr))abfr(mstr) = 1 
 	  	  
-      print*,mstr,trim(strnumm(mstr))," ",trim(strname(mstr)),"start-,endkm mstas,mwehr,mRBs",startkm(mstr),endkm(mstr),mStas(mstr),mwehr(mstr),mRBs(mstr)
+      print*,mstr," ",trim(strnumm(mstr))," ",trim(strname(mstr))," start-,endkm mstas,mwehr,mRBs" &
+	        ,startkm(mstr),endkm(mstr),mStas(mstr),mwehr(mstr),mRBs(mstr)
 	  
       if(abfr(mstr).eq.0)cycle 
 	  
@@ -2098,6 +2101,7 @@
           endif  !  if(nbuhn(mstr) 
         enddo ! do ior = 1,hanze(mstr)+1
       endif ! f(iwied/=1
+	  !print*,azStr,' sysgenou mstra,hanze=',mstra(azStr),hanze(mstra(azStr))
    ENDDO !DO azStr = 1,azStrs 
    
     close (11) 
@@ -2842,18 +2846,19 @@
       chlags(mstr,mRB) = -1. 
       endif 
 !                                                                       
-      if(iph.eq.0)goto 721 
-!                                                                       
+      ! if(iph.eq.0)goto 721 !!wy Randbedingungen auch ohne pH-Berechnung                                                                       
       !!wy if(RBtyp(mstr,mRB).gt.0.or.NRschr(mstr,mRB).eq.0)goto 721 
 	  ! auch an Tide- und Ausflussrändern p-Wert berechnen.
-      if(NRschr(mstr,mRB).eq.0)goto 721 
                                                                         
-!     Berechnung des p-Wertes am Start (ohne Algen)                     
-!                                                                       
-      call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB),mRB,mstr) !!wy Übergabe Einzelwerte, nicht Felder
-!                                                                       
+!     Berechnung des p-Wertes am Start (ohne Algen)                                                                                           
+      if(iph.ne.0)then 
+         call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB)) !!wy Übergabe Einzelwerte, nicht Felder
+      endif
+		 !
+      if(RBtyp(mstr,mRB).gt.0 .or. NRschr(mstr,mRB).eq.0)goto 721 
+	  
 !##### Belegen des 1. Knotens eines Strangs, wenn Vorstränge und Einleitung am 1. Knoten #####
-
+    !print*,mstr," nnstrs(mstr)=",nnstrs(mstr)
     if(nnstrs(mstr)>0)then 
       hgesN(mstr,1) = gesNs(mstr,mRB) 
       hgesP(mstr,1) = gesPs(mstr,mRB) 
@@ -2872,7 +2877,7 @@
       hBAC(mstr,1) = BACs(mstr,mRB) 
       hnh4(mstr,1) = vNH4s(mstr,mRB) 
       if(isnan(vo2s(mstr,mRB)))print*,"isnan(vo2s",mstr,mRB
-      if(vo2s(mstr,mRB).le. 0.0)print*,"vo2s.le.0.0 vo2s(mstr,mRB)=",vo2s(mstr,mRB),mstr,mRB
+      !if(vo2s(mstr,mRB).le. 0.0)print*,"vo2s.le.0.0 vo2s(mstr,mRB)=",vo2s(mstr,mRB),mstr,mRB
       ho2(mstr,1) = vo2s(mstr,mRB) 
       hno3(mstr,1) = vno3s(mstr,mRB) 
       hno2(mstr,1) = vnO2s(mstr,mRB) 
@@ -2882,7 +2887,8 @@
       hchla(mstr,1) = chlas(mstr,mRB) 
       haki(mstr,1) = (chlas(mstr,mRB)*vkigrs(mstr,mRB)/1000.) * (hakbcm(mstr,1)/Caki) 
       hagr(mstr,1) = (chlas(mstr,mRB)*(1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))/1000.) * (hagbcm(mstr,1)/Cagr) 
-      habl(mstr,1) = (Chlas(mstr,mRB)*antbls(mstr,mRB)/1000.) * (habbcm(mstr,1)/Cabl) 
+      habl(mstr,1) = (Chlas(mstr,mRB)*antbls(mstr,mRB)/1000.) * (habbcm(mstr,1)/Cabl)
+	  !if((mstr==35).or.(mstr==37))print*,mstr,hchlak(mstr,1),'=hchlak(mstr,1), chlas,vkigrs,mrb=',chlas(mstr,mRB),vkigrs(mstr,mRB),mrb
       hchlak(mstr,1) = chlas(mstr,mRB)* vkigrs(mstr,mRB) 
       hchlag(mstr,1) = chlas(mstr,mRB)* (1.-vkigrs(mstr,mRB)-antbls(mstr,mRB)) 
       hchlab(mstr,1) = chlas(mstr,mRB)* antbls(mstr,mRB) 
@@ -3238,8 +3244,12 @@
       iwahl = 1 
 
 !      if(nstrs(istr)==0)iwahl = 1  
-      if(nstrs(istr)>0.and.j_ist==1) iwahl = 2 ! j_ist: gilt nur bei iwied=0. Zufließende Straenge sind bereits mit
+      if(nstrs(istr)>0 .and. j_ist==1) iwahl = 2 ! j_ist: gilt nur bei iwied=0. Zufließende Straenge sind bereits mit
                                                ! Randedingungen belegt 
+      !if((mstr==35).or.(mstr==37))then
+	  !   print*,mstr,' Rand_Wahl: ,iwahl,ESTRNR,nstrs,istr,j_ist,iwied='
+	  !   print*,iwahl,ESTRNR(istr,nstr),nstrs(istr),istr,j_ist,iwied
+      !endif
  
       Rand_Wahl: select case (iwahl)
        
@@ -3340,7 +3350,10 @@
        if(akis(mstr1,mRB).ge.Wtst)haki(mstr,ior) = akis(mstr1,mRB) 
        if(agrs(mstr1,mRB).ge.Wtst)hagr(mstr,ior) = agrs(mstr1,mRB) 
        if(abls(mstr1,mRB).ge.Wtst)habl(mstr,ior) = abls(mstr1,mRB) 
-       if(chlaks(mstr1,mRB).ge.Wtst)hchlak(mstr,ior) = chlaks(mstr1,mRB) 
+       if(chlaks(mstr1,mRB).ge.Wtst)then
+	      hchlak(mstr,ior) = chlaks(mstr1,mRB)
+          !if(mstr==37)print*,mstr,ior,' chlaks(mstr1,mRB) ',chlaks(mstr1,mRB)	,mstr1,mRB	  
+	   endif
        if(chlags(mstr1,mRB).ge.Wtst)hchlag(mstr,ior) = chlags(mstr1,mRB) 
        if(chlabs(mstr1,mRB).ge.Wtst)hchlab(mstr,ior) = chlabs(mstr1,mRB) 
        if(vkigrs(mstr1,mRB).ge.Wtst)hvkigr(mstr,ior) = vkigrs(mstr1,mRB) 
@@ -3821,7 +3834,11 @@
       hcs49 = hcs49+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*habl(ESTRNR(istr,nstr),kanz)                                     
       hcs50 = hcs50+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-     &*hchlak(ESTRNR(istr,nstr),kanz)                                   
+     &*hchlak(ESTRNR(istr,nstr),kanz) 
+	  !if((mstr==35).or.(mstr==37))then
+	  !   print*,mstr," hcs50,hchlak,hQaus,ESTRNR,istr,nstr,kanz,iSta"
+	  !   print*,hcs50,hchlak(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta),ESTRNR(istr,nstr),istr,nstr,kanz,iSta
+      !endif	  
       hcs51 = hcs51+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
      &*hchlag(ESTRNR(istr,nstr),kanz)                                   
       hcs52 = hcs52+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
@@ -4137,7 +4154,8 @@
       haki(mstr,ior) = hcs47 
       hagr(mstr,ior) = hcs48 
       habl(mstr,ior) = hcs49 
-      hchlak(mstr,ior) = hcs50 
+      hchlak(mstr,ior) = hcs50
+      !if((mstr==35).or.(mstr==37))print*,mstr,' nach hcs50 hchlak,ior=',hchlak(mstr,ior),ior	  
       hchlag(mstr,ior) = hcs51 
       hchlab(mstr,ior) = hcs52 
       hakbcm(mstr,ior) =hcs6
@@ -4263,7 +4281,7 @@
       bcsb(mstr,ior) = hcsb(mstr,ior) 
       bnh4(mstr,ior) = hnh4(mstr,ior) 
       bo2(mstr,ior) = ho2(mstr,ior) 
-      print*,"qsim bo2(mstr,ior) = ho2 mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
+      !print*,"qsim bo2(mstr,ior) = ho2 mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
       bno3(mstr,ior) = hno3(mstr,ior) 
       bno2(mstr,ior) = hno2(mstr,ior) 
       bx0(mstr,ior) = hx0(mstr,ior) 
@@ -4695,6 +4713,7 @@
                                      
  9898 do 8888 azStr = 1,azStrs
       mstr = mstra(azStr) 
+	  !if(mstr==35)print*,'qsim Beginn Zeitschritt aki(35/10),Chlaki=',aki(10),Chlaki(10)
       anze = hanze(mstr) 
       iein = 0
 	  
@@ -4765,9 +4784,9 @@
       enddo
 
      Do ior = 1, anze + 1 
-     if(ISNAN(ho2(mstr,ior)))print*,"qsim Linienquellen mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
+        if(ISNAN(ho2(mstr,ior)))  &
+		print*,"qsim Linienquellen mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
      enddo 
- 
 !                                                                       
 !.....Kenngroessen für Pflanzenwachstum,und Dreissenawachstum           
 !.....nur strangweise nicht Abschnittsweise                             
@@ -4830,7 +4849,9 @@
       aki(ior) = haki(mstr,ior) 
       agr(ior) = hagr(mstr,ior) 
       abl(ior) = habl(mstr,ior)
-      chlaki(ior) = hchlak(mstr,ior) 
+      chlaki(ior) = hchlak(mstr,ior)
+      !if(mstr==35 .and. ior==10)print*,'qsim nach haki aki(35/10)=',aki(10),Chlaki(10)
+	  if(chlaki(ior) .lt. 0.0)print*,'chlaki(ior) .lt. 0.0 mstr,ior=',chlaki(ior),mstr,ior
       chlagr(ior) = hchlag(mstr,ior) 
       chlabl(ior) = hchlab(mstr,ior) 
       vkigr(ior) = hvkigr(mstr,ior) 
@@ -5028,7 +5049,7 @@
        iSTRiz_neu = int((tflie*86400.)/dtmin_Mac)+1
        isub_dt_Mac(mstr) = (iStriz_neu/Striz(mstr))+1 
        if(isub_dt_Mac(mstr)==0)isub_dt_Mac(mstr) = 1
-
+	   
 !..........................................                             
 !..         BAUSTEINE                    ..                             
 !.......................................... 
@@ -5040,8 +5061,10 @@
                   ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr,it_h,ij,jahrs,itage,monate,jahre,uhren        &
                   ,isim_end,azStr,azStrs)
       if(ifehl.gt.0)goto 989 
-                                                                       
+      
+	  !print*,'qsim temperl v templ(1),TLMAX,IDWe,mstr,imet=',TEMPL(1),TLMAX(IDWe(mstr,1)),IDWe(mstr,1),mstr,imet
       call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs) 
+	  !print*,'qsim temperl n templ(1),TLMAX,IDWe,mstr,imet=',TEMPL(1),TLMAX(IDWe(mstr,1)),IDWe(mstr,1),mstr,imet
 
   705 if(nbuhn(mstr).eq.0)goto 709 
 !                                                                       
@@ -5059,7 +5082,7 @@
       enddo 
 
   709 if(iwsim==2.or.iwsim==5.or.iwsim==4)goto 113 
-                                                                       
+
 !***************Sediment-Stofffluxe******** 
                             
  1712 continue 
@@ -5233,7 +5256,8 @@
 !***********Rotatorien***********************                           
 !                                                                       
                                                                        
- 1612 continue       
+ 1612 continue  
+ 
       call konsum(vkigr,TEMPW,VO2,TFLIE                                 &
      &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
      &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
@@ -5242,7 +5266,7 @@
      &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
      &,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
      &,itags,uhrz,mstr,azStrs , .FALSE., 0) !!wy ,kontroll, iglob 3D
-      
+	 
       if(nbuhn(mstr)==0)goto 1415 
       if(ilbuhn==0)then 
       do ior=1,anze+1 
@@ -5376,11 +5400,11 @@
       zwcoro(ior,jC) = coro(ior,jC) 
  1784 Coro(ior,jC) = 0.0 
  1783 continue 
-!                                                                       
+!
  1440 call coroph(coro,coros,tempw,flae,elen,anze,ior                                  &
      &,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                           &
      &,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs , .FALSE., 0) !!wy ,kontroll, iglob 3D
-                                                                       
+
       if(nbuhn(mstr)==0)goto 1441 
       if(ilbuhn==0)then 
       do ior=1,anze+1 
@@ -5472,7 +5496,7 @@
          enddo   
 
       endif
-
+	  
       call dreissen(zdrei,zdreis,tempw,flae,elen,anze                   &
      &,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg                     &
      &,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek                      &
@@ -5553,7 +5577,8 @@
  1412 continue 
 
 !      if(hChla(mstr,1)<0.0)goto 1513
-
+      !if(mstr==35)print*,'qsim  vor algaeski aki(35/10)=',aki(10),Chlaki(10)
+      
       call       algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg,CHLA,ir                    &
                 ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                                   &
                 ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema                       &
@@ -5791,8 +5816,6 @@
                                                                        
  1413 continue 
                                                                        
-
-
       call                algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir               &
                          ,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl,abchl,abgmax,abksn,abksp,saettb,abremi     &
                          ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros  &
@@ -5993,6 +6016,7 @@
                 ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                                    &
      &          ,.false.,0)     !!wy kontroll,iglob
 
+      !if(mstr==35)print*,'qsim nach algaesgr aki(35/10),Chlaki=',aki(10),Chlaki(10)
       
        if(ifehl>0)goto 989                  
 
@@ -6918,6 +6942,7 @@
              ,flag,elen,ior,anze,vph,elfL,caL,qeinlL,iorLa,iorLe,ieinLs,ssalg,stind,albewg,alberg,albewk,alberk,wge      &
              ,abl,dalgbl,dalgab,IDWe,iwied,fkm,ij,resdr,dzres1,dzres2,aki,agr,ilbuhn,eph,emw,elf,eca,vco2,qeinl          &
              ,jiein,mstr,cpfad,rhyd,WLage,hWS,itags,monats,uhrz,azStrs,iphy                                              &
+             ,Caki, Cagr, Cabl	          &				
              ,.false.,0)     !!wy kontroll,iglob
       if(nbuhn(mstr)==0)goto 113 
       if(ilbuhn==0)then 
@@ -8122,8 +8147,8 @@
 !        enddo
 !      endif
       
-      !!wy write(222,*)'vor Transport DL(',anze,')=',DL(anze),' strang=',mstr 
-     
+      !if(mstr==35)print*,'qsim vor transport aki(35/10),Chlaki=',aki(10),Chlaki(10)
+	  
  call Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tempw,vo2,vnh4,vno3,vno2,vx0,vx02,Si,mstr   &      
                 ,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr             &      
                 ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN   &
@@ -8135,7 +8160,7 @@
                 ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1,GRote                                           &
                 ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,mtracer,nkztot_max,ischwer)
 
-       !print*,"nach Transport DL(",anze,")=",DL(anze)," Verfahren=",ilongDis," strang=",mstr 
+      !if(mstr==35)print*,'qsim nach transport aki(35/10),Chlaki=',aki(10),Chlaki(10)
 
 !     if(mstr==17)then
 !        do ior=1,anze+1

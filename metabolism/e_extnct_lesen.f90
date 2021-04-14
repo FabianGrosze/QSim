@@ -1,10 +1,30 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> <h2> subroutine e_extnct_lesen </h2>
 !! ließt die \n
 !! Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, Humin, susp. Schwebstoff,Sonnenlicht\n
 !! aus <a href="../../exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
 !! \n\n
-!! Quelle: e_extnct_lesen.f90 , zu: \ref Stoffumsatz ; algae_huelle(), \ref Randbedingungen , \ref extnct_rb
+!! Quelle: e_extnct_lesen.f90 , zu: \ref Stoffumsatz ; algae_huelle(), \ref zuflussranddaten , \ref extnct_rb
 !!
       Subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
       !!write(cpfad,'(A)')trim(modellverzeichnis)

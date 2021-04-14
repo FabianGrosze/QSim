@@ -63,7 +63,14 @@
 # PV=qsim3d_wsp
 # PV=qsim3d_schismQ
 # PV=qsim3d_untrimWeser
-PV=qsim3d_unterweser
+# PV=qsim3d_unterweser
+# PV=qsim3d_pwert_korr
+# PV=qsim3d_strukt_ph
+# PV=qsim3d_1404entw
+# PV=qsim3d_1404final
+# PV=qsim3d_final_v
+# PV=qsim3d_pHtrans
+PV=qsim3d_pHtrans_gather
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 

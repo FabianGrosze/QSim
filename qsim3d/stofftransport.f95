@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page Stofftransport Stofftransport
 !! 
 !! <h2>Konzept: Konzentrations-Transport</h2>
@@ -279,19 +300,34 @@
       implicit none
       integer :: i, n, j
 
+      do i=1,part ! all i elements/nodes on this process
+	     iglob=(i+meinrang*part)
+		 if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph=",  &
+         planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+      end do
+      call ph2hplus()
+      call mpi_barrier (mpi_komm_welt, ierr)
+	  
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
          call gather_planktkon()
          if(meinrang.eq.0)then !! nur prozessor 0
+			if(kontrollknoten.ge.1)print*,'0  vor stofftransport_casu: ph,lf=',  &
+		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
+					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
             call stofftransport_casu()
-            !print*,'stofftransport_casu() gemacht meinrang=',meinrang
+			if(kontrollknoten.ge.1)print*,'0 nach stofftransport_casu: ph,lf=',  &
+		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
+					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(2) ! Untrim² netCDF
          call gather_planktkon()
          if(meinrang.eq.0)then !! nur prozessor 0
             call stofftransport_untrim()
-            !print*,'stofftransport_untrim() gemacht meinrang=',meinrang
+			if(kontrollknoten.ge.1)print*,'nach stofftransport_untrim: lf,ph=',  &
+		            planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
+					planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
@@ -299,6 +335,17 @@
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
       end select
+	  
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call hplus2ph()
+      call mpi_barrier (mpi_komm_welt, ierr)
+	  call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
+	  
+      do i=1,part ! all i elements/nodes on this process
+	     iglob=(i+meinrang*part)
+		 if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph=",  &
+         planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+      end do
 
       call mpi_barrier (mpi_komm_welt, ierr)
       if(meinrang.eq.0)then !! nur prozessor 0
@@ -391,5 +438,56 @@ end if ! only prozessor 0
          return
       END subroutine allo_trans
 !----+-----+----
+
+!> calculate proton concentration from pH
+!! \n\n
+      subroutine ph2hplus()
+      use modell
+      implicit none
+	  real*8 mue,ph,lf,hplus,hk,lgh
+	  integer i
+	  
+      do i=1,part ! all i elements/nodes on this process
+	     iglob=(i+meinrang*part)
+         lf=planktonic_variable_p(65+(i-1)*number_plankt_vari)
+         ph=planktonic_variable_p(66+(i-1)*number_plankt_vari)
+	     mue = 1.7e-5*lf 
+         if(mue.lt.0.0)mue = 0.0 
+         hk = (0.5*sqrt(mue))/(1.+1.4*sqrt(mue)) 
+         lgh = ph-hk 
+         hplus = 10**(-lgh)
+	     planktonic_variable_p(66+(i-1)*number_plankt_vari)=hplus
+		 if(iglob.eq.kontrollknoten)print*,meinrang,i,' ph2hplus: ph,hplus,part,number_plankt_vari=',  &
+		                                            ph,hplus,part,number_plankt_vari
+      end do ! all i elements/nodes on this process
+	  
+      return
+      END subroutine ph2hplus
+!----+-----+----
+
+!> calculate pH from proton concentration
+!! \n\n
+      subroutine hplus2ph()
+      use modell
+      implicit none
+	  real*8 mue,ph,lf,hplus,hk,lgh
+	  integer i
+	  
+      do i=1,part ! all i elements/nodes on this process
+	     iglob=(i+meinrang*part)
+         lf   =planktonic_variable_p(65+(i-1)*number_plankt_vari)
+         hplus=planktonic_variable_p(66+(i-1)*number_plankt_vari)
+	     mue = 1.7e-5*lf 
+         if(mue.lt.0.0)mue = 0.0 
+         hk = (0.5*sqrt(mue))/(1.+1.4*sqrt(mue)) 
+         ph = log10(hplus)
+         ph = (-1.*ph)+hk
+	     planktonic_variable_p(66+(i-1)*number_plankt_vari)=ph
+		 if(iglob.eq.kontrollknoten)print*,meinrang,i,' hplus2ph: ph,hplus,part,number_plankt_vari=',  &
+		                                   ph,hplus,part,number_plankt_vari
+      end do ! alle j elements/nodes
+	  
+      return
+      END subroutine hplus2ph
 
 

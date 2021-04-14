@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page wetter_rb Wetter-Randbedingungen
 !!
 !! Die Wetter-Randbedingungen (meteorologischen Bedingungen) werden für die \ref Waermebilanz
@@ -51,7 +72,7 @@
 !! Um die QSim-Routinen benutzen zu können ist das Feld iWSta erhalten geblieben; es speichert in QSim3D aber den Zähler.
 !! Für die Kennnummer aus WETTER.txt ist ein neues Feld "Wetterstationskennung" eingeführt worden.
 !! \n\n
-!! zurück: \ref Randbedingungen, \ref Waermebilanz oder \ref Modellerstellung ; Quelle: wetter.f95
+!! zurück: \ref zuflussranddaten, \ref Waermebilanz oder \ref Modellerstellung ; Quelle: wetter.f95
 
 
 
@@ -629,7 +650,7 @@ end if !! nur prozessor 0
 
             do j=1,mwetts_T(i),1 ! alle j zeitintervalle vorwärts
                if( (zeitpunktw(i,j).le.zeitpunkt) )then ! bis zum aktuellen Zeitpunkt
-                  if( wert_gueltig(ipw,wertw_T(i,ipw,j)) )then !gültiger wert
+                  if( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) )then !gültiger wert
                      found1=.true.
                      w1=wertw_T(i,ipw,j)
                      z1=zeitpunktw(i,j)
@@ -641,7 +662,7 @@ end if !! nur prozessor 0
 
             do j=mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
                if( (zeitpunktw(i,j).ge.zeitpunkt) )then ! bis zum aktuellen Zeitpunkt
-                  if( wert_gueltig(ipw,wertw_T(i,ipw,j)) )then !gültiger wert
+                  if( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) )then !gültiger wert
                      found2=.true.
                      w2=wertw_T(i,ipw,j)
                      z2=zeitpunktw(i,j)
@@ -683,10 +704,10 @@ end if !! nur prozessor 0
       END subroutine wettles_wetter
 !----+-----+----
 
-      logical function wert_gueltig(ipw,wert)
+      logical function wert_gueltig(ipw,wert,imet)
       implicit none
       character (300) :: fehler
-      integer ipw
+      integer ipw,imet
       real wert
       wert_gueltig=.false.
 
@@ -697,6 +718,7 @@ end if !! nur prozessor 0
          if((wert.ge. -20.0).and.(wert.le. 50.0))wert_gueltig=.true.
       case(3) ! tlmin_T(i) = ywert 
          if((wert.ge. -20.0).and.(wert.le. 50.0))wert_gueltig=.true.
+		 if(imet.eq.1)wert_gueltig=.true. !! not in use with timeseries data (needed for daily averages imet=0) 
       case(4) ! ro_T(i) = ywert 
          if(wert.ge. 0.0)wert_gueltig=.true.
       case(5) ! wge_T(i) = ywert 
@@ -746,7 +768,7 @@ end if !! nur prozessor 0
          TLMIN(1)=tlmin_T(i)
          call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
          tlmed_T(i)=TEMPL(1)
-         !print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
+         print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
 
       end do ! alle Wetterstationen i
 

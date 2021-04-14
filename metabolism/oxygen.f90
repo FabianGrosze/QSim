@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
   SUBROUTINE oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,rhyd,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4              &
                     ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                        &
                     ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein                       &
@@ -267,7 +288,9 @@
      endif
 
      if((rau(ior).gt. 0.0).and.(tiefe(ior).gt. 0.0).and.(rhyd(ior).gt. 0.0))then
-        call Belueftung_K2(rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wge,IDWe,iphy,bbei,mstr,ior,azStrs)
+        !call Belueftung_K2(rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wge,IDWe,iphy,bbei,mstr,ior,azStrs)
+		call Belueftung_K2(rau(ior),tiefe(ior),vmitt(ior),rhyd(ior),flae(ior),tempw(ior)   &
+     &                    ,WLage(mstr,ior),hWS(mstr,ior),wge(IDWe(mstr,ior)),iphy,bbei(ior))
      else
         bbei(ior)=0.0
      endif

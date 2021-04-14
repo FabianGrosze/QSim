@@ -1,3 +1,23 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> \page Algen Algen
 !!
@@ -157,7 +177,7 @@
 !-----------------------------------------------------------------------------
 !> \page Veränderung-Algenmasse Veränderung der Algen-Biomasse
 !!
-!! Die Veränderung der Algen-Biomasse in einem Zeitschritt wird als Summe der folgenden Teilprozesse modelliert:\n
+!! Die Veränderung der Algen- \ref Biomasse in einem Zeitschritt wird als Summe der folgenden Teilprozesse modelliert:\n
 !! <ul>
 !!    <li>\subpage Algen-Wachstum</li>
 !!    <li>\subpage Algen-Mortalität</li>
@@ -167,21 +187,20 @@
 !!    <li>\subpage Algen-Konsum-planktisch</li>
 !!    <li>\subpage Algen-Konsum-bentisch</li>
 !! </ul>\n
-!! Die folgende Formel dient der Einführung der Bezeichnungen für die Teilprozesse
-!! \f{eqnarray*} {
-!! & A_i(t + \Delta t) - A_i(t) & \\
-!! &=&\left( {\Delta grow}_i - {\Delta mor}_i - {\Delta resp}_i \right) \\
-!! &+&\left( cmatki - sedalk - algzok - algdrk - algcok\right) 
+!! Die folgende Formel dient der Einführung der Bezeichnungen für die Teilprozesse, welche zum einen in den Algen selbst ablaufen (Wachstum, Mortalität und Respiration) und zum anderen Äußere Einflüsse (Abspülung, Sedimentation, Konsum) sind.  
+!! \f{eqnarray*}{
+!! A_i(t + \Delta t) - A_i(t) &=& \left( {\Delta grow}_i - {\Delta mor}_i - {\Delta resp}_i \right) \\
+!! &+&  \left( cmatki - sedalk - algzok - algdrk - algcok\right)
 !! \f}
 !! 
 !! <h2>Algen-Wachstum</h2>
 !! Dabei wird die Zunahme der Algenbiomasse als exponentielles Wachstum disktretisiert:
 !! \f[ {\Delta grow}_i = A_i(t) \cdot e^{\left(\mu A_i \cdot \Delta t \right)} \f]
-!! Wie die Rate des Algenwachstums, \f$ \muA_i \f$, bestimmt wird, findet sich im Abschnitt: \ref Algen-Wachstum
+!! Wie die Rate des Algenwachstums, \f$ \mu A_i \f$, bestimmt wird, findet sich im Abschnitt: \ref Algen-Wachstum
 !! \n\n
 !! Dieser und die folgenden exponentiellen Formeln gehen auf die Lösung einer Wachstums-Differentialgleichung
 !! zurück, bei welcher der Zuwachs proportional zur vorhandenen Konzentration ist: 
-!! \f[\frac{ \partial A_i  }{\partial t} = \mu_i  \cdot  A_i \f]
+!! \f[\frac{ \partial A_i  }{\partial t} = \mu A_i  \cdot  A_i \f]
 !! 
 !! <h2>Algen-Mortalität</h2>
 !! Die Mortalität der Algen wird ebenfalls als exponentieller Rückgang disktretisiert:

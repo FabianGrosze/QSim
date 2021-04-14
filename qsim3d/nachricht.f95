@@ -1,8 +1,29 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> Die suboutine qerror()
 !! \n\n
       subroutine qerror(fehlermeldung)
          use modell                                                   
+         implicit none
          character fehlermeldung*(*) 
          character (len=longname) :: systemaufruf
          integer errcode,sysa
@@ -47,10 +68,12 @@
 !! \n\n
       subroutine fortschritt(n,f)
       use modell                                                   
+      implicit none
       integer n
       real f, f_old
       integer ion, sysa, system_error,errcode
       character (len=longname) :: systemaufruf,progressfile
+	  character (len = 8)                     :: versionstext
 
 if(meinrang.eq.0)then !! alles nur auf Prozessor 0
 
@@ -59,7 +82,8 @@ if(meinrang.eq.0)then !! alles nur auf Prozessor 0
       select case (n)
 
       case (1) ! start
-         print*,'---------------> QSim-3D <--------------- Start-- Param anschalten!'
+	     call version_string(versionstext)
+         print*,'---------------> QSim-3D ',trim(versionstext),' <--------------- Start-- '
       !   call ausgabekonzentrationen_beispiel()
       !   call AParamParam(cpfad1,j1)
       !   call EreigGParam(cpfad1,j1)
@@ -227,8 +251,10 @@ if(meinrang.eq.0)then !! alles nur auf Prozessor 0
          if(nur_alter)print*,'##### nur Aufenthaltzeit-Simulation  (Datei alter.txt) #####'
          !print*,"#### stoffumsatz ausgeschaltet 14apr15 ####"
          call versionsdatum()
+		 call version_string(versionstext)
          !print*,'---------------> QSim-3D (muqu) ### tiefe 7 m Kreisgerinne mitt ### <--------------- Schluß -------'
-         print*,'---------------> QSim-3D (qsim3d) <--------------- endet regulaer -------'
+         !print*,'---------------> QSim-3D (qsim3d) <--------------- endet regulaer -------'
+         print*,'---------------> QSim-3D <--------------- ends normally ------- Version=',trim(versionstext)
 
          write(systemaufruf,'(3A)',iostat = errcode)'rm -rf ',adjustl(trim(modellverzeichnis)),'fortschritt'
          if(errcode .ne. 0)then

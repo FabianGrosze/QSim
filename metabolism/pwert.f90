@@ -19,7 +19,7 @@
 !
 !---------------------------------------------------------------------------------------
 
-      subroutine pwert(mws,vphs,lfs,tempws,pws,mRB,mstr) !!wy azStrs nicht mehr benötigt
+      subroutine pwert(mws,vphs,lfs,tempws,pws) !!wy azStrs nicht mehr benötigt
 !                                                                       
 !     EIN PROGRAMM ZUR BERECHNUNG DES P-WERTES aus dem m-Wert und       
 !     dem ph-Wert                                                       
@@ -33,7 +33,7 @@
       real :: mws, vphs, lfs, tempws, pws  !!wy Übergabe Einzelwerte, nicht Felder
       REAL :: K1,K2,MUE,lgk1,lgk2,lgh,lgoh, abst, pk1, pk2, pkw, hk, c, ph0, ph1, ph2, delph, delph1, delph2
       REAL :: poh, h, oh, y, y1, y2, eta
-      integer :: mRB, mstr, itera
+      integer :: itera
 !                                                                       
 !     Berechnung der absoluten Temperatur                               
 !                                                                       

@@ -1,4 +1,24 @@
+!---------------------------------------------------------------------------------------
 !
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !----------------------------------------------------------------------------------------- uebergabekonzentrationen
 !> \page uebergabe_werte Übergabe-Werte
 !! damit sind alle Feldgrößen gemeint, 
@@ -89,7 +109,7 @@
 !!<tr><td> 72 </td><td> \anchor algzog algzog	</td><td> Gruen-Algen-Konsum des Zoo-Planktons 					</td><td> mgBio/l je Zeitschritt 	</td><td> konsum -> algaesgr </td></tr>
 !!<tr><td> 73 </td><td> \anchor algzob algzob	</td><td> Blau-Algen-Konsum des Zoo-Planktons 					</td><td> mgBio/l je Zeitschritt  	</td><td> konsum -> algaesbl </td></tr>
 !!<tr><td> 74 </td><td> \anchor zhnf zhnf	</td><td> Zooplankton frisst HNF 						</td><td> mgC/l  je Zeitschritt		</td><td> konsum -> hnf </td></tr>
-!!<tr><td> 75 </td><td> \anchor hnfza hnfza	</td><td> HNFza(ior) = (zHNF(ior)/CHNF(ior))*24. 				</td><td> #unstimmig#			</td><td> konsum -> Ausgabe </td></tr>
+!!<tr><td> 75 </td><td> \anchor hnfza hnfza	</td><td> HNFza(ior) = (zHNF(ior)/CHNF(ior))*24. 				</td><td> unstimmig ??			</td><td> konsum -> Ausgabe </td></tr>
 !!<tr><td> 76 </td><td> \anchor rmuas rmuas	</td><td> = mueRot-respRg , Netto-Wachstumsrate des Zooplanktons, aufsummiert zu XRMUE</td><td> 1/d			</td><td> konsum -> Ausgabe </td></tr>
 !!<tr><td> 77 </td><td> \anchor rakr rakr	</td><td> = iras(ior)*respaR , Aktive Respirationsrate des Zooplanktons ?fraßabhängig? , aufsummiert zu XRAKR</td><td> 1/d </td><td> konsum -> Ausgabe </td></tr>
 !!<tr><td> 78 </td><td> \anchor rbar rbar	</td><td> = respRg, Basale Respirationsrate des Zooplanktons, aufsummiert zu XRBAR</td><td> 1/d 			</td><td> konsum -> Ausgabe </td></tr>

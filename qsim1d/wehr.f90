@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
  subroutine WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                                &                                  
           ,tzt,hte_z,htez_z,chlazt,hchlaz_z,akizt,hakiz_z,agrzt,hagrz_z,ablzt,hablz_z                                    &
           ,NH4zt,hNH4z_z,NO2zt,hNO2z_z,NO3zt,hNO3z_z,Pzt,hPz_z,gSizt,hsiz_z,chlkzt,hchlkz_z                              &

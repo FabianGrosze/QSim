@@ -1,4 +1,27 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page PH-Wert pH-Wert
+!!
+!! Nachfolge: Markdown Doku \subpage ph_doku
 !!
 !! <h2>Herkunft</h2>
 !!     ph() \n 
@@ -17,7 +40,7 @@
 !!    <li>Gasaustausch über die Gewässeroberfläche</li>
 !!    <li>Nitrifikation </li>
 !! </ul>
-!! Im 3D-Modell sind noch keine Wehre implementiert, daher kommt es auch zu keinem Co2-Austrag an Wehren wie im 1D.   \n                           
+!! Im 3D-Modell sind noch keine Wehre implementiert, daher kommt es auch zu keinem Co2-Austrag an Wehren wie im 1D. \n
 !!
 !! <h2>Schnittstellenbeschreibung</h2>
 !!
@@ -49,7 +72,7 @@
 !! Es existiert aber ein älterer
 !! <a href="./pdf/PH_Verena.pdf" target="_blank">Dokumentationsentwurf</a> 
 !! zum pH-Wert Modul von Verena Michalski.
-!! \n\n 
+!! \n\n
 !! zurück: \ref Stoffumsatz; Quelle: ph_huelle.f95
 
 
@@ -150,179 +173,139 @@
       use modell                                                 
       use QSimDatenfelder
       implicit none
-      integer :: i, i2, iii
+      integer :: i
+      real tiefes,raus,flaes
 
-!> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-      iglob=(i+meinrang*part)
-      if (iglob.gt. knotenanzahl2D) return ! überstehende Nummern nicht bearbeiten.
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Datenübergabe: 
 
       ! planktische variablen
-      mw(1) = planktonic_variable_p(62+(i-1)*number_plankt_vari) ! m-Wert
-      mw(2) = mw(1)
-      pw(1) = planktonic_variable_p(63+(i-1)*number_plankt_vari) ! p-Wert
-      pw(2) = pw(1)
-      ca(1) = planktonic_variable_p(64+(i-1)*number_plankt_vari) ! Calium ?
-      ca(2) = ca(1)
-      lf(1) = planktonic_variable_p(65+(i-1)*number_plankt_vari) ! Leitfähigkeit
-      lf(2) = lf(1)
+      !mw(1:2) = planktonic_variable_p(62+(i-1)*number_plankt_vari) ! m-Wert
+      !pw(1:2) = planktonic_variable_p(63+(i-1)*number_plankt_vari) ! p-Wert
+      !ca(1:2) = planktonic_variable_p(64+(i-1)*number_plankt_vari) ! Calium ?
+      !lf(1:2) = planktonic_variable_p(65+(i-1)*number_plankt_vari) ! Leitfähigkeit
+      !vph(1:2) = planktonic_variable_p(66+(i-1)*number_plankt_vari) ! der zu berechnende PH-Wert
+      !vco2(1:2) = transfer_quantity_p(26+(i-1)*number_trans_quant) ! Kohlendioxyd
+      !tempw(1:2) = planktonic_variable_p( 1+(i-1)*number_plankt_vari)  ! Wassertemperatur
 
-      ! wasser-milieu
-      tempw(1) = planktonic_variable_p( 1+(i-1)*number_plankt_vari)  ! Wassertemperatur
-      !tflie = 1      ! Zeitschrittdauer in d
-
-      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
-
-      susn(1) = transfer_quantity_p(29+(i-1)*number_trans_quant) ! Durch SUSPendierte NITRIFikanten OXIDIERTE AMMONIUMMENGE
-      susn(2) = susn(1)
-      bsbt(1) = transfer_quantity_p(1+(i-1)*number_trans_quant) !orgc Sauerstoffverbrauch
-      bsbt(2) = bsbt(1)
-      dalgki(1) = transfer_quantity_p(20+(i-1)*number_trans_quant) ! Zuwachs Kiesel-Algen
-      dalgki(2) = dalgki(1)
-      dalggr(1) = transfer_quantity_p(21+(i-1)*number_trans_quant) ! Zuwachs Grün-Algen
-      dalggr(2) = dalggr(1) 
-      dalgak(1) = transfer_quantity_p(23+(i-1)*number_trans_quant) ! Respiration Kiesel-Algen
-      dalgak(2) = dalgak(1)
-      dalgag(1) = transfer_quantity_p(24+(i-1)*number_trans_quant) ! Respiration Grün-Algen
-      dalgag(2) = dalgag(1)
-      PO2P(1) = transfer_quantity_p(30+(i-1)*number_trans_quant) ! Sauerstoffproduktion durch Makrophyten
-      PO2P(2) = PO2P(1)
-      PO2R(1) = transfer_quantity_p(31+(i-1)*number_trans_quant) ! Sauerstoffverbrauch durch Makrophyten
-      PO2R(2) = PO2R(1)
+      !tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
       ! Hydraulik
-      tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! water_depth(i) 
-      rau(1:2)= strickler( zone(point_zone(iglob))%reib , tiefe(1) )
-      vmitt(1:2) = rb_hydraul_p(1+(i-1)*number_rb_hydraul) ! vel_mag(i) 
-      flae(1:2) = 1000.0 !! unbenutzt da keine Einleitung
-      vabfl(1:2) = 2.5 !! wird nur bei Einleitungen verwendet, die sind aber ausgeschaltet.
+      !rau(1:2)= strickler( zone(point_zone(iglob))%reib , tiefe(1) )
+      !vmitt(1:2) = rb_hydraul_p(1+(i-1)*number_rb_hydraul) ! vel_mag(i) 
+      !flae(1:2) = 1000.0 !! unbenutzt da keine Einleitung
+      !rhyd(1:2) = tiefe(1) ! hydraulischer Radius | sinnvollste Annahme im mehrdimensionalen
+	  !tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! water_depth(i) 
+      !Wlage(1,1:2)=zone(point_zone(iglob))%wettstat%wetterstations_lage ! Höhenlage der zuständigen Wetterstation mü.NHN 
+      !hWS(1,1:2)= rb_hydraul_p(3+(i-1)*number_rb_hydraul) ! Wasserspiegellage, von holen_trans() gesetzt
+      !wge(1:2)=wge_T(zone(point_zone(iglob))%wettstat%wetterstations_nummer)        ! Windgeschwindigkeit  aus Wetterstationsdaten
 
-      ! ph so benutzen , dass nur der 1. Strang mit nur einem Knoten/Profil berechnet wird
-      flag(1)=0         ! keine Einleitungen
-      flag(2)=flag(1)
-      elen(1)=1         ! Elementlänge (nicht verwendet)
-      elen(2)=elen(1)
-      anze=1            ! Anzahl der Profile im aktuellen Strang
-      ior=1             ! Laufindex
+      !susn(1:2) = transfer_quantity_p(29+(i-1)*number_trans_quant) ! Durch SUSPendierte NITRIFikanten OXIDIERTE AMMONIUMMENGE
+      !!#bsbt(1:2) = transfer_quantity_p(1+(i-1)*number_trans_quant) !orgc Sauerstoffverbrauch
+	  !bsbct(1:2) = transfer_quantity_p(47+(i-1)*number_trans_quant)
+      !dalgki(1:2) = transfer_quantity_p(20+(i-1)*number_trans_quant) ! Zuwachs Kiesel-Algen
+      !dalggr(1:2) = transfer_quantity_p(21+(i-1)*number_trans_quant) ! Zuwachs Grün-Algen
+      !dalgbl(1:2) = transfer_quantity_p(22+(i-1)*number_trans_quant) ! Zuwachs Blau-Algen
+      !dalgak(1:2) = transfer_quantity_p(23+(i-1)*number_trans_quant) ! Respiration Kiesel-Algen
+      !dalgag(1:2) = transfer_quantity_p(24+(i-1)*number_trans_quant) ! Respiration Grün-Algen
+      !dalgab(1:2) = transfer_quantity_p(25+(i-1)*number_trans_quant) ! Respiration Blau-Algen
+      !PO2P(1:2) = transfer_quantity_p(30+(i-1)*number_trans_quant) ! Sauerstoffproduktion durch Makrophyten
+      !PO2R(1:2) = transfer_quantity_p(31+(i-1)*number_trans_quant) ! Sauerstoffverbrauch durch Makrophyten
 
-      vph(1) = planktonic_variable_p(66+(i-1)*number_plankt_vari) ! der zu berechnende PH-Wert
-      vph(2) = vph(1)
+      !ssalg(1:2) = planktonic_variable_p(52+(i-1)*number_plankt_vari) ! 
+      !stind(1:2) = planktonic_variable_p(59+(i-1)*number_plankt_vari) ! 
+      !albewg(1:2)=benthic_distribution_p(13+(i-1)*number_benth_distr) ! Wachstum benthischer gruen-Algen
+      !alberg(1:2)=benthic_distribution_p(11+(i-1)*number_benth_distr) ! Respiration benthischer gruen-Algen
+      !albewk(1:2)=benthic_distribution_p(14+(i-1)*number_benth_distr) ! Wachstum benthischer kiesel-Algen
+      !alberk(1:2)=benthic_distribution_p(12+(i-1)*number_benth_distr) ! Respiration benthischer kiesel-Algen
+	  	  
+      !resdr(1:2)=benthic_distribution_p(15+(i-1)*number_benth_distr) ! Respirationsrate benthischer Filtrierer (Dreissena-Muscheln)
+      !dzres1(1:2) = transfer_quantity_p(27+(i-1)*number_trans_quant) ! Grund-Respiration Konsumenten
+      !dzres2(1:2) = transfer_quantity_p(28+(i-1)*number_trans_quant) ! Fraßabhängige Respirationsrate Konsumenten
 
-      qeinlL(1)=0.0           ! Zufluss Linienquelle; nicht verwendet
-      iorLa(1)=0              ! AnfangsKnoten der Linienquelle; nicht verwendet
-      iorLe(1)=0              ! EndKnoten der Linienquelle; nicht verwendet
-      ieinLs(1)=0             ! keine Linienquellen
-      ieinLs(2)=ieinLs(1)
-      elfL(1)=0.0             ! keine Linienquellen
-      CaL(1)=0.0              ! keine Linienquellen
+      if((iphy<1).or.(iphy>4))then
+         write(fehler,*)'ph_huelle: aeration flag iphy',iphy,' out of bounds i,meinrang=',i,meinrang
+         call qerror(fehler)
+      endif
 
-      ssalg(1) = planktonic_variable_p(52+(i-1)*number_plankt_vari) ! 
-      ssalg(2) = ssalg(1)
-      stind(1) = planktonic_variable_p(59+(i-1)*number_plankt_vari) ! 
-      stind(2) = stind(1)
-      albewg(1)=benthic_distribution_p(13+(i-1)*number_benth_distr) ! Wachstum benthischer gruen-Algen
-      albewg(2) = albewg(1)
-      alberg(1)=benthic_distribution_p(11+(i-1)*number_benth_distr) ! Respiration benthischer gruen-Algen
-      alberg(2) = alberg(1)
-      albewk(1)=benthic_distribution_p(14+(i-1)*number_benth_distr) ! Wachstum benthischer kiesel-Algen
-      albewk(2) = albewk(1)
-      alberk(1)=benthic_distribution_p(12+(i-1)*number_benth_distr) ! Respiration benthischer kiesel-Algen
-      alberk(2) = alberk(1)
-      i2=zone(point_zone(iglob))%wettstat%wetterstations_nummer !! ist parallel !!!
-      wge(1:2)=wge_T(i2)        ! Windgeschwindigkeit  aus Wetterstationsdaten
-
-      abl(1) = planktonic_variable_p(10+(i-1)*number_plankt_vari) ! Anteil blau-Algen
-      abl(2) = abl(1)
-      dalgbl(1) = transfer_quantity_p(22+(i-1)*number_trans_quant) ! Zuwachs Blau-Algen
-      dalgbl(2) = dalgbl(1)
-      dalgab(1) = transfer_quantity_p(25+(i-1)*number_trans_quant) ! Respiration Blau-Algen
-      dalgab(2) = dalgab(1)
-      idwe(1,1)= 1            ! Eigentlich Wetterstationsnummer ,muss aber 1 sein, 
-      ! weil in typw(1) wge(1) ro(1) die Daten der aktuellen Wetterstation in 1 haben
-      idwe(1,2)=idwe(1,1)
-      iwied=0      ! unbenutzte Variable
-      fkm (1)=0.0  ! Flusskilometer unbenutzt
-      ij=0         ! unbenutzte Variable
-      resdr(1)=benthic_distribution_p(15+(i-1)*number_benth_distr) ! Respirationsrate benthischer Filtrierer (Dreissena-Muscheln)
-      resdr(2) = resdr(1)
-                                  
-      dzres1(1) = transfer_quantity_p(27+(i-1)*number_trans_quant) ! Grund-Respiration Konsumenten
-      dzres1(2) = dzres1(1)
-      dzres2(1) = transfer_quantity_p(28+(i-1)*number_trans_quant) ! Fraßabhängige Respirationsrate Konsumenten
-      dzres2(2) = dzres2(1)
-      agr(1) = planktonic_variable_p( 9+(i-1)*number_plankt_vari) ! 
-      agr(2) = agr(1)
-      aki(1) = planktonic_variable_p( 8+(i-1)*number_plankt_vari) ! 
-      aki(2) = aki(1)
-
-      ilbuhn=0          ! keine Buhnen
-      eph(1) = 0.0      ! keine Einleitung
-      emw(1) = 0.0      ! keine Einleitung
-      elf(1) = 0.0      ! keine Einleitung
-      eca(1) = 0.0      ! keine Einleitung
-      vco2(1) = transfer_quantity_p(26+(i-1)*number_trans_quant) ! Kohlendioxyd
-      vco2(2) = vco2(1)
-      qeinl(1)=0.0      ! kein Abfluss Einleitung
-      jiein(1)=0        ! null Punkt-Einleitungen
-
-      mstr=1            ! Strangzähler
-      !cpfad            ! (unbenutzt)
-      rhyd(1:2) = tiefe(1) ! hydraulischer Radius | sinnvollste Annahme im mehrdimensionalen
-      Wlage(1,1:2)=zone(point_zone(iglob))%wettstat%wetterstations_lage ! Höhenlage der zuständigen Wetterstation mü.NHN 
-      hWS(1,1:2)= rb_hydraul_p(3+(i-1)*number_rb_hydraul) ! Wasserspiegellage, von holen_trans() gesetzt
-      itags=tag           ! Tag im Monat module::modell zeitsekunde() 	(unbenutzt)
-      monats=monat          ! Monat im Jahr module::modell zeitsekunde() (unbenutzt)
-      uhrz=uhrzeit_stunde ! Uhrzeit module::modell zeitsekunde() (unbenutzt)
-      ! azStrs=1 - aus QSimDatenfelder
-      ! iphy direkt aus module_modell
+      !! ---
+      iglob=(i+meinrang*part) ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
+      if (iglob.gt. knotenanzahl2D) return ! überstehende Nummern nicht bearbeiten.
+      tflie=real(deltat)/86400
+      tiefes=rb_hydraul_p(2+(i-1)*number_rb_hydraul)
+      raus=strickler( zone(point_zone(iglob))%reib , tiefes )
+      flaes=1000.0
+	  ! Caki,Cagr,Cabl  ! set by   ini_algae() delivered by module_QSimDatenfelder.f95
       kontroll=iglob.eq.kontrollknoten
-	  iii=20; if(kontroll) iii=0
-      do 
-	  	 mw(1:2)=planktonic_variable_p(62+(i-1)*number_plankt_vari)
-		 pw(1:2 )=planktonic_variable_p(63+(i-1)*number_plankt_vari)
-         ca(1:2) =(real(iii)/20.0)*planktonic_variable_p(64+(i-1)*number_plankt_vari)
-         lf(1:2) =planktonic_variable_p(65+(i-1)*number_plankt_vari)
-         vph(1:2)=planktonic_variable_p(66+(i-1)*number_plankt_vari)
-         if(kontroll) print*,'ph  vorher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
 	  
-	  ! vph,mw,(pw),ca,vco2
-	  ! lf,tempw
-	  ! rau,vmitt,tiefe,flae,vabfl,wge # Belüftung
-	  ! po2p,po2r # produktion und respiration der Macrophyten
-	  ! bsbt # bakterieller Abbau org. Kohlenstoffe
-	  ! dalgki,dalggr,dalgbl | dalgak,dalgag,dalgab
-	  ! albewg,alberg,albewk,alberk
-	  ! dzres1,dzres2,resdr
-	  ! susn
+      if(kontroll)print*,iglob,meinrang,i,part,"  vor ph_kern lf,ph=",  &
+      planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
 
-!qsim13.40 15okt18 ###############################################################################################
-      call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbt,dalgki        &
-     &,dalggr,dalgak,dalgag,po2p,po2r,rau,vmitt,tiefe         &
-     &,flae,vabfl                                             &
-     &,flag,elen,ior,anze,vph                                 &
-     &,elfL,caL,qeinlL,iorLa,iorLe,ieinLs                     &
-     &,ssalg,stind,albewg                                     &
-     &,alberg,albewk,alberk,wge                               &
-     &,abl,dalgbl,dalgab,IDWe,iwied,fkm,ij,resdr              &
-     &,dzres1,dzres2,aki,agr                                  &
-     &,ilbuhn,eph,emw,elf,eca,vco2,qeinl,jiein                &
-     &,mstr,cpfad,rhyd,WLage,hWS,itags,monats,uhrz            &
-     &,azStrs,iphy   ,kontroll ,iglob )
+!  subroutine ph_kern(mws,pws,cas,lfs,tempws,vphs,vco2s                 &
+!                    ,tflie,raus,vmitts,tiefes,rhyds,flaes              &
+!                    ,wges,WLages,hWSs,iphy                             &
+!                    ,bsbcts,resdrs,dzres1s,dzres2s                     &
+!				 	 ,dalgkis,dalggrs,dalgbls,dalgaks,dalgags,dalgabs   &
+!					 ,Caki,Cagr,Cabl                                    &
+!					 ,albergs,alberks,albewgs,albewks                   &
+!					 ,susns,po2ps,po2rs,ssalgs,stinds                   &
+
+            call ph_kern(planktonic_variable_p(62+(i-1)*number_plankt_vari) &
+	 &                  ,planktonic_variable_p(63+(i-1)*number_plankt_vari) &
+     &                  ,planktonic_variable_p(64+(i-1)*number_plankt_vari) &
+	 &                  ,planktonic_variable_p(65+(i-1)*number_plankt_vari) &
+     &                  ,planktonic_variable_p( 1+(i-1)*number_plankt_vari) &
+	 &                  ,planktonic_variable_p(66+(i-1)*number_plankt_vari) &
+     &                  ,transfer_quantity_p(26+(i-1)*number_trans_quant)   &
+     &                  ,tflie                                   &
+     &                  ,raus                                    &
+     &                  ,rb_hydraul_p(1+(i-1)*number_rb_hydraul) &
+     &                  ,rb_hydraul_p(2+(i-1)*number_rb_hydraul) &
+     &                  ,rb_hydraul_p(2+(i-1)*number_rb_hydraul) &
+     &                  ,flaes                                   &
+     &                  ,wge_T(zone(point_zone(iglob))%wettstat%wetterstations_nummer)  &
+     &                  ,zone(point_zone(iglob))%wettstat%wetterstations_lage           &
+     &                  ,rb_hydraul_p(3+(i-1)*number_rb_hydraul)                        &
+     &                  ,iphy                                                           &
+     &                  ,transfer_quantity_p(47+(i-1)*number_trans_quant)    &
+     &                  ,benthic_distribution_p(15+(i-1)*number_benth_distr) &
+     &                  ,transfer_quantity_p(27+(i-1)*number_trans_quant)    &
+     &                  ,transfer_quantity_p(28+(i-1)*number_trans_quant)    &
+     &                  ,transfer_quantity_p(20+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(21+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(22+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(23+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(24+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(25+(i-1)*number_trans_quant) &
+     &                  ,Caki,Cagr,Cabl   &
+     &                  ,benthic_distribution_p(11+(i-1)*number_benth_distr) &
+     &                  ,benthic_distribution_p(12+(i-1)*number_benth_distr) &
+     &                  ,benthic_distribution_p(13+(i-1)*number_benth_distr) &
+     &                  ,benthic_distribution_p(14+(i-1)*number_benth_distr) &
+     &                  ,transfer_quantity_p(29+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(30+(i-1)*number_trans_quant) &
+     &                  ,transfer_quantity_p(31+(i-1)*number_trans_quant) &
+     &                  ,planktonic_variable_p(52+(i-1)*number_plankt_vari) &
+     &                  ,planktonic_variable_p(59+(i-1)*number_plankt_vari) &
+     &                  ,kontroll ,iglob )  
+
+      if(kontroll)print*,iglob,meinrang,i,part," nach ph_kern lf,ph=",  &
+      planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+
+      if((iphy<1).or.(iphy>4))then
+         write(fehler,*)'ph_huelle nachher: aeration flag iphy',iphy,' out of bounds i,meinrang=',i,meinrang
+         call qerror(fehler)
+      endif
              
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Daten-rückgabe: 
-	     if(kontroll) print*,'ph nachher: vph,mw,pw,ca,lf,vco2',vph(1),mw(1),pw(1),ca(1),lf(1),vco2(1)
-		 iii=iii+1
-		 if (iii.gt.20)exit
-      enddo !permutation am Kontrollknoten
 
       ! Transportkonzentrationen zurückschreiben
-      planktonic_variable_p(62+(i-1)*number_plankt_vari) = mw(1) !
-      planktonic_variable_p(63+(i-1)*number_plankt_vari) = pw(1) ! 
-      planktonic_variable_p(64+(i-1)*number_plankt_vari) = ca(1) ! 
-      planktonic_variable_p(65+(i-1)*number_plankt_vari) = lf(1) !  ### wie geht das mit dem Salzgehalt zusammen????
-      planktonic_variable_p(66+(i-1)*number_plankt_vari) = vph(1) ! 
-      planktonic_variable_p(59+(i-1)*number_plankt_vari) = stind(1) ! ??? Minutenzähler Bedeutung sehr unklar; Versuch einer Altersvariablen?
+      !planktonic_variable_p(62+(i-1)*number_plankt_vari) = mw(1) !
+      !planktonic_variable_p(63+(i-1)*number_plankt_vari) = pw(1) ! 
+      !planktonic_variable_p(64+(i-1)*number_plankt_vari) = ca(1) ! 
+      !planktonic_variable_p(65+(i-1)*number_plankt_vari) = lf(1) !  ### wie geht das mit dem Salzgehalt zusammen????
+      !planktonic_variable_p(66+(i-1)*number_plankt_vari) = vph(1) ! 
+      !planktonic_variable_p(59+(i-1)*number_plankt_vari) = stind(1) ! ??? Minutenzähler Bedeutung sehr unklar; Versuch einer Altersvariablen?
       ! Übergabekonzentrationen Rückgabewerte
-      transfer_quantity_p(26+(i-1)*number_trans_quant) = vco2(1) ! Kohlendioxyd
+      !transfer_quantity_p(26+(i-1)*number_trans_quant) = vco2(1) ! Kohlendioxyd
 
       RETURN 
       END subroutine ph_huelle
@@ -347,40 +330,7 @@
       RETURN 
       END subroutine ini_ph
                                           
-!----+-----+----
-!>  \page ph_aufteilung Ergänzung P-Wert
-!! siehe: ph_aufteilung_einleitung(), von wo QSim Subroutine pweinl() aufgerufen wird \n
-!! Kontext: \ref PH-Wert
 
-!> die Subroutine ph_aufteilung_einleitung() sthet in: ph_huelle.f95\n
-!! Sie dient dazu am Rand den fehlenden p-Wert durch Zuhilfenahme der QSim Subroutine pweinl() zu berechnen. \n
-!! läuft nur auf prozessor 0 \n
-!! 
-      SUBROUTINE ph_aufteilung_einleitung(i)
-      use modell                                                 
-      use QSimDatenfelder
-      implicit none
-      integer :: i
-      real, Dimension(azStrs,100)    :: mws, vphs, lfs, tempws, pws 
-
-      tempws(1,1) = planktonic_variable( 1+(i-1)*number_plankt_vari)  ! Wassertemperatur
-      mws(1,1) = planktonic_variable(62+(i-1)*number_plankt_vari) ! m-Wert
-      vphs(1,1) = planktonic_variable(66+(i-1)*number_plankt_vari) ! PH-Wert
-      lfs(1,1) = planktonic_variable(65+(i-1)*number_plankt_vari) ! Leitfähigkeit
-      mstr = 1        ! Strangzähler
-
-!     Berechnung des p-Wertes am Start (ohne Algen)                     
-!                                                                       
-      call pwert(mws,vphs,lfs,tempws,pws,  1,  mstr,  azStrs) ! mRB=1
-!                                                                       
-      planktonic_variable(63+(i-1)*number_plankt_vari) = pws(1,1) ! p-Wert Rückgabe
-
-      RETURN 
-      END subroutine ph_aufteilung_einleitung
-      !call pweinl(mw,vph,lf,tempw,pw,ior) 
-                                          
-!----+-----+----
-!      end module ph_module
 
 !! <h2>Modellierte Teilprozesse:</h2>
 !! <ul>

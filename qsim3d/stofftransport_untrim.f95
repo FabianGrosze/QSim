@@ -773,12 +773,12 @@ if(meinrang.eq.0)then ! prozess 0 only
       call check_err( nf90_inq_dimid(ncid,"nMesh2_data_time", didi) )
       call check_err( nf90_inq_varid(ncid,"nMesh2_data_time", didi) )
       call check_err( nf90_get_var(ncid, didi, zeitstunde) )
-      print*,'netcdf nMesh2_data_time',transinfo_anzahl,' Zeitschritte von: ',zeitstunde(1)," bis: " &
-     &      ,zeitstunde(transinfo_anzahl)," Stunden"
+      print*,'netcdf nMesh2_data_time ',transinfo_anzahl,' timesteps starting: ',zeitstunde(1),' until: ' &
+     &      ,zeitstunde(transinfo_anzahl),' h'
 	  !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
 	  delt=(zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
-      print*,'nc_sichten: delt=',delt,(delt*3600.0),int(delt*3600.0)
-      do n=1,transinfo_anzahl ! Stunden in Sekunden, regelmäßige integer Zeitpunkte
+      !print*,'nc_sichten: delt=',delt,(delt*3600.0),int(delt*3600.0)
+      do n=1,transinfo_anzahl ! timestep exactly equal
          transinfo_zeit(n)= (n-1)*int(delt*3600.0) + int(zeitstunde(1)*3600.0)
          transinfo_zuord(n)=n
          !nnn=n-1-(((n-1)/3)*3)
@@ -812,8 +812,14 @@ if(meinrang.eq.0)then ! prozess 0 only
       !  transinfo_zeit(n)= transinfo_zeit(n)+time_offset
       !end do ! alle Transportzeitschritte
 
+      do n=1,transinfo_anzahl
+		 if (iabs(transinfo_zeit(n)-int(zeitstunde(n)*3600.0)).gt.5) then ! wrong times
+            write(fehler,*)'nc_sichten: ERROR nMesh2_data_time does not fit'
+			print*,n,' times do not fit=',zeitstunde(n),' h, ', int(zeitstunde(n)*3600.0),transinfo_zeit(n),' s'
+            call qerror(fehler)
+         endif
+      end do ! alle Transportzeitschritte ab 2
       dttrans=transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
-      print*,'netcdf erste Zeitschritt-Länge=',dttrans," zuord(2und1):",transinfo_zuord(2),transinfo_zuord(1)
       do n=3,transinfo_anzahl,1
          delt=transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
          if((delt.ne.dttrans).or.(delt.lt.1.0))then
@@ -824,28 +830,28 @@ if(meinrang.eq.0)then ! prozess 0 only
             do nnn=1,15,1
                print*,nnn,'=n transinfo_zeit=',transinfo_zeit(transinfo_zuord(nnn)),transinfo_zuord(nnn)
             end do
-            write(fehler,*)'nc_sichten: ERROR unregelmäßiger Transportzeitschritt ',delt, 'sollte sein: ', dttrans
+            write(fehler,*)'nc_sichten: ERROR unequal timestep=',delt, ' should be: ', dttrans
+			print*,'nMesh2_data_time =',zeitstunde(n-1),zeitstunde(n),' h'
             call qerror(fehler)
-         end if ! mehr als ein Transportzeitschritt
+         end if ! wrong timestep
       end do ! alle Transportzeitschritte ab 2
-      print*,'netcdf Zeitschritt-Länge=',dttrans," Sekunden"
+      print*,'all netcdf timesteps=',dttrans,' seconds, checked.'
 
-      print*,'nc_sichten ', transinfo_anzahl,' Transport-Zeitschritte'
+      print*,'nc_sichten ', transinfo_anzahl,' transport-timesteps'
       zeitpunkt=transinfo_zeit(transinfo_zuord(1))
       call zeitsekunde()
-      write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
+      write(*,228)'from: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       zeitpunkt=transinfo_zeit(transinfo_zuord(transinfo_anzahl))
       call zeitsekunde()
-      write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
+      write(*,228)'until: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
-      print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
       deallocate(zeitstunde) !,secuz)
 
 end if ! only prozessor 0
       call mpi_barrier (mpi_komm_welt, ierr)
       RETURN
-  227 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr  = ",I9," sek. seit Jahresanfang ",I4)
-  228 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr  = ",I9," sek. seit ",A)
+  227 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since start of year ",I4)
+  228 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since ",A)
       END subroutine nc_sichten
 
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

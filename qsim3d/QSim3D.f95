@@ -475,16 +475,19 @@
 !--------------------------------------------------------------------------------------------------------------
  
 !> \page Download Download
-!! </ul><h3>Versionierungs-System</h3><ul>
+!! <h3>Versionierungs-System</h3><ul>
 !! <li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
 !! der aktuelle Quellcode von QSim verfügbar:\n
 !! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li>
-!! </ul><h3>ausführbare Programme</h3><ul>
+!! </ul>
+!! <h3>ausführbare Programme</h3><ul>
 !! <li> QSim1D Windows-executabels  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
 !! <li> QSim3D Linux-executabels  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> 
-!! </ul><h3>Dokumentation</h3><ul>
+!! </ul>
+!! <h3>Dokumentation</h3><ul>
 !! <li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li>
-!! </ul><h3>Archiv</h3><ul>
+!! </ul>
+!! <h3>Archiv</h3><ul>
 !! <li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li>
 !! </ul>
 !! aus Datei QSim3D.f95 ; zurück zu \ref index
@@ -512,33 +515,23 @@
 !!
 !! \subsection batch-queue batch-queue
 !! Teure Hochleistungsrechner wie der HPC (high-performance-cluster) der BfG stehen in der Regel nicht einzelnen Kollegen alleine zur Verfügung.
-!! Um die Berechnungsaufträge von vielen Benutzern abzuarbeiten, werden sogenannte batch-queues (elektronische Warteschlangen) verwendet.
-!! Der Benutzer übergibt seinen Berechnungsauftrag durch Start eines qsub-scripts (torque) an einen Scheduler.
+!! Um die Berechnungsaufträge von vielen Benutzern abzuarbeiten, werden sogenannte batch-queues (elektronische Warteschlangen) verwendet.\n\n
+!! Der Benutzer übergibt seinen Berechnungsauftrag durch Start eines scripts an einen Scheduler; momentan wird slurm verwendet früher torque.
+!! \n Beispiel <a href="./exp/qsim3d.sbatch" target="_blank">qsim3d.sbatch</a>\n
 !! Der Auftrag wird dann abgearbeitet, sobald die angeforderten Kapazitäten auf dem HPC verfügbar sind.
-!! Sowohl QSim3D als auch qsub verfügen über Möglichkeiten den Benutzer über das Berechnungsende per Email zu informieren.
-!!
-!! \section automatisch Benutzeroberfläche Gerris
-!! Für den Programmstart mithilfe von \ref Gerris ist es erforderlich, vorher eine ssh-Verbindung 
-!! zwischen dem eigenen Arbeits-PC und dem server, auf dem gerechnet werden soll, herzustelllen.
-!! Details dazu enthalten die Dokumente: 
-!! <a href="./pdf/Gerris3D_nachvollzogenJens.pdf" target="_blank">Gerris3D_nachvollzogen</a> 
-!! und <a href="./pdf/Schluesselkonvertierung.pdf" target="_blank">Schluesselkonvertierung</a>
-!! \n\n 
-!! Gerris startet auf dem Server allerdings nur ein script, in dem der maschinenspezifische Programmaufruf enthalten ist. 
-!! Z.Z. (aug18) ist dies hpc-worker.bafg.de:/home/Wyrwa/bin/qsim3d_gerris.bash.\n
-!! Dieses ruft wiederum ein qsub-script auf, das im jeweiligen Modellverzeichnis angelegt werden muss, 
-!! um die Simulation des dort liegenden Modells/Ereignises in die Warteschlange (batch-queue) des hpc-servers einzureihen.
+!! Sowohl QSim3D als auch slurm verfügen über Möglichkeiten den Benutzer über das Berechnungsende per Email zu informieren.
 !! 
-!! \section fortschritt fortschritt
+!! \subsection fortschritt fortschritt
 !! Während des Rechenlaufs wird im Modellverzeichnis eine Datei \p fortschritt abgelegt, die nur eine Zahl
 !! zwischen 0 und 1 enthält, und angibt, welcher Anteil der erforderlichen Zeitschritte bereits durchlaufen wurde.
 !! Beim Beenden von QSim-3D wird diese Datei gelöscht. Das Vorhandensein von \p fortschritt verhindert, dass weitere
 !! Rechenläufe gestartet werden, die dasselbe Modellverzeichnis verwenden. \n Bei unkontrollierten Programmabbrüchen
 !! wird \p fortschritt nicht gelöscht. Bei einem Neustart würde dies das Anlaufen von QSim3d verhindern; 
 !! d.h. \p fortschritt muss nach unkontrollierten Abbrüchen vor dem Neustart manuell entfernt werden.
-!! \n\n
-!! <hr>Es existiert eine Überlegung QSim3D mithilfe einer in php codierten <a href="./taz/webstart_tiqu26apr16.taz">Web-Anwendung</a> zu starten.  
-!! (z. Z. im Versuchsstadium)
+!!
+!! \section automatisch Benutzeroberfläche Gerris
+!! Wenn bei der \ref Gerris die Optionen richtig gesetzt wurden, läßt sich QSim3D durch Drücken auf den "Berechnen" Knopf starten:\n
+!! \image html GERRISstart.png 
 !! \n\n
 !! aus Datei QSim3D.f95 ; zurück zu \ref Modell_Benutzung oder \ref index
 

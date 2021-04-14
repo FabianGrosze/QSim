@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 ! hier enthalten:
 ! randbedingungen_setzen() ; randwert_planctonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ; 
 ! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; ereigg_Randbedingungen_lesen() ;
@@ -104,10 +125,11 @@
       implicit none
       integer :: j, RB_zaehl
       logical einmalig
-!
       !print*,'randbedingungen_setzen'
 
-!>>>> Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	  !!wy call gather_planktkon() ! syncronize non-parallel fields to paralell ones
+	  
+	  !>>>> Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       call scatter_rb_hydraul()
 
 !>>>> Wetter-Randbedingungen <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -204,6 +226,7 @@ end if !! nur prozessor 0
          print*,'akbcm = ',planktonic_variable_p(24+(j-1)*number_plankt_vari) !, ' Caki=',Caki
          print*,'agbcm = ',planktonic_variable_p(25+(j-1)*number_plankt_vari) !, ' Caki=',Caki
          print*,'abbcm = ',planktonic_variable_p(26+(j-1)*number_plankt_vari) !, ' Caki=',Caki
+         print*,'ph = ',planktonic_variable_p(66+(j-1)*number_plankt_vari) !
       endif  ! kontrollknoten
 
       RETURN
@@ -351,7 +374,7 @@ end if !! nur prozessor 0
 !----+-----+----
 
 !> bisher plankt_vari_vert konstant über die Tiefe d.h. 2D tiefengemittelt
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
       SUBROUTINE tiefenprofil(jjj)
 
       use modell                                                   
@@ -607,8 +630,10 @@ end if !! nur prozessor 0
      &     planktonic_variable(66+nk),      & ! VPH | vphs
      &     planktonic_variable(65+nk),      & ! LF | lfs
      &     planktonic_variable( 1+nk),      & ! Tempw | tempws
-     &     planktonic_variable(63+nk),      & ! pw | pws
-     &     0,0)                               !  mRB,mstr
+     &     planktonic_variable(63+nk))! ,      & ! pw | pws
+!     &     0,0)                               !  mRB,mstr
+!      subroutine pwert(mws,vphs,lfs,tempws,pws) !!wy azStrs nicht mehr benötigt
+
 !
       RETURN
       END subroutine randbedingungen_ergaenzen
@@ -616,7 +641,7 @@ end if !! nur prozessor 0
 
 !> <h1>Legt die Randbedingungs-Datenfelder an </h1>
 !! .... to be done PARALLEL\n 
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
 !! 
       subroutine randbedingungen_parallel()
       use modell
@@ -690,7 +715,7 @@ end if !! nur prozessor 0
 !----+-----+----
 !> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
 !! .... to be done PARALLEL\n 
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
 !! 
       subroutine scatter_BC()
       use modell
@@ -712,7 +737,7 @@ end if !! nur prozessor 0
 !! lineare Interpolation zwischen den gültigen Randwerten:\n 
 !! davor und danach konstant \n
 !! analog zu QSim-1D/funkstar.f90
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
 !! 
       subroutine RB_werte_aktualisieren(t)
       use modell
@@ -799,7 +824,7 @@ end if !! nur prozessor 0
 
 !----+-----+----
 !> <h1>Randwert gueltig?</h1>
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
       logical function randwert_gueltig(wert,n)
       use modell
       implicit none
@@ -1244,7 +1269,7 @@ end if !! nur prozessor 0
 !> <h1>Datei e_extnct.dat Lesen</h1>
 !! aus <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
 !! siehe \ref extnct_rb aus \ref Datenmodell
-!! \n\n Quelle: randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n Quelle: randbedingungen.f95 , zurück: \ref zuflussranddaten
 !!
       SUBROUTINE extnct_lesen()
       use modell
@@ -1292,7 +1317,7 @@ end if !! nur prozessor 0
 !
 !> <h1>Felder allocieren für die hydraulischen Randbedingungen</h1>
 !!
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
       SUBROUTINE alloc_hydraul_BC(nk)
       use modell
       implicit none
@@ -1314,7 +1339,7 @@ end if !! nur prozessor 0
 !
 !> <h1>Volumenstrom und Tracerflüsse entlang aller ianz_rb Ränder ermitteln</h1>
 !! ruft subroutine flux() aus schnitt.f95 auf 
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
 !!
       SUBROUTINE rand_flux(zeitzaehler)
       use modell
@@ -1410,7 +1435,7 @@ end if !! nur prozessor 0
 !> <h1>Randknoten zu einer Randlinie zusammenstellen</h1>
 !! , damit Durchfluss-Integrationen von rand_flux() ausgeführt werden können. \n
 !! läuft nur auf Prozess 0
-!! \n\n aus randbedingungen.f95 , zurück: \ref Randbedingungen
+!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
       SUBROUTINE randlinie_zusammenstellen()
       use modell
       implicit none

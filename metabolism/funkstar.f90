@@ -85,9 +85,9 @@
          read(92,'(2x)') 
          do i_Rand = 1, 200 ! Randbedingungsschleife Beginn  / all boundary conditions    
             ! read(92,9230,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
-            read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR)                                                
+            read(92,*,iostat=read_error)mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR),dummy                                               
             if(read_error<0.0)exit ! no further boundary
-            print*,'funkstar read(92 mstr,RBNR,istund,NrSchr',mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR) 
+            print*,'funkstar read(92 mstr,RBNR,istund,NrSchr,ident',mstr,RBNR,istund(mstr,RBNR),NrSchr(mstr,RBNR),adjustl(trim(dummy))
             !....warning                                                    
             if(NrSchr(mstr,RBNR).gt.40000)then 
                write(199,1899)RBNR,mstr 
@@ -98,7 +98,11 @@
             do iwe = 1,NrSchr(mstr,RBNR)      ! spool through   
                read(92,*,iostat=read_error)dummy
             enddo
-         enddo ! all i boundary conditions / Randbedingungsschleife Ende 
+         enddo ! all i boundary conditions / Randbedingungsschleife Ende
+         if(i_Rand.ge.200)then
+		    print*,'too many boundary conditions in EREIGG.txt'
+			stop 44
+         endif		 
 
          !allocate bc-arrays
          if(.not.allocated(imstr))allocate(imstr(i_Rands))

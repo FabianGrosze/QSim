@@ -31,6 +31,25 @@
 
 !> \page Modellerstellung Modellerstellung
 !! 
+!! \section strukda Stuktur des Datenmodells 
+!! Um eine Gewässergüte-Simulation (in QSim als "Ereignis" bezeichnet)
+!! in einem Gewässerabschnitt (Modell) durchführen zu können, ist ein Daten-Modell erforderlich.\n
+!! Dabei müssen Vorgaben zu den folgenden Punkten gemacht werden:\n 
+!! <ul>
+!! <li> \subpage Netz  </li>
+!! <li> \subpage Ablaufsteuerung </li>
+!! <li> \ref Transportinformationen </li>
+!! <li> \subpage Anfangsbedingungen  </li>
+!! <li> \subpage zuflussranddaten </li>
+!! <li> \subpage globaleParameter  </li> 
+!! <li> \subpage lokaleParameter </li>
+!! </ul>
+!!\n\n
+!! Informationstechnisch wird ein Daten-Modell für QSim-3D durch ein Verzeichnis definiert, 
+!! das im weiteren als <b>Modellverzeichnis</b> bezeichnet wird.\n
+!! In diesem befindet sich ein Satz von Dateien (deren Vollständigkeit beim Programmstart von QSim-3D abgeprüft wird). \n
+!! Im Abschnitt \subpage Datenmodell finden sie eine detaillierte Beschreibung der einzelnen Dateien.\n
+!! 
 !! \section Gerris Modellerstellung mit der Benutzeroberfläche Gerris 
 !! Die Bedienung von QSim-1D mittels Gerris kann im 
 !! <a href="./pdf/BfG_1778.pdf" target="_blank">BfG-Bericht 1778</a> nachgelesen werden.
@@ -48,26 +67,66 @@
 !! auf der Basis des <a href="./pdf/Gerris123D.Feinkonzept.3D.1.0.pdf" target="_blank">DV-technischen Feinkonzepts</a>
 !! vom <a href="http://www.wasserundumwelt.de" target="_blank">Ingenieurbüro Schumacher</a>  produziert.
 !! \n\n
-!! \section strukda Stuktur des Datenmodells 
-!! Um eine Gewässergüte-Simulation (in QSim als "Ereignis" bezeichnet)
-!! in einem Gewässerabschnitt (Modell) durchführen zu können, ist ein Daten-Modell erforderlich.\n
-!! Dabei müssen Vorgaben zu den folgenden Punkten gemacht werden:\n 
-!! <ul>
-!! <li> \subpage Netz  </li>
-!! <li> \subpage Ablaufsteuerung </li>
-!! <li> \ref Transportinformationen </li>
-!! <li> \subpage Anfangsbedingungen  </li>
-!! <li> \subpage zuflussranddaten </li>
-!! <li> \subpage globaleParameter  </li> 
-!! <li> \subpage lokaleParameter </li>
-!! </ul>
-!!\n
-!! Informationstechnisch wird ein Daten-Modell für QSim-3D durch ein Verzeichnis definiert, 
-!! das im weiteren als <b>Modellverzeichnis</b> bezeichnet wird.\n
-!! In diesem befindet sich ein Satz von Dateien (deren Vollständigkeit beim Programmstart von QSim-3D abgeprüft wird). \n
-!! Im Abschnitt \subpage Datenmodell finden sie eine detaillierte Beschreibung der einzelnen Dateien.\n
+!! Die Netzerstellung und Zonierung erfolgt mit dem externen Netzgenerator Janet
 !! \n\n
-!! Die Netzerstellung und Zonierung erfolgt mit dem externen Netzgenerator Janet\n
+!! Für Modellbedienung mittels Gerris ist es erforderlich, vorher eine ssh-Verbindung 
+!! zwischen dem eigenen Arbeits-PC, auf dem Gerris installiert ist und dem server (HPC), auf dem gerechnet werden soll, herzustelllen.
+!! Details dazu enthalten die Dokumente: 
+!! <a href="./pdf/Gerris3D_nachvollzogenJens.pdf" target="_blank">Gerris3D_nachvollzogen</a> 
+!! und <a href="./pdf/Schluesselkonvertierung.pdf" target="_blank">Schluesselkonvertierung</a>
+!! \n\n 
+!! Die Kommunikation zwischen Gerris und dem Server erfolgt, indem Scripte auf dem Server gestartet werden. 
+!! Diese kommunikation wird in den 3D Optionen eingerichtet:
+!! \n\n
+!! \image html 3Doptionen.png 
+!! \n\n 
+!!! Server-URL\n
+!! 	URL oder ip-Adresse des Servers, auf dem QSim3D gerechnet weden soll. Zwischen dem Server und dem lokalen Arbeitsrechner muss eine ssh-Verbindung möglich sein.
+!! \n\n
+!! User-Name \n
+!! 	Name des Benutzers, mit dem auf dem Server gerechnet werden soll. Die ssh-Anmeldung erfolgt über diesen Benutzer.
+!! \n\n
+!! Ereignisliste-Skript \n
+!! 	Pfad zu einem Skript auf dem Server, welches eine Liste aller auf dem Server vorhandenen hydraulischen Modelle/Ereignisse auf die Standartausgabe ausgibt.
+!! \n\n
+!! 	Jede Zeile der Ausgabe steht dabei für ein Modell/Ereignis und besteht aus vier bis sechs Feldern, die durch ein Semikolon(;) getrennt sind:
+!! \n\n
+!!<table Ereignisliste>
+!!<tr><td> Verzeichnispfad  </td><td> Vollständiger Pfad des Modellverzeichnisses auf dem Server	</td></tr>
+!!<tr><td> Startzeitpunkt  </td><td> Startzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde	</td></tr>
+!!<tr><td> Endzeitpunkt  </td><td> Endzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde	</td></tr>
+!!<tr><td> Zeitschrittweite  </td><td> Zeitschrittweite des Ereignisses in Sekunden als ganze Zahl	</td></tr>
+!!<tr><td> Modellname  </td><td> optional: Modellname	</td></tr>
+!!<tr><td> Projektname  </td><td> optional: Projektname (nur wenn auch Modellname angegegeben)	</td></tr>
+!!</table>
+!! \n\n
+!! 	Beispiel Ausgabezeile: \n
+!! <code>\verbatim
+!! 	/home/username/fluss/;2011-01-01 00:00:00;2011-08-15 00:00:00;600;Flussmodell;Flussprojekt
+!! \endverbatim</code>
+!! \n\n
+!! QSim-3D-Skript \n
+!! 	Pfad zu einem Skript auf dem Server, welches den QSim3D-Rechenlauf startet.
+!! 	Wird in Gerris ein Rechenlauf gestartet, wird dieses Skript zusammen mit dem Projektverzeichnis als Parameter aufgerufen. Im Projektverzeichnis wird dadurch das Skript "qsim3d.sbatch" ausgeführt.
+!! 	\n
+!! 	Dabei müssen in "qsim3d.sbatch" alle für den Rechenlauf relevanten SLURM-Parameter definiert und das QSim-Executable zusammen mit dem Projektverzeichnis aufgerufen werden.
+!! \n\n
+!! Definitionen-Skript \n
+!! 	Pfad zu einem Skript auf dem Server, welches Definitionsdateien, die an der Schnittstelle von Qsim3d und Gerris benötigt werden, bereitstellt. Aus einem zentralen Verzeichnis werden dazu die folgenden Dateien in das Projektverzeichnis kopiert.
+!! 		AParamParam.xml 						enthält Definitionen der globalen QSim-Modellparameter
+!! 		ausgabekonzentrationen_beispiel.txt 	enthält eine Liste der Namen der Modell-Variablen, die von der aktuellen QSim-3D Version ausgegeben werden können
+!! 		EreigGParam.xml							enthält Definitionen der Ereignisparameter
+!! 		ModellG3Param.xml						enthält Definitionen der Zonen-Parameter
+!! 		WetterParam.xml							enthält Definitionen der Wetter-Parameter
+!! \n\n
+!! IsoQ-Skript \n
+!! 	Pfad zu einem Skript auf dem Server, welches die Visualisierung QSim-3D-Ergebnissen ermöglicht.
+!! \n\n
+!! Ncdump \n
+!! 	Name des Programmaufrufs, um auf dem Server Daten aus NetCDF-Dateien zu lesen.
+!! \n\n
+!! E-Mail \n
+!! 	E-Mail-Adresse, an die eine Benachrichtigung bei Berechnungsende geschickt wird.
 !! \n\n
 !! aus Datei eingabe.f95 ; zurück zu \ref Modell_Benutzung
 
@@ -645,11 +704,12 @@
       read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
      &                                   ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
 !     read(92,9220)imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy aus qsim.f90 13.301_28mae18
+      print*,'Zeile 5 von EREIGG.txt:'
+	  print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy'
+      print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
       if(read_error.ne.0) then
+         print*,'EREIGG.txt Zeilentext: ',trim(ctext)
          write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'
-         print*,'Zeilentext: ',trim(ctext)
-         print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy'
-         print*,imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
          call qerror(fehler)
       end if ! open_error.ne.0
       if(imitt.eq. 1) &

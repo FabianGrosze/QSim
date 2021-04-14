@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page Stoffumsatz Stoffumsatz
 !!
 !! <h1> lokale Prozesse: Biologie, Chemie und Temperatur</h1>
@@ -6,24 +27,24 @@
 !! \n\n
 !! <center><table>
 !! <tr><th> Baustein				</th><th> QSim Subroutine	</th><th> Version	</th></tr>
-!! <tr><td> \subpage Sedimentflux		</td><td> sedflux()		</td><td> ### zurückgestellt ### Aug.19</td></tr>
-!! <tr><td> \subpage rotatorien 		</td><td> konsum()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage Sedimentflux	</td><td> sedflux()		</td><td> ### zurückgestellt ### Aug.19</td></tr>
+!! <tr><td> \subpage rotatorien 	</td><td> konsum()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage coroph	 		</td><td> coroph()		</td><td> ### in Bearbeitung </td></tr>
-!! <tr><td> \subpage Dreissena			</td><td> dreissen()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage Dreissena		</td><td> dreissen()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage hnf  			</td><td> hnf()			</td><td> ### inaktiv weil fehlerhaft ### 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage Algen - kiesel, grün, blau	</td><td> algaeski(), algaesgr(), algaesbl() </td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage albenth	 		</td><td> albenth()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage albenth	 	</td><td> albenth()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage mphyt			</td><td> mphyt()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage BSB			</td><td> orgc()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Stickstoff			</td><td> ncyc()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage PH-Wert			</td><td> ph()			</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Waermebilanz 1) +wetter	</td><td> temperw()	 	</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Phosphor			</td><td> po4s() 		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Silizium			</td><td> silikat()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage Stickstoff		</td><td> ncyc()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage ph_doku		</td><td> ph()			</td><td> 14.04 </td></tr>
+!! <tr><td> \subpage Waermebilanz 1) +wetter </td><td> temperw()	 	</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage Phosphor		</td><td> po4s() 		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage Silizium		</td><td> silikat()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> \subpage Sauerstoffgehalt		</td><td> oxygen()		</td><td> 13.401_15okt18 </td></tr>
 !! <tr><td> <i>Schwebstoffe</i>, Übernahme nicht geplant, ersetzt durch \n \subpage schwebstoff_salz</td><td> schwebstoff_salz() \n ersetzt schweb und erosion </td><td></td></tr>
 !! <tr><td> Schwermetalle 			</td><td> Schwermetalle()	</td><td> ### externe Entwicklung </td></tr>
-!! <tr><td> \subpage coliform			</td><td> coliform()		</td><td> 13.401_15okt18 </td></tr>
+!! <tr><td> \subpage coliform		</td><td> coliform()		</td><td> 13.401_15okt18 </td></tr>
 !! </table></center>
 !! \n\n
 !! Voranstehend sind die Bausteine in der Reihenfolge ihrer Bearbeitung, die QSim-3D von QSim-1D übernimmt, aufgeführt.
@@ -68,7 +89,7 @@
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
       do i=1,part ! Alle Knoten auf diesem Prozessor 
          iglob=(i+meinrang*part)
-         nk=(i-1)*number_plankt_vari ! Ort im Feld der transporterten, planktischen Variablen 
+         nk=(i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen 
          if(iglob.le.number_plankt_point)then ! Knotennummer existiert (letzter Prozess)
          if(iglob.eq.kontrollknoten)print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
          if(rb_hydraul_p(2+(i-1)*number_rb_hydraul).gt. min_tief )then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten

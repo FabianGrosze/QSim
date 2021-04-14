@@ -1,5 +1,23 @@
-
-!--------------------------------------------------------------------------------------------------------------
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
 
 !> \page Datentechnik Informationstechnische Umsetzung
 !!
@@ -741,7 +759,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
             !call getarg(2,aufrufargument)
             call get_command_argument(2, aufrufargument)
             read(aufrufargument, * , iostat = io_error)kontrollknoten
-            print*,'get_command_argument(2 (kontrollknoten) #', kontrollknoten
+            !print*,'get_command_argument(2 (kontrollknoten) #', kontrollknoten
             if (kontrollknoten .lt. 0)call qerror('modeverz: negative control node not permitted')
             print*,'control node, kontrollknoten #', kontrollknoten
           else! no controll node

@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !> \page Sedimentflux Sediment-Flüsse
 !! <h1>Flüsse in/aus Sediment</h1>
 !! 
@@ -40,7 +61,7 @@
 !!                   ,\ref obsb,\ref ocsb,  \ref kontroll ,\ref jjj ) !!wy  
 !!\n\n
 !! \ref Sedimenteigenschaften
-!! </code>
+!! </code><code>
 !!
 !!WRITE(1, '(A)') '<ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt">'\n
 !!WRITE(1, '(A)') '  <Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" />'\n
@@ -48,7 +69,7 @@
 !!WRITE(1, '(A)') '  <Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
 !!WRITE(1, '(A)') '  <Parameter Ident="kornd" Text="Korndurchmesser D50 Sediment (0-1), optional" Unit="m" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
 !!WRITE(1, '(A)') '  <Parameter Ident="burial" Text="Burial-geschwindigkeit ins Sediment, optional" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
-!!\n\n
+!!\n\n </code>
 !! MQ-Tiefe =2 m, MQ-Geschwindigkeit =1 m/s\n
 !! ansonsten Korndurchmesser und burialgeschwindigkeit in modellg.txt vorgeben
 !!\n\n

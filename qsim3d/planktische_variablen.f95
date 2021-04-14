@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
 !
 !> \page planktische_variablen planktische, transportierte Variablen
 !! 
@@ -37,9 +58,9 @@
 !!<tr><td>  5 </td><td> \anchor vno3 vno3	</td><td> Nitrat-Sticktoff							</td><td> mg NO3-N / l	</td></tr>
 !!<tr><td>  6 </td><td> \anchor gelp gelp	</td><td> gelöster ortho-Phosphat-Phosphor					</td><td> mg PO4-P / l	</td></tr>
 !!<tr><td>  7 </td><td> \anchor si si		</td><td> Silikat-Silizium							</td><td> mg Si / l	</td></tr>
-!!<tr><td>  8 </td><td> \anchor aki aki		</td><td> Kiesel-Algen Biomasse (Trockengewicht) 				</td><td> mgBio/l 	</td></tr>
-!!<tr><td>  9 </td><td> \anchor agr agr		</td><td> Gruen-Algen Biomasse  (Trockengewicht) 				</td><td> mgBio/l 	</td></tr>
-!!<tr><td> 10 </td><td> \anchor abl abl		</td><td> Blau-Algen Biomasse 	(Trockengewicht)				</td><td> mgBio/l 	</td></tr>
+!!<tr><td>  8 </td><td> \anchor aki aki		</td><td> Kiesel-Algen \ref Biomasse					</td><td> mgBio/l 	</td></tr>
+!!<tr><td>  9 </td><td> \anchor agr agr		</td><td> Gruen-Algen \ref Biomasse		 				</td><td> mgBio/l 	</td></tr>
+!!<tr><td> 10 </td><td> \anchor abl abl		</td><td> Blau-Algen \ref Biomasse						</td><td> mgBio/l 	</td></tr>
 !!<tr><td> 11 </td><td> \anchor chla chla	</td><td> Gesamt Chlorophyll-a							</td><td> µgChla/l 	</td></tr>
 !!<tr><td> 12 </td><td> \anchor chlaki chlaki	</td><td> Chlorophyll-a Kiesela.							</td><td> µgChla/l 	</td></tr>
 !!<tr><td> 13 </td><td> \anchor chlagr chlagr	</td><td> Chlorophyll-a Grüna.							</td><td> µgChla/l 	</td></tr>
@@ -54,9 +75,9 @@
 !!<tr><td> 21 </td><td> \anchor svhemk svhemk	</td><td> Lichtinhibition Kieselalgenwachstum 					</td><td>		</td></tr>
 !!<tr><td> 22 </td><td> \anchor svhemg svhemg	</td><td> Lichtinhibition Grünalgenwachstum					</td><td>		</td></tr>
 !!<tr><td> 23 </td><td> \anchor svhemb svhemb	</td><td> Lichtinhibition Blaualgenwachstum					</td><td>		</td></tr>
-!!<tr><td> 24 </td><td> \anchor akbcm akbcm	</td><td> Chlorophyll-a zu Kohlenstoff Verhältnis in Kiesel-Algen		</td><td> mg Chla/ mg C	</td></tr>
-!!<tr><td> 25 </td><td> \anchor agbcm agbcm	</td><td> Chlorophyll-a zu Kohlenstoff Verhältnis in Grün-Algen			</td><td> mg Chla/ mg C	</td></tr>
-!!<tr><td> 26 </td><td> \anchor abbcm abbcm	</td><td> Chlorophyll-a zu Kohlenstoff Verhältnis in Blau-Algen			</td><td> mg Chla/ mg C	</td></tr>
+!!<tr><td> 24 </td><td> \anchor akbcm akbcm	</td><td> Kohlenstoff zu Chlorophyll-a Verhältnis in Kiesel-Algen		</td><td> mg C/ mg Chla	</td></tr>
+!!<tr><td> 25 </td><td> \anchor agbcm agbcm	</td><td> Kohlenstoff zu Chlorophyll-a Verhältnis in Grün-Algen			</td><td> mg C/ mg Chla	</td></tr>
+!!<tr><td> 26 </td><td> \anchor abbcm abbcm	</td><td> Kohlenstoff zu Chlorophyll-a Verhältnis in Blau-Algen			</td><td> mg C/ mg Chla	</td></tr>
 !!<tr><td> 27 </td><td> \anchor akiiv akiiv	</td><td> entallen								</td><td>	 	</td></tr>
 !!<tr><td> 28 </td><td> \anchor agriv agriv	</td><td> entallen								</td><td>	 	</td></tr>
 !!<tr><td> 29 </td><td> \anchor abliv abliv	</td><td> entallen								</td><td>		</td></tr>
@@ -110,8 +131,13 @@
 !!<tr><td> 77 </td><td> \anchor akmor_1 akmor_1	</td><td> max.?? Algenmortalität??	Kiesel</td><td> ?		</td></tr>
 !!<tr><td> 78 </td><td> \anchor agmor_1 agmor_1	</td><td> 	Grün </td><td> ?		</td></tr>
 !!<tr><td> 79 </td><td> \anchor abmor_1 abmor_1	</td><td> 	Blau </td><td> ?		</td></tr>
-!!</table planktonic_variable>\n
+!!</table planktonic_variable>
 !!
+!! * <b> \anchor Biomasse Biomasse </b> \n
+!! Der Begriff "Biomasse" wird möglicherweise nur in Bezug auf QSim in dieser Form verwendet. Eine Begriffsklärung ist in Arbeit (April2021).
+!! Er wird vorläufig beibehalten, weil sich andere Größen (Nährstoffgehalte, Schwebstoffmassen) darauf beziehen.
+!!
+!! \n\n
 !! <i>Transport eigentlich unnötig: fbsgr, frfgr</i>
 !! \n\n
 !! <h2> tiefenaufgelöste Konzentrationen </h2> \anchor tiefenaufgelöste_planktische_variable \n
@@ -138,9 +164,9 @@
 !!<tr><td> 17 </td><td> \anchor hq_nkz hq_nkz	</td><td> Stickstoffanteil der Algenbiomasse kiesel 	</td><td> mg N /mg bio	</td></tr>
 !!<tr><td> 18 </td><td> \anchor hq_ngz hq_ngz	</td><td> Stickstoffanteil der Algenbiomasse grün 	</td><td> mg N /mg bio	</td></tr>
 !!<tr><td> 19 </td><td> \anchor hq_nbz hq_nbz	</td><td> Stickstoffanteil der Algenbiomasse blau 	</td><td> mg N /mg bio	</td></tr>
-!!<tr><td> 20 </td><td> \anchor hcchlkz hcchlkz	</td><td> c-chla Verhältnis Kiesel entspricht \ref akbcm</td><td> mg Chla/ mg C	</td></tr>	 
-!!<tr><td> 21 </td><td> \anchor hcchlgz hcchlgz	</td><td> c-chla Verhältnis grün entspricht \ref agbcm	</td><td> mg Chla/ mg C	</td></tr>
-!!<tr><td> 22 </td><td> \anchor hcchlbz hcchlbz	</td><td> c-chla Verhältnis blau entspricht \ref abbcm	</td><td> mg Chla/ mg C	</td></tr>
+!!<tr><td> 20 </td><td> \anchor hcchlkz hcchlkz	</td><td> c-chla Verhältnis Kiesel entspricht \ref akbcm</td><td> mg C/ mg Chla	</td></tr>	 
+!!<tr><td> 21 </td><td> \anchor hcchlgz hcchlgz	</td><td> c-chla Verhältnis grün entspricht \ref agbcm	</td><td> mg C/ mg Chla	</td></tr>
+!!<tr><td> 22 </td><td> \anchor hcchlbz hcchlbz	</td><td> c-chla Verhältnis blau entspricht \ref abbcm	</td><td> mg C/ mg Chla	</td></tr>
 !!</table plankt_vari_vert>\n\n
 !!<code>\verbatim
 !!       subroutine transportz(anze,deltat,izeits,isub_dt,hvmitt,elen,flag &

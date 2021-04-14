@@ -55,13 +55,14 @@
 !! \section mehrdimausgabe mehrdimensionale Felder zu einzelnen Zeitpunkten
 !! Mittels der Datei <a href="./exp/ausgabezeitpunkte.txt" target="_blank">ausgabezeitpunkte.txt</a>
 !! wird angegeben, zu welchen Zeitpunkten mehrdimensionale Felder ausgegeben werden sollen.\n 
-!! Im Verlauf der Berechnung werden diese dann im \ref Modellverzeichnis im
+!! Im Verlauf der Berechnung werden diese dann im Modellverzeichnis (siehe \ref Datenmodell) im
 !! .vtk-Format abgelegt. Der Dateiname (z. B. ausgabe_734850.vtk) enthält den Zeitpunkt 
 !! als ganzahligen Integer-Wert in Sekunden. Der Ursprung dieser Sekundenzählung ist in der 
 !! Datei meta im traninfo-Verzeichnis (\ref Transportinformationen) festgelegt. Die Bildschirm-Ausgabe
 !! von QSim-3D gibt für jeden Zeitpunkt das Datum zusammen mit dem Sekundenzähler aus.
 !! \n
 !! Das .vtk-Format dient der Visualisierung mit 
+!! <a href="http://www.visitusers.org/index.php?title=Main_Page" target="_blank">VisIt</a> oder
 !! <a href="http://voss-mod02/wiki/doku.php?id=paraview" target="_blank">paraview</a>.\n
 !! netCDF-Formate sind für unstrukturierte Netze noch nicht praktikabel.
 !! \n

@@ -1,60 +1,80 @@
-  subroutine Belueftung_K2(rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wge,IDWe,iphy,bbei,mstr,ior,azStrs)
-
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+  subroutine Belueftung_K2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,iphys,bbeis)
 
 !##########################################
 !  Berechnung des BELUEFTUNGSBEIWERT in 1/d
 !##########################################       
+	  
+      implicit none
                                                                         
-      integer                                :: azStrs
-      integer, Dimension(azStrs,1000)        :: IDWe 
+      real                  :: wges
+      real                  :: raus,tiefes,vmitts,rhyds,flaes,tempws,bbeis 
+      real                  :: WLages, hwss
+      integer               :: iphys
+	  
+	  real FN,G,UST,Slope,Breite,zw10,fkWind,zWmess,wge10,SC,Wind_Kl,bbeiw
 
-      real, Dimension(20)                    :: wge
-      real, Dimension(1000)                  :: rau,tiefe,vmitt,rhyd,flae,tempw,bbei 
-      real, Dimension(azStrs,1000)           :: WLage, hWS 
-
-
-      FN = 1./RAU(ior) 
+      FN = 1./raus 
       G = 9.81 
-      UST = ((FN*G**0.5)/tiefe(ior)**0.166667)*abs(VMITT(ior)) 
-      Slope = (vmitt(ior)/(Rau(ior)*rhyd(ior)**0.6667))**2
-      Breite = flae(ior)/tiefe(ior) 
-      !print*,"Belueftung_K2: rau,VMITT,rhyd,UST,Slope,Breite,Tiefe,ior=",rau(ior),VMITT(ior),rhyd(ior),UST,Slope,Breite,Tiefe(ior),ior
+      UST = ((FN*G**0.5)/tiefes**0.166667)*abs(vmitts) 
+      Slope = (vmitts/(raus*rhyds**0.6667))**2
+      Breite = flaes/tiefes 
+      !print*,"Belueftung_K2: rau,VMITT,rhyd,UST,Slope,Breite,Tiefe,ior=",raus,vmitts,rhyds,UST,Slope,Breite,tiefes,ior
 
 
       zw10 = 10.
       fkWind = 1.
-      zWmess = WLage(mstr,ior)-hWS(mstr,ior)
+      zWmess = WLages-hWSs
       if(zWmess .gt. 0.0) fkwind = (zw10/zWmess)**0.11 
       
       wge10 = 0.0
-      if(wge(IDWe(mstr,ior)) .gt. 0.0) wge10 = wge(IDWe(mstr,ior)) * fkwind
+      if(wges .gt. 0.0) wge10 = wges * fkwind
       
-      SC = -0.0308*Tempw(ior)**3 + 3.0286*Tempw(ior)**2 - 112.37*Tempw(ior) + 1845
+      SC = -0.0308*tempws**3 + 3.0286*tempws**2 - 112.37*tempws + 1845
       if(SC .lt. 1.0) SC= 1.0
 
       Wind_Kl = (40.94*SC**(-0.5)) * wge10**1.81 * ((1.2/998.)**0.5)
       ! Wind_Kl = 40.94*SC**(-0.5) * wge10**1.81 * (1.2/998.)**0.5  ! original
       if(isnan(Wind_Kl)) print*,"Belueftung_K2: Wind_Kl,SC,wge10,zWmess,fkwind,WLage,hWS,wge=",   &
-                Wind_Kl,SC,wge10,zWmess,fkwind,WLage(mstr,ior),hWS(mstr,ior),wge(IDWe(mstr,ior))
+                Wind_Kl,SC,wge10,zWmess,fkwind,WLages,hWSs,wges
 
-      if(iphy==1.or.iphy==2)then
-        if(iphy==2)Wind_Kl = 0.0
-        bbeiw = 79.6*(abs(vmitt(ior))*Slope)**0.32*Tiefe(ior)**(-0.38)*Breite**(-0.16)  ! Tracer
-        bbei(ior) = bbeiw+Wind_Kl/Tiefe(ior)
-        if(isnan(bbei(ior))) print*,'Belueftung_K2 isnan(bbei iphy=',iphy
-      else if(iphy==3)then
-        bbei(ior) = ((3.+40./rau(ior))*abs(vmitt(ior))/tiefe(ior)**2)   ! +0.5/tiefe(ior)                                                       
-        bbeiw = 10.47*abs(vmitt(ior))**0.43*Tiefe(ior)**(-1.37)*Slope**0.22  ! gleiche Datengrundlage wie Wolf (1974)
-        bbei(ior) = bbei(ior)+Wind_Kl/Tiefe(ior)
-        if(isnan(bbei(ior))) print*,'Belueftung_K2 isnan(bbei iphy=',iphy
-      else if(iphy==4)then
-        bbei(ior) = 142.*(abs(vmitt(ior))*Slope)**0.333*tiefe(ior)**(-0.66)*Breite**(-0.243)
-        if(isnan(bbei(ior))) print*,'Belueftung_K2 isnan(bbei iphy=',iphy
+      if(iphys==1.or.iphys==2)then
+        if(iphys==2)Wind_Kl = 0.0
+        bbeiw = 79.6*(abs(vmitts)*Slope)**0.32*tiefes**(-0.38)*Breite**(-0.16)  ! Tracer
+        bbeis = bbeiw+Wind_Kl/tiefes
+        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
+      else if(iphys==3)then
+        bbeis = ((3.+40./raus)*abs(vmitts)/tiefes**2)   ! +0.5/tiefes                                                       
+        bbeiw = 10.47*abs(vmitts)**0.43*tiefes**(-1.37)*Slope**0.22  ! gleiche Datengrundlage wie Wolf (1974)
+        bbeis = bbeis+Wind_Kl/tiefes
+        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
+      else if(iphys==4)then
+        bbeis = 142.*(abs(vmitts)*Slope)**0.333*tiefes**(-0.66)*Breite**(-0.243)
+        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
       endif
         
-      if(bbei(ior)>20.)bbei(ior) = 20.
+      if(bbeis>20.)bbeis = 20.
                                                                        
 ! +++ Temperaturabhängigkeit ++++ 
-      BBEI(ior) = BBEI(ior)*(1.024**(TEMPW(ior)-20.))     
+      bbeis = bbeis*(1.024**(tempws-20.))     
 
   end subroutine Belueftung_K2

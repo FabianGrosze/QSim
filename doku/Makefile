@@ -9,7 +9,9 @@ INSTALL=/home/Wyrwa/public_html/dokuport
 
 #------------------------------------------------------------- -------
 
-usual: check date doc
+usual: doc
+
+all: check date doc save
  
 check:
 	@if test -d $(INSTALL); then echo "Installing Documentation into $(INSTALL) "; else echo "can't install into $(INSTALL)"; exit 1 ; fi;
@@ -24,14 +26,15 @@ date:
 
 clean:	
 	@echo "cleaning ..."
-	rm -rf ./dox ./exp ./html ./img ./pdf ./qsim_doku.taz ./taz
+	rm -rf ./dox
 
 FD=qsim_doku_`date +%d%b%y`.taz
 
 save:
 	@/bin/rm -f qsim_doku*.taz
-	@tar cvfz $(FD) ./img ./exp ./html ./pdf ./taz
+	@tar cvfz $(FD) ./img ./exp ./html ./pdf ./taz ./*.md ./confi ./Makefile
 	@cp $(FD) $(MY_ARC)
+	@cp $(FD) ./taz/qsim_doku.taz
 	@echo "saved $(FD) to $(MY_ARC)"
 
 doc:	
@@ -45,7 +48,6 @@ doc:
 	cp -r ./html ./dox/html
 	cp -r ./pdf ./dox/html
 	cp -r ./taz ./dox/html
-	cp qsim_doku.taz ./dox/html/taz/qsim_doku.taz
 	rsync -ua ./dox/html/* $(INSTALL)
 	find $(INSTALL) -type d -exec chmod 755 {} \;
 	find $(INSTALL) -type f -exec chmod 644 {} \;

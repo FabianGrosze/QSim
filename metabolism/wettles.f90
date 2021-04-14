@@ -1,3 +1,24 @@
+!---------------------------------------------------------------------------------------
+!
+!   QSim - Programm zur Simulation der Wasserqualität
+!
+!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!
+!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   GNU General Public License, Version 3,
+!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
+!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   Details finden Sie in der GNU General Public License.
+!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
+!   Falls nicht, siehe http://www.gnu.org/licenses/.  
+!   
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!
+!---------------------------------------------------------------------------------------
+
       subroutine wettles(itags,monats,jahrs,uhrz,glob,tlmax,tlmin,ro,wge,cloud,typw,imet     &
                          ,iwied,cpfad, ckenn_vers1)
 !                                                                       
@@ -80,6 +101,8 @@
       enddo
    enddo      
 
+print*,'wettles: mWetts_mx,iWSta_mx,iWETTs,IMET=',mWetts_mx,iWSta_mx,iWETTs,IMET
+
       if(.not.allocated(wertw))allocate(wertw(1:iWSta_mx,1:mWetts_mx,1:ipws))
       if(.not.allocated(itagw))allocate(itagw(1:iWSta_mx,1:mWetts_mx))
       if(.not.allocated(monatw))allocate(monatw(1:iWSta_mx,1:mWetts_mx))
@@ -95,18 +118,19 @@
            read(86,'(A40)')MODELL 
            read(86,'(A40)')ERENAME 
       endif
-      read(86,'(I2,2x,I1)')IWETTs,IMET 
+      read(86,*,iostat=read_error)IWETTs,IMET 
+      if(read_error<0)stop 122 
 
       do iWETT = 1,iWETTs 
       read(86,'(I8,2x,I5)',iostat=read_error)IWSta(iwett),mWetts(iwett)
-      if(read_error<0)exit 
+      if(read_error<0)stop 123 
                                                                        
        if(imet==0)then
          hcTmx2 = -999.
          do mWett = 1,mWetts(iwett) 
-           read(86,2013)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett)                    &
+           read(86,2013,iostat=read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett)                    &
                        ,jahrw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw=1,7)
-                                                                       
+           if(read_error<0)stop 124 
            if(wertw(iWSta(iwett),mwett,3).gt.hcTmx2)hcTmx2 = wertw(iWSta(iwett),mwett,3)                                       
                                                                        
          enddo 
@@ -120,8 +144,9 @@
             else             ! Messwerte auf Stundenbasis
               do mWett = 1,mWetts(iwett) 
 
-                read(86,2023)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett),jahrw(iWSta(iwett),mwett)       &
+                read(86,2023,iostat=read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett),jahrw(iWSta(iwett),mwett)       &
                              ,uhrzw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw=1,7)                          
+                if(read_error<0)stop 125 
               enddo
          endif
       enddo
