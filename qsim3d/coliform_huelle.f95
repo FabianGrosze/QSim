@@ -48,8 +48,8 @@
 !!
 !! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
 !! SUBROUTINE COLIFORM (\ref tiefe,\ref rau,\ref vmitt,\ref vabfl,\ref elen,\ref flae,\ref flag,\ref tflie
-!! ,\ref schwi,\ref ss,\ref zooind,\ref grote,\ref chla,\ref tempw,\ref jiein,\ref ecoli     &\n
-!! ,\ref qeinl,\ref colil,\ref qeinll,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
+!! ,\ref schwi,\ref ss,\ref zooind,\ref grote,\ref chla,\ref tempw,\ref jiein,*ecoli*     &\n
+!! ,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
 !! ,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
 !! ,\ref ratecde,\ref etacde,\ref ratecie,\ref xnuece,\ref ratecge,\ref ratecse,\ref ifehl & \n                                                  
 !! ,\ref kontroll ,\ref iglob )
@@ -62,7 +62,7 @@
 !!  RateCGe Coliforme Verlustrate durch Grazing \n
 !!  RateCSe Coliforme Verlustrate durch Sedimentation \n
 !! \n
-!! Quelle coliform_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle coliform_huelle.f95; zurück zu: \ref lnk_ueberblick
 
 !> SUBROUTINE coliform_huelle() wird beschrieben in: \ref coliform \n
 !! Quelle coliform_huelle.f95

@@ -55,7 +55,7 @@
 !!     &,\ref kontroll ,\ref iglob ) !!wy  \n
 !!                                                                       
 !! \n
-!! Quelle hnf_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle hnf_huelle.f95; zurück zu: \ref lnk_ueberblick
 
 !> SUBROUTINE hnf_huelle() wird beschrieben in: \ref hnf \n
 !! Quelle hnf_huelle.f95

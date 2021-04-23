@@ -5,7 +5,7 @@
 #====================================================================
 
 CONFIG=./confi
-INSTALL=/home/Wyrwa/public_html/dokuport
+INSTALL=/home/Frassl/public_html/dokuport
 
 #------------------------------------------------------------- -------
 

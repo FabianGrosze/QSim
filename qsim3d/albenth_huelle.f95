@@ -67,7 +67,7 @@
 !! Ident="GGruen" Text="Gewicht Grünalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Grünalgen \n
 !! Ident="GKiesel" Text="Gewicht Kieselalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Kieselalgen \n
 !! \n
-!! Quelle albenth_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle albenth_huelle.f95; zurück zu: \ref lnk_ueberblick
 
 !> SUBROUTINE albenth_huelle() wird beschrieben in: \ref albenth \n
 !! Quelle albenth_huelle.f95

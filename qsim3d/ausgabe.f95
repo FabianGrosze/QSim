@@ -109,7 +109,7 @@
 !! \section sonstiges
 !! - Es wurde eine Abschätzung für die \subpage numdiff implementiert.
 !! \n\n
-!! zurück: \ref Modell_Benutzung ; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
+!! zurück: \ref lnk_technisch; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
 
 
 !> macht nur Verzweigung nach hydraulischem treiber wegen deren unterschiedlichen Datenstrukturen 

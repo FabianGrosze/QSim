@@ -27,9 +27,9 @@
 !! Wenn die Datei 
 !! <a href="./exp/alter.txt" target="_blank">alter.txt</a> 
 !! im Modellverzeichnis vorhanden ist, wird ausschließlich eine Aufenthaltszeitermittlung durchgeführt.
-!! Der restliche \ref Stoffumsatz ist dann ausgeschaltet.
+!! Der restliche Stoffumsatz ist dann ausgeschaltet.
 !! 
-!!\n\n zurück: \ref Stoffumsatz ; Code: alter.f95
+!!\n\n zurück: \ref lnk_ueberblick; Code: alter.f95
       SUBROUTINE alter(i)
 
 !!    läuft parallel

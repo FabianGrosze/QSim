@@ -75,18 +75,18 @@
 !! , \ref agbcm, \ref pfl, \ref ezind, \ref abl, \ref abbcm, \ref bsbbl, \ref csbbl
 !! , \ref dblmor, \ref zexbl, \ref drfaeb, \ref csbki, \ref csbgr, \ref ischif, \ref echla &\n
 !! , \ref evkigr, \ref eantbl, \ref aki, \ref agr, \ref drfaek, \ref drfaeg
-!! , \ref drfaes, \ref ssdr, \ref orgcsd, \ref orgcsd0, \ref orgcsd_abb, \ref cd, \ref cp, \ref cm, \ref bac, \ref ecd &\n
-!! , \ref ecp, \ref ecm, \ref ebac, \ref toc_csb, \ref grote, \ref vcsb, \ref vkigr
+!! , \ref drfaes, \ref ssdr, \ref orgcsd, \ref orgcsd0, \ref orgcsd_abb, *cd*, *cp*, *cm*, *bac*, *ecd* &\n
+!! , *ecp*, *ecm*, *ebac*, \ref toc_csb, \ref grote, \ref vcsb, \ref vkigr
 !! , \ref antbl, \ref hnfbac, \ref bsbhnf, \ref chnf, \ref zbac &\n
 !! , \ref bvhnf, \ref echnf, \ref fbsgr, \ref frfgr, \ref fbsgrs, \ref frfgrs
-!! , \ref bacmua, \ref dorgss, \ref ilbuhn, \ref iwied, \ref fkm, \ref bsbct, \ref qeinll &\n
+!! , \ref bacmua, \ref dorgss, \ref ilbuhn, \ref iwied, \ref fkm, \ref bsbct, *qeinll* &\n
 !! , \ref iorla, \ref iorle, \ref ieinls, \ref pl0, \ref q_pk, \ref q_pb, \ref q_pg
-!! , \ref pzoo, \ref nl0, \ref q_nk, \ref q_nb, \ref q_ng, \ref nzoo, \ref etemp, \ref bsbctp &\n
-!! , \ref don, \ref hsdflub, \ref hype, \ref hymxde, \ref ksd1e, \ref ksd2e
+!! , *pzoo*, \ref nl0, \ref q_nk, \ref q_nb, \ref q_ng, \ref nzoo, *etemp*, \ref bsbctp &\n
+!! , \ref don, *hsdflub*, \ref hype, \ref hymxde, \ref ksd1e, \ref ksd2e
 !! , \ref ksme, \ref upbace, \ref jdoc1, \ref jdoc2, \ref ybace, \ref rsgbace &\n
 !! , \ref nkzs, \ref mstr, \ref itags, \ref monats, \ref uhrz, \ref  azstrs
-!! , \ref  bsbzoo &\n
-!! , \ref kontroll, \ref i) !!wy\n      
+!! , *bsbzoo* &\n
+!! , \ref kontroll, *i*) !!wy\n      
 !! </code> \n
 !!
 !! <h2>Dokumentation und Veröffentlichungen</h2>
@@ -100,7 +100,7 @@
 !! Oxygen - Conceptual Model and QSim Approach</a>
 !! \n Schöl et al. 2013 \n zu simulieren. 
 !! \n\n
-!! Siehe dazu auch :Validierung orgc in \ref vali
+!! Siehe dazu auch :Validierung orgc in \ref lnk_validierung
 !! (war mal ./vali/orgc_oxygen.html )
 !! \n
 !! <h2>Formelzeichen</h2>
@@ -110,13 +110,13 @@
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ CP_i \f$  </td><td> CP(i=\ref cp1 + \ref cp2, </td><td> \subpage bilaCP in der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CD_i \f$  </td><td> CD(i=\ref cd1 + \ref cd2, </td><td> \subpage bilaCD in der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
-!!<tr><td> \f$ CM \f$    </td><td> \ref CM </td><td> \subpage bilaCM </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> \subpage bilaBAC </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CM \f$    </td><td> *CM* </td><td> \subpage bilaCM </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> \subpage bilaBAC </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref (nur intern orgc() ) </td><td> \subpage bilaCref </td><td> mgC/l </td><td> ? </td></tr>
 !!</table>\n
 !! mit \f$ i \f$ als Index der Abbaubarkeit  -  i=1: leicht abbaubar; i=2: schwer abbaubar\n
 !! \n\n
-!! zurück zu: \ref Stoffumsatz , Quelle: orgc_huelle.f95
+!! zurück zu: \ref lnk_ueberblick , Quelle: orgc_huelle.f95
 
 !
 
@@ -128,11 +128,11 @@
 !!                 , \ref abl, \ref abbcm, \ref bsbbl, \ref csbbl, \ref dblmor, \ref zexbl, \ref drfaeb  \n
 !!                 , \ref csbki, \ref csbgr, \ref ischif, \ref echla, \ref evkigr, \ref eantbl            \n
 !!                 , \ref aki, \ref agr, \ref drfaek, \ref drfaeg, \ref drfaes, \ref ssdr, \ref orgCsd     \n
-!!                 , CD=\ref cd1+\ref cd2, CP=\ref cp1+\ref cp2, \ref CM, \ref BAC, \ref o2bsb, \ref GRote, \ref vcsb, \ref vkigr, \ref antbl   \n
-!!                 , \ref HNFBAC \ref BSBHNF, \ref CHNF, \ref echnf, \ref fbsgr, \ref frfgr, \ref fbsgrs, \ref frfgrs   \n
+!!                 , CD=\ref cd1+\ref cd2, CP=\ref cp1+\ref cp2, *CM*, *BAC*, \ref o2bsb, \ref GRote, \ref vcsb, \ref vkigr, \ref antbl   \n
+!!                 , \ref HNFBAC *BSBHNF*, *CHNF*, \ref echnf, \ref fbsgr, \ref frfgr, \ref fbsgrs, \ref frfgrs   \n
 !!                 , \ref bacmua, \ref dorgSS, \ref ilbuhn, \ref iwied, \ref fkm, \ref bsbct   \n
 !!                 , \ref pl0, \ref Q_PK, \ref Q_PB, \ref Q_PG, \ref pZoo, \ref nl0, \ref Q_NK, \ref Q_NB, \ref Q_NG, \ref nzoo   \n
-!!                 , \ref bsbctP, \ref doN, \ref hyPe, \ref hymxDe, \ref KsD1e, \ref ksd2e, \ref KsMe, \ref upBACe   \n
+!!                 , \ref bsbctP, \ref doN, *hyPe*, \ref hymxDe, \ref KsD1e, \ref ksd2e, \ref KsMe, \ref upBACe   \n
 !!                 , \ref YBACe, \ref rsGBACe, \ref nkzs, \ref mstr, \ref itags, \ref monats, \ref uhrz   \n
 !!                 , kontroll, i)
 ! -------------------------------------------------------------------------------------------Teilprozesse Umwandlung-----------------------
@@ -185,10 +185,10 @@
 !!<tr><td> \f$ T \f$  </td><td> \ref tempw </td><td> Wassertemperatur </td><td> C° </td><td> 0 ... 30 </td></tr>
 !!<tr><td> \f$ T_{opt} \f$  </td><td> Topt </td><td> optimale Temperatur </td><td>  C°  </td><td>  25 hartcodiert  </td></tr>
 !!<tr><td> \f$ dti \f$  </td><td> dti </td><td> Bezugs-Temperatur </td><td>  C°  </td><td> 20 hartcodiert </td></tr>
-!!<tr><td> \f$ hy_{P,e} \f$  </td><td> \ref hyPe </td><td> Parameter (APARAM.txt 17|4) </td><td> 1/d </td><td>  </td></tr>
+!!<tr><td> \f$ hy_{P,e} \f$  </td><td> *hyPe* </td><td> Parameter (APARAM.txt 17|4) </td><td> 1/d </td><td>  </td></tr>
 !!<tr><td> \f$ C-BSB_5 \f$  </td><td> \ref obsb </td><td> biologischer Sauerstoffbedarf siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> chemischer Sauerstoffbedarf  siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 !
@@ -233,26 +233,26 @@
 !! \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CM \f$  </td><td> \ref CM </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ hy_{D,i} \f$  </td><td> hyP(i) </td><td> Hydrolyserate für die gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> 1/d </td><td> ?? </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit, siehe: \ref hyp </td><td> - </td><td> 0.2 ... 1 </td></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ hy_{max,D,i} \f$  </td><td> hymxD(i) \ref hymxDe </td><td> maximale Hydrolyserate für die gelösten organischen C-Verbindungen </td><td> 1/d </td><td> APARAM.txt hymxDe 17|5 </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ hy_{max,D,i} \f$  </td><td> hymxD(i) *hymxDe* </td><td> maximale Hydrolyserate für die gelösten organischen C-Verbindungen </td><td> 1/d </td><td> APARAM.txt hymxDe 17|5 </td></tr>
 !!<tr><td> \f$ K_{s,D,i} \f$  </td><td> ksD(i) </td><td> Halbsättigungskonstante für die Hydrolyse der gelösten organischen C-Verbindungen </td><td> mgC/l </td><td> APARAM.txt KsD1e 18|1, KsD2e 18|2 </td></tr>
 !!<tr><td> \f$ C-BSB_5 \f$  </td><td> \ref obsb </td><td> biologischer Sauerstoffbedarf  siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> chemischer Sauerstoffbedarf  siehe: \ref o2zehr</td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !!<code>
 !!       vcb =  \ref obsb / \ref ocsb \n
-!!       hymxD(1) = \ref hymxDe \n
+!!       hymxD(1) = *hymxDe* \n
 !!       hymxD(2) = 0.474*vcb**(-1.346)  \n
 !!       if(hymxD(2)>6.)hymxD(2) = 6.  \n
-!!       hyP(1) = \ref hyPe  \n
+!!       hyP(1) = *hyPe*  \n
 !!       hyP(2) = 1.51*vcb**2.31 \n
-!!       ksD(1) = \ref KsD1e  \n
-!!       ksD(2) = \ref KsD2e  \n
+!!       ksD(1) = *KsD1e*  \n
+!!       ksD(2) = *KsD2e*  \n
 !!</code> 
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 ! 
@@ -299,15 +299,15 @@
 !! \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ up_{HBAC} \f$  </td><td> upBAC </td><td> Aufnahmerate von Kohlenstoff durch heterotrophe Bakterien </td><td> 1/d </td><td> ? </td></tr>
-!!<tr><td> \f$ up_{HBAC,max} \f$  </td><td> upBACm \ref upBACe </td><td> maximale Aufnahmerate für die Aufnahme von Kohlenstoff durch heterotrophe Bakterien</td><td>  1/d  </td><td> APARAM.txt upBACe 18|4  </td></tr>
-!!<tr><td> \f$ k_{s,M} \f$  </td><td> ksM \ref KsMe </td><td> Halbsättigungskonstante für die Aufnahme von Kohlenstoff durch heterotrophe Bakterien</td><td> mgC/l </td><td> APARAM.txt KsMe 18|3 </td></tr>
+!!<tr><td> \f$ up_{HBAC,max} \f$  </td><td> upBACm *upBACe* </td><td> maximale Aufnahmerate für die Aufnahme von Kohlenstoff durch heterotrophe Bakterien</td><td>  1/d  </td><td> APARAM.txt upBACe 18|4  </td></tr>
+!!<tr><td> \f$ k_{s,M} \f$  </td><td> ksM *KsMe* </td><td> Halbsättigungskonstante für die Aufnahme von Kohlenstoff durch heterotrophe Bakterien</td><td> mgC/l </td><td> APARAM.txt KsMe 18|3 </td></tr>
 !!<tr><td> \f$ res_{HBAC} \f$  </td><td> resbac </td><td> Respirationsrate der heterotrophen Bakterien </td><td> 1/d </td><td> ? </td></tr>
-!!<tr><td> \f$ CM \f$  </td><td> \ref CM </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ Y \f$  </td><td> YBAC \ref YBACe </td><td> Ertragskoeffizient (Ernährungseffizienz) </td><td> - </td><td> APARAM.txt YBACe 18|5 </td></tr>
-!!<tr><td> \f$ res_{G,HBAC} \f$  </td><td> \ref rsGBACe </td><td> Grundrespirationsrate bei Optimumstemperatur </td><td> 1/d </td><td>  APARAM.txt rsGBACe 19|1 </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ Y \f$  </td><td> YBAC *YBACe* </td><td> Ertragskoeffizient (Ernährungseffizienz) </td><td> - </td><td> APARAM.txt YBACe 18|5 </td></tr>
+!!<tr><td> \f$ res_{G,HBAC} \f$  </td><td> *rsGBACe* </td><td> Grundrespirationsrate bei Optimumstemperatur </td><td> 1/d </td><td>  APARAM.txt rsGBACe 19|1 </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 !                                                                     
@@ -366,12 +366,12 @@
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ \Delta CD_1 \f$  </td><td> - </td><td> Änderung an leicht abbaubaren gelösten C-Verbindungen infolge des Absterbens von Biomasse in einem Zeitschritt </td><td> mgC/l je Zeitschritt </td><td>  </td></tr>
-!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> \ref BSBHNF </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> *BSBHNF* </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ dki_{mort} \f$  	</td><td> \ref dkimor </td><td> Absterberate Kieselalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ dgr_{mort} \f$  	</td><td> \ref dgrmor </td><td> Absterberate Grünalgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
 !!<tr><td> \f$ dbl_{mort} \f$  	</td><td> \ref dblmor </td><td> Absterberate Blaualgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
 !!<tr><td> \f$ Rot_{mort} \f$  	</td><td> \ref abszo </td><td> Absterberate der Rotatorien </td><td> Ind. je Liter und Zeitschritt </td><td>  </td></tr>
-!!<tr><td> \f$ G_{Rot} \f$  	</td><td> \ref GRote </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td>  </td></tr>
+!!<tr><td> \f$ G_{Rot} \f$  	</td><td> *GRote* </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td>  </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 ! 
@@ -503,9 +503,9 @@
 !! Klipping bei:\f$ HBA(t+\Delta t) > 0.00001 \f$
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ HNFBAC \f$  </td><td> \ref HNFBAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen, die in jedem Zeitschritt infolge Wegfraß durch heterotrophe Nanoflagelaten verloren geht </td><td> mgC/l (zeitschrittbezogen) </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HNFBAC \f$  </td><td> *HNFBAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen, die in jedem Zeitschritt infolge Wegfraß durch heterotrophe Nanoflagelaten verloren geht </td><td> mgC/l (zeitschrittbezogen) </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB
 ! 
@@ -594,19 +594,19 @@
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ \Delta {O_2}_{orgC} \f$  </td><td> \ref bsbt </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
 !!<tr><td> \f$ res_{HBAC} \f$  </td><td> resbac </td><td> Respirationsrate der heterotrophen Bakterien, siehe: \ref BACm </td><td> 1/d </td><td> ? </td></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ O_2dC \f$  </td><td> \ref o2bsb </td><td> Sauerstoff-Kohlenstoffverhältnis beim C-Abbau </td><td> mgO2/mgC </td><td>  </td></tr>
 !!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ C-BSB_5 \f$  </td><td> \ref obsb </td><td> - </td><td> - </td><td> - </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td><td> ? </td></tr>
 !!<tr><td> \f$ pfl \f$  </td><td> \ref pfl </td><td> Pflanzentrockengewicht Makrophyten </td><td> g/m² </td><td>  </td></tr>
-!!<tr><td> \f$ h \f$  </td><td> \ref TIEFE </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
+!!<tr><td> \f$ h \f$  </td><td> *TIEFE* </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit, siehe: \ref hyp </td><td> - </td><td> 0.2 ... 1 </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref </td><td> Konzentration der refraktären (nicht abbaubaren) C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ CM \f$  </td><td> \ref CM </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ C_{HNF} \f$  </td><td> \ref CHNF </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ C_{HNF} \f$  </td><td> *CHNF* </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 ! 
@@ -642,21 +642,21 @@
 !! mit:
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ BSB_{NH4} \f$  </td><td> \ref doN </td><td> Ammoniumfreisetzung infolge Kohlenstoffmineralisierung </td><td> mgN/l je Zeitschritt</td><td> ? </td></tr>
+!!<tr><td> \f$ BSB_{NH4} \f$  </td><td> *doN* </td><td> Ammoniumfreisetzung infolge Kohlenstoffmineralisierung </td><td> mgN/l je Zeitschritt</td><td> ? </td></tr>
 !!<tr><td> \f$ BSB_{C} \f$  </td><td> \ref bsbct </td><td> zu CO2 mineralisierter Kohlenstoff, siehe: \ref o2zehr (### hier stimmt was nicht ###)</td><td> mgC/l je Zeitschritt</td><td> ? </td></tr>
 !!<tr><td> \f$ N_{org} \f$  </td><td>\ref  nl0 </td><td> Verhältnis von Stickstoff zu Kohlenstoff in organischem Material </td><td> mgN/mgC </td><td> ? </td></tr>
 !!<tr><td> \f$ orgN \f$  </td><td> orgn </td><td> Gesamt-Stickstoffgehalt im organischem Material </td><td> mgN/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td><td> ? </td></tr>
-!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> \ref BSBHNF </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> *BSBHNF* </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ f_N \f$  	</td><td> ## fehlt </td><td> zu implementierendes Verhältnis </td><td> mgN/mgC </td><td> ? </td></tr>
 !!<tr><td> \f$ dki_{mort} \f$  	</td><td> \ref dkimor </td><td> Absterberate Kieselalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ dgr_{mort} \f$  	</td><td> \ref dgrmor </td><td> Absterberate Grünalgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
 !!<tr><td> \f$ dbl_{mort} \f$  	</td><td> \ref dblmor </td><td> Absterberate Blaualgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{N,Ki} \f$  </td><td> \ref Q_NK </td><td> Stickstoffanteil in der Biomasse der Kieselalgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{N,Gr} \f$  </td><td> \ref Q_NG </td><td> Stickstoffanteil in der Biomasse der Grünalgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{N,Bl} \f$  </td><td> \ref Q_NB </td><td> Stickstoffanteil in der Biomasse der Blaualgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{N,Ki} \f$  </td><td> *Q_NK* </td><td> Stickstoffanteil in der Biomasse der Kieselalgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{N,Gr} \f$  </td><td> *Q_NG* </td><td> Stickstoffanteil in der Biomasse der Grünalgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{N,Bl} \f$  </td><td> *Q_NB* </td><td> Stickstoffanteil in der Biomasse der Blaualgen </td><td> mgN/mgBiom. </td><td> ? </td></tr>
 !!<tr><td> \f$ Rot_{mort} \f$  	</td><td> \ref abszo </td><td> Absterberate der Rotatorien </td><td> Ind. je Liter und Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ G_{Rot} \f$  	</td><td> \ref GRote </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td> ? </td></tr>
+!!<tr><td> \f$ G_{Rot} \f$  	</td><td> *GRote* </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td> ? </td></tr>
 !!<tr><td> \f$ N_R \f$  	</td><td> \ref nzoo </td><td> Stickstoffanteil in der Rotatorienbiomasse </td><td> mgN/mgBiom. </td><td> ? </td></tr>
 !!<tr><td> \f$ ROT_{faec,Ki} \f$  </td><td> \ref zexki </td><td> Ausscheidungen der Rotatorien infolge Konsums von Kieselalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ ROT_{faec,Gr} \f$  </td><td> \ref zexgr </td><td> Ausscheidungen der Rotatorien infolge Konsums von Grünalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
@@ -699,21 +699,21 @@
 !! mit:
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ BSB_{PO4} \f$  </td><td> \ref bsbctP </td><td> ortho-Phosphat-Freisetzung infolge Kohlenstoffmineralisierung </td><td> mgP/l je Zeitschritt</td><td> ? </td></tr>
+!!<tr><td> \f$ BSB_{PO4} \f$  </td><td> *bsbctP* </td><td> ortho-Phosphat-Freisetzung infolge Kohlenstoffmineralisierung </td><td> mgP/l je Zeitschritt</td><td> ? </td></tr>
 !!<tr><td> \f$ BSB_{C} \f$  </td><td> \ref bsbct </td><td> zu CO2 mineralisierter Kohlenstoff, siehe: \ref o2zehr (### hier stimmt was nicht ###)</td><td> mgC/l je Zeitschritt</td><td> ? </td></tr>
 !!<tr><td> \f$ P_{org} \f$  </td><td> \ref pl0 </td><td> Verhältnis von Phosphor zu Kohlenstoff in organischem Material </td><td> mgP/mgC zeitschrittbezogen </td><td> ? </td></tr>
 !!<tr><td> \f$ orgP \f$  </td><td> orgp </td><td> Gesamt-Phosphorgehalt im organischem Material </td><td> mgP/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td><td> ? </td></tr>
-!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> \ref BSBHNF </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ BSB_{HNF} \f$  	</td><td> *BSBHNF* </td><td> Absterben und Exkretion Heterotropher Naloflagelaten </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ f_P \f$  	</td><td> ## fehlt </td><td> zu implementierendes Verhältnis </td><td> mgP/mgC </td><td> ? </td></tr>
 !!<tr><td> \f$ dki_{mort} \f$  	</td><td> \ref dkimor </td><td> Absterberate Kieselalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ dgr_{mort} \f$  	</td><td> \ref dgrmor </td><td> Absterberate Grünalgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
 !!<tr><td> \f$ dbl_{mort} \f$  	</td><td> \ref dblmor </td><td> Absterberate Blaualgen </td><td>  mgBiom./l je Zeitschritt  </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{P,Ki} \f$  </td><td> \ref Q_PK </td><td> Phosphoranteil in der Biomasse der Kieselalgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{P,Gr} \f$  </td><td> \ref Q_PG </td><td> Phosphoranteil in der Biomasse der Grünalgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
-!!<tr><td> \f$ Q_{P,Bl} \f$  </td><td> \ref Q_PB </td><td> Phosphoranteil in der Biomasse der Blaualgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{P,Ki} \f$  </td><td> *Q_PK* </td><td> Phosphoranteil in der Biomasse der Kieselalgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{P,Gr} \f$  </td><td> *Q_PG* </td><td> Phosphoranteil in der Biomasse der Grünalgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
+!!<tr><td> \f$ Q_{P,Bl} \f$  </td><td> *Q_PB* </td><td> Phosphoranteil in der Biomasse der Blaualgen </td><td> mgP/mgBiom. </td><td> ? </td></tr>
 !!<tr><td> \f$ Rot_{mort} \f$  	</td><td> \ref abszo </td><td> Absterberate der Rotatorien </td><td> Ind. je Liter und Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ G_{Rot} \f$  	</td><td> \ref GRote </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td> ? </td></tr>
+!!<tr><td> \f$ G_{Rot} \f$  	</td><td> *GRote* </td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µgBiom./Ind. </td><td> ? </td></tr>
 !!<tr><td> \f$ P_R \f$  	</td><td> \ref pZoo </td><td> Phosphoranteil in der Rotatorienbiomasse </td><td> mgP/mgBiom. </td><td> ? </td></tr>
 !!<tr><td> \f$ ROT_{faec,Ki} \f$  </td><td> \ref zexki </td><td> Ausscheidungen der Rotatorien infolge Konsums von Kieselalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ ROT_{faec,Gr} \f$  </td><td> \ref zexgr </td><td> Ausscheidungen der Rotatorien infolge Konsums von Grünalgen </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
@@ -751,10 +751,10 @@
 !!  die sedimentierten Partikel mit enthalten !  \n\n
 !!<table>
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta SS_{org} \f$  </td><td>  \ref dorgSS </td><td> Veränderung von suspendierten Sedimenten aus C-Verbindungen </td><td> mg SS /l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta SS_{org} \f$  </td><td>  *dorgSS* </td><td> Veränderung von suspendierten Sedimenten aus C-Verbindungen </td><td> mg SS /l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref </td><td> Konzentration der refraktären (nicht abbaubaren) C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
@@ -767,7 +767,7 @@
 !! \f]
 !!<table>
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ orgC_{sed} \f$  </td><td> \ref orgCsd </td><td> Gesamtmase Kohlenstoff, die je Zeitschritt sedimentiert </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ orgC_{sed} \f$  </td><td> *orgCsd* </td><td> Gesamtmase Kohlenstoff, die je Zeitschritt sedimentiert </td><td> mgC/l je Zeitschritt </td><td> ? </td></tr>
 !!<tr><td> \f$ sedCP_1 \f$, \f$sedCP_2 \f$, \f$sedBAC \f$, \f$sedC_{ref} \f$  </td><td> sedCP1, sedCP2, sedBAC, sedCrf </td><td> siehe \ref Sediorgc </td><td>  mgC/l je Zeitschritt  </td><td> ? </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
@@ -821,7 +821,7 @@
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2</td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 !
@@ -841,7 +841,7 @@
 !! welches auch nicht massenerhaltend ist.\n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CM \f$  </td><td> \ref CM </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ \Delta t \f$  </td><td> tflie </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB
@@ -862,8 +862,8 @@
 !! Abgesehen von Massenverlusten durch Respiration, HNF-Grazing und Sedimentation sind Bakterien unsterblich.
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 !
@@ -900,10 +900,10 @@
 !!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
-!!<tr><td> \f$ CM \f$  </td><td> \ref CM </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ HBAC \f$  </td><td> \ref BAC </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ C_{HNF} \f$  </td><td> \ref CHNF </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> \ref TFLIE </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ C_{HNF} \f$  </td><td> *CHNF* </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
 !! zurück zu: \ref BSB , Quelle orgc_huelle.f95
 
@@ -1365,14 +1365,14 @@
 !!<tr><th> Formelzeichen 	</th><th> Name QSim 	</th><th> Beschreibung </th><th> Dimension h</th></tr>
 !!<tr><td> \f$ C-BSB5 \f$  	</td><td> \ref obsb 	</td><td> Kohlenstoffbürtiger biologischer Sauerstoffbedarf in 5 Tagen </td><td> mgO2/l </td></tr>
 !!<tr><td> \f$ CSB \f$  	</td><td> \ref ocsb 	</td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td></tr>
-!!<tr><td> \f$ C_{HNF} \f$  	</td><td> \ref CHNF 	</td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td></tr>
-!!<tr><td> \f$ V_{HNF} \f$  	</td><td> \ref BVHNF	</td><td> Biovolumen der HNF  </td><td> µm3 ?? </td></tr>
+!!<tr><td> \f$ C_{HNF} \f$  	</td><td> *CHNF*	</td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td></tr>
+!!<tr><td> \f$ V_{HNF} \f$  	</td><td> \ref bvhnf	</td><td> Biovolumen der HNF  </td><td> µm3 ?? </td></tr>
 !!<tr><td> \f$ v \f$  		</td><td> vcbe 		</td><td> Verhältnis \ref obsb/ \ref ocsb </td><td> - </td></tr>
 !!<tr><td> \f$ CP_i \f$  	</td><td> CP(i=\ref cp1+\ref cp2, </td><td> \ref bilaCP in der i-ten Stoffgruppe </td><td> mgC/l </td></tr>
 !!<tr><td> \f$ CD_i \f$  	</td><td> CD(i=\ref cd1+\ref cd2 </td><td> \ref bilaCD in der i-ten Stoffgruppe </td><td> mgC/l</td></tr>
 !!<tr><td> \f$ i \f$  		</td><td> i 		</td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td></tr>
-!!<tr><td> \f$ CM \f$  		</td><td> \ref CM 	</td><td> planktonic_variable 41</td><td> \ref bilaCM </td><td> mgC/l /td></tr>
-!!<tr><td> \f$ HBAC \f$  	</td><td> \ref BAC	</td><td> planktonic_variable 42</td><td> \ref bilaBAC </td><td> mgC/l </td></tr>
+!!<tr><td> \f$ CM \f$  		</td><td> *CM*	</td><td> planktonic_variable 41</td><td> \ref bilaCM </td><td> mgC/l /td></tr>
+!!<tr><td> \f$ HBAC \f$  	</td><td> *BAC*	</td><td> planktonic_variable 42</td><td> \ref bilaBAC </td><td> mgC/l </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  	</td><td> Cref 		</td><td> \ref bilaCref </td><td> mgC/l </td></tr>
 !!<tr><td> \f$ TOC \f$  	</td><td> BTOC 		</td><td> Gesamtgehalt an organischem Kohlenstoff (total organic carbon)  </td><td> mgC/l </td></tr>
 !!<tr><td> \f$ O_{BSB} \f$  	</td><td> \ref o2bsb 	</td><td> Sauerstoff-Kohlenstoffverhältnis beim C-Abbau </td><td> mgO2/mgC </td></tr>

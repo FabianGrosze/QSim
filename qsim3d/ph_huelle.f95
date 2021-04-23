@@ -49,12 +49,12 @@
 !! &, \ref dalggr, \ref dalgak, \ref dalgag, \ref po2p, \ref po2r, \ref rau, \ref vmitt, \ref tiefe         &\n
 !! &, \ref flae, \ref vabfl                                             &\n
 !! &, \ref flag, \ref elen, \ref ior, \ref anze, \ref vph                                 &\n
-!! &, \ref elfl, \ref cal, \ref qeinll, \ref iorla, \ref iorle, \ref ieinls                     &\n
+!! &, *elfl*, *cal*, *qeinll*, \ref iorla, \ref iorle, \ref ieinls                     &\n
 !! &, \ref ssalg, \ref stind, \ref albewg                                     &\n
 !! &, \ref alberg, \ref albewk, \ref alberk, \ref wge                               &\n
-!! &, \ref abl, \ref dalgbl, \ref dalgab, \ref idwe, \ref iwied, \ref fkm, \ref ij, \ref resdr              &\n
+!! &, \ref abl, \ref dalgbl, \ref dalgab, *idwe*, \ref iwied, \ref fkm, \ref ij, \ref resdr              &\n
 !! &, \ref dzres1, \ref dzres2, \ref aki, \ref agr                                  &\n
-!! &, \ref ilbuhn, \ref eph, \ref emw, \ref elf, \ref eca, \ref vco2, \ref qeinl, \ref jiein                &\n
+!! &, \ref ilbuhn, *eph*, *emw*, *elf*, *eca*, \ref vco2, \ref qeinl, \ref jiein                &\n
 !! &, \ref mstr, \ref cpfad, \ref rhyd, \ref wlage, \ref hws, \ref itags, \ref monats, \ref uhrz                           &\n
 !! &, \ref azstrs, \ref iphy , \ref kontroll , \ref iglob )\n
 !! \n
@@ -72,10 +72,8 @@
 !! Es existiert aber ein älterer
 !! <a href="./pdf/PH_Verena.pdf" target="_blank">Dokumentationsentwurf</a> 
 !! zum pH-Wert Modul von Verena Michalski.
-!! \n\n
-!! zurück: \ref Stoffumsatz; Quelle: ph_huelle.f95
-
-
+!! \n\n 
+!! zurück: \ref lnk_ueberblick; Quelle: ph_huelle.f95
 !! \n
 !!<table >
 !!<tr><th>Variablen-Name QSim </th><th> Beschreibung			</th><th> T-QSim Daten-Feld 		</th></tr>
@@ -145,7 +143,7 @@
 !!<tr><td>	</td><td>					</td><td>				</td></tr>
 !!</table>
 !! \n\n 
-!! zurück: \ref Stoffumsatz; Quelle: ph_huelle.f95
+!! zurück: \ref lnk_ueberblick; Quelle: ph_huelle.f95
 
 !--------------------------------------------------------------------------------------------------------------- orgc
 
@@ -158,7 +156,7 @@
 
 !> Das module ph_module widmet sich dem \ref PH-Wert (sauer <-> basisch)
 !! \n\n 
-!! zurück: \ref Stoffumsatz; Quelle: ph_huelle.f95
+!! zurück: \ref lnk_ueberblick; Quelle: ph_huelle.f95
 !      module ph_module
 !      implicit none
 !      save

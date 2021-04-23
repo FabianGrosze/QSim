@@ -1,0 +1,1000 @@
+   16  doxygen -g 
+   17  doxygen Doxyfile 
+   18  ls
+   19  ls html/
+   20  ls markdown/
+   21  gedit Doxyfile 
+   22  cd markdown/
+   23  file -bi readme.md 
+   24  iconv -f us-ascii -t UTF-8//TRANSLIT readme.md -o readme-uft.md
+   25  ls
+   26  file -bi readme-uft.md 
+   27  iconv -f ascii -t UTF-8//TRANSLIT ./readme.md -o ./readme-utf.md
+   28  file -bi readme-utf.md
+   29  rm readme-ut
+   30  rm readme-utf.md 
+   31  rm readme-uft.md 
+   32  file -i readme.md 
+   33  iconv -f US-ASCII -t UTF-8//TRANSLIT readme.md -o readme-utf.md
+   34  file -i readme-utf.md 
+   35  file -b --mime-type readme.md 
+   36  file -b --mime-encoding readme.md 
+   37  ls
+   38  nano readme.md 
+   39  file -i readme.md 
+   40  rm readme.md 
+   41  rm readme-utf.md 
+   42  nano readme.md
+   43  file -i readme.md 
+   44  rm readme.md 
+   45  vi readme.md
+   46  file -i readme.md 
+   47  cd .
+   48  cd ..
+   49  ls
+   50  doxygen Doxyfile 
+   51  ls
+   52  ls html/
+   53  ls latex/
+   54  cd ..
+   55  cd qsim-doku/
+   56  ls
+   57  which doxygen
+   58  cd /usr/bin/doxygen
+   59  ls ~/bin/
+   60  ls /bin/
+   61  ls -l /bin/
+   62  ls
+   63  ./create-doxy.sh 
+   64  gedit qsim-md/ueberblick.md 
+   65   
+   66  ./create-doxy.sh > doxy.log 
+   67  gedit create-doxy.sh 
+   68  rm -rf ./dox
+   69  doxygen ./doku/confi > doxy.log 
+   70  cp ./dox/html/index.html ./dox/html/main.html
+   71  cp -rp ./doku/pdf ./dox/html/pdf
+   72  cp -rp ./doku/exp ./dox/html/exp
+   73  cp -rp ./doku/img ./dox/html/img
+   74  cp -rp ./doku/html ./dox/html/html
+   75  cp -rp ./doku/taz ./dox/html/taz
+   76  cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
+   77  cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
+   78  cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
+   79  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+   80  gedit metabolism/zuflussrand.f90 
+   81  ls metabolism/
+   82  grep -r 'BSB' ./
+   83  ls
+   84  ./create-doxy.sh > doxy.log 
+   85  ./create-doxy.sh > doxy.log   
+   86   
+   87  ./create-doxy.sh > doxy.log   
+   88  ls
+   89  nano qsim-md/main-doc.md
+   90  ls qsim-md/
+   91  ./create-doxy.sh > doxy.log   
+   92  gedit qsim-md/main-doc.md
+   93  ./create-doxy.sh > doxy.log   
+   94  ls
+   95   
+   96  ./create-doxy.sh > doxy.log   
+   97  grep -r 'kkkkzzzz' ./
+   98   
+   99  ./create-doxy.sh > doxy.log   
+  100  ls
+  101   
+  102  ./create-doxy.sh > doxy.log   
+  103  ls
+  104  gedit create-doxy.sh 
+  105  ls doku/
+  106  gedit create-doxy.sh 
+  107  ./create-doxy.sh > doxy.log   
+  108  ls .dox/
+  109  ls
+  110  cd dox
+  111  ls
+  112  cd ..
+  113  ./create-doxy.sh > doxy.log   
+  114  ls dox/html/
+  115  ls
+  116  ls doku/
+  117  ls doku/dox
+  118  ls doku/html/
+  119  gedit create-doxy.sh 
+  120  ls
+  121  gedit create-doxy.sh 
+  122  ./create-doxy.sh > doxy.log   
+  123  gedit metabolism/zuflussrand.f90 
+  124  ./create-doxy.sh > doxy.log   
+  125  gedit doxy.log 
+  126  ./create-doxy.sh > doxy.log   
+  127   
+  128  ./create-doxy.sh > doxy.log   
+  129  ls
+  130  cd doku/
+  131  ls
+  132  grep Makefile 
+  133  gedit Makefile 
+  134  ls
+  135  cd ..
+  136  ls
+  137  ./create-doxy.sh > doxy.log   
+  138  ls
+  139  cd qsim1d/
+  140  grep 'ueberblick' *.f90
+  141  cd qsim-doku/qsim3d-ignore4now/
+  142  grep 'extnct_rb' *.f95
+  143  gedit module_modell.f95 
+  144  grep 'zuflussranddaten' *.f95
+  145  gedit eingabe.f95 
+  146  grep 'Waermebil' *.f95
+  147  exit
+  148  cd qsim-doku/metabolism/
+  149  grep "ausserdem" *.f90
+  150  cd ..
+  151  grep -r 'ausserdem' ./
+  152  ls
+  153  cd qsim-md/
+  154  ls
+  155  nano phyto_technisches.f90
+  156  nano modell-bedienung.f90
+  157  ls
+  158  gedit main-doc.md 
+  159  cd ..
+  160  mkdir qsim-doc
+  161  cp qsim-md/phyto_technisches.f90 qsim-doc/phyto_technisches.f90
+  162  cp qsim-md/modell-bedienung.f90 qsim-doc/modell-bedienung.f90
+  163  cp metabolism/algae.f90 qsim-doc/phytoplankton.f90
+  164  gedit qsim-doc/phytoplankton.f90 
+  165  gedit qsim-doc/modell-bedienung.f90 
+  166  gedit qsim1d/qsim.f90 
+  167  gedit qsim-doc/phyto_technisches.f90 
+  168  grep -r 'Algen-Wachstu' ./
+  169  exit
+  170  cd qsim-doku/
+  171  gedit metabolism/algae.f90 &
+  172  ls
+  173  create-doxy.sh > doxy.log 
+  174  ./create-doxy.sh > doxy.log 
+  175  gedit confi
+  176  ls
+  177  gedit doku/confi
+  178  ./create-doxy.sh > doxy.log 
+  179  grep -r 'Die pflanzliche' ./
+  180  rm metabolism/algae.f90 
+  181  ./create-doxy.sh > doxy.log 
+  182  exit
+  183  cd qsim-doku/
+  184  ls metabolism/
+  185  gedit metabolism/konsum.f90 
+  186  gedit qsim-doc/konsum-doc.f90 
+  187  ./create-doxy.sh > doxy.log 
+  188  gedit qsim3d-ignore4now/algae_huelle.f95 
+  189  ./create-doxy.sh > doxy.log 
+  190  ls
+  191  ls doku/
+  192  gedit doku/DoxygenLayout.xml 
+  193  gedit doku/DoxygenLayout-bak.xml
+  194  gedit doku/confi
+  195  nano qsim-doc/pageorder.dox
+  196  ls qsim-doc/
+  197  ./create-doxy.sh > doxy.log 
+  198  ls qsim-doc/
+  199  gedit qsim-doc/phyto_technisches.f90 
+  200  mv qsim-doc/phytoplankton.f90 qsim-doc/algae-doc.f90
+  201  gedit qsim-doc/algae-doc.f90 
+  202  ls metabolism/
+  203  ls qsim-doc/
+  204  gedit qsim-doc/pageorder.dox 
+  205  gedit metabolism/ncyc.f90 
+  206  mv qsim-doc/pageorder.dox qsim-doc/pageorder.f90
+  207  gedit qsim-doc/pageorder.f90 
+  208  ./create-doxy.sh > doxy.log 
+  209  cd ..
+  210  ls
+  211  cd doku-testing/
+  212  ls
+  213  cd markdown/
+  214  ls
+  215  gedit readme.md 
+  216  gedit otherpage.md 
+  217  nano DetailsSection.md
+  218  nano SamplesSection.md
+  219  ls
+  220  cd ..
+  221  ls
+  222  doxygen 
+  223  ls -lt html
+  224  cp html/*.html /srv/cifs-mounts/u2/u/u/Copy/Frassl/test-doku/
+  225  ls
+  226  gedit markdown/SamplesStructure.md 
+  227  gedit markdown/DetailsSection.md 
+  228  nano markdown/detail-1.md
+  229  cp markdown/detail-1.md markdown/detail-2.md 
+  230  nano markdown/detail-2.md 
+  231  doxygen 
+  232  cp html/*.html /srv/cifs-mounts/u2/u/u/Copy/Frassl/test-doku/
+  233  cd ..
+  234  ls
+  235  mkdir doku-qsim-md
+  236  cd doku-qsim-md/
+  237  cp ../doku-testing/Doxyfile  ./Doxyfile
+  238  cp ../qsim-doku/create-doxy.sh ./create-doxy.sh
+  239  nano readme.md
+  240  ls
+  241  mkdir qsim-doc
+  242  cd qsim-doc
+  243  nano ueberblick-doc.md
+  244  nano module-doc.md
+  245  nano bedienung-doc.md
+  246  nano technik-doc.md
+  247  nano download-doc.md
+  248  nano projekte-doc.md
+  249  nano literatur-doc.md
+  250  nano kontakt-doc.md
+  251  cd ..
+  252  gedit readme.md 
+  253  gedit Doxyfile 
+  254  ls
+  255  doxygen 
+  256  cp html/*.html /srv/cifs-mounts/u2/u/u/Copy/Frassl/test-doku/
+  257  ls
+  258  gedit create-doxy.sh 
+  259  ls
+  260  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  261  ls
+  262  gedit qsim-doc/ueberblick-doc.md 
+  263  ls
+  264  mkdir doku
+  265  mkdir img
+  266  rm img
+  267  rm -r img
+  268  cd doku/
+  269  mkdir img
+  270  cp ../../qsim-doku/doku/img/ ./img/
+  271  ls
+  272  ls img/
+  273  rm img/
+  274  rm -r img/
+  275  cp ../../qsim-doku/doku/img/ ./img/
+  276  cp ../../qsim-doku/doku/img/ ./img
+  277  mkdir img
+  278  cp ../../qsim-doku/doku/img/*.jpg ./img
+  279  cp ../../qsim-doku/doku/img/*.png ./img
+  280  cp ../../qsim-doku/doku/img/ img/
+  281  cp -r ../../qsim-doku/doku/img/ img/
+  282  ls img/
+  283  cd ..
+  284  ls
+  285  mv Doxyfile doku/doxy-confi
+  286  gedit doku/doxy-confi 
+  287  cd doku/
+  288  doxygen 
+  289  ls
+  290  mv doxy-confi Doxyfile
+  291  doxygen 
+  292  ls
+  293  cd ..
+  294  ls
+  295  rm -r html/
+  296  rm -r latex/
+  297  ls
+  298  rsync -ua ./doku/html/* /home/Frassl/public_html/dokuport
+  299  ls doku/
+  300  doxygen 
+  301  ls
+  302  cd doku/
+  303  doxygen 
+  304  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  305  doxygen 
+  306  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  307  gedit Doxyfile 
+  308  doxygen 
+  309  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  310  ls
+  311  cd ..
+  312  ls qsim-doc/
+  313  gedit qsim-doc/module-doc.md 
+  314  ls
+  315  nano qsim-doc/rotatorien-doc.md
+  316  nano qsim-doc/stickstoff-doc.md
+  317  nano qsim-doc/phosphor-doc.md
+  318  nano qsim-doc/algae-doc.md
+  319  gedit qsim-doc/rotatorien-doc.md 
+  320  gedit qsim-doc/ueberblick-doc.md 
+  321  nano qsim-doc/tmp-text.md
+  322  gedit qsim-doc/tmp-text.md
+  323  ls
+  324  ls doku/
+  325  cp -r ../qsim-doku/doku/pdf ./doku/pdf
+  326  ls doku/pdf/
+  327  ls
+  328  doxygen doku/Doxyfile 
+  329  gedit doku/Doxyfile 
+  330  doxygen doku/Doxyfile 
+  331  mv qsim-doc/tmp-text.md tmp-text.md
+  332  doxygen doku/Doxyfile 
+  333  gedit qsim-doc/stickstoff-doc.md 
+  334  rsync -ua doku/html/* /home/Frassl/public_html/dokuport
+  335  gedit qsim-doc/module-doc.md 
+  336  doxygen doku/Doxyfile 
+  337  rsync -ua doku/html/* /home/Frassl/public_html/dokuport
+  338  cd qsim-doc/
+  339  grep 'Hier werden die einzelnen' *.md
+  340  cd ..
+  341  cd doku/html/
+  342  grep 'Hier werden die einzelnen' *.html
+  343  rm lnk_module.html 
+  344  ls -lt
+  345  cd ..
+  346  ls
+  347  ls -lt html/
+  348  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  349  gedit qsim-doc/phosphor-doc.md 
+  350  gedit qsim-doc/stickstoff-doc.md 
+  351  doxygen doku/Doxyfile 
+  352  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  353  doxygen doku/Doxyfile 
+  354  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  355  doxygen doku/Doxyfile 
+  356  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  357  nano qsim-doc/rotatorien-equ.md
+  358  gedit qsim-doc/rotatorien-equ.md
+  359  doxygen doku/Doxyfile 
+  360  rsync -ua ./html/* /home/Frassl/public_html/dokuport
+  361  nano qsim-doc/rotatorien-pars.md
+  362  nano qsim-doc/rotatorien-numerik.md
+  363  doxygen doku/Doxyfile 
+  364  ls
+  365  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  366  rm -r html/
+  367  rm -r latex/
+  368  cp -r ../qsim-doku/metabolism/ ./metabolism
+  369  ls
+  370  cp -r ../qsim-doku/qsim1d/ ./qsim1d
+  371  gedit qsim1d/qsim.f90 
+  372  gedit tmp-text.md 
+  373  ls -lt qsim1d/
+  374  gedit qsim1d/qsim-technisch.f90 
+  375  rm qsim1d/qsim-technisch.f90 
+  376  rm qsim1d/qsim-bedienung.f90 
+  377  rm qsim1d/qsim-aufbau.f90 
+  378  gedit qsim1d/randbedingungen.f90 
+  379  ls -lt metabolism/
+  380  gedit metabolism/ncyc.f90 
+  381  cd metabolism/
+  382  grep '!> ' *.f90
+  383  gedit e_extnct_lesen.f90 
+  384  gedit po4s.f90 
+  385  gedit zuflussrand.f90 
+  386  doxygen doku/Doxyfile 
+  387  cd ..
+  388  doxygen doku/Doxyfile 
+  389  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  390  ls
+  391  doxygen doku/Doxyfile 
+  392  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  393  ls doku/
+  394  ls ../qsim-doku/doku/
+  395  cp ../qsim-doku/doku/footer.html doku/footer.html
+  396  cp ../qsim-doku/doku/header.html doku/header.html
+  397  cp ../qsim-doku/doku/customdoxygen.css doku/customdoxygen.css
+  398  doxygen doku/Doxyfile 
+  399  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  400  exit
+  401  cd doku-testing/
+  402  ls
+  403  cd ..
+  404  ls
+  405  cd test-dir/
+  406  ls
+  407  nano filename.txt 
+  408  ls -a
+  409  cd ..
+  410  rm test-dir/
+  411  rm -r test-dir/
+  412  ls
+  413  cd doku-testing/
+  414  ls
+  415  gedit Doxyfile 
+  416  exit
+  417  cd qsim-doku/
+  418  ls
+  419  gedit qsim-doc/phytoplankton.f90 &
+  420  cd qsim-doc/
+  421  nano konsum-doc.f90
+  422  gedit konsum-doc.f90 
+  423  cd ..
+  424  gedit qsim3d-ignore4now/konsum_huelle.f95 
+  425  ls
+  426  cp /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doku/konsum-doc.f90 ./qsim-doc/konsum-doc.f90
+  427  gedit qsim1d/qsim.f90 
+  428  ./create-doxy.sh > doxy.log 
+  429  cp qsim-doc/konsum-doc.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doku/konsum-doc.f90 
+  430  cp /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doku/konsum-doc.f90 qsim-doc/konsum-doc.f90 
+  431  cp /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doc/konsum-doc.f90 qsim-doc/konsum-doc.f90 
+  432  cp qsim-doc/konsum-doc.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doc/konsum-doc.f90 
+  433  cp /srv/cifs-mounts/u2/u/u/Copy/Frassl/qsim-doc/konsum-doc.f90 qsim-doc/konsum-doc.f90 
+  434  ls
+  435  cd dox
+  436  cd html/
+  437  ls -lt
+  438  gedit index.html 
+  439  gedit lnk_algae.html 
+  440  ls -lt index.html 
+  441  cd ..
+  442  ls
+  443  ls qsim-md/
+  444  gedit qsim-md/main-doc.md 
+  445  gedit qsim-md/ueberblick.md 
+  446  ls
+  447  cd doku/
+  448  ls
+  449  ls img/
+  450  gedit confi
+  451  cd ..
+  452  ls
+  453  ls doku/
+  454  gedit doku/confi
+  455  exit
+  456  ls
+  457  cd doku-qsim-md/
+  458  ls
+  459  gedit qsim-doc/kontakt-doc.md 
+  460  ls qsim-doc/
+  461  gedit qsim-doc/rotatorien-equ.md 
+  462  ls
+  463  gedit create-doxy.sh 
+  464  doxygen doku/Doxyfile 
+  465  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  466  ls *.html dox/html/
+  467  ls -lt *.html dox/html/
+  468  doxygen doku/Doxyfile > doxy.log
+  469  gedit doxy.log 
+  470  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  471  exit
+  472  ls
+  473  gedit qsim-doku/qsim-doc/konsum-doc.f90 &
+  474  exit
+  475  ls
+  476  gedit doku-qsim-md/qsim-doc/rotatorien-equ.md 
+  477  gedit doku-qsim-md/qsim-doc/rotatorien-pars.md 
+  478  cd doku-qsim-md/
+  479  doxygen doku/Doxyfile > doxy.log
+  480  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  481  gedit qsim-doc/rotatorien-numerik.md 
+  482  doxygen doku/Doxyfile > doxy.log
+  483  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  484  nano info_tech_umsetzung.md
+  485  ls
+  486  ls qsim-doc/
+  487  gedit qsim-doc/technik-doc.md 
+  488  cd qsim-doc/
+  489  ls
+  490  nano tech_plankt_var.md
+  491  gedit tech_plankt_var.md 
+  492  doxygen doku/Doxyfile > doxy.log
+  493  cd ..
+  494  doxygen doku/Doxyfile > doxy.log
+  495  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  496  doxygen doku/Doxyfile > doxy.log
+  497  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  498  doxygen doku/Doxyfile > doxy.log
+  499  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  500  gedit readme.md 
+  501  doxygen doku/Doxyfile > doxy.log
+  502  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  503  ls
+  504  ls qsim-doc/
+  505  ls doku/
+  506  exit
+  507  cd qsim-doku/qsim3d-ignore4now/
+  508  grep '\ref tiefen' *f95
+  509  cd ..
+  510  grep -r '\ref tiefengemittelte_plankt' ./
+  511  grep -r 'tiefengemittelte_plankt' ./*.f
+  512  grep -r 'tiefengemittelte_plankt' ./
+  513  gedit qsim3d-ignore4now/planktische_variablen.f95 
+  514  gedit qsim3d-ignore4now/module_modell.f95 
+  515  exit
+  516  gedit qsim-doku/qsim-doc/konsum-doc.f90 &
+  517  exit
+  518  ls
+  519  cd doku-qsim-md/
+  520  ls
+  521  gedit qsim-doc/rotatorien-equ.md 
+  522  gedit qsim-doc/rotatorien-pars.md &
+  523  gedit qsim-doc/rotatorien-numerik.md &
+  524  gedit create-doxy.sh &
+  525  doxygen ./doku/Doxyfile 
+  526  ls
+  527  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  528  ls -lt ./dox/html/*.html
+  529  gedit ./dox/html/rotatorien-equ_8md.html 
+  530  rm -rf ./dox
+  531  doxygen ./doku/Doxyfile 
+  532  cp ./dox/html/index.html ./dox/html/main.html
+  533  cp -rp ./doku/pdf ./dox/html/pdf
+  534  cp -rp ./doku/exp ./dox/html/exp
+  535  cp -rp ./doku/img ./dox/html/img
+  536  cp -rp ./doku/html ./dox/html/html
+  537  cp -rp ./doku/taz ./dox/html/taz
+  538  cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
+  539  cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
+  540  cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
+  541  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  542  gedit qsim-doc/rotatorien-equ.md 
+  543  grep -r 'Rotatorien: Gleichungen'./
+  544  grep -r 'Gleichungen'./
+  545  ls qsim-doc/
+  546  gedit rotatorien-doc.md
+  547  gedit qsim-doc/rotatorien-doc.md 
+  548  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  549  doxygen ./doku/Doxyfile 
+  550  ls
+  551  ls -lt dox/
+  552  cp -rp ./doku/html ./dox/html/html
+  553  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  554  doxygen ./doku/Doxyfile > doxy.log 
+  555  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  556  doxygen ./doku/Doxyfile > doxy.log 
+  557  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  558  gedit doku/Doxyfile 
+  559  doxygen ./doku/Doxyfile > doxy.log 
+  560  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  561  doxygen ./doku/Doxyfile > doxy.log 
+  562  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  563  ls
+  564  gedit readme.md 
+  565  ls qsim-doc/
+  566  cd qsim-doc/
+  567  grep 'Rotatorien:' *.md
+  568  grep 'Gleichungen' *.md
+  569  cd ..
+  570  nano qsim-doc/rotatorien-test.md
+  571  doxygen ./doku/Doxyfile > doxy.log 
+  572  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  573  ls
+  574  cd qsim-doc/
+  575  l
+  576  rm rotatorien-test.md 
+  577  cd ..
+  578  ls
+  579  ls doku/
+  580  ls -lt doku/html/
+  581  rm -r doku/html/
+  582  ls doku/
+  583  gedit doku/customdoxygen.css 
+  584  ls
+  585  doxygen ./doku/confi
+  586  doxygen ./doku/Doxyfile > doxy.log 
+  587  ls doku/
+  588  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  589  ls qsim-doc/
+  590  gedit qsim-doc/module-doc.md &
+  591  nano qsim-doc/Stofftransport.md
+  592  ls qsim-doc/
+  593  gedit readme.md 
+  594  gedit qsim-doc/stofftransport-doc.md 
+  595  doxygen ./doku/Doxyfile > doxy.log 
+  596  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  597  doxygen ./doku/Doxyfile > doxy.log 
+  598  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  599  exit
+  600  cd public_html/dokuport
+  601  ls
+  602  grep -r 'Gleichungen' ./
+  603  ls -lt
+  604  cd ..
+  605  rm -r dokuport
+  606  ls
+  607  mkdir dokuport
+  608  ls dokuport
+  609  grep -r 'Gleichungen' ./
+  610  ls -lt
+  611  ls -lt dokuport
+  612  gedit dokuport/navtree.css
+  613  gedit dokuport/navtree.js 
+  614  gedit dokuport/navtreeindex0.js 
+  615  gedit dokuport/navtreeindex1.js 
+  616  gedit rotatorien-equ_8md_source.html
+  617  gedit dokuport/rotatorien-equ_8md_source.html
+  618  ls
+  619  cd doku-qsim-md/
+  620  l
+  621  gedit doku/Doxyfile &
+  622  ls
+  623  gedit create-doxy.sh 
+  624  ./create-doxy.sh 
+  625  doxygen ./doku/Doxyfile 
+  626  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  627  ls
+  628  cd qsim-doku/
+  629  ls
+  630  cd qsim1d/
+  631  ls
+  632  cd ../metabolism/
+  633  ls
+  634  gedit TEMPERW.f90 &
+  635  cd ../qsim3d-ignore4now/
+  636  grep "hctemp" *.f90
+  637  grep "hctemp" *.f95
+  638  exit
+  639  ls
+  640  ls doku-testing/
+  641  ls qsim-doku/
+  642  ls -lrt qsim-doku/
+  643  ls -lrta qsim-doku/
+  644  cd qsim-doku/
+  645  git status
+  646  ls
+  647  ls qsim-md/
+  648  mv qsim-md/ /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare
+  649  ls qsim-md/
+  650  ls
+  651  mv qsim3d-ignore4now/ qsim3d
+  652  ls qsim-doc/
+  653  mv qsim-doc/konsum-doc.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/konsum-doc.f90
+  654  mv qsim-doc/pageorder.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/pageorder.f90
+  655  ls
+  656  ls qsim-doc/
+  657  mv qsim-doc/ /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/
+  658  ls
+  659  git status
+  660  cp doku/Makefile /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/doku/Makefile
+  661  cp doku/confi /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/doku/confi
+  662  cp metabolism/funkstar.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  663  cp metabolism/konsum.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  664  cp metabolism/ncyc.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  665  cp metabolism/po4s.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  666  cp metabolism/temperl.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  667  cp metabolism/wettles.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  668  cp metabolism/zuflussrand.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  669  cp qsim1d/Makefile /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/qsim1d/
+  670  cp qsim1d/qsim.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/qsim1d/
+  671  cp qsim1d/randbedingungen.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/qsim1d/
+  672  cp qsim3d/stoffumsatz.f95 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/qsim3d/
+  673  git status
+  674  cp metabolism/e_extnct_lesen.f90 /srv/cifs-mounts/u2/u/u/Copy/Frassl/dokubak2compare/metabolism/
+  675  git pull origin master
+  676  git fetch
+  677  git checkout origin/master
+  678  git reset --hard origin/master
+  679  git pull origin master
+  680  git checkout -b doku-branch
+  681  git status
+  682  ls
+  683  gedit doku/Makefile 
+  684  diff doku/confi ../doku-qsim-md/doku/Doxyfile 
+  685  cp diff doku/confi /srv/cifs-mounts/u2/u/u/Copy/Frassl/doku-tmp/confi
+  686  cp diff doku/confi /srv/cifs-mounts/u2/u/u/Copy/Frassl/doku-tmp/
+  687  cp ../doku-qsim-md/doku/Doxyfile /srv/cifs-mounts/u2/u/u/Copy/Frassl/doku-tmp/
+  688  cp ../doku-qsim-md/doku/Doxyfile doku/
+  689  mv doku/confi doku/confi-bak
+  690  gedit doku/Doxyfile 
+  691  cp ../doku-qsim-md/readme.md ./doku/
+  692  ls doku/
+  693  mk doku/qsim-docmd
+  694  mkdir doku/qsim-docmd
+  695  mv doku/qsim-docmd/ doku/docmd
+  696  cp ../doku-qsim-md/qsim-doc/ueberblick-doc.md doku/qsim-docmd/
+  697  cp ../doku-qsim-md/qsim-doc/ueberblick-doc.md doku/docmd/
+  698  cp ../doku-qsim-md/qsim-doc/wtemp.md doku/docmd/
+  699  cp ../doku-qsim-md/qsim-doc/naehrstoffe.md doku/docmd/
+  700  cp ../doku-qsim-md/qsim-doc/algae-doc.md doku/docmd/
+  701  cp ../doku-qsim-md/qsim-doc/rotatorien-doc.md doku/docmd/
+  702  cp ../doku-qsim-md/qsim-doc/rotatorien-equ.md doku/docmd/
+  703  cp ../doku-qsim-md/qsim-doc/rotatorien-pars.md.md doku/docmd/
+  704  cp ../doku-qsim-md/qsim-doc/rotatorien-pars.md doku/docmd/
+  705  cp ../doku-qsim-md/qsim-doc/sauerstoff.md doku/docmd/
+  706  cp ../doku-qsim-md/qsim-doc/module-sonstiges.md doku/docmd/
+  707  cp ../doku-qsim-md/qsim-doc/stofftransport-doc.md doku/docmd/
+  708  cp ../doku-qsim-md/qsim-doc/technik-doc.md doku/docmd/
+  709  cp ../doku-qsim-md/qsim-doc/projekte-doc.md doku/docmd/
+  710  cp ../doku-qsim-md/qsim-doc/literatur-doc.md doku/docmd/
+  711  cp ../doku-qsim-md/qsim-doc/kontakt-doc.md doku/docmd/
+  712  ls qsim3d/
+  713  ls qsim3d/QSim3D.f95 
+  714  gedit qsim3d/QSim3D.f95 
+  715  ls -lrt doku/
+  716  gedit doku/footer.html
+  717  ls
+  718  gedit create-doxy.sh 
+  719  git status
+  720  gedit create-doxy.sh 
+  721  ls
+  722  rm -rf ./dox
+  723  ls
+  724  doxygen ./doku/Doxyfile > doxy.log
+  725  ls
+  726  cd doku/
+  727  doxygen ./Doxyfile > doxy.log
+  728  ls
+  729  ls ..
+  730  gedit doxy.log 
+  731  rm -rf ./dox
+  732  doxygen ./Doxyfile > doxy.log
+  733  ls
+  734  cp ./dox/html/index.html ./dox/html/main.html
+  735  cp -rp ./doku/pdf ./dox/html/pdf
+  736  cp -rp ./doku/exp ./dox/html/exp
+  737  cp -rp ./doku/img ./dox/html/img
+  738  cp -rp ./doku/html ./dox/html/html
+  739  cp -rp ./doku/taz ./dox/html/taz
+  740  cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
+  741  cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
+  742  cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
+  743  ls
+  744  cp ./dox/html/index.html ./dox/html/main.html
+  745  cp -rp ./doku/pdf ./dox/html/pdf
+  746  ls
+  747  cp -rp ./pdf ./dox/html/pdf
+  748  cp -rp ./exp ./dox/html/exp
+  749  cp -rp ./img ./dox/html/img
+  750  cp -rp ./html ./dox/html/html
+  751  cp -rp ./taz ./dox/html/taz
+  752  cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
+  753  cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
+  754  cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
+  755  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  756  ls
+  757  cd ..
+  758  ls
+  759  mv create-doxy.sh doku
+  760  cd doku/
+  761  cd ..
+  762  gedit qsim1d/ergeb2DFormat.f90 
+  763  gedit qsim3d/randbedingungen.f95 
+  764  grep 'lsRandbedin' qsim3d/*.f95 
+  765  ls doku/docmd/
+  766  cp ../doku-qsim-md/qsim-doc/module-doc.md doku/docmd/
+  767  gedit doku/docmd/module-doc.md 
+  768  ls doku/docmd/
+  769  cp ../doku-qsim-md/qsim-doc/rotatorien-numerik.md doku/docmd/
+  770  cp ../doku-qsim-md/qsim-doc/download-doc.md doku/docmd/
+  771  cp ../doku-qsim-md/qsim-doc/tech_plankt_var.md doku/docmd/
+  772  cd doku/
+  773  ./create-doxy.sh 
+  774  gedit create-doxy.sh 
+  775  ls
+  776  doxygen ./Doxyfile > doxy.log
+  777  cp ./dox/html/index.html ./dox/html/main.html
+  778  cp -rp ./pdf ./dox/html/pdf
+  779  cp -rp ./exp ./dox/html/exp
+  780  cp -rp ./img ./dox/html/img
+  781  cp -rp ./html ./dox/html/html
+  782  cp -rp ./taz ./dox/html/taz
+  783  cp ./dox/html/img/bfg_logo.png ./dox/html/logo.png
+  784  cp ./dox/html/img/qsim_logo.png ./dox/html/qsim.png
+  785  cp ./dox/html/img/qsim_t.ico ./dox/html/qsim.ico
+  786  rsync -ua ./dox/html/* /home/Frassl/public_html/dokuport
+  787  cd docmd/
+  788  grep 'readme' *.md
+  789  ls
+  790  cd ..
+  791  gedit readme.md 
+  792  gedit docmd/module-sonstiges.md 
+  793  gedit docmd/algae-doc.md 
+  794  cd ..
+  795  gedit qsim3d/algae_huelle.f95 
+  796  gedit qsim3d/benthische_verteilungen.f95 
+  797  grep 'lnk_module' doku/docmd/*.md
+  798  rm doku/docmd/module-doc.md
+  799  grep 'Modell-Bedienung' doku/docmd/*.md
+  800  gedit doku/docmd/technik-doc.md 
+  801  grep 'Modellbedienung' doku/docmd/*.md
+  802  grep 'Modellbedienung' qsim3d/*.f95
+  803  gedit qsim3d/eingabe.f95 
+  804  grep 'Modell_Benutzung' qsim3d/*.f95
+  805  gedit doku/docmd/technik-doc.md 
+  806  grep 'lnk_bedien' doku/docmd/*.md
+  807  gedit qsim3d/ausgabe.f95 
+  808  gedit qsim3d/QSim3D.f95 
+  809  cd doku/
+  810  ./create-doxy.sh 
+  811  ls
+  812  gedit Doxyfile 
+  813  grep 'Informationste' ../qsim3d/*.f95
+  814  gedit ../qsim3d/module_modell.f95 
+  815  gedit ../qsim3d/parallel.f95 
+  816  grep 'f Datentechnik' ../qsim3d/*.f95
+  817  gedit ../qsim3d/benthische_verteilungen.f95 
+  818  gedit ../qsim3d/parallel.f95 
+  819  gedit ../qsim3d/randbedingungen.f95 
+  820  gedit ../qsim3d/stofftransport_casu.f95 
+  821  gedit ../qsim3d/stofftransport.f95 
+  822  gedit ../qsim3d/stofftransport_untrim.f95 
+  823  gedit ../qsim3d/stofftransport_schism.f95 
+  824  gedit ../qsim3d/uebergabe_werte.f95 
+  825  grep 'Einführung, Konzept' ../qsim3d/*.f95
+  826  gedit docmd/ueberblick-doc.md 
+  827  grep 'Simulations-Verfahren' ../qsim3d/*.f95
+  828  grep 'Über diese Dokumentation' ../qsim3d/*.f95
+  829  grep 'Validierung, Beispiele' ../qsim3d/*.f95
+  830  grep 'wissenschaftliche V' ../qsim3d/*.f95
+  831  grep 'literatur' ../qsim3d/*.f95
+  832  gedit docmd/literatur-doc.md 
+  833  rm docmd/literatur-doc.md 
+  834  grep 'Download' ../qsim3d/*.f95
+  835  gedit docmd/download-doc.md
+  836  rm docmd/download-doc.md
+  837  grep 'Geschichte' ../qsim3d/*.f95
+  838  cd ..
+  839  ls
+  840  gedit Readme.txt 
+  841  grep 'readme' doku/docmd/*.md
+  842  grep 'readme' qsim3d/*.f95
+  843  ls doku/docmd/
+  844  ls doku/
+  845  cd doku/
+  846  ./create-doxy.sh 
+  847  grep 'readme' qsim1d/*.f90
+  848  grep 'readme' ../qsim1d/*.f90
+  849  grep 'readme' ../metabolism/*.f90
+  850  ls docmd/
+  851  nano docmd/konsumenten.md
+  852  nano docmd/primaerproduktion.md
+  853  gedit ../qsim3d/albenth_huelle.f95 
+  854  gedit docmd/primaerproduktion.md 
+  855  nano docmd/naehrstoffe.md 
+  856  gedit docmd/naehrstoffe.md 
+  857  gedit ../metabolism/ncyc.f90 
+  858  gedit ../qsim3d/ncyc_huelle.f95 
+  859  gedit ../qsim3d/orgc_huelle.f95 
+  860  gedit 
+  861  gedit ../qsim3d/mphyt_huelle.f95 
+  862  ged
+  863  gedit ../qsim3d/ph_huelle.f95 
+  864  gedit ../qsim3d/silikat_huelle.f95 
+  865  nano docmd/schadstoffe.md
+  866  mv docmd/schadstoffe.md docmd/verunreinigung.md
+  867  gedit docmd/verunreinigung.md
+  868  gedit ../qsim3d/schwebstoff_salz.f95 
+  869  gedit ../qsim3d/coliform_huelle.f95 
+  870  nano docmd/schadstoffe.md
+  871  nano docmd/verunreinigung.md 
+  872  rm docmd/module-sonstiges.md 
+  873  gedit ../qsim3d/alter.f95 
+  874  ./create-doxy.sh 
+  875  gedit docmd/konsumenten.md 
+  876  gedit ../qsim3d/coroph_huelle.f95 
+  877  gedit ../qsim3d/dreissen_huelle.f95 
+  878  gedit ../qsim3d/hnf_huelle.f95 
+  879  grep 'zBAC' ../qsim3d/*.f95
+  880  gedit ../qsim3d/module_QSimDatenfelder.f95 
+  881  gedit ../qsim3d/algae_huelle.f95 
+  882  grep 'ref Algen ' ../qsim3d/*.f95
+  883  gedit ../qsim3d/schwebstoff_salz.f95 
+  884  gedit docmd/technik-doc.md
+  885  grep 'ref Download ' ../qsim3d/*.f95
+  886  gedit ../qsim3d/module_modell.f95 
+  887  gedit ../qsim3d/stoffumsatz.f95 
+  888  grep 'page Download ' ../qsim3d/*.f95
+  889  gedit ../qsim3d/QSim3D.f95 
+  890  grep 'page lnk_bedienung' ../qsim3d/*.f95
+  891  gedit ../qsim3d/eingabe.f95 
+  892  ./create-doxy.sh 
+  893  cd ..
+  894  grep -r 'readme' ./
+  895  gedit doku/Doxyfile 
+  896  ./create-doxy.sh 
+  897  cd doku/
+  898  ./create-doxy.sh 
+  899  grep -r 'ref Algen' ./
+  900  grep -r 'ref Algen ' ./
+  901  grep -r 'ref Algen ' ../qsim3d/*.f95
+  902  grep -r 'ref Algen ' ../qsim1d/*.f90
+  903  grep -r 'ref Algen ' ../metabolism/*.f90
+  904  gedit ../metabolism/zuflussrand.f90 
+  905  grep -r 'readme' ../metabolism/*.f90
+  906  grep -r 'readme' ../qsim1d/*.f90
+  907  grep 'ref Randbedingungen' ../qsim3d/*.f95
+  908  grep 'page Randbedingungen' ../qsim3d/*.f95
+  909  gedit ../qsim3d/randbedingungen.f95 
+  910  grep ' Randbedingungen ' ../qsim3d/*.f95
+  911  gedit ../qsim3d/alter.f95 
+  912  grep 'ref Randbedingungen' ../qsim3d/*.f95
+  913  grep -l 'ref Randbedingungen' ../qsim3d/*.f95
+  914  grep -ln 'ref Randbedingungen' ../qsim3d/*.f95
+  915  grep -n 'ref Randbedingungen' ../qsim3d/*.f95
+  916  exit
+  917  ls
+  918  cd doku-qsim-md/
+  919  ls
+  920  ls doku/
+  921  ls qsim-doc/
+  922  gedit qsim-doc/module-doc.md &
+  923  gedit readme.md 
+  924  ls
+  925  gedit qsim-doc/rotatorien-doc.md 
+  926  nano qsim-doc/wtemp.md
+  927  nano qsim-doc/naehrstoffe.md
+  928  gedit qsim-doc/algae-doc.md 
+  929  nano qsim-doc/sauerstoff.md
+  930  nano qsim-doc/module-sonstiges.md
+  931  ls
+  932  ls doku/
+  933  gedit create-doxy.sh 
+  934  gedit qsim-doc/technik-doc.md 
+  935  gedit qsim-doc/kontakt-doc.md 
+  936  ./create-doxy.sh 
+  937  gedit qsim-doc/module-sonstiges.md 
+  938  gedit qsim-doc/rotatorien-doc.md 
+  939  nano qsim-doc/konsumenten-doc.md
+  940  ls
+  941  ls doku/
+  942  ls
+  943  ls qsim-doc/
+  944  ls -lrt doku/
+  945  gedit doku/footer.html 
+  946  git status
+  947  ls qsim-doc/
+  948  grep 'lnk_plankt_var' qsim-doc/*.md
+  949  ls qsim-doc/
+  950  gedit qsim-doc/phosphor-doc.md 
+  951  gedit qsim-doc/stickstoff-doc.md 
+  952  exit
+  953  ls
+  954  mount_freigaben
+  955  exit
+  956  ls
+  957  mount_freigaben
+  958  exit
+  959  ls
+  960  mount_freigaben
+  961  ls bin
+  962  cp bin bin_qsim
+  963  mkdir bin_qsim
+  964  cp bin/qsim1d_ohnesedflux bin_qsim/qsim1d_ohnesedflux
+  965  ls bin_qsim/
+  966  cp -r /etc/skel/bin ~/bin
+  967  ls bin
+  968  ls bin/bin
+  969  ls ~/bin
+  970  ls
+  971  ls -a
+  972  gedit .bashrc 
+  973  exit
+  974  mount_freigaben
+  975  cd bin
+  976  ls
+  977  ls bin
+  978  mv bin/get_REFERAT ./get_REFERAT
+  979  ls
+  980  ls bin
+  981  mv bin/mount_freigaben ./mount_freigaben
+  982  mv bin/permissions_html ./permissions_html
+  983  mv bin/permissions_shiny ./permissions_shiny
+  984  ls bin
+  985  ls
+  986  rm bin
+  987  rmdir bin
+  988  ls
+  989  cd ..
+  990  gedit .bashrc 
+  991  exit
+  992  ls
+  993  mount_freigaben 
+  994  ls
+  995  ls freigaben/
+  996  cd bin
+  997  ls
+  998  gedit mount_freigaben 
+  999  exi
+ 1000  exit
+ 1001  ls
+ 1002  ls -a
+ 1003  ls qsim-doku/
+ 1004  cd qsim-doku/
+ 1005  ls -l
+ 1006  ls -l ../doku-qsim-md/
+ 1007  ls doku/
+ 1008  ls
+ 1009  gedit Readme.txt &
+ 1010  cd doku/docmd/
+ 1011  ls -l
+ 1012  cd ..
+ 1013  ls
+ 1014  gedit doku/docmd/technik-doc.md &
+ 1015  history > my_hist.txt

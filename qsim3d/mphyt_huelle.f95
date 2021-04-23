@@ -79,7 +79,7 @@
 !! <tr><td> PflMax </td><td> max. Dichte (Sommer) </td><td> g/m² </td><td> Maximale Dichte der Makrophyten im Sommer </td></tr>
 !! </table>
 !!\n
-!! Quelle mphyt_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle mphyt_huelle.f95; zurück zu: \ref lnk_ueberblick
 
 !> SUBROUTINE mphyt_huelle() wird beschrieben in: \ref mphyt \n
 !! Quelle mphyt_huelle.f95

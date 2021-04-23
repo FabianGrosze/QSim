@@ -1,0 +1,14 @@
+qsim3d/f95_gerris.zip
+qsim_doku.taz
+doku/
+!doku/Makefile
+!doku/confi
+!doku/customdoxygen.css
+!doku/footer.html
+!doku/header.html
+qsim1d/*.o
+qsim1d/qsim-aufbau.f90
+qsim1d/qsim1d_marieke_testet
+metabolism/*.o
+metabolism/libqsim.a
+./my_hist.txt	

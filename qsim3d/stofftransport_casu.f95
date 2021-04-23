@@ -211,7 +211,7 @@
 !! \n\n
 !! Zum Lesen des Netzes aus dem Modellverzeichnis bedient sich netz_lesen() der Subroutinen points(), elements() und edges()
 !! \n\n
-!! aus Datei stofftransport_casu.f95; zurück zu \ref Datentechnik oder \ref Transportinformationen
+!! aus Datei stofftransport_casu.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
 
 
 !> subroutine holen_trans(nt) , mit nt - Zeitschrittzähler, 

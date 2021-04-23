@@ -55,16 +55,16 @@
 !! SUBROUTINE po4s()\n
 !! ( \ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe                                &\n
 !! &, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak                                      &\n
-!! &, \ref ep, \ref qeinl, \ref vabfl, \ref anze, \ref tflie, \ref dzres1, \ref dzres2                          &\n
+!! &, *ep*, \ref qeinl, \ref vabfl, \ref anze, \ref tflie, \ref dzres1, \ref dzres2                          &\n
 !! &, \ref jiein, \ref sedalk, \ref sedalb, \ref sedalg                                       &\n
 !! &, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr, \ref aki, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0      &\n
 !! &, \ref abl, \ref dalgbl, \ref dalgab, \ref exdrvb, \ref gesp, \ref orgcsd                             &\n
-!! &, \ref zooind, \ref grote, \ref pzoo, \ref egesp, \ref ilbuhn, \ref iwied                             &\n
-!! &, \ref cd, \ref cp, \ref cm, \ref bac, \ref bsbctp, \ref qmx_pk, \ref q_pk, \ref up_pkz                           &\n
-!! &, \ref qmx_pg, \ref q_pg, \ref up_pgz, \ref qmx_pb, \ref q_pb, \ref up_pbz, \ref epl0                       &\n
+!! &, \ref zooind, \ref grote, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied                             &\n
+!! &, *cd*, *cp*, \ref cm, \ref bac, \ref bsbctp, \ref qmx_pk, \ref q_pk, \ref up_pkz                           &\n
+!! &, \ref qmx_pg, \ref q_pg, \ref up_pgz, \ref qmx_pb, \ref q_pb, \ref up_pbz, *epl0*                       &\n
 !! &, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr, \ref agrbrz                                &\n
 !! &, \ref akibrz, \ref ablbrz, \ref algakz, \ref algagz, \ref algabz, \ref hjpo4, \ref nkzs, \ref dh2d               &\n
-!! &, \ref dh2de, \ref mstr, \ref iorla, \ref iorle, \ref ieinls, \ref flae, \ref qeinll, \ref gpl, \ref gespl, \ref hgespz       &\n
+!! &, \ref dh2de, \ref mstr, \ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *gpl*, *gespl*, \ref hgespz       &\n
 !! &, \ref algdrk, \ref algdrg, \ref algdrb, \ref itags, \ref monats, \ref uhrz, \ref azstrs                    &\n
 !! &, \ref kontroll , \ref iglob )    \n
 !! \n
@@ -77,7 +77,7 @@
 !! Bisher existiert eine Dokumentation des Phosphor-Moduls als Kapitel 9 der
 !! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
 !! \n\n
-!! zurück: \ref Stoffumsatz, Quelle: po4s_huelle.f95
+!! zurück: \ref lnk_ueberblick, Quelle: po4s_huelle.f95
 
 !> Beschreibung siehe \ref Phosphor, Quelle: po4s_huelle.f95
       SUBROUTINE po4s_huelle(i)
@@ -365,9 +365,9 @@
 !----+-----+----
 !> \page po4s_aufteilung Phosphor-Aufteilung Zufluss
 !! Phophor-Gehalte im Zufluss werden auf den Maximalwert gesetzt in randwert_planctonic():\n
-!!     planktonic_variable(31+nk)= transfer_parameter_p(32) ! \ref Q_PK=\ref Qmx_PK \n
-!!     planktonic_variable(34+nk)= transfer_parameter_p(11) ! \ref Q_PG=\ref Qmx_PG \n
-!!     planktonic_variable(36+nk)= transfer_parameter_p(55) ! \ref Q_PB=\ref Qmx_PB \n
+!!     planktonic_variable(31+nk)= transfer_parameter_p(32) ! *Q_PK*=*Qmx_PK* \n
+!!     planktonic_variable(34+nk)= transfer_parameter_p(11) ! *Q_PG*=*Qmx_PG* \n
+!!     planktonic_variable(36+nk)= transfer_parameter_p(55) ! *Q_PB*=*Qmx_PB* \n
 !! \n\n
 !! zurück: \ref Phosphor und \ref randbedingungen_ergaenzen, Quelle: po4s_huelle.f95
 
@@ -496,7 +496,7 @@
 !!<tr><td> gesPL(1) </td><td> 0.0 </td><td> Phosphatgehalt Linienquelle; nicht verwendet  </td></tr>
 !! </table>
 !! \n\n
-!! zurück: \ref Stoffumsatz, Quelle: po4s_module.f95
+!! zurück: \ref lnk_ueberblick, Quelle: po4s_module.f95
 
 
 
@@ -504,13 +504,13 @@
 !! <h2>Aufruf</h2>
 !! po4s_huelle ist eine QSim3D Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim1D Subroutine:\n\n
 !!
-!!       SUBROUTINE po4s(\ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak, \ref ep, \ref qeinl, \ref vabfl, \ref anze, \ref tflie        &
+!!       SUBROUTINE po4s(\ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak, *ep*, \ref qeinl, \ref vabfl, \ref anze, \ref tflie        &
 !!                     , \ref dzres1, \ref dzres2, \ref jiein, \ref sedalk, \ref sedalb, \ref sedalg, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr            & 
 !!                     , \ref aki, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0, \ref abl, \ref dalgbl, \ref dalgab, \ref exdrvb, \ref gesP, \ref orgCsd, \ref zooind, \ref GRote           &
-!!                     , \ref pZoo, \ref egesP, \ref ilbuhn, \ref iwied, \ref CD, \ref CP, \ref CM, \ref BAC, \ref bsbctP, \ref Qmx_PK, \ref Q_PK, \ref up_PKz, \ref Qmx_PG, \ref Q_PG            &
-!!                     , \ref up_PGz, \ref Qmx_PB, \ref Q_PB, \ref up_PBz, \ref epl0, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr                             &
+!!                     , *pZoo*, *egesP*, \ref ilbuhn, \ref iwied, *CD*, *CP*, \ref CM, \ref BAC, \ref bsbctP, \ref Qmx_PK, \ref Q_PK, \ref up_PKz, \ref Qmx_PG, \ref Q_PG            &
+!!                     , \ref up_PGz, \ref Qmx_PB, \ref Q_PB, \ref up_PBz, *epl0*, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr                             &
 !!                     , \ref agrbrz, \ref akibrz, \ref ablbrz, \ref algakz, \ref algagz, \ref algabz, \ref hJPO4, \ref nkzs, \ref dH2D, \ref dH2De, \ref mstr, \ref iorLa, \ref iorLe      &
-!!                     , \ref ieinLs, \ref flae, \ref qeinlL, \ref gPL, \ref gesPL                                                          &
+!!                     , \ref ieinLs, \ref flae, *qeinlL*, *gPL*, *gesPL*                                                          &
 !!     &               , \ref hgesPz, \ref algdrk, \ref algdrg, \ref algdrb, \ref itags, \ref monats, \ref uhrz,1)    ! azStrs=1 in QSim3D    
 !! \n\n 
 !!

@@ -18,17 +18,6 @@
 !	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
 !
 !---------------------------------------------------------------------------------------
-
-!> \page Modell_Benutzung Modell-Bedienung
-!! die Modellbedienung setzt sich zusammen aus den 3 Bestandteilen:
-!! <ol>
-!! <li> \subpage Modellerstellung (preprocessing) </li> 
-!! <li> \subpage Programmstart (processing) </li> 
-!! <li> \subpage Ergebnisse (postprocessing) </li> 
-!! </ol>
-!! \n\n
-!! aus Datei eingabe.f95 ; zurück zu \ref index
-
 !> \page Modellerstellung Modellerstellung
 !! 
 !! \section strukda Stuktur des Datenmodells 
@@ -128,7 +117,7 @@
 !! E-Mail \n
 !! 	E-Mail-Adresse, an die eine Benachrichtigung bei Berechnungsende geschickt wird.
 !! \n\n
-!! aus Datei eingabe.f95 ; zurück zu \ref Modell_Benutzung
+!! aus Datei eingabe.f95 ; zurück zu \ref lnk_technisch
 
 !> \page Datenmodell Datenmodell
 !! <h1>Bestandteile des Datenmodells</h1>

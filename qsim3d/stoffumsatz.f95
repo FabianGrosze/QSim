@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 !---------------------------------------------------------------------------------------
 !
 !   QSim - Programm zur Simulation der Wasserqualität
@@ -19,60 +20,6 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page Stoffumsatz Stoffumsatz
-!!
-!! <h1> lokale Prozesse: Biologie, Chemie und Temperatur</h1>
-!! \n
-!! QSim-1D und QSim-3D modellieren Stoffumsetzungsprozesse untergliedert in die nachstehend aufgeführten Bausteine:
-!! \n\n
-!! <center><table>
-!! <tr><th> Baustein				</th><th> QSim Subroutine	</th><th> Version	</th></tr>
-!! <tr><td> \subpage Sedimentflux	</td><td> sedflux()		</td><td> ### zurückgestellt ### Aug.19</td></tr>
-!! <tr><td> \subpage rotatorien 	</td><td> konsum()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage coroph	 		</td><td> coroph()		</td><td> ### in Bearbeitung </td></tr>
-!! <tr><td> \subpage Dreissena		</td><td> dreissen()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage hnf  			</td><td> hnf()			</td><td> ### inaktiv weil fehlerhaft ### 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Algen - kiesel, grün, blau	</td><td> algaeski(), algaesgr(), algaesbl() </td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage albenth	 	</td><td> albenth()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage mphyt			</td><td> mphyt()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage BSB			</td><td> orgc()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Stickstoff		</td><td> ncyc()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage ph_doku		</td><td> ph()			</td><td> 14.04 </td></tr>
-!! <tr><td> \subpage Waermebilanz 1) +wetter </td><td> temperw()	 	</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Phosphor		</td><td> po4s() 		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Silizium		</td><td> silikat()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> \subpage Sauerstoffgehalt		</td><td> oxygen()		</td><td> 13.401_15okt18 </td></tr>
-!! <tr><td> <i>Schwebstoffe</i>, Übernahme nicht geplant, ersetzt durch \n \subpage schwebstoff_salz</td><td> schwebstoff_salz() \n ersetzt schweb und erosion </td><td></td></tr>
-!! <tr><td> Schwermetalle 			</td><td> Schwermetalle()	</td><td> ### externe Entwicklung </td></tr>
-!! <tr><td> \subpage coliform		</td><td> coliform()		</td><td> 13.401_15okt18 </td></tr>
-!! </table></center>
-!! \n\n
-!! Voranstehend sind die Bausteine in der Reihenfolge ihrer Bearbeitung, die QSim-3D von QSim-1D übernimmt, aufgeführt.
-!! \n\n
-!! Der Stoffumsatz wird im mehrdimensionalen QSim3D auf identische Weise wie im 1-dimensionalen QSim modelliert. 
-!! Um dies sicherzustellen werden programmtechnisch dieselben Quellcode-Dateien einkompiliert, 
-!! aus denen auch die Software QSim erzeugt wird (QSim-Subroutinen). 
-!! Im Detail ist dies im Abschnitt \ref hüllen beschrieben.\n
-!! Der aktuell verwendete QSim1D-source-code wird im Abschnitt \ref Download bereitgestellt.
-!! \n\n
-!! Die lokal ablaufenden biologischen und chemischen Stoffumsetzungs-Prozesse werden 
-!! numerisch als \ref Num_Umsatz diskretisiert.
-!! \n\n
-!! Wird QSim zur Ermittlung der \subpage Aufenthaltszeit eingesetzt, ist der Stoffumsatz komplett ausgeschaltet.
-!!
-!!\n\n zurück: \ref Simulation ; Code: stoffumsatz.f95
-!! \n
-!! <hr>
-!! <a name="1">1)</a>
-!!     Obwohl es sich eigentlich um einen physikalischen Vorgang handelt, wird die Wärmebilanz hier trotzdem mit aufgeführt. 
-!!     Zum einen, weil auch die Temperatur wie eine Konzentration behandelt wird, 
-!!     die durch Wärmeaustausch mit der Umgebung anwachsen oder abnehmen kann.
-!!     Zum anderen, weil auch dafür die bewährte QSim-Subroutine temperw() verwendet wird.
-!! <hr>
-
-
-!> Beschreibung siehe: \ref Stoffumsatz
-!! \n Quelle: stoffumsatz.f95
       SUBROUTINE stoffumsatz()
 
       use modell
@@ -274,7 +221,7 @@
 !! Das Obengenannte bezieht sich nun nur ganz allgemein auf den Stoffumsatz irgendeiner Konzentration.
 !! Eine konkrete Konzentration z. B. der Sauerstoffgehalt verändert sich durch Beiträge aus verschiedenen Stoffumsetzungsprozessen,
 !! die in den Modulen des Gewässergütemodells modelliert sind.\n\n
-!! Im Abschnitt \ref Stoffumsatz sind alle von QSim modellierten Prozesse aufgeführt.\n\n
+!! Im Abschnitt \ref lnk_ueberblick sind alle von QSim modellierten Prozesse aufgeführt.\n\n
 !! Die Zuordnung, welche Konzentrationen von welchem Modul geändert wird, befindet sich in der Liste in: \ref planktische_variablen .
 !! 
 !! \n\n aus Datei stoffumsatz.f95; zurück:\ref numerik

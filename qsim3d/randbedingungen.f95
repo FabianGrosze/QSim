@@ -113,7 +113,7 @@
 !! Zufluss-Randbedingungen aus <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a>\n
 !! werden von der subroutine ereigg_Randbedingungen_lesen() eingelesen.\n
 !! QSim3D ließt in die Struktur \ref rb ein.\n
-!! \n aus randbedingungen.f95 , zurück: \ref Datentechnik und \ref zuflussranddaten siehe auch \n\n
+!! \n aus randbedingungen.f95 , zurück: \ref lnk_Datentechnik und \ref zuflussranddaten siehe auch \n\n
 
 !> Dient dem Anbringen der \ref zuflussranddaten\n
 !! in Datei randbedingungen.f95 

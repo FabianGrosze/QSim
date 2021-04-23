@@ -19,7 +19,7 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page Datentechnik Informationstechnische Umsetzung
+!> \page lnk_Datentechnik Informationstechnische Umsetzung
 !!
 !! \section Datenstruktur Datenstruktur
 !! In Qsim3D wurden Variablenfelder gemäß ihrer Funktion in den untenstehenden Gruppen zusammengeasst.
@@ -76,7 +76,7 @@
 !! statt 1D oder 2D-breitengemittelt wie in QSim-1D.\n
 !! Die Simulation der im Gewässer lokal ablaufenden Prozesse (lokaler stoffumsatz()) bleibt identisch.
 !! \n\n
-!! Der aktuell verwendete QSim1D-source-code wird im Abschnitt \ref Download bereitgestellt.
+!! Der aktuell verwendete QSim1D-source-code wird im Abschnitt \ref lnk_download bereitgestellt.
 !! \n\n
 !! Um mit denselben Subroutinen arbeiten zu können, die auch das Programm QSim verwendet, wurden hier Hüllroutinen geschaffen,
 !! deren einzige Aufgabe darin besteht, die in QSim-3D geänderte Datenstruktur an die QSim-Subroutinen zu übergeben.\n
@@ -92,7 +92,7 @@
 !! Eine Übernahme ins mehrdimensionale ist nicht geplant.
 !! QSim3D arbeitet z. Zt. (Mai 2018) noch durchgängig tiefenintegriert.
 !! \n\n 
-!! aus Datei  module_modell.f95 ; zurück zu \ref Datentechnik
+!! aus Datei  module_modell.f95 ; zurück zu \ref lnk_Datentechnik
 
 !--------------------------------------------------------------------------------------------------------------- modell
 !> Das module ::modell 

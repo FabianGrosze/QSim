@@ -46,10 +46,10 @@
 !!
 !! <h2>Schnittstellenbeschreibung</h2>
 !! SUBROUTINE silikat()\n
-!! ( \ref si, \ref flag, \ref elen, \ref ior, \ref esi, \ref qeinl, \ref vabfl, \ref anze, \ref tflie, \ref jiein, \ref aki         &\n
+!! ( \ref si, \ref flag, \ref elen, \ref ior, *esi*, *qeinl*, \ref vabfl, \ref anze, \ref tflie, \ref jiein, \ref aki         &\n
 !! , \ref albewk, \ref alberk, \ref tiefe, \ref tempw, \ref ilbuhn, \ref akkssi, \ref qmx_sk, \ref q_sk          &\n
 !! , \ref up_siz, \ref siz, \ref algakz, \ref akitbr, \ref akibrz, \ref hjsi, \ref nkzs, \ref dh2d, \ref dh2de, \ref mstr    &\n
-!! , \ref iorla, \ref iorle, \ref ieinls, \ref flae, \ref qeinll, \ref sil, \ref itags, \ref uhrz, \ref azstrs         &\n
+!! , \ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *sil*, \ref itags, \ref uhrz, \ref azstrs         &\n
 !! , \ref kontroll , \ref iglob )    \n
 !! \n
 !! silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
@@ -58,7 +58,7 @@
 !! Bisher existiert eine Dokumentation des Silikat-Moduls als Kapitel 12 der
 !! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Quelle: silikat_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Quelle: silikat_huelle.f95
 
 
 
@@ -114,7 +114,7 @@
 !!<tr><td> </td><td> </td><td> </td></tr>
 !!</table>
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Quelle: silikat_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Quelle: silikat_huelle.f95
 
 !> \page si_aufteilung Ergänzungen Silikat
 !! an den Zufluss-Rändern wird der Siliziumanteil in den Kieselalgen,\n
