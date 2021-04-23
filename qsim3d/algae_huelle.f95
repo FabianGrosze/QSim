@@ -1,5 +1,5 @@
 
-!> \page Algen Algen
+!> \page lnk_algendoc Algen
 !!
 !!<table border="0" ><tr><td  width="50%" >
 !! \image html blaualgenbluetHavelAnnette11_600.jpg "Blau-Algen-Blüte in der Havel bei Berlin (Annette Becker, BfG, 2011)"  
@@ -68,15 +68,15 @@
 !!     & , \ref up_pkz, \ref up_nkz, \ref up_siz, \ref qmx_pk, \ref qmn_pk, \ref upmxpk                   		        &\n
 !!     & , \ref qmx_nk, \ref qmn_nk, \ref upmxnk, \ref qmx_sk, \ref qmn_sk, \ref upmxsk, \ref skmor, \ref ikke, \ref frmuke		        &\n
 !!     & , \ref alamda, \ref akitbr, \ref chlaz, \ref akibrz, \ref akiz                                                 &\n
-!!     & , \ref chlal, \ref qeinll, \ref ieinls, \ref algakz, \ref algzkz, \ref ablz, \ref agrz                                     &\n
+!!     & , \ref chlal, *qeinll*, \ref ieinls, \ref algakz, \ref algzkz, \ref ablz, \ref agrz                                     &\n
 !!     & , \ref chlaki, \ref hchlkz, \ref hchlgz, \ref hchlbz    							&\n
 !!     & , \ref hcchlkz, \ref hcchlbz, \ref hcchlgz    							&\n
 !!     & , \ref dz2d, \ref toptk 		  							&\n
 !!     & , \ref ktemp_ki          								&\n 
 !!     & , \ref ifix 										&\n
-!!     & , \ref chlabl, \ref chlagr, \ref a1ki, \ref a2ki, \ref a3ki, \ref sedalg_mq, \ref sedalk0, \ref hq_nkz    		        & !! noch unbearbeitet #################\n
-!!     & , \ref hQ_NGz, \ref hQ_NBz, \ref Q_PG, \ref Q_NG, \ref Q_PB, \ref Q_NB                        &\n
-!!     & , \ref extkS, \ref akmor_1, \ref agmor_1, \ref abmor_1
+!!     & , \ref chlabl, \ref chlagr, *a1ki*, *a2ki*, *a3ki*, \ref sedalg_mq, \ref sedalk0, \ref hq_nkz    		        & !! noch unbearbeitet #################\n
+!!     & , *hQ_NGz*, *hQ_NBz*, *Q_PG*, *Q_NG*, *Q_PB*, *Q_NB*                        &\n
+!!     & , *extkS*, \ref akmor_1, \ref agmor_1, \ref abmor_1
 !!     & , \ref mstr, \ref it_h, \ref itags, \ref monats, \ref isim_end, \ref azstrs                                          &\n
 !!     & , \ref kontroll , \ref iglob )                 !!wy\n
 !! </code>\n
@@ -97,8 +97,8 @@
 !! , \ref upmxpb, \ref qmx_nb, \ref qmn_nb, \ref upmxnb, \ref q_nb, \ref q_pb, \ref ikbe
 !! , \ref frmube, \ref alamda, \ref abltbr, \ref ablbrz, \ref up_n2z, \ref ablz               &\n
 !! , \ref chlabl, \ref a1bl, \ref a2bl, \ref a3bl, \ref hchlbz, \ref hcchlbz, \ref algabz, \ref algzbz
-!! , \ref dz2d, \ref toptb, \ref ktemp_bl, \ref ifix, \ref sedalg_mq            &                      \n         
-!! , \ref sedalb0, \ref hq_nbz, \ref  mstr, \ref itags, \ref monats, \ref isim_end, \ref azstrs                                                &\n
+!! , \ref dz2d, \ref toptb, *ktemp_bl*, \ref ifix, \ref sedalg_mq            &                      \n         
+!! , *sedalb0*, \ref hq_nbz, \ref  mstr, \ref itags, \ref monats, \ref isim_end, \ref azstrs                                                &\n
 !! , \ref ialloc2  , \ref kontroll , \ref iglob )              !!wy                            
 !! </code>
 !! \n\n
@@ -111,7 +111,7 @@
 !! , \ref agchl, \ref aggmax, \ref agksn, \ref agksp, \ref agremi, \ref vco2, \ref algdrg, \ref pbiogr, \ref q_pk
 !! , \ref q_nk, \ref iph, \ref akbcm, \ref agbcm, \ref aki, \ref agr, \ref cmatgr            &\n
 !! , \ref cmatki, \ref abbcm, \ref antbl, \ref abl, \ref pbiobl, \ref chlabl, \ref extk, \ref extk_lamda &\n
-!! , \ref ilamda, \ref eta, \ref aw, \ref ack, \ref acg, \ref acb, \ref ah, \ref as, \ref al & !!wy, \ref  einlesen von e_extnct.dat nicht hier\n
+!! , \ref ilamda, \ref eta, \ref aw, \ref ack, \ref acg, \ref acb, \ref ah, \ref as, \ref al & !!wy, *einlesen* von e_extnct.dat nicht hier\n
 !! , \ref tpgr, \ref uhrz, \ref iwied, \ref algcog  &\n
 !! , \ref figaus, \ref agmuea, \ref fhegas, \ref agreau, \ref tauscs, \ref ischif, \ref ilbuhn, \ref ieros
 !! , \ref asgre, \ref echla, \ref ess, \ref ss, \ref zooind, \ref grote, \ref q_pg, \ref q_ng       &\n
@@ -120,7 +120,7 @@
 !! , \ref qmn_pg, \ref upmxpg, \ref qmx_ng, \ref qmn_ng, \ref upmxng, \ref ikge, \ref frmuge, \ref alamda
 !! , \ref agrtbr, \ref agrbrz, \ref akiz, \ref agrz, \ref ablz                     &\n
 !! , \ref chlaz, \ref hchlkz, \ref hchlgz, \ref hchlbz, \ref hcchlgz, \ref algagz, \ref algzgz, \ref dz2d
-!! , \ref toptg, \ref ktemp_gr, \ref ifix, \ref sedalg_mq, \ref sedalg0, \ref  hq_ngz    &\n
+!! , \ref toptg, *ktemp_gr*, \ref ifix, \ref sedalg_mq, *sedalg0*, \ref  hq_ngz    &\n
 !! , \ref a1gr, \ref a2gr, \ref a3gr, \ref ifehl, \ref ifhstr, \ref isim_end, \ref azstrs & \n                 
 !! , \ref kontroll , \ref iglob )  !!wy \n                           
 !! </code>
@@ -152,7 +152,7 @@
 !! sowie einen <a href="./pdf/UmstrukturierungAlgenbaustein.pdf" target="_blank">Vorschlag</a>
 !! zur Umstrukturierung / Zerlegung ausgearbeitet:\n
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Code: algae_huelle.f95
+!! zurück: \ref lnk_ueberblick; Code: algae_huelle.f95
 !
 !-----------------------------------------------------------------------------
 !> \page Veränderung-Algenmasse Veränderung der Algen-Biomasse
@@ -212,7 +212,7 @@
 !!<tr><td> \f$ algdrk \f$  </td><td> \ref algdrk </td><td> \ref Algen-Konsum-bentisch Muscheln </td><td> mgBio/l </td><td>  </td></tr>
 !!<tr><td> \f$ algcok \f$  </td><td> \ref algcok </td><td> \ref Algen-Konsum-bentisch Corophium </td><td> mgBio/l </td><td>  </td></tr>
 !!</table>\n
-!! zurück: \ref Algen ; Code: algae_huelle.f95
+!! zurück: \ref lnk_algendoc ; Code: algae_huelle.f95
 ! 
 !-----------------------------------------------------------------------------
 !> \page Algen-Wachstum Algen-Wachstum
@@ -241,7 +241,7 @@
 !! und bieten Algen dadurch z. T. sehr unterschiedliche Lebensräume.
 !! Dies kann durch die 2D-Option in QSim1D 
 !! (Die Tiefenverteilung macht aus dem querschnittsgemittelten Modell ein breitengemitteltes)
-!! berücksichtigt werden. \n zur Realisierung von Tiefenverteilungen in QSim3D siehe \ref tiefenverteilung \n
+!! berücksichtigt werden. \n zur Realisierung von Tiefenverteilungen in QSim3D siehe \ref *tiefenverteilung* \n
 !! \n Aber auch vertikal gut durchmischte, zumeist schnell fließende Gewässer, in denen sich 
 !! keine großen Unterschiede in Temperatur und Nährstoffen ausbilden können, weisen Lichtgradienten auf.
 !! Diese Fälle lassen sich hydraulisch und vom Stofftransport zwar in guter Näherung tiefengemittelt berechnen,
@@ -254,9 +254,9 @@
 !! flachen, gleichförmigen Gerinne mit freier Oberfläche die Turbulenz durch die Sohlreibung produziert wird.
 !! Die vertikale Diffusivität nimmt dann nach 
 !! <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=A+224" target="_blank">
-!! Fischer et al. 1979</a> \ref b 
+!! Fischer et al. 1979</a> \ref lnk_litfuss 
 !! (siehe auch <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=A+7042" target="_blank">
-!! Nezu+Nakagawa 1993</a> \ref b) 
+!! Nezu+Nakagawa 1993</a> \ref lnk_litfuss) 
 !! im Mittel über die Tiefe folgenden Wert an: 
 !! \f[ 
 !!      \nu_{turb} = 0.06667 \cdot u^\star \cdot h
@@ -317,7 +317,7 @@
 !! Die Graphik ist der 
 !! <a href="./pdf/QSimUndergroundDokuAnnette10.pdf" target="_blank"> Dokumentation von Annette Becker</a> entnommen.
 !! \n\n
-!! Wie im Baustein der \ref Waermebilanz näher ausgeführt, wird mittels der subroutine strahlg()
+!! Wie im Baustein der \ref lnk_wtemp näher ausgeführt, wird mittels der subroutine strahlg()
 !! aus den Tagessummen eine aktuelle Strahlungsleistung \f$ Q_{s,g} \f$ der Sonne an der Gewässeroberfläche ermittelt.
 !! Diese wird mithilfe des Sonnenlichtspektrum  \f$a_l(i)\f$ in ein 
 !! Spektrum der Strahlungsintensität \f$ I_0(i) \f$ an der Gewässeroberfläche umgerechnet.
@@ -703,7 +703,7 @@
 !-----------------------------------------------------------------------------
 !> \page Algen-Konsum-planktisch Konsum durch planktische Lebewesen
 !! Bezüglich des Konsums von Algen werden
-!! in QSim stellvertretend für das gesamte Zooplankton die \ref rotatorien modelliert. (konsum.f90)
+!! in QSim stellvertretend für das gesamte Zooplankton die \ref lnk_rotatorien modelliert. (konsum.f90)
 !! \n<i> #### in QSim3D z.Z. noch nicht in Betrieb #### </i>\n
 !! \n\n
 !! <hr>mit:\n <table >
@@ -780,12 +780,12 @@
 !!      planktonic_variable(28+nk)= 0.01 ! agriv ### unklar ### \n
 !!      planktonic_variable(29+nk)= 0.01 ! abliv ### unklar ### \n
 !! \n \n
-!! Quelle: algae_huelle.f95 , zurück: \ref zuflussranddaten, \ref Algen oder \ref Anfangsbedingungen
+!! Quelle: algae_huelle.f95 , zurück: \ref zuflussranddaten, \ref lnk_algendoc oder \ref Anfangsbedingungen
 
 !!<tr><td> \f$  \f$  </td><td>  </td><td>  </td><td>  </td><td>  </td></tr>
 !
 !> SUBROUTINE algae_huelle()
-!!\n zurück: \ref Stoffumsatz oder \ref Algen ; Code: algae_huelle.f95
+!!\n zurück: \ref lnk_ueberblick oder \ref lnk_algendoc ; Code: algae_huelle.f95
       SUBROUTINE algae_huelle(i)
       use modell                                                 
       use QSimDatenfelder

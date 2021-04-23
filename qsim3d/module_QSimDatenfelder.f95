@@ -1,6 +1,6 @@
 
 !> <h1>Datenfelder QSim</h1>
-!! Das module QSimDatenfelder enthält alle von QSim verwendeten Datenfelder \n
+!! Das Module QSimDatenfelder enthält alle von QSim verwendeten Datenfelder \n
 !! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten !!\n
 !! QSim3D ist in Fortran95 geschrieben. Darin ist es gleichgültig, ob ein Variablenname mit Groß- oder Kleinbuchstaben geschrieben wird.
 !! z. B. bezeichnet Q_NK den gleichen Speicherplatz wie q_nk.\n
@@ -70,11 +70,11 @@
 !! Siehe dazu auch \ref hüllen.
     real, Dimension(1000)               :: flae
 !                                       hydraulische Parameter:
-!>  \ref TIEFE Wassertiefe
+!>  *TIEFE*: Wassertiefe
     real, Dimension(1000)               :: tiefe
 !> \ref vmitt Fließgeschwindigkeit (Querschnittsgemittelt in QSim-1D)
     real, Dimension(1000)               :: vmitt
-!>  \anchor rhyd rhyd, hydraulischer Radius, im Mehrdimensionalen der \ref TIEFE gleichgesetzt.
+!>  \anchor rhyd rhyd, hydraulischer Radius, im Mehrdimensionalen der *TIEFE* gleichgesetzt.
     real, Dimension(1000)               :: rhyd
 
 !                                       planktische Konzentrationen, die es auch als Tiefenprofil gibt:
@@ -182,7 +182,8 @@
     real, Dimension(1000)               :: CM
 !> \ref bac Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
     real, Dimension(1000)               :: BAC
-!> \ref zBAC Aufnahmerate der Bakterien
+! !> \ref zBAC Aufnahmerate der Bakterien
+!> zBAC: Aufnahmerate der Bakterien
     real, Dimension(1000)               :: zBAC 
 !> \ref o2bsb Sauerstoff-Kohlenstoffverhältnis beim C-Abbau
     real, Dimension(1000)               :: O2BSB
@@ -200,7 +201,7 @@
     real, Dimension(1000)               :: BVHNF
 !>  \ref zooind Anzahl der Rotatorien
     real, Dimension(1000)               :: zooind
-!>  \ref TGZoo Gewicht einer Rotatorie
+!>  *TGZoo* Gewicht einer Rotatorie
     real, Dimension(1,1000)               :: TGZoo
 !>  \ref akmor_1 akmor_1 ?? unklar ??
     real, Dimension(1,1000)               :: akmor_1 !  Kiesel-Algen
@@ -210,7 +211,7 @@
     real, Dimension(1,1000)               :: abmor_1 !  Blau-Algen
 
 
-!>  \ref bsbZoo biol. Sauerstoffbedarf in 5d je Biomasse Zooplankton =1.6 hard coded
+!>  *bsbZoo* biol. Sauerstoffbedarf in 5d je Biomasse Zooplankton =1.6 hard coded
     real bsbZoo
 !>  \ref abrzo unbenutzt ??
     real, Dimension(1000)               :: abrzo1
@@ -281,7 +282,7 @@
     real drHNF(1000)                               ! Dreissena fressen HNF
 
 !>  \anchor rau Gauckler-Manning-Strickler Reibungsbeiwert in (m**1/3)/s 
-!!  wird von function strickler() (module_modell.f95) aus der äuivalenten Sandrauheit \ref ks und der \ref TIEFE ermittelt.
+!!  wird von function strickler() (module_modell.f95) aus der äuivalenten Sandrauheit \ref ks und der *TIEFE* ermittelt.
     real, Dimension(1000)               :: rau     ! Gauckler-Manning-Strickler Reibungsbeiwert
     real, Dimension(1,1000)             :: orgCsd  ! Gesamtmase Kohlenstoff, die je Zeitschritt sedimentiert
     real, Dimension(1000)               :: bsbbet  ! Ausgabekonzentration Sauerstoffverbrauch durch Organismen auf Makrophyten
@@ -510,7 +511,7 @@
       real, Dimension(100)       :: eo2, etemp
       real, Dimension(50)        :: vo2zt, seo2, hcvo2_2D, vo2e, hco2Ez, Cpart, D
       real    :: zwgmes
-!>  \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe \ref dC_DenW \n
+!>  \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe *dC_DenW* \n
 !! im qsim hauptprogramm auf den konstanten Wert = 3.1  gesetzt. (in QSim3d ebenfalls)
       real    :: TOC_CSB
 
@@ -600,12 +601,12 @@ real, Dimension(azStrs,50,1000) :: hgesNz
 !>    \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
 !>    \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
 !      real :: sa, su 
-!>    \anchor itstart itstart = \ref starttag
-!>    \anchor mstart mstart = \ref startmonat
-!>    \anchor itmax itmax = \ref maxtag
-!>    \anchor mmax mmax = \ref maxmonat
-!>    \anchor itend itend = \ref endtag
-!>    \anchor mend mend = \ref endmonat
+!>    \anchor itstart itstart = *starttag*
+!>    \anchor mstart mstart = *startmonat*
+!>    \anchor itmax itmax = *maxtag*
+!>    \anchor mmax mmax = *maxmonat*
+!>    \anchor itend itend = *endtag*
+!>    \anchor mend mend = *endmonat*
       integer :: itstart,mstart,itmax,mmax,itend,mend
 
 !! aus temperw_module.f95\n

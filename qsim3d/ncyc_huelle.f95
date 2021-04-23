@@ -70,7 +70,7 @@
 !!       Subroutine ncyc()\n
 !! ( \ref tempw, \ref  vx0, \ref  vnh4, \ref  tflie , \ref  rau, \ref  tiefe, \ref  vmitt, \ref  rhyd
 !! , \ref   vo2, \ref   go2n, \ref   vno3, \ref   dc_denw, \ref  flag, \ref  elen, \ref  ior, \ref  anze  & \n                
-!! , \ref  enh4, \ref  eno3, \ref  ex0, \ref  qeinl, \ref  vabfl, \ref   pfl, \ref   sgo2n, \ref   sedx0, \ref   don, \ref   susn
+!! , *enh4*, \ref  eno3, \ref  ex0, \ref  qeinl, \ref  vabfl, \ref   pfl, \ref   sgo2n, \ref   sedx0, \ref   don, \ref   susn
 !! , \ref   bettn, \ref   susno, \ref   agrnh4, \ref   akinh4, \ref   dzres1, \ref   dzres2  & \n                
 !! , \ref   agrno3, \ref   akino3, \ref  jiein, \ref  ischif, \ref   ynmx1e, \ref   stks1e, \ref   anitrie, \ref   bnmx1e, \ref   bnks1e, \ref   vph, \ref   vno2, \ref  ij  &\n
 !! , \ref   albewg, \ref   alberg, \ref   albewk, \ref   alberk, \ref   resdr, \ref   aki, \ref   agr, \ref   exdrvk
@@ -80,13 +80,13 @@
 !! , \ref  egesn, \ref   sedalk, \ref   sedalb, \ref   sedalg, \ref  ilbuhn, \ref  iwied, \ref  fkm
 !! , cd( \ref cd1, \ref   cd2), cp( \ref cp1, \ref   cp2), \ref   cm, \ref   bac
 !! , \ref   bsbct, \ref  nkzs, \ref   vnh4z, \ref   vno2z, \ref   vno3z, \ref  dh2d  & \n                
-!! , \ref   hjno3, \ref   hjnh4, \ref  hjn2, \ref  suso2n, \ref   hflun3, \ref   akksn, \ref   agksn, \ref   abksn
+!! , \ref   hjno3, \ref   hjnh4, \ref  hjn2, *suso2n*, \ref   hflun3, \ref   akksn, \ref   agksn, \ref   abksn
 !! , \ref   qmx_nk, \ref   q_nk, \ref   up_nkz, \ref   qmx_ng, \ref   q_ng, \ref   up_ngz, \ref   qmx_nb      &\n
 !! , \ref   q_nb, \ref   up_nbz, \ref   dalgkz, \ref   dalgbz, \ref   dalggz, \ref   agnh4z, \ref   aknh4z
 !! , \ref   abnh4z, \ref   agno3z, \ref   akno3z, \ref   abno3z, \ref   vo2z, \ref   abltbr             &\n
 !! , \ref   akitbr, \ref   agrtbr, \ref   agrbrz, \ref   akibrz, \ref   ablbrz, \ref  mstr, \ref  uhrz, \ref  itags, \ref  monats, \ref  enl0
 !! , \ref   algakz, \ref   algagz, \ref   algabz                &\n
-!! , \ref   up_n2z ,iorla, \ref  iorle, \ref  ieinls, \ref  flae, \ref  qeinll, \ref  enh4l, \ref  eno2l, \ref  eno3l, \ref  gesnl, \ref   hgesnz, \ref   algdrk, \ref   algdrg, \ref   algdrb  &\n
+!! , \ref   up_n2z ,iorla, \ref  iorle, \ref  ieinls, \ref  flae, *qeinll*, *enh4l*, *eno2l*, *eno3l*, *gesnl*, \ref   hgesnz, \ref   algdrk, \ref   algdrg, \ref   algdrb  &\n
 !! , \ref  ifehl, \ref  ifhstr, \ref   azstrs, \ref  ialloc2, \ref  kontroll , \ref  iglob )
 !! \n\n
 !! (Die nicht verlinkten Variablen haben in QSim3D keine Bedeutung oder werden in ncyc nicht verwendet)
@@ -103,7 +103,7 @@
 !! \n\n
 !! Dazu auch das <a href="./pdf/NITROLIMIT2014diskpapier3.pdf" target="_blank">Diskussionspapier</a> aus NITROLIMIT zu gelösten organischen Stickstoffverbinungen.
 !!\n\n
-!! zurück: \ref Stoffumsatz ; Code: ncyc_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Code: ncyc_huelle.f95
 
 !! <code>\verbatim Z:\U\U2\Intern\U2Gewässergruppe\QSim\Dokumentation_u_Handbuecher\QSim\QSimDokumentation\QSimDoku.docx \endverbatim</code>
 !! <a href="./pdf/QSimDoku_10Stickstoff.pdf" target="_blank">Stickstoff-Moduls</a> als Kapitel 10 von 
@@ -277,7 +277,7 @@
 !!<tr><td> </td><td> </td><td>
 !!</table>
 !!\n\n
-!! zurück: \ref Stoffumsatz ; Code: ncyc_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Code: ncyc_huelle.f95
 
 
 !! <h2>Übergabe-Parameter:</h2>
@@ -398,7 +398,7 @@
 !!\n ! q N2-AufnahmeBlaualgen
 !!\n ! p Sedimentation organisches Material
 !!\n \n
-!! zurück: \ref Stoffumsatz ; Code: ncyc_huelle() ; Quelle: ncyc_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Code: ncyc_huelle() ; Quelle: ncyc_huelle.f95
 !
 !> Beschreibung: \ref Stickstoff\n\n
 !! WIRD VON ALLEN PROZESSEN AUFGERUFEN !!! (parallel)
@@ -773,6 +773,6 @@
 !! nl0  ### noch unklar ### \n
 !! alle anderen stickstoff-relevanten Transportkonzentrationen VNH4, VNO2, VNO3, VX0, VX02 und gesN werden vorgegeben.
 !! \n\n
-!! zurück: \ref Stoffumsatz oder  \ref Stickstoff ; Quelle: ncyc_huelle.f95
+!! zurück: \ref lnk_ueberblick oder  \ref Stickstoff ; Quelle: ncyc_huelle.f95
 
 

@@ -1,6 +1,6 @@
 !> \page wetter_rb Wetter-Randbedingungen
 !!
-!! Die Wetter-Randbedingungen (meteorologischen Bedingungen) werden für die \ref Waermebilanz
+!! Die Wetter-Randbedingungen (meteorologischen Bedingungen) werden für die \ref lnk_wtemp
 !! und das Strahlungsklima, das die Algen (\ref Licht_algen ) erfahren, benötigt.
 !! \n
 !! <h2>Wetter-Parameter</h2>
@@ -51,7 +51,7 @@
 !! Um die QSim-Routinen benutzen zu können ist das Feld iWSta erhalten geblieben; es speichert in QSim3D aber den Zähler.
 !! Für die Kennnummer aus WETTER.txt ist ein neues Feld "Wetterstationskennung" eingeführt worden.
 !! \n\n
-!! zurück: \ref Randbedingungen, \ref Waermebilanz oder \ref Modellerstellung ; Quelle: wetter.f95
+!! zurück: \ref Randbedingungen, \ref lnk_wtemp oder \ref Modellerstellung ; Quelle: wetter.f95
 
 
 

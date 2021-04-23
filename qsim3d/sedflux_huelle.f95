@@ -39,15 +39,15 @@
 !!                   ,\ref chlaki,\ref chlagr,\ref chlabl,\ref hflun3,\ref ilang,\ref azstrs,\ref iwied,\ref ynmx1e,\ref stks1e     &\n
 !!                   ,\ref obsb,\ref ocsb,  \ref kontroll ,\ref jjj ) !!wy  
 !!\n\n
-!! \ref Sedimenteigenschaften
+!! *Sedimenteigenschaften*
 !! </code>
 !!
-!!WRITE(1, '(A)') '<ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt">'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="BedGSed" Text="Bedeckungsgrad der Sohle mit Sediment (0-1)" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="kornd" Text="Korndurchmesser D50 Sediment (0-1), optional" Unit="m" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="burial" Text="Burial-geschwindigkeit ins Sediment, optional" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
+! !!WRITE(1, '(A)') '<ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt">'\n
+! !!WRITE(1, '(A)') '  <Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" />'\n
+! !!WRITE(1, '(A)') '  <Parameter Ident="BedGSed" Text="Bedeckungsgrad der Sohle mit Sediment (0-1)" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
+! !!WRITE(1, '(A)') '  <Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
+! !!WRITE(1, '(A)') '  <Parameter Ident="kornd" Text="Korndurchmesser D50 Sediment (0-1), optional" Unit="m" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
+! !!WRITE(1, '(A)') '  <Parameter Ident="burial" Text="Burial-geschwindigkeit ins Sediment, optional" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
 !!\n\n
 !! MQ-Tiefe =2 m, MQ-Geschwindigkeit =1 m/s\n
 !! ansonsten Korndurchmesser und burialgeschwindigkeit in modellg.txt vorgeben
@@ -63,7 +63,7 @@
 !! <a href="./pdf/BfG1843_Sedimentmodul.pdf" target="_blank">BfG-Bericht 1843</a> (vom August 2016)
 !! "Das Sediment-Modul SEDFLUX im Gewässergütemodell QSim"
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Code: sedflux_huelle.f95
+!! zurück: \ref lnk_ueberblick ; Code: sedflux_huelle.f95
 
       SUBROUTINE sedflux_huelle(i)
 
@@ -249,7 +249,7 @@
       iwied=0      ! unbenutzte Variable
       ! direkt aus QSimDatenfelder ynmx1e  !  Max. Wachstum Nitrosomonas 
       ! direkt aus QSimDatenfelder ystks1e !  Halbsättigung Nitrosomonas 
-!!\ref obsb,\ref ocsb,  \ref kontroll ,\ref jjj ) !!wy  
+!!\ref obsb,\ref ocsb,  \ref kontroll ,*jjj* ) !!wy  
       obsb(1) = planktonic_variable_p(17+(i-1)*number_plankt_vari) ! C-BSB5 
       obsb(2) = obsb(1)
       ocsb(1) = planktonic_variable_p(18+(i-1)*number_plankt_vari) ! CSB 

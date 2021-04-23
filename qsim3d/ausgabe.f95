@@ -55,7 +55,7 @@
 !! \section mehrdimausgabe mehrdimensionale Felder zu einzelnen Zeitpunkten
 !! Mittels der Datei <a href="./exp/ausgabezeitpunkte.txt" target="_blank">ausgabezeitpunkte.txt</a>
 !! wird angegeben, zu welchen Zeitpunkten mehrdimensionale Felder ausgegeben werden sollen.\n 
-!! Im Verlauf der Berechnung werden diese dann im \ref Modellverzeichnis im
+!! Im Verlauf der Berechnung werden diese dann im \ref Datenmodell im
 !! .vtk-Format abgelegt. Der Dateiname (z. B. ausgabe_734850.vtk) enthält den Zeitpunkt 
 !! als ganzahligen Integer-Wert in Sekunden. Der Ursprung dieser Sekundenzählung ist in der 
 !! Datei meta im traninfo-Verzeichnis (\ref Transportinformationen) festgelegt. Die Bildschirm-Ausgabe
@@ -108,7 +108,7 @@
 !! \section sonstiges
 !! - Es wurde eine Abschätzung für die \subpage numdiff implementiert.
 !! \n\n
-!! zurück: \ref Modell_Benutzung ; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
+!! zurück: \ref lnk_technisch; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
 
 
 !> macht nur Verzweigung nach hydraulischem treiber wegen deren unterschiedlichen Datenstrukturen 

@@ -25,12 +25,12 @@
 !! \n\n
 !! Die vorgegebene Schwebstoffkonzentration wird  in die Variable 
 !! \ref ss eingelesen und repräsentiert nur den ??? zusätzlichen ??? Schwebstoffanteil.
-!! Das \ref Licht_algen , das den \ref Algen für die Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe abgeschwächt.
+!! Das \ref Licht_algen , das den \ref lnk_algendoc für die Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe abgeschwächt.
 !! \n\n
 !! \section sali Salzkonzentrationen
 !! z.Z. noch nicht realisiert.
 !! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref Stoffumsatz
+!! Quelle schwebstoff_salz.f95 zurück zu \ref lnk_ueberblick
 
 !----+-----+----
 
@@ -40,7 +40,7 @@
 !! d-Dateien im Unterverszeichnis trueb geholt. Zwischen den in trueb vorhandenen Zeitpunkten wird interpoliert.
 !! vor dem ersten und nach dem letzten wird die erste, resp. letzte Verteilung genommen.
 !! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref schwebstoff_salz oder \ref Stoffumsatz
+!! Quelle schwebstoff_salz.f95 zurück zu \ref schwebstoff_salz oder \ref lnk_ueberblick
       SUBROUTINE schwebstoff_salz()
       use modell
       implicit none

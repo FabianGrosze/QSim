@@ -85,7 +85,7 @@
 !!<tr><td>73	</td><td> \anchor abekm2 abekm2 </td><td> Biomasse benthischer Kieselalgen  	</td><td> gBio/m³ </td></tr>
 !!</table>\n\n
 !! Variablendefinition in module_modell.f95\n
-!! aus Datei benthische_verteilungen.f95; zurück: \ref Datentechnik \n 
+!! aus Datei benthische_verteilungen.f95; zurück: \ref lnk_Datentechnik \n 
 !! siehe dazu auch: stofftransport()
 
 !----+-----+----

@@ -1,6 +1,6 @@
 !!wy ...
 
-!> SUBROUTINE ini_algae() wird beschrieben in: \ref Algen \n
+!> SUBROUTINE ini_algae() wird beschrieben in: \ref lnk_algendoc \n
 !! Quelle zuflussrand.f90
       SUBROUTINE ini_algae(akchl,abchl,agchl,Cagr,Caki,Cabl,CZoo,a1Ki,a2Ki,a3Ki,a1Bl,a2Bl,a3Bl,a1Gr,a2Gr,a3Gr)
       implicit none
@@ -52,7 +52,7 @@
       END subroutine ini_algae
 !----+-----+----
 
-!> SUBROUTINE algae_start() wird beschrieben in: \ref Algen \n
+!> SUBROUTINE algae_start() wird beschrieben in: \ref lnk_algendoc \n
 !! Quelle zuflussrand.f90\n
 !!     Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses \n          
 !!     Angabe in mgChla/mgC                                  \n            

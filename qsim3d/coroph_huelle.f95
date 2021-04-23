@@ -26,7 +26,7 @@
 !! <h2>Dokumentation und Veröffentlichungen</h2>
 !! <h2>IT-Realisierung</h2>
 !! \n\n
-!! Quelle coroph_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle coroph_huelle.f95; zurück zu: \ref lnk_ueberblick
 !
 !> SUBROUTINE coroph_huelle() wird beschrieben in: \ref coroph \n
 !! Quelle coroph_huelle.f95

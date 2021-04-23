@@ -1,64 +1,7 @@
-
-!> \page Waermebilanz  Wärmebilanz / Temperatur
-!! 
-!! <center> 
-!! \image html Waermehaushalts.png
-!! </center>
+!> \page lnk_wtemp_equ  Wassertemperatur - Prozesse
 !!
-!! <h2>Herkunft</h2>
-!!     temperw()\n
-!!     EIN PROGRAMM ZUR BERECHNUNG DER WASSERTEMPERATUR\n
-!!     AUTOR : VOLKER KIRCHESCH\n
-!!     entnommen aus Version qsim13.301_28mae18\n 
-!!\n
 !! <h2>Teilprozesse</h2>
-!! Die Temperaturverteilung im Wasserkörper ist ein Resultat der Wärmebilanz.
-!! Numerisch wird die Temperatur behandelt wie eine Konzentrationen.
-!! Die im folgenden genannten lokalen Wärmeeinträge und -austräge (Wärmeflüsse) 
-!! sind quasi der stoffumsatz() der "Temperatur-Konzentration":\n
-!! <ul>
-!!    <li>Globalstrahlung (Sonneneinstrahlung, Licht)</li>\n\n
-!!    <li>Ausstrahlung (langwellige Wärmestrahlung des Wasserkörpers nach oben)</li>\n\n
-!!    <li>Gegenstrahlung (langwellige Wärmestrahlung der Athmosphäre ins Gewässer)</li>\n\n
-!!    <li>Verdunstung/Kondensation (abhängig von der Dampfdruckdifferenz zwischen Wasseroberfläche und darüberliegender Luft
-!!        verdunstet Wasser aus dem Wasserkörper in die Luft oder kondensiert aus der Luft in den Wasserkörper.
-!!        dabei wird dem Wasser entweder Verdunstungswärme entzogen oder Kondensationswärme zugeführt.)</li>\n\n
-!!    <li>Konvektion (Wärmeleitung zwischen Wasseroberfläche Luft)</li>\n\n
-!!    <li>Wärmeleitung Sediment</li>
-!! </ul>\n
-!! <b>Wärmeentstehung</b> im Wasserkörper etwa durch biologische Prozesse (Respiration) oder  
-!! Reibungswärme ist sehr gering und wird vernachlässigt.\n\n
-!! D. h. die Wärmebilanz ist von anderen Stoffumsetzungsprozessen in guter Näherung unabhängig. 
-!! Ein- und Austrag von Wärme ins Wasser erfolgt demnach nur infolge der \ref wetter_rb.
-!! 
-!! <h2>Schnittstellenbeschreibung</h2>
-!! call temperw()\n
-!! ( \ref ro, \ref templ, \ref tempw, \ref schwi, \ref wge, \ref tiefe, \ref tflie, \ref flag
-!! , \ref elen, \ref ior, \ref anze, \ref etemp, \ref ewaerm, \ref typ, \ref qeinl, \ref vabfl   &\n
-!! , \ref jiein, \ref cloud, \ref typw, \ref iwied, \ref uhrz, \ref ilbuhn, \ref nwaerm
-!! , \ref fkm, \ref nkzs, \ref tempwz, \ref dh2d, \ref iorla, \ref iorle, \ref ieinls, \ref flae &\n
-!! , \ref qeinll, \ref etempl, \ref mstr, \ref idwe, \ref ilang, \ref dtemp, \ref fluxt1
-!! , \ref extk, \ref itags, \ref monats, \ref tsed, \ref wlage, \ref hws, \ref irhkw      &\n
-!! , \ref htempw, \ref htempz, \ref wuebks, \ref spewkss, \ref psrefss, \ref extks
-!! , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim                   &\n
-!! &, \ref kontroll, \ref iglob, \ref meinrang)  \n
 !! \n
-!! temperw wird von der Hüllroutine temperw_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
-!!
-!! <h2>Dokumentation</h2>
-!! Bisher existiert eine Dokumentation des Temperatur-Moduls als Kapitel 6 der
-!! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
-!! \n\n
-!! Eine Modellbeschreibung in englischer Sprache ist im Anhang D des IKSR Berichts 
-!! <a href="http://bibliothek.bafg.de/index.asp?detsuche_systematik=online+280" target="_blank">
-!! Estimation of the effects of climate change scenarios on future Rhine water temperature development </a> zu finden.
-!! \n\n
-!! zurück: \ref Stoffumsatz ; in: temperw_huelle.f95
-
-
-!! Die ausführliche Beschreibung dieses Modellbausteins einschließlich der Angabe sämtlicher Formeln findet sich 
-!! in der\n <a href="./pdf/Temperatur_Doku_Volker.pdf" target="_blank">Dokumentation Temperatur</a> von Volker Kirchesch \n
-
 !! <h3>Eingabe der Randbedingungen</h3>
 !! Von entscheidender Bedeutung für die Berechnung der lokalen Wärmeflüsse sind die meteorologischen Bedingungen:\n
 !! Sonnenstand, Bewölkung, Lufttemperatur und -feuchte sowie die Windgeschwindigkeit.\n\n
@@ -74,21 +17,12 @@
 !! zu berücksichtigen. Im mehrdimensionalen T-QSim muss dies über Randbedingungen vorgegeben werden. D. h. einen Ausströmrand
 !! an dem der Volumenstrom entnommen wird und einem Einströmrand, an dem das erwärmte Wasser ins Gewässer(Modellgebiet) zurückfließt.
 !!
-!! <h3>Berechnungsablauf</h3>
-!! in jedem Zeitschritt müssen für jede Wetterstation die folgenden Subroutinen abgearbeitet werden:\n
-!! wettles_module()  ersetzt QSim-Subroutine wettles(), interpoliert die Wetterdaten für den aktuellen Zeitpunkt.\n
-!! temperl_module()  ersetzt QSim-Subroutine Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.\n
-!! strahlg_huelle()  berechnet aus der von <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>
-!! eingelesenen Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
-!! durch Aufruf der QSim-Subroutine strahlg() unter Benutzung der QSim-Subroutinen sasu() und tage()\n
 !! \n
-!! <h3>Aufruf</h3>
-!! Die Hüllroutine temperw_huelle(), wird von stoffumsatz() für alle Knoten 
-!! (die von dem jeweiligen prozessor parallel bearbeitet werden) aufgerufen.
-!! Die Wassertemperatur und die Sedimenttemperatur werden dann von der QSim-Subroutine temperw() berechnet.
-!! Dieser werden dafür die folgenden Variablen übergeben:
-!! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
-!! \n
+!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!
+! ------
+!
+!> \page lnk_wtemp_pars  Wassertemperatur - Parameter
 !!<table >
 !!<tr><th>     Variablen-Name QSim	 </th><th> Daten-Feld T-QSim	</th><th> Beschreibung </th></tr>
 !!<tr><td> ro(1)</td><td>ro_T (i2) </td><td> relative Luftfeuchte in % , subroutine wettles() </td></tr>
@@ -147,8 +81,7 @@
 !!<tr><td> dH2De </td><td>0.0   </td><td> unbenutzt  </td></tr>
 !!</table>
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Code: temperw_huelle(); in: temperw_huelle.f95
-
+!! zurück: \ref lnk_wtemp ; Code: temperw_huelle(); in: temperw_huelle.f95
 !! \n
 !!<table >
 !!<tr><th>Variablen-Name </th><th> Beschreibung			</th><th> T-QSim Daten-Feld 		</th></tr>
@@ -254,15 +187,61 @@
 !!       ! call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
 !!       ! call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
 !! \n\n
-!! zurück: \ref Stoffumsatz ; Code: temperw_huelle(); in: temperw_huelle.f95
+!! zurück: \ref lnk_wtemp ; Code: temperw_huelle(); in: temperw_huelle.f95
 !
-!> Die Hüllroutine temperw_huelle(i) wird in "\ref Waermebilanz " beschrieben; 
+!> Die Hüllroutine temperw_huelle(i) wird in "\ref lnk_wtemp " beschrieben; 
 !! dort findet sich auch eine ausfühliche schnittstellenbeschreibung zu temperw().
 !! Quelle: temperw_huelle.f95
 !! \n\n
 !! Zum Hüllroutinen-Konzept siehe \ref hüllen
 !! \n\n
 !! Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
+!!
+!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!
+! ------
+!
+!> \page lnk_wtemp_num  Wassertemperatur - Umsetzung
+!! <h2>Herkunft</h2>
+!!     temperw()\n
+!!     EIN PROGRAMM ZUR BERECHNUNG DER WASSERTEMPERATUR\n
+!!     AUTOR : VOLKER KIRCHESCH\n
+!!     entnommen aus Version qsim13.301_28mae18\n 
+!!\n
+!! Numerisch wird die Temperatur behandelt wie eine Konzentrationen.
+!! Die im folgenden genannten lokalen Wärmeeinträge und -austräge (Wärmeflüsse) 
+!! sind quasi der *Stoffumsatz* der "Temperatur-Konzentration":\n
+!!
+!! <h2>Schnittstellenbeschreibung</h2>
+!! call temperw()\n
+!! ( \ref ro, \ref templ, \ref tempw, \ref schwi, \ref wge, \ref tiefe, \ref tflie, \ref flag
+!! , \ref elen, \ref ior, \ref anze, *etemp*, *ewaerm*, *typ*, \ref qeinl, \ref vabfl   &\n
+!! , \ref jiein, \ref cloud, \ref typw, \ref iwied, \ref uhrz, \ref ilbuhn, *nwaerm*
+!! , \ref fkm, \ref nkzs, \ref tempwz, \ref dh2d, \ref iorla, \ref iorle, \ref ieinls, \ref flae &\n
+!! , *qeinll*, *etempl*, \ref mstr, *idwe*, \ref ilang, \ref dtemp, \ref fluxt1
+!! , \ref extk, \ref itags, \ref monats, \ref tsed, \ref wlage, \ref hws, *irhkw*      &\n
+!! , *htempw*, *htempz*, \ref wuebks, \ref spewkss, \ref psrefss, \ref extks
+!! , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim                   &\n
+!! &, \ref kontroll, \ref iglob, *meinrang*)  \n
+!! \n
+!! temperw wird von der Hüllroutine temperw_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
+!! <h3>Berechnungsablauf</h3>
+!! in jedem Zeitschritt müssen für jede Wetterstation die folgenden Subroutinen abgearbeitet werden:\n
+!! wettles_module()  ersetzt QSim-Subroutine wettles(), interpoliert die Wetterdaten für den aktuellen Zeitpunkt.\n
+!! temperl_module()  ersetzt QSim-Subroutine Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.\n
+!! strahlg_huelle()  berechnet aus der von <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>
+!! eingelesenen Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
+!! durch Aufruf der QSim-Subroutine strahlg() unter Benutzung der QSim-Subroutinen sasu() und tage()\n
+!! \n
+!! <h3>Aufruf</h3>
+!! Die Hüllroutine temperw_huelle(), wird von stoffumsatz() für alle Knoten 
+!! (die von dem jeweiligen prozessor parallel bearbeitet werden) aufgerufen.
+!! Die Wassertemperatur und die Sedimenttemperatur werden dann von der QSim-Subroutine temperw() berechnet.
+!! Dieser werden dafür die folgenden Variablen übergeben:
+!! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+!!
+!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!! \n
       SUBROUTINE temperw_huelle(i)
      ! SUBROUTINE temperw_huelle(ausgeben, temperatur_wa, tiefe_wa, geschw_wa, temperatur_sed, &
      !&                          temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp, delta_zeit)

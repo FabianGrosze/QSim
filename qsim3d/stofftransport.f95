@@ -28,7 +28,7 @@
 !! <h2>antreibendes Strömungsfeld</h2>
 !! Das in der Transportgleichung verwendete Geschwindigkeitsfeld wird für QSim vorab mithilfe einer numerischen Strömungssimulation 
 !! (CFD, Computational Fluid Dynamics) von einem sogenanntes HN(Hydro-Numerisches)-Modell berechnet, das in diesem Zusammenhang auch als 
-!! "hydraulischer Treiber" bezeichnet wird. Bei der Verbindung von Strömungssimulation und Gütemodell handelt es sich um eine \ref Kopplung .\n\n
+!! "hydraulischer Treiber" bezeichnet wird. Bei der Verbindung von Strömungssimulation und Gütemodell handelt es sich um eine \ref lnk_Kopplung .\n\n
 !! QSim-1D verwendet als hydraulischen Treiber Hydrax.\n\n
 !! QSim-3D kann die Ergebnisse verschiedener hydraulischer Treiber nutzen:\n
 !! <ul>
@@ -46,7 +46,7 @@
 !! <h2>datentechnische Umsetzung</h2>
 !! siehe \subpage hydraul_rb
 !!  \n\n
-!! zurück: \ref Simulation ;  Quelle: stofftransport.f95
+!! zurück: lnk_simulation;  Quelle: stofftransport.f95
 
 !> \page Netz Netz / Orts-Diskretisierung
 !! Sowohl in QSim1D als auch in QSim3D wird die horizontalen Diskretisierung, also des Netzes (3D) oder der Gewässer-Stränge (1D)
@@ -75,7 +75,7 @@
 !! <li> \subpage Transport_Untrim  </li>
 !! <li> \subpage Transport_SCHISM  </li>
 !! </ol>
-!! \n\n aus Datei stofftransport.f95; zurück zu \ref Modellerstellung oder \ref Datentechnik
+!! \n\n aus Datei stofftransport.f95; zurück zu \ref Modellerstellung oder \ref lnk_Datentechnik
 !
 
 

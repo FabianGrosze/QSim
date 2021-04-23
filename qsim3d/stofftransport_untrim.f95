@@ -21,7 +21,7 @@
 
 !> \page Transport_Untrim Transportinformationen von Untrim (Zellrandflüsse)
 !! dargestellt im Vortrag Wyrwa QSimworkshop 2017.
-!! \n\n aus Datei stofftransport_untrim.f95; zurück zu \ref Datentechnik oder \ref Transportinformationen
+!! \n\n aus Datei stofftransport_untrim.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
 
 !----+-----+----
       SUBROUTINE holen_trans_untrim(nt)

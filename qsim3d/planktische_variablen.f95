@@ -155,7 +155,7 @@
 !!      &,jpoin1,itags,monats,isub_dt,imac,iverfahren,uhrz)                             
 !! \endverbatim</code>
 !! \n\n
-!! aus planktische_variablen.f95; zurück zu \ref Stofftransport oder \ref Datentechnik
+!! aus planktische_variablen.f95; zurück zu \ref Stofftransport oder \ref lnk_Datentechnik
 
 !----+-----+----
 !> Anlegen der Datenfelder für die Prozesse > 0\n

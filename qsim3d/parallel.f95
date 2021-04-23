@@ -56,7 +56,7 @@
 !> parallel_ini()\n
 !! startet mpi 
  !! \n\n
-!! aus Datei parallel.f95; zurück: \ref Datentechnik
+!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
       subroutine parallel_ini()
       use modell
       use QSimDatenfelder
@@ -81,7 +81,7 @@
 !! ruft die subroutinen auf, die auf allen Processoren >0 
 !! die jeweiligen Felder allokieren und füllen.
 !! \n\n
-!! aus Datei parallel.f95; zurück: \ref Datentechnik
+!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
@@ -140,7 +140,7 @@
 !> zentrale Modellwerte an alle Prozesse verteilen.\n
 !! und part berechnen. d.i. die Anzahl der Knoten, die jeder Prozess erhält.
 !! \n\n
-!! aus Datei parallel.f95; zurück: \ref Datentechnik
+!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
       subroutine modell_parallel()
       use modell
       use QSimDatenfelder

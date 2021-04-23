@@ -11,7 +11,7 @@
 !! STAND : 15.01.1996    \n                                            
 !!
 !! <h2>Teilprozesse</h2>
-!! ### Liste möglicherweise unvollständig ###\n
+!! *Liste möglicherweise unvollständig* \n
 !! <ul>
 !! <li> Reproduktion Larvenbildung </li>
 !! <li> Schwebstoffaufnahme durch Dreissena </li>
@@ -39,9 +39,9 @@
 !! &, \ref lait1, \ref laim1, \ref laid1, \ref ilang                                                      &\n
 !! &, \ref resdr, \ref exdrvg, \ref exdrvk, \ref ssalg, \ref drpfec                                       &\n
 !! &, \ref abl, \ref exdrvb, \ref abbcm, \ref algdrb, \ref drfaeb                                         &\n
-!! &, \ref idras, \ref drmas, \ref drakr, \ref drbar, \ref drmor, \ref ffood, \ref coroi, \ref corois     &\n
-!! &, \ref chnf, \ref drhnf, \ref hnfdra, \ref dlmax, \ref dlmaxs, \ref gwdmax                            &\n
-!! &, \ref sgwmue, \ref fkm, \ref foptde, \ref mstr, \ref azStr                                           &\n                                                   
+!! &, \ref idras, \ref drmas, \ref drakr, \ref drbar, \ref drmor, *ffood*, \ref coroi, \ref corois     &\n
+!! &, \ref chnf, \ref drhnf, *hnfdra*, \ref dlmax, \ref dlmaxs, \ref gwdmax                            &\n
+!! &, \ref sgwmue, \ref fkm, \ref foptde, \ref mstr, *azStr*                                &\n                                                   
 !! &, \ref kontroll , \ref iglob )
 !! \n\n
 !! \anchor bsohlm bsohlm Sohlbreite hier = 500.0 gesetzt\n
@@ -61,7 +61,7 @@
 !! \anchor drbar drbar Grundrespirationrate Dreissena  (0. +1. Koh.)\n
 !! \anchor drmor drmor Mortalitätsrate Dreissena (0. +1. Koh.)\n
 !! \n
-!! Quelle dreissen_huelle.f95; zurück zu: \ref Stoffumsatz
+!! Quelle dreissen_huelle.f95; zurück zu: \ref lnk_ueberblick
       
 !> SUBROUTINE dreissen_huelle() wird beschrieben in: \ref Dreissena \n
 !! Quelle dreissen_huelle.f95

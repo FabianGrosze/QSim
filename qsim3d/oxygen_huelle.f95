@@ -45,19 +45,19 @@
 !! , \ref dalgki, \ref dalggr, \ref dalgak, \ref dalgag, \ref akinh4   &\n
 !! , \ref agrnh4, \ref akino3, \ref agrno3, \ref bsbt, \ref hjo2, \ref flag, \ref elen, \ref ior
 !! , \ref anze, \ref dzres1, \ref dzres2, \ref hschlr              &\n
-!! , \ref eo2, \ref qeinl, \ref vabfl, \ref po2p, \ref po2r, \ref so2ein, \ref do2o2d, \ref salgo
+!! , *eo2*, \ref qeinl, \ref vabfl, \ref po2p, \ref po2r, \ref so2ein, \ref do2o2d, \ref salgo
 !! , \ref dalgo, \ref dalgao, \ref o2ein1, \ref jiein             &\n
 !! , \ref opgrmi, \ref opgrma, \ref opkimi, \ref opkima, \ref albewg, \ref alberg, \ref abeowg, \ref abeorg
 !! , \ref opblmi, \ref opblma, \ref ablnh4        &\n
 !! , \ref ablno3, \ref dalgbl, \ref dalgab, \ref albewk, \ref alberk, \ref abeowk, \ref abeork, \ref ro2dr
-!! , \ref wge, \ref idwe, \ref fkm, \ref uhrz, \ref vnh4       &\n
-!! , \ref vno3, \ref bsbbet, \ref zooro2, \ref ro2hnf, \ref ilbuhn, \ref iwied, \ref vo2z, \ref suso2n
-!! , \ref nkzs, \ref dh2d, \ref o2l, \ref qeinll             &\n
+!! , \ref wge, *idwe*, \ref fkm, \ref uhrz, \ref vnh4       &\n
+!! , \ref vno3, \ref bsbbet, \ref zooro2, \ref ro2hnf, \ref ilbuhn, \ref iwied, \ref vo2z, *suso2n*
+!! , \ref nkzs, \ref dh2d, *o2l*, *qeinll*             &\n
 !! , \ref iorla, \ref iorle, \ref ieinls, \ref agnh4z, \ref aknh4z, \ref abnh4z, \ref dalgkz, \ref dalgbz
 !! , \ref dalggz, \ref agno3z, \ref akno3z          &\n
 !! , \ref abno3z, \ref algakz, \ref algagz, \ref algabz, \ref vz1, \ref tempwz, \ref saett, \ref mstr
 !! , \ref cpfad, \ref ij, \ref itags, \ref monats             &\n
-!! , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, \ref etemp, \ref dh2de, \ref ifehl, \ref ifhstr
+!! , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, \ref ifehl, \ref ifhstr
 !! , \ref azstrs                          &\n 
 !! , \ref zooind, \ref grote, \ref iphy, \ref kontroll, \ref iglob)\n                          
 !!
@@ -78,7 +78,7 @@
 !! Desweiteren  existiert eine Dokumentation des Sauerstoff-Moduls als Kapitel 15 der
 !! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
 !! \n\n
-!! zurück zu: \ref Stoffumsatz ; Quelle: oxygen_huelle.f95
+!! zurück zu: \ref lnk_ueberblick ; Quelle: oxygen_huelle.f95
 
 !! Das nebenstehende Bild vom Fischsterben im Main, April 1971, ist der Webseite der 
 !! <a href="http://www.frankfurter-fischerzunft.de/Galarie/1971_fischsterben.htm"  target="_blank">
@@ -212,7 +212,7 @@
 !! </table>
 !! \n
 !! \n\n
-!! zurück zu: \ref Stoffumsatz ; Quelle: oxygen_huelle.f95
+!! zurück zu: \ref lnk_ueberblick ; Quelle: oxygen_huelle.f95
 !                                                                       !                                                                       
 !> \page ZehrProdO2 Summe der Änderung des Sauerstoffgehalts infolge lokaler Produktion und Zehrung
 !! hier wird nun die Aufsummation der Änderung der Sauerstoffkonzentration infolge von lokalen Zehrungs- und

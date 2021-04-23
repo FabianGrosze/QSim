@@ -17,52 +17,6 @@
 !	1979 bis 2018 Volker Kirchesch
 !	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
 !
-!---------------------------------------------------------------------------------------
-
-!> \mainpage QSim-3D Dokumentations-Portal
-!! <center>
-!! <table border="0" ><tr><td width="65%" >
-!! <span style="font-size:150%">QSim-3D ist ein deterministisches Gewässergütemodell, \n
-!! das die biologischen und chemischen Prozesse im Gewässer \n
-!! in ihrer 3-dimensionalen Verteilung simuliert. </span> 
-!! </td><td width="25%" >
-!! QSim steht für\n <b>Q</b>ualitäts-<b>Sim</b>ulation.\n\n
-!! QSim-3D basiert auf 
-!! <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html"  target="_blank">QSim-1D</a>.
-!! </td></tr></table>
-!! </center>
-!! 
-!! Dieses Dokumentations-Portal dient der Zusammenstellung von sehr unterschiedlichen Quellen rund um QSIM-3D.
-!! Beginnend mit Seiten, die einen einführenden Überblick vermitteln,  
-!! über wissenschaftlichen Ausführungen zu Details einzelner Berechnungsmodule  
-!! bis hin zum Quellcode des Programms erstreckt sich der Inhalt dieses Portals.
-!! Es empfiehlt sich daher für das Weiterlesen eine Auswahl anhand der untenstehenden Punkte zu treffen 
-!! 
-!! <table border="0" ><tr><td width="45%" >
-!! <ul>
-!! <li><span style="font-size:150%"> \subpage intro </span> \n</li>
-!! <li><span style="font-size:150%"> \subpage Simulation </span> \n</li>
-!! <li><span style="font-size:150%"> \subpage Modell_Benutzung </span> \n</li>
-!! </ul>
-!! </td><td  width="45%" align="left" valign="top">
-!! <ul>
-!! <li><span style="font-size:150%"> \subpage Datentechnik </span> \n</li>
-!! <li><span style="font-size:150%"> \subpage Download </span> (Quellcode, Executables, Versionierung) \n</li>
-!! <li><span style="font-size:150%"> \subpage vali, \subpage literatur </span> \n</li>
-!! </ul>
-!! </td></tr></table>
-!! \n\n 
-!! <center>
-!! \image html sinnbild.png 
-!! </center>
-!! 
-!! <center><a href="http://www.bafg.de" target="_blank">Bundesanstalt für Gewässerkunde</a>, Koblenz, seit August 2011 \n
-!! \subpage about_tiqusim -- \subpage about_doc  -- 
-!! <a href="http://www.bafg.de/DE/08_Ref/U2/05_Mitarbeiter/wyrwa_j/wyrwa_node.html" target="_blank">Kontakt</a> 
-!! </center>
-!! \n
-!! aus Datei QSim3D.f95
-
 !--------------------------------------------------------------------------------------------------------------
 
 !> Hauptprogramm QSim3D 
@@ -158,37 +112,7 @@
       call exit(0)
       END program QSim3D
 !--------------------------------------------------------------------------------------------------------------
-
-!> \page intro Einführung, Konzept 
-!! 
-!! \section Zweck Aufgaben eines Gewässergütemodells 
-!! Das Gewässergütemodell QSim (Quality Simulation) ist ein Instrument zur Simulation und Prognose des 
-!! Stoffhaushalts und der Planktondynamik von Fließgewässern. 
-!! Vielfach steht die Ermittlung des Sauerstoffgehalts im Zentrum der Untersuchungen.
-!! \image html qsim_prozesse.png
-!! \section Was Was wird simuliert? 
-!! Für diese Simulation der Stoffumsetzungs-Prozesse, die im fließenden Wasser ablaufen, verwendet QSim 
-!! zwölf Module. Dies sind: <ul> <li>das Wärmebilanzmodul, </li> <li> 7 biochemische Module zur Beschreibung 
-!! des Seston-Gehalts, des pH-Wertes, der Nährstoffe (N, P, Si), des organischen Kohlenstoffs und des 
-!! Sauerstoffgehalts, </li> <li> 3 biologische Module zur Erfassung von Phyto- und Zooplankton sowie benthischen Filtrierern
-!! und </li> <li> einem Sedimentmodul, zur Berechnung der frühdiagenetischen Prozesse, welche  
-!! Sauerstoff-, Kohlenstoff- und Nährstoff-Flüsse hervorrufen.</li></ul>
-!! Eine kurze Beschreibung dieser Stoffumsetzungs-Module finden Sie in 
-!! <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+492" target="_blank">Schöl et al. 2014</a>, 
-!! ausführlichere Informationen sind im Abschnitt \ref Stoffumsatz verfügbar.
-!! \n\n
-!! Wie QSim die von der Strömung des Wassers hervorgerufenen advektiven und diffusiven Transportprozesse der o.g. 
-!! Wasserinhaltstoffe simuliert, erläutert der Abschnitt \ref Stofftransport.
-!! \n\n
-!! Eine Einführung in die Gewässergütesimulation finden Sie auf der 
-!! <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html"  target="_blank">
-!! Website der Bundesanstalt für Gewäserkunde</a>, in der 
-!! <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+321" target="_blank"> 
-!! QSim Übersicht</a> \ref b und in der 
-!! <a href="./pdf/kurzdoku13_1ber.pdf" target="_blank"> Kurz-Dokumentation QSim</a> von Volker Kirchesch.
-!! \n
-!!
-!! \section Grundlagen Grundlegende Annahmen eines deterministischen Modells 
+!> \page lnk_Grundlagen Grundlegende Annahmen eines deterministischen Modells 
 !! <ol>
 !!  <li> Es werden nur die für den Sauerstoffgehalt mengenmäßig bedeutendsten Stoffumsetzungsprozesse simuliert. 
 !!       Diese laufen auf der Ebene der Gewässermikrobiologie ab.\n\n</li>
@@ -205,7 +129,7 @@
 !! Die datentechnische Realisierung finden Sie im Abschnitt \ref hüllen. 
 !! Einen Einblick in die Entstehung der QSim-Familie gibt der Abschnitt \ref about_tiqusim.
 !! 
-!! \section Konzept Aufbau von QSim 
+!> \page lnk_konzept Aufbau von QSim 
 !! \image html qsim_konzept.png "konzeptioneller Aufbau der Gütemodelle QSim-1D und QSim-3D"
 !! Das Ineinandergreifen der Komponenten der QSim-Gütemodelle ist in obigem Schaubild zusammengestellt.
 !! Beide beziehen die Informationen über den Strömungsvorgang aus einem als sog. "hydraulischen Treiber"
@@ -220,7 +144,7 @@
 !! \n\n
 !! Bedient werden beide QSim's mit Gerris (\ref Gerris).
 !! 
-!! \section Kopplung offline Kopplung von Strömungssimulation und Stoff-Transport
+!> \page lnk_Kopplung Offline Kopplung von Strömungssimulation und Stoff-Transport
 !! Dabei kommunizieren die Strömungssimulation und das Gütemodell offline, 
 !! d. h. mittels fest abgespeicherte Dateien.
 !! Der hydraulische Treiber ist eine eigenständige Software, welche die Strömung simuliert und seine Ergebnisse abspeichert.
@@ -244,17 +168,17 @@
 !! Da die verwendeten hydraulischen Treiber zur Simulation des Transports von Salz und suspendierten Sedimenten
 !! über eigene Löser der Advektions-Diffusions-Gleichung (Transportgleichung) verfügen,
 !! ergibt sich die Möglichkeit, durch Übergabe von verfahrensabhängigen Transportinformationen
-!! im Gütemodell einiges an Rechenaufwandt einzusparen.
+!! im Gütemodell einiges an Rechenaufwand einzusparen.
 !! Details werden im Abschnitt \ref Stofftransport näher ausgeführt. 
 !! \n\n
 !! aus Datei: QSim3D.f95 ; zurück:\ref index
 
 !--------------------------------------------------------------------------------------------------------------
 
-!> \page Simulation Simulations-Verfahren
+!> \page lnk_simulation Simulations-Verfahren
 !! 
 !! \section EinfNum Grundgleichung
-!! In QSIM werden alle güte-relevanten Variablen incl. der planktisch lebenden Organismen
+!! In QSim werden alle güte-relevanten Variablen incl. der planktisch lebenden Organismen
 !! als im Wasser gelöste Konzentrationen modelliert\n
 !! Die Veränderungen dieser Konzentrationen wird summarisch mit der untenstehenden partiellen Differential-Gleichung beschrieben:\n
 !! \f[ 
@@ -275,21 +199,21 @@
 !!
 !! \section aenderUrsachen Ursachen der Konzentrations-Änderungen
 !!        \subsection metabol Stoffumsatz
-!!            Der gesamte <b>\subpage Stoffumsatz</b>, also alle biologischen Stoffwechselvorgänge und chemischen Reaktionen
+!!            Der gesamte Stoffumsatz, also alle biologischen Stoffwechselvorgänge und chemischen Reaktionen
 !!            werden in der obigen Gleichung in einer Änderungsrate \f$ Q_m \f$ zusammengefasst.
 !!            Diese hängt von anderen (ebenfalls als Konzentrationen modellierten) Variablen  
 !!            sowie von Ort (x) und Zeit (t) ab. 
 !!            \n\n
 !!            Die voranstehende Gleichung kann auch als Massenbilanz des "Stoffes" m gelesen werden. 
 !!            Dann ist \f$ Q_m \f$ je nach Vorzeichen ein Quelle oder Senke.
-!!            Der Index m zählt über alle 1 bis M (z.Zt. M=76) transportierten Konzentrationen. (\ref planktische_variablen)
+!!            Der Index m zählt über alle 1 bis M (z.Zt. M=76) transportierten Konzentrationen. (\subpage planktische_variablen)
 !!            \n\n
 !!            Die Prozessbeschreibungen, die hier formal in der Änderungsrate \f$ Q_m \f$ zusammengefasst wurden, die aber den Kern des Gütemodells ausmachen,
-!!            werden im Abschnitt \ref Stoffumsatz im Detail erläutert.
+!!            werden in den einzelnen Modulbeschreibungen im Detail erläutert.
 !!        \n\n
 !!        \subsection transport Stofftransport
 !!            Die Verfrachtung (Advektion) und Vermischung (Diffusion) der Konzentrationen
-!!            infolge des Fließvorgangs des Wassers wird zusammenfassend als <b>\subpage Stofftransport</b> benannt.
+!!            infolge des Fließvorgangs des Wassers wird zusammenfassend als <b>\ref Stofftransport</b> benannt.
 !!            \n\n
 !!            Die Advektion bewirkt, dass das Strömungsfeld \f$ v_i \f$ eine Konzentration \f$ c_m \f$ von anderenorts 
 !!            (\f$ x_i \f$) herantransportiert, wo diese andere Werte aufweist. 
@@ -324,7 +248,7 @@
 !! \image html NumericalAspects_WyrwaSchoel_final6.png
 !! dabei können die Einzelprozesse mit unterschiedliche Zeitschritt-weiten abgebildet werden, die allerdings ganzzahlige Vielfache voneinader sein müssen.
 !! \n\n
-!! Die Stoffumsätze (aufgelistet in: \ref Stoffumsatz) werden numerisch als \subpage Num_Umsatz modelliert.
+!! Die Stoffumsätze (aufgelistet in: \ref lnk_ueberblick) werden numerisch als \ref Num_Umsatz modelliert.
 !! Die numerische Umsetzung der \ref Stofftransport - Modellierung wird im Vortrag
 !! <a href="http://bibliothek.bafg.de/dokumente/Online%20377.ppt" target="_blank">
 !! Numerical aspects in offline coupling of biochemical reaction modules with advection-diffusion simulations</a>
@@ -359,7 +283,7 @@
 !! Erst durch die Hinzunahme der schon in QSim-1D angelegten Tiefenauflösung gelangt man zu wirklich drei-dimensionalen 
 !! Raumauflösungen, die aber nur in geschichteten Wasserkörpern erforderlich sind.
 !! \n\n
-!! aus Datei: QSim3D.f95 ; zurück:\ref intro
+!! aus Datei: QSim3D.f95 
 
 !--------------------------------------------------------------------------------------------------------------
 
@@ -390,7 +314,7 @@
 
 !--------------------------------------------------------------------------------------------------------------
 
-!> \page vali Validierung, Beispiele
+!> \page lnk_validierung Validierung, Beispiele
 !! <ul>
 !! <li>das alte <a href="http://oss-hpc01.bafg.de/wyrwa/vali/index.html"  target="_blank">Validierungs Dokument</a> 
 !!     wird momentan (Dez15) in ein <a href= "http://voss-wiki.bafg.de/instanzen/qsim_validierung/doku.php?id=start" target="_blank">Validierungs-Wiki</a> überführt\n\n </li>
@@ -402,39 +326,39 @@
 
 !--------------------------------------------------------------------------------------------------------------
 
-!> \page literatur Literatur
+!> \page lnk_literatur Literatur
 !!
 !! \section wiss wissenschaftliche Veröffentlichungen mit Bezug zu QSim
 !! <ul>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+492" target="_blank">
 !!      Modelling Water Quality in the Elbe and its Estuary Large Scale and Long Term Applications with Focus on the Oxygen Budget of the Estuary, 
-!!      Schöl et al. 2014</a> \ref b \n\n</li>
+!!      Schöl et al. 2014</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=?????" target="_blank">
 !!      Oxygen - Conceptual Model and QSim Approach, 
-!!      Schöl et al. 2013</a> \ref b \n\n</li>
+!!      Schöl et al. 2013</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+118" target="_blank"> 
 !!      Influence of global change on phytoplankton and nutrient cycling in the Elbe River,
-!!      Quiel et al. 2011</a> \ref b \n\n</li>
+!!      Quiel et al. 2011</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=?????" target="_blank">
 !!      MODELLING THE EFFECTS OF THERMAL STRATIFICATION ON THE OXYGEN BUDGET OF AN IMPOUNDED RIVER,
-!!      Becker et al. 2009</a> \ref b \n\n</li>
+!!      Becker et al. 2009</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/index.asp?detsuche_systematik=sep+8989" target="_blank">
 !!      Modelling the chlorophyll a content of the river Rhine - 
 !!      interrelation between riverine algal production and population biomass of grazers, rotifers and the zebra mussel, Dreissena polymorpha,
-!!      Schöl et al. 2002</a> \ref b \n\n</li>
+!!      Schöl et al. 2002</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/dokumente/II,230-43.1999.pdf" target="_blank">
 !!      Das Gewässergütemodell QSIM - ein Instrument zur Simulation und Prognose des Stoffhaushalts 
 !!      und der Planktondynamik von Fließgewässern.
-!!      Kirchesch, V. und Schöl, A. 1999</a> \ref b \n\n</li>
+!!      Kirchesch, V. und Schöl, A. 1999</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=A+224" target="_blank">
 !!      Mixing in inland and coastal waters,
-!!      Fischer et al. 1979</a> \ref b \n\n</li>
+!!      Fischer et al. 1979</a> \ref lnk_litfuss \n\n</li>
 !!  <li><a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=A+7042" target="_blank">
 !!      Turbulence in open-Channel Flow,
-!!      I. Nezu und H. Nakagawa 1993</a> \ref b \n\n</li>
+!!      I. Nezu und H. Nakagawa 1993</a> \ref lnk_litfuss \n\n</li>
 !! </ul>
 !! <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+321" target="_blank"> 
-!! QSim Übersicht</a> \ref b und in der \n
+!! QSim Übersicht</a> \ref lnk_litfuss und in der \n
 !! http://dx.doi.org/10.1002/rra.1260 \n
 !!
 !! \section andere Beispiele anderer Projekte:
@@ -442,8 +366,8 @@
 !! <a href="http://www.opentelemac.org/index.php/publications" target="_blank">Telemac</a> \n
 !! <a href="http://ccrm.vims.edu/schism/schism_pubs.html" target="_blank">SCHISM (ex SELFE)</a> \n
 !! 
-!! \section b *
-!! <h3>Sorry,</h3>
+!! \section lnk_litfuss *
+!! <h3>Entschuldigung,</h3>
 !! unsere Bibliothekssoftware ist leider schon etwas älter.
 !! Daher erhalten Sie beim Anklicken des ersten Literaturverweises nach dem Öffnen ihres Browsers
 !! nur die Suchmaske unserer Bibliothek. \n \n
@@ -470,23 +394,23 @@
 !! <li>\subpage sauerkohl \n\n</li>
 !! <li>\subpage kalterwind \n\n</li>
 !! </ol>
-!! aus Datei QSim3D.f95 ; zurück zu \ref vali
+!! aus Datei QSim3D.f95 ; zurück zu \ref lnk_validierung
 
 !--------------------------------------------------------------------------------------------------------------
  
-!> \page Download Download
-!! </ul><h3>Versionierungs-System</h3><ul>
-!! <li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
+!> \page lnk_download Download
+!! <h3>Versionierungs-System</h3>
+!! <ul><li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
 !! der aktuelle Quellcode von QSim verfügbar:\n
-!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li>
-!! </ul><h3>ausführbare Programme</h3><ul>
-!! <li> QSim1D Windows-executabels  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
-!! <li> QSim3D Linux-executabels  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> 
-!! </ul><h3>Dokumentation</h3><ul>
-!! <li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li>
-!! </ul><h3>Archiv</h3><ul>
-!! <li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li>
-!! </ul>
+!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li></ul>
+!! <h3>ausführbare Programme</h3>
+!! <ul><li> QSim1D Windows-executabels  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
+!! <li> QSim3D Linux-executabels  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> </ul>
+!! <h3>Dokumentation</h3>
+!! <ul><li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li></ul>
+!! <h3>Archiv</h3>
+!! <ul><li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li></ul>
+!!
 !! aus Datei QSim3D.f95 ; zurück zu \ref index
  
 !--------------------------------------------------------------------------------------------------------------
@@ -540,7 +464,7 @@
 !! <hr>Es existiert eine Überlegung QSim3D mithilfe einer in php codierten <a href="./taz/webstart_tiqu26apr16.taz">Web-Anwendung</a> zu starten.  
 !! (z. Z. im Versuchsstadium)
 !! \n\n
-!! aus Datei QSim3D.f95 ; zurück zu \ref Modell_Benutzung oder \ref index
+!! aus Datei QSim3D.f95 ; zurück zu \ref lnk_technisch oder \ref index
 
 !--------------------------------------------------------------------------------------------------------------
 
