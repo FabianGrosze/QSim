@@ -9,13 +9,15 @@ Was wird simuliert?
 und die Subpages entsprechend anordnen...-->
 Für die Simulation der Stoffumsetzungs-Prozesse, die im fließenden Wasser 
 ablaufen, verwendet QSim zwölf Module. Diese sind: 
-- Das [Wärmebilanzmodul](#lnk_wtemp),
-- 7 biochemische Module zur Beschreibung des Seston-Gehalts, des [pH-Wertes](#PH-Wert), 
-der Nährstoffe ([N](#Stickstoff ), [P](#Phosphor), [Si](#Silizium)), des [organischen Kohlenstoffs](#BSB) und des [Sauerstoffgehalts](#Sauerstoffgehalt), 
-- 3 biologische Module zur Erfassung von [Phyto-](#lnk_algendoc) und 
-[Zooplankton](#rotatorien) sowie 
-[benthischen Filtrierern](#Dreissena) und 
-- Ein [Sedimentmodul](#Sedimentflux) zur Berechnung der frühdiagenetischen 
+- Das [Wärmebilanzmodul](\ref lnk_wtemp),
+- 7 biochemische Module zur Beschreibung des Seston-Gehalts, 
+des [pH-Wertes](\ref lnk_ph), der Nährstoffe ([N](\ref Stickstoff), 
+[P](\ref Phosphor), [Si](\ref Silizium)), des [organischen Kohlenstoffs](\ref BSB) 
+und des [Sauerstoffgehalts](\ref Sauerstoffgehalt), 
+- 3 biologische Module zur Erfassung von [Phyto-](\ref lnk_algendoc) und 
+[Zooplankton](\ref lnk_rotatorien) sowie 
+[benthischen Filtrierern](\ref Dreissena) und 
+- Ein [Sedimentmodul](\ref Sedimentflux) zur Berechnung der frühdiagenetischen 
 Prozesse, welche Sauerstoff-, Kohlenstoff- und Nährstoff-Flüsse 
 hervorrufen.
 
@@ -58,7 +60,7 @@ von QSim beschrieben.
 | [Makrophyten (Wasserpflanzen)](\ref mphyt)  |  mphyt()	|  13.401_15okt18 |
 | [organischer Kohlenstoff](\ref BSB)	      |  orgc()	    |  13.401_15okt18 | 
 | [Stickstoff](\ref Stickstoff) |  ncyc()	    |  13.401_15okt18 | 
-| [pH-Wert](\ref PH-Wert)	  |  ph()	    |  13.401_15okt18 | 
+| [pH-Wert](\ref lnk_ph)	  |  ph()	    |  13.401_15okt18 | 
 | [Wärmebilanz/Temperatur](\ref lnk_wtemp) 1) +wetter |  temperw() |  13.401_15okt18 | 
 | [Phosphor](\ref Phosphor) | po4s()      |  13.401_15okt18 | 
 | [Silizium](\ref Silizium) |  silikat()  |  13.401_15okt18 | 

@@ -725,7 +725,7 @@
 !! zurück zu: \ref BSB , Quelle: orgc_huelle.f95
 ! 
 !> \page  kohlensauer Änderung des ph-Werts durch Bildung von Kohlensäure
-!! Das beim Abbau von C-Verbindungen entstehende Kohlendioxyd (CO2) verändert den \ref PH-Wert.
+!! Das beim Abbau von C-Verbindungen entstehende Kohlendioxyd (CO2) verändert den \ref lnk_ph.
 !! Dort wird die CO2 Lieferung aus C-abbau aus \f$ \Delta O_2 \f$ bestimmt, das hier im 
 !! Zusammenhang mit dem \ref o2zehr berechnet wurde. \n
 !!<table>

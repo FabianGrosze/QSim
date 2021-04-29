@@ -13,3 +13,4 @@ qsim1d/qsim1d_marieke_testet
 metabolism/*.o
 metabolism/libqsim.a
 ./my_hist.txt	
+backup-dokufiles/*
