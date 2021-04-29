@@ -70,7 +70,8 @@
 # PV=qsim3d_1404final
 # PV=qsim3d_final_v
 # PV=qsim3d_pHtrans
-PV=qsim3d_pHtrans_gather
+#PV=qsim3d_pHtrans_gather
+PV=qsim3d_sc21
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
