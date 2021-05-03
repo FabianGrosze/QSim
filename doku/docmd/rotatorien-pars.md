@@ -1,7 +1,13 @@
-Rotatorien - Parameter {#lnk_rotatorien_pars}
-======================
+Rotatorien - Formelzeichen/Variablennamen {#lnk_rotatorien_pars}
+=========================================
 
-## Aufruf-Parameter:(Stand QSim 13.30) ##
+## Liste der Formelzeichen und Variablennamen des Rotatorien-Bausteins:(Stand *QSim 13.30*) ##
+
+| Formelzeichen/ \n Variablen-Name | Bedeutung | Einheit | Wert | Variablenname \n Quellcode | Herkunft | 
+| ------ | --------| -------| --------| ------- | ------- | 
+|  | Anteil Kieselalgen | - | - | [vkigr](\ref tiefengemittelte_planktische_variable 19) | e | 
+
+<!-- to do: untenstehende Tabelle in obige Struktur umschreiben -->
 
 | Variablen-Name \n QSim-1D | Daten-Feld \n QSim-3D | Beschreibung | Einheit |
 |----------------|------------|--------------|---------|
@@ -65,6 +71,11 @@ Rotatorien - Parameter {#lnk_rotatorien_pars}
 | itags	 | module ::modell tag | tag          |  |
 | mstr	 | 1                   | Strangzähler |  |
 
+Herkunft:
++ x - Bilanzvariable QSim
++ b - berechnet, Zwischengröße / Übergabevariable
++ e - Eingabe
++ v - Vorgabe im Quellcode gesetzt
 
 aus Datei: rotatorien-pars.md;
 
