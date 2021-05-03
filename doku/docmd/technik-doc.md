@@ -3,8 +3,7 @@ Modellstruktur und -bedienung {#lnk_technisch}
 
 Dieser Teil umfasst "technische" Aspekte von QSim. Dazu gehören:
 
-Modellstruktur
---------------
+# Modellstruktur {#lnk_modellstruktur}
 
 - \subpage lnk_simulation
 - \subpage lnk_Kopplung
@@ -12,8 +11,7 @@ Modellstruktur
 - \subpage Parallelisierung 
 - \subpage Randbedingungen
 
-Modellbedienung
----------------
+# Modellbedienung {#lnk_modellbedienung}
 
 Die Modellbedienung setzt sich zusammen aus den 3 Bestandteilen:
 - \subpage Modellerstellung (preprocessing)
@@ -24,8 +22,7 @@ Anwendungsbeispiele befinden sich im Unterkapitel \subpage lnk_validierung.
 
 <!-- - \subpage lnk_download) -->
 
-Wissenswertes zur Modellierung
-------------------------------
+# Wissenswertes zur Modellierung {#lnk_wissenswertes}
 
 - \subpage lnk_Grundlagen
 - \subpage Dimension
