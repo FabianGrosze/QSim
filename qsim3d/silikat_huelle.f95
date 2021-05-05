@@ -18,50 +18,6 @@
 !	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
 !
 !---------------------------------------------------------------------------------------
-
-!> \page Silizium Silizium
-!! \n
-!! <center> 
-!! \image html Haeckel_Diatomea_klein.jpg "Zeichnung Diatomeen, aus Ernst Haeckel's ''Kunstformen der Natur'' (1904)" 
-!! <a href="Haeckel_Diatomea.jpg">Bild groß</a> \n
-!! Quelle: https://commons.wikimedia.org/wiki/File:Haeckel_Diatomea.jpg Heruntergeladen 12. Nov. 2019
-!! </center>
-!! \n
-!! <h2>Herkunft</h2>
-!!     silikat() \n 
-!!     EIN PROGRAMM zu Berechnung des geloesten Silikats    \n               
-!!     AUTOR : VOLKER KIRCHESCH                      \n                      
-!!     entnommen aus Version qsim13.301_28mae18\n 
-!!                                     
-!! <h2>Teilprozesse</h2>
-!! Silizium wird von Kieselalgen, lat.: Diatomeen, zum Aufbau ihrer Zellgerüste (Frustule) benötigt. Es ist nur als im
-!! Wasser gelöstes Silikat bioverfügbar. Folgende Teilprozesse wirken sich auf den Silikatgehalt des Wassers aus: 
-!! \n
-!! <ul>
-!! <li> Rücklösung aus dem Sediment </li>
-!! <li> Rücklösung aus schwebendem Detritus (noch Unklarheiten)</li>
-!! <li> Verbrauch durch Wachstum planktischer Kiesel-Algen </li>
-!! <li> Verbrauch durch Wachstum bentischer Kiesel-Algen </li>
-!! </ul>
-!!
-!! <h2>Schnittstellenbeschreibung</h2>
-!! SUBROUTINE silikat()\n
-!! ( \ref si, \ref flag, \ref elen, \ref ior, *esi*, *qeinl*, \ref vabfl, \ref anze, \ref tflie, \ref jiein, \ref aki         &\n
-!! , \ref albewk, \ref alberk, \ref tiefe, \ref tempw, \ref ilbuhn, \ref akkssi, \ref qmx_sk, \ref q_sk          &\n
-!! , \ref up_siz, \ref siz, \ref algakz, \ref akitbr, \ref akibrz, \ref hjsi, \ref nkzs, \ref dh2d, \ref dh2de, \ref mstr    &\n
-!! , \ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *sil*, \ref itags, \ref uhrz, \ref azstrs         &\n
-!! , \ref kontroll , \ref iglob )    \n
-!! \n
-!! silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
-!!
-!! <h2>Dokumentation</h2>
-!! Bisher existiert eine Dokumentation des Silikat-Moduls als Kapitel 12 der
-!! <a href="./pdf/QSimDoku_ncycWy.pdf" target="_blank">Kurzdoku</a> (Version vom 22. Nov. 2017)
-!! \n\n
-!! zurück: \ref lnk_ueberblick ; Quelle: silikat_huelle.f95
-
-
-
 !! 
 !! <h1>Schnittstellenbeschreibung</h1>
 !! 
@@ -123,10 +79,10 @@
 !! QSqm-Variable Qmx_SK, gespeichert in QSimDatenfelder aus APARAM.txt (siehe dazu eingabe())\n
 !! in RB_werte_aktualisieren() gesetzt.
 !!\n\n
-!!zurück: \ref Silizium ; \ref zuflussranddaten ; Quelle: silikat_huelle.f95
+!!zurück: \ref lnk_silikat ; \ref zuflussranddaten ; Quelle: silikat_huelle.f95
 
 !! VORSICHT veraltet \n\n 
-!! zurück: \ref Silizium\n\n 
+!! zurück: \ref lnk_silikat\n\n 
 !! <h2>Aufruf</h2>
 !! silikat_huelle ist eine T-QSim Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim Subroutine:\n\n
 !! \n 
@@ -176,7 +132,7 @@
 !> SUBROUTINE silikat_huelle()
 !! WIRD VON ALLEN PROZESSEN AUFGERUFEN !!! (parallel)
 !! \n\n
-!!Beschreibung: \ref Silizium ; Quelle: silikat_huelle.f95
+!!Beschreibung: \ref lnk_silikat ; Quelle: silikat_huelle.f95
       SUBROUTINE silikat_huelle(i)
       use modell                                                 
       use QSimDatenfelder

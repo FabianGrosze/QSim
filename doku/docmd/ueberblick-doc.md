@@ -12,7 +12,7 @@ ablaufen, verwendet QSim zwölf Module. Diese sind:
 - Das [Wärmebilanzmodul](\ref lnk_wtemp),
 - 7 biochemische Module zur Beschreibung des Seston-Gehalts, 
 des [pH-Wertes](\ref lnk_ph), der Nährstoffe ([N](\ref Stickstoff), 
-[P](\ref Phosphor), [Si](\ref Silizium)), des [organischen Kohlenstoffs](\ref BSB) 
+[P](\ref Phosphor), [Si](\ref lnk_silikat)), des [organischen Kohlenstoffs](\ref BSB) 
 und des [Sauerstoffgehalts](\ref Sauerstoffgehalt), 
 - 3 biologische Module zur Erfassung von [Phyto-](\ref lnk_algendoc) und 
 [Zooplankton](\ref lnk_rotatorien) sowie 
@@ -63,7 +63,7 @@ von QSim beschrieben.
 | [pH-Wert](\ref lnk_ph)	  |  ph()	    |  13.401_15okt18 | 
 | [Wärmebilanz/Temperatur](\ref lnk_wtemp) 1) +wetter |  temperw() |  13.401_15okt18 | 
 | [Phosphor](\ref Phosphor) | po4s()      |  13.401_15okt18 | 
-| [Silizium](\ref Silizium) |  silikat()  |  13.401_15okt18 | 
+| [Silizium](\ref lnk_silikat) |  silikat()  |  13.401_15okt18 | 
 | [Sauerstoffgehalt] (\ref Sauerstoffgehalt) | oxygen() | 13.401_15okt18  | 
 | *Schwebstoffe*, Übernahme nicht geplant, ersetzt durch [Verteilung (Schwebstoff, Salz)] (\ref schwebstoff_salz) |  schwebstoff_salz() ersetzt schweb und erosion  |  |
 | *Schwermetalle* 	 |  Schwermetalle() |  *externe Entwicklung*  | 
