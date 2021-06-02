@@ -25,30 +25,32 @@
 ! extnct_lesen() ;  alloc_hydraul_BC()
 ! 
 !-------------------------------------------------------------------------------Randbedingungs-Datenfelder
-!> \page zuflussranddaten Zufluss-Randbedingungen
-!! Dies sind die Konzentrationen im zufließend Wasser an den Zuflussrändern, sie
+!> \page zuflussranddaten Randbedingungen
+!! Dies sind die Konzentrationen im zufließend Wasser an den Rändern, sie
 !! werden aus der Datei <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> gelesen\n
 !! und entsprechend den Randnummern zu den am Rand liegenden Knoten/Elementen zugeordnet.\n
 !! Knoten mit der Randnummer 0 liegen im inneren des Gebiets.\n
 !! Datentechnische Detail in: ereigg_Randbedingungen_lesen()
 !! \n\n
+!! Nur die üblicherweise aus Messungen verfügbaren Variablen sind angebbar, ( randbedingungen_setzen() )\n
+!! Bei denjenigen \ref tiefengemittelte_planktische_variable , die dadurch keine Werte erhalten, 
+!! werden diese plausibel ergänzt; siehe: \subpage randbedingungen_ergaenzen . \n
+!! \n
+!! Im Programmablauf geschieht die Randbedingungs-Zuordnung vor Stoffumsatz und Stofftransport, 
+!! damit der Transport die am Rand gesetzten Konzentrationen (besonders an den Einströmstellen)
+!! ins Gebiet einträgt.\n
+!! \n
+!! Aus der <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> 
+!! Datei werden die folgenden Variablen (werts) gelesen und den in nachfolgender Tabelle
+!! genannten \ref tiefengemittelte_planktische_variable zugeordnet.\n
+!! \n
 !! Für den aktuellen Zeitschrit wird der Wert zwischen gültigen Randwerten interpoliert.\n
-!! Gültig sind als nur positive Werte. Negative Werte werden als ungültig betrachtet.\n
+!! \n
+!! Gültig sind nur positive Werte. Negative Werte werden als ungültig betrachtet.\n
 !! Wird an einem Rand kein gültiger Randwert gefunden, bricht die Simulation ab, ausser:\n
 !! bei \ref hnf und \ref coliform. 
 !! Diese werden bei ausschließlich ungültigen Randwerten als an dem Rand nicht vorhanden (Null) betrachtet.\n
 !! \n
-!! Da allerding nur die üblicherweise aus Messungen verfügbaren Variablen angebbar sind, ( randbedingungen_setzen() )\n
-!! müssen die restlichen Randbedingungen plausibel ergänzt werden. (\subpage randbedingungen_ergaenzen)\n
-!! \n
-!! Im Programmalblauf geschieht die Randbedingungs-Zuordnung vor Stoffumsatz und Stofftransport, 
-!! damit der Transport die am Rand gesetzten Konzentrationen (besonders an den Einströmstellen)
-!! ins Gebiet einträgt.\n\n
-!! Aus der <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> 
-!! Datei werden die folgenden Variablen (werts) gelesen und den in nachfolgender Tabelle
-!! genannten \ref tiefengemittelte_planktische_variable zugeordnet.\n\n
-!! Bei denjenigen \ref tiefengemittelte_planktische_variable , die hier keine Werte erhalten, 
-!! werden diese plausibel ergänzt; siehe:\ref randbedingungen_ergaenzen .\n\n
 !!<table >
 !!<tr><th> werts(Nr.)</th><th>plankt-var. Nr.</th><th>QSim-Variablen-Name</th><th> Beschreibung </th><th> Einheit </th><th> wird gesetzt in Subrout. </th> </tr>
 !!<tr><td>  1 </td><td>  - </td><td> QEINL	</td><td> Einleiter-Abfluss / in QSim3D unberücksichtigt		</td><td> m³/s 	</td><td>   </td></tr>

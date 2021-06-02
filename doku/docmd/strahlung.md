@@ -30,12 +30,12 @@ mit:
 
 \f[t_{hell} = SU - SA \f]
 
-I<sub><Delta> t</sub>: Globalstrahlung während des Berechnungszeitschritts 
-\\(\Delta t\\) [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$I_{\Delta t}\f$: Globalstrahlung während des Berechnungszeitschritts 
+\f$\Delta t\f$ [J cm<sup>-2</sup> h<sup>-1</sup>]
 
-I<sub>max</sub>:      maximale Globalstrahlung am Tag [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$I_{max}\f$: maximale Globalstrahlung am Tag [J cm<sup>-2</sup> h<sup>-1</sup>]
 
-\\[\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}\\]
+\f$\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}\f$
 
 zurück: \ref lnk_waerme; Code in Datei *.f90
 

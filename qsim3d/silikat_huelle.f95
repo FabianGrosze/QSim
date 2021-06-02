@@ -19,11 +19,11 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page Silizium Silizium
+!> \page Silizium Silizium_Vorläuferversion
 !! \n
 !! <center> 
 !! \image html Haeckel_Diatomea_klein.jpg "Zeichnung Diatomeen, aus Ernst Haeckel's ''Kunstformen der Natur'' (1904)" 
-!! <a href="Haeckel_Diatomea.jpg">Bild groß</a> \n
+!! <a href="img/Haeckel_Diatomea.jpg">Bild groß</a> \n
 !! Quelle: https://commons.wikimedia.org/wiki/File:Haeckel_Diatomea.jpg Heruntergeladen 12. Nov. 2019
 !! </center>
 !! \n

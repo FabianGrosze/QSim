@@ -19,7 +19,7 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page PH-Wert pH-Wert
+!> \page PH-Wert pH-Wert_Vorgängerversion
 !!
 !! Nachfolge: Markdown Doku \subpage ph_doku
 !!

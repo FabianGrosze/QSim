@@ -7,6 +7,6 @@ Hier kommt ein kurzer Überblick zu den Nährstoffe hin mit Link zu N, P, Si.
 - \subpage BSB
 - \subpage Stickstoff
 - \subpage Phosphor
-- \subpage Silizium
+- \subpage lnk_silikat
 
 aus Datei naehrstoffe.md

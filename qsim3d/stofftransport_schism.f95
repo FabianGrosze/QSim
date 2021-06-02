@@ -144,66 +144,12 @@
 	  integer nti(maxsubst)
 
 if(meinrang.eq.0)then !! prozessor 0 only
-      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt     
-	  num_sub=1 ; nti(:)=0
-	  if((deltat.ne.int(dt)).and.(int(dt).ne.0))num_sub=deltat/int(dt)
-	  if(num_sub.lt.1)call qerror("number of substeps impossible")
-      print*,"stofftransport_schism:  deltat(QSim_int),dt(SCHISM_real), num_sub=",deltat,dt,num_sub
-      do nt=1,num_sub ! alle Transport (zwischen) Zeitschritte
-         subtim=startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
-         print*,"stofftransport_schism: subtim,nt=",subtim, nt
-         if(subtim.lt.transinfo_zeit(transinfo_zuord(1)))call qerror("subzeitpunkt vor SCHISM Zeitraum")
-         if(subtim.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror("subzeitpunkt nach SCHISM Zeitraum")
-         nti(nt)=0
-         diffprev=(subtim-transinfo_zeit(transinfo_zuord(1)) )
-         do n=2,transinfo_anzahl
-            diff= (subtim-transinfo_zeit(transinfo_zuord(n)) )
-            if( (real(diffprev)*real(diff)) .le. 0.0 )then !in between ## Wertebereichsüberschreitung bei integermultiplikation
-               if(abs(diff).gt.abs(diffprev))then !closer to first
-                  nti(nt)=n-1
-               else
-                  nti(nt)=n
-               end if !closer to first
-     !          print*,"stofftransport_schism: n,diff,diffprev,diffprev*diff,abs="  &
-     !&               ,n,diff,diffprev,(real(diffprev)*real(diff)),abs(diff),abs(diffprev)
-            end if ! !in between
-            diffprev=diff
-         end do ! all n transport sub steps
-         if(nti(nt).lt. 1) then ! schould not happen
-            call qerror("detecting closest hydro-timestep failed")
-         end if
-     !    print*,"stofftransport_schism: nti(",nt,")=",nti(nt)   &
-     !&         ," transportiert mit SCHISM-Strömungsfeld zuord,zeit,stack,instack,datei="  &
-     !&         ,transinfo_zuord(nti(nt)), transinfo_zeit(transinfo_zuord(nti(nt))),transinfo_stack(transinfo_zuord(nti(nt))) &
-     !&         ,transinfo_instack(transinfo_zuord(nti(nt))), transinfo_datei(transinfo_zuord(nti(nt)))
-      end do ! all nt Substeps
-end if !! prozess 0 only
-
-      call mpi_barrier (mpi_komm_welt, ierr)
-	  call MPI_Bcast(num_sub,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(nti,maxsubst,MPI_INT,0,mpi_komm_welt,ierr)
-      do nt=1,num_sub ! alle Transport (zwischen) Zeitschritte
-		 call get_schism_step(nti(nt))
-         call mpi_barrier (mpi_komm_welt, ierr)
-
-     !    call do_transport_tvd(1,.true.,1,7.0)  !(it,ltvd,ntr,difnum_max_l)
-!!!!      use schism_glbl, only:su2,sv2,tr_el,tr_nd0,rkind,nvrt,ne,nea,idry_e_2t  &
-!!!!     & ,tempmin,tempmax,saltmin,saltmax,nsa,ns,nea2,natrm,isconsv,ihdif,h_tvd  &
-!!!!     & ,errmsg,dt,flux_adv_vface,idry_e,i34,dp,elnode,itvd_e,kbs,distj,sny,snx,isbs,idry_s  &
-!!!!     & ,ihconsv,isdel,eta2,zs,bdy_frc,flx_sf,flx_bt,kbe,elside,ic3,ssign,iegl2,ze  &
-!!!!     & ,dfh,area,isidenode,isbnd,ntrs,itrtype,trobc,irange_tr,trth,hdif,delj
-!!!!      use schism_msgp, only: myrank,comm,ierr  & ! nproc
-!!!!     & , parallel_abort, exchange_e3dw, exchange_e3d_tr2, exchange_e3d_2t_tr  &
-!!!!     & , exchange_s3d_tr2, exchange_e2di_2t, exchange_s3dw
-     !    call do_transport_tvd_imp(it,ltvd,ntracers,difnum_max_l) !,nvrt,npa,dfh)
-
-      end do ! all nt Substeps
-! weil stofftransport nicht parallel ???? braucht schism das ????
-         call gather_planktkon()
-         call scatter_planktkon()
-
+      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt  
+      call qerror("preliminary Interrupt")
+endif
       RETURN
       END subroutine stofftransport_schism
+
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
 
 

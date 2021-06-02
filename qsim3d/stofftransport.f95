@@ -331,7 +331,7 @@
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
-         !!!### call stofftransport_schism() !parallel and 3D
+         call stofftransport_schism() !parallel and 3D
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
       end select

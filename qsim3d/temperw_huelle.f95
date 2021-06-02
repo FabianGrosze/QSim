@@ -19,12 +19,26 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page Waermebilanz  Wärmebilanz / Temperatur
+!> \page Waermebilanz  temperw_Vorläuferversion
 !! 
-!! Nachfolge: Markdown Doku \subpage temperw_doku
+!! Nachfolge: Markdown Doku \ref lnk_waerme
+!!
+!! <h2>Teilprozesse</h2>
+!! \subpage lnk_wtemp_equ
+!!
+!! <h2>Parameter</h2>
+!! \subpage lnk_wtemp_pars
+!!
+!! <h2>Umsetzung</h2>
+!! \subpage lnk_wtemp_num
+!!
 !! <center> 
 !! \image html Waermehaushalts.png
 !! </center>
+!!\n\n
+!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_waerme
+!
+!
 !> \page lnk_wtemp_equ  Wassertemperatur - Prozesse
 !!
 !! <h2>Teilprozesse</h2>
@@ -45,7 +59,7 @@
 !! an dem der Volumenstrom entnommen wird und einem Einströmrand, an dem das erwärmte Wasser ins Gewässer(Modellgebiet) zurückfließt.
 !!
 !! \n
-!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!! aus Datei temperw_huelle.f95; zurück zu \ref Waermebilanz
 !
 ! ------
 !
@@ -224,7 +238,7 @@
 !! \n\n
 !! Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
 !!
-!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!! aus Datei temperw_huelle.f95; zurück zu \ref Waermebilanz
 !
 ! ------
 !
@@ -267,7 +281,7 @@
 !! Dieser werden dafür die folgenden Variablen übergeben:
 !! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
 !!
-!! aus Datei temperw_huelle.f95; zurück zu \ref lnk_wtemp
+!! aus Datei temperw_huelle.f95; zurück zu \ref Waermebilanz
 !! \n
       SUBROUTINE temperw_huelle(i)
      ! SUBROUTINE temperw_huelle(ausgeben, temperatur_wa, tiefe_wa, geschw_wa, temperatur_sed, &

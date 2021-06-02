@@ -1,29 +1,9 @@
-Wasser-Temperatur {#temperw_doku}
-===============
+Wassertemperatur - Prozesse {#lnk_wtemp_prozesse} 
+=====================
 
- ![](Waermehaushalts.png)
-
-Überblick
-====
-
-Im BfG-Gewässergütemodell werden folgende Prozesse zur Berechnung der Wassertemperatur berücksichtigt:
-
-* Strahlung (\ref{Strahlung});
-* Verdunstung;
-* Konvektion; 
-* Direkter Wärmeaustausch mit dem Sediment;
-* Aufwärmung des Gewässerbodens durch die, das Wasser durchdringende Strahlung;
-* Aufwärmung des Wasserkörpers durch die am Gewässerboden reflektierte Strahlung;
-* linienförmige und punktuelle Einleitungen.
-
-An Wetterdaten werden für die Modellierung des Wärmehaushalts neben der
-Strahlung Tagesmittelwerte der relativen Luftfeuchte, der Windgeschwindigkeit und des Bedeckungsgrades sowie 
-Tageswerte der minimalen und maximalen Lufttemperatur benötigt.
-
- 
-Bilanz {#TempAenderung}
-====
-Die Grundlage aller verbreiteten Methoden zur Berechnung der Erwärmung eines Fließgewässers ist die vereinfachte Wärmehaushaltsgleichung. 
+# Bilanz {#TempAenderung} #
+Die Grundlage aller verbreiteten Methoden zur Berechnung der Erwärmung eines 
+Fließgewässers ist die vereinfachte Wärmehaushaltsgleichung. 
 Auf deren Grundlage wird die Wärmehaushaltsbilanz des Gewässers erstellt, 
 mit der die Temperaturänderung des Gewässers pro Zeiteinheit quantifiziert werden kann. 
 Damit lautet die vereinfachte Wärmehaushaltsgleichung:
@@ -31,61 +11,30 @@ Damit lautet die vereinfachte Wärmehaushaltsgleichung:
 \f[ \frac{\delta T_w}{\delta t} = \frac{q_S - q_V - q_K + q_{US} + q_U - q_E }{c_w * h * \rho_w}   \f]    
 
 
-| Formelzeichen  | Bedeutung				| Dimension   	| Variablenname Quellcode | Herkunft    | 
-| -------------  | -----------				| ----------- 	| -----------             | ----------- | 
-| \f$ T_w \f$    | Wassertemperatur  		| °C  			| temperw	| x |
-| \f$ t \f$      | Zeit      				| h 			| tflie    	| e |
-| \f$ q_S \f$    | Wärmestromdichte \ref Strahlung | kJ/(h*m²)	| -     | b |
-| \f$ q_V \f$    | Wärmestromdichte Verdunstung | kJ/(h*m²)	| -         | b |
-| \f$ q_K \f$    | Wärmestromdichte Konvektion | kJ/(h*m²)	| -         | b |
-| \f$ q_U \f$    | Wärmestromdichte Sohle 	| kJ/(h*m²) 	| -         | b |
-| \f$ q_{US}\f$  | Wärmestromdichte Reflektion Sohle | kJ/(h*m²) | -	| b |
-| \f$ q_E \f$    | Wärmestromdichte Einleitung | kJ/(h*m²) 	| -    		| b |
-| \f$ c_w \f$    | spez. Wärmekapazität Wasser | 4,1868  kJ/(kg*K) | speWKW  | v |
-| \f$ h \f$      | mittlere Wassertiefe 	|  m 			| tiefe   	| e |
-| \f$ \rho_w \f$ | Dichte des Wassers 		| 1000 kg/m3  	| rho		| v |
+## Verdunstung {#lnk_verdunstung}##
+===============
 
-Herkunft:
-+ x - Bilanzvariable
-+ u - Übergabevariable 
-+ b - berechnet, Zwischengröße
-+ e - Eingabe, hydr. Antrieb
-+ v - Vorgabe im Quellcode gesetzt
-
-siehe Formel \ref Qv
-
-Strahlung {#Strahlung}
-====
-Die Wärmestromdichte aus Strahlung qs wird in Kap. XX beschrieben. 
-
-Verdunstung
-====
-Verdunstung entsteht beim Druckausgleich des Dampfdrucks zwischen Wasseroberfläche und der darüber liegenden Luftschicht. 
-Ist der Dampfdruck an der Wasseroberfläche größer als der der Luft, verdunstet Wasser aus dem Gewässer. 
-In Abhängigkeit von den Dampfdruckverhältnissen kann der Verdunstungsterm in der Wärmehaushaltsbilanz aber auch negative Werte annehmen. 
-Da für diesen Vorgang abhängig von der Wassertemperatur mehr oder weniger Verdampfungswärme benötigt wird, kühlt sich der Wasserkörper ab. 
-Im umgekehrten Fall kondensiert Wasser aus der Luft ins Gewässer. Die bei diesem Phasenübergang erster Ordnung aufgenommene 
-oder abgegebene Energiemenge wird auch als latente (lateinisch: „verborgen“) Wärme bezeichnet.
+Verdunstung entsteht beim Druckausgleich des Dampfdrucks zwischen Wasseroberfläche 
+und der darüber liegenden Luftschicht. 
+Ist der Dampfdruck an der Wasseroberfläche größer als der der Luft, verdunstet Wasser aus 
+dem Gewässer. 
+In Abhängigkeit von den Dampfdruckverhältnissen kann der Verdunstungsterm in der 
+Wärmehaushaltsbilanz aber auch negative Werte annehmen. 
+Da für diesen Vorgang abhängig von der Wassertemperatur mehr oder weniger Verdampfungswärme 
+benötigt wird, kühlt sich der Wasserkörper ab. 
+Im umgekehrten Fall kondensiert Wasser aus der Luft ins Gewässer. Die bei diesem 
+Phasenübergang erster Ordnung aufgenommene oder abgegebene Energiemenge wird auch als 
+latente (lateinisch: „verborgen“) Wärme bezeichnet.
 
 In QSim erfolgt die Berechnung der latenten Wärme nach dem Ansatz von Dalton (1803), 
-wobei die Verdunstungsrate eine Funktion der Windgeschwindigkeit und der Differenz der Sättigungsdampfdrücke 
-an der Phasengrenze Wasser-Luft ist. Die Berechnung beruht in diesem Fall auf einer empirisch ermittelten Formel, 
-der sogenannten „Wind-Formel“. Die Konstanten a und b der Wind-Formel beziehen sich auf eine Referenz der 
-World Meteorological Organisation (WMO, 1966).
+wobei die Verdunstungsrate eine Funktion der Windgeschwindigkeit und der Differenz der 
+Sättigungsdampfdrücke an der Phasengrenze Wasser-Luft ist. Die Berechnung beruht in diesem 
+Fall auf einer empirisch ermittelten Formel, der sogenannten „Wind-Formel“. Die Konstanten 
+a und b der Wind-Formel beziehen sich auf eine Referenz der World Meteorological Organisation 
+(WMO, 1966).
 
-\f[ q_V= (a+b*v_wind )*(p_S-p_D )*p_(L,Ort)/p_(L,Meer) *c \f]    \label{Qv}
+\f[ q_V= (a+b*v_{wind} )*(p_S-p_D )*p_(L,Ort)/p_(L,Meer) *c \f]    \label{equ_qV}
 
-
-
-qv	Wärmestromdichte aus Verdunstung (latente Wärme) [kJ/(h*m²)]
-a	empirische Konstante = 0,13 [m/s*hPa] = 3.69 [W/(m2*mbar)] (siehe WMO (1966), Sweers (1976))
-b	empirische Konstante = 0,0936 [m/s*hPa] = 2.66 [W*s/( m3*mbar)] (siehe WMO (1966), Sweers (1976))
-vwind	Windgeschwindigkeit [m/s]
-pS	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar], Formel Fehler! Verweisquelle konnte nicht gefunden werden.] 
-pD	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [mbar], Formel Fehler! Verweisquelle konnte nicht gefunden werden.] 
-pL,Ort	Luftdruck bezogen auf Ortshöhe [mbar]
-pL,Meer	Luftdruck bezogen auf Meereshöhe [mbar] 
-c	Umrechnungsfaktor = 1/24.000 [-], aus der Umrechnung der hV von mm/d in m/h
 
 Der Sättigungsdampfdruck pS an der Wasseroberfläche berechnet sich aus der Wassertemperatur TW [K] nach der Magnus Formel zu:
 p_S=p_0*e^((c_2*T_W)/(c_3+T_W ))	[16]
@@ -402,3 +351,29 @@ Wellenlängenbereiche [m-1]
 
 
 
+
+# Rand- und Anfangsbedingungen #
+
+Von entscheidender Bedeutung für die Berechnung der lokalen Wärmeflüsse sind die 
+meteorologischen Bedingungen:
+
+Sonnenstand, Bewölkung, Lufttemperatur und -feuchte sowie die Windgeschwindigkeit.\n\n
+
+Diese Wetterdaten werden bei der eingabe() von Subroutine wetter_readallo() aus der Datei 
+<a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a> gelesen.
+\n\n
+! Wetterdaten für Waermebilanz in diesem Zeitschritt wurden in randbedingungen_setzen() ermittelt\n
+! call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt\n
+! call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.\n
+! call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, 
+der im Gewässer ankommt.
+\n\n
+Im 1-dimensionalen QSim besteht die Möglichkeit <b>Wärmeeinleitungen</b> z.B. durch Kraftwerke 
+direkt in der Temperaturberechnung zu berücksichtigen. Im mehrdimensionalen T-QSim muss dies 
+über Randbedingungen vorgegeben werden. D. h. einen Ausströmrand an dem der Volumenstrom 
+entnommen wird und einem Einströmrand, an dem das erwärmte Wasser ins Gewässer(Modellgebiet) 
+zurückfließt.
+
+
+
+&nbsp aus Datei: wtemp-prozess.md; Code in Datei TEMPERW.f90

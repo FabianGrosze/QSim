@@ -148,8 +148,8 @@ endif
 #--------------------------------------------------------------------
 
 #usual: modu check date qsim qsim3d
-#usual: check date schism qsim qsim3d
-usual: check date qsim qsim3d
+usual: check date schism qsim qsim3d
+#usual: check date qsim qsim3d
 
 modu:
 	/usr/bin/modulecmd bash purge
@@ -182,7 +182,8 @@ date:
 
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
-    $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD_QS.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+     $(SCHISM_CORE)/schism_io.o  \
+    $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
 #     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
@@ -222,7 +223,7 @@ Q3 = version.co trans_read.co \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
 	 eingabe.o initialisieren.o randbedingungen.o\
-     stofftransport_casu.o \
+     stofftransport_casu.o stofftransport_schism.o \
 	 stofftransport_untrim.o stofftransport.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
      stoffumsatz.o \

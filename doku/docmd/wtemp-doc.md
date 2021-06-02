@@ -1,13 +1,26 @@
 Wassertemperatur {#lnk_wtemp}
 ================
 
-* Hier kommt ein einleitender Text hin *
+Im BfG-Gewässergütemodell werden folgende Prozesse zur Berechnung der Wassertemperatur berücksichtigt:
+
+* [Strahlung](\ref Strahlung);
+* [Verdunstung](\ref lnk_verdunstung);
+* Konvektion; 
+* Direkter Wärmeaustausch mit dem Sediment;
+* Aufwärmung des Gewässerbodens durch die, das Wasser durchdringende Strahlung;
+* Aufwärmung des Wasserkörpers durch die am Gewässerboden reflektierte Strahlung;
+* linienförmige und punktuelle Einleitungen.
+
+An Wetterdaten werden für die Modellierung des Wärmehaushalts neben der
+Strahlung Tagesmittelwerte der relativen Luftfeuchte, der Windgeschwindigkeit und des Bedeckungsgrades sowie 
+Tageswerte der minimalen und maximalen Lufttemperatur benötigt.
+
 
 Weitere Details zum Wassertemperatur-Modul sind in den folgenden Abschnitten 
 beschrieben: 
-- \subpage lnk_wtemp_equ
-- \subpage lnk_wtemp_pars
-- \subpage lnk_wtemp_num
+- \subpage lnk_wtemp_prozesse
+- \subpage lnk_wtemp_vars
+- \subpage lnk_wtemp_umsetzung
 
 Veröffentlichungen/weitere Dokumentation
 ----------------------------------------

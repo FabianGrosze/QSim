@@ -39,6 +39,5 @@ Die folgenden beiden Unterkapitel beschreiben die Berechnung
 - der \subpage lnk_wtemp
 
 
-zurück: \ref lnk_ueberblick
+Textquelle: waerme-doc.md ; codesources: TEMPERW.f90, temperw_huelle.f95  ; Vorläufer: \subpage Waermebilanz ; zurück: \ref lnk_ueberblick
 
-aus Datei waerme-doc.md

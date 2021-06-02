@@ -61,6 +61,8 @@
 !!      - Zellrandflüsse aus Untrim\n
 !!      - Anbindung von SCHISM steht noch aus.
 !! \n\n</li>
+!! <li> \subpage lnk_steuerparameter werden Programmintern zur Ablaufsteuerung und zur Verfahrensauswahl benutzt.
+!! \n\n</li>
 !! </ol>
 !! 
 !! \subpage Parallelisierung \n

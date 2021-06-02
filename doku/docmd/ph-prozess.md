@@ -1,43 +1,37 @@
-pH - Wert {#ph_doku}
-===============
-
-![] (pHscala_mini.png)
-
-Das pH-Modul bilanziert in erster Linie den inorganischen Kohlenstoff (CO2).
-
-Kohlendioxid bildet im Wasser Kohlensäure und ist als schwache Säure für die Pufferkapazität des Wassers verantwortlich.
-
-Der pH-Wert wird durch die Alkalinität des Wassers wesentlich beeinflusst. \n
-Deswegen bilanziert das pH-Modul zusätzlich den Calciumgehalt des Wassers.
+pH - Prozesse {#lnk_ph_prozess}
+===========================
 
 Im Einzelnen werden folgende Prozesse berücksichtigt:
 
 * \ref CO2Bilanz
-   - CO2 \ref Lueft über die Wasseroberfläche
-   - CO2 Quellen: Abbau organischer Kohlenstoffverbindungen, Atmung Konsumenten (\ref co2lief)
-   - CO2 Senken: Algenwachstum, Makrophytenwachstum (\ref co2verb)
+   - \ref Lueft über die Wasseroberfläche
+   - CO2-Quellen: Abbau organischer Kohlenstoffverbindungen, Atmung Konsumenten (\ref co2lief)
+   - CO2-Senken: Algenwachstum, Makrophytenwachstum (\ref co2verb)
 * \ref Nitribit
 * \ref dca , Fällung/Rücklösung
 * pH-Wert Änderung (\ref pHiter)
 
-# Gesamter, inorganischer, gelöster Kohlenstoff (DIC)  {#DIC}
+# Gesamter, inorganischer, gelöster Kohlenstoff (DIC) {#DIC}
 Die Summe des im Wasser gelösten inorganischen Kohlenstoffs ergibt sich aus der Differenz von Säurekapazität und Basenkapazität.
 \f[ DIC = (m - p)/1000 \f]
 
-\ref Formel
+(*[Erklärung der Formelzeichen](\ref lnk_ph_pars)*)
 
 # Protonenkonzentration {#Proton}
-Dazu werden zuerst die Protonen- und die Hydroxidkonzentration aus dem ph-Wert bestimmt:\n
+Dazu werden zuerst die Protonen- und die Hydroxidkonzentration aus dem pH-Wert bestimmt:\n
 \f[ H = 10^{(hk-pH)} \f] 
 \f[ OH = 10^{(pH+hk-pk_w)} \f]
-mit der temperaturabhängigen Dissoziationskonstante des Wassers: \n
-\f$ pk_w = (4471,33/T)+0,017053*T-6,085 \f$ \n
-und der Leitfähigkeitskorrektur:\n
+mit der temperaturabhängigen Dissoziationskonstante des Wassers: 
+
+\f$ pk_w = (4471,33/T)+0,017053*T-6,085 \f$
+
+und der Leitfähigkeitskorrektur:
+
 \f$ hk =\frac{0,5*\sqrt{lf*0,000017}}{1+1,4*\sqrt{lf*0,000017}} \f$ \n
 
 # Kohlensäureformen  {#Aufteilung}
 Der DIC, (\ref DIC) wird nun abhängig von Temperatur, Leitfähigkeit und pH-Wert auf 
-die drei Fraktionen, Kohlendioxid, Hydrogencarbonat und Carbonat, aufgeteilt.
+die drei Fraktionen, Kohlendioxid, Hydrogencarbonat und Carbonat aufgeteilt.
 
 Die Säurekonstante, welche das Verhältnis von Kohlendioxid zu Hydrogencarbonat bestimmt, 
 ist von der Temperatur und Leitfähigkeit abhängig. Für sie wird folgender Ansatz verwendet: \n
@@ -47,13 +41,13 @@ ist von der Temperatur und Leitfähigkeit abhängig. Für sie wird folgender Ans
 \f$ k_2 =  10^{((2*\sqrt{lf*0,000017})/(1+1,4*\sqrt{lf*0,000017}))-((2902,39/T)+0,02379*T-6,498)} \f$ \n
 
 Damit berechnen sich dann die Kohlensäurefraktionen wie folgt:
-\f[ CO_2  = DIC * (\frac{H^2}      {H^2 + k_1*H + k_1*k_2}) \f]
-\f[ HCO_3 = DIC * (\frac{k_1*H}    {H^2 + k_1*H + k_1*k_2}) \f]
-\f[ CO_3  = DIC * (\frac{k_1*k_2}  {H^2 + k_1*H + k_1*k_2}) \f]
+\f[ CO_2  = DIC * \left(\frac{H^2}      {H^2 + k_1*H + k_1*k_2}\right) \f]
+\f[ HCO_3 = DIC * \left(\frac{k_1*H}    {H^2 + k_1*H + k_1*k_2}\right) \f]
+\f[ CO_3  = DIC * \left(\frac{k_1*k_2}  {H^2 + k_1*H + k_1*k_2}\right) \f]
 
-# CO2 Bilanz {#CO2Bilanz}
+# CO2-Bilanz {#CO2Bilanz}
 
-## Gasaustauch {#Lueft}
+## CO2-Gasaustauch {#Lueft}
 Die Berechnung des Austauschs von gasförmigem CO2 über die Wasseroberfläche beginnt mit dem Anatz für die 
 temperaturabhängige Sättigungskonzentration von CO2 im Wasser nach folgender Formel:                                                                        
 \f[ {CO_2}^{eq}= -0,00000907*(T-273,16)^3 + 0,0009662*(T-273,16)^2 - 0,04657*(T-273,16) + 1.27  \f]
@@ -70,7 +64,7 @@ Die Zu- und Abnahme von im Wasser gelöstem Kohlendioxid im jeweiligen Zeitschri
 
 ## Biologischer Kohlenstoffumsatz {#Cbio}
 
-### CO2 Lieferung {#co2lief}
+### CO2-Lieferung {#co2lief}
 
 Die folgenden Prozesse geben Kohlendioxid ins Wasser ab. 
 Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 liefernden Prozesse in mol/l im jeweiligen Zeitschritt.
@@ -103,7 +97,7 @@ Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 li
   mittels der Variablen \ref dzres1 (Grundrespiration) \ref dzres2 (fraßabhängige Respiration) übergeben.
   Die Multiplikation mit den Kohlenstoffgehalt \ref CRot ergibt dann die CO2 Zunahme im Wasser.
 
-### CO2 Verbrauch {#co2verb}
+### CO2-Verbrauch {#co2verb}
 
 Die folgenden Prozesse gehören zur Primärproduktion und entnehmen Kohlendioxid aus dem Wasser. 
 Das Formelzeichen \f$ (\Delta CO_2)_{verb} \f$ steht für die Summe dieser CO2 verbrauchenden Prozesse in mol/l im jeweiligen Zeitschritt.
@@ -130,9 +124,13 @@ wofür die Verletzung der Massenerhaltung in Kauf genommen werden muss.
 ## Summe
 \f[ (\Delta CO_2)_{bio} = (\Delta CO_2)_{lief} - (\Delta CO_2)_{verb} \f]
 
+zurück zu \ref lnk_ph_prozess
+
 # Nitrifikation {#Nitribit}
 Die Nitrifikation von Ammonium \f$NH_4^+ \f$ zu Nitrat \f$NO_3^-\f$ erzeugt je zwei Protonen:
 \f[ \Delta H_N = \frac{2*\Delta N}{14 g/mol * 1000 mg/g} \f]
+
+zurück zu \ref lnk_ph_prozess
 
 # Calcium {#Calcium}
 
@@ -154,6 +152,8 @@ mit: \f$ \mu = \frac{(Ca/40080)*CO_3}{k_{ca}} \f$
 
 Nur dann, wenn die obige Bedingung erfüllt ist, wird in der Subroutine ph() die äußere Iterationsschleife aktiviert.
 Wenn nicht, bleibt der Calciumgehalt gleich und nur die innere Iteration, \ref pHiter, ist aktiv.	  
+
+zurück zu \ref lnk_ph_prozess
 
 ## geschachtelte Iterationen 
 Die nichtlinearen Zusammenhänge zwischen dem Calciumgehalt, pH-Wert und den Kolensäureformen machen eine iterative Lösung erforderlich.
@@ -258,42 +258,8 @@ Schleifenende äussere Iteration
 !!!!! in der Kernroutine ist allen Übergabe-Variablen ein "s" im Namen angehängt, \n
 !!!!! um zu kennzeichen, dass es sich um lokale Variablen in dieser Subroutine handelt \n
 !!!!! und nicht um die globalen Felder des Hauptprogramms. \n
- 
-#  Formelzeichen {#Formel}
 
-| Formelzeichen  	| Bedeutung					| (Wert) Dimension   	| Variablenname Quellcode 	| Herkunft    | 
-| ------------- 	| -----------				| ----------- 	| -----------				| ----------- | 
-| \f$ pH \f$    	| pH-Wert 					|negativer dekadischer Logarithmus der Protonenkonzentration im mol/l | vph   |  x |
-| \f$ Ca \f$    	| Calcium     				| mg/l    		| Ca     		| x |
-| \f$ \Delta Ca \f$ | Calcium-Änderung pro Zeitschritt| mg/l	| dca			| b |
-| \f$ lf \f$    	| Leitfähigkeit				| \f$ \mu S/cm\f$| lf 			| x |
-| \f$ m \f$      	| m-Wert Säurekapazität		| mmol/l		| mw    		| x |
-| \f$ p \f$      	| p-Wert Basenkapazität		| mmol/l		| pw    		| x |
-| \f$ DIC \f$   	| gelöster inorganischer Kohlenstoff |mol/l | c				| b |
-| \f$ CO_2 \f$   	| gel. Kohlendioxid + Kohlensäure | mol/l  	| moco2			| b |
-| \f$ HCO_3^- \f$   | Hydrogencarbonat  		| mol/l    		| mohco3		| b |
-| \f$ CO_3^{2-} \f$ | Carbonat  				| mol/l    		| moco3			| b |
-| \f$ k_1 \f$    	| Säurekonstante  			| mol/l    		| k1			| b |
-| \f$ k_2 \f$    	| Säurekonstante  			| mol/l    		| k2			| b |
-| \f$ k_{ca} \f$ 	| Löslichkeitsprodukt Calcium * Carbonat | \f$ mol^2/l^2 \f$| kca	| b |
-| \f$ H^+ \f$    	| Protonenkonzentration		| mol/l    		| h				| b |
-| \f$ OH^- \f$   	| Hydroxid  				| mol/l    		| oh			| b |
-| \f$ T \f$      	| abs. Wassertemperatur  	| K      		| abst=tempw+273.16| x |
-| \f$ t \f$ , \f$ \Delta t \f$| Zeit, Zeitschritt | d 			| - , tflie 	| e |
-| \f$ \Delta N \f$  | oxidiertes Ammonium pro Zeitschritt | mgN/l | susns		| b |
-| \f$ pk_w\f$ 		| Dissoziationskonstante Wasser | - 		| pkw 			| b |
-| \f$ hk \f$ 		| Leitfähigkeitskorrektur 	| - 			| hk 			| b |
-| \f$ stind \f$ 	| Alter						| min 			| stind 		| x |
-| \f$ ssalgs\f$ 	| gesamt-Schwebstoff		| mg/l 			| ssalg 		| x |
-| \f$C_{aki}\f$,\f$C_{agr}\f$,\f$C_{abl}\f$|Kohlenstoffgehalte Algen|0,48 gC/gBio|caki,cagr,cabl|v |
-|\f$C_{dr}\f$	|Kohlenstoffgehalt Muscheln	| 0,38 gC/gBio	|cdr			| v |
-|\f$C_{rot}\f$ |Kohlenstoffgehalt Konsumenten|0,45 gC/gBio	|crot			| v |
-
-Herkunft:
-+ x - Bilanzvariable QSim
-+ b - berechnet, Zwischengröße / Übergabevariable
-+ e - Eingabe
-+ v - Vorgabe im Quellcode gesetzt
+zurück zu \ref pHiter
 
 # Transport
 Im Transport-Teil von QSim werden die Konzentrationen: 
@@ -311,7 +277,17 @@ Die nichtlinearen Zusammenhänge erfordern auch hier eine iterative Berechnung.
 In zwei geschachtelten Iterationen wird der p-Wert solange variiert, bis das Ladungsgleichgewicht erfüllt ist.
 Dabei finden die im Abschnitt \ref pHiter angegebenen Formeln Anwendung.
 
-# Literaturliste
+## Rand und Anfangsbedingungen ##
+Ergänzung des P-Wertes im Zufluss mit pwert(); 
+Siehe dazu auch \ref randbedingungen_ergaenzen .
+
+
+# QSim-Veröffentlichungen, die den pH-Baustein beschreiben und/oder anwenden:
+
+- ...
+
+
+## Literaturliste pH-Baustein
 
 Charlton, S. R. (2020). phreeqc. https://www.usgs.gov/software/phreeqc-version-3.
 
@@ -350,8 +326,5 @@ Sigg, L., & Stumm, W. (2016). Aquatische Chemie: Einführung in die Chemie natü
 WEISS, R. F. (1974). CARBON DIOXIDE IN WATER AND SEAWATER: THE SOLUBILITY OF A NON-IDEAL GAS. Marine Chemistry, 2 (1974) 203--215. 
 
 
-### Herkunft Titelbild
-https://commons.wikimedia.org/wiki/File:PHscala.png Creative Commons Attribution-Share Alike 4.0 International license
- 
 
-zurück zu \ref Stoffumsatz ; Quelle: ph_doku.md 
+Textquelle: ph-prozess.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90 ; zurück: \ref lnk_ph
