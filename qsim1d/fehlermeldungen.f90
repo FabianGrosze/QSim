@@ -79,7 +79,7 @@
     1060 format('Es fehlt die Eingabe der Nitrobacter-Konzentration an den Rändern!') 
     1070 format('Es fehlt die Eingabe des Kieselalgenanteils am Chla an den Rändern!')
     1080 format('Es fehlt die Eingabe des Blaualgenanteils am Chla an den Rändern!')
-    1090 format('Es fehlt die Eingabe der Silikatwerte an den Rändern!')
+    1090 format('Es fehlt die Eingabe der Silikatwerte an den Rändern!') 						! 10
     1100 format(' Der Bedeckungsgrad ist groesser als 8/8 oder kleiner (es liegen nur Fehlwerte vor) als 0 ')
     1110 format('Es fehlt die Zuordnung einer Wetterstation zum Strang:') 
     1120 format('Die Eingabe Laubwald rechtes und Laubwald linkes Ufer ist so nicht zulässig <Laubwald beidseitig>; Strang:')
@@ -89,7 +89,7 @@
     1160 format('Die Zeitpunkte fuer das Makrophythenwachstum sind nicht oder unvollstaendig eingegeben für Strang:')
     1170 format('Es erfolgte keine Eingabe für die Austauschzeit zwischen Buhnfeld und Hauptstrom!')
     1180 format('Es wurde am Startprofil kein m-Wert eingegeben!')
-    1190 format('Es wurde am Startprofil kein Ca-Wert eingegeben!')
+    1190 format('Es wurde am Startprofil kein Ca-Wert eingegeben!') 						! 20
     1200 format('Die Eingabe der geografischen Breite und geografischen Laenge ist unvollständig!')
     1210 format('Division durch 0 im Stickstoffbaustein im Strang:')
     1220 format('Division durch 0 im Sauerstoffbaustein im Strang:')
@@ -99,9 +99,9 @@
     1260 format('Die Eigabe des Faktors für BSB5/CSB-Erhöhung durch Algen fehlt oder ist falsch (s. Parameter-Hilfe)')
     1280 format('Es fehlt die Eingabe des C-BSB5 und des CSB an den Rändern (Einer von beiden muss eingegeben werden!)')
     1300 format('Es fehlt die Eingabe der Schwebstoffe an den Rändern')
-    1320 format('Es fehlt die Eingabe des pH-Wertes an den Rändern')
-    1340 format('Es fehlt die Eingabe des pH-Wertes für den Zufluss (und evt. weitere):')
-    1360 format('Es fehlt die Eingabe der Schwebstoffe für den Zufluss (und evt. weitere):')
+    1320 format('Es fehlt die Eingabe des pH-Wertes an den Rändern') 						! 30
+    1340 format('Es fehlt die Eingabe des pH-Wertes für den Zufluss (und evt. weitere):')  	! 31
+    1360 format('Es fehlt die Eingabe der Schwebstoffe für den Zufluss (und evt. weitere):')! 32
     1370 format('read_error in EREIGG.txt')
     1380 format('iphy wert (Belüftungs-Verfahren) nicht definiert')
     close (599)

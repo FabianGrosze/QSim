@@ -25,7 +25,7 @@
       character*255               :: cpfad
       character (len=275)         :: pfadstring 
       integer                     :: read_error,open_error
-      integer                     :: mstr,i_hcon,iws_RB,i_Rands,itagl,iw_max,i_Rand,iwe
+      integer                     :: mstr,i_hcon,iws_RB,i_Rands,itagl,iw_max,iwe
       integer                     :: RBNR
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt' 
@@ -46,7 +46,7 @@
         iw_max = 0
         i_rands = 0
                                                                         
-        do i_Rand = 1, 500                 ! Randbedingungsschleife Beginn     
+        do                 ! Randbedingungsschleife Beginn     
           read(92,9230,iostat=read_error) mstr, RBNR, i_hcon, iws_RB                                             
 
           if(read_error<0.0)exit
@@ -60,11 +60,12 @@
           do iwe = 1,iws_RB    ! Einlesen der Randbedingungswerte für den Strang <mstr>, hier Schleifenbeginn 
             read(92,9240)itagl            
           enddo                             ! Schleifenende
-       enddo                                 ! Randbedingungsschleife Ende 
+        enddo                                 ! Randbedingungsschleife Ende 
                                                                        
    9230 format(I5,2x,I5,2x,I1,2x,I5) 
    9240 format(i2) 
 
-   close(92)                                                        
+      close(92)  
+      print*,'subroutine Randbedingungen found ',i_Rands,' boundaries in EREIGG.txt'   
                                                                        
   end subroutine Randbedingungen

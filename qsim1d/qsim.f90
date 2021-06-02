@@ -2547,7 +2547,7 @@
 !... m-Wert
 
       if(iph==1.and.mws(mstr,mRB)<=0.0)then
-        print*,'m-Wert falsch',iph,mws(mstr,mRB),mstr,mRB
+        print*,'### m-Wert,,mstr,mRB,iph=',mws(mstr,mRB),mstr,mRB,iph
         ifehl = 19
         ifhstr = mstr
         goto 989
@@ -2564,6 +2564,8 @@
 
     if(vbsbs(mstr,mRB)<0.0.and.vcsbs(mstr,mRB)<0.0)then
       ifehl = 28
+        print*,'### BSB5,CSB,mstr,mRB=',vbsbs(mstr,mRB),vcsbs(mstr,mRB),mstr,mRB
+        ifhstr = mstr
       goto 989
     endif
 
@@ -5086,7 +5088,7 @@
 !***************Sediment-Stofffluxe******** 
                             
  1712 continue 
-      mitsedflux=.false. !!wy sedimnt fluxes switched off temporarily
+      mitsedflux=.true. !!wy sediment fluxes switched off temporarily
       if(mitsedflux)then     
       call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP            &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
