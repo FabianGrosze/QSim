@@ -145,6 +145,7 @@
 !! \n\n 
 !! zurück: \ref lnk_ueberblick; Quelle: ph_huelle.f95
 
+
 !--------------------------------------------------------------------------------------------------------------- orgc
 
 !http://de.wikipedia.org/wiki/Wasseranalyse
@@ -154,7 +155,7 @@
 !Der m-Wert ist eine wasserchemische Rechengröße, die aus den Konzentrationen der Hydrogencarbonat- und Carbonationen sowie den bei der Dissoziation des Wassers entstehenden H+- undOH--Ionen ermittelt wird. Er ist hilfreich bei der Berechnung von Mischwasseranalysen und bei der Vorausberechnung von Änderungen der Wasserzusammensetzung infolge von Aufbereitungsmaßnahmen.
 !Das m erinnert daran, dass man früher Methylorange als Farbindikator für eine Titration mit Salzsäure verwendet hat, die etwa gleichbedeutend ist mit der heutigen Bestimmung der Säurekapazität bis pH 4,3. Letztere ist annähernd gleich dem m-Wert.
 
-!> Das module ph_module widmet sich dem \ref PH-Wert (sauer <-> basisch)
+!> Das module ph_module widmet sich dem \ref lnk_ph (sauer <-> basisch)
 !! \n\n 
 !! zurück: \ref lnk_ueberblick; Quelle: ph_huelle.f95
 !      module ph_module
@@ -164,7 +165,7 @@
 !      CONTAINS
 
 !> Die Subroutine ph_huelle() dient dem Aufruf der QSim-subroutine ph(). \n\n
-!! Diese dient der Berechnung des \ref PH-Wert
+!! Diese dient der Berechnung des \ref lnk_ph
 !! \n\n 
 !! Quelle: ph_huelle.f95
       SUBROUTINE ph_huelle(i)

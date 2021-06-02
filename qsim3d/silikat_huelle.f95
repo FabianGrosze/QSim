@@ -61,7 +61,6 @@
 !! zurück: \ref lnk_ueberblick ; Quelle: silikat_huelle.f95
 
 
-
 !! 
 !! <h1>Schnittstellenbeschreibung</h1>
 !! 
@@ -123,10 +122,10 @@
 !! QSqm-Variable Qmx_SK, gespeichert in QSimDatenfelder aus APARAM.txt (siehe dazu eingabe())\n
 !! in RB_werte_aktualisieren() gesetzt.
 !!\n\n
-!!zurück: \ref Silizium ; \ref zuflussranddaten ; Quelle: silikat_huelle.f95
+!!zurück: \ref lnk_silikat ; \ref zuflussranddaten ; Quelle: silikat_huelle.f95
 
 !! VORSICHT veraltet \n\n 
-!! zurück: \ref Silizium\n\n 
+!! zurück: \ref lnk_silikat\n\n 
 !! <h2>Aufruf</h2>
 !! silikat_huelle ist eine T-QSim Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim Subroutine:\n\n
 !! \n 
@@ -176,7 +175,7 @@
 !> SUBROUTINE silikat_huelle()
 !! WIRD VON ALLEN PROZESSEN AUFGERUFEN !!! (parallel)
 !! \n\n
-!!Beschreibung: \ref Silizium ; Quelle: silikat_huelle.f95
+!!Beschreibung: \ref lnk_silikat ; Quelle: silikat_huelle.f95
       SUBROUTINE silikat_huelle(i)
       use modell                                                 
       use QSimDatenfelder
