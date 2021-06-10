@@ -223,7 +223,8 @@ Q3 = version.co trans_read.co \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
 	 eingabe.o initialisieren.o randbedingungen.o\
-     stofftransport_casu.o stofftransport_schism.o \
+     stofftransport_casu.o \
+	 screen_schism_nc.o stofftransport_schism.o \
 	 stofftransport_untrim.o stofftransport.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
      stoffumsatz.o \

@@ -45,6 +45,7 @@
       real zeit_min, zeit_max
       real zeit_delta
       integer :: nnd, nnv, sumtra, nnt
+	  
       if(meinrang.eq.0) print*,'screen_schism_nc starts' 
 	  
       !--- netcdf-files parallel
@@ -78,14 +79,14 @@
       !do i=1,10
          write(chari,*),i
          write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc	 
-		 !print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
+		 print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
          iret = nf_open(dateiname, NF_NOWRITE, ncid)
          if(iret.ne. 0) then
             call check_err(iret)
             write(fehler,*)meinrang,i,' screen_schism_nc: nf_open failed ',dateiname,iret
             call qerror(fehler)
-		 !else
-		    !print*,"screen_schism_nc: nf_open(ncid= ",ncid
+		 else
+		    print*,"screen_schism_nc: nf_open(ncid= ",ncid
          end if ! open failed
          call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
          !! dimensions
@@ -120,11 +121,11 @@
          end if
          iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
          call check_err(iret)
-         !print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid=',varid,iret,ncid
+         print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid=',varid,iret,ncid
          n=dlength(dimids(1))
          if(n.gt. 0)then
             transinfo_anzahl=transinfo_anzahl+n
-            !print*,i,'read_mesh_nc_sc: transinfo_anzahl=',transinfo_anzahl,n
+            print*,i,'read_mesh_nc_sc: transinfo_anzahl=',transinfo_anzahl,n
             allocate (zeiten(n), stat = istat )
             iret = nf90_get_var(ncid, varid, zeiten)
             call check_err(iret)
@@ -137,7 +138,7 @@
             if(n.gt. 1)then
                zeit_delta=zeiten(2)-zeiten(1)
             end if ! more than one timestep
-            !print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2=',zeiten(1), zeiten(2),zeit_delta
+            print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2=',zeiten(1), zeiten(2),zeit_delta
             deallocate(zeiten)
          end if ! dlength ok
 

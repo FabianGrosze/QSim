@@ -1,6 +1,6 @@
 qsim3d/f95_gerris.zip
 qsim_doku.taz
-doku/*
+!doku/*
 !doku/Makefile
 !doku/confi
 !doku/customdoxygen.css
@@ -9,8 +9,9 @@ doku/*
 !doku/docmd/
 !doku/readme.md
 qsim1d/*.o
+qsim3d/*.o
+metabolism/*.o
 qsim1d/qsim-aufbau.f90
 qsim1d/qsim1d_marieke_testet
-metabolism/*.o
 metabolism/libqsim.a
 backup-dokufiles/*

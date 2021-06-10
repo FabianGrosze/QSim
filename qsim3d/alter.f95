@@ -22,7 +22,14 @@
 !> \page Aufenthaltszeit Aufenthaltszeit
 !! Alterung des Wasser zur Aufenthaltsbestimmung
 !! \n
-!! Altersberechnung nach Shen & Wang 2007
+!! Altersberechnung nach Shen & Wang 2007 doi:10.1016/j.ecss.2007.05.017
+!! \n
+!! \n	   !   planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
+!! \n      !   planktonic_variable_name(73)= "         age_decay"
+!! \n      !   planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007 [in Tagen]
+!! \n      !   planktonic_variable_name(75)= "        age_growth"
+!! \n
+!! Aufenthaltszeit [Tagen] = age_arith / Tracer
 !! \n
 !! Wenn die Datei 
 !! <a href="./exp/alter.txt" target="_blank">alter.txt</a> 
@@ -51,10 +58,11 @@
       depth = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen
 
 
-      !   planktonic_variable_name(71)= "            Tracer"
-      !   planktonic_variable_name(73)= "       alter_decay"
-      !   planktonic_variable_name(74)= "       alter_arith"
-      !   planktonic_variable_name(75)= "      alter_growth"
+	  !   planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
+      !   planktonic_variable_name(73)= "         age_decay"
+      !   planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007 
+      !   planktonic_variable_name(75)= "        age_growth"
+
       ! decaying tracer
       planktonic_variable_p(73+nk) = planktonic_variable_p(73+nk)*(1.0 - rate*tflie)
       !!  planktonic_variable_p(73+nk) = 0.0

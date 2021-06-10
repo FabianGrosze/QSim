@@ -1,5 +1,7 @@
-QSim - Das Gewässergütemodell der BfG {#mainpage}
+Dokumentation {#mainpage}
 ============
+
+<h1>QSim - Das Gewässergütemodell der BfG</h1>
 
 QSim (<strong>Q</strong>ualitäts-<strong>Sim</strong>ulation)
 ist ein deterministisches Gewässergütemodell, das der Simulation und Prognose 

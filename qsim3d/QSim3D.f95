@@ -399,14 +399,23 @@
 !--------------------------------------------------------------------------------------------------------------
 !> \page lnk_download Download
 !! <h3>Versionierungs-System</h3>
-!! <ul><li>Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
-!! der aktuelle Quellcode von QSim verfügbar:\n
-!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a> \n</li></ul>
+!! Im Versionierungssystem <a href="./html/QSim1D_GitBucket.html">GitBucket</a> ist
+!! der aktuelle Quellcode von QSim verfügbar. Dieser enthält auch diese Dokumentation.\n
+!! Dazu existiert eine Anleitung zur <a href="./pdf/QSIM_GIT.pdf" target="_blank">Weiterentwicklung von QSim mit GIT</a>
+!! 
 !! <h3>ausführbare Programme</h3>
-!! <ul><li> QSim1D Windows-executables  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim (im BfG-Netzwerk)\n </li> 
+!! Innerhalb des BfG-Netzwerks sind ausfürbare Versionen üblicherweise in folgenden Verzeichnissen hinterlegt.
+!! <ul><li> QSim1D Windows-executables  Z:\\U\\U2\\QSim\\Versionen_u_Setups\\QSim \n </li> 
 !! <li> QSim3D Linux-executables  /home/Wyrwa/bin (HPC im BfG-Netzwerk) \n </li> </ul>
+!!
 !! <h3>Dokumentation</h3>
-!! <ul><li> <a href="./taz/qsim_doku.taz"> ergänzendes Material zur Dokumentation</a> \n </li></ul>
+!! In dieser Dokumentation sind an vielen Stellen Beispiele, Dokumente und Bilder verlinkt. Dieses
+!! <a href="./taz/qsim_doku_additional.taz"> ergänzendes Material zur Dokumentation</a> liegt nicht im Versionierungssystem.
+!! Es kann anhand dieses Links heruntergeladen werden.
+!! \n\n
+!! Allen QSim Nutzer*innen, welche diese Dokumentation online nicht erreichen können, kann eine  
+!! <a href="./taz/qsim_doku_offline.zip"> offline-Version der Dokumentation</a> zur Verfügung gestellt werden.
+!! \n\n 
 !! <h3>Archiv</h3>
 !! <ul><li> <a href="./taz/qsimcode_13_40originalVolker.zip"> QSim1D-source-code (15. Oktober 2018)</a> letzte Version von Volker Kirchesch\n</li></ul>
 !!

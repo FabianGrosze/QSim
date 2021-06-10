@@ -542,7 +542,7 @@
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         !!!### call screen_schism_nc()
+         call screen_schism_nc()
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select
