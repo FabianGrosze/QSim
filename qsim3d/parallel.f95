@@ -60,7 +60,7 @@
       subroutine parallel_ini()
       use modell
       use QSimDatenfelder
-      use aparam                                                   
+      !use aparam                                                   
 !!!####	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
 
@@ -86,7 +86,7 @@
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
-      use aparam                                                   
+      !use aparam                                                   
 !!!###	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
       integer kontroll_lokal
@@ -146,7 +146,7 @@
       subroutine modell_parallel()
       use modell
       use QSimDatenfelder
-      use aparam                                                   
+      !use aparam                                                   
       implicit none
       integer n, alloc_status
       !print*,meinrang," modell_parallel() ... startet"
