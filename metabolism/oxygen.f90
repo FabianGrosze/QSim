@@ -27,8 +27,8 @@
                     ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                                   &
                     ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z                    &
                     ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                       &
-                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROTe,iphy                   &        ! chlagr  unbenutzt                                       
-                    ,kontroll ,jjj ) !!wy  
+                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROTe,iphy                   &
+                    ,kontroll ,jjj ) !!wy  					! chlagr  unbenutzt                                       
                                                                        
 !##############################################################
 !PROGRAMM ZUR BERECHNUNG DES SAUERSTOFFGEHALTS IN FLIEßGEWÄSSER

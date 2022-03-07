@@ -81,7 +81,7 @@ subroutine EreigGParam(cpfad1,j1)
   WRITE(1, '(A)') '<AerFormulas>'
   WRITE(1, '(A)') '<AerFormula Value="1" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16+K2wind (mit Wind)" Help="Berechnung nach Kirchesch" />´'
   WRITE(1, '(A)') '<AerFormula Value="2" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16 (ohne Wind)" Help="Berechnung nach Kirchesch" />'
-  WRITE(1, '(A)') '<AerFormula Value="3" Text="k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'
+  WRITE(1, '(A)') '<AerFormula Value="3" Text="##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'
   WRITE(1, '(A)') '<AerFormula Value="4" Text="K2=142*(v*S)^0.333*H^-0.66*B^-0.243 (Melching 1999)" Help="Berechnung nach Melching" />'
   WRITE(1, '(A)') '</AerFormulas>'
   WRITE(1, '(A)') '<HmFormulas>'

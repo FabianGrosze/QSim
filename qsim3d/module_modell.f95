@@ -179,7 +179,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !> \anchor iphy Berechnungsoption für Oberflächenbelüftung in oxygen.f90:\n
 !!     iphy = 1       ! neue Formel von mir mit Wind\n
 !!     iphy = 2       ! neue Formel von mir ohne Wind\n
-!!     iphy = 3       ! Formel von Wolf\n
+!!     iphy = 3       ! Formel von Wolf ##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'\n
 !!     iphy = 4       ! Formel von Melching\n
       integer :: iphy
 !> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010

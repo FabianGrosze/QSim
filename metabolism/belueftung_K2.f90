@@ -57,21 +57,28 @@
       if(isnan(Wind_Kl)) print*,"Belueftung_K2: Wind_Kl,SC,wge10,zWmess,fkwind,WLage,hWS,wge=",   &
                 Wind_Kl,SC,wge10,zWmess,fkwind,WLages,hWSs,wges
 
-      if(iphys==1.or.iphys==2)then
-        if(iphys==2)Wind_Kl = 0.0
-        bbeiw = 79.6*(abs(vmitts)*Slope)**0.32*tiefes**(-0.38)*Breite**(-0.16)  ! Tracer
-        bbeis = bbeiw+Wind_Kl/tiefes
-        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
-      else if(iphys==3)then
-        bbeis = ((3.+40./raus)*abs(vmitts)/tiefes**2)   ! +0.5/tiefes                                                       
-        bbeiw = 10.47*abs(vmitts)**0.43*tiefes**(-1.37)*Slope**0.22  ! gleiche Datengrundlage wie Wolf (1974)
-        bbeis = bbeis+Wind_Kl/tiefes
-        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
-      else if(iphys==4)then
-        bbeis = 142.*(abs(vmitts)*Slope)**0.333*tiefes**(-0.66)*Breite**(-0.243)
-        if(isnan(bbeis)) print*,'Belueftung_K2 isnan(bbei iphys=',iphys
+      select case (iphys) ! verschiedene Belüftungsformeln </AerFormulas>
+      case(1) ! k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16+K2wind (mit Wind) - Berechnung nach Kirchesch
+         bbeiw = 79.6*(abs(vmitts)*Slope)**0.32*tiefes**(-0.38)*Breite**(-0.16)
+         bbeis = bbeiw+Wind_Kl/tiefes
+      case(2) ! k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16 (ohne Wind) - Berechnung nach Kirchesch
+         bbeis = 79.6*(abs(vmitts)*Slope)**0.32*tiefes**(-0.38)*Breite**(-0.16)
+      case(3) ! k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974) - Berechnung nach Wolf (überarbeitete Form)
+	     !### rechnet nicht nach angegebener Formel
+         bbeis = ((3.+40./raus)*abs(vmitts)/tiefes**2)   ! +0.5/tiefes                                                       
+         bbeiw = 10.47*abs(vmitts)**0.43*tiefes**(-1.37)*Slope**0.22  ! gleiche Datengrundlage wie Wolf (1974)
+         bbeis = bbeis+Wind_Kl/tiefes
+      case(4) ! K2=142*(v*S)^0.333*H^-0.66*B^-0.243 (Melching 1999) - Berechnung nach Melching
+         bbeis = 142.*(abs(vmitts)*Slope)**0.333*tiefes**(-0.66)*Breite**(-0.243)
+      case default
+	     print*,'Belueftung_K2: Belüftungsformel iphy=',iphys,' nicht vorhanden.'
+         stop 234
+      end select
+
+      if(isnan(bbeis))then
+		 print*,'Belueftung_K2 isnan(bbei iphys=',iphys
+         stop 234
       endif
-        
       if(bbeis>20.)bbeis = 20.
                                                                        
 ! +++ Temperaturabhängigkeit ++++ 
