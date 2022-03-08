@@ -852,8 +852,8 @@ end if !! nur prozessor 0
         geob=modell_geob
         call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl) 
         if(kontrollknoten.gt.0)		&
-        print*,'SASU nachher tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl=' &
-     &                       ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
+     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
 		if (ifehl.ne. 0)call qerror("SASU fehlgeschlagen")
 		if(sa.gt.su)then
 		   print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
@@ -891,7 +891,7 @@ end if !! nur prozessor 0
      &               ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
 	 
          if(kontrollknoten.gt.0)		&
-	     print*,meinrang,i," strahlg_wetter glob,uhrz,sa,su,schwi",glob(1),uhrz,sa,su,schwi(1)
+	     print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
 
 !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &                                           
 !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr

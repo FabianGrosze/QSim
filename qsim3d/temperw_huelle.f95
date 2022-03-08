@@ -498,6 +498,10 @@
 		 ,dtempS_mit                          &
 		 ,iform_VerdR                         &
 		 ,kontroll, iglob ) 
+!   subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                           &
+!                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz1,tempmt,xtempw,btiefe,xTsed,xdtemp_nkz,dtempS_mit,iform_VerdR            &
+!						  ,kontroll ,jjj )
+	     if (kontroll) print*,meinrang,i,'nach temperw_kern tempw=',planktonic_variable_p(1+nk),(1+nk)
 
          !! error check
 		 if( isNaN(xdtemp_nkz) )then
@@ -510,15 +514,15 @@
 		 endif
          !! Temperatur change ...
 	     if(rb_hydraul_p(2+(i-1)*number_rb_hydraul).gt.min_tief)then ! wet nodes
-             plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =       &
-		     plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) * xdtemp_nkz ! tempwz(j,1)
 		     planktonic_variable_p(1+nk) = tempmt  ! = planktonic_variable_p(1+nk) + xdtemp_mit ! tempw(1)
+             !plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =       &
+		     !plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) * xdtemp_nkz ! tempwz(j,1)
 		 else ! dry nodes
 		    planktonic_variable_p(1+nk) = transfer_quantity_p(62+(i-1)*number_trans_quant) ! water temperature equals air temp.
-            plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) &
-			= transfer_quantity_p(62+(i-1)*number_trans_quant) 
 		 endif ! wet nodes
-      end do
+		!keine extra Tiefenauflösung im 3D
+		plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable_p(1+nk)
+      end do ! all j num_lev
 
       RETURN
       END subroutine temperw_huelle

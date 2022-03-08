@@ -203,6 +203,8 @@ end if !! nur prozessor 0
       if ((j.ge.1).and.(j.le.part))then
          print*,'nach randbedingungen_setzen am Kontrollknoten:',kontrollknoten,meinrang,part,j
          print*,'Tiefe=', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
+         print*,'tempw=', planktonic_variable_p(1+(j-1)*number_plankt_vari),1+(j-1)*number_plankt_vari
+         print*,'O2='   , planktonic_variable_p(2+(j-1)*number_plankt_vari),2+(j-1)*number_plankt_vari ! Sauerstoffgehalt tiefengemittelt
          print*,'obsb = ',planktonic_variable_p(17+(j-1)*number_plankt_vari)
          print*,'ocsb = ',planktonic_variable_p(18+(j-1)*number_plankt_vari) 
          print*,'cd1 = ',planktonic_variable_p(37+(j-1)*number_plankt_vari) ! 	leicht abbaubare gelöste organische C-Verbindungen 	mg C / l

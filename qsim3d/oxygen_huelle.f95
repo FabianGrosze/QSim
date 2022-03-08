@@ -709,7 +709,7 @@
          call qerror('iphy out of range 1...4 , aeration method, set in EREIGG.txt') ! Reaeration rate
       endif
 
-      if(kontroll) print*,'oxygen (davor): vo2(1),vo2(2),i,FLAE(1)=',vo2(1),vo2(2),i, FLAE(1)
+      if(kontroll) print*,'oxygen (davor): vo2(1),vo2(2),i,FLAE(1),TEMPWz(1,1)=',vo2(1),vo2(2),i, FLAE(1),TEMPWz(1,1)
       do k=1,number_benth_distr
          if(isnan(benthic_distribution_p(k+(i-1)*number_benth_distr)))then
             print*,'vor oxygen: isnan(benthic_distribution_p  node#',iglob,' variable# ',k
