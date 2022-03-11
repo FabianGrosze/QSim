@@ -580,7 +580,7 @@
       endif
       if(kontroll) print*,"SEDIMENTATION DER NITRIFIKANTEN: vxt-sednit",vxt,sednit
 !++++++++++++++++++++++++++++++++++++++++                               
-!   doN		Ammoniumfreisetzung beim C-Abbau (wird im Baustein <orgC> berechnet      
+!   doN		Ammoniumfreisetzung beim C-Abbau (wird im Baustein <orgC> berechnet)      
 !   dzN		Ammoniumfreisetzung durch Zooplankton (Rotatorienrespiration)
 !   ddrN		Ammoniumfreisetzung durch Grund- und aktive Respiration der benthischen Filtrierer (Dreissena)
                                                                     

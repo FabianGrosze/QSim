@@ -451,64 +451,65 @@
       rewind (299)
 
       read(299,'(f5.2)',iostat=read_error)Version_alt
-      print*,"Version_alt=",Version_alt
-      if(read_error<0)then
-        if(versio>=13.20)then
-          write(*,1200)
-          1200 format(2x,'ab der Version 13.20 wird das C:Chl-Verhaeltnis statt')
-          write(*,1202)
-          1202 format(2x,'des Chla:Biomasse-Verhaeltnisses benutzt!!')
-          write(*,*)
-          write(*,1205)
-          1205 Format(2x,'Eingabe der max. Algenwachstumsraten fuer 20 Grad C !!!')
-          write(*,1207)
-          1207 Format(2x,'Default-Werte in <aparam_gerris.xlsx>') 
-          write(*,*)
-          write(*,1210)
-          1210 format(2x,'falls die Werte schon geaendert wurden "weiter mit: w"')
-          write(*,1215) 
-          1215 format(2x,'ansonsten "Berechnungsabruch mit: s"')
-          read(*,'(a1)')ctaste
-          if(ctaste=='s'.or.ctaste=='S')then
-            rewind(299)
-            write(299,'(f5.2)')versio
-          stop 1
-          endif
-          rewind(299)
-          write(299,'(f5.2)')versio
-        endif    
-      endif
+	  Version_alt=14.00 ! kein Rückgriff auf 13er Versionen mehr
+      print*,"Version_alt=",Version_alt," versio=",versio
+      !if(read_error<0)then
+      !  if(versio>=13.20)then
+      !    write(*,1200)
+      !    1200 format(2x,'ab der Version 13.20 wird das C:Chl-Verhaeltnis statt')
+      !    write(*,1202)
+      !    1202 format(2x,'des Chla:Biomasse-Verhaeltnisses benutzt!!')
+      !    write(*,*)
+      !    write(*,1205)
+      !    1205 Format(2x,'Eingabe der max. Algenwachstumsraten fuer 20 Grad C !!!')
+      !    write(*,1207)
+      !    1207 Format(2x,'Default-Werte in <aparam_gerris.xlsx>') 
+      !    write(*,*)
+      !    write(*,1210)
+      !    1210 format(2x,'falls die Werte schon geaendert wurden "weiter mit: w"')
+      !    write(*,1215) 
+      !    1215 format(2x,'ansonsten "Berechnungsabruch mit: s"')
+      !    read(*,'(a1)')ctaste
+      !    if(ctaste=='s'.or.ctaste=='S')then
+      !      rewind(299)
+      !      write(299,'(f5.2)')versio
+      !    stop 1
+      !    endif
+      !    rewind(299)
+      !    write(299,'(f5.2)')versio
+      !  endif    
+      !endif
 
-      if(Version_alt>13.19.and.Versio<=13.19)then
-         write(*,1220)
-         1220 format(2x,'Eingabe des Chla:Biomasse-Verhaeltnisses')
-         write(*,*)
-         write(*,1210)
-         write(*,1215)
-         read(*,'(a1)')ctaste
-         if(ctaste=='s'.or.ctaste=='S')then
-           rewind(299)
-           write(299,'(f5.2)')versio
-           stop 1
-         endif
-       endif
+      !if(Version_alt>13.19.and.Versio<=13.19)then
+      !   write(*,1220)
+      !   1220 format(2x,'Eingabe des Chla:Biomasse-Verhaeltnisses')
+      !   write(*,*)
+      !   write(*,1210)
+      !   write(*,1215)
+      !   read(*,'(a1)')ctaste
+      !   if(ctaste=='s'.or.ctaste=='S')then
+      !     rewind(299)
+      !     write(299,'(f5.2)')versio
+      !     stop 1
+      !   endif
+      ! endif
 
-           if(Version_alt>0.0.and.Version_alt<=13.19.and.Versio>13.19)then
-              write(*,1200)
-              write(*,1202)
-              write(*,*)
-              write(*,1205)
-              write(*,1207)
-              write(*,*)
-              write(*,1210)
-              write(*,1215) 
-              read(*,'(a1)')ctaste
-              if(ctaste=='s'.or.ctaste=='S')then
-                rewind(299)
-                write(299,'(f5.2)')versio
-                stop 1
-              endif
-         endif
+      !     if(Version_alt>0.0.and.Version_alt<=13.19.and.Versio>13.19)then
+      !        write(*,1200)
+      !        write(*,1202)
+      !        write(*,*)
+      !        write(*,1205)
+      !        write(*,1207)
+      !        write(*,*)
+      !        write(*,1210)
+      !        write(*,1215) 
+      !        read(*,'(a1)')ctaste
+      !        if(ctaste=='s'.or.ctaste=='S')then
+      !          rewind(299)
+      !          write(299,'(f5.2)')versio
+      !          stop 1
+      !        endif
+      !   endif
 
               rewind(299)
               write(299,'(f5.2)')versio

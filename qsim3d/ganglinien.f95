@@ -31,9 +31,9 @@
          n_ue=0
          n_bn=0
 
-         call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierror)
          if(meinrang.ne.0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
-         call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierror)
 
          !! Knoten aussortieren, die nicht zu diesem Prozess gehören
          agp=0 !!
@@ -46,17 +46,17 @@
             end if
          end do
 
-         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierror)
          allocate (r_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
          allocate (t_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
          allocate (u_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
  
          ! planktonic variables
-         call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_plankt_vari
             if(output_plankt(j))n_pl=n_pl+1
          end do
-         call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_plankt_vari_vert
             if(output_plankt_vert(j))n_pl=n_pl+1
          end do
@@ -80,22 +80,22 @@
          end if ! alloc_status .ne.0
 
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
-         call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_benth_distr
             if(output_benth_distr(j))n_bn=n_bn+1
          end do
          allocate (bn_gang(anz_gangl,zeitschrittanzahl+1,n_bn), stat = alloc_status )
 
          !transfer_quantities
-         call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_trans_val
             if(output_trans_val(j))n_ue=n_ue+1
          end do
-         call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_trans_quant
             if(output_trans_quant(j))n_ue=n_ue+1
          end do
-         call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierror)
          do j=1,number_trans_quant_vert
             if(output_trans_quant_vert(j))n_ue=n_ue+1
          end do
@@ -294,7 +294,7 @@
       end if ! hydro_trieb=1=casu
       end if ! meinrang.eq. 0
 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       END subroutine ganglinien_zeitschritt
 !!
@@ -487,8 +487,8 @@ if(meinrang.eq.0)then ! prozess 0 only
  124  continue
 
 end if ! only prozessor 0
-        call mpi_barrier (mpi_komm_welt, ierr)
-        call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierr)
+        call mpi_barrier (mpi_komm_welt, ierror)
+        call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierror)
 
          ! lueftung! beschriftung=trim(beschriftung)//"|        delo2_last|"
 

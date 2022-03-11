@@ -117,7 +117,7 @@
          integer :: i,j,as
 
          !print*,meinrang,'benthic_parallel'
-         call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierror)
 
          allocate (benthic_distribution_p(number_benth_distr*part), stat = as )
          if(as.ne.0)then
@@ -140,7 +140,7 @@
 
          call scatter_benthic()
 
-         !call mpi_barrier (mpi_komm_welt, ierr)
+         !call mpi_barrier (mpi_komm_welt, ierror)
          return
       END subroutine benthic_parallel
 
@@ -154,13 +154,13 @@
          !print*,'scatter_benthic'
          
          call MPI_Scatter(benthic_distribution, part*number_benth_distr, MPI_FLOAT,  &
-         benthic_distribution_p, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-         if(ierr.ne.0)then
-            write(fehler,*)' 13 MPI_Scatter(benthic_distribution failed :', ierr
+         benthic_distribution_p, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+         if(ierror.ne.0)then
+            write(fehler,*)' 13 MPI_Scatter(benthic_distribution failed :', ierror
             call qerror(fehler)
          end if 
 
-         !call mpi_barrier (mpi_komm_welt, ierr)
+         !call mpi_barrier (mpi_komm_welt, ierror)
          return
       END subroutine scatter_benthic
 !----+-----+----
@@ -172,13 +172,13 @@
          !print*,'gather_benthic'
          
          call MPI_Gather(benthic_distribution_p, part*number_benth_distr, MPI_FLOAT,  &
-         benthic_distribution, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-         if(ierr.ne.0)then
-            write(fehler,*)' 13b MPI_Gather(benthic_distribution_p failed :', ierr
+         benthic_distribution, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+         if(ierror.ne.0)then
+            write(fehler,*)' 13b MPI_Gather(benthic_distribution_p failed :', ierror
             call qerror(fehler)
          end if 
          
-         !call mpi_barrier (mpi_komm_welt, ierr)
+         !call mpi_barrier (mpi_komm_welt, ierror)
          return
       END subroutine gather_benthic
 !----+-----+----

@@ -67,10 +67,10 @@
          nin=transinfo_instack(transinfo_zuord(nt))
          print*,"get_schism_step: nt,zuord,zeit=",nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
-      call MPI_Bcast(nst,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(nin,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
+      call MPI_Bcast(nst,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(nin,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       if(nst.ne.nst_prev)then ! proceed to next stack
          if(meinrang.eq.0)print*,"get_schism_step proceeds to next stack ",nst,ncid
@@ -88,7 +88,7 @@
          end if ! open error
          nst_prev=nst
       end if !next stack
-      call mpi_barrier (mpi_komm_welt, ierr)!#! 
+      call mpi_barrier (mpi_komm_welt, ierror)!#! 
 
       !! get Dimensions
       call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
@@ -99,12 +99,12 @@
          call check_err(iret)
          if(iret.ne. 0) print*,meinrang,j," get_schism_step nf90_Inquire_Dimension failed iret=",iret
       end do ! all dimensions
-      call mpi_barrier (mpi_komm_welt, ierr)!#! 
+      call mpi_barrier (mpi_komm_welt, ierror)!#! 
 
      !!!!! elev -> p
       call check_err( nf_inq_varid(ncid,"elev", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
-      call mpi_barrier (mpi_komm_welt, ierr)!#! 
+      call mpi_barrier (mpi_komm_welt, ierror)!#! 
       if(dlength(dimids(1)).gt.maxstack)call qerror("elev:dlength(dimids(1)).gt.maxstack")
       !! initialize
       do j=1,maxstack 
@@ -115,7 +115,7 @@
             var_g(j)=777.777
          end do ! all j
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! get data
       start2 = (/ 1, nin /)
       count2 = (/ npa, 1 /) ! nodenumber first dimension
@@ -127,14 +127,14 @@
       !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
 	  !print*,meinrang," eta2(topnode side 7",isidenode(1,7),") =",eta2(isidenode(1,7))
 	  !print*,meinrang," eta2(bottomnode side 7",isidenode(2,7),") =",eta2(isidenode(2,7))
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p elev failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p elev failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
 	     !print*,meinrang," get_schism_step elev recombine into global",npa,varid,trim(adjustl(vname(varid))) 
@@ -152,7 +152,7 @@
          end do ! all j
          print*," get_schism_step wsp minwert, maxwert=",minwert, maxwert
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !print*,meinrang," get_schism_step elev recombined"
 
       !!!!! dahv -> u,dir
@@ -175,7 +175,7 @@
             var_g(j)=777.777
          end do ! all j
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! get data vel-x
       start3 = (/1, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
@@ -185,14 +185,14 @@
       call check_err(iret)
 	  !print*,meinrang," dahv_x (topnode side 7",isidenode(1,7),") =",var_p(isidenode(1,7))
 	  !print*,meinrang," dahv_x (bottomnode side 7",isidenode(2,7),") =",var_p(isidenode(2,7))
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv1 failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv1 failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -201,7 +201,7 @@
             end do
          end do
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! get data vel-y
       start3 = (/2, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
@@ -210,14 +210,14 @@
       call check_err(iret)
 	  !print*,meinrang," dahv_y (topnode side 7",isidenode(1,7),") =",var_p(isidenode(1,7))
 	  !print*,meinrang," dahv_y (bottomnode side 7",isidenode(2,7),") =",var_p(isidenode(2,7))
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv2 failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv2 failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -244,7 +244,7 @@
          end do ! all j
          !print*," get_schism_step u minwert, maxwert=",minwert, maxwert
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  
       !!!!! hvel_side -> su2,sv2
 	  ! if(iof_hydro(26)==1) call writeout_nc(id_out_var(30),'hvel_side',8,nvrt,nsa,su2,sv2)
@@ -262,7 +262,7 @@
       if(meinrang.eq. 0)then
          var_g(:)=777.777
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  do i=1,nvrt
          ! float hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two) ;
          start4 = (/1, i, 1  , nin /)
@@ -277,15 +277,15 @@
          if(iret.ne. 0) print*,meinrang," get_schism_step nf90_get_var hvel_side failed iret=",iret
          call check_err(iret)
          sv2(i,1:nsa)=var2_p(1:nsa)
-         call mpi_barrier (mpi_komm_welt, ierr)
-         call MPI_Gather(var1_p, maxstack, MPI_FLOAT, var1_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-         call MPI_Gather(var2_p, maxstack, MPI_FLOAT, var2_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+         call mpi_barrier (mpi_komm_welt, ierror)
+         call MPI_Gather(var1_p, maxstack, MPI_FLOAT, var1_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+         call MPI_Gather(var2_p, maxstack, MPI_FLOAT, var2_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
 	  end do ! all i levels
 	  !print*,meinrang," nvrt=1 su2(7)=",su2(1,7)," sv2=",sv2(1,7)," global edge/side number=",islg(7)
 	  !print*,meinrang," nvrt=2 su2(7)=",su2(2,7)," sv2=",sv2(2,7)
 	  !print*,meinrang," global topnode number =",iplg(isidenode(1,7)),  &
       !&                " global bottomnode number =",iplg(isidenode(2,7))
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers !ed_vel_x, ed_vel_y
       if(meinrang.eq. 0)then
 	  	 ed_vel_x(:)=0.0 ; ed_vel_y(:)=0.0
@@ -302,13 +302,13 @@
 	        !print*,j," ed_vel =",ed_vel_x(islg_sc(j,7)),ed_vel_y(islg_sc(j,7))," global edge/side number=",islg_sc(j,7)
          end do ! all j processes
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
 	  !!!!!  zs depth discretisation of edges/sides !###	call writeout_nc(id_out_var(39),'zs',8,nvrt,nsa,zs)
 	  if(.not.allocated(zs))allocate(zs(nvrt,nsa))
       if(meinrang.eq. 0) var_g(:)=777.777
       var_p(:)=0.0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call check_err( nf_inq_varid(ncid,"zs", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
 	  do i=1,nvrt
@@ -323,7 +323,7 @@
 	  if(.not.allocated(znl))allocate(znl(nvrt,npa))
       if(meinrang.eq. 0) var_g(:)=777.777
       var_p(:)=0.0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call check_err( nf_inq_varid(ncid,"znl", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
 	  do i=1,nvrt
@@ -334,14 +334,14 @@
 		 !#############
 	  end do ! all i levels
 	  !################
-	  call mpi_barrier (mpi_komm_welt, ierr)
+	  call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv1 failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dahv1 failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -350,7 +350,7 @@
             end do
          end do
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  !dingdong=##########
 
 	  !print*,meinrang," znl (topnode side 7",   isidenode(1,7),") =",znl(1,isidenode(1,7)),znl(2,isidenode(1,7))
@@ -363,7 +363,7 @@
             var_g(j)=777.777
          end do ! all j
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       iret=nf_inq_varid(ncid,"temp", varid)
       if(iret.ne. 0)then !no temp?
          if(meinrang.eq. 0)then ! message only once
@@ -393,14 +393,14 @@
             call qerror(fehler)
          end if
       end if ! with salt
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p temp failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p temp failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -419,7 +419,7 @@
          !!### if(minwert.lt. -1.0)call qerror("This is no ice simulation")
          !!### if(maxwert.gt. 90.0)call qerror("This is no steam simulation")
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       !!!!! salt -> planktonic_variable_name(72)
       if(meinrang.eq. 0)then
@@ -427,7 +427,7 @@
             var_g(j)=777.777
          end do ! all j
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       iret=nf_inq_varid(ncid,"salt", varid)
       if(iret.ne. 0)then ! salt?
          if(meinrang.eq. 0)then ! message only once
@@ -457,14 +457,14 @@
             call qerror(fehler)
          end if
       end if ! with salt
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p salt failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p salt failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -473,7 +473,7 @@
             end do
          end do
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       !!!!! AGE_1 -> planktonic_variable_name(74)= "       alter_arith"
       if(meinrang.eq. 0)then
@@ -481,7 +481,7 @@
             var_g(j)=777.777
          end do ! all j
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       iret= nf_inq_varid(ncid,"AGE_1", varid)
       if(iret.ne. 0)then ! with age1 ?
          if(meinrang.eq. 0)then ! message only once
@@ -508,14 +508,14 @@
          call check_err(iret)
          if(iret.ne. 0) print*,meinrang," get_schism_step nf90_get_var AGE_1 failed iret=",iret
       end if ! with age
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p AGE_1 failed : ", ierr
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p AGE_1 failed : ", ierror
          call qerror(fehler)
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !! recombine into global numbers
       if(meinrang.eq. 0)then
          do j=1,proz_anz ! all processes/ranks
@@ -526,7 +526,7 @@
       end if ! proc. 0 only
 	  
  7777 continue
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       !! close, clean, return
 	  if(meinrang.eq.0)then
@@ -537,7 +537,7 @@
       if(istat.ne.0) call qerror("deallocate var_p( failed")
       deallocate (dlength,dname, stat = istat)
       deallocate (vxtype,vndims,vname,  stat = istat )
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       if(meinrang.eq. 0)then
          do j=1,number_plankt_point ! all j nodes
@@ -549,14 +549,14 @@
          end do ! all j nodes
          print*,"### stofftransport_schism: ks and utau, only first guess ###"
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       if(meinrang.eq. 0)then !! all boundary nodes inflow ####
          do j=1,number_plankt_point ! all j nodes
             if(knoten_rand(j).gt. 0 ) inflow(j)=.true.
          end do ! all j nodes
       end if ! proc. 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       END subroutine get_schism_step
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

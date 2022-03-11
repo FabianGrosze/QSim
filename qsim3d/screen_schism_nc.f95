@@ -46,7 +46,7 @@
       real zeit_delta
       integer :: nnd, nnv, sumtra, nnt
 	  
-      if(meinrang.eq.0) print*,'screen_schism_nc starts' 
+      !if(meinrang.eq.0) print*,'screen_schism_nc starts' 
 	  
       !--- netcdf-files parallel
       !print*,nf90_max_var_dims,'nf90_max_var_dims',meinrang
@@ -69,7 +69,7 @@
          endif
       end do
       if(meinrang.eq.0)print*,"screen_schism_nc,n_stacks=",n_stacks
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       transinfo_anzahl=0
       zeit_min=3153600000.0
@@ -79,14 +79,14 @@
       !do i=1,10
          write(chari,*),i
          write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc	 
-		 print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
+		 !print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
          iret = nf_open(dateiname, NF_NOWRITE, ncid)
          if(iret.ne. 0) then
             call check_err(iret)
             write(fehler,*)meinrang,i,' screen_schism_nc: nf_open failed ',dateiname,iret
             call qerror(fehler)
-		 else
-		    print*,"screen_schism_nc: nf_open(ncid= ",ncid
+		 !else
+		 !   print*,"screen_schism_nc: nf_open(ncid= ",ncid
          end if ! open failed
          call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
          !! dimensions
@@ -96,7 +96,7 @@
             iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
             call check_err(iret)
             if((meinrang.eq. 2).and.(i.eq. 1))  &
-     &         print*,meinrang,i,j,' screen_schism_nc: Dimension  ' ,trim(adjustl(dname(j))),' wert=', dlength(j)
+     &         print*,meinrang,i,ndims,j,' screen_schism_nc: Dimension  ' ,trim(adjustl(dname(j))),' wert=', dlength(j)
          end do !all j dimension
          !! Variables
          do j=1,nVars
@@ -121,11 +121,11 @@
          end if
          iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
          call check_err(iret)
-         print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid=',varid,iret,ncid
+         !print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid=',varid,iret,ncid
          n=dlength(dimids(1))
          if(n.gt. 0)then
             transinfo_anzahl=transinfo_anzahl+n
-            print*,i,'read_mesh_nc_sc: transinfo_anzahl=',transinfo_anzahl,n
+            !print*,meinrang,i,' screen_schism_nc: transinfo_anzahl=',transinfo_anzahl,n
             allocate (zeiten(n), stat = istat )
             iret = nf90_get_var(ncid, varid, zeiten)
             call check_err(iret)
@@ -138,32 +138,32 @@
             if(n.gt. 1)then
                zeit_delta=zeiten(2)-zeiten(1)
             end if ! more than one timestep
-            print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2=',zeiten(1), zeiten(2),zeit_delta
+            !print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2=',zeiten(1), zeiten(2),zeit_delta
             deallocate(zeiten)
          end if ! dlength ok
 
-         !! checking necessary variables
-         iret = nf_inq_varid(ncid,'elev', varid)
-         if(iret.ne. 0)then
-            if(meinrang.eq.0) print*,'screen_schism_nc: water level elevation needed by QSim , param.nml: iof_hydro(1)=1' 
-            call check_err( iret )
-            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> elev <<  failed, iret=',iret, " rank=",meinrang
-            call qerror(fehler)
-         end if
-         iret = nf_inq_varid(ncid,'dahv', varid)
-         if(iret.ne. 0)then
-            if(meinrang.eq.0) print*,'screen_schism_nc: node veocities needed by QSim, param.nml: iof_hydro(16)=1' 
-            call check_err( iret )
-            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> dahv <<  failed, iret=',iret, " rank=",meinrang
-            call qerror(fehler)
-         end if
-         iret = nf_inq_varid(ncid,'hvel_side', varid)
-         if(iret.ne. 0)then
-            if(meinrang.eq.0) print*,'screen_schism_nc: side velocities needed by QSim, param.nml: iof_hydro(26)=1' 
-            call check_err( iret )
-            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> hvel_side <<  failed, iret=',iret, " rank=",meinrang
-            call qerror(fehler)
-         end if
+!         !! checking necessary variables
+!         iret = nf_inq_varid(ncid,'elev', varid)
+!         if(iret.ne. 0)then
+!            if(meinrang.eq.0) print*,'screen_schism_nc: water level elevation needed by QSim , param.nml: iof_hydro(1)=1' 
+!            call check_err( iret )
+!            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> elev <<  failed, iret=',iret, " rank=",meinrang
+!            call qerror(fehler)
+!         end if
+!         iret = nf_inq_varid(ncid,'dahv', varid)
+!         if(iret.ne. 0)then
+!            if(meinrang.eq.0) print*,'screen_schism_nc: node veocities needed by QSim, param.nml: iof_hydro(16)=1' 
+!            call check_err( iret )
+!            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> dahv <<  failed, iret=',iret, " rank=",meinrang
+!            call qerror(fehler)
+!         end if
+!         iret = nf_inq_varid(ncid,'hvel_side', varid)
+!         if(iret.ne. 0)then
+!            if(meinrang.eq.0) print*,'screen_schism_nc: side velocities needed by QSim, param.nml: iof_hydro(26)=1' 
+!            call check_err( iret )
+!            write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, >> hvel_side <<  failed, iret=',iret, " rank=",meinrang
+!            call qerror(fehler)
+!         end if
 
          call check_err( nf_close(ncid) )
       end do !all i stacks
@@ -182,7 +182,7 @@
       sumtra=sumtra/proz_anz
       !print*,meinrang,'screen_schism_nc timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0) 
       if(transinfo_anzahl.ne.sumtra)call qerror('timestep number unclear screen_schism_nc')
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
 if(meinrang.eq. 0)then ! prozess 0 only
       allocate (transinfo_zeit(transinfo_anzahl), transinfo_zuord(transinfo_anzahl), stat = istat )
@@ -220,16 +220,16 @@ if(meinrang.eq. 0)then ! prozess 0 only
          iret = nf_close(ncid)
          call check_err(iret)
       end do !all i stacks
-      print*,'screen_schism_nc reread 0 timestep number=',transinfo_anzahl, nnt, n_stacks
+      !print*,'screen_schism_nc reread 0 timestep number=',transinfo_anzahl, nnt, n_stacks
       if(nnt.ne.transinfo_anzahl)call qerror('screen_schism_nc reread 0 timestep number unclear ')
       !write(time_offset_string,'(A)')'2011 01 01 00 00 00' !#################
       write(time_offset_string,'(I4,x,I2,x,I2,x,I2,x,I2,x,I2)')jahr, monat, tag , stunde, minute, sekunde
-      print*,'screen_schism_nc: ', transinfo_anzahl,' Transport-Zeitschritte ab ',trim(adjustl(time_offset_string)) ! &
+      !print*,'screen_schism_nc: ', transinfo_anzahl,' Transport-Zeitschritte ab ',trim(adjustl(time_offset_string)) ! &
      !&      ,' ######## WARNING ###### start time hard coded ########'
       !read(time_offset_string,*,iostat=istat) jahr, monat, tag, stunde, minute, sekunde
       !if(istat.ne.0)call qerror('screen_schism_nc: time_offset-Lesefehler')
-      print*,"screen_schism_nc time_offset=",tag, monat, jahr, stunde, minute, sekunde
-      print*,"screen_schism_nc time_offset_string=",trim(time_offset_string)
+      !print*,"screen_schism_nc time_offset=",tag, monat, jahr, stunde, minute, sekunde
+      !print*,"screen_schism_nc time_offset_string=",trim(time_offset_string)
       call sekundenzeit(1)
       write(*,227)"screen_schism_nc: time-offset="  &
                   ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
@@ -242,16 +242,16 @@ if(meinrang.eq. 0)then ! prozess 0 only
       call zeitsekunde()
       write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
-      print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
+      print*,'in ',transinfo_anzahl,' regelmäßigen Schritten von  ',dttrans, ' Sekunden'
 end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       deallocate (dlength,dname, stat = istat)
       deallocate (vxtype,vndims,vname,  stat = istat )
       ncid=-333
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
   227 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr  = ",I9," sek. seit Jahresanfang ",I4)
   228 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr  = ",I9," sek. seit ",A)
-      if(meinrang.eq.0) print*,"screen_schism_nc finished" 
+      !if(meinrang.eq.0) print*,"screen_schism_nc finished" 
       return
       END subroutine screen_schism_nc

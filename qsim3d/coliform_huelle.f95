@@ -81,7 +81,6 @@
       iglob=(i+meinrang*part)
       nk=(i-1)*number_plankt_vari
       kontroll = iglob.eq.kontrollknoten
-      if(kontroll)print*,'coliform_huelle... start: iglob,i,nk,meinrang=',iglob,i,nk,meinrang
 
       tiefe(1:2)= rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
       rau(1:2)= strickler( zone(point_zone(iglob))%reib , tiefe(1) ) ! Strickler Reibungsbeiwert
@@ -109,7 +108,8 @@
       ieinLs(1:2)=0        ! keine Linienquellen
       ilbuhn = 0           ! keine Buhnen
       coli(1:2)  = planktonic_variable_p(61+(i-1)*number_plankt_vari) ! Fäkalcoliforme Bakterien
-      DOSCF(1:2)  = planktonic_variable_p(70+(i-1)*number_plankt_vari) ! 
+       if(kontroll)print*,'coliform_huelle... start: iglob,i,nk,meinrang=',iglob,i,nk,meinrang,' coli=',coli(1)
+     DOSCF(1:2)  = planktonic_variable_p(70+(i-1)*number_plankt_vari) ! 
       EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS ((nicht mehr)nur bei Temperaturmodellierung erforderlich!)       mstr
       ! integer , parameter :: azStrs=1
 

@@ -306,7 +306,7 @@
          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
       end do
       call ph2hplus()
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
@@ -331,14 +331,14 @@
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
-         call stofftransport_schism() !parallel and 3D
+         !call stofftransport_schism() !parallel and 3D
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
       end select
 	  
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call hplus2ph()
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
 	  
       do i=1,part ! all i elements/nodes on this process
@@ -347,13 +347,13 @@
          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
       end do
 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       if(meinrang.eq.0)then !! nur prozessor 0
          do j=1,number_plankt_point ! alle j Knoten
             call tiefenprofil(j)  !! 2D depth avaraged
          end do ! alle j Berechnungsstützstellen
       end if !! nur prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       RETURN
       END subroutine stofftransport

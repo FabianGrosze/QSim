@@ -119,7 +119,7 @@
       use modell                                                   
       implicit none
 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call gather_benthic()
       call gather_ueber()
       !! Aufruf immer nach stofftransport() daher ist gather_planktkon() immer schon gemacht
@@ -137,7 +137,7 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
          call qerror('ausgeben: Hydraulischer Antrieb unbekannt')
       end select
 end if ! nur Prozessor 0 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       RETURN
       END subroutine ausgeben
 !----+-----+----+-----+----+-----+----+-----+----
@@ -566,9 +566,9 @@ endif ! Tageswechsel
 
       !print*,meinrang,'ausgeben_parallel() n_ausgabe=',n_ausgabe
 
-      call MPI_Bcast(n_ausgabe,1,MPI_INT,0,mpi_komm_welt,ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_ausgabe,  ierr=', ierr
+      call MPI_Bcast(n_ausgabe,1,MPI_INT,0,mpi_komm_welt,ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_ausgabe,  ierror=', ierror
          call qerror(fehler)
       end if
       !print*,'MPI_Bcast(n_ausgabe gemacht',meinrang
@@ -576,15 +576,15 @@ endif ! Tageswechsel
          allocate (ausgabe_zeitpunkt(n_ausgabe), stat = alloc_status )
          allocate (ausgabe_bahnlinie(n_ausgabe), stat = alloc_status )
       end if
-      call MPI_Bcast(ausgabe_zeitpunkt,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_zeitpunkt,  ierr=', ierr
+      call MPI_Bcast(ausgabe_zeitpunkt,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_zeitpunkt,  ierror=', ierror
          call qerror(fehler)
       end if
       !print*,'MPI_Bcast(ausgabe_zeitpunkt gemacht',meinrang
-      call MPI_Bcast(ausgabe_bahnlinie,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_bahnlinie,  ierr=', ierr
+      call MPI_Bcast(ausgabe_bahnlinie,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_bahnlinie,  ierror=', ierror
          call qerror(fehler)
       end if
       !print*,'MPI_Bcast(ausgabe_bahnlinie gemacht',meinrang
@@ -1097,6 +1097,14 @@ end if ! nur Prozessor 0
       do n=1,knotenanzahl2D
          write(ion,'(f27.6)') real(knoten_rand(n))
       end do ! alle Knoten
+
+	  if(hydro_trieb==3)then  ! nur SCHISM transport is prallel
+         write(ion,'(A)')'SCALARS knoten_rang float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n=1,knotenanzahl2D
+            write(ion,'(f27.6)') real(knoten_rang(n))
+         end do ! alle Knoten
+	  endif
 
       !print*,'mesh_output: finished'
       RETURN

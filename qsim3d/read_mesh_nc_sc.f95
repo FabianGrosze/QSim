@@ -30,51 +30,50 @@
       SUBROUTINE read_mesh_nc_sc() !meinrang.eq.0
       use netcdf
       use modell
-      use schism_glbl, only:su2,sv2,tr_el,eta2  &
-	 &                     ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
-	 &                     ,ielg,iplg,islg,RNDAY ,dt, rkind &
-	 &                     ,xnd,ynd,dp00,kbp00, i34,elnode, isidenode,snx,sny,distj 
-      use schism_msgp, only:nproc,myrank
+      use schism_glbl
+!	  , only:su2,sv2,tr_el,eta2  &
+!	 &                     ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
+!	 &                     ,ielg,iplg,islg,rnday ,dt, rkind &
+!	 &                     ,xnd,ynd,dp00,kbp00, i34,elnode, isidenode,snx,sny,distj 
+      use schism_msgp
+!	  , only:nproc,myrank
 	  implicit none
       include 'netcdf.inc'
 	  
-      integer :: IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,IHFSKIP,MSC2,MDC2
+!     Name list
+      integer :: ntracer_gen,ntracer_age,sed_class,eco_class !,flag_fib
+      namelist /CORE/ipre,ibc,ibtp,ntracer_gen,ntracer_age,sed_class,eco_class, &
+     &nspool,ihfskip,msc2,mdc2,dt,rnday
 
-	  namelist /CORE/IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,NSPOOL,IHFSKIP,MSC2,MDC2,DT,RNDAY
-	  
-      integer :: i,j,k,n,m,mm,ne,np,ns, neta_global,nr
-      integer lfdb, istat
+      integer :: i,j,k,n,m,mm, istat, nr
       character (len=longname) :: dateiname,systemaufruf
-      integer :: start_year,start_month,start_day
-      real*8 :: start_hour,utc_start !, dt
-      character(len=72) :: fgb,fgb2,fdb  ! Processor specific global output file name
+!      integer :: start_year,start_month,start_day
+!      real*8 :: start_hour,utc_start !, dt
+!      character(len=72) :: fgb,fgb2,fdb  ! Processor specific global output file name
       character(len=400) :: textline
-      !integer :: ne_p, np_p, ns_p ! numbers on each process
       integer :: ne_l, np_l, ns_l
       integer ::irank
-      integer :: nrec, nspool, kz, ics, nmax, nmin, tn, bn
-      real :: dtout, h0, h_s, h_c, theta_b, theta_f
-      real,allocatable , dimension (:) :: ztot, sigma
+	  integer :: nmax, nmin, tn, bn
       integer,allocatable , dimension (:,:) :: nm2
 	  integer,allocatable , dimension (:) :: kbp00_global , i34_global
-      real :: xmax, xmin, ymax, ymin, zmax, zmin, rzone, distmax, distmin
+      real :: xmax, xmin, ymax, ymin, zmax, zmin, rzone, distmax, distmin, dtout, xg,yg
 
       if(meinrang.eq.0)then !! nur prozessor 0
-	     print*,'read_mesh_nc_sc starts'
+	     ! print*,'read_mesh_nc_sc starts'
 	  
 	     ! read param.out.nml
 	     write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
 	     open(15,file=dateiname,delim='apostrophe',status='old')
          read(15,nml=CORE)
 		 deltat=int(dt)
-		 print*,"read_mesh_nc_sc: param.out.nml DT,RNDAY=",DT,deltat,RNDAY
+		 print*,"param.out.nml DT,RNDAY=",DT,deltat,RNDAY
 		 close(15)
 
 	     !--- zone.gr3 
          open(14,file='zone.gr3',status='old',iostat=istat)
          if(istat/=0) call qerror('read_mesh_nc_sc: zone.gr3 open failure')
          read(14,*); read(14,*) ne,np
-         print*,'read_mesh_nc_sc: zone.gr3: ne,np=',ne,np
+         ! print*,'read_mesh_nc_sc: zone.gr3: ne,np=',ne,np
          n_elemente=ne
          knotenanzahl2D=np
          allocate (knoten_x(knotenanzahl2D),knoten_y(knotenanzahl2D),knoten_z(knotenanzahl2D),   &
@@ -100,10 +99,10 @@
             if(nmax.le.knoten_zone(i))nmax=knoten_zone(i)
             if(nmin.ge.knoten_zone(i))nmin=knoten_zone(i)
          end do ! alle i Knoten
-         print*,'zone.gr3:'
-         print*,'x-koordinate max+min', xmax, xmin
-         print*,'y-koordinate max+min', ymax, ymin
-         print*,'Zone max+min', nmax, nmin 
+         print*,'zone.gr3: ne,np=',ne,np
+         print*,'zone.gr3: x-koordinate max+min', xmax, xmin
+         print*,'zone.gr3: y-koordinate max+min', ymax, ymin
+         print*,'zone.gr3: Zone max+min', nmax, nmin 
 
          !Read local_to_global_0000 for global info
          write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
@@ -113,8 +112,8 @@
             call qerror(trim(fehler))
          end if
          read(10,*)ns_global,ne_global,np_global,nvrt,nproc !,ntracers
-         print*,'read_mesh_nc_sc: local_to_global_0000 ',trim(adjustl(dateiname)), ' points, elements, sides levels, processes'  &
-     &         ,np_global,ne_global,ns_global,nvrt,nproc
+         !print*,'read_mesh_nc_sc: local_to_global_0000 ',trim(adjustl(dateiname))
+		 print*,'local_to_global_0000: points, elements, sides levels, processes',np_global,ne_global,ns_global,nvrt,nproc
 	     rewind(10)
          close(10)
          if((n_elemente.ne.ne_global).or.(knotenanzahl2D.ne.np_global))then
@@ -127,49 +126,52 @@
          if(nproc.ne.proz_anz)then
             write(fehler,*)'read_mesh_nc_sc: given number of processes=', proz_anz, ', needed number of processes=', nproc
             call qerror(fehler)
-         else 
-            print*,'read_mesh_nc_sc: equal number of processes QSim+SCHISM =', proz_anz,nproc
+         !else 
+         !   print*,'read_mesh_nc_sc: equal number of processes QSim+SCHISM =', proz_anz,nproc
          endif !! wrong process number
          knotenanzahl3D=nvrt*np_global
-         !allocate( np(0:proz_anz-1),ns(0:proz_anz-1),ne(0:proz_anz-1),stat=istat)
-         !if(istat/=0) call qerror('Allocation error np')
-         !do i=0,proz_anz-1
-         !   ! Read in local-global mappings from all ranks
-         !   lfdb=len_trim(dateiname)
-         !   !Find max. for dimensioning
-         !   write(dateiname(lfdb-3:lfdb),'(i4.4)') i
-         !   open(10,file=dateiname,status='old')
-         !   if(.not.zeile(10))call qerror('get_local_to_global erste zeile')
-         !   if(.not.zeile(10))call qerror('get_local_to_global zweite zeile')
-         !   read(10,*)ne(i)
-         !   !print*,'get_local_to_global: ne(', i, ')=',ne(i)
-         !   close(10)
-         !enddo ! all i processes
+        ! do i=0,proz_anz-1
+        !    ! Read in local-global mappings from all ranks
+        !    lfdb=len_trim(dateiname)
+        !    !Find max. for dimensioning
+        !    write(dateiname(lfdb-3:lfdb),'(i4.4)') i
+		!    print*,trim(dateiname)
+        !    open(10,file=dateiname,status='old', iostat = istat)
+		!  	 if(istat/=0) then
+        !       write(fehler,*)'read_mesh_nc_sc open local_to_global_* crashed, i=',i
+        !       call qerror(trim(fehler))
+        !    end if
+        !    if(.not.zeile(10))call qerror('get_local_to_global erste zeile')
+        !    if(.not.zeile(10))call qerror('get_local_to_global zweite zeile')
+        !    close(10)
+		!	 print*," seems o.k. ",i
+        ! enddo ! all i processes
          !print*,'element number=',n_elemente,sum(ne)
          !print*,'read_mesh_nc_sc: using hydraulic event: ',trim(adjustl(modellverzeichnis))//'outputs_schism'
          !systemaufruf='ls -thora '//trim(adjustl(modellverzeichnis))//'outputs_schism'
          !call system(trim(systemaufruf),istat)
+	 
       end if !! prozess 0 only
 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !if(meinrang.ne.0)allocate( np(0:proz_anz-1),ns(0:proz_anz-1),ne(0:proz_anz-1),stat=istat)
 	  if(rkind.ne.8)call qerror('read_mesh_nc_sc: rkind.ne.8') ! Default real datatype from schism_glbl needs to be 8=DOUBLE_PRECISION
-      call MPI_Bcast(dt,1,MPI_DOUBLE_PRECISION,0,mpi_komm_welt,ierr)
-	  ! print* ,meinrang,"MPI_Bcast(dt",ierr
-	  call MPI_Bcast(RNDAY,1,MPI_DOUBLE_PRECISION,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(dt,1,MPI_DOUBLE_PRECISION,0,mpi_komm_welt,ierror)
+	  ! print* ,meinrang,"MPI_Bcast(dt",ierror
+	  call MPI_Bcast(RNDAY,1,MPI_DOUBLE_PRECISION,0,mpi_komm_welt,ierror)
 	  ! MPI_FLOAT, mpi_real, MPI_DOUBLE, MPI_LONG_DOUBLE,MPI_REAL2, MPI_REAL4 and MPI_REAL8
-	  call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierr)
-	  ! print* ,meinrang,"MPI_Bcast(deltat",ierr
-      call MPI_Bcast(knotenanzahl3D,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(n_elemente,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(kantenanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(ns_global,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(ne_global,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(np_global,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(nproc,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(nvrt,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call mpi_barrier (mpi_komm_welt, ierr)
+	  call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierror)
+	  ! print* ,meinrang,"MPI_Bcast(deltat",ierror
+      call MPI_Bcast(knotenanzahl3D,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(n_elemente,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(kantenanzahl,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(ns_global,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(ne_global,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(np_global,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(nproc,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(nvrt,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call mpi_barrier (mpi_komm_welt, ierror)
 	  ! print*,meinrang,"read_mesh_nc_sc: dt,deltat,RNDAY=",dt,deltat,RNDAY
 
 	  !!!! read first part: local_to_global_meinrang !!!!
@@ -187,29 +189,34 @@
       if(.not.zeile(10+meinrang))call qerror('get_local_to_global erste zeile')!print*,'1 ',trim(adjustl(dateiname)),' : ',trim(adjustl(ctext)), ' rang=',meinrang
       if(.not.zeile(10+meinrang))call qerror('get_local_to_global zweite zeile')!print*,'2 ',trim(adjustl(dateiname)),' : ',trim(adjustl(ctext)), ' rang=',meinrang
 
-      read(10+meinrang,*)nea
-      !call mpi_barrier (mpi_komm_welt, ierr)
+      read(10+meinrang,*, iostat = istat)nea
+      if(istat/=0) call qerror('read_mesh_nc_sc nea')
+      !call mpi_barrier (mpi_komm_welt, ierror)
       allocate( ielg(nea))
 	  allocate(i34(nea),elnode(4,nea))
       do i=1,nea
-        read(10+meinrang,*)j,ielg(i)
+        read(10+meinrang,*, iostat = istat)j,ielg(i)
+        if(istat/=0) call qerror('read_mesh_nc_sc j,ielg(i)') 
       enddo !i
       !print*, trim(adjustl(dateiname)),' local number elements=',nea,j,ielg(j)
 
-      read(10+meinrang,*)npa
+      read(10+meinrang,*, iostat = istat)npa
+      if(istat/=0) call qerror('read_mesh_nc_sc npa')
 	  allocate(eta2(npa))
 	  allocate(xnd(npa),ynd(npa),dp00(npa),kbp00(npa))
-      !call mpi_barrier (mpi_komm_welt, ierr)
+      !call mpi_barrier (mpi_komm_welt, ierror)
       allocate( iplg(npa) )
       do i=1,npa
-        read(10+meinrang,*)j,iplg(i)
+        read(10+meinrang,*, iostat = istat)j,iplg(i)
+        if(istat/=0) call qerror('read_mesh_nc_sc j,iplg(i)')
       enddo !i
       ! print*, trim(adjustl(dateiname)),' local number points=',npa,j,iplg(j)
 	  
-      read(10+meinrang,*)nsa
+      read(10+meinrang,*, iostat = istat)nsa
+      if(istat/=0) call qerror('read_mesh_nc_sc nsa')
 	  allocate( su2(nvrt,nsa),sv2(nvrt,nsa) )
 	  allocate( isidenode(2,nsa), snx(nsa), sny(nsa), distj(nsa) )
-      !call mpi_barrier (mpi_komm_welt, ierr)
+      !call mpi_barrier (mpi_komm_welt, ierror)
       allocate( islg(nsa) )
       do i=1,nsa
          read(10+meinrang,*, iostat = istat)j,islg(i)
@@ -224,29 +231,37 @@
       !write(10,*)start_year,start_month,start_day,start_hour,utc_start
       !write(10,*)nrec,real(dt*nspool),nspool,nvrt,kz,real(h0),real(h_s),real(h_c),real(theta_b),real(theta_f),ics
       !write(10,*)(real(ztot(k)),k=1,kz-1),(real(sigma(k)),k=1,nvrt-kz+1)
-	  read(10+meinrang,*)textline! ; print*,textline
-	  read(10+meinrang,*)textline! ; print*,textline
-	  read(10+meinrang,*)textline! ; print*,textline
-	  read(10+meinrang,*)textline! ; print*,textline
-      read(10+meinrang,*)np,ne,ns
+	  read(10+meinrang,*)textline !; print*,meinrang,textline
+	  read(10+meinrang,*)textline !; print*,textline
+	  read(10+meinrang,*)textline !; print*,textline
+	  read(10+meinrang,*)textline !; print*,textline
+      read(10+meinrang,*)np,ne,ns !; print*,np,ne,ns
 	  if((np.ne.npa).or.(ne.ne.nea).or.(ns.ne.nsa))then
 	     call qerror('local_to_global np.ne.npa')
 	  else
-	     !print*,meinrang,"read_mesh_nc_sc: npa,nea,nsa=",npa,nea,nsa
+	     print*,trim(dateiname),": npa,nea,nsa=",npa,nea,nsa
 	  endif !numbers wrong
       do i=1,np
-        read(10+meinrang,*)xnd(i),ynd(i),dp00(i),kbp00(i)
+        read(10+meinrang,*, iostat = istat)xnd(i),ynd(i),dp00(i),kbp00(i)
+        if(istat/=0) then;print*,meinrang,i;call qerror('read_mesh_nc_sc xnd');endif
       enddo !all nodes i
       do m=1,ne
-        read(10+meinrang,*)i34(m),(elnode(mm,m),mm=1,i34(m))
+        read(10+meinrang,*, iostat = istat)i34(m),(elnode(mm,m),mm=1,i34(m))
+        if(istat/=0) then;print*,meinrang,i;call qerror('read_mesh_nc_sc elnode');endif
       enddo !m
       do m=1,ns
-        read(10+meinrang,*)(isidenode(mm,m),mm=1,2),snx(m),sny(m),distj(m)
+	    read(10+meinrang,'(A)')textline
+        read(textline,*, iostat = istat)i,(isidenode(mm,m),mm=1,2),snx(m),sny(m),distj(m)
+		if(i/=m)call qerror("read_mesh_nc_sc: i .ne. m")
+        if(istat/=0) then
+		   print*,meinrang,m
+		   print*,m,isidenode(1,m),isidenode(2,m),snx(m),sny(m),distj(m)
+		   call qerror('read_mesh_nc_sc isidenode')
+		endif
       enddo !m
       rewind(10+meinrang)
       close(10+meinrang)
-	  !print*,meinrang,"read_mesh_nc_sc: isidenode(nsa)= ",isidenode(1,nsa),isidenode(2,nsa)
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       if(meinrang.eq.0)then !! nur prozessor 0
          allocate(ne_sc(proz_anz), np_sc(proz_anz), ns_sc(proz_anz),stat=istat)
@@ -255,7 +270,7 @@
          if(istat/=0) call qerror('Allocation error: ztot')
          allocate( kbp00_global(knotenanzahl2D) ,stat=istat)
          if(istat/=0) call qerror('Allocation error: kbp00_global')
-	     print*,"read_mesh_nc_sc: allocate 0 1"
+	     ! print*,"read_mesh_nc_sc: allocate 0 1"
 
 !         if(istat/=0) stop 'Allocation error: kbe'
          allocate( ielg_sc(proz_anz,n_elemente) ) !! too large, who cares?
@@ -265,7 +280,7 @@
 		 allocate( top_node(kantenanzahl), bottom_node(kantenanzahl), stat = istat)
 		 allocate( edge_normal_x(kantenanzahl), edge_normal_y(kantenanzahl), &
      &             cell_bound_length(kantenanzahl), stat = istat)
-	     print*,"read_mesh_nc_sc: allocate 0 2"
+	     ! print*,"read_mesh_nc_sc: allocate 0 2"
 		 top_node(:)=-1; bottom_node(:)=-1
 		 edge_normal_x(:)=-77.7; edge_normal_y(:)=-77.7; cell_bound_length(:)=-77.7
 		 
@@ -276,7 +291,7 @@
          if(istat/=0) call qerror('Allocation error: ed_vel_x')
 		 ! init
 		 ed_flux(:)=-1; ed_area(:)=-1; ed_vel_x(:)=-1; ed_vel_y(:)=-1
-	     print*,"read_mesh_nc_sc: allocate 0 3"
+	     ! print*,"read_mesh_nc_sc: allocate 0 3"
 
          allocate (elementnodes(n_elemente,4), stat=istat)
          if(istat.ne. 0) call qerror('allocate elementnodes failed')
@@ -290,17 +305,17 @@
             element_zone(n) = 0
             element_rand(n) = 0
          end do ! alle Elemente!
-	     print*,"read_mesh_nc_sc: allocate 0 4"
+	     ! print*,"read_mesh_nc_sc: allocate 0 4"
 
          ! reread on process 0
          write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
-		 print*,"read_mesh_nc_sc reread:  dateiname ",trim(dateiname)
+		 ! print*,"read_mesh_nc_sc reread:  dateiname ",trim(dateiname)
          lfdb=len_trim(dateiname)
          maxstack=0
          do irank=1,proz_anz,1 ! all ranks
             write(dateiname(lfdb-3:lfdb),'(i4.4)') irank-1
             open(10, file=dateiname, status='old', iostat = istat)
-			!print*,"do irank dateiname=",trim(adjustl(dateiname))
+			! print*,"do irank dateiname=",trim(adjustl(dateiname))
             if(istat/=0)then
                call qerror('open 10 failed')
             !else
@@ -330,7 +345,7 @@
 
             if(.not.zeile(10))call qerror('get_local_to_global Header missing')!read(10+meinrang,*) !'Header:'
             read(10,*)start_year,start_month,start_day,start_hour,utc_start 
-            if(irank.eq.1)print*,'Start Date=',start_year,start_month,start_day,start_hour,utc_start
+            !if(irank.eq.1)print*,'Start Date=',start_year,start_month,start_day,start_hour,utc_start
             jahr=start_year
             monat=start_month
             tag=start_day
@@ -345,14 +360,18 @@
             read(10,*)np_sc(irank),ne_sc(irank),ns_sc(irank)
 			!print*,irank,'read_mesh_nc_sc: np_sc,ne_sc,ns_sc=',np_sc(irank),ne_sc(irank),ns_sc(irank)
             if(np_sc(irank).ne. np_l) call qerror('np_sc(irank).ne. np_l')
-            read(10,*, iostat = istat) ( knoten_x(iplg_sc(irank,m)), knoten_y(iplg_sc(irank,m)), knoten_z(iplg_sc(irank,m)),  &
-      &                   kbp00_global(iplg_sc(irank,m)),m=1,np_sc(irank) )
-            if(istat/=0)call qerror('read(10,*) ( knoten_x... failed')
+			do m=1,np_sc(irank)
+               read(10,*, iostat = istat) xg, yg, knoten_z(iplg_sc(irank,m)), kbp00_global(iplg_sc(irank,m))
+               if(istat/=0)call qerror('read(10,*) ( knoten_x... failed')
+			   if(abs(knoten_x(iplg_sc(irank,m))-xg).gt.0.1)call qerror("knoten_x missmatch local_to_global zone.gr3 ")
+			   if(abs(knoten_y(iplg_sc(irank,m))-yg).gt.0.1)call qerror("knoten_y missmatch local_to_global zone.gr3 ")
+			   knoten_rang(iplg_sc(irank,m))=irank
+			enddo !m
             read(10,*, iostat = istat) ( i34_global(ielg_sc(irank,m)), &
 			                           (nm2(mm,m),mm=1,i34_global(ielg_sc(irank,m))), m=1,ne_sc(irank) )
             if(istat/=0)call qerror('read(10,*)( i34_global(ielg(irank,m))... failed')
 			do m=1,ns_sc(irank)
-			   read(10,*,iostat = istat)tn,bn,  &
+			   read(10,*,iostat = istat)i,tn,bn,  &
      &            edge_normal_x(islg_sc(irank,m)),edge_normal_y(islg_sc(irank,m)),cell_bound_length(islg_sc(irank,m))
 			      !snx_l(m),sny_l(m),distj_l(m)
                if(istat/=0)call qerror('read(10,*) local_to_global (top +bottom node)... failed')
@@ -425,19 +444,18 @@
             if(zmax.le.knoten_z(n))zmax=knoten_z(n)
             if(zmin.ge.knoten_z(n))zmin=knoten_z(n)
          end do ! alle Knoten
-         print*,'local_to_global_0000:'
-         print*,'x-koordinate max+min', xmax, xmin
-         print*,'y-koordinate max+min', ymax, ymin
-         print*,'Sohlhöhe max+min', zmax, zmin 
-         print*,'maxstack=',maxstack
-         print*,'edge length distmax+distmin', distmax, distmin 
+         print*,'local_to_global_0000: x-koordinate max+min', xmax, xmin
+         print*,'local_to_global_0000: y-koordinate max+min', ymax, ymin
+         print*,'local_to_global_0000: Sohlhöhe max+min', zmax, zmin 
+         !print*,'maxstack=',maxstack
+         print*,'local_to_global_0000: edge length distmax+distmin', distmax, distmin 
 
       end if !! prozess 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
-      call MPI_Bcast(maxstack,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
+      call MPI_Bcast(maxstack,1,MPI_INT,0,mpi_komm_welt,ierror)
       nst_prev=-333 ! initialize
       ncid=-333
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
       ! get boundary numbers from zone.gr3
       if(meinrang.eq.0)then !! prozess 0 only
@@ -458,8 +476,8 @@
          end do ! all j open boundaries
          close(14)
       end if !! prozess 0 only
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
-      if(meinrang.eq.0) print*,'read_mesh_nc_sc finished' 
+      !if(meinrang.eq.0) print*,'read_mesh_nc_sc finished' 
       RETURN
       END subroutine read_mesh_nc_sc

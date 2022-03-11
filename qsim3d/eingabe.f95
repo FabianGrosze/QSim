@@ -481,6 +481,7 @@
       !print*,'eingabe() startet'
       only=.false.
 
+      !!! get mesh (space discretisation) ---------- 
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
          if(meinrang.eq.0)then ! prozess 0 only
@@ -488,8 +489,8 @@
             ! Konzentrationen anlegen und initialisieren:
             n_cal=knotenanzahl2D
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierr)
-         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call mpi_barrier (mpi_komm_welt, ierror)
+         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierror)
       case(2) ! Untrim² netCDF
          if(meinrang.eq.0)then ! prozess 0 only
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen                     
@@ -497,26 +498,26 @@
             n_cal=n_elemente
             print*,'Untrim netCDF read mesh'
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierr)
-         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call mpi_barrier (mpi_komm_welt, ierror)
+         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierror)
       case(3) ! SCHISM netCDF
-         !!!### call read_mesh_nc_sc()
-         n_cal=n_elemente !!??
-         n_cal=knotenanzahl2D
-         if(meinrang.eq.0)print*,'got SCHISM netCDF mesh ##### but n_cal=knotenanzahl2D ?????????########'
+         !call read_mesh_nc_sc()
+         !n_cal=n_elemente !!??
+         !n_cal=knotenanzahl2D
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
       end select
 
-      ! partitioning of variable arrays
+      !############ partitioning of variable arrays
          part=n_cal/proz_anz
          n=part*proz_anz
          !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
          if(n.lt.n_cal)part=part+1
-         print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
-     &         ," modell_parallel() n_cal=", n_cal
+     !    print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
+     !&         ," modell_parallel() n_cal=", n_cal
 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      !!! initialize and allocate ------------ 
+      call mpi_barrier (mpi_komm_welt, ierror)
       call ini_planktkon0(n_cal)
       call ini_benthic0(n_cal)
       call ini_ueber(n_cal)
@@ -528,26 +529,29 @@
             call qerror('modeverz: control node = 0  ### special option #### (error is regular exit)')
          end if
       end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call show_mesh()
       call ini_zeit() ! initialise time preliminary to reference-year
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
+      !!! get time discretisation  ---------- 
       select case (hydro_trieb)
       case(1) ! casu-transinfo  
          if(meinrang.eq.0)then ! prozess 0 only
             call transinfo_sichten()      ! Transportinformationen sichten:
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierr)
+         call mpi_barrier (mpi_komm_welt, ierror)
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         call screen_schism_nc()
+         !call screen_schism_nc()
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select
-
+	  
    if(meinrang.eq.0)then ! only prozessor 0
+   
+      !!! get input for water quality (BGC) simulation  ---------- 
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
@@ -558,7 +562,7 @@
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
 !
-      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
+      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! should work for all hydraulic drivers ?
 
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
@@ -573,7 +577,9 @@
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if(nur_alter) call alter_lesen() 
    end if ! only prozessor 0
-   call mpi_barrier (mpi_komm_welt, ierr)
+   call mpi_barrier (mpi_komm_welt, ierror)
+   
+	  !if(hydro_trieb==3) call qerror("soweit so gut beim schism Antrieb eingabe()")
 
       RETURN
   222 FORMAT (A,'rechenzeit=',I15,' Temperatur_Wasser=',F8.3,' Temperatur_Sediment=',F8.3)

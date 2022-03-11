@@ -128,8 +128,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !-------------------------------------------------------------------------------parallel_datenfelder
 ! Beschreibung in parallel.f95
 !> nummer und Gesamtzahl prozessoren (MPI)
-      integer :: meinrang, part, proz_anz, ierr
-      integer :: mpi_komm_welt
+      integer :: meinrang, part, proz_anz
+      integer :: mpi_komm_welt, ierror
 
 !-------------------------------------------------------------------------------Modell+Netz
 !> modellverzeichnis etc.

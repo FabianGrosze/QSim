@@ -136,7 +136,7 @@
 
 !>>>> Wetter-Randbedingungen <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       call update_weather()
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
 !Randverläufe und Wetterstationen haben alle Prozessoren alle Eingabedaten
 !und wenden sie auf ihre Knoten an.
@@ -195,7 +195,7 @@ if(meinrang.eq.0)then !! nur prozessor 0
 
 end if !! nur prozessor 0
 !   
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       call scatter_BC()
       call scatter_planktkon()  
 
@@ -250,12 +250,12 @@ end if !! nur prozessor 0
 !      end do !! alle j knoten
 !end if !! nur prozessor 0
       call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
-    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)' 14 MPI_Scatter(rb_hydraul failed :', ierr
+    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)' 14 MPI_Scatter(rb_hydraul failed :', ierror
          call qerror(fehler) 
       end if 
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       RETURN
       END subroutine scatter_rb_hydraul
 !----+-----+----
@@ -662,13 +662,13 @@ end if !! nur prozessor 0
          rb_hydraul_p(ini)=0.0
       end do
       call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
-    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)'randbedingungen_parallel MPI_Scatter(rb_hydraul failed :', ierr
+    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)'randbedingungen_parallel MPI_Scatter(rb_hydraul failed :', ierror
          call qerror(fehler)
       end if 
       !print*,'rb_hydraul_p successfully allocated and scattered',meinrang
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
 !      allocate (rb_wetter_p(part*number_rb_wetter), stat = as )
 !      if(as.ne.0)then
@@ -679,15 +679,15 @@ end if !! nur prozessor 0
 !         rb_wetter_p(ini)=0.0
 !      end do
 
-      call MPI_Bcast(rb_extnct_ilamda,1,MPI_INT,0,mpi_komm_welt,ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)meinrang, 'MPI_Bcast(rb_extnct_ilamda,  ierr=', ierr
+      call MPI_Bcast(rb_extnct_ilamda,1,MPI_INT,0,mpi_komm_welt,ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)meinrang, 'MPI_Bcast(rb_extnct_ilamda,  ierror=', ierror
          call qerror(fehler)
       end if 
       !print*,meinrang, 'nachher rb_extnct_ilamda=', rb_extnct_ilamda
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
       !print*,meinrang, ' anz_extnct_koeff=', anz_extnct_koeff
-      !! parameter nicht broadcasten !!!! call MPI_Bcast(anz_extnct_koeff,1,MPI_INT,0,mpi_komm_welt,ierr)
+      !! parameter nicht broadcasten !!!! call MPI_Bcast(anz_extnct_koeff,1,MPI_INT,0,mpi_komm_welt,ierror)
 
       if(meinrang.ne.0)then
          allocate (rb_extnct_p(rb_extnct_ilamda*anz_extnct_koeff), stat = as )
@@ -700,16 +700,16 @@ end if !! nur prozessor 0
          end do
       end if ! meinrang.ne.0
    !   ### call MPI_Scatter(rb_extnct, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT,  &
-    !& rb_extnct_p, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      call MPI_Bcast(rb_extnct_p,rb_extnct_ilamda*anz_extnct_koeff,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)'randbedingungen_parallel MPI_Bcast(rb_extnct_p failed :', ierr
+    !& rb_extnct_p, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      call MPI_Bcast(rb_extnct_p,rb_extnct_ilamda*anz_extnct_koeff,MPI_FLOAT,0,mpi_komm_welt,ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)'randbedingungen_parallel MPI_Bcast(rb_extnct_p failed :', ierror
          call qerror(fehler)
       end if 
       !print*,'eta(ilamda)=rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang'  &
       !      ,rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang
 
-      !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierr
+      !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierror
 
       RETURN
       END subroutine randbedingungen_parallel
@@ -725,9 +725,9 @@ end if !! nur prozessor 0
       integer :: i
 
       call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
-    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if(ierr.ne.0)then
-         write(fehler,*)' MPI_Scatter(rb_hydraul failed :', ierr
+    & rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierror)
+      if(ierror.ne.0)then
+         write(fehler,*)' MPI_Scatter(rb_hydraul failed :', ierror
          call qerror(fehler)
       end if 
 

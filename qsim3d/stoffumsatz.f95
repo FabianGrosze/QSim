@@ -152,7 +152,7 @@
 !  1521  call Schwermetalle(vabfl,qeinl,mstr,flag,anze,sedss,sedalk,sedalb,sedalg,hSSalg,SSalg,hph,vph,bssalg,bssalg_1,bph      &
 
          !------------------------------------------------------------------------ coliforme Keime
-         call coliform_huelle(i)
+         if(iColi.eq. 1)call coliform_huelle(i)
 
 ! erosion
 

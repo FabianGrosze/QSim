@@ -23,18 +23,13 @@
                           ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs             &
                           ,RateCde,etaCde,RateCIe,xnueCe,RateCGe,RateCSe,ifehl                                        &                                                   
                           ,kontroll ,jjj ) !!wy  
-
-
                                                                        
 !     Programm zur Berechnung der Konzentration E. Coli, faecal coliformer und coliformer      
 !     Bakterien in Fliessgewässer                                       
-                                                                       
-                                                                       
 
 !     AUTOR:VOLKER KIRCHESCH                                            
                                                                        
 !     STAND:15.08.2017                                                  
-                                                                       
                                                                        
 
       logical kontroll !!wy
@@ -50,9 +45,10 @@
       real, Dimension(1000)                :: tiefe, elen, flae, vabfl, ss, zooind, chla, tempw, coli, extk, schwi, DOSCF 
       real, Dimension(1000)                :: rau, vmitt, ausUV
       real, Dimension(azStrs,1000)         :: extkS
-
       
-!                                                                       
+       if(kontroll)print*,'COLIFORM start: jjj,meinrang,anze=',jjj,meinrang,anze,'  coli(1),coli(2),colit=',coli(1),coli(2),colit
+
+	  !                                                                       
 !      open(unit=166,file='coli.tst')                                   
 !                                                                       
       iein = 1 
@@ -159,23 +155,33 @@
       if(tlip.lt.0.001)tlip = 0.001
       if(tlip.gt.tiefe(ior))tlip = tiefe(ior)
 
-      vLicht = tlip**2/xmuet
-      vGes = tiefe(ior)**2/xmuet
+	  vLicht =  0.0
+	  vGes =  0.0
+	  if(xmuet.gt.0.0)then
+         vLicht = tlip**2/xmuet
+         vGes = tiefe(ior)**2/xmuet
+      endif
 
       PARSW_J = PARS*(1./(tlip*extk(ior)))*(1.-exp(-extk(ior)*tlip)) 
 
       PARSW_MJ = PARSW_J * 0.01 * tflie * 24.       ! MJ*m-2                                     
 
-      DOSCFt = DOSCF(ior)+PARSW_MJ*vLicht/vGes
+      DOSCFt = DOSCF(ior)
+	  if(vGes.gt.0.0)then
+	     DOSCFt=DOSCFt+PARSW_MJ*vLicht/vGes
+	  endif
       
       if(PARS<=0.0001)DOSCFt = 0.0
                                                                        
       VRC = RateKD*etaEC**(tempw(ior)-20.)                                                     
 
       colit = coli(ior)*(1.-(1.-exp(-RateKI*DOSCFt))**nueI)*exp(-(VRC+RateCGz+RateCSd)*tflie)
-
+	  
+      if(kontroll)print*,'COLIFORM RateKI,DOSCFt,nueI,VRC,RateCGz,RateCSd,tflie=',  &
+     &                            RateKI,DOSCFt,nueI,VRC,RateCGz,RateCSd,tflie
+	 
       decoli = colit-coli(ior) 
-      if(colit.lt.0.0)colit = (coli(ior)/(coli(ior)+abs(decoli)))*coli(ior)             
+      if((colit.lt.0.0).and.((coli(ior)+abs(decoli)).gt.0.0)) colit = (coli(ior)/(coli(ior)+abs(decoli)))*coli(ior)             
 
       extk(ior) = -1.                                                                       
                                                                        
@@ -185,5 +191,8 @@
       DOSCF(anze+1) = DOSCFt
       extk(anze+1) = -1.  
    ENDIF
-                                                               
+   
+       if(kontroll)print*,'COLIFORM end: coli(1),coli(2),colit=',coli(1),coli(2),colit
+
+   
       END Subroutine COLIFORM 

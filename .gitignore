@@ -8,10 +8,14 @@ qsim_doku.taz
 !doku/header.html
 !doku/docmd/
 !doku/readme.md
+doku/dox/*
+doku/exp/*
+doku/html/*
+doku/img/*
+doku/pdf/*
+doku/taz/*
 qsim1d/*.o
 qsim3d/*.o
 metabolism/*.o
-qsim1d/qsim-aufbau.f90
-qsim1d/qsim1d_marieke_testet
 metabolism/libqsim.a
 backup-dokufiles/*

@@ -32,7 +32,8 @@
 # PV= qsim1d_mit_sedflux
 # PV= qsim1d_entwicklung
 # PV= qsim1d_final_v
-PV= qsim1d_14.04
+# PV= qsim1d_14.06
+PV= qsim1d_14.05
 
 #====================================================================
 
@@ -89,7 +90,7 @@ qsim:
 Q1= AdvDiff.o ALBEDO.o aparamles.o AParamParam.o ctracer.o E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
 Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
 qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-van_veen.o verteilungskoeff.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.f90
+van_veen.o verteilungskoeff.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o 
 
 qsim1d:	$(Q1)
 	$(FC) $(Q1) $(QSIM_LIB) -o $(PV)

@@ -117,12 +117,12 @@
       implicit none
       integer :: alloc_status
 
-      call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierror)
       if(meinrang.eq. 0)print*,'meinrang, IWETTs_T, IMET_T, mwettmax_T'
       print*, meinrang, IWETTs_T, IMET_T, mwettmax_T
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierror)
 
 if(meinrang.ne.0)then ! alle Prozesse ausser 0
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
@@ -220,16 +220,16 @@ if(meinrang.ne.0)then ! alle Prozesse ausser 0
 
 end if !! alle Prozesse ausser 0
 
-      call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(itagw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(monatw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(jahrw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(itagw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(monatw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(jahrw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierror)
+      !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierror)
 
       return
       end subroutine wetter_parallel
