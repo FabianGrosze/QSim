@@ -6,350 +6,256 @@ Die Grundlage aller verbreiteten Methoden zur Berechnung der Erwärmung eines
 Fließgewässers ist die vereinfachte Wärmehaushaltsgleichung. 
 Auf deren Grundlage wird die Wärmehaushaltsbilanz des Gewässers erstellt, 
 mit der die Temperaturänderung des Gewässers pro Zeiteinheit quantifiziert werden kann. 
-Damit lautet die vereinfachte Wärmehaushaltsgleichung:
+Die vereinfachte Wärmehaushaltsgleichung lautet:
 
-\f[ \frac{\delta T_w}{\delta t} = \frac{q_S - q_V - q_K + q_{US} + q_U - q_E }{c_w * h * \rho_w}   \f]    
+\f[ \frac{\partial T_w}{\partial t} = \frac{q_S - q_V - q_K + q_{US} + q_U - q_E }{c_w \cdot h \cdot \rho_w}   \f]
 
+\f$\partial T_w \f$: &ensp; Wassertemperatur [°C] \n
+\f$t \f$: &ensp; Zeit [h] \n
+\f$q_S \f$: &ensp; Wärmestromdichte aus Strahlung [\f$ kJ/(h \cdot m²) \f$]  \n
+\f$q_V \f$: &ensp; Wärmestromdichte aus Verdunstung (latente Wärme) [\f$  kJ/(h \cdot m²) \f$] \n
+\f$q_K \f$: &ensp; Wärmestromdichte aus Konvektion [\f$  kJ/(h \cdot m²) \f$] \n
+\f$q_{US} \f$: &ensp; Wärmestromdichte aus dem Sediment [\f$ kJ/(h \cdot m²) \f$]  \n
+\f$q_U \f$: &ensp; Wärmestromdichte in das Sediment [\f$ kJ/(h \cdot m²) \f$] \n
+\f$q_E \f$: &ensp; Wärmestromdichte aus direkter Einleitung [\f$ kJ/(h \cdot m²) \f$] \n
+\f$c_w \f$: &ensp; spez. Wärmekapazität von Wasser = 4,1868 103 [\f$ kJ/(kg \cdot K) \f$] \n
+<!-- #tbw: c_w laut Lexikon Cheime 4,1851 bei 20 °C -->
+\f$h \f$: &ensp; mittlere Wassertiefe [m] \n
+\f$\rho_w \f$: &ensp; Dichte des Wassers = 1.000 [kg/m3] \n
 
-## Verdunstung {#lnk_verdunstung}##
-===============
+Alle weiteren evtl. beeinflussenden Komponenten, wie z.B. die Wärmeeinleitung aus der Schifffahrt 
+oder aus chemischen bzw. biologischen Prozessen, sind quantitativ meist nur von untergeordneter
+Bedeutung. Ein unter Umständen größerer, aber meist schwer zu quantifizierender Einfluss kann der
+Zustrom von Grundwasser sein. Diese Einflüsse werden in QSim indirekt über die Kalibrierung des 
+Modells berücksichtigt oder können, im Fall des Grundwassers, über einen Einleiter angenähert 
+werden.
+
+Im folgenden wird auf die einzelnen Teilprozesse der Wärmehaushaltsgleichung eingegangen.
+
+Die Wärmestromdichte aus der Strahlung \f$q_S\f$ wir im Kapitel [Strahlung] (\ref lnk_strahlung) 
+beschrieben.
+<!-- #mf: schauen, ob das Wort Strahlung nun direkt mit dem Link hinterlegt ist" -->
+
+# Verdunstung {#lnk_verdunstung}#
 
 Verdunstung entsteht beim Druckausgleich des Dampfdrucks zwischen Wasseroberfläche 
 und der darüber liegenden Luftschicht. 
 Ist der Dampfdruck an der Wasseroberfläche größer als der der Luft, verdunstet Wasser aus 
-dem Gewässer. 
+dem Gewässer. Da für diesen Vorgang abhängig von der Wassertemperatur mehr oder weniger 
+Verdampfungswärme benötigt wird, kühlt sich der Wasserkörper ab. 
 In Abhängigkeit von den Dampfdruckverhältnissen kann der Verdunstungsterm in der 
-Wärmehaushaltsbilanz aber auch negative Werte annehmen. 
-Da für diesen Vorgang abhängig von der Wassertemperatur mehr oder weniger Verdampfungswärme 
-benötigt wird, kühlt sich der Wasserkörper ab. 
-Im umgekehrten Fall kondensiert Wasser aus der Luft ins Gewässer. Die bei diesem 
-Phasenübergang erster Ordnung aufgenommene oder abgegebene Energiemenge wird auch als 
-latente (lateinisch: „verborgen“) Wärme bezeichnet.
+Wärmehaushaltsbilanz auch negative Werte annehmen. In einem solchen Fall kondensiert Wasser 
+aus der Luft ins Gewässer. Die bei diesen Phasenübergängen erster Ordnung aufgenommene 
+oder abgegebene Energiemenge wird auch als latente (lateinisch: „verborgen“) Wärme bezeichnet.
 
-In QSim erfolgt die Berechnung der latenten Wärme nach dem Ansatz von Dalton (1803), 
-wobei die Verdunstungsrate eine Funktion der Windgeschwindigkeit und der Differenz der 
-Sättigungsdampfdrücke an der Phasengrenze Wasser-Luft ist. Die Berechnung beruht in diesem 
-Fall auf einer empirisch ermittelten Formel, der sogenannten „Wind-Formel“. Die Konstanten 
-a und b der Wind-Formel beziehen sich auf eine Referenz der World Meteorological Organisation 
-(WMO, 1966).
+Für die Berechnung der latenten Wärme gibt es in QSim verschiedene Berechnungsverfahren,
+die über einen Schalter \f$ Schaltern einfügen \f$ in den Parametereinstellungen 
+ausgewählt werden können. 
 
-\f[ q_V= (a+b*v_{wind} )*(p_S-p_D )*p_(L,Ort)/p_(L,Meer) *c \f]    \label{equ_qV}
+Die drei Berechnungsverfahren nach WMO, Sweers und Rimsha-Donchenko basieren auf dem 
+Ansatz nach Dalton (1803). Alle drei berücksichtigen die Windgeschwindigkeit und variieren 
+lediglich in der Parametrisierung der Gleichung:
+
+\f[ E = (a + b  \cdot  \nu_{wind} )  \cdot  (p_S - p_D )  \cdot  \frac{p_{L,Ort}}{p_{L,Meer}}  \cdot  1/24000 \f]    
+<!-- #tbw: bei der Formel müssen die Einheiten noch überprüft werden -->
+
+\f$ E \f$: &ensp; Verdunstungsrate [\f$m  \cdot  h^{-1}\f$] \n
+<!-- schauen, ob E und q_V das gleiche sind oder nicht (wenn ja, dann E durch q_V ersetzen -->
+\f$a \f$:  &ensp; empirische Konstanten (s.u.) [-]
+<!-- #mf: bzw. stand in Tabelle am Ende der Kurzdoku:
+a [m  \cdot  s-1  \cdot  hPa-1]: Koeffizient für den windunabhängigen Teil der Verdunstung; Wert = 0,13; Ref = WMO 1966 
+b [m  \cdot  s-1  \cdot  hPa-1]: Koeffizient für den überlagernden windbedingten Anteil; Wert = 0,0936; Ref = WMO 1966 -->
+
+\f$ \nu_{wind} \f$: &ensp;	Windgeschwindigkeit in 2 m über der Wasseroberfläche [\f$ m s^{-1} \f$] \n
+\f$p_S \f$: &ensp;	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
+\f$p_D \f$: &ensp;	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen 
+           Thermometer [mbar] \n
+\f$p_{L,Ort} \f$: &ensp;	Luftdruck bezogen auf Ortshöhe [mbar] \n
+<!-- #tbw: Wird der Luftdruck irgendwo eingegeben und berücksichtigt? Wenn nicht, weglassen. -->
+<!-- #mf: ich meine auch, dass hier ein anderer Faktor berecnet wird (ATkor = exp(-9.81 \cdot hWS(mstr,ior)/(287.*(templ(ior)+273.16)))  im Code) --> 
+\f$p_{L,Meer} \f$: &ensp;	Luftdruck bezogen auf Meereshöhe [mbar] \n
+
+E errechnet sich nach obiger Gleichung in mm/d. Die Umrechnung in m/h erfolgt durch Multiplikation 
+mit 1/24000.
+<!-- #mf: wo kommen die mm her? -->
+<!-- #mf: müsste es nicht 1/86400 sein? -->
+
+In QSim verwendete Werte für *a* und *b* (Referenz: Poß (1983)) 
+| a	| b	| Literatur | 
+| 0.13	| 0.0936 | WMO (1966) | 
+| 0.153	| 0.063	| Sweers (1976) | 
+| 0.211	| 0.103	| Rimsha-Donchenko (1957) aus Poß (1983) |
 
 
-Der Sättigungsdampfdruck pS an der Wasseroberfläche berechnet sich aus der Wassertemperatur TW [K] nach der Magnus Formel zu:
-p_S=p_0*e^((c_2*T_W)/(c_3+T_W ))	[16]
+In einem vierten und fünften Verfahren erfolgt die Berechnung der Verdunstung 
+ohne die Berücksichtigung des Winds.
+
+Nach Priestley & Taylor (1972):
+
+\f[ E = b1  \cdot  \frac{p_S - p_D}{p_S}  \cdot  \frac{\Delta}{\Delta + \gamma}  \cdot  \frac{abs(R_n)}{\lambda} \f]
+<!-- #mf: nach kompilieren schauen, ob delta und gamma korrekt sind -->
+
+Nach Hargreaves, Delclaux et al. (2007):
+
+\f[ E = a3  \cdot  \frac{p_S - p_D}{p_S}  \cdot  (T_{L, Tr} + b3)  \cdot  \frac{abs(R_n)}{\lambda} \f]
+<!-- #mf: T_{L, Tr} in °C: Einheit passt noch nicht -->
+
+\f$ \Delta \f$: &ensp; Steigung der Sättigungsdampfdruck-Kurve [\f$ mbar  \cdot  °C^{-1}\f$] \n
+\f$ \lambda \f$: &ensp; Verdampfungswärme von Wasser [\f$ KJ  \cdot  m^{-3} \f$]	  \n
+\f$ \gamma \f$: &ensp; Psychrometer-Konstante [\f$ mbar  \cdot  °C^{-1}\f$] \n
+* \f$ \gamma =\frac{cp_{air} \cdot p}{C_{v,t} \cdot \nu} \f$
+* \f$ cp_{air}\f$:	spezifische Wärmekapazität von Luft: 1,005 \f$ [KJ \cdot kg^{-1} \cdot K-1] \f$
+* *p*: atmosphärischer Druck \f$ [mbar] \f$ 
+* \f$ \nu \f$: Molmassenverhältnis von Wasser und Luft [-]
+* \f$ C_{v, t} \f$: Verdampfungswärme von Wasser \f$[KJ \cdot kg^{-1}] \f$
+<!-- #mf hier auch schauen, ob eingerückte bullet list ohne bullet möglich -->
+b1, a3, b3: empirische Konstanten (2,805; 0,04; 27,375) [-]  \n
+\f$ R_n \f$: Nettostrahlung \f$[kJ \cdot m^{-2} \cdot h^{-1}]\f$
+* \f$ R_n = q_s + q_{Us} - q_U \f$ 
+* \f$ q_s \f$: Wärmestromdichte aus Strahlung \f$ [kJ \cdot m^{-2} \cdot h^{-1}] \f$ 
+* \f$ q_{Us} \f$: Wärmestromdichte aus der vom Sediment reflektierten Strahlung 
+				\f$ [kJ \cdot m^{-2} \cdot h^{-1}] \f$ 
+\f$ q_U \f$: Wärmestromdichte aus Temperaturdifferenz zwischen Sediment und
+	Wasser \f$[kJ \cdot m^{-2} \cdot h^{-1}]\f$  \n
+\f$ T_{L, Tr} \f$: Lufttemperatur [°C] \n
+
+Die Einführung des Quotienten  \f$\frac{p_S  -p_D }{p_S} \f$ in die Originalformeln führte 
+beim Vergleich zwischen Modellergebnissen und Messungen zu deutlich besseren Ergebnissen.
+
+Die Konstanten *b1, a3, b3* sind Kalibrierungsparameter.
 
 
-pS	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar], Formel Fehler! Verweisquelle konnte nicht gefunden werden.] p0	p(TW=0) = 6,10780 [mbar]
-c2	spezifische Verdampfungswärme = 17 ,08085 [-]
-c3	spezifische Gaskonstante = 234 ,175 [°C]
+Wird der Wind in einer höheren Lage gemessen als die Wasserspiegellage, wird die 
+Windgeschwindigkeit durch Multiplikation mit dem Faktor \f$fkWind\f$ auf die Höhe
+der Wasserspiegellage korrigiert.
+<!-- #mf: fkWind noch einen schönen Namen geben -->
+<!-- #mf: Achtung: h_{WS} ist von mir selbst als Name vergeben, taucht aber bestimmt anderswo 
+auch auf, sollte abgestimmt werden -->
 
-Der Partialdampfdruck der Luft pD bei gemessener Lufttemperatur am trockenen Thermometer TL [°C] berechnet sich äquivalent zu pS unter Berücksichtigung der relativen Luftfeuchtigkeit FRel [%]:
-p_D=〖(p〗_0*e^((c_2*T_L)/(c_3+T_W )))*F_Rel/ 100	[177]
+\f[ fkWind = \left(\frac{2}{h_{Wetter} - h_{WS}}\right)^{0.11} \f]
+<!-- #mf: Klammersetzung in der Gleichung nochmal gegenchecken -->
+
+\f$fkWind \f$: &ensp; Korrekturfaktor für die Windgeschwindigkeit [-] \n
+\f$h_{Wetter} \f$: &ensp; Höhe der Wetterstation [m ü NN]  \n
+\f$h_{WS} \f$: &ensp; Wasserspiegellage am Querprofil [m ü NN] \n
+
+Der Sättigungsdampfdruck \f$p_S\f$ an der Wasseroberfläche berechnet sich aus der Wassertemperatur
+\f$T_W\f$ [°C] nach der Magnus Formel zu:
+<!-- #mf: überprüfen, ob QSim in °C oder K rechnet, sollte eigtl. °C sein -->
+
+\f[p_S = p_0 \cdot e^\left({\frac{c_2 \cdot T_W}{c_3 + T_W}}\right) \f]
+
+\f$p_S \f$: &ensp;	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
+\f$p_0 \f$: &ensp;	Dampfdruck bei der Wassertemperatur 0; \f$ p(T_W = 0) \f$ = 6,10780 [mbar] \n
+\f$c_2 \f$: &ensp;	spezifische Verdampfungswärme = 17,08085 [-] \n
+\f$c_3 \f$: &ensp;	spezifische Gaskonstante = 234,175 [°C] \n
+
+Der Partialdampfdruck der Luft \f$p_D\f$ bei gemessener Lufttemperatur am trockenen 
+Thermometer \f$T_{L, Tr}\f$ [°C] berechnet sich äquivalent zu \f$p_S\f$ unter Berücksichtigung der 
+relativen Luftfeuchtigkeit \f$F_{Rel}\f$ [%]:
+
+\f[ p_D = p_0 \cdot e^\left({\frac{c_2 \cdot T_{L, Tr}}{c_3+T_W}}\right) \cdot \frac{F_{Rel}}{100} \f]
 
 
-pD	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [mbar]
-p0	p(TW=0) = 6,10780 [mbar]
-c2	empirische Konstante = 17,08085 [-]
-c3	empirische Konstante = 234,175 [K] 
-Frel	relative Luftfeuchte [%]
+\f$p_D\f$: 		Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [mbar] \n
+\f$p_0\f$:	 	\f$ p(TW=0) \f$ = 6,10780 [mbar] \n
+\f$c_2\f$:		empirische Konstante = 17,08085 [-] \n
+\f$c_3\f$:		empirische Konstante = 234,175 [K]  \n
+\f$F_{rel}\f$:	relative Luftfeuchte [%] \n
 
-Aus der latenten Wärme qV kann die Verdunstungsrate hV [m/s] über folgenden Zusammenhang berechnet werden:
-h_V=q_V/(〖(ρ〗_W*c_V))   	[18]
+Aus der latenten Wärme \f$q_V\f$ kann die Verdunstungsrate \f$h_V\f$ [m/s] über folgenden 
+Zusammenhang berechnet werden:
+
+\f[h_V = \frac{q_V}{\rho_W \cdot c_V} \f]
 
 
-hv	Verdunstungsrate [m/s]
-qV	Wärmestromdichte aus Verdunstung (latente Wärme) [kJ/(h*m²)]
-ρW	Dichte des Wassers = 1.000 [kg/m³]
-cV	latente Verdampfungswärme  von Wasser [kJ/kg], siehe Formel Fehler! Verweisquelle konnte nicht gefunden werden.] 
-Die latente Verdampfungswärme cV von Wasser berechnet sich in Abhängigkeit der Wassertemperatur TW [°C] und gibt an, wieviel Energie benötigt wird, um einen Kilogramm flüssiges Wasser zu verdunsten:
+\f$h_V\f$:		Verdunstungsrate [m/s] \n
+\f$q_V\f$:		Wärmestromdichte aus Verdunstung (latente Wärme) [\f$ kJ/(h \cdot m²) \f$] \n
+\f$\rho_W\f$:	Dichte des Wassers = 1.000 [kg/m³] \n 
+\f$c_V\f$:		latente Verdampfungswärme  von Wasser [kJ/kg] \n
+
+Die latente Verdampfungswärme \f$c_V\f$ von Wasser berechnet sich in Abhängigkeit der 
+Wassertemperatur \f$T_W\f$ [°C] und gibt an, wieviel Energie benötigt wird, um einen Kilogramm 
+flüssiges Wasser zu verdunsten:
+ 
+\f[ c_V = 595,24 - 0,569 \cdot T_W \f]
+
+\f$c_V\f$:	latente Verdampfungswärme  von Wasser [kJ/kg] \n
+\f$c_4\f$:	empirische Konstante = 595,24 [kJ/kg] \n
+\f$c_5\f$:	empirische Konstante = 0,569 [kJ/(kg*K)] \n
+<!-- #mf c4 und c5 tauchen nicht in der Formel auf; im Code gegenchecken -->
+
+
+# Konvektion {#lnk_konvektion}#
+
+Konvektion ist der direkte Wärmeaustausch zwischen Luft und Wasseroberfläche. Sie findet nur 
+bei unterschiedlichen Temperaturen von Luft und Wasseroberfläche statt und ist, wie auch die 
+Verdunstung, abhängig von der Windgeschwindigkeit. Der Einfluss der Konvektion auf die
+Wärmehaushaltsbilanz eines Gewässers ist meist sehr viel geringer als der der Verdunstung. In
+Abhängigkeit der Temperaturverhältnisse zwischen Luft und Wasser kann der Konvektionsterm positive 
+oder negative Werte annehmen. Von den verschiedenen Ansätzen wird in QSim der Ansatz nach LAWA 
+(1991) verwendet, für den sich der konvektive Wärmestrom nach folgender Formel berechnet:
 
  
-[19 ]
+\f[ q_K = q_V \cdot \frac{T_W - T_{L,Tr}}{1,53 \cdot (p_S - p_D)} \f]
+
+\f$q_K\f$:	Wärmestromdichte aus Konvektion [\f$ kJ/(h \cdot m2) \f$]  \n
+\f$q_V\f$:	Wärmestromdichte aus Verdunstung [\f$ kJ/(h \cdot m2) \f$] \n
+\f$ T_W \f$:	Wassertemperatur [°C] \n
+\f$T_{L,Tr}\f$:	Lufttemperatur, gemessen am trockenen Thermometer [°C]  \n
+\f$p_S\f$:	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
+\f$p_D\f$:	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [mbar] \n
 
 
-cV	latente Verdampfungswärme  von Wasser [kJ/kg]
-c4	empirische Konstante = 2501,7 [kJ/kg]
-c5	empirische Konstante = 2,366 [kJ/(kg*K)]
+# Wärmestromdichte aus direkter Einleitung {#lnk_waermeeinleitung} #
 
-
-Konvektion ist der direkte Wärmeaustausch zwischen Luft und Wasseroberfläche. Sie findet nur bei unterschiedlichen Temperaturen von Luft und Wasseroberfläche statt und ist, wie auch die Verdunstung, abhängig von der Windgeschwindigkeit. Der Einfluss der Konvektion auf die Wärmehaushaltsbilanz eines Gewässers ist meist sehr viel geringer als der der Verdunstung. In Abhängigkeit der Temperaturverhältnisse zwischen Luft und Wasser kann der Konvektionsterm positive oder negative Werte annehmen. Von den verschiedenen Ansätzen wird in QSim der Ansatz nach LAWA (1991) verwendet, für den sich der konvektive Wärmestrom nach folgender Formel berechnet:
-
- 
-[20 ]
-
-
-qK	Wärmestromdichte aus Konvektion [kJ/(h*m2)]
-qV	Wärmestromdichte aus Verdunstung nach Formel Fehler! Verweisquelle konnte nicht gefunden werden. [kJ/(h*m2)] TW	Wassertemperatur [°C]
-TL,Tr	Lufttemperatur, gemessen am trockenen Thermometer [°C]
-pS	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [Formel Fehler! Verweisquelle konnte nicht gefunden werden.] [hPa]
-pD	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [hPa, Formel Fehler! Verweisquelle konnte nicht gefunden werden.]  
-
-Neben den bisher genannten mehr oder weniger natürlichen Komponenten der Wärmehaushaltsbilanz muss die Wärmestromdichte aus direkter Einleitung berücksichtigt werden. Diese umfasst den Wärmeeintrag durch Kühlwassereinleitung, aber auch die Erwärmung durch den Zufluss meist wärmerer Nebengewässer bzw. die Abkühlung durch Grundwasserzustrom. 
+Neben den bisher genannten mehr oder weniger natürlichen Komponenten der Wärmehaushaltsbilanz 
+muss die Wärmestromdichte aus direkter Einleitung berücksichtigt werden. Diese umfasst den 
+Wärmeeintrag durch Kühlwassereinleitung, aber auch die Erwärmung durch den Zufluss meist 
+wärmerer Nebengewässer. Eine Abkühlung durch Grundwasserzustrom könnte auch
+über eine Einleitung abgeschätzt werden. 
 
  
-[21]
+\f[q_E = c_W \cdot \rho_W \cdot \nu_E \cdot \Delta T \f]
+<!-- #mf: prüfen ob nu und Delta richtig sind -->
 
+\f$q_E\f$:		Wärmestromdichte aus direkter Einleitung in kJ/(h m^2) \n
+\f$c_W\f$:		spez. Wärmekapazität von Wasser = 4,1868 103 J/(kg K) \n
+\f$\rho_W\f$:	Dichte des Wassers = 1.000 kg/ m3 \n
+\f$\nu_E\f$:	Einleitgeschwindigkeit = QE/AE (Punktquelle) bzw. Q_L/LE (Linienquelle) in m/s \n
+* \f$QE\f$:		streckenbezogene Wassermenge der punktförmigen Einleitung [m³*s-1*m-1] \n
+* \f$AE\f$: \n	
+* \f$Q_L\f$:	streckenbezogene Wassermenge der linienförmigen Einleitung [m³*s-1*m-1] \n
+* \f$LE\f$:	 \n
+<!-- #mf QE, AE, qE, LE sollten unter nu_E eingerückt sein; überprüfen + ist eine Einrückung 
+ohne bullet points möglich? -->
 
-qE	Wärmestromdichte aus direkter Einleitung in kJ/(h m2)
-cW	spez. Wärmekapazität von Wasser = 4,1868 103 J/(kg K)
-ρW	Dichte des Wassers = 1.000 kg/ m3
-vE	Einleitgeschwindigkeit = QE/AE (Punktquelle) bzw. qE/LE (Linienquelle) in m/s
-	QE	streckenbezogene Wassermenge der punktförmigen Einleitung [m³*s-1*m-1]
-	AE	
-	qE	streckenbezogene Wassermenge der linienförmigen Einleitung [m³*s-1*m-1]
-	LE	
-ΔT	Aufwärmspanne, Temperaturdifferenz (T1-T2) in K
+\f$ \Delta_T \f$:	Aufwärmspanne, Temperaturdifferenz (T1-T2) in K  \n
 
-Zur Vereinfachung der Berechnung werden für eine punktförmige Einleitung ein homothermer (gleichmäßig warmer) Wasserkörper sowie die sofortige vollständige Durchmischung der Ströme angenommen, obwohl sich unterhalb der Einleitungsstelle je nach Art des Fließvorgangs mehr oder minder ausgeprägte Zonen und Schichten unterschiedlicher Temperatur ausbilden. Für die meisten Aufgabenstellungen (z.B. großräumige Wärmebilanzen) ist diese Vereinfachung jedoch zulässig.
+Zur Vereinfachung der Berechnung werden für eine punktförmige Einleitung ein homothermer 
+(gleichmäßig warmer) Wasserkörper sowie die sofortige vollständige Durchmischung der Ströme 
+angenommen, obwohl sich unterhalb der Einleitungsstelle je nach Art des Fließvorgangs mehr oder 
+minder ausgeprägte Zonen und Schichten unterschiedlicher Temperatur ausbilden. Für die meisten
+Aufgabenstellungen (z.B. großräumige Wärmebilanzen) ist diese Vereinfachung jedoch zulässig.
 
-Der Einfluss der Linienquellen (diffuser Eintrag) wird vor der Berechnung der Temperaturänderung durch die Wärmestromdichten wie folgt berücksichtigt:
+Der Einfluss der Linienquellen (diffuser Eintrag) wird vor der Berechnung der Temperaturänderung 
+durch die Wärmestromdichten wie folgt berücksichtigt:
 
  
-[22]
+\f[ T_W = T_{W-1} + \frac{(T_L - T_{W-1}) \cdot Q_L}{FLAE} \cdot \Delta t \f]
 
+<!-- #mf: in Variablenbeschreibung: müsste da nicht °C stehen? es wird doch nicht in K gerechnet? -->
 
-Tm	Wassertemperatur nach dem Zeitschritt Δt [K]
-Tm-1	Wassertemperatur vor dem Zeitschritt Δt [K]
-TL	Wassertemperatur der linienförmigen Einleitung [K]
-QL	streckenbezogene Wassermenge der linienförmigen Einleitung [m3*s-1*m-1]
-FLAE	Querschnittsfläche des Gewässers [m2]
-Δt	Zeitschritt [h]
+\f$T_W\f$:		Wassertemperatur nach dem Zeitschritt Δt [K] \n
+\f$T_{W-1}\f$:	Wassertemperatur vor dem Zeitschritt Δt [K] \n
+\f$T_L\f$:		Wassertemperatur der linienförmigen Einleitung [K] \n
+<!-- #mf: K sollte überall durch °C ersetzt werden, no?? -->
+\f$Q_L\f$:		streckenbezogene Wassermenge der linienförmigen Einleitung [m3*s-1*m-1] \n
+\f$FLAE\f$:  	Querschnittsfläche des Gewässers [m2] \n
+\f$\Delta_t\f$:	Zeitschritt [h] \n
+<!-- #mf: Delta_t steht in h, Q_L steht in m3/s; Gleichung evtl. noch mit 86400 multiplizieren -->
 
 Dies gilt analog für alle anderen Stoffe, für die ebenfalls ein diffuser Eintrag berücksichtigt wird.
-
-Tabelle 4: Bei der Modellierung der Wassertemperatur benutzte Variablenwerte
-Bezeichnung im Text	Bezeichnung im Code	Einheit	Bedeutung	Wert in QSim	Referenz
-a		m*s-1*hPa-1	Koeffizient für den windunabhängigen Teil der Verdunstung	0,13	WMO 1966
-AE					
-b		m*s-1*hPa-1	Koeffizient für den zu überlagernden windbedingten Anteil	0,0936	WMO 1966
-c		-	Faktor aus der Umrechnung der hV von mm/d in m/h	1/24.000	
-cV	VDW	kJ*kg-1	latente Verdampfungswärme von Wasser	Formel Fehler! Verweisquelle konnte nicht gefunden werden.
-
-cW	speWKW	J*kg-1* K-1	spezifische Wärmekapazität von Wasser	4,1868	
-FLAE	flae	m2	Querschnittsfläche des Gewässers		
-Frel	IDWe	%	relative Luftfeuchte		
-h	Btiefe	m	mittlere Wassertiefe		
-hv	HR	m*s-1	Verdunstungsrate		
-LE					
-pD	pdltt	mbar	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer	Formel Fehler! Verweisquelle konnte nicht gefunden werden.]
-
-pL,Meer		mbar	Luftdruck bezogen auf Meereshöhe		
-pL,Ort		mbar	Luftdruck auf Ortshöhe		
-pS	sddw	mbar	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche	Formel Fehler! Verweisquelle konnte nicht gefunden werden.
-
-qE		m³*s-1*m-1			
-QE		m³*s-1*m-1	streckenbezogene Wassermenge der punktförmigen Einleitung		
-qE	EWAERM	kJ*h-1*m-2	Wärmestromdichte aus direkter Einleitung	Formel Fehler! Verweisquelle konnte nicht gefunden werden.
-
-qK		kJ*h-1*m-2	Wärmestromdichte aus Konvektion	Formel Fehler! Verweisquelle konnte nicht gefunden werden.
-
-QL		m³*s-1*m-1	streckenbezogene Wassermenge der linienförmigen Einleitung		
-qS		kJ*h-1*m-2	Wärmestromdichte aus Strahlung		
-q(TW,t)	WSTRWS	kJ*h-1*m-2	Wärmestromdichte aus dem Austausch an der Wasseroberfläche		
-qU		kJ*h-1*m-2			
-qUS		kJ*h-1*m-2			
-qV	WV	W*m-2	Wärmestromdichte aus Verdunstung	Formel Fehler! Verweisquelle konnte nicht gefunden werden.
-
-ρW	roh2o	kg*m-3	Dichte des Wassers	1.000	
-σ	stbk	kJ*m-2 *k-4	Stefan-Boltzmann-Konstante	2.0411 * 10-7	
-t		h	Zeiteinheit		
-TL	ETEMP	K	Wassertemperatur der linienförmigen Einleitung		
-TL,Tr	TEMPL	K	Lufttemperatur gemessen am trockenen Thermometer	Messwert	
-TW	TEMPW	K	Tiefengemittelte Wassertemperatur	Messwert	
-vE	tflie	m*s-1	Einleitgeschwindigkeit		
-vwind	fkwind	m*s-1	Windgeschwindigkeit	Messwert	
-
-
-
-Überarbeitung:
-============
-Berechnungsverfahren für die Verdunstung
-Für die Berechnungsverfahren nach WMO, Sweers und Rimsha-Donchenko wird der Ansatz nach Dalton verwendet. Die drei Verfahren haben unterschiedliche Werte für die Konstanten a und b.
-Ansatz nach Dalton unter Berücksichtigung der Windgeschwindigkeit:
-E= (a+b*v_wind )*(p_S-p_D )*p_(L,Ort)/p_(L,Meer) *1/24000
-[1]
-
-
-E	Verdunstungsrate [m*h-1]
-a, b	empirische Konstanten [-]
-vwind	Windgeschwindigkeit in 2 m über der Wasseroberfläche [m*s-1]
-pS	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [hPa] 
-pD	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen Thermometer [hPa] 
-pL,Ort	Luftdruck bezogen auf Ortshöhe [hPa]
-pL,Meer	Luftdruck bezogen auf Meereshöhe [hPa]
-
-E errechnet sich nach obiger Gleichung in mm/d. Die Umrechnung in m/h erfolgt durch Multiplikation mit 1/24000.
-
-In QSim verwendete Werte für a und b 
-a	b	Literatur
-0.13	0.0936	WMO (1966)
-0.153	0.063	SWEERS (1976)
-0.211	0.103	RIMSHA-DONCHENKO (1957)
-AUS: G.POß ( 1983)
-
-
-Berechnungsansätze für die Verdunstung ohne Berücksichtigung des Winds
-nach PRIESTLEY-TAYLOR (1972)
-E=b1*  ((p_S-p_D ))/ps*∆/(∆+γ)*(abs(R_n))/λ	[2]
-
-
-nach dem Hargreaves-Verfahren, DELCLAUX ET AL. (2007)
-E=a3*  ((p_S-p_D ))/ps*(T_L+b3)*(abs(R_n))/λ	[3]
-
-
-Δ		Steigung der Sättigungsdampfdruck-Kurve [hPa*°C-1]
-λ		Verdampfungswärme von Wasser [KJ*m-3]	
-γ		Psychrometer-Konstante [hPa*°C-1]
-		γ=(〖cp〗_air*p)/(C_(v_t)*v)
-		Cpair	spezifische Wärmekapazität von Luft: 1.005 [KJ*kg-1*K-1]
-		P	atmosphärischer Druck [hPa]
-		v	Molmassenverhältnis von Wasser und Luft [-]
-		Cv_t	Verdampfungswärme von Wasser [KJ*Kg-1]
-b1, a3, b3		empirische Konstanten (2.805; 0.04; 27.375) [-]
-Rn		Nettostrahlung [kJ*m-2*h-1]
-		R_n=q_s+q_Us-q_U
-			qs 	Wärmestromdichte aus Strahlung [kJ*m-2*h-1]
-			qUs 	Wärmestromdichte aus vom Sediment reflektierter Strahlung 
-				[kJ*m-2*h-1]
-qU	Wärmestromdichte aus Temperaturdifferenz zwischen Sediment und
-	Wasser [kJ*m-2*h-1]
-TL		Lufttemperatur [°C]
-
-Die Einführung des Quotienten  ((p_S-p_D ))/ps in die Originalformeln führte beim Vergleich zwischen Modellergebnissen und Messungen zu deutlich besseren Ergebnissen.
-Die Konstanten b1, a3, b3 sind Kalibrierungsdaten.
-
-
- 
-Berechnung der Strahlungsabsorption in den einzelnen vertikalen Schichten
-Gegenüber dem von der BfG übergebenen Code wurde hier die langwellige Strahlung in zwei Wellenlängenbereiche unterteilt, wobei erst einmal der Extinktionskoeffizient für beide Bereiche als gleich angenommen wurde (4 m-1, wie im Originalcode). Eine Verbesserung wäre hier sicherlich die Einführung der in Tabelle 1 gelisteten Werte. Des Weiteren wurde  die von der Sohle reflektierte Strahlung in jeder vertikalen Schicht berücksichtigt. Dies war im Ausgangscode nicht der Fall und stellt damit eine Ungenauigkeit dar. Der Reflexionsanteil sollte laut Literatur nicht wie bisher 80% sondern besser nur 20% betragen.
-Absorption der Globalstrahlung und atmosphärische Gegenstrahlung
-Bei der einfallenden Globalstrahlung wird zwischen drei Wellenlängenbereichen unterschieden:
-Der Wellenlängenbereich <=700 nm (UV-und fotosynthetisch aktive Strahlung):
-〖GS〗_(PARS,k)=GS*(f_UV+f_PARS )	[4]
-
-
-und die Wellenlängenbereiche >700 <=910 nm und >910 nm. Diese beiden Wellenlängenbereiche gelten auch für die langwellige Gegenstrahlung.
-〖SL1〗_k=GS*〖fL〗_1+G*〖fL〗_1/(〖fL〗_1+〖fL〗_2 )
-〖SL2〗_k=GS*〖fL〗_2+G*〖fL〗_2/(〖fL〗_1+〖fL〗_2 )	[5]
-
-
-GS		Globalstrahlung an der Gewässeroberfläche [kJ*m-2*h-1]
-G		langwellige atmosphärische Gegenstrahlung
-fUV, fPARS	Anteil der UV- und fotosynthetisch aktiven Strahlung an der
-		Globalstrahlung [-]
-fL1		Anteil der Strahlung der Wellenlänge 700-910 nm an der
-Globalstrahlung [-]
-fL2		Anteil der Strahlung der Wellenlänge >910 nm an der
-Globalstrahlung [-]
-
-Die Strahlungsintensität in der Tiefe z errechnet sich für die drei Wellenlängenbereiche zu: 
-〖GS〗_(PARS,k+1)=〖GS〗_(PARS,k)*exp⁡(-extk*z) 
-〖SL1〗_(k+1)=〖SL1〗_k*exp⁡(-〖extkL〗_1*z)       
-〖GS〗_(PARS,k+1)=〖GS〗_(PARS,k)*exp⁡(-〖extkL〗_2*z)  für j=1, n-1	[6]
-
-
-GSPARS,k, SL1k, SL2k	Strahlung der drei Wellenlängenbereiche am Anfang der jeweiligen vertikalen Schicht [kJ*m-2*h-1]
-
-GSPARS,k+1, SL1k+1, SL2k+1	Strahlung am Ende der jeweiligen vertikalen Schicht
-(Schichtdicke = z) [kJ*m-2*h-1]
-z				Dicke der jeweiligen vertikalen Schichten [m]
-j				Laufvariable für die vertikalen Schichten
-n				Anzahl der vertikalen Schichten
-k				kennzeichnet Schichtanfang (1) und Schichtende (2)
-Extk, extkL1, extkL2		Lichtextinktionskoeffizient für Licht der drei 
-Wellenlängenbereiche [m-1]
-				
-
-Die Wärmestromdichte qs,j in kJ*m-2*h-1 durch die einfallende Strahlung errechnet sich somit für alle Schichten aus:
-Für j = 1, n-1:
- q_(s,j)=〖(GS〗_(PARS,k)-〖GS〗_(PARS,k+1))+(〖SL1〗_k-〖SL1〗_(k+1))
-             +(〖SL2〗_k-〖SL2〗_(k+1))
-
-〖GS〗_(PARS,k)=〖GS〗_(PARS,k+1)
-〖SL1〗_k=〖SL1〗_(k+1)
-〖SL2〗_k=〖SL2〗_(k+1)
-	[7]
-
-
-Tab.1: Aufteilung der Strahlung und entsprechende Extinktionskoeffizienten
-(ABBASI ET AL. 2017):
-Wellenlänge	Anteil fi an der gesamten Strahlung  [-]	Extinktionskoeffizient [m-1]
-< 400	0.046 	Wie PARS 
-400 - 700	0.45 
-(eigene Messungen)	Wird berechnet
-700 - 910	0.21 	2.92 (eigene Messungen ~4) 
-
->910	0.294 	93 
-
-
-Absorption der von der Gewässersohle reflektierten Strahlung
-Für die drei Wellenlängenbereiche errechnet sich die von der Gewässersohle reflektierte Strahlung aus:
-
-〖GSr〗_PARS=GS*PSREFS*(f_UV+f_PARS )*exp⁡(-extk*H)
-SL1r=(GS*〖fL〗_1*PSREFS+G*PSREFS*〖fL〗_1/(〖fL〗_1+〖fL〗_2 ))
-                 *exp⁡(-〖extkL〗_1*H)
-SL2r=(GS*〖fL〗_2*PSREFS+G*PSREFS*〖fL〗_2/(〖fL〗_1+〖fL〗_2 ))
-                 *exp⁡(-〖extkL〗_2*H)
-	[8]
-
-
-GSrPARS	reflektierte Strahlungsmenge der Wellenlängen <=700 nm an der
-Gewässersohle [kJ*m-2*h-1]
-SL1r		reflektierte Strahlungsmenge der Wellenlängen >700 <=910 nm an der
-Gewässersohle [kJ*m-2*h-1]
-SL1r		reflektierte Strahlungsmenge der Wellenlängen >910 nm an der
- Gewässersohle [kJ*m-2*h-1]
-PSREFS		Reflektionsanteil der auf die Gewässersohle auftreffenden Strahlung [-]
-H		Gewässertiefe [m]
-
-Die Strahlungsmenge die von der reflektierten Strahlung die Gewässeroberfläche wieder erreicht ergibt sich aus: 
-〖GSr〗_(PARS,k)=〖GSr〗_PARS*exp⁡(-extk*H)
-〖SL1r〗_k=SL1r*exp⁡(-〖extkL〗_1*H)
-〖SL2r〗_k=SL2r*exp⁡(-〖extkL〗_2*H)
-	[9]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Die Wärmstromdichte qUS,j  kJ*m-2*h-1aus der reflektierten Strahlung  errechnet sich für die einzelnen Schichten aus:
-Für j = 1, n-1:
-k=1
- q_(US,j)=〖(GSr〗_(PARS,k+1)-〖GSr〗_(PARS,k))+(〖SL1r〗_(k+1)-〖SL1r〗_k)
-             +(〖SL2r〗_(k+1)-〖SL2r〗_k)
-mit: 
-〖GSr〗_(PARS,k+1)=〖GSr〗_(PARS,k)*exp⁡(xtk*z)
-〖SL1r〗_(k+1)=〖SL1r〗_k*exp⁡(-〖extkL〗_1*z)
-〖SL2r〗_(k+1)=〖SL2r〗_k*exp⁡(-〖extkL〗_2*z)
-
-〖GSr〗_(PARS,k)=〖GSr〗_(PARS,k+1)
-〖SL1r〗_k=〖SL1r〗_(k+1)
-〖SL2r〗_k=〖SL2r〗_(k+1)
-	[10]
-
-
-
-GSrPARS,k, SL1rk, SL2rk	reflektierte Strahlung der drei Wellenlängenbereiche am Anfang der jeweiligen vertikalen Schicht [kJ*m-2*h-1]
-GSrPARS,k+1, SL1rk+1, SL2rk+1	Strahlung am Ende der jeweiligen vertikalen Schicht
-(Schichtdicke = z) [kJ*m-2*h-1]
-z				Dicke der jeweiligen vertikalen Schichten [m]
-j				Laufvariable für die vertikalen Schichten
-n				Anzahl der vertikalen Schichten
-Extk, extkL1, extkL2		Lichtextinktionskoeffizient für Licht der drei 
-Wellenlängenbereiche [m-1]
-				
-
-
 
 
 # Rand- und Anfangsbedingungen #
@@ -374,6 +280,34 @@ direkt in der Temperaturberechnung zu berücksichtigen. Im mehrdimensionalen T-Q
 entnommen wird und einem Einströmrand, an dem das erwärmte Wasser ins Gewässer(Modellgebiet) 
 zurückfließt.
 
+Veröffentlichungen/weitere Dokumentation
+----------------------------------------
+
+Eine Modellbeschreibung in englischer Sprache ist im Anhang D des IKSR Berichts 
+<a href="http://bibliothek.bafg.de/index.asp?detsuche_systematik=online+280" target="_blank">
+Estimation of the effects of climate change scenarios on future Rhine water temperature development </a> zu finden.
+
+Eine Vorgängerversion dieser Dokumentation mit einer ausführlichen Beschreibung dieses 
+Modellbausteins einschließlich der Angabe sämtlicher Formeln findet sich in 
+der\n <a href="./pdf/Temperatur_Doku_Volker.pdf" target="_blank">Dokumentation Temperatur</a> von Volker Kirchesch \n
+
+Zitierte Literatur 
+------------------
+
+* ABBASI, A., F.O. ANNOR & N. VAN DE GIESEN: A framework to simulate small shallow inland Water bodies in semi-arid regions. - Advances in Water Resources, 110, 77-96 (2017)
+
+* Delclaux, F., A. Coudrain & T. Condom: Evaporation estimation on Lake Titicaca: a synthesis review and modelling. – Hydrological Processes 21, 1664–1677 (2007)
+
+* Poß, G.: Untersuchungen zum Abwärmetransport aus Fließgewässern an die Atmosphäre. -  Kernforschungszentrum Karlsruhe GmbH, ISSN 0303-4003 (1983)
+
+* Priestley, C. H. B. & R. J. Taylor: On the assessment of surface heat flux and evaporation using large-scale parameters. -  Monthly Weather Review (100), 81-92, (1972)
+
+* Sweers, H. E. : A nomogram to estimate the heat-exchange coefficient at the air-water interface as a function of wind speed and temperature; a critical survey of some literature. - Journal of Hydrology 30, 375-401 (1976)
+
+* WMO, WORLD METEOROLOGICAL ORGANIZATION: Measurement and Estimation of Evaporation and Evapotranspiration. - Technical Note No. 83 (WMO-No. 201, TP. 105). Geneva (1966)
 
 
-&nbsp aus Datei: wtemp-prozess.md; Code in Datei TEMPERW.f90
+
+
+
+Textquelle: wtemp-prozess.md ; Codesources: TEMPERW.f90, temperw_huelle.f95 ;  zurück: \ref lnk_wtemp

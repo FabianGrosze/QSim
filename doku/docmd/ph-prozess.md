@@ -73,7 +73,7 @@ Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 li
   Dazu wird der von Bakterien mineralisierter Kohlenstoffgehalt je Zeitschritt in der Subroutine orgc() berechnet und 
   mittels der Variable \ref bsbct übergeben.
   \n\n
-* planktische Kiesel, Grün- und Blau- \ref Algen geben in lichtlosen Zeiten CO2 ab. 
+* planktische Kiesel, Grün- und Blau- \ref lnk_phytoplankton geben in lichtlosen Zeiten CO2 ab. 
   Dazu wird der Biomasseverlust pro Zeitschritt, der in den Subroutinen algaeski(), algaesgr() und algaesbl() berechnet wurde, 
   mittels der Variablen  \ref dalgak,  \ref dalgag und  \ref dalgab übergeben.
   Die Multiplikation mit den Kohlenstoffgehalten der Algen  \ref Caki,  \ref Cagr und  \ref Cabl ergeben dann die CO2 Zunahme im Wasser.
@@ -90,9 +90,10 @@ Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 li
 * Bei der Atmung geben \ref Dreissena Kohlendioxid ab.
   Dazu wird deren Biomasseverlust pro Zeitschritt, der in der Subroutine dreissen() berechnet wurde,
   mittels der Variable \ref resdr übergeben.
-  Die Multiplikation mit dem Kohlenstoffgehalten \ref cdr ergibt dann die CO2 Zunahme im Wasser.
-  \n\n
-* Bei der Atmung geben Konsumenten (\ref rotatorien) Kohlendioxid ab.
+  Die Multiplikation mit dem Kohlenstoffgehalten *cdr* ergibt dann die CO2 Zunahme im Wasser.
+  \n\n <!-- #mf: cdr war \ref cdr, ist aber nirgends definiert. Ist ein anderer
+  Parameter gemeint? -->
+* Bei der Atmung geben Konsumenten (\ref lnk_rotatorien) Kohlendioxid ab.
   Dazu wird der Biomasseverlust pro Zeitschritt, der in der Subroutine konsum() berechnet wurde,
   mittels der Variablen \ref dzres1 (Grundrespiration) \ref dzres2 (fraßabhängige Respiration) übergeben.
   Die Multiplikation mit den Kohlenstoffgehalt \ref CRot ergibt dann die CO2 Zunahme im Wasser.
@@ -102,7 +103,7 @@ Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 li
 Die folgenden Prozesse gehören zur Primärproduktion und entnehmen Kohlendioxid aus dem Wasser. 
 Das Formelzeichen \f$ (\Delta CO_2)_{verb} \f$ steht für die Summe dieser CO2 verbrauchenden Prozesse in mol/l im jeweiligen Zeitschritt.
 
-* planktische Kiesel, Grün- und Blau- \ref Algen entnehmen das zum Wachstum benötigte CO2 aus dem im Wasser.
+* planktische Kiesel, Grün- und Blau- \ref lnk_phytoplankton entnehmen das zum Wachstum benötigte CO2 aus dem im Wasser.
   Dazu wird der Zuwach an Biomasse pro Zeitschritt, der in den Subroutinen algaeski(), algaesgr() und algaesbl() berechnet wurde, 
   mittels der Variablen  \ref dalgki,  \ref dalggr und  \ref dalgbl übergeben.
   Die Multiplikation mit den Kohlenstoffgehalten der Algen  \ref Caki,  \ref Cagr und  \ref Cabl ergeben dann die CO2-Abnahme im Wasser.
@@ -247,7 +248,7 @@ Schleifenende äussere Iteration
 
   subroutine ph_kern( \ref mw, \ref pw, \ref ca, \ref lf, \ref tempw, \ref vph, \ref vco2                 &\n
                     , \ref tflie, \ref rau, \ref vmitt, \ref tiefe, \ref rhyd, \ref flae              &\n
-                    , \ref wge, \ref WLage, \ref hWS, \ref iphy                            &\n
+                    , \ref wge, \ref wlage, \ref hws, \ref iphy                            &\n
 					, \ref bsbct, \ref resdr, \ref dzres1, \ref dzres2                     &\n
 					, \ref dalgki, \ref dalggr, \ref dalgbl, \ref dalgak, \ref dalgag, \ref dalgab   &\n
 					, \ref Caki, \ref Cagr, \ref Cabl                                    &\n

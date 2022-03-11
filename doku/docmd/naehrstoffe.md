@@ -1,12 +1,27 @@
 Nährstoffe {#lnk_naehrstoffe}
 ==========
 
-Hier kommt ein kurzer Überblick zu den Nährstoffe hin mit Link zu N, P, Si.
-(Evtl. hier Wortbeschreibung der Module und dann direkt Unterseite mit Gleichungen und Details.
+Kohlenstoff ist die primäre Bausubstanz von Organismen und damit "die Währung"
+vieler ökologischer Modelle. Durch Primärproduzenten wird Kohlenstoff aus dem Wasser
+aufgenommen und steht als Biomasse für höhere trophische Ebenen zur Verfügung. 
+Der Abbau von organischer Substanz macht den Kohlenstoff wieder verfügbar, zehrt 
+dabei jedoch Sauerstoff. Die Abschätzung dieser Sauerstoffzehrung ist eine der
+wesentlichen Aufgaben der Gewässergütemodellierung.
 
-- \subpage BSB
-- \subpage Stickstoff
-- \subpage Phosphor
+<!-- In QSim wird der Umsatz verschiedener Kohlenstoff-Fraktionen in einem eigenen 
+Modul (orgC) berechnet:
+- \subpage lnk_orgC 
+-->
+
+Die Primärproduzenten brauchen zum Wachsen nicht nur Kohlenstoff, sondern auch
+verschiedene Nährstoffe. Die Umsätze der mengenmäßig wichtigsten Nährstoffe 
+(Stickstoff, Phosphor und Silikat) werden in einzelnen Modulen quantifiziert:
+
+- \subpage lnk_stickstoff
+- \subpage lnk_phosphor
 - \subpage lnk_silikat
 
-aus Datei naehrstoffe.md
+Silikat ist dabei nur für die Diatomeen (= Kieselalgen) relevant, da diese 
+Algen die Außenhülle ihrer Zellen aus Silikat aufbauen.
+ 
+Textquelle: naehrstoffe.md; zurück: \ref lnk_ueberblick

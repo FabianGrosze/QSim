@@ -25,16 +25,18 @@ call temperw()\n
  , *qeinll*, *etempl*, \ref mstr, *idwe*, \ref ilang, \ref dtemp, \ref fluxt1
  , \ref extk, \ref itags, \ref monats, \ref tsed, \ref wlage, \ref hws, *irhkw*      &\n
  , *htempw*, *htempz*, \ref wuebks, \ref spewkss, \ref psrefss, \ref extks
- , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim                   &\n
- &, \ref kontroll, \ref iglob, *meinrang*)  \n
+ , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim, *iform_VerdR*,                  &\n
+ &, \ref kontroll, *jjj*, \ref iglob, *meinrang*)  \n
  \n
+ <!-- check, ob jjj, iglob und meinrang noch dabei sind (sind nicht in Volkers Doku -->
+ <!-- wenn eine Var noch nicht in Var-Liste definiert, dann in Volkers Update-Doku schauen -->
 
  
 ## IT-Realisierung ##
 Die QSim Subroutine temperw wird von der Hüllroutine temperw_huelle() aufgerufen. 
 Zum Hüllroutinen-Konzept siehe: \ref hüllen). 
 
-## Schnittstellenbeschreibung ##
+Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
 
 ### Berechnungsablauf ###
 In jedem Zeitschritt müssen für jede Wetterstation die folgenden Subroutinen abgearbeitet werden:\n
@@ -43,6 +45,13 @@ temperl_module()  ersetzt QSim-Subroutine Temperl(), berechnet Lufttemperatur un
 strahlg_huelle()  berechnet aus der von <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>
 eingelesenen Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
 durch Aufruf der QSim-Subroutine strahlg() unter Benutzung der QSim-Subroutinen sasu() und tage()\n
+
+<!-- kurzer Abschnitt aus "alter Doku" (war in temperw_huelle.f95) -->
+Wetterdaten für Waermebilanz in diesem Zeitschritt wurden in randbedingungen_setzen() ermittelt
+call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt
+call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
+call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
+<!-- Abschnittsende --> 
 
 ### Aufruf ###
 Die Hüllroutine temperw_huelle(), wird von stoffumsatz() für alle Knoten 
@@ -76,9 +85,5 @@ Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihr
 
 
 &nbsp 
-
-aus Datei wtemp-umsetzung.ms; 
-
-Code: temperw_huelle(); in: temperw_huelle.f95; 
-
-zurück zu \ref lnk_wtemp
+Textquelle: wtemp-umsetzung.md ; Codesources: TEMPERW.f90, temperw_huelle() in temperw_huelle.f95 ;  
+zurück: \ref lnk_wtemp

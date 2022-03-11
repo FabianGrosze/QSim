@@ -18,7 +18,7 @@ Im Einzelnen gehört dazu:
 
 - \subpage lnk_Grundlagen
 - \subpage Dimension
-- \subpage Num_Umsatz 
+- \ref Num_Umsatz 
 
 
 

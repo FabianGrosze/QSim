@@ -14,10 +14,12 @@ SUBROUTINE silikat()\n
 , \ref albewk, \ref alberk, \ref tiefe, \ref tempw, \ref ilbuhn, \ref akkssi, \ref qmx_sk, \ref q_sk          &\n
 , \ref up_siz, \ref siz, \ref algakz, \ref akitbr, \ref akibrz, \ref hjsi, \ref nkzs, \ref dh2d, \ref dh2de, \ref mstr    &\n
 , \ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *sil*, \ref itags, \ref uhrz, \ref azstrs         &\n
-, \ref kontroll , \ref iglob )    \n
+, \ref kontroll , *jjj* )    \n
+
+<!-- #mf: Referenz jjj funktioniert noch nicht -->
 
 silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
 
 \n\n
 
-aus Datei: silikat-umsetzung.md; Code in Datei: silikat.f90
+Textquelle: silikat-umsetzung.md; Code: silikat.f90; zurück \ref lnk_silikat

@@ -12,4 +12,3 @@ Kontakt {#lnk_kontakt}
 
 [Marieke Frassl](https://www.bafg.de/DE/08_Ref/U2/05_Mitarbeiter/frassl_m/frassl_node.html)
 
-
