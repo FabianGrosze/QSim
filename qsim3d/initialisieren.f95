@@ -164,7 +164,7 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
          print*,'initialisieren(): holen_trans_untrim fetching step= ',na_transinfo
       case(3) ! SCHISM                                        
          nt=na_transinfo
-		 print*, "don't call get_schism_step(nt) here only on rank 0 | nt=", nt
+		 ! don't call get_schism_step(nt) here only on rank 0
       case default
          call qerror('initialisieren: Hydraulischer Antrieb unbekannt')
       end select
@@ -210,15 +210,14 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
 
 end if !! nur prozessor 0
       !print*,'initialisieren(): kontrollpunkt', meinrang
-      call mpi_barrier (mpi_komm_welt, ierror)
-      call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
       if(hydro_trieb.eq. 3)then ! get first schism flowfield for initialization in parallel
-	     print*,meinrang,' initialisieren(): not yet get_schism_step fetching step= ',nt, ' in parallel'
-		 stop
-         !call get_schism_step(nt)
+	     !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
+         !!!### call get_schism_step(nt)
 	  end if ! hydro_trieb=SCHISM,3
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       RETURN
       END subroutine initialisieren

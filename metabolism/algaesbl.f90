@@ -105,7 +105,7 @@
       kTresp = 0.09 
 
       Ihemm = 600. 
-      tauad = 100.  ! Relaxationszeit der Algen in sec                                                    
+      tauad = 100.  ! Relaxationszeit der Algen [sec]
 
       Cabl = 0.48 
 
@@ -124,21 +124,22 @@
        endif
 
 !     C:Chla = abchl * exp(-a1*T) * a2 * I * exp(-a3*T)
-
-      CChl0 = abchl * exp(-a1Bl * Te0)               ! C:Chla bei 0°C  mgC/mgChla
-
+      
+      ! C:Chla bei 0°C [mgC/mgChla]
+      CChl0 = abchl * exp(-a1Bl * Te0)
       if(abChl>abChl_max)then
         CChl0 = abChl_max * exp(-a1bl * Te0)
       endif
 
 
-!Umrechnung der maximalen Wachstumsrate bei 20°C auf Wachstumsrate unter optimalen Temperatur-Bedingungen
+! Umrechnung der maximalen Wachstumsrate bei 20°C auf Wachstumsrate unter
+! optimalen Temperatur-Bedingungen
 
        abgmaxTopt = abgmax
        if(iTemp==1)then
          abgmaxTopt = abgmax/(exp(-kTemp_Bl*(Te0-Topt)**2))
-         upmxPB = abgmaxTopt * Qmx_PB               ! s. Geider (1998), Angabe pro mg Biomasse
-         upmxNB = abgmaxTopt * Qmx_NB               ! Geider (1998)
+         upmxPB = abgmaxTopt * Qmx_PB  ! s. Geider (1998), Angabe pro mg Biomasse
+         upmxNB = abgmaxTopt * Qmx_NB  ! Geider (1998)
         endif    
 
 !.....Einlesen
@@ -776,12 +777,9 @@
         ablt = (abl(ior)/(abl(ior)+dabl))*abl(ior)
       endif             
 
-     Chlablt = ablt*Cabl*1000./CChlaz(1)
-
-     if(ablt<1.e-5)then
-       ablt = 1.e-5
-       Chlablt = ablt*Cabl*1000./CChlaz(1)
-     endif  
+     if(ablt<1.e-5) ablt = 1.e-5
+     Chlablt = 1.e-5  !!wy prevent isnan(Chlabl)
+     if(CChlaz(1).gt. 0.0) Chlablt = ablt*Cabl*1000./CChlaz(1)
 
     if(nkzs(ior)==1)then
       dbmorz(1,ior) = dblmor(ior) 

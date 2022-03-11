@@ -775,12 +775,9 @@
         agrt = (agr(ior)/(agr(ior)+dagr))*agr(ior)
       endif             
 
-     Chlagrt = agrt*Cagr*1000./CChlaz(1)
-
-     if(agrt<1.e-5)then
-       agrt = 1.e-5
-       Chlagrt = agrt*Cagr*1000./CChlaz(1)
-     endif
+     if(agrt<1.e-5) agrt = 1.e-5
+     Chlagrt = 1.e-5  !!wy prevent isnan(Chlagr)
+     if(CChlaz(1).gt. 0.0) Chlagrt = agrt*Cagr*1000./CChlaz(1)
 
     if(nkzs(ior)==1)then
       dgmorz(1,ior) = dgrmor(ior) 

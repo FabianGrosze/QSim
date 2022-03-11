@@ -67,7 +67,8 @@
 !! Die Kommunikation zwischen Gerris und dem Server erfolgt, indem Scripte auf dem Server gestartet werden. 
 !! Diese kommunikation wird in den 3D Optionen eingerichtet:
 !! \n\n
-!! \image html 3Doptionen.png 
+!! <em> hier fehlt noch das Bild (siehe Code, auskommentiert) </em>
+! ! \image html 3Doptionen.png 
 !! \n\n 
 !!! Server-URL\n
 !! 	URL oder ip-Adresse des Servers, auf dem QSim3D gerechnet weden soll. Zwischen dem Server und dem lokalen Arbeitsrechner muss eine ssh-Verbindung möglich sein.
@@ -117,7 +118,7 @@
 !! E-Mail \n
 !! 	E-Mail-Adresse, an die eine Benachrichtigung bei Berechnungsende geschickt wird.
 !! \n\n
-!! aus Datei eingabe.f95 ; zurück zu \ref lnk_technisch
+!! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellstruktur
 
 !> \page Datenmodell Datenmodell
 !! <h1>Bestandteile des Datenmodells</h1>
@@ -465,7 +466,7 @@
 !! aus Datei eingabe.f95 ; zurück zu \ref Datenmodell
 
 !> <h1> SUBROUTINE eingabe </h1>
-!! bewerkstelligt das Einlesen vom \ref Datenmodell.\n
+!! bewerkstelligt das Einlesen vom \ref Datenmodell. \n
 !! aus Datei eingabe.f95 ; zurück zu \ref Modellerstellung
       SUBROUTINE eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
 !
@@ -481,7 +482,6 @@
       !print*,'eingabe() startet'
       only=.false.
 
-      !!! get mesh (space discretisation) ---------- 
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
          if(meinrang.eq.0)then ! prozess 0 only
@@ -489,8 +489,8 @@
             ! Konzentrationen anlegen und initialisieren:
             n_cal=knotenanzahl2D
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierror)
-         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
+         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(2) ! Untrim² netCDF
          if(meinrang.eq.0)then ! prozess 0 only
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen                     
@@ -498,26 +498,26 @@
             n_cal=n_elemente
             print*,'Untrim netCDF read mesh'
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierror)
-         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
+         call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(3) ! SCHISM netCDF
-         !call read_mesh_nc_sc()
-         !n_cal=n_elemente !!??
-         !n_cal=knotenanzahl2D
+         !!!### call read_mesh_nc_sc()
+         n_cal=n_elemente !!??
+         n_cal=knotenanzahl2D
+         if(meinrang.eq.0)print*,'got SCHISM netCDF mesh ##### but n_cal=knotenanzahl2D ?????????########'
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
       end select
 
-      !############ partitioning of variable arrays
+      ! partitioning of variable arrays
          part=n_cal/proz_anz
          n=part*proz_anz
          !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
          if(n.lt.n_cal)part=part+1
-     !    print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
-     !&         ," modell_parallel() n_cal=", n_cal
+         print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
+     &         ," modell_parallel() n_cal=", n_cal
 
-      !!! initialize and allocate ------------ 
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call ini_planktkon0(n_cal)
       call ini_benthic0(n_cal)
       call ini_ueber(n_cal)
@@ -529,29 +529,26 @@
             call qerror('modeverz: control node = 0  ### special option #### (error is regular exit)')
          end if
       end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call show_mesh()
       call ini_zeit() ! initialise time preliminary to reference-year
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
-      !!! get time discretisation  ---------- 
       select case (hydro_trieb)
       case(1) ! casu-transinfo  
          if(meinrang.eq.0)then ! prozess 0 only
             call transinfo_sichten()      ! Transportinformationen sichten:
          end if ! only prozessor 0
-         call mpi_barrier (mpi_komm_welt, ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         !call screen_schism_nc()
+         !!call screen_schism_nc()
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select
-	  
+
    if(meinrang.eq.0)then ! only prozessor 0
-   
-      !!! get input for water quality (BGC) simulation  ---------- 
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
@@ -562,7 +559,7 @@
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
 !
-      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! should work for all hydraulic drivers ?
+      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
 
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
@@ -577,9 +574,7 @@
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if(nur_alter) call alter_lesen() 
    end if ! only prozessor 0
-   call mpi_barrier (mpi_komm_welt, ierror)
-   
-	  !if(hydro_trieb==3) call qerror("soweit so gut beim schism Antrieb eingabe()")
+   call mpi_barrier (mpi_komm_welt, ierr)
 
       RETURN
   222 FORMAT (A,'rechenzeit=',I15,' Temperatur_Wasser=',F8.3,' Temperatur_Sediment=',F8.3)
@@ -694,14 +689,12 @@
 
       rechenzeit=startzeitpunkt
 
-      !read(ion,*, iostat = read_error)imitt,ipH,idl,itemp,itracer,ieros,ischwa ! Berechnungs-Flags??
       if(.not.zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
       read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
-     &                                   ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
-!     read(92,9220)imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy aus qsim.f90 13.301_28mae18
+     &                                   ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
       print*,'Zeile 5 von EREIGG.txt:'
-	  print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy'
-      print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
+	  print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
+      print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
       if(read_error.ne.0) then
          print*,'EREIGG.txt Zeilentext: ',trim(ctext)
          write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'

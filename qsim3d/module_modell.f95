@@ -34,6 +34,7 @@
 !!     Nach dem gemeinsamen Transport (Advektions-Diffusions-Simulation)
 !!     werden die Datenfelder wieder auf die parallelen Prozesse verteilt 
 !!     (MPI_scatter in scatter_planktkon()).
+!!     \n \subpage lnk_partik_planktik
 !! \n\n</li>
 !! <li>\subpage benthische_verteilungen, beschreibt Eigenschaften der Gewässersohle
 !!     Diese Variablen sind ortsfest und 2-dimensional. 
@@ -129,7 +130,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 ! Beschreibung in parallel.f95
 !> nummer und Gesamtzahl prozessoren (MPI)
       integer :: meinrang, part, proz_anz
-      integer :: mpi_komm_welt, ierror
+      !!wy integer :: mpi_komm_welt, ierror
+      integer :: mpi_komm_welt, ierr
 
 !-------------------------------------------------------------------------------Modell+Netz
 !> modellverzeichnis etc.
@@ -180,6 +182,15 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !!     iphy = 3       ! Formel von Wolf\n
 !!     iphy = 4       ! Formel von Melching\n
       integer :: iphy
+!> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010
+      integer :: iformVert
+!> \anchor IFORM_VERDR:   Schalter für die Auswahl der Verdunstungsformeln in temperw_kern.f90 \n
+!!    iform_VerdR==1 ! WMO (FGSM-Handbuch)
+!!    iform_VerdR==2 ! Sweers (1976) over Land
+!!    iform_VerdR==3 ! Rimsha & Donschenko
+!!    iform_VerdR==4 ! Priestley-Taylor (1972)
+!!    iform_VerdR==5 ! Delclaux et al. (2007)
+      integer :: iform_verdr
 
 !> \anchor iwsim Kennung, Simulationstyp ?
       integer :: iwsim
@@ -454,11 +465,15 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 
       integer :: nst_prev ! stack number of preveously read timestep
 !> Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-      integer :: na_transinfo, ne_transinfo, anz_transinfo
+      integer :: na_transinfo, ne_transinfo, anz_transinfo, n_trans
 !> SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
       integer ::n_stacks
-!> Zeitschrittweite der Transportinformation
+!> \anchor dttrans timestep for transport simulation in sec.
       real :: dttrans
+!> \anchor deltatrans timestep for transport simulation in whole sec. (integer)
+      integer :: deltatrans !! in ganzen Sekunden
+!> \anchor nub_sub_trans number of sub-steps in transport simulation 
+      integer :: nub_sub_trans
 !> Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w
 !! werden im  /ref zuflussranddaten ??? übernommen und auf die Prozesse verteilt.
       real , allocatable , dimension (:) :: p, u, dir, w, vel_x, vel_y !! , tief

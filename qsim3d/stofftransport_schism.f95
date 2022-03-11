@@ -143,13 +143,10 @@
       integer :: num_sub
 	  integer nti(maxsubst)
 
-!if(meinrang.eq.0)then !! prozessor 0 only
-      print*,meinrang," stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt,nt,na_transinfo"  &
-	 &      ,startzeitpunkt, zeitpunkt, endzeitpunkt,nt,na_transinfo 
-      !call qerror("preliminary Interrupt")
-!endif
-      call get_schism_step(nt)
-	  
+if(meinrang.eq.0)then !! prozessor 0 only
+      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt  
+      call qerror("preliminary Interrupt")
+endif
       RETURN
       END subroutine stofftransport_schism
 

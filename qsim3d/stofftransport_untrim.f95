@@ -848,7 +848,7 @@ if(meinrang.eq.0)then ! prozess 0 only
       deallocate(zeitstunde) !,secuz)
 
 end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       RETURN
   227 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since start of year ",I4)
   228 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since ",A)

@@ -70,9 +70,14 @@
 # PV=qsim3d_1404final
 # PV=qsim3d_final_v
 # PV=qsim3d_pHtrans
-#PV=qsim3d_pHtrans_gather
-#PV=qsim3d_sc21
-PV=qsim3d_14.05
+# PV=qsim3d_pHtrans_gather
+# PV=qsim3d_sc21
+# PV=qsim3d_14.06entw
+# PV=qsim3d_14.07
+# PV=qsim_14.06git05
+# PV='qsim14.06doku'
+PV='qsim3d14.07doku'
+
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
 #compiler:
@@ -148,8 +153,8 @@ endif
 #--------------------------------------------------------------------
 
 #usual: modu check date qsim qsim3d
-#usual: check date schism qsim qsim3d
 usual: check date qsim qsim3d
+#usual: check date qsim qsim3d
 
 modu:
 	/usr/bin/modulecmd bash purge
@@ -183,7 +188,7 @@ date:
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \
-     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+    $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
 #     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
@@ -229,8 +234,8 @@ Q3 = version.co trans_read.co \
      stoffumsatz.o \
      QSim3D.o
 
+#  screen_schism_nc.o stofftransport_schism.o 
 #	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
-# 	 read_mesh_nc_sc.o screen_schism_nc.o get_schism_step.o stofftransport_schism.o\
 
 
 qsim3d:	$(Q3)
@@ -272,6 +277,7 @@ taz:
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
 	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml ../qsim1d/convert.exe \
 	../metabolism/*.f90 ../metabolism/*.txt ../metabolism/Makefile* \
+	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt
 	cp ../$(FN) .
 

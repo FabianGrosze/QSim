@@ -1118,12 +1118,9 @@
          print*,hconsk,dkimor(ior),dalgak(ior),sedalk(ior),algzok(ior),algdrk(ior),algcok(ior)
       end if ! INF
 
-     Chlakit =  akit*Caki*1000./CChlaz(1)
-
-     if(akit<1.e-5)then
-       akit = 1.e-5
-       Chlakit =  akit*Caki*1000./CChlaz(1)
-     endif
+     if(akit<1.e-5) akit = 1.e-5
+     chlakit = 1.e-5  !!wy prevent isnan(chlaki)
+     if(CChlaz(1).gt. 0.0) Chlakit =  akit*Caki*1000./CChlaz(1)
 
      if(nkzs(ior)==1)then
        dkmorz(1,ior) = dkimor(ior) 

@@ -1,4 +1,4 @@
-!---------------------------------------------------------------------------------------
+﻿!---------------------------------------------------------------------------------------
 !
 !   QSim - Programm zur Simulation der Wasserqualität
 !
@@ -28,7 +28,7 @@ subroutine EreigGParam(cpfad1,j1)
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="EreigG" QsimVersion="14.02">'  
+  WRITE(1, '(A)') '<GerrisParam FileType="EreigG" QsimVersion="14.06">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="EreigG" Text="Randbedingungs-Parameter" Help="Parameter der Randbedingungen">'
   WRITE(1, '(A)') '  <Parameter Ident="OBSB" Text="C-BSB5" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="C-BSB5" Min="0" Max="999.99" Default="" Module="Alle" />'
   WRITE(1, '(A)') '  <Parameter Ident="OCSB" Text="CSB" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="CSB" Min="0" Max="999.99" Default="" Module="Alle" />'
@@ -89,6 +89,13 @@ subroutine EreigGParam(cpfad1,j1)
   WRITE(1, '(A)') '<HmFormula Value="2" Text="Verteilungskoeff. nach Deltares (2010)" Help="" />'
   WRITE(1, '(A)') '<HmFormula Value="3" Text="noch nicht belegt" Help="" />'
   WRITE(1, '(A)') '</HmFormulas>'
+  WRITE(1, '(A)') '<EvapoFormulas>'
+  WRITE(1, '(A)') '  <EvapoFormula Value="1" Text="Windabhängigk. nach WMO" Help="fwind = 0,13 + 0,0936 * uw [m/s]" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="2" Text="nach Sweers (1976)" Help="fwind = 0,153 + 0,063 * uw [m/s]" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="3" Text="nach Rimsha und Donschenko" Help="fwind = 0,211 + 0,103 * uw [m/s])" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="4" Text="ohne Wind nach Priestley-Taylor (1972)" Help="ohne Wind nach Priestley-Taylor (1972)" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="5" Text="ohne Wind nach Delclaux et al. (2007)" Help="ohne Wind nach Delclaux et al. (2007)" />'
+  WRITE(1, '(A)') '</EvapoFormulas>'
   WRITE(1, '(A)') '</GerrisParam>'
  
   CLOSE(1)

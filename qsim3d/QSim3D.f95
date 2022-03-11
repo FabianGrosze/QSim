@@ -55,17 +55,17 @@
       do izeit=1,zeitschrittanzahl !------------------------------------------------- proceed in time
 
          call zeitschritt_halb(.true.) ! --- increment time and compute boundary-values in the middle of the timestep
-         call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierror);call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr);call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
          call zeitsekunde()
          call fortschritt(0,real(izeit)/real(zeitschrittanzahl)) ! update progess display
-         call mpi_barrier (mpi_komm_welt, ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
 
          !------------------------------------------------- set Boundary-Conditions (incl. Weather and Flow)
          call randbedingungen_setzen()
 
          !-------------------------------------------------- suspended matter module 
          call schwebstoff_salz()    ! currently only reading distribuions from input
-         call mpi_barrier (mpi_komm_welt, ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
 
          !------------------------------------------------- all metabolic processes 
          call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -75,35 +75,35 @@
 
          !------------------------------------------------- finish time step
          call zeitschritt_halb(.false.)
-         call mpi_barrier (mpi_komm_welt, ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
 
          !------------------------------------------------- output ... 
          if(jetzt_ausgeben()) call ausgeben() !! output concentration fields if required
          call ganglinien_zeitschritt(izeit+1) !! store values for time series
-         call mpi_barrier (mpi_komm_welt, ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
 
       end do
 !==== End of time-loop   ============= ============= ============= ============= =============
       write(*,*)meinrang,' End of time-loop'
 
       !------------------------------------------------- 
-      !call mpi_barrier (mpi_komm_welt, ierror)
+      !call mpi_barrier (mpi_komm_welt, ierr)
       !call gather_planktkon()
       !call gather_benthic()
       !call gather_ueber()
-      !call mpi_barrier (mpi_komm_welt, ierror)
+      !call mpi_barrier (mpi_komm_welt, ierr)
       !------------------------------------------------- 
       call ganglinien_schliessen() !! write and close time series files
 
       call ausgeben() !! output at the end
       !call aus_grd() !! aufsummierte Überstaudauer für Janet ausgeben
       if(hydro_trieb.eq. 3)call check_err( nf_close(ncid) ) ! close SCHISM netCDF files
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       call fortschritt(-1,0.0) !! write closing message, delete file "fortschritt"
-      call mpi_finalize(ierror)
-      if (ierror.ne.0)then
-         print*,'mpi_finalize(ierror).ne.0'
+      call mpi_finalize(ierr)
+      if (ierr.ne.0)then
+         print*,'mpi_finalize(ierr).ne.0'
          call exit(7)
       !else
       !   print*,'mpi_finalized'
@@ -410,7 +410,7 @@
 !!
 !! <h3>Dokumentation</h3>
 !! In dieser Dokumentation sind an vielen Stellen Beispiele, Dokumente und Bilder verlinkt. Dieses
-!! <a href="./taz/qsim_doku_additional.taz"> ergänzendes Material zur Dokumentation</a> liegt nicht im Versionierungssystem.
+!! <a href="./taz/qsim_doku_additional.zip"> ergänzendes Material zur Dokumentation</a> liegt nicht im Versionierungssystem.
 !! Es kann anhand dieses Links heruntergeladen werden.
 !! \n\n
 !! Allen QSim Nutzer*innen, welche diese Dokumentation online nicht erreichen können, kann eine  

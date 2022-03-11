@@ -283,174 +283,243 @@
 !!
 !! aus Datei temperw_huelle.f95; zurück zu \ref Waermebilanz
 !! \n
-      SUBROUTINE temperw_huelle(i)
-     ! SUBROUTINE temperw_huelle(ausgeben, temperatur_wa, tiefe_wa, geschw_wa, temperatur_sed, &
-     !&                          temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp, delta_zeit)
-      use modell                                                 
-      use QSimDatenfelder
-      implicit none
-      real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp 
-      integer :: i,j,nk
-
-!> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-      iglob=(i+meinrang*part)
-      kontroll=(iglob.eq.kontrollknoten)
-      !if (kontroll) print*,'temperw_huelle meinrang,i,iglob,wetterstations_nummer,tlmed_T'
-      nk=(i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
 
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Daten-übergabe: 
 
-      ro(1)=transfer_quantity_p(63+(i-1)*number_trans_quant)        ! relative Luftfeuchte in % , subroutine wettles()
-      ro(2)=ro(1)
-      templ(1)=transfer_quantity_p(62+(i-1)*number_trans_quant)      ! air temperature at node i 
-      templ(2)=templ(1)
-      tempw(1)=planktonic_variable_p(1+nk)    ! water-Temperatur - auch Rückgabewert !!!
-      tempw(2)=tempw(1)
-      schwi(1)=transfer_quantity_p(64+(i-1)*number_trans_quant)      ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
-      schwi(2)=schwi(1)
-      if(kontroll) print*,'temperw_huelle: schwi(1)=',schwi(1)
-      wge(1)=transfer_quantity_p(65+(i-1)*number_trans_quant)        ! Windgeschwindigkeit aus Wetterstationsdaten
-      wge(2)=wge(1)
+      !ro(1)=transfer_quantity_p(63+(i-1)*number_trans_quant)        ! relative Luftfeuchte in % , subroutine wettles()
+      !ro(2)=ro(1)
+      !templ(1)=transfer_quantity_p(62+(i-1)*number_trans_quant)      ! air temperature at node i 
+      !templ(2)=templ(1)
+      !tempw(1)=planktonic_variable_p(1+nk)    ! water-Temperatur - auch Rückgabewert !!!
+      !tempw(2)=tempw(1)
+      !schwi(1)=transfer_quantity_p(64+(i-1)*number_trans_quant)      ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
+      !schwi(2)=schwi(1)
+      !wge(1)=transfer_quantity_p(65+(i-1)*number_trans_quant)        ! Windgeschwindigkeit aus Wetterstationsdaten
+      !wge(2)=wge(1)
 
-      tiefe(1)= rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
+      !tiefe(1)= rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
       !if(i.eq.1)tiefe(1)= 0.01 ! #### test
       !if(i.eq.2)tiefe(1)= 0.05 ! #### test
       !if(i.eq.3)tiefe(1)= 0.25 ! #### test
       !if(i.eq.4)tiefe(1)= 2.5 ! #### test
       !if(i.eq.5)tiefe(1)= 8.0 ! #### test
       !rb_hydraul_p(2+(i-1)*number_rb_hydraul)=tiefe(1) ! #### test
-      if(tiefe(1).lt. min_tief )tiefe(1)=min_tief ! Minimaltiefe an trockenen Knoten
-      tiefe(2)= tiefe(1)
-      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
-      flag(1)=0         ! keine Einleitungen
-      flag(2)=flag(1)
-      elen(1)=1         ! Elementlänge (nicht verwendet)
-      elen(2)=elen(1)
-      ior=1             ! Laufindex im Strang (T-QSim verwendet nur erstes Profil(Punkt) im Strang)
-      anze=1            ! Anzahl der Profile im aktuellen Strang
+      !if(tiefe(1).lt. min_tief )tiefe(1)=min_tief ! Minimaltiefe an trockenen Knoten
+      !tiefe(2)= tiefe(1)
+	  
+      !flag(1)=0         ! keine Einleitungen
+      !flag(2)=flag(1)
+      !elen(1)=1         ! Elementlänge (nicht verwendet)
+      !elen(2)=elen(1)
+      !ior=1             ! Laufindex im Strang (T-QSim verwendet nur erstes Profil(Punkt) im Strang)
+      !anze=1            ! Anzahl der Profile im aktuellen Strang
 
-      etemp(1)=0.0              ! Einleitetemperatur - keine Einleitungen
-      ewaerm(1)=0.0             ! Eingeleitete Wärmemenge - keine Einleitungen
-      typ(1)=0                  ! unbenutzt
-      qeinl(1)=0.0              ! Abfluss Einleitung - keine Einleitungen
-      vabfl(1)=0.0              ! Abfluss wird aber hier nicht benutzt
-      vabfl(2) = vabfl(1)
+      !etemp(1)=0.0              ! Einleitetemperatur - keine Einleitungen
+      !ewaerm(1)=0.0             ! Eingeleitete Wärmemenge - keine Einleitungen
+      !typ(1)=0                  ! unbenutzt
+      !qeinl(1)=0.0              ! Abfluss Einleitung - keine Einleitungen
+      !vabfl(1)=0.0              ! Abfluss wird aber hier nicht benutzt
+      !vabfl(2) = vabfl(1)
 
-      jiein(1)=0        ! keine Punkt-Einleitungen
-      cloud(1)=transfer_quantity_p(66+(i-1)*number_trans_quant)    ! Bewölkungsdichte  aus Wetterstationsdaten
-      cloud(2)=cloud(1)
-      typw(1)=transfer_quantity_p(67+(i-1)*number_trans_quant)      ! Wolkentyp  aus Wetterstationsdaten
-      typw(2)=typw(1)
-      iwied=0      ! unbenutzte Variable
-      uhrz=uhrzeit_stunde ! Uhrzeit module::modell zeitsekunde() 
-      ilbuhn=0          ! keine Buhnen
-      uhrz=uhrzeit_stunde ! Uhrzeit module::
-      nwaerm=0      ! unbenutzte Variable
-      fkm (1)=0.0  ! Flusskilometer (unbenutzt)
-      nkzs(1)=1                 ! Anzahl Tiefenschichten
-      nkzs(2)=nkzs(1)
-      do j=1,num_lev
-         tempwz(j,1) =  & ! Wassertemperatur tiefenaufgelöst auch Rückgabe
-         plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
-         tempwz(j,2) = tempwz(j,1)
-      end do ! alle j tiefenlevels
-
-      dH2D=tiefe(1)           ! delta_z ??? !tiefe(1)  
-      iorLa(1)=0              ! zur Berücksichtigung der Linienquelle; nicht verwendet
-      iorLe(1)=0              ! zur Berücksichtigung der Linienquelle; nicht verwendet
-      ieinLs(1)=0             ! keine Linienquellen
-      FLAE(1)=tiefe(1)*500.0  ! Breite konstant 500 m ; wird in der Belüftungsformel verwendet, 
+      !jiein(1)=0        ! keine Punkt-Einleitungen
+      !cloud(1)=transfer_quantity_p(66+(i-1)*number_trans_quant)    ! Bewölkungsdichte  aus Wetterstationsdaten
+      !cloud(2)=cloud(1)
+      !typw(1)=transfer_quantity_p(67+(i-1)*number_trans_quant)      ! Wolkentyp  aus Wetterstationsdaten
+      !typw(2)=typw(1)
+      !iwied=0      ! unbenutzte Variable
+      !uhrz=uhrzeit_stunde ! Uhrzeit module::modell zeitsekunde() 
+      !ilbuhn=0          ! keine Buhnen
+      !nwaerm=0      ! unbenutzte Variable
+      !fkm (1)=0.0  ! Flusskilometer (unbenutzt)
+      !nkzs(1)=1                 ! Anzahl Tiefenschichten
+      !nkzs(2)=nkzs(1)
+      !do j=1,num_lev
+      !   tempwz(j,1) =  & ! Wassertemperatur tiefenaufgelöst auch Rückgabe
+      !   plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      !   tempwz(j,2) = tempwz(j,1)
+      !end do ! alle j tiefenlevels
+      !iorLa(1)=0              ! zur Berücksichtigung der Linienquelle; nicht verwendet
+      !iorLe(1)=0              ! zur Berücksichtigung der Linienquelle; nicht verwendet
+      !ieinLs(1)=0             ! keine Linienquellen
+      !FLAE(1)=tiefe(1)*500.0  ! Breite konstant 500 m ; wird in der Belüftungsformel verwendet, 
       ! hat aber keine Entsprechung im Mehrdimensionalen, daher sinnvoller Wert fürs Ästuar
-      FLAE(2)=FLAE(1)
+      !FLAE(2)=FLAE(1)
 
-      qeinlL(1)=0.0              ! für Linienquelle; nicht verwendet
-      etempL(1)=0.0              ! für Linienquelle; nicht verwendet
-      mstr=1                     ! Strangzähler | nur ein Profil in einem Strang
-      IDWe(1,1)= 1               ! Eigentlich Wetterstationsnummer ,muss aber 1 sein, 
+      !qeinlL(1)=0.0              ! für Linienquelle; nicht verwendet
+      !etempL(1)=0.0              ! für Linienquelle; nicht verwendet
+      !mstr=1                     ! Strangzähler | nur ein Profil in einem Strang
+      !IDWe(1,1)= 1               ! Eigentlich Wetterstationsnummer ,muss aber 1 sein, 
       ! weil in typw(1) wge(1) ro(1) die Daten der aktuellen Wetterstation haben
-      IDWe(1,2)= IDWe(1,1)
-      do j=1,num_lev_trans ! lokaler Wärmeeintrag tiefenaufgelöst (tiefenprofil ausserhalb temperw)
-         dtemp(j,1) = trans_quant_vert_p(j+(22-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert)
-         dtemp(j,2) = dtemp(j,1)
-      end do ! alle j tiefenlevels
-      FluxT1(1) = transfer_quantity_p(46+(i-1)*number_trans_quant) ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
-      FluxT1(2) = FluxT1(1)
-      extk(1) = transfer_quantity_p(54+(i-1)*number_trans_quant) ! mittlerer Extinktionskoeffizient
-      extk(2) = extk(1)
-      if((extk(1)<=0.0).and.(iglob.eq. 1))  print*,'temperw_huelle extk(1)<=0.0 ,extkS, iglob',extk(1),extkS(1,1),iglob
-      if((extk(1)<=0.0).and.(iglob.eq. 2))  print*,'algaeski schon aktiv ??? ',extk(1),extkS(1,1),iglob
-      if(kontroll) print*,'temperw vorher: extk(1),extk(2),extkS(1,1),tiefe(1)',extk(1),extk(2),extkS(1,1),tiefe(1)
+      !IDWe(1,2)= IDWe(1,1)
+      !do j=1,num_lev_trans ! lokaler Wärmeeintrag tiefenaufgelöst (tiefenprofil ausserhalb temperw)
+      !   dtemp(j,1) = trans_quant_vert_p(j+(22-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert)
+      !   dtemp(j,2) = dtemp(j,1)
+      !end do ! alle j tiefenlevels
+      !FluxT1(1) = transfer_quantity_p(46+(i-1)*number_trans_quant) ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
+      !FluxT1(2) = FluxT1(1)
+      !extk(1) = transfer_quantity_p(54+(i-1)*number_trans_quant) ! mittlerer Extinktionskoeffizient
+      !extk(2) = extk(1)
+      !if((extk(1)<=0.0).and.(iglob.eq. 1))  print*,'temperw_huelle extk(1)<=0.0 ,extkS, iglob',extk(1),extkS(1,1),iglob
+      !if((extk(1)<=0.0).and.(iglob.eq. 2))  print*,'algaeski schon aktiv ??? ',extk(1),extkS(1,1),iglob
 
-      itags=tag           ! Tag im Monat module::modell zeitsekunde()	(unbenutzt)
-      monats=monat          ! Monat im Jahr module::modell zeitsekunde() (unbenutzt)
-      tsed(1:2)=benthic_distribution_p(1+(i-1)*number_benth_distr)    ! Temperatur des Sediments 	- auch Rückgabewert !!!
-      Wlage(1,1:2)=zone(point_zone(iglob))%wettstat%wetterstations_lage! Höhenlage der zuständigen Wetterstation mü.NHN 
-      hWS(1,1:2)= rb_hydraul_p(3+(i-1)*number_rb_hydraul) ! Wasserspiegellage, von holen_trans() gesetzt
-      iRHKW=0 ! (unbenutzt)
-
-      htempw(1,1) = 0.0 ! zur Berücksichtigung von Linienquellen (in QSim3D nicht verwendet) Ausgabewert
-      htempz(1,1,1) = 0.0 ! zur Berücksichtigung von Linienquellen (in QSim3D nicht verwendet) Ausgabewert
+      !itags=tag           ! Tag im Monat module::modell zeitsekunde()	(unbenutzt)
+      !monats=monat          ! Monat im Jahr module::modell zeitsekunde() (unbenutzt)
+      !tsed(1:2)=benthic_distribution_p(1+(i-1)*number_benth_distr)    ! Temperatur des Sediments 	- auch Rückgabewert !!!
+      !Wlage(1,1:2)=zone(point_zone(iglob))%wettstat%wetterstations_lage! Höhenlage der zuständigen Wetterstation mü.NHN 
+      !hWS(1,1:2)= rb_hydraul_p(3+(i-1)*number_rb_hydraul) ! Wasserspiegellage, von holen_trans() gesetzt
+      !iRHKW=0 ! (unbenutzt)
+      !htempw(1,1) = 0.0 ! zur Berücksichtigung von Linienquellen (in QSim3D nicht verwendet) Ausgabewert
+      !htempz(1,1,1) = 0.0 ! zur Berücksichtigung von Linienquellen (in QSim3D nicht verwendet) Ausgabewert
 
       ! Sedimenteigenschaften ggf von: MODELLG.3D.txt
-      WUEBKS(1,1:2) = zone(point_zone(iglob))%seditemp%wuebk ! von Modellg gelesen, wenn 0.0=Standartwert Wärmeübergangskoeffizient verwenden.
-      SPEWKSS(1,1:2)= zone(point_zone(iglob))%seditemp%spewks ! von Modellg gelesen, wenn 0.0= Standartwert spezifische Wärmekapazität des Sediments verwenden.
-      ! PSREFSS ! unbenutzt  ,psrefs(izoni) ... trotzdem:
-      PSREFSS(1,1:2) = zone(point_zone(iglob))%seditemp%psrefs ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
-      ! extkS ! nicht belegt, Verwendung abgefangen. ... dennoch:
-      EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!) 
+      !WUEBKS(1,1:2) = zone(point_zone(iglob))%seditemp%wuebk ! von Modellg gelesen, wenn 0.0=Standartwert Wärmeübergangskoeffizient verwenden.
+      !SPEWKSS(1,1:2)= zone(point_zone(iglob))%seditemp%spewks ! von Modellg gelesen, wenn 0.0= Standartwert spezifische Wärmekapazität des Sediments verwenden.
+      !PSREFSS ! unbenutzt  ,psrefs(izoni) ... trotzdem:
+      !PSREFSS(1,1:2) = zone(point_zone(iglob))%seditemp%psrefs ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
+      !extkS ! nicht belegt, Verwendung abgefangen. ... dennoch:
+      !EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!) 
 
-      ifehl=0  ! if ISNAN(tempmt)(zwischenwert Wassertemperatur) > ifehl=24
-      ifhStr=0 ! Strangnummer in dem der Fehler auftrat
-
-      iwsim = 3 ! Simulations-typ 3=alles
-
-      if(kontroll) print*,'temperw vorher: tempw(1),tempw(2),tempwz(1,1),tsed(1),templ(1)',  &
-                                           tempw(1),tempw(2),tempwz(1,1),tsed(1),templ(1)
+      !ifehl=0  ! if ISNAN(tempmt)(zwischenwert Wassertemperatur) > ifehl=24
+      !ifhStr=0 ! Strangnummer in dem der Fehler auftrat
+      !iwsim = 3 ! Simulations-typ 3=alles
 
 !version qsim13.40_15okt18
-      call temperw(      RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl    &
-                         ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae &
-                         ,qeinlL,etempL,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW      &
-                         ,htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,ifehl,ifhStr,azStrs,iwsim                   &                                                   
-                         ,kontroll ,iglob )
+!      call temperw(      RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl    &
+!                         ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae &
+!                         ,qeinlL,etempL,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW      &
+!                         ,htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,ifehl,ifhStr,azStrs,iwsim                   &                                                   
+!                         ,kontroll ,iglob )
 
-     if( isNaN(tempw(1)) )then
-        print*,'temperw nachher isNaN(tempw iglob,extk(1),tiefe(1)=',iglob,extk(1),tiefe(1)
-     endif
-     if(kontroll) print*,'temperw nachher: tempw(1),tempw(2),tempwz(1,1),tempwz(1,2),tsed(1),tsed(2),templ(1)',  &
-                                           tempw(1),tempw(2),tempwz(1,1),tempwz(1,2),tsed(1),tsed(2),templ(1)
-    !  if(i.eq.1)print*,meinrang,' temperw i=1 nachher: tempw,tsed,templ,',tempw(2),tsed(2),templ(1)  &
-    ! &                ,' iglob,part,kontrollknoten=',iglob,part,kontrollknoten
 !
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Daten-rückgabe: 
-      if(tiefe(1).le.min_tief)then ! wenn trockengefallen
-         planktonic_variable_p(1+nk) = templ(1)    ! Wassertemperatur=Luft-Temp. an trockenen Knoten
-      else ! nass
-         planktonic_variable_p(1+nk) = tempw(2)    ! Wasser-Temperatur Rückgabewert
-      endif
+!      call temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                           &
+!                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz,tempmt,xtempw,btiefe,xTsed,xdtemp,dtempS_mit,iform_VerdR) 
 
-      do j=1,num_lev ! Wassertemperatur tiefenaufgelöst
-         plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =  &
-         tempwz(j,2)
+
+
+      SUBROUTINE temperw_huelle(i)
+     ! SUBROUTINE temperw_huelle(ausgeben, temperatur_wa, tiefe_wa, geschw_wa, temperatur_sed, &
+     !&                          temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp, delta_zeit)
+      use modell                                                 
+      use QSimDatenfelder
+      implicit none
+      !real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
+      real :: xdtemp_nkz ! delte_temp_3D	  
+      real :: xdtemp_mit ! delte_temp_2D	  
+      integer :: i,j,nk
+	  !! vermutlich fehlerhaft verwendete Variablen:
+      real :: tempmt	  
+      real :: dtempS_mit
+	  real :: btiefe
+!        call temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                                &
+!                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz(1),tempmt,xtempw,btiefe,xTsed,xdtemp(nkz),dtempS_mit,iform_VerdR) 
+
+!    nkz        :   Zähler Tiefenschichten (nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
+!    xnkzs      :   Anzahl der Tiefenschichten am Querprofil  
+! ### Die Tiefenschichten müssen immer von 1 bis xnkzs nacheinander aufgerufen werden ####
+!    xtypw      :   Wolkentyp (0-6)
+!    xschwi     :   Globalstrahlung am Querprofil [cal/(cm2*h)]
+!    xextk      :   Lichtextinktion [1/m]
+!    xhWS       :   Wasserspiegellage am Querprofil, Höhe ü. NN [m]
+!    xtempl     :   Lufttemperatur im Zeitschritt [°C]
+!    xro        :   relative Luftfeuchte im Zeitschritt [%]
+!    xwge       :   die in der Höhe zWmess gemessene Windgeschwindigkeit [m/s]
+!    xcloud     :   Bedeckungsgrad in achtel
+!    xWlage     :   Lage der Wetterstation, Höhe ü. NN [m]
+!    dH2D eigentlich delta_z Tiefenschicht-Dicke  z.Z. Wassertiefe ???
+!    xdtemp_mit :   mittlere Temperaturänderung in der Wassersäule [°C] 
+!    tflie  Zeitschritt 
+!    WUEBK      :   Wärmeübergangskoeffizient 
+!    SPEWKS     :   spezifische Wärmekapazität des Sediments 
+!    PSREFS     :   Reflektionsanteil der Strahlung an der Sedimentoberfläche
+!    xtempwz    :   Temperatur in der Tiefenschicht nkz am Querprofil [°C] 1 ???
+!    tempmt     :   Mittelwert der Wassertemperatur im Querprofil nach dem Zeitschritt tflie [°C]
+!    xtempw     :   Mittelwert der Wassertemperatur im Querprofil [°C]
+!    btiefe = tiefe
+!    xTsed      :   Sedimenttemperatur [°C] 
+!    xdtemp_nkz :   Temperaturänderung in den einzelnen Tiefenschichten [°C/h]   
+!    dtempS_mit :   Temperaturänderung durch Sedimenteinfluss (bezogen auf die gesamte Wassersäule) [°C]   
+!    IFORM_VERDR:   Schalter für die Auswahl der Verdunstungsformeln
+!    iform_VerdR==1 ! WMO (FGSM-Handbuch)
+!    iform_VerdR==2 ! Sweers (1976) over Land
+!    iform_VerdR==3 ! Rimsha & Donschenko
+!    iform_VerdR==4 ! Priestley-Taylor (1972)
+!    iform_VerdR==5 ! Delclaux et al. (2007)
+	  
+!> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
+      iglob=(i+meinrang*part)
+      kontroll=(iglob.eq.kontrollknoten)
+      !if (kontroll) print*,'temperw_huelle meinrang,i,iglob,wetterstations_nummer,tlmed_T'
+      nk=(i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
+      tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+	  
+	  if(num_lev>1)call qerror("temperw_huelle not ready for 3D")
+      if(kontroll) print*,'temperw vorher: temperw, extk, tiefe, temperwz1',planktonic_variable_p(1+nk)  &
+     &                   ,transfer_quantity_p(54+(i-1)*number_trans_quant),rb_hydraul_p(2+(i-1)*number_rb_hydraul)  &
+	 &                   ,plankt_vari_vert_p(1+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+!########################################################################################
+!  das Abarbeiten der einzelnen Schichten erfolgt von 
+!  der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
+!  übergeben wird die Temperaturänderung dtemp in den einzelnen Schichten
+!########################################################################################   
+      btiefe=rb_hydraul_p(2+(i-1)*number_rb_hydraul)
+	  if(btiefe.le.min_tief)btiefe=min_tief ! minimale Wassertiefe erhalten
+      dH2D=btiefe  ! =tiefe           ! eigentlich delta_z   
+	  
+	  if((iform_VerdR<1).or.(iform_VerdR>5))then
+	     print*,meinrang,'temperw_huelle iform_VerdR=',iform_VerdR
+     	 call qerror('iform_VerdR unzulässiger Wert in temperw_huelle')
+	  endif
+
+      do j=1,num_lev ! Wassertemperatur tiefenaufgelöst von oben nach unten
+	     call temperw_kern(                          &
+		 j                          &
+		 ,num_lev  &
+		 ,transfer_quantity_p(67+(i-1)*number_trans_quant)                           &
+		 ,transfer_quantity_p(64+(i-1)*number_trans_quant)                           &
+		 ,transfer_quantity_p(54+(i-1)*number_trans_quant)                            &
+		 ,rb_hydraul_p(3+(i-1)*number_rb_hydraul)                            &
+		 ,transfer_quantity_p(62+(i-1)*number_trans_quant)                           &
+		 ,transfer_quantity_p(63+(i-1)*number_trans_quant)                           &
+		 ,transfer_quantity_p(65+(i-1)*number_trans_quant)                           &
+		 ,transfer_quantity_p(66+(i-1)*number_trans_quant)                           &
+		 ,zone(point_zone(iglob))%wettstat%wetterstations_lage                            &
+		 ,dH2D                          &
+		 ,xdtemp_mit                                          &
+		 ,tflie                          &
+		 ,zone(point_zone(iglob))%seditemp%wuebk                             &
+		 ,zone(point_zone(iglob))%seditemp%spewks                            &
+		 ,zone(point_zone(iglob))%seditemp%psrefs                            &
+		 ,plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)       &
+		 ,tempmt                          &
+		 ,planktonic_variable_p(1+nk)                          &
+		 ,btiefe                           &
+		 ,benthic_distribution_p(1+(i-1)*number_benth_distr)                           &
+		 ,xdtemp_nkz                          &
+		 ,dtempS_mit                          &
+		 ,iform_VerdR                         &
+		 ,kontroll, iglob ) 
+
+         !! error check
+		 if( isNaN(xdtemp_nkz) )then
+		    write(fehler,*)meinrang," isNaN(xdtemp_nkz) ",j,i,iglob
+		    call qerror(fehler)
+		 endif
+		 if( isNaN(xdtemp_mit) )then
+		    write(fehler,*)meinrang," isNaN(xdtemp_mit) ",j,i,iglob
+		    call qerror(fehler)
+		 endif
+         !! Temperatur change ...
+	     if(rb_hydraul_p(2+(i-1)*number_rb_hydraul).gt.min_tief)then ! wet nodes
+             plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =       &
+		     plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) * xdtemp_nkz ! tempwz(j,1)
+		     planktonic_variable_p(1+nk) = tempmt  ! = planktonic_variable_p(1+nk) + xdtemp_mit ! tempw(1)
+		 else ! dry nodes
+		    planktonic_variable_p(1+nk) = transfer_quantity_p(62+(i-1)*number_trans_quant) ! water temperature equals air temp.
+            plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) &
+			= transfer_quantity_p(62+(i-1)*number_trans_quant) 
+		 endif ! wet nodes
       end do
-      do j=1,num_lev_trans ! lokaler Wärmeeintrag tiefenaufgelöst (tiefenprofil ausserhalb temperw)
-         trans_quant_vert_p(j+(22-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = dtemp(j,1)
-      end do
-      transfer_quantity_p(46+(i-1)*number_trans_quant) = FluxT1(1)   ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
-      benthic_distribution_p(1+(i-1)*number_benth_distr) = tsed(2) ! Temperatur des Sediments - Rückgabewert 
 
-      transfer_quantity_p(54+(i-1)*number_trans_quant) = extk(1) ! mittlerer Extinktionskoeffizient
-
-      transfer_quantity_p(62+(i-1)*number_trans_quant) = templ(1) ! templ(1) ! Lufttemperatur | wge(1) ! 
-      transfer_quantity_p(63+(i-1)*number_trans_quant) = RO(1)    ! Luftfeuchte
-      transfer_quantity_p(64+(i-1)*number_trans_quant) = SCHWI(1) ! Globalstrahlung 
-      transfer_quantity_p(65+(i-1)*number_trans_quant) = WGE(1)   ! Windgeschwindigkeit 
-      transfer_quantity_p(66+(i-1)*number_trans_quant) = cloud(1) ! Bewölkungsdichte 
-      transfer_quantity_p(67+(i-1)*number_trans_quant) = typw(1)  ! Wolkentyp 
-!
-      !if(ausgeben)print*,'dtemp(1,1)=',dtemp(1,1),' tiefe(1)=',tiefe(1) &
-      !                  ,' tempw(1)=',tempw(1),' tsed(1)=',tsed(1)
-!
       RETURN
       END subroutine temperw_huelle
 !----+-----+----

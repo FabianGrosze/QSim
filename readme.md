@@ -1,15 +1,3 @@
-## tag 14.08
-Teile des 1D-Codes wurden neu formatiert um die Lesbarkeit zu verbessern. 
-Die Berechnungen der Güte bleiben unverändert.
-    
-Die meisten Änderungen beziehen sich auf `qsim1d.f90`:
-* Sämtliche Einrückungen im Code angepasst.
-* Soweit der Code verständlich war, wurden goto-Anweisungen durch Schleifen und Verzweigungen ersetzt.
-* Es gab eine if-else-Konstruktion um den gesamten Code, so dass mehrere tausend Zeilen in der else-Schleife lagen. Code wurde so umgeschrieben, dass diese Verzweigung in dieser Form nicht mehr nötig ist.
-* ModellA.txt, ModellG.txt, AParam.txt werden jetzt innerhalb eigener Subroutinen eingelesen.
-* Fehlermeldungen: Bisher werden Fehler umständlich mit goto-Anweisungen und Fehlernummern, die auf eine externe Datei mit vorformulierten Fehlermeldungen verweist, gehandhabt. Es gibt jezt die Subroutine `call fehlerAusgeben(text)`, welcher der Text zur Fehlermeldung direkt übergeben wird. Die Routine gibt den Text auf der Konsole sowie in `file1.err` (Schnittstelle für Gerris) aus und beendet anschließend QSim mit Exit-Code 1.
-
-Änderungen in anderen Files sind lediglich neue Formatierungen ohne funktionale Veränderung
 
 ## TAG 14.06
 
@@ -19,6 +7,9 @@ including extended and restructured temperature module `temperw_kern.f90`
 
 
 ## tag 14.04
+
+Restrukturierung und Dokumentation pH-Modul
+
  
 Dokumentationsportal in eigenem Verzeichnis (27aug20):
  
