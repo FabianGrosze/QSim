@@ -333,8 +333,8 @@
       real, Dimension(:,:,:), allocatable     :: CChlkzt, CChlbzt, CChlgzt
 
       real :: Cagr,Caki,Cabl,CZoo  ! werden in ini_algae (zuflussrand.f90) gesetzt
-	  character (len = 8)                     :: versionstext
-	  real                                    :: versio
+	  character (len = 8)                     :: versionstext,version_alt,version
+	  !real                                    :: versio
 
 !###### setting ################
       linux  = .false.
@@ -342,7 +342,7 @@
 
 !##### version #################################
       call version_string(versionstext)
-	  read(versionstext,*)versio
+	  !read(versionstext,*)versio
 	  print*,"QSim1D Version ",versionstext," starting ..."
                                     
 !.....Schalter für "Regeln bei Kraftwerksbetrieb"                       
@@ -434,7 +434,7 @@
 
       endif ! if(cpfad(1:5)==' ')
         
-      print*,j1,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' versio=',versio
+      print*,j1,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' versio=',versionstext
 
       call fehlermeldungen(cpfad,j1)
 
@@ -450,68 +450,68 @@
         open(unit=299, file=pfadstring, iostat = open_error)
       rewind (299)
 
-      read(299,'(f5.2)',iostat=read_error)Version_alt
+      read(299,'(A)',iostat=read_error)Version_alt
       print*,"Version_alt=",Version_alt
-      if(read_error<0)then
-        if(versio>=13.20)then
-          write(*,1200)
-          1200 format(2x,'ab der Version 13.20 wird das C:Chl-Verhaeltnis statt')
-          write(*,1202)
-          1202 format(2x,'des Chla:Biomasse-Verhaeltnisses benutzt!!')
-          write(*,*)
-          write(*,1205)
-          1205 Format(2x,'Eingabe der max. Algenwachstumsraten fuer 20 Grad C !!!')
-          write(*,1207)
-          1207 Format(2x,'Default-Werte in <aparam_gerris.xlsx>') 
-          write(*,*)
-          write(*,1210)
-          1210 format(2x,'falls die Werte schon geaendert wurden "weiter mit: w"')
-          write(*,1215) 
-          1215 format(2x,'ansonsten "Berechnungsabruch mit: s"')
-          read(*,'(a1)')ctaste
-          if(ctaste=='s'.or.ctaste=='S')then
-            rewind(299)
-            write(299,'(f5.2)')versio
-          stop 1
-          endif
-          rewind(299)
-          write(299,'(f5.2)')versio
-        endif    
-      endif
+!      if(read_error<0)then
+!        if(versio>=13.20)then
+!          write(*,1200)
+!          1200 format(2x,'ab der Version 13.20 wird das C:Chl-Verhaeltnis statt')
+!          write(*,1202)
+!          1202 format(2x,'des Chla:Biomasse-Verhaeltnisses benutzt!!')
+!          write(*,*)
+!          write(*,1205)
+!          1205 Format(2x,'Eingabe der max. Algenwachstumsraten fuer 20 Grad C !!!')
+!          write(*,1207)
+!          1207 Format(2x,'Default-Werte in <aparam_gerris.xlsx>') 
+!          write(*,*)
+!          write(*,1210)
+!          1210 format(2x,'falls die Werte schon geaendert wurden "weiter mit: w"')
+!          write(*,1215) 
+!          1215 format(2x,'ansonsten "Berechnungsabruch mit: s"')
+!          read(*,'(a1)')ctaste
+!          if(ctaste=='s'.or.ctaste=='S')then
+!            rewind(299)
+!            write(299,'(f5.2)')versio
+!          stop 1
+!          endif
+!          rewind(299)
+!          write(299,'(f5.2)')
+!        endif    
+!      endif
 
-      if(Version_alt>13.19.and.Versio<=13.19)then
-         write(*,1220)
-         1220 format(2x,'Eingabe des Chla:Biomasse-Verhaeltnisses')
-         write(*,*)
-         write(*,1210)
-         write(*,1215)
-         read(*,'(a1)')ctaste
-         if(ctaste=='s'.or.ctaste=='S')then
-           rewind(299)
-           write(299,'(f5.2)')versio
-           stop 1
-         endif
-       endif
+!      if(Version_alt>13.19.and.Versio<=13.19)then
+!         write(*,1220)
+!         1220 format(2x,'Eingabe des Chla:Biomasse-Verhaeltnisses')
+!         write(*,*)
+!         write(*,1210)
+!         write(*,1215)
+!         read(*,'(a1)')ctaste
+!         if(ctaste=='s'.or.ctaste=='S')then
+!           rewind(299)
+!           write(299,'(f5.2)')versio
+!           stop 1
+!         endif
+!       endif
 
-           if(Version_alt>0.0.and.Version_alt<=13.19.and.Versio>13.19)then
-              write(*,1200)
-              write(*,1202)
-              write(*,*)
-              write(*,1205)
-              write(*,1207)
-              write(*,*)
-              write(*,1210)
-              write(*,1215) 
-              read(*,'(a1)')ctaste
-              if(ctaste=='s'.or.ctaste=='S')then
-                rewind(299)
-                write(299,'(f5.2)')versio
-                stop 1
-              endif
-         endif
+!           if(Version_alt>0.0.and.Version_alt<=13.19.and.Versio>13.19)then
+!              write(*,1200)
+!              write(*,1202)
+!              write(*,*)
+!              write(*,1205)
+!              write(*,1207)
+!              write(*,*)
+!              write(*,1210)
+!              write(*,1215) 
+!              read(*,'(a1)')ctaste
+!              if(ctaste=='s'.or.ctaste=='S')then
+!                rewind(299)
+!                write(299,'(f5.2)')versio
+!                stop 1
+!              endif
+!         endif
 
               rewind(299)
-              write(299,'(f5.2)')versio
+              write(299,'(A)')versionstext
               close (299)
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'qsim.tst' 
@@ -534,7 +534,7 @@
         if(ckenn_vers/='*V')then
           else
             rewind(10)
-            read(10,1110)VERSIO
+            read(10,'(A)')version
             read(10,'(a2)')chcon 
             1110 Format(19x,F5.2)  
       endif
@@ -9335,35 +9335,35 @@
       end if
       
       if(ckenn_vers=='*V')then
-        write(45,4555)Versio
-        4555 format('*V  QSim  ERGEBM',2x,F5.2)  
+        write(45,4555)versionstext
+        4555 format('*V  QSim  ERGEBM',2x,A)  
           call ergebMFormat() 
         write(45,'(a50)')modell 
         write(45,'(a255)')cEreig
 
-        write(155,4556)Versio
-        4556 format('*V  QSim  ERGEBT',2x,F5.2)  
+        write(155,4556)versionstext
+        4556 format('*V  QSim  ERGEBT',2x,A)  
           call ergebTFormat() 
         write(155,'(a50)')modell 
         write(155,'(a255)')cEreig 
 
-        write(255,4557)Versio
-        4557 format('*V  QSim  ERGEB2D',2x,F5.2)  
+        write(255,4557)versionstext
+        4557 format('*V  QSim  ERGEB2D',2x,A)  
           call ergeb2DFormat()
         write(255,'(a50)')modell 
         write(255,'(a255)')cEreig
           else
             write(45,'(a50)')modell 
-            write(45,4558)versio 
+            write(45,4558)versionstext 
             write(45,'(a255)')cEreig 
             write(155,'(a50)')modell 
-            write(155,4558)versio 
+            write(155,4558)versionstext 
             write(155,'(a255)')cEreig 
             write(255,'(a50)')modell 
-            write(255,4558)versio 
+            write(255,4558)versionstext 
             write(255,'(a255)')cEreig 
       endif
-  4558 format('QSim-Version  ',F5.2)
+  4558 format('QSim-Version  ',A)
                                                                        
       iergeb = 1 
                                                                        

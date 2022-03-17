@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GerrisParam QSimVersion="99.99" Remark="">
+<GerrisParam QSimVersion="14.07.01" Remark="">
 	<ParamSet Id="SW" Title="Wehr" Comment="Parameter eines Wehres" StationCount="2" Scope="Wehr" IsGrouped="0" Class="Hydrax">
 		<Param Id="Breite" Caption="Überfallbreite [m]" Unit="m" Default="" Format="" Comment="Breite des Wehr-Überfalls in m" DataType="Float" Min="0" Max="9999.999" Group=""/>
 		<Param Id="Hoehe" Caption="Überfallhöhe [m über NN]" Unit="m ü. NN" Default="" Format="" Comment="Oberkante des Wehr-Überfalls in m über NN" DataType="Float" Min="-999.999" Max="9999.999" Group=""/>

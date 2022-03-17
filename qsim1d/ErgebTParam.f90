@@ -25,12 +25,14 @@
 
   character(255)  :: cpfad1
   character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'ErgebTParam.xml'
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="ErgebT" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="ErgebT" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="ErgebT" Text="Zeitschritt-Ergebnisparameter" Help="Die von QSim in Zeitschritt-Auflösung berechneten Parameter">'
   WRITE(1, '(A)') '  <Parameter Ident="VBSB" Text="C-BSB5" Unit="mg/l" Format="F6.2" Help="C-BSB5" Group="1" Quantity="BSB5" />'
   WRITE(1, '(A)') '  <Parameter Ident="VCSB" Text="CSB" Unit="mg/l" Format="F6.2" Help="CSB" Group="1" Quantity="CSB" />'

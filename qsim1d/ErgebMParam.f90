@@ -25,12 +25,14 @@
 
   character(255)  :: cpfad1
   character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'ErgebMParam.xml'
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="ErgebM" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="ErgebM" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="ErgebM" Text="Tageswert-Ergebnis-Parameter" Help="Die von QSim als Tageswerte berechneten Parameter">'
   WRITE(1, '(A)') '  <Parameter Ident="MIB5" Text="C-BSB5, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5, Tages-Minimum" Group="Haupt" Quantity="BSB5" Aggregat="Min" />'
   WRITE(1, '(A)') '  <Parameter Ident="XBSB5" Text="C-BSB5, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5, Tagesmittelwert" Group="Haupt" Quantity="BSB5" Aggregat="Avg" />'

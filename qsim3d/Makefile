@@ -77,7 +77,8 @@
 # PV=qsim_14.06git05
 # PV='qsim14.06doku'
 # PV='qsim3d14.07doku'
-PV='qsim3d14.07Cu'
+# PV='qsim3d14.07Cu'
+PV='qsim3d14.07.01'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -276,7 +277,7 @@ taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
 	tar cvfz ../$(FN) ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
-	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml ../qsim1d/convert.exe \
+	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
 	../metabolism/*.f90 ../metabolism/*.txt ../metabolism/Makefile* \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt

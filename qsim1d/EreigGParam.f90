@@ -23,12 +23,14 @@ subroutine EreigGParam(cpfad1,j1)
 
   character(255) :: cpfad1
   character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'EreigGParam.xml'
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="EreigG" QsimVersion="14.06">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="EreigG" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="EreigG" Text="Randbedingungs-Parameter" Help="Parameter der Randbedingungen">'
   WRITE(1, '(A)') '  <Parameter Ident="OBSB" Text="C-BSB5" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="C-BSB5" Min="0" Max="999.99" Default="" Module="Alle" />'
   WRITE(1, '(A)') '  <Parameter Ident="OCSB" Text="CSB" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="CSB" Min="0" Max="999.99" Default="" Module="Alle" />'
