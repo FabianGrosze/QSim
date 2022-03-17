@@ -78,7 +78,8 @@
 # PV='qsim14.06doku'
 # PV='qsim3d14.07doku'
 # PV='qsim3d14.07Cu'
-PV='qsim3d14.07.01'
+# PV='qsim3d14.07.01'
+PV='qsim3d14.10.00'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 

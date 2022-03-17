@@ -25,6 +25,7 @@ qsim1d/x64/*
 qsim1d/.vs/*
 qsim3d/*.o
 metabolism/*.o
+metabolism/*.mod
 metabolism/libqsim.a
 
 qsim3d/f95_gerris.zip

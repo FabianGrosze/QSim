@@ -1,4 +1,9 @@
 
+## 14.10
+
+adding additional heavy metal concentrations.
+restructure modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
+enable input of erosion parameters
 
 ## 14.07.01
 compiled at 16.mae.2022 
