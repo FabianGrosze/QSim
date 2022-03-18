@@ -127,7 +127,8 @@ CFLAGS2             = -O -g -fbounds-check ## develop ##
 # GEN_CFLAGS          = -I../lib -I/usr/include
 CCLAGS       = $(CFLAGS2) $(MPICH2_INCLUDE)
 # FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) -finit-local-zero ## develop ##
-FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFINC) -finit-local-zero ## develop ##
+FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFINC) -finit-local-zero -J../metabolism  ## develop ##
+# -J Modules include
 ## production ## FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFMOD)
 
 #loader-flags:
@@ -267,7 +268,7 @@ kombit: $(KT)
 clean:	
 	@echo "cleaning ..."
 	rm -f *.o *.co $(PV) version.h code_source.h *~ *.mod libschism.a
-	rm -f ../metabolism/*.o ../metabolism/*.a
+	rm -f ../metabolism/*.o ../metabolism/*.mod ../metabolism/*.a
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 # systemaufruf='cp '//trim(adjustl(codesource))//'/*source*.taz'

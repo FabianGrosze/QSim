@@ -36,13 +36,15 @@ check:
 	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) vorhanden"; else exit 1 ; fi;
 
 
-QSIM = albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o  coliform.o  COROPH.o  Dichte.o \
-       dreissen.o  e_extnct_lesen.o  einleiter_Misch.o erosion.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
+QSIM = module_allodim.o module_aparam.o albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
+       coliform.o  COROPH.o  Dichte.o \
+       dreissen.o  e_extnct_lesen.o  einleiter_Misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
        lin_spline.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o phstart.o \
-       po4s.o  pro_Runge_Kutta.o  runge_kutta.o  sasu.o  schiff.o  schweb.o  Sed_DiffK.o  SedFlux.o \
+       po4s.o  pro_Runge_Kutta.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \
        Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o TEMPERW.o \
-       uptake.o ANZTAG.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o Schwermetalle.o version_string.o \
-	   module_allodim.o module_aparam.o
+       uptake.o ANZTAG.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o version_string.o \
+       verteilungskoeff.o Sedimentbelastung.o Schwermetalle.o Schwermetalle_kern.o erosion.o erosion_kern.o schweb.o schweb_kern.o
+	   
 
 metabol:$(QSIM)
 	ar ruv libqsim.a $(QSIM)
@@ -62,7 +64,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN).taz *.f90 *.xml *.txt  Makefile*
+	tar cvfz $(FN).taz *.f90 *.txt  Makefile*
 
 store:
 	cp $(FN).taz $(MY_ARC)
