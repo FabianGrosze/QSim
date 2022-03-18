@@ -230,7 +230,8 @@ Q3 = version.co trans_read.co \
      oxygen_huelle.o orgc_huelle.o ph_huelle.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
-	 eingabe.o initialisieren.o randbedingungen.o\
+	 eingabe.o initialisieren.o randbedingungen.o \
+	 schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
      stofftransport_casu.o \
 	 stofftransport_untrim.o stofftransport.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\

@@ -41,7 +41,8 @@ QSIM = albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o  colifor
        lin_spline.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o phstart.o \
        po4s.o  pro_Runge_Kutta.o  runge_kutta.o  sasu.o  schiff.o  schweb.o  Sed_DiffK.o  SedFlux.o \
        Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o TEMPERW.o \
-       uptake.o ANZTAG.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o Schwermetalle.o version_string.o
+       uptake.o ANZTAG.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o Schwermetalle.o version_string.o \
+	   module_allodim.o module_aparam.o
 
 metabol:$(QSIM)
 	ar ruv libqsim.a $(QSIM)

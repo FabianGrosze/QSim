@@ -19,191 +19,68 @@
 !
 !---------------------------------------------------------------------------------------
 
-      SUBROUTINE erosion(anze,fkm,ss,ssalg,tflie,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb       &
-                         ,hgsZn,hgsCad,hgsCu,hgsNi,tiefe,rau,vmitt,mstr,ilbuhn,ischwer,ilang,azStrs &
-                         ,iwied,ianze_max                                                           &                                                   
-                         ,kontroll ,jjj ) !!wy                                            
-                                                                       
-                                                                       
+      SUBROUTINE erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh                              &
+                         ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied,kontroll ,jjj)                          
                                                                        
 !     UNTERPROGRAMM ZUR Bestimmung der Erosionsrate                     
                                                                        
                                                                        
 !     AUTOR:VOLKER KIRCHESCH                                            
+!     STAND:31.07.2019                                                    
+!     Restrukturierung Jens Wyrwa   Nov.2021                                                          
                                                                        
-!     STAND:08.02.01                                                    
+!     sedroh   -  Rohdichte des Sediments [Kg*m-3] 
+!     dReros   -  Erosionsrate in kg/m2/sec                      
                                                                        
-!     sedroh   -  Rohdichte des Sediments [Kg*m-3]                      
-                                                                       
-      logical kontroll !!wy
-      integer jjj !!wy
-      integer                                   :: anze, azStrs 
-      integer, Dimension(1000)                  :: ischic
+      use allodim                                                   
+      implicit none
+      logical                                 :: kontroll,kontroll_kern
+      integer                                 :: anze, jjj, iwied, mstr, ilang, ior
+	  real                                    :: tflie
+      real, Dimension(ialloc2)                :: tiefe, ss, ssalg, SSeros
+      real, Dimension(ialloc2)                :: vmitt, rau 
+	  real, Dimension(azStrs,ialloc2)         :: tausc
+	  real, Dimension(azStrs,ialloc2)         :: M_eros
+	  real, Dimension(azStrs,ialloc2)         :: n_eros
+	  real, Dimension(azStrs,ialloc2)         :: sedroh
+	  real, Dimension(azStrs,ialloc2)         :: dsedH
 
-      real, Dimension(1000)                     :: tiefe, fkm, ss, ssalg, sedh, sedss, sedalk, sedalg, sedalb
-      real, Dimension(1000)                     :: vmitt, rau 
-
-      real, Dimension(1000,100)                 :: tausc      !!wy
-
-      real                                      :: m,n, JZn, JCad, JCu, JNi 
-      real, Dimension(2)                        :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni
-      real, allocatable, Dimension(:,:,:)       :: dsedH
-
-      real, Dimension(azStrs,1000)              :: hgsZn, hgsCad, hgsCu, hgsNi 
-      real, allocatable, Dimension(:,:)         :: ZnSed, bZnSed, CadSed, bCadSed, CuSed, bCuSed, NiSed, bNiSed 
-
-
-      save dsedH, ZnSed, bZnSed, CadSed, bCadSed, CuSed, bCuSed, NiSed, bNiSed                                                                      
-
-!      open(unit=111,file='erosion.tst')
-                                
-      js = 250                                                                                   
-      if(.not.allocated(dsedH))allocate(dsedH(1:azStrs,1:ianze_max+1,1:js))
-      if(.not.allocated(ZnSed))allocate(ZnSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(bZnSed))allocate(bZnSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(CadSed))allocate(CadSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(bCadSed))allocate(bCadSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(CuSed))allocate(CuSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(bCuSed))allocate(bCuSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(NiSed))allocate(NiSed(1:azStrs,1:ianze_max+1))
-      if(.not.allocated(bNiSed))allocate(bNiSed(1:azStrs,1:ianze_max+1))
-
-
-      sedroh = 1450. 
-      roh2o = 1000. 
-      g = 9.81 
+      !print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2    
 !                                                                       
 !...Sedimentparameter                                                   
-!                                                                       
-      tau0c = 1.25 
-      tauunc = 10. 
-      m = 7.5e-4 
-      n = 3.2 
-      fkomp = 1.43 
-      sedhmx = 0.001 
+!
+      ! M_eros(mstr,:) = 7.5e-4      !! Eingebbar machen!     ###
+      ! n_eros(mstr,:) = 3.2         !! Eingebbar machen!     ###
+      ! tausc(mstr,:)  = 1.25        !! Eingebbar machen!     ###
+      ! sedroh(mstr,:) = 1450.       !! Eingebbar machen!     ###
                                                                       
       if(iwied==0)then
-        do j1 = 1, azStrs
-          do j2 = 1,1000 
-            do j = 1,250
-              dsedH(mstr,ior,j) = 0.0
-            enddo
-          enddo
+        do ior=1,anze+1
+            dsedH(mstr,ior) = 0.0
         enddo
       endif 
        
-                                                                       
-      do ior = 1,anze+1 
-                                                                       
-      if(ischwer==1.and.ilang==0)then
-        iformVert = 2
-        i = 1
-        hcSS = min(100.,SSalg(ior))
-
-        call Verteilungskoeff(hcSS,hcph,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,iformVert,i)                                                                           
-  
-        ZnSed(mstr,ior) = (1.-(1./(1.+VTKoeff_Zn(i)*hcSS/1000.)))*max(0.0,hgsZn(mstr,ior))
-        ZnSed(mstr,ior) = ZnSed(mstr,ior)/SSalg(ior)
-        if(ilbuhn==1)bZnSed(mstr,ior) = ZnSed(mstr,ior)
-
-        CadSed(mstr,ior) = (1.-(1./(1.+VTKoeff_Cad(i)*hcSS/1000.)))*max(0.0,hgsCad(mstr,ior))
-        CadSed(mstr,ior) = CadSed(mstr,ior)/SSalg(ior)
-        if(ilbuhn==1)bCadSed(mstr,ior) = CadSed(mstr,ior)
-
-        CuSed(mstr,ior) = (1.-(1./(1.+VTKoeff_Cu(i)*hcSS/1000.)))*max(0.0,hgsCu(mstr,ior))
-        CuSed(mstr,ior) = CuSed(mstr,ior)/SSalg(ior)
-        if(ilbuhn==1)bCuSed(mstr,ior) = CuSed(mstr,ior)
-
-        NiSed(mstr,ior) = (1.-(1./(1.+VTKoeff_Ni(i)*hcSS/1000.)))*max(0.0,hgsNi(mstr,ior))
-        NiSed(mstr,ior) = NiSed(mstr,ior)/SSalg(ior)
-        if(ilbuhn==1)bNiSed(mstr,ior) = NiSed(mstr,ior)
-
-      endif      
-
-      Srate = ((sedss(ior)+sedalk(ior)+sedalg(ior)+sedalb(ior))/1000.)*tiefe(ior)                                                
-      ddsedh = Srate/sedroh 
-      sedh(ior) = sedh(ior)+ddsedh 
-                                                                       
-! #### Aufteilen des Sediments in einzelne Schichten ####                     
-                                                                       
-      ischic(ior) = int(sedh(ior)/sedhmx)
-      hcon = (sedh(ior)/sedhmx) - int(sedh(ior)/sedhmx)
-
-      if(hcon>0.0)ischic(ior) = ischic(ior) + 1
-      
-        do j = ischic(ior),1,-1
-          if(j==ischic(ior))then
-            if(hcon>0.0)then
-              dsedH(mstr,ior,j) = sedhmx * hcon
-                else
-                  dsedH(mstr,ior,j) = sedhmx
-            endif
-
-            if(tausc(ior,j)==0.0)tausc(ior,j) = tau0c
-            cycle
-          endif
-            if(dsedH(mstr,ior,j)==0.0)dsedH(mstr,ior,j) = sedhmx
-            hctausc = tau0c+((tauunc-tau0c)*(1.-exp(-fkomp*sedHmx*(ischic(ior)-j)))) 
-            if(tausc(ior,j)==0.0.or.tausc(ior,j)<hctausc)tausc(ior,j) = hctausc
-         enddo
-          
-! #### Berechnung der Sohlschubspannung ####
- 
-     FN = 1./RAU(ior) 
-      G = 9.81 
-      UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior)) 
-                                                                       
-      taus = (ust**2)*roh2o 
-! #############################################################
-
-      SdReros = 0.0
-      j_minus = 0
-
-      do j = ischic(ior),1,-1 
-        if(taus<tausc(ior,j))exit
-        dReros = M*((taus-tausc(ior,j))/tausc(ior,j))**n                                        
-        dReros = dReros*tflie*86400. 
-        dsedhe = dReros/sedroh
-        dsedH(mstr,ior,j) = dsedH(mstr,ior,j) - dsedhe
-        if(dsedH(mstr,ior,j)<=0.0)then
-          dsedH(mstr,ior,j) = 0.0
-          dReros = dsedH(mstr,ior,j)*sedroh
-          j_minus = j_minus + 1 
-         endif
-         SdReros =  SdReros + dReros
-         if(dsedH(mstr,ior,j)>0.0)exit
-      enddo
-
-     ischic(ior) = ischic(ior) - j_minus
-      
-      sedh(ior) = 0.0
-      do j = ischic(ior),1,-1
-        sedh(ior) = sedh(ior) + dsedH(mstr,ior,j)
-      enddo 
-                                                                     
-      SSeros = (SdReros/tiefe(ior))*1000. 
-      SS(ior) = SS(ior)+SSeros 
-      SSalg(ior) = SSalg(ior)+SSeros
-
-    if(ischwer==1)then   
-      if(ilbuhn==0)then
-        JZn = SSeros*ZnSed(mstr,ior)
-        JCad = SSeros*CadSed(mstr,ior)
-        JCu = SSeros*CuSed(mstr,ior)
-        JNi = SSeros*NiSed(mstr,ior)
-          else
-            JZn = SSeros*bZnSed(mstr,ior)
-            JCad = SSeros*bCadSed(mstr,ior)
-            JCu = SSeros*bCuSed(mstr,ior)
-            JNi = SSeros*bNiSed(mstr,ior)
-      endif 
-      hgsZn(mstr,ior) = hgsZn(mstr,ior) + JZn
-      hgsCad(mstr,ior) = hgsCad(mstr,ior) + JCad
-      hgsCu(mstr,ior) = hgsCu(mstr,ior) + JCu
-      hgsNi(mstr,ior) = hgsNi(mstr,ior) + JNi
-    endif
-                                                                       
-    enddo 
-                                                                     
+      do ior = 1,anze+1
+        !!wy if(ilang==0)exit
+		
+		kontroll_kern= .false.
+		if(kontroll .and. ior==jjj)then
+		   kontroll_kern= .true.
+		   !print*,"vor erosion_kern ss(",jjj,"),ssalg=",ss(jjj),ssalg(jjj)
+		endif
+        
+		call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior)  &
+		                 ,SSeros(ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
+						 ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
+		                 ,kontroll_kern,jjj)
+		
+		if(kontroll_kern)then
+		   !print*,"nach erosion_kern ss(",jjj,"),ssalg=",ss(jjj),ssalg(jjj)
+		endif
+      enddo ! do ior
+	
+      !if(kontroll)print*,mstr,jjj,' erosion computing tausc(jjj,1),SSeros,SS,SSalg=',  &
+	  !                   tausc(jjj,1), SSeros(jjj), SS(jjj), SSalg(jjj)
                                                                        
   END subroutine erosion                                           
+
