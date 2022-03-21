@@ -62,6 +62,7 @@
       SUBROUTINE hnf_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer :: i
 
@@ -107,7 +108,7 @@
 !----------------------------------------------------------------------------------
       call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                     &
      &,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
-     &,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNFe,BACkse       &
+     &,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks       &
      &,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz           &                                                   
      &,kontroll ,iglob )
 !----------------------------------------------------------------------------------

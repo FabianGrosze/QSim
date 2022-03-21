@@ -89,6 +89,7 @@
       SUBROUTINE dreissen_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
 
       integer :: i,j, azStr,k
@@ -193,7 +194,7 @@
      &,abl,exdrvb,abbcm,algdrb,drfaeb                                   &
      &,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs                 &
      &,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax                            &
-     &,sgwmue,fkm,FoptDe,mstr,azStr                                     &
+     &,sgwmue,fkm,FoptD,mstr,azStr                                     &
      &,kontroll ,iglob ) !!wy
 !----------------------------------------------------------------------------------
       if(kontroll)print*,'dreissen_huelle ... zdreis(1,1), dlmax(1)=',zdreis(1,1),dlmax(1)

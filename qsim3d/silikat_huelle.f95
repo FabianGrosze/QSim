@@ -179,6 +179,7 @@
       SUBROUTINE silikat_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer :: i,j,nk
 

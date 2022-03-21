@@ -633,10 +633,10 @@ end if !! nur prozessor 0
 !!<tr><td>  | </td><td> \anchor toptb toptb	</td><td> optimal Temperatur für Blaualgenwachstum </td><td> °C </td><td>   Format= F5.2  Null= -1  Help= optimal Temperatur für Blaualgenwachstum  </td></tr>
 !!<tr><td>  | </td><td> \anchor tmaxb tmaxb	</td><td> Letal-Temperatur für Blaualgenwachstum </td><td> °C </td><td>   Format= F5.2  Null= -1  Help= Letal-Temperatur für Blaualgenwachstum  </td></tr>
 !!<tr><td>  | </td><td> \anchor ifix ifix	</td><td> Luftstickstofffixierer (0/1) </td><td>  </td><td>   Format= I2  Null= -1  Help= Luftstickstofffixierer(0:Nein/1:Ja)  </td></tr>
-!!<tr><td bgcolor="#888888"></td>Zeile 14 :</td><td>irmaxe,FopIRe,GRote,zresge,zakie </td></tr>
+!!<tr><td bgcolor="#888888"></td>Zeile 14 :</td><td>irmaxe,FopIRe,GROT,zresge,zakie </td></tr>
 !!<tr><td>  | </td><td> \anchor irmaxe irmaxe	</td><td> max. Gewichtsspez. Algenaufnahmerate d. Rotatorien </td><td> µgC*µgC-2/3*d-1 ??? </td><td>   Format= F5.2  Null= -1  Help= Max. Ingestionsrate für Rotatorien  </td></tr>
 !!<tr><td>  | </td><td> \anchor fopire fopire	</td><td> Halbsättigungskonstante für Futteraufnahme d. Rotatorien </td><td> mg/l </td><td>   Format= F5.2  Null= -1  Help= Optimale Futterkonzentration für Rotatorienwachstum  </td></tr>
-!!<tr><td>  | </td><td> \anchor grote grote	</td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µg </td><td>   Format= F5.2  Null= -1  Help= Gewicht einer Rotatorie  </td></tr>
+!!<tr><td>  | </td><td> \anchor GROT GROT	</td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µg </td><td>   Format= F5.2  Null= -1  Help= Gewicht einer Rotatorie  </td></tr>
 !!<tr><td>  | </td><td> \anchor zresge zresge	</td><td> Grundrespiration Rotatorien </td><td> 1/d </td><td>   Format= F5.3  Null= -1  Help= Grundrespiration der Rotatorien  </td></tr>
 !!<tr><td>  | </td><td> \anchor zakie zakie	</td><td> Filtrierbarkeit Kieselalgen </td><td> 0-1 </td><td>   Format= F5.2  Null= -1  Help= Filtrierbarkeit der Kieselalgen durch Rotatorien  </td></tr>
 !!<tr><td bgcolor="#888888"></td>Zeile 15 :</td><td>zagre,zable,ynmx1e,stks1e,anitrie </td></tr>
@@ -716,7 +716,7 @@ end if !! nur prozessor 0
 !!       read(55,5518,iostat=read_error)frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB 
 !!       read(55,5520,iostat=read_error)Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi 
 !!       read(55,5522,iostat=read_error)opblma,asble,ToptB,kTemp_Bl,ifix
-!!       read(55,5524,iostat=read_error)irmaxe,FopIRe,GRote,zresge,zakie 
+!!       read(55,5524,iostat=read_error)irmaxe,FopIRe,GROT,zresge,zakie 
 !!       read(55,5526,iostat=read_error)zagre,zable,ynmx1e,stks1e,anitrie 
 !!       read(55,5530,iostat=read_error)bnmx1e,bnks1e,ynmx2e,stks2e,anitrie
 !!       read(55,5528,iostat=read_error)bnmx2e,bnks2e,KNH4e,KapN3e,hyPe 

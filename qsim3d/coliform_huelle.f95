@@ -51,7 +51,7 @@
 !! ,\ref schwi,\ref ss,\ref zooind,\ref grote,\ref chla,\ref tempw,\ref jiein,*ecoli*     &\n
 !! ,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
 !! ,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
-!! ,\ref ratecde,\ref etacde,\ref ratecie,\ref xnuece,\ref ratecge,\ref ratecse,\ref ifehl & \n                                                  
+!! ,\ref ratecd,\ref etacd,\ref rateci,\ref xnuec,\ref ratecg,\ref ratecs,\ref ifehl & \n                                                  
 !! ,\ref kontroll ,\ref iglob )
 !! \n\n
 !! \ref globaleParameter :\n
@@ -74,7 +74,7 @@
       integer :: i,nk
       real, Dimension(100) :: ecoli, coliL
 
-      if(RateCde .le. 0.0)then
+      if(RateCd .le. 0.0)then
          if(kontroll)print*,'coliform_huelle no simulation without parameters'
          RETURN 
       end if
@@ -114,19 +114,19 @@
       EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS ((nicht mehr)nur bei Temperaturmodellierung erforderlich!)       mstr
       ! integer , parameter :: azStrs=1
 
-      ! RateCde ! aus APARAM.txt
-      ! etaCde  ! aus APARAM.txt
-      ! RateCIe ! aus APARAM.txt
-      ! xnueCe  ! aus APARAM.txt
-      ! RateCGe ! aus APARAM.txt
-      ! RateCSe ! aus APARAM.txt
+      ! RateCd ! aus APARAM.txt
+      ! etaCd  ! aus APARAM.txt
+      ! RateCI ! aus APARAM.txt
+      ! xnueC  ! aus APARAM.txt
+      ! RateCG ! aus APARAM.txt
+      ! RateCS ! aus APARAM.txt
       ifehl=0 !initialisiert
 
 !----------------------------------------------------------------------------------
-      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GRote,Chla,tempw,jiein,ecoli    &
-                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs             &
-                   ,RateCde,etaCde,RateCIe,xnueCe,RateCGe,RateCSe,ifehl                                        &                                                   
-                   ,kontroll , iglob )
+      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli    &
+                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs            &
+                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs,ifehl                                             &
+				   ,kontroll , iglob )
 !----------------------------------------------------------------------------------
       if(ifehl.gt.0)then
          print*,'ifehl=',ifehl,' in coliform_huelle: iglob,i,meinrang=',iglob,i,meinrang

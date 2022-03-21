@@ -388,7 +388,7 @@ end if !! nur prozessor 0
                   planktonic_variable(73+nk)= 0.0 ! alter_decay
                   planktonic_variable(74+nk)= 0.0 ! alter_arith
                   planktonic_variable(75+nk)= 0.0 ! alter_growth
-                  planktonic_variable(76+nk)= Grote ! TGZoo
+                  planktonic_variable(76+nk)= GROT ! TGZoo
                   planktonic_variable(77+nk)= 0.0 ! akmor_1
                   planktonic_variable(78+nk)= 0.0 ! agmor_1
                   planktonic_variable(79+nk)= 0.0 ! abmor_1

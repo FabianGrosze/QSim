@@ -29,6 +29,7 @@
 !
       use modell                                                   
       use QSimDatenfelder
+      use aparam                                                   
            
       implicit none
       integer i,j,k,nini,nuzo, nt, irn

@@ -23,6 +23,7 @@
       SUBROUTINE konsum_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
 
 !    integer                        :: anze
@@ -41,7 +42,7 @@
       iglob=(i+meinrang*part)
 
 !! aus module::aparam
-!! , irmaxe, GRote
+!! , irmaxe, GROT
 
       !if(i.eq.1)print*,'Rotatorien konsumieren drauflos'
 
@@ -73,10 +74,10 @@
       vabfl(1) = 0.0     ! wird nur bei Einleitungen verwendet, die sind aber ausgeschaltet.
       vabfl(2) = vabfl(1)
 
-! jiein,FopIRe,GRote,dzres1,dzres2,zresge
+! jiein,FopIRe,GROT,dzres1,dzres2,zresge
       jiein(1)=0       ! keine Punkt-Einleitungen
       ! FopIRe ! Halbsättigungskonstante für Futteraufnahme d. Rotatorien ! von aparam_lesen() jetzt direkt in module QSimDatenfelder
-      ! GRote ! Gewicht Rotatorie ! von aparam_lesen() jetzt direkt in module QSimDatenfelder
+      ! GROT ! Gewicht Rotatorie ! von aparam_lesen() jetzt direkt in module QSimDatenfelder
       !dzres1(1) = transfer_quantity_p(27+(i-1)*number_trans_quant) ! Grund-Respiration Konsumenten
       !dzres1(2) = dzres1(1)
       !dzres2(1) = transfer_quantity_p(28+(i-1)*number_trans_quant) ! Fraßabhängige Respirationsrate Konsumenten
@@ -164,7 +165,7 @@
       kontroll=(iglob.eq.kontrollknoten) 
       if(kontroll)then
          print*,'konsum vorher: tflie=',tflie,' uhrz=',uhrz
-         print*,'GROTe',GROTe
+         print*,'GROT',GROT
          print*,'zooind,abszo,ir',zooind(1),abszo(1),ir(1)
          print*,'dzres1,dzres2',dzres1(1),dzres2(1)
          print*,'zexki,zexgr,zexbl',zexki(1),zexgr(1),zexbl(1)
@@ -176,10 +177,10 @@
 !version  Stoffumsatzroutinen aus der QSim1D Version 13_40 vom 15. Oktober 2018 in QSim3D
   call konsum(vkigr,TEMPW,VO2,TFLIE                                  &
   &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
-  &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
-  &,irmaxe,zexki,zexgr,zexbl                                         &
+  &,jiein,FOPTR,GROT,dzres1,dzres2,ZRESG                          &
+  &,IRMAX,zexki,zexgr,zexbl                                         &
   &,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                      &
-  &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
+  &,rakr,rbar,CHNF,zHNF,ilbuhn,ZAKI,ZAGR,ZABL,HNFza,algzok        &
   &,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
   &,itags,uhrz,mstr,azStrs                                           &                                                   
   &,kontroll ,iglob ) !!wy  
@@ -187,7 +188,7 @@
 !version qsim13.301_28mae18wy_3D!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
 !  call konsum(vkigr,TEMPW,VO2,TFLIE                                  &
 !  &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
-!  &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
+!  &,jiein,FopIRe,GROT,dzres1,dzres2,zresge                          &
 !  &,irmaxe,zexki,zexgr,zexbl                                         &
 !  &,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                      &
 !  &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
@@ -196,7 +197,7 @@
 !Version 13.30 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
 !  call konsum(vkigr,TEMPW,VO2,TFLIE                            &
 !  &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
-!  &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
+!  &,jiein,FopIRe,GROT,dzres1,dzres2,zresge                          &
 !  &,irmaxe,zexki,zexgr,zexbl                                         &
 !  &,aki,agr,abl,iwied,rmuas,iras                                     &
 !  &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
@@ -211,7 +212,7 @@
       transfer_quantity_p(6+(i-1)*number_trans_quant) = abszo(1) ! Absterberate Zooplankton
       transfer_quantity_p(42+(i-1)*number_trans_quant) = ir(1) ! Ingestionsrate der Rotatorien in mg/(l*h) | konsum()
 
-! jiein,FopIRe,GRote,dzres1,dzres2,zresge
+! jiein,FopIRe,GROT,dzres1,dzres2,zresge
       transfer_quantity_p(27+(i-1)*number_trans_quant) = dzres1(1) ! Grund-Respiration Konsumenten
       transfer_quantity_p(28+(i-1)*number_trans_quant) = dzres2(1) ! Fraßabhängige Respirationsrate Konsumenten
 
@@ -246,7 +247,7 @@
                                              
       if(kontroll)then
          print*,'konsum nachher: tflie=',tflie,' uhrz=',uhrz
-         print*,'GROTe',GROTe
+         print*,'GROT',GROT
          print*,'zooind,abszo,ir',zooind(1),abszo(1),ir(1)
          print*,'dzres1,dzres2',dzres1(1),dzres2(1)
          print*,'zexki,zexgr,zexbl',zexki(1),zexgr(1),zexbl(1)

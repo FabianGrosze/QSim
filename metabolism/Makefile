@@ -37,7 +37,7 @@ check:
 
 
 QSIM = module_allodim.o module_aparam.o albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
-       coliform.o  COROPH.o  Dichte.o \
+       coliform.o  COROPH.o  Dichte.o\
        dreissen.o  e_extnct_lesen.o  einleiter_Misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
        lin_spline.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o phstart.o \
        po4s.o  pro_Runge_Kutta.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \

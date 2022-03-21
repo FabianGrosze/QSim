@@ -913,6 +913,7 @@
       SUBROUTINE orgc_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
 
       integer :: i,j
@@ -1155,17 +1156,19 @@
       if(kontroll) print*,'orgc_huelle davor: BAC,bacmua,CM,zBAC',BAC(1),BACmua(1),CM(1),zBAC(1)
 
 !version  Stoffumsatzroutinen aus der QSim1D Version 13_40 vom 15. Oktober 2018 in QSim3D
-       call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze            &                   
+
+       call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze             &                   
                 ,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor,jiein,bsbgr,bsbki,akbcm             &
                 ,agbcm,pfl,ezind,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb,csbki,csbgr,ischif,echla               &
                 ,evkigr,eantbl,aki,agr,drfaek,drfaeg,drfaes,ssdr,orgCsd,orgCsd0,orgCsd_abb,CD,CP,CM,BAC,eCD       &
-                ,eCP,eCM,eBAC,TOC_CSB,GRote,vcsb,vkigr,antbl,HNFBAC,BSBHNF,CHNF,zBAC                              &
+                ,eCP,eCM,eBAC,TOC_CSB,GROT,vcsb,vkigr,antbl,HNFBAC,BSBHNF,CHNF,zBAC                               &
                 ,BVHNF,eCHNF,fbsgr,frfgr,fbsgrs,frfgrs,BACmua,dorgSS,ilbuhn,iwied,fkm,bsbct,qeinlL                &
                 ,iorLa,iorLe,ieinLs,pl0,Q_PK,Q_PB,Q_PG,pZoo,nl0,Q_NK,Q_NB,Q_NG,nzoo,etemp,bsbctP                  &
-                ,doN,hsdFluB,hyPe,hymxDe,KsD1e,KsD2e,KsMe,upBACe,JDOC1,JDOC2,YBACe,rsGBACe                        &
-                ,nkzs,mstr,itags,monats,uhrz,azStrs,bsbZoo                                                        &                                                   
+                ,doN,hsdFluB,HyP1,hymxD,KsD1,KsD2,KsM,upBAC,JDOC1,JDOC2,YBAC,rsGBAC                               &
+                ,nkzs,mstr,itags,monats,uhrz,azStrs,bsbZoo                                                        &
                 ,kontroll ,i )
-!version qsim13.301_28mae18wy_3D
+				
+				!version qsim13.301_28mae18wy_3D
 !       call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze             &                   
 !                ,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor,jiein,bsbgr,bsbki,akbcm             &
 !                ,agbcm,pfl,ezind,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb,csbki,csbgr,ischif,echla               &

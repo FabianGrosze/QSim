@@ -83,7 +83,7 @@
 !!     & , \ref ilamda, \ref eta, \ref aw, \ref ack, \ref acg, \ref acb, \ref ah, \ref as, \ref al                              		& !!wy\n
 !!     & , \ref uhrz, \ref sised, \ref tpki, \ref iwied, \ref akmuea, \ref ftaaus, \ref fiaus, \ref fheaus                                &\n
 !!     & , \ref akraus, \ref tauscs, \ref ischif, \ref ilbuhn, \ref ieros, \ref askie, \ref cmatki, \ref algdrk                           &\n
-!!     & , \ref algcok, \ref ess, \ref zooind, \ref grote, \ref ss, \ref q_pk, \ref q_nk, \ref q_sk			                &\n
+!!     & , \ref algcok, \ref ess, \ref zooind, \ref GROT, \ref ss, \ref q_pk, \ref q_nk, \ref q_sk			                &\n
 !!     & , \ref vnh4z, \ref vno3z, \ref gelpz, \ref siz, \ref dalgkz, \ref nkzs, \ref dh2d, \ref cpfad			                &\n
 !!     & , \ref up_pkz, \ref up_nkz, \ref up_siz, \ref qmx_pk, \ref qmn_pk, \ref upmxpk                   		        &\n
 !!     & , \ref qmx_nk, \ref qmn_nk, \ref upmxnk, \ref qmx_sk, \ref qmn_sk, \ref upmxsk, \ref skmor, \ref ikke, \ref frmuke		        &\n
@@ -109,7 +109,7 @@
 !! , \ref vco2, \ref iph, \ref vkigr, \ref abbcm, \ref abl, \ref tpbl, \ref uhrz, \ref iwied
 !! , \ref fibaus, \ref abmuea, \ref fhebas, \ref abreau, \ref tauscs, \ref ischif, \ref ilbuhn, \ref ieros  &\n
 !! , \ref zakie, \ref zagre, \ref zable, \ref asble, \ref qeinl, \ref jiein, \ref echla, \ref ess
-!! , \ref algdrb, \ref algcob, \ref antbl, \ref zooind, \ref grote, \ref ss, \ref extk           &\n
+!! , \ref algdrb, \ref algcob, \ref antbl, \ref zooind, \ref GROT, \ref ss, \ref extk           &\n
 !! , \ref extk_lamda                                                                                       &\n
 !! , \ref ilamda, \ref eta, \ref aw, \ref ack, \ref acg, \ref acb, \ref ah, \ref as, \ref al       							   & !!wy, einlesen von e_extnct.dat nicht hier\n
 !! , \ref vnh4z, \ref vno3z, \ref gelpz, \ref dalgbz, \ref nkzs, \ref dh2d, \ref tempwz, \ref cpfad
@@ -134,7 +134,7 @@
 !! , \ref ilamda, \ref eta, \ref aw, \ref ack, \ref acg, \ref acb, \ref ah, \ref as, \ref al & !!wy, *einlesen* von e_extnct.dat nicht hier\n
 !! , \ref tpgr, \ref uhrz, \ref iwied, \ref algcog  &\n
 !! , \ref figaus, \ref agmuea, \ref fhegas, \ref agreau, \ref tauscs, \ref ischif, \ref ilbuhn, \ref ieros
-!! , \ref asgre, \ref echla, \ref ess, \ref ss, \ref zooind, \ref grote, \ref q_pg, \ref q_ng       &\n
+!! , \ref asgre, \ref echla, \ref ess, \ref ss, \ref zooind, \ref GROT, \ref q_pg, \ref q_ng       &\n
 !! , \ref vnh4z, \ref vno3z, \ref gelpz, \ref dalggz, \ref nkzs, \ref dh2d, \ref tempwz, \ref cpfad, \ref itags
 !! , \ref monats, \ref mstr, \ref up_pgz, \ref up_ngz, \ref qmx_pg                 &\n
 !! , \ref qmn_pg, \ref upmxpg, \ref qmx_ng, \ref qmn_ng, \ref upmxng, \ref ikge, \ref frmuge, \ref alamda
@@ -1044,7 +1044,7 @@
       ! pbiogr, nbiogr, nbiobl, pbiobl ! unbenutzt
       zooind(1) = planktonic_variable_p(50+(i-1)*number_plankt_vari) ! Anzahl der Rotatorien in Ind/l
       zooind(2) = zooind(1)
-      !jetzt direkt aus QSimDatenfelder GRote=transfer_parameter_p(67) ! Gewicht einer Rotatorie µg  | Aparam.txt
+      !jetzt direkt aus QSimDatenfelder GROT=transfer_parameter_p(67) ! Gewicht einer Rotatorie µg  | Aparam.txt
       ss(1) = planktonic_variable_p(53+nk) ! ORG. UND ANORG. SCHWEBSTOFFE(OHNE ALGEN UND ZOOPLANKTER) schweb()
       ss(2) = ss(1)
       Q_PK(1) = planktonic_variable_p(31+nk) ! Phosphoranteil der Kiesel-Algenbiomasse
@@ -1246,7 +1246,7 @@
       if(kontroll) print*,'vor algaeski: extk,EXTKS=',extk(1:2),EXTKS(1,1:2)
       if(kontroll) print*,'vor algaes**: schwi(1),CHLA,up_NKz= ',schwi(1),CHLA(1),up_NKz(1,1)
       if(kontroll) print*,'vor algaes**: Q_NK,hQ_NKz,akbcm,hCChlgz=',Q_NK(1),hQ_NKz(1,1,1),akbcm(1),hCChlgz(1,1,1)
-      if(kontroll) print*,'vor algaes**: algzok,zooind,GRote=',algzok(1),zooind(1),GRote
+      if(kontroll) print*,'vor algaes**: algzok,zooind,GROT=',algzok(1),zooind(1),GROT
       if(kontroll) print*,'vor algaeski: svhemk=',svhemk(1),extk(1)
       if(kontroll) print*,'vor algaes**: akmor_1,agmor_1,abmor_1=',akmor_1(1,1),agmor_1(1,1),abmor_1(1,1)
       do k=1,number_benth_distr
@@ -1270,7 +1270,7 @@
                 ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                         &
                 ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                           &
                 ,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk                      & 
-                ,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                                  &
+                ,algcok,ess,zooind,GROT,SS,Q_PK,Q_NK,Q_SK                                  &
                 ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad                               & 
                 ,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                                  &
                 ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke                & 
@@ -1299,7 +1299,7 @@
 !     & ,ilamda,eta,aw,ack,acg,acb,ah,as,al                              		& !!wy
 !     & ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                &
 !     & ,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk                           &
-!     & ,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK			                &
+!     & ,algcok,ess,zooind,GROT,SS,Q_PK,Q_NK,Q_SK			                &
 !     & ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad			                &
 !     & ,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                   		        &
 !     & ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke		        &
@@ -1347,13 +1347,13 @@
       call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                        &
                          ,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl,abchl,abgmax,abksn,abksp,saettb,abremi     &
                          ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros  &
-                         ,zakie,zagre,zable,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GRote,SS,extk           &
+                         ,ZAKI,ZAGR,ZABL,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GROT,SS,extk           &
                          ,extk_lamda                                                                                       &
                          ,ilamda,eta,aw,ack,acg,acb,ah,as,al       						           &
                          ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                      &
                          ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz               &
-                         ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ            &                               
-                         ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                        &
+                         ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ            &
+						 ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                        &
                          ,kontroll ,iglob )                                                                        
 ! qsim13.301_28mae18
 !      call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                              &
@@ -1391,7 +1391,7 @@
                 ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda		       	                             	&
                 ,ilamda,eta,aw,ack,acg,acb,ah,as,al       					       	                &
                 ,tpgr,uhrz,iwied,algcog                                                                                 &
-                ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG       &
+                ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GROT,Q_PG,Q_NG       &
                 ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
                 ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
                 ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &

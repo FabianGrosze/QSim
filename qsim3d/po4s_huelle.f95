@@ -83,6 +83,7 @@
       SUBROUTINE po4s_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer :: i,j,k,nk
 
@@ -309,7 +310,7 @@
      &,jiein,sedalk,sedalb,sedalg                                       &
      &,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,pl0      &
      &,abl,dalgbl,dalgab,exdrvb,gesP,orgCsd                             &
-     &,zooind,GRote,pZoo,egesP,ilbuhn,iwied                             &
+     &,zooind,GROT,pZoo,egesP,ilbuhn,iwied                             &
      &,CD,CP,CM,BAC,bsbctP,Qmx_PK,Q_PK,up_PKz                           &
      &,Qmx_PG,Q_PG,up_PGz,Qmx_PB,Q_PB,up_PBz,epl0                       &
      &,gelpz,agrtbr,akitbr,abltbr,agrbrz                                &
@@ -439,7 +440,7 @@
 !!<tr><td> orgCsd(1)</td><td>benthische_verteilungen::benthic_distribution_p (6+(i-1)*number_benth_distr) </td><td> Gesamtmasse Kohlenstoff, die je Zeitschritt sedimentiert </td></tr>
 !!<tr><td> </td><td> </td><td> </td></tr>
 !!<tr><td> zooind(1) </td><td> planktische_variablen::planktonic_variable_p (50+(i-1)*number_plankt_vari) </td><td> Anzahl der Rotatorien </td></tr>
-!!<tr><td> GRote</td><td> ! direkt aus QSimDatenfelder </td><td> Gewicht einer Rotatorie µg  | Aparam.txt </td></tr>
+!!<tr><td> GRot</td><td> ! direkt aus QSimDatenfelder </td><td> Gewicht einer Rotatorie µg  | Aparam.txt </td></tr>
 !!<tr><td> pZoo  </td><td> transfer_value_p(3) !! Phosphoranteil in der Rotatorienbiomasse mgP/mgBiom. </td></tr>
 !!<tr><td> bl01(1) </td><td> planktische_variablen::planktonic_variable_p (44+(i-1)*number_plankt_vari) </td><td> schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent </td></tr>
 !!<tr><td> bl02(1) </td><td> planktische_variablen::planktonic_variable_p (45+(i-1)*number_plankt_vari) </td><td> leichtabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent </td></tr>
@@ -506,7 +507,7 @@
 !!
 !!       SUBROUTINE po4s(\ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak, *ep*, \ref qeinl, \ref vabfl, \ref anze, \ref tflie        &
 !!                     , \ref dzres1, \ref dzres2, \ref jiein, \ref sedalk, \ref sedalb, \ref sedalg, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr            & 
-!!                     , \ref aki, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0, \ref abl, \ref dalgbl, \ref dalgab, \ref exdrvb, \ref gesP, \ref orgCsd, \ref zooind, \ref GRote           &
+!!                     , \ref aki, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0, \ref abl, \ref dalgbl, \ref dalgab, \ref exdrvb, \ref gesP, \ref orgCsd, \ref zooind, \ref GRot           &
 !!                     , *pZoo*, *egesP*, \ref ilbuhn, \ref iwied, *CD*, *CP*, \ref CM, \ref BAC, \ref bsbctP, \ref Qmx_PK, \ref Q_PK, \ref up_PKz, \ref Qmx_PG, \ref Q_PG            &
 !!                     , \ref up_PGz, \ref Qmx_PB, \ref Q_PB, \ref up_PBz, *epl0*, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr                             &
 !!                     , \ref agrbrz, \ref akibrz, \ref ablbrz, \ref algakz, \ref algagz, \ref algabz, \ref hJPO4, \ref nkzs, \ref dH2D, \ref dH2De, \ref mstr, \ref iorLa, \ref iorLe      &

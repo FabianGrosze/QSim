@@ -471,6 +471,8 @@
       SUBROUTINE eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
 !
       use modell                                                   
+      use QSimDatenfelder
+      use aparam	  
                          
       implicit none
       integer :: i, j, n, n_cal
