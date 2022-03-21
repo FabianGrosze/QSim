@@ -42,7 +42,8 @@
 !!    läuft parallel
       use modell
       use QSimDatenfelder
-
+      use aparam
+	  
       implicit none
       integer :: i,nk
       real :: depth 

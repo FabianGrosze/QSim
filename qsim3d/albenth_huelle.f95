@@ -74,6 +74,7 @@
       SUBROUTINE albenth_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam
       implicit none
       integer :: i,nk
 

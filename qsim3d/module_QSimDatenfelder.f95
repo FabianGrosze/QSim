@@ -20,7 +20,7 @@
 !---------------------------------------------------------------------------------------
 
 !> <h1>Datenfelder QSim</h1>
-!! Das Modul QSimDatenfelder enthält alle von QSim verwendeten Datenfelder \n
+!! Das Module QSimDatenfelder enthält alle von QSim verwendeten Datenfelder \n
 !! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten !!\n
 !! QSim3D ist in Fortran95 geschrieben. Darin ist es gleichgültig, ob ein Variablenname mit Groß- oder Kleinbuchstaben geschrieben wird.
 !! z. B. bezeichnet Q_NK den gleichen Speicherplatz wie q_nk.\n
@@ -32,7 +32,7 @@
       module QSimDatenfelder
       implicit none
       save
-
+	  
 !> \anchor azstrs Stranganzahl Felddimensionierungs-Parameter
     integer , parameter :: azStrs=1
 !> \anchor ialloc2 Querprofile im Strang Felddimensionierungs-Parameter
@@ -90,7 +90,7 @@
 !! Siehe dazu auch \ref hüllen.
     real, Dimension(1000)               :: flae
 !                                       hydraulische Parameter:
-!>  \ref tiefe : Wassertiefe
+!>  *TIEFE*: Wassertiefe
     real, Dimension(1000)               :: tiefe
 !> \ref vmitt Fließgeschwindigkeit (Querschnittsgemittelt in QSim-1D)
     real, Dimension(1000)               :: vmitt
@@ -100,7 +100,7 @@
 !                                       planktische Konzentrationen, die es auch als Tiefenprofil gibt:
 !> \ref tempw  Wassertemperatur 
     real, Dimension(1000)               :: tempw
-!> \ref vo2  Sauerstoffgehalt 
+!> \anchor vo2  Sauerstoffgehalt aus \ref planktische_variablen
     real, Dimension(1000)               :: vo2
 !> \ref vnh4 Ammonium
     real, Dimension(1000)               :: vnh4
@@ -112,11 +112,11 @@
     real, Dimension(1000)               :: gelP
 !> \ref si Silizium
     real, Dimension(1000)               :: Si
-!> \anchor aki Biomasse der Kieselalgen, \f$A_{ki}\f$ [mg L\f$^{-1}\f$]
+!> \ref aki Kieselalgen
     real, Dimension(1000)               :: aki
-!> \ref agr Biomasse der Gruenalgen, \f$A_{gr}\f$ [mg L\f$^{-1}\f$]
+!> \ref agr Gruenalgen
     real, Dimension(1000)               :: agr
-!> \ref abl Biomasse der Blaualgen, \f$A_{bl}\f$ [mg L\f$^{-1}\f$]
+!> \ref abl Blaualgen
     real, Dimension(1000)               :: abl
 !> \ref chla Chlorophyll-a
     real, Dimension(1000)               :: chla
@@ -194,9 +194,9 @@
     real, Dimension(1000)               :: Q_NB
 !>  \ref q_pb Phosphor in Blaualgen
     real, Dimension(1000)               :: Q_PB
-!> CD = \ref cd1 + \ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
+!> CD=\ref cd1+\ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
     real, Dimension(2,1000)             :: CD
-!> CP = \ref cp1 + \ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
+!> CP=\ref cp1+\ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
     real, Dimension(2,1000)             :: CP
 !>  \ref cm monomolekularen organischen C-Verbindungen
     real, Dimension(1000)               :: CM
@@ -288,7 +288,7 @@
 
 !                                       benthische Verteilungen
     real, Dimension(1000)               :: tsed    ! Temperatur des Sediments
-!>  \ref sised sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
+!>  \anchor sised sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
     real, Dimension(1000)               :: sised   ! Menge an Silikat an der Gewässersohle infolge sedimentierter Algen (aufsummiert für den Simulationszeitraum) in algaeski()
     real, Dimension(1000)               :: pfl     ! Pflanzentrockengewicht in g/m2
     real, Dimension(1000)               :: ssdr    ! Schwebstoffaufnahme durch Dreissena
@@ -310,31 +310,6 @@
     real, Dimension(1000)               :: cmatki  ! Abspülung benthischer kiesel-Algen
     real, Dimension(1000)               :: cmatgr  ! Abspülung benthischer gruen-Algen
 
-!>                                      global parameter from APARAM.txt
-      real :: agchl,aggmax,IKge,agksn,agksp 
-      real :: agremi,frmuge,bsbgr,csbgr,Qmx_NG 
-      real :: Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG 
-      real :: opgrmi,opgrma,asgre,ToptG,kTemp_gr
-      real :: akchl,akgmax,IKke,akksn,akksp 
-      real :: akkssi,akremi,frmuke,bsbki,csbki 
-      real :: Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK 
-      real :: Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi 
-!      real :: opkima,askie,ToptK,TmaxK,abchl 
-      real :: opkima,askie,ToptK,kTemp_Ki,abchl
-      real :: abgmax,IKbe,abksn,abksp,abremi 
-      real :: frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB 
-      real :: Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi 
-      real :: opblma,asble,ToptB,kTemp_bl
-      integer :: ifix
-      real :: irmaxe,FopIRe,GRote,zresge,zakie 
-      real :: zagre,zable,ynmx1e,stks1e,anitrie 
-      real :: bnmx1e,bnks1e,ynmx2e,stks2e,anitri2e
-      real :: bnmx2e,bnks2e,KNH4e,KapN3e,hyPe 
-      real :: hymxDe,KsD1e,KsD2e,KsMe,upBACe 
-      real :: YBACe,rsGBACe,FoptDe,upHNFe,BACkse 
-      real :: alamda,fPOC1e,fPOC2e,SorpCape,Klange
-      real :: KdNh3e,ratecde,etacde,ratecie,xnuece
-      real :: ratecge,ratecse
 
 !!--------------------------------------------------------------------------------------------
 !    integer                             :: ieros, iph !!jetzt in module::modell
@@ -445,7 +420,7 @@
 !> \anchor pbiobl ! unbenutzt
       real pbiobl
       real saettk, saettg, saettb
-!> \ref it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
+!> \anchor it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
       integer, Dimension(azStrs,ialloc2)            :: it_h
 !> \anchor ij Nummer des zeitschrittes während eines Tages (unbenutzt in 3D)
       integer            :: ij
@@ -453,18 +428,9 @@
       integer            :: isim_end
 
       real, Dimension(1,50,1000)            :: hCChlkz, hCChlbz, hCChlgz  
-!> \anchor Caki Kohlenstoffgehalt der Kieselalgen-Biomasse
-!!Kieselalgen; mgC/mgBio; in ini_algae() konstant gesetzt.
-      real  Caki
-!> \anchor Cagr Kohlenstoffgehalt der Grünalgen-Biomasse
-!! Grünalgen; mgC/mgBio; in ini_algae() konstant gesetzt.
-      real  Cagr
-!> \anchor Cabl Kohlenstoffgehalt der Cyanobakterien-Biomasse
-!! Blaualgen; mgC/mgBio; in ini_algae() konstant gesetzt.
-	  real  Cabl 
-!> \anchor Czoo Kohlenstoffgehalt der Konsumenten-Biomasse
-!! Zooplankton ; mgC/mgBio; in ini_algae() konstant gesetzt.
-	  real  CZoo
+!> \anchor caki \anchor cagr \anchor cabl \anchor czoo Kohlenstoffgehalt der Biomassen 
+!!Kiese-,Grün- und Balualgen, Zooplankton ; mgC/mgBio; in ini_algae() konstant gesetzt.
+      real  Caki, Cagr, Cabl, CZoo
 !> \anchor a1Ki \anchor a2Ki \anchor a3Ki 
 !! ; in ini_algae() gesetzt
       real  a1Ki, a2Ki, a3Ki
@@ -500,7 +466,7 @@
     real, Dimension(1000)                :: sdbsb
 !>  \anchor bsbcnb bsbCNB
     real, Dimension(1000)                :: bsbCNB 
-!>  \ref drfaes drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
+!>  \anchor drfaes drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
     real, Dimension(1000)                :: drfaes  
 !     bisher implizit:
 !>  \anchor frfgrs  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
@@ -619,9 +585,9 @@ real, Dimension(azStrs,50,1000) :: hgesNz
     real, Dimension(azStrs,1000)   :: hSised  
 !> \anchor hcd hCD siehe \ref cd1 und \ref cd2
      real, Dimension(azStrs,2,1000) :: hCD 
-!> \ref sedalg_mq sedalg_mq
+!> \anchor sedalg_mq sedalg_mq
     real, Dimension(1,1000)         :: sedalg_mq
-!> \anchor sedss_mq sedss_mq
+!> \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
     real, Dimension(1,1000)         :: sedss_mq
 
 ! mphyt Makrophyten

@@ -110,6 +110,30 @@
 !! if(ipp==25)BVHNFs(mstr,RBNR) = ywert 
 !! if(ipp==26)colis(mstr,RBNR) = ywert 
 !! if(ipp==27)waers(mstr,RBNR) = ywert 
+!! 28 und 29 Tracer und kons. Substanz in tempws
+!! if(ipp==30)gsPbs(mstr,RBNR) = ywert  
+!! if(ipp==31)glPbs(mstr,RBNR) = ywert  
+!! if(ipp==32)gsCads(mstr,RBNR) = ywert  
+!! if(ipp==33)glCads(mstr,RBNR) = ywert  
+!! if(ipp==34)gsCrs(mstr,RBNR) = ywert  
+!! if(ipp==35)glCrs(mstr,RBNR) = ywert  
+!! if(ipp==36)gsFes(mstr,RBNR) = ywert  
+!! if(ipp==37)glFes(mstr,RBNR) = ywert  
+!! if(ipp==38)gsCus(mstr,RBNR) = ywert  
+!! if(ipp==39)glCus(mstr,RBNR) = ywert  
+!! if(ipp==40)gsMns(mstr,RBNR) = ywert  
+!! if(ipp==41)glMns(mstr,RBNR) = ywert  
+!! if(ipp==42)gsNis(mstr,RBNR) = ywert  
+!! if(ipp==43)glNis(mstr,RBNR) = ywert  
+!! if(ipp==44)gsHgs(mstr,RBNR) = ywert  
+!! if(ipp==45)glHgs(mstr,RBNR) = ywert  
+!! if(ipp==46)gsUs(mstr,RBNR) = ywert  
+!! if(ipp==47)glUs(mstr,RBNR) = ywert  
+!! if(ipp==48)gsZns(mstr,RBNR) = ywert  
+!! if(ipp==49)glZns(mstr,RBNR) = ywert  
+!! if(ipp==50)gsAss(mstr,RBNR) = ywert  
+!! if(ipp==51)glAss(mstr,RBNR) = ywert  
+
 !!  \endverbatim</code>\n\n
 !! type(rb) , allocatable , dimension (:) :: rabe\n
 !! Zufluss-Randbedingungen aus <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a>\n
@@ -123,6 +147,7 @@
 
       use modell
       use QSimDatenfelder
+      use aparam                                                   
 
       implicit none
       integer :: j, RB_zaehl
@@ -266,6 +291,7 @@ end if !! nur prozessor 0
 
       use modell                                                   
       use QSimDatenfelder
+      use aparam                                                   
 
       implicit none
 !!  \anchor jjj wahrscheinlich ein Zähler (def. in randbedingungen; referenziert in N subroutine!?)
@@ -366,6 +392,31 @@ end if !! nur prozessor 0
                   planktonic_variable(77+nk)= 0.0 ! akmor_1
                   planktonic_variable(78+nk)= 0.0 ! agmor_1
                   planktonic_variable(79+nk)= 0.0 ! abmor_1
+
+                  planktonic_variable(80+nk)= rabe(zaehl)%wert_jetzt(48) ! Zink gesamt
+                  planktonic_variable(81+nk)= rabe(zaehl)%wert_jetzt(49) ! Zink gelöst
+                  planktonic_variable(82+nk)= rabe(zaehl)%wert_jetzt(32) ! Cadmium gesamt
+                  planktonic_variable(83+nk)= rabe(zaehl)%wert_jetzt(33) ! Cadmium gelöst
+                  planktonic_variable(84+nk)= rabe(zaehl)%wert_jetzt(38) ! Kupfer gesamt
+                  planktonic_variable(85+nk)= rabe(zaehl)%wert_jetzt(39) ! Kupfer gelöst
+                  planktonic_variable(86+nk)= rabe(zaehl)%wert_jetzt(42) ! Nickel gesamt
+                  planktonic_variable(87+nk)= rabe(zaehl)%wert_jetzt(43) ! Nickel gelöst
+                  planktonic_variable(88+nk)= rabe(zaehl)%wert_jetzt(50) ! Arsen gesamt
+                  planktonic_variable(89+nk)= rabe(zaehl)%wert_jetzt(51) ! Arsen gelöst
+
+                  planktonic_variable(90+nk)= rabe(zaehl)%wert_jetzt(30) ! Blei gesamt
+                  planktonic_variable(91+nk)= rabe(zaehl)%wert_jetzt(31) ! Blei gelöst
+                  planktonic_variable(92+nk)= rabe(zaehl)%wert_jetzt(34) ! Chrom gesamt
+                  planktonic_variable(93+nk)= rabe(zaehl)%wert_jetzt(35) ! Chrom gelöst
+                  planktonic_variable(94+nk)= rabe(zaehl)%wert_jetzt(36) ! Eisen gesamt
+                  planktonic_variable(95+nk)= rabe(zaehl)%wert_jetzt(37) ! Eisen gelöst
+                  planktonic_variable(96+nk)= rabe(zaehl)%wert_jetzt(44) ! Quecksilber gesamt
+                  planktonic_variable(97+nk)= rabe(zaehl)%wert_jetzt(45) ! Quecksilber gelöst
+                  planktonic_variable(98+nk)= rabe(zaehl)%wert_jetzt(40) ! Mangan gesamt
+                  planktonic_variable(99+nk)= rabe(zaehl)%wert_jetzt(41) ! Mangan gelöst
+
+                  planktonic_variable(100+nk)= rabe(zaehl)%wert_jetzt(46) ! Uran gesamt
+                  planktonic_variable(101+nk)= rabe(zaehl)%wert_jetzt(47) ! Uran gelöst
 
 !                  if(jjj.eq.kontrollknoten)print*,"randwert_planctonic: OBSB=",planktonic_variable(17+nk)  &
 !     &                                           ," OCSB=",planktonic_variable(18+nk)
@@ -526,6 +577,7 @@ end if !! nur prozessor 0
       SUBROUTINE randbedingungen_ergaenzen(j,einmalig)
       use modell                                                   
       use QSimDatenfelder
+      use aparam                                                   
 
       implicit none
       integer :: j,nk
@@ -566,7 +618,7 @@ end if !! nur prozessor 0
      &                  ,' OCSB =',planktonic_variable(18+nk)  & 
      &                  ,' O2BSB =',planktonic_variable(43+nk)
       call orgc_start(                      &
-     &     TOC_CSB,bsbZoo,GRote,            & ! globale Parameter direkt aus QSimDatenfelder
+     &     TOC_CSB,bsbZoo,GROT,            & ! globale Parameter direkt aus QSimDatenfelder
      &     planktonic_variable( 8+nk),      & ! aki | akis
      &     planktonic_variable(10+nk),      & ! abl | abls
      &     planktonic_variable( 9+nk),      & ! agr | agrs
@@ -602,7 +654,7 @@ end if !! nur prozessor 0
      &     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
      &     planktonic_variable(67+nk),      & ! GESN | gesNs,
      &     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-     &     nZoo, pZoo, GRote,               & ! globale Parameter direkt aus QSimDatenfelder
+     &     nZoo, pZoo, GROT,               & ! globale Parameter direkt aus QSimDatenfelder
      &     planktonic_variable( 6+nk),      & ! GELP | gelPs,
      &     planktonic_variable(68+nk),      & ! GESP | gesPs,
      &     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -749,12 +801,15 @@ end if !! nur prozessor 0
       use modell
       implicit none
       integer n,j,k
-      integer t, zeit_vor, zeit_nach
+      integer t, zeit_vor, zeit_nach, n_active_concentrations
       real ::a, wert_vor, wert_nach, wert
       logical :: randwert_gueltig, vor_da, nach_da
 
+      n_active_concentrations=anzrawe
+      if(ischwer==0 .and. ikonss==0)n_active_concentrations=28
+
       do n=1,ianz_rb !! alle Randbedingungen
-         do k=1,anzrawe !alle Rand-Variablen
+         do k=1,n_active_concentrations !alle Rand-Variablen
             vor_da=.false.
             nach_da=.false.
             do j=1,rabe(n)%anz_rb ! alle Zeitpunkte dieser RB
@@ -974,20 +1029,25 @@ end if !! nur prozessor 0
          do m=1,anzi !alle Zeitpunkte dieser Randlinie
             !! HIER !! wird die Randbedingungszeile in die Struktur rb_zeile gelesen    !! HIER !!                             
             if(.not.zeile(ion)) call qerror('ereigg_Randbedingungen_lesen() alle Zeitpunkte dieser Randlinie lesen schlägt fehl')
-            read(ctext, *, iostat = read_error) lesezeil(m) ! ### schlägt fehl wenn Datenzeile nicht vollständig ggf. ändern wy 28sep17
+			lesezeil(m)%werts(:)=-1.0
+			if(ischwer==0 .and. ikonss==0)then ! last part of Boundary concentrations irrelevant in simulation without heavy metals
+			   read(ctext, *, iostat = read_error)lesezeil(m)%itag, lesezeil(m)%imonat , lesezeil(m)%ijahrl, lesezeil(m)%uhrl  &
+			   ,lesezeil(m)%werts(1:28)
+			else ! full set of BC's needed:
+               read(ctext, *, iostat = read_error) lesezeil(m)
+			endif
             if(read_error.ne.0)then
-              print*,'anzi=',anzi,m,'=m , ctext=',trim(ctext)
+			  print*,read_error,'=read_error anzrawe=',anzrawe, ischwer,'=ischwer ikonss',ikonss
+              print*,m,anzi,n,'=m-th line of anzi in n-th RB , ctext:'
+              print*,trim(ctext)
+              print*,'lesezeil(m):'
               print*,lesezeil(m)
               call qerror("read_error EREIGG.txt ... Zeitpunkt Datenzeile lesen")
             endif
-            !if(m .eq. 1) print*,'lesezeil(1)=',lesezeil(1)
             if(randwert_gueltig(lesezeil(m)%werts(22),22)) then
                i=i+1
-               !print*,'l', lesezeil(m)%itag, lesezeil(m)%imonat &
-               !, lesezeil(m)%ijahrl, lesezeil(m)%uhrl &
-               !, lesezeil(m)%werts(22)
             end if ! temperatur positif
-         end do !! alle Zeitpunkte dieser Randlinie
+         end do !! all m time-points at this boundary
          rabe(n)%t_guelt=i
          rabe(n)%anz_rb=anzi
          allocate (rabe(n)%punkt(rabe(n)%anz_rb), stat = alloc_status )
@@ -1280,6 +1340,7 @@ end if !! nur prozessor 0
       SUBROUTINE extnct_lesen()
       use modell
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       character(500) dateiname, text
       integer :: io_error,i, alloc_status, ini

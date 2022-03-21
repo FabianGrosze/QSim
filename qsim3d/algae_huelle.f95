@@ -808,6 +808,7 @@
       SUBROUTINE algae_huelle(i)
       use modell                                                 
       use QSimDatenfelder
+      use aparam
       implicit none
       integer :: i,j,k,nk,i2,string_write_error
       integer :: ieros_flag
@@ -1664,6 +1665,7 @@
       SUBROUTINE algae_aufteilung(i)!! ### ERSETZT 
       use modell                                                 
       use QSimDatenfelder
+      use aparam
       implicit none
       integer i,nk,l
       real T, Te0, Sum_N, f_NK
