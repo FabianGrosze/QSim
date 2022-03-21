@@ -206,7 +206,7 @@ schism: $(SC)
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 qsim:	
-	@cd ../metabolism; make metabol; cd ../qsim3d
+	@cd ../metabolism; make metabol; cp *.mod ../qsim3d; cd ../qsim3d
 
 %.co: %.c
 	$(CC) -c  $(CCLAGS) $< -o $@
@@ -222,7 +222,7 @@ qsim:
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
 Q3 = version.co trans_read.co \
-     module_modell.o module_QSimDatenfelder.o nachricht.o aparam_lesen.o\
+     module_modell.o module_QSimDatenfelder.o nachricht.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o parallel.o \

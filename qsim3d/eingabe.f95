@@ -556,7 +556,14 @@
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
 !     read global model-parameters now in module ::uebergabe_werte
-      call aparam_lesen()
+      write(cpfad,*,iostat=ifehl)trim(adjustl(modellverzeichnis))
+	  if(ifehl.ne.0)call qerror('eingabe: write(cpfad went wrong')
+	  call aparam_lesen(cpfad,iwsim,icoli,ieros,ifehl)   
+	  if(ifehl.ne.0)then
+	     print*,'cpfad,iwsim,icoli,ieros=',trim(cpfad),iwsim,icoli,ieros
+	     write(fehler,*)'eingabe: aparam_lesen went wrong, ifehl=',ifehl
+	     call qerror(fehler)
+	  endif
       call extnct_lesen()
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
