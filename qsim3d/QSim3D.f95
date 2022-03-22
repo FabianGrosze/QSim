@@ -64,7 +64,7 @@
          call randbedingungen_setzen()
 
          !-------------------------------------------------- suspended matter module 
-         call schwebstoff_salz()    ! currently only reading distribuions from input
+         !call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
 
          !------------------------------------------------- all metabolic processes 

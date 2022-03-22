@@ -103,9 +103,9 @@
 !!<tr><td> 49 </td><td> \anchor bvhnf bvhnf	</td><td> Biovolumen der HNF ??							</td><td> µm3 ??	</td></tr>
 !!<tr><td> 50 </td><td> \anchor zooind zooind	</td><td> Anzahl der Rotatorien							</td><td> Ind/l		</td></tr>
 !!<tr><td> 51 </td><td> \anchor abrzo abrzo1	</td><td> leer ?								</td><td>		</td></tr>
-!!<tr><td> 52 </td><td> \anchor ssalg ssalg	</td><td> GESAMTSCHWEBSTOFFE ss+Algen+Rotatorien 				</td><td> mg/l		</td></tr>
-!!<tr><td> 53 </td><td> \anchor ss ss		</td><td> mineralischer Schwebstoffgehalt	 				</td><td> mg/l		</td></tr>
-!!<tr><td> 54 </td><td> \anchor fssgr fssgr	</td><td> zu schweb()  								</td><td>		</td></tr>
+!!<tr><td> 52 </td><td> \anchor ssalg ssalg	</td><td> GESAMTSCHWEBSTOFFE = ss+Algen+Rotatorien 				</td><td> mg/l		</td></tr>
+!!<tr><td> 53 </td><td> \anchor ss ss		</td><td> nicht lebender Schwebstoffgehalt	 				</td><td> mg/l		</td></tr>
+!!<tr><td> 54 </td><td> \anchor fssgr fssgr	</td><td> ??? zu schweb()  								</td><td>		</td></tr>
 !!<tr><td> 55 </td><td> \anchor fbsgr fbsgr	</td><td> Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von zehrungsfähigem, organischem Material ???? siehe: \ref Sediorgc </td><td> - </td></tr>
 !!<tr><td> 56 </td><td> \anchor frfgr frfgr	</td><td> Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von refraktärem, organischem Material ???? siehe: \ref Sediorgc</td><td> - </td></tr>
 !!<tr><td> 57 </td><td> \anchor nl0 nl0		</td><td> N/C Verhältnis von Stickstoff zu Kohlenstoff in organischem Material	</td><td> mg N / mg C	</td></tr>
@@ -129,8 +129,30 @@
 !!<tr><td> 75 </td><td> \anchor alter_growth alter_growth </td><td> Altersvariable Wachstum  (nur QSim3D)			</td><td> d		</td></tr>
 !!<tr><td> 76 </td><td> \anchor tgzoo tgzoo	</td><td> Gewicht einer einzelnen Rotatorie (Zooplankton) (noch nicht aktiv)	</td><td> µg		</td></tr>
 !!<tr><td> 77 </td><td> \anchor akmor_1 akmor_1	</td><td> max.?? Algenmortalität??	Kiesel</td><td> ?		</td></tr>
-!!<tr><td> 78 </td><td> \anchor agmor_1 agmor_1	</td><td> 	Grün </td><td> ?		</td></tr>
-!!<tr><td> 79 </td><td> \anchor abmor_1 abmor_1	</td><td> 	Blau </td><td> ?		</td></tr>
+!!<tr><td> 78 </td><td> \anchor agmor_1 agmor_1	</td><td> ???? Grün </td><td> ?		</td></tr>
+!!<tr><td> 79 </td><td> \anchor abmor_1 abmor_1	</td><td> ???? Blau </td><td> ?		</td></tr>
+!!<tr><td> 80 </td><td> \anchor hgsZn hgsZn </td><td> Zink gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td> 81 </td><td> \anchor hglZn hglZn </td><td> Zink gelöst 		</td><td> µg/l </td></tr>
+!!<tr><td> 82 </td><td> \anchor hgsCad hgsCad </td><td> Cadmium gesamt 	</td><td> µg/l </td></tr>
+!!<tr><td> 83 </td><td> \anchor hglCad hglCad </td><td> Cadmium gelöst 	</td><td> µg/l </td></tr>
+!!<tr><td> 84 </td><td> \anchor hgsCu hgsCu </td><td> Kupfer gesamt 	</td><td> µg/l </td></tr>
+!!<tr><td> 85 </td><td> \anchor hglCu hglCu </td><td> Kupfer gelöst 	</td><td> µg/l </td></tr>
+!!<tr><td> 86 </td><td> \anchor hgsNi hgsNi </td><td> Nickel gesamt 	</td><td> µg/l </td></tr>
+!!<tr><td> 87 </td><td> \anchor hglNi hglNi </td><td> Nickel gelöst 	</td><td> µg/l </td></tr>
+!!<tr><td> 88 </td><td> \anchor hgsAs hgsAs </td><td> Arsen gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td> 89 </td><td> \anchor hglAs hglAs </td><td> Arsen gelöst 		</td><td> µg/l </td></tr>
+!!<tr><td> 90 </td><td> \anchor hgsPb hgsPb </td><td> Blei gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td> 91 </td><td> \anchor hglPb hglPb </td><td> Blei gelöst 		</td><td> µg/l </td></tr>
+!!<tr><td> 92 </td><td> \anchor hgsCr hgsCr </td><td> Chrom gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td> 93 </td><td> \anchor hglCr hglCr </td><td> Chrom gelöst 		</td><td> µg/l </td></tr>
+!!<tr><td> 94 </td><td> \anchor hgsFe hgsFe </td><td> Eisen gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td> 95 </td><td> \anchor hglFe hglFe </td><td> Eisen gelöst 		</td><td> µg/l </td></tr>
+!!<tr><td> 96 </td><td> \anchor hgsHg hgsHg </td><td> Quecksilber gesamt</td><td> µg/l </td></tr>
+!!<tr><td> 97 </td><td> \anchor hglHg hglHg </td><td> Quecksilber gelöst</td><td> µg/l </td></tr>
+!!<tr><td> 98 </td><td> \anchor hgsMn hgsMn </td><td> Mangan gesamt 	</td><td> µg/l </td></tr>
+!!<tr><td> 99 </td><td> \anchor hglMn hglMn </td><td> Mangan gelöst 	</td><td> µg/l </td></tr>
+!!<tr><td>100 </td><td> \anchor hgsU hgsU  	</td><td> Uran gesamt 		</td><td> µg/l </td></tr>
+!!<tr><td>101 </td><td> \anchor hglU hglU  	</td><td> Uran gelöst 		</td><td> µg/l </td></tr>
 !!</table planktonic_variable>
 !!
 !! * <b> \anchor Biomasse Biomasse </b> \n

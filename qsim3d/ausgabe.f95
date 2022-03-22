@@ -339,13 +339,14 @@ endif ! Tageswechsel
       do while( zeile(ion)) !!  read all lines and understand
          if((ctext(1:1).eq.'x').or.(ctext(1:1).eq.'X'))then ! line marked ?
             found=.false.
+			print*,trim(ctext)
 
             do j=1,number_plankt_vari ! all depth averaged planktic con.
                write(text,'(A18)')trim(planktonic_variable_name(j))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for planktic concentration j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,iscan,' output for planktic concentration j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_plankt(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -354,8 +355,8 @@ endif ! Tageswechsel
                write(text,'(A18)')trim(plankt_vari_vert_name(j))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output only for level 1; plankt_vari_vert j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output only for level 1; plankt_vari_vert j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_plankt_vert(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -365,8 +366,8 @@ endif ! Tageswechsel
                write(text,'(A)')ADJUSTL(trim(benth_distr_name(j)))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for benthic distribution j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output for benthic distribution j=',j,' parameter: ',trim(text),' line:'
+                  !print*,trim(ctext)
                   output_benth_distr(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -379,7 +380,7 @@ endif ! Tageswechsel
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
                   print*,'ausgabe globaler uebergabe wert j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  !print*,trim(ctext)
                   output_trans_val(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -388,8 +389,8 @@ endif ! Tageswechsel
                write(text,'(A)')ADJUSTL(trim(trans_quant_name(j)))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for exchange concentration j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output for exchange concentration j=',j,' parameter: ',trim(text),' line:'
+                  !print*,trim(ctext)
                   output_trans_quant(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -400,8 +401,8 @@ endif ! Tageswechsel
                   write(text,'(A)')ADJUSTL(trim(trans_quant_vert_name(j)))
                   iscan=index(trim(ctext),trim(text))
                   if(iscan.gt.0)then ! found
-                     print*,'output only for level 1; trans_quant_vert j=',j,' parameter: ',trim(text),' line:'
-                     print*,trim(ctext)
+                     if(meinrang==0)print*,'output only for level 1; trans_quant_vert j=',j,' parameter: ',trim(text),' line:'
+                     !print*,trim(ctext)
                      output_trans_quant_vert(j)=.true.
                      found=.true.
                   end if !! in string ctext
@@ -409,7 +410,7 @@ endif ! Tageswechsel
 
             if (.not.found) then
                print*,'no parameter found for choice:'
-               print*,trim(ctext)
+               !print*,trim(ctext)
             end if ! not found
          end if ! marked line
       end do ! no further line
