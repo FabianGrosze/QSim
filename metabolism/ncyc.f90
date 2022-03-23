@@ -548,7 +548,7 @@
       jsed = 1
       ZellV = 0.0
 
-      call Sedimentation(ior,tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+      call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
 
       if(kontroll) print*,"nach call Sedimentation: csedn*qsgr,oc,ust",csedn,qsgr,oc,ust
 

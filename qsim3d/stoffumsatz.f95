@@ -150,20 +150,20 @@
          call oxygen_huelle(i)
 
          !------------------------------------------------------------------------ Schwebstoff-Bilanz + Sedimentation Min.
-         !call schweb_huelle(i)
+         call schweb_huelle(i)
 		 
          !------------------------------------------------------------------------ coliforme Keime
-         !if(iColi==1)then
-		 !      call coliform_huelle(i)
-         !else
-		 !      planktonic_variable_p(61+(i-1)*number_plankt_vari)=0.0
-         !endif
+         if(iColi==1)then
+		       call coliform_huelle(i)
+         else
+		       planktonic_variable_p(61+(i-1)*number_plankt_vari)=0.0
+         endif
 		 
          !------------------------------------------------------------------------ Erosion von Schwebstoffe
-         !if(ieros==1)call erosion_huelle(i)
+         if(ieros==1)call erosion_huelle(i)
 		 
          !------------------------------------------------------------------------ Schwermetalle
-         !if(iSchwer==1)call schwermetalle_huelle(i)
+         if(iSchwer==1)call schwermetalle_huelle(i)
 ! erosion
 
          end if ! .not. nur_temp

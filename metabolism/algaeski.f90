@@ -1025,7 +1025,9 @@
 
       jsed = 1
       ZellV = 1400.
-      call Sedimentation(ior,tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+      call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+	  if(kontroll)print*,'Sedimentation algaeski: tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj'   & 
+	 &        ,tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj
 
       ceq = akis*qsgr 
                                                                        
