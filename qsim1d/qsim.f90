@@ -20,6 +20,9 @@
 !---------------------------------------------------------------------------------------
 
   Program QSIM     
+
+      use allodim                                                   
+      use aparam                                                   
                                                                        
 !      izdt Einheiten min oder Stunden Beruecksichtigung bei itime      
 !      Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
@@ -34,153 +37,164 @@
       character (len = 200)                   :: ctext 
       character (len = 255)                   :: cpfad,cpfad1,cpfad2,filestring
       character (len=275)                     :: pfadstring
+	  character (len=6000)                    :: langezeile
       logical kontroll, einmalig, linux,mitsedflux  !!wy
-      integer iglob, open_error !!wy
+      integer iglob, open_error, jjj !!wy
       character (len = 120)                   :: cfehlr 
       
-      character (len = 50), Dimension(50,100) :: CEname  
+      character (len = 50), Dimension(ialloc5,ialloc1) :: CEname  
 	  character (len = 40), Dimension(:), allocatable      :: strname,strnumm 
 
-      integer                                 :: maus, read_error, anze, azstr, azstrs, anzej, Stunde,STRiz_2D, anzema  
+      integer                                 :: maus, read_error, anze, azstr, anzej, Stunde,STRiz_2D, anzema  
       integer                                 :: tdj, SCHRNR, zabfr, RBNR
       integer, Dimension(2)                   :: ikanz
       integer, Dimension(20)                  :: iWSta, mwetts
-      integer, Dimension(100)                 :: typ, iorLa, iorle, mWO2
-      integer, Dimension(1000)                :: flag, jiein, ischif, ischic, zwnkzs, nkzsy, nkzs, hnkzsz
+      integer, Dimension(ialloc1)                 :: typ, iorLa, iorle, mWO2
+      integer, Dimension(ialloc2)                :: flag, jiein, zwjiein, ischif, ischic, zwnkzs, nkzsy, nkzs, hnkzsz
 
       integer, Dimension(:), allocatable      :: hanze,ianze, STRiz,isub_dt,imac,isub_dt_Mac, mstr_ist, strNr, mstra 
       integer, Dimension(:), allocatable      :: ieinsh, ieinLs, nbuhn, iFlRi, isegs, STRID, janzWt, janzWs, jlwo2, iRB_K1, izufluss
-      integer, Dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, i2Ds, mWes, mVs, mZs, mAs
+      integer, Dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, i2Ds, mWes, mVs, mZs, mAs, mEs
       integer, Dimension(:), allocatable      :: itsts, msts, itmaxs, mmaxs, itends, mends, laits, laims, laids, mStas
-      integer, Dimension(:), allocatable      ::  abfr, mwehr, mRBs, nstrs, nnstrs, iFlRi_l
+      integer, Dimension(:), allocatable      :: abfr, mwehr, mRBs, nstrs, nnstrs, iFlRi_l
        
       integer, Dimension(:,:), allocatable    :: it_h, it_hy, iorLah, iorLeh, typh, ischig, ikWSta, idWe, mstrLe, istund
       integer, Dimension(:,:), allocatable    :: RBtyp, Weinl, NRSchr, hnkzs, nkzmx, znkzs, inkzs, ibschi       
       integer, Dimension(:,:), allocatable    :: hflag, hjiein, hischf, ESTRNR 
 
-      real                                    :: N4end, N2end, N3end, Kiend, Klange, KdNh3e, lat_k, nzoo,mues,lgh
-      real                                    :: irmaxe, nbiogr
-      real                                    :: KsD1e, KsD2e, KsMe, IKge, IKke, IKbe, KapN3e, KNH4e, kTemp_Gr
-      real                                    :: kTemp_Ki, kTemp_Bl, mikonsS, mxkonsS
+      real                                    :: N4end, N2end, N3end, Kiend, lat_k, nzoo,mues,lgh
+      real                                    :: nbiogr
+      real                                    :: mikonsS, mxkonsS
 
       real, Dimension(2)                      :: xCD, xCP, xdrakr, xdrbar, xdrmor, xidras, xdrmas   
       real, Dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
       real, Dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge 
       real, Dimension(24)                     :: astand
 
-      real, Dimension(50)                     :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
-      real, Dimension(50)                     :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94, dvdz, xU 
-      real, Dimension(50)                     :: hcs96, hcs97, hcs98, akiz_vor, akiz_vor1
-      real, Dimension(50)                     :: hc212, hc262, hc32, hc42, hc52, hc62, hc92, hc102, hc112, hc122, hc222
+      real, Dimension(ialloc5)                     :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
+      real, Dimension(ialloc5)                     :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94, dvdz, xU 
+      real, Dimension(ialloc5)                     :: hcs96, hcs97, hcs98, akiz_vor, akiz_vor1
+      real, Dimension(ialloc5)                     :: hc212, hc262, hc32, hc42, hc52, hc62, hc92, hc102, hc112, hc122, hc222
 
-      real, Dimension(100)                    :: einlk, qeinl, ebsb, ecsb, enh4, ex0, eo2, etemp, echla, ep
-      real, Dimension(100)                    :: elf, eph, emw, eca, ex02, eno2, ess, ewaerm, esi, ezind, eno3
-      real, Dimension(100)                    :: eCHNF, eBVHNF, egesN, egesP, ecoli, evkigr,eantbl, enl0, epl0
-      real, Dimension(100)                    :: qeinlL, bsbL, csbL, enh4L, x0L, x02L, o2L, etempL, gpL, siL 
-      real, Dimension(100)                    :: eno2L, eno3L, gesNL, gesPL, ssL, phL, elfL, caL, coliL, enl0L  
-      real, Dimension(100)                    :: pl0L, chlaL 
-      real, Dimension(1000)                   :: elen, vmitt, tiefe, flae, breite, rau, rhyd, vabfl, stind, nl0, pl0
-      real, Dimension(1000)                   :: Q_NK, Q_PK, Q_SK, Q_NG, Q_PG, Q_NB, Q_PB, akmuea, ftaaus, fiaus 
-      real, Dimension(1000)                   :: fheaus, fhegas, fhegy, agmuea, agmuey, akraus, rmuas, rmuasy, agreau
-      real, Dimension(1000)                   :: agrey, rakr, rakry, figaus, figy, rbar, rbary, dorgSS, HNFmua, BACmua
-      real, Dimension(1000)                   :: HNFmuy, BACmuy, HNFBAy,HNFrey, HNFupy, HNFmoy, HNFexy, HNFdry, HNFzy
-      real, Dimension(1000)                   :: HNFrea, HNFupa, HNFmoa, HNFexa, HNFdra, HNFza, akmuey, ftay, fiy, fhey
-      real, Dimension(1000)                   :: akry, sgefpm, sedh, dl, resdr, exdrvg, exdrvk, dlarvd, dlarvR, dlarvn
-      real, Dimension(1000)                   :: dlarny, pflmin, pflmax, po2p, po2r, pfl, VALTBL, EDUFBL, VALTBR, EDUFBR
-      real, Dimension(1000)                   :: drpfey, drpfec, ssdr, drfaek, drfaeg, drfaes, volfdr, Tsed, tempw, zexki
-      real, Dimension(1000)                   :: templ, zexgr, dzres1, dzres2, obsb, vcsb, vbsb, CM, BAC, ocsb, vnh4, vno3
-      real, Dimension(1000)                   :: vno2, si, chla, ssalg, zooind, gelp, vco2, aki, agr, ro2dr, zooro2, akitbr
-      real, Dimension(1000)                   :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
-      real, Dimension(1000)                   :: vx0, go2n, vo2, sgo2n, vx02, gesN, gesP, sdbsb, abszo, bsbt, bsbct, bsbctP
-      real, Dimension(1000)                   :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, SiRuek, svkh1, sised 
-      real, Dimension(1000)                   :: SKmor, schwi, Dz2D, dC_DenW, fkm, dO2o2D, salgo 
-      real, Dimension(1000)                   :: CHNF, HNFBAC, BSBHNF, drHNF, BVHNF, coli, zHNF, zBAC, rO2HNF, tpki, tpgr
-      real, Dimension(1000)                   :: abl, antbl, abbcm, abltbr, svhemb, nbiobl, dblmor, tpbl, dalgbl, dalgab  
-      real, Dimension(1000)                   :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob    
-      real, Dimension(1000)                   :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb  
+      real, Dimension(ialloc1)                    :: einlk, qeinl, ebsb, ecsb, enh4, ex0, eo2, etemp, echla, ep
+      real, Dimension(ialloc1)                    :: elf, eph, emw, eca, ex02, eno2, ess, ewaerm, esi, ezind, eno3
+      real, Dimension(ialloc1)                    :: eCHNF, eBVHNF, egesN, egesP, ecoli, evkigr,eantbl, enl0, epl0
+      real, Dimension(ialloc1)                    :: qeinlL, bsbL, csbL, enh4L, x0L, x02L, o2L, etempL, gpL, siL 
+      real, Dimension(ialloc1)                    :: eno2L, eno3L, gesNL, gesPL, ssL, phL, elfL, caL, coliL, enl0L  
+      real, Dimension(ialloc1)                    :: pl0L, chlaL 
+      real, Dimension(ialloc2)                   :: elen, vmitt, tiefe, flae, breite, rau, rhyd, vabfl, stind, nl0, pl0
+      real, Dimension(ialloc2)                   :: Q_NK, Q_PK, Q_SK, Q_NG, Q_PG, Q_NB, Q_PB, akmuea, ftaaus, fiaus 
+      real, Dimension(ialloc2)                   :: fheaus, fhegas, fhegy, agmuea, agmuey, akraus, rmuas, rmuasy, agreau
+      real, Dimension(ialloc2)                   :: agrey, rakr, rakry, figaus, figy, rbar, rbary, dorgSS, HNFmua, BACmua
+      real, Dimension(ialloc2)                   :: HNFmuy, BACmuy, HNFBAy,HNFrey, HNFupy, HNFmoy, HNFexy, HNFdry, HNFzy
+      real, Dimension(ialloc2)                   :: HNFrea, HNFupa, HNFmoa, HNFexa, HNFdra, HNFza, akmuey, ftay, fiy, fhey
+      real, Dimension(ialloc2)                   :: akry, sgefpm, dl, resdr, exdrvg, exdrvk, dlarvd, dlarvR, dlarvn
+      real, Dimension(ialloc2)                   :: dlarny, pflmin, pflmax, po2p, po2r, pfl, VALTBL, EDUFBL, VALTBR, EDUFBR
+      real, Dimension(ialloc2)                   :: drpfey, drpfec, ssdr, drfaek, drfaeg, drfaes, volfdr, Tsed, tempw, zexki
+      real, Dimension(ialloc2)                   :: templ, zexgr, dzres1, dzres2, obsb, vcsb, vbsb, CM, BAC, ocsb, vnh4, vno3
+      real, Dimension(ialloc2)                   :: vno2, si, chla, ssalg, zooind, gelp, vco2, aki, agr, ro2dr, zooro2, akitbr
+      real, Dimension(ialloc2)                   :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
+      real, Dimension(ialloc2)                   :: vx0, go2n, vo2, sgo2n, vx02, gesN, gesP, sdbsb, abszo, bsbt, bsbct, bsbctP
+      real, Dimension(ialloc2)                   :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, SiRuek, svkh1, sised 
+      real, Dimension(ialloc2)                   :: SKmor, schwi, Dz2D, dC_DenW, fkm, dO2o2D, salgo 
+      real, Dimension(ialloc2)                   :: CHNF, HNFBAC, BSBHNF, drHNF, BVHNF, coli, zHNF, zBAC, rO2HNF, tpki, tpgr
+      real, Dimension(ialloc2)                   :: abl, antbl, abbcm, abltbr, svhemb, nbiobl, dblmor, tpbl, dalgbl, dalgab  
+      real, Dimension(ialloc2)                   :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob    
+      real, Dimension(ialloc2)                   :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb  
 
-      real, Dimension(1000)                   :: ably, abln4y, sedaby, algzby, algdby, algcby, dalgby, dalaby, dbmory  
-      real, Dimension(1000)                   :: abmuey, fiby, fheby, abrey, antbly, tpbly
+      real, Dimension(ialloc2)                   :: ably, abln4y, sedaby, algzby, algdby, algcby, dalgby, dalaby, dbmory  
+      real, Dimension(ialloc2)                   :: abmuey, fiby, fheby, abrey, antbly, tpbly
   
-      real, Dimension(1000)                   :: tau2, hctau1, hctau2, zwTsed, zwtemp, zwvm, zwtief,zwextk
-      real, Dimension(1000)                   :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk,bssalg_1 
-      real, Dimension(1000)                   :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr  
-      real, Dimension(1000)                   :: zwkiiv, zwgriv, zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau, zwbsct
-      real, Dimension(1000)                   :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm  
-      real, Dimension(1000)                   :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2 
-      real, Dimension(1000)                   :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
-      real, Dimension(1000)                   :: zwrbar, zwno2, zwx0, zwgo2n, zwbsbt, zwschr, zwpfl, zwsgon, zwsdx0  
-      real, Dimension(1000)                   :: zwdon, zwsusn, zwbetn, zwsuso, zwagn4, zwakn4, zwagn3, zwabn4, zwabn3  
-      real, Dimension(1000)                   :: zwakn3, zwph, bph_1, zwx02, zwgesN, zwgesP, zwsedn, zwexdb, zwCsed_abb, zwrdr    
-      real, Dimension(1000)                   :: zwexdk, zwexdg, zwzexb, zwobsb, zwocsb, zwvbsb, zwvcsb, zwsbsb, zwbsbe   
-      real, Dimension(1000)                   :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed, zwcm, zwBAC, zwHNFB   
-      real, Dimension(1000)                   :: zwBSBH, zwHNF, zwfbgr, zwfrgr, zwnl0, zwpl0, zwpo2p, zwpo2r, zwso2e    
-      real, Dimension(1000)                   :: zwsalo,zwdalo, zwdago, zwo2ei, zwabwg, zwabwk, zwabrg, zwabrk, zwrodr
-      real, Dimension(1000)                   :: zwrzo, zwrHNF, zworgS, zwss, zwfssg, zwsedS, zwmw, zwpw, zwca, zwlf 
-      real, Dimension(1000)                   :: zwstin, zwtpki, zwtpgr, zwchlk, zwchlg, zwbsP, zwbsN, zwchlb   
-      real, Dimension(1000)                   :: zwn4z, zwn2z, zwn3z, zwPz, zwgN4z, zwkN4z, zwbN4z, zwbn3z, zwgN3z
-      real, Dimension(1000)                   :: zwkN3z, zwsiz, zup_PK, zup_NK, zup_Si, zQ_PK, zQ_NK, zQ_SK, zaktbr 
-      real, Dimension(1000)                   :: zup_PG, zup_NG, zagtbr, zQ_PG, zQ_NG, zwakz, zwaakz, zwagz, zwaagz 
-      real, Dimension(1000)                   :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba 
-      real, Dimension(1000)                   :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_PB, zup_NB, zQ_PB, zQ_NB 
-      real, Dimension(1000)                   :: zabtbr, zwabz, zwaabz, zwCoIs, zwflae, zwlboe, zwSKmo, zww2, zwSdOM 
-      real, Dimension(1000)                   :: zwbso, zwJN2,zwTGZoo, zwColi, zwDOSCF, zwakmor_1, zwagmor_1, zwabmor_1
-      real, Dimension(1000)                   :: zwgsZn, zwglZn, zwgsCad, zwglCad, zwgsCu, zwglCu, zwgsNi, zwglNi
-      real, Dimension(1000)                   :: zwKorn, zwFlN3, zwJNO3, zwJNH4, zwJPO4, zwJO2, zwJSi, zwJDOC1, zwJDOC2
-      real, Dimension(1000)                   :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, so2ein, ir, gwdmax, sedx0, don, susn 
-      real, Dimension(1000)                   :: bettn, agrnh4, akinh4, susno, akino3, agrno3, iras, sedalg, sedalk 
-      real, Dimension(1000)                   :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr 
-      real, Dimension(1000)                   :: mw, pw(1000),lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1  
-      real, Dimension(1000)                   :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm, akbcmz, pfldalg 
-      real, Dimension(1000)                   :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss, r
+      real, Dimension(ialloc2)                   :: tau2, hctau1, hctau2, zwTsed, zwtemp, zwvm, zwtief,zwextk
+      real, Dimension(ialloc2)                   :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk 
+      real, Dimension(ialloc2)                   :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr  
+      real, Dimension(ialloc2)                   :: zwkiiv, zwgriv, zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau, zwbsct
+      real, Dimension(ialloc2)                   :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm  
+      real, Dimension(ialloc2)                   :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2 
+      real, Dimension(ialloc2)                   :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
+      real, Dimension(ialloc2)                   :: zwrbar, zwno2, zwx0, zwgo2n, zwbsbt, zwschr, zwpfl, zwsgon, zwsdx0  
+      real, Dimension(ialloc2)                   :: zwdon, zwsusn, zwbetn, zwsuso, zwagn4, zwakn4, zwagn3, zwabn4, zwabn3  
+      real, Dimension(ialloc2)                   :: zwakn3, zwph, zwx02, zwgesN, zwgesP, zwsedn, zwexdb, zwCsed_abb, zwrdr    
+      real, Dimension(ialloc2)                   :: zwexdk, zwexdg, zwzexb, zwobsb, zwocsb, zwvbsb, zwvcsb, zwsbsb, zwbsbe   
+      real, Dimension(ialloc2)                   :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed, zwcm, zwBAC, zwHNFB   
+      real, Dimension(ialloc2)                   :: zwBSBH, zwHNF, zwfbgr, zwfrgr, zwnl0, zwpl0, zwpo2p, zwpo2r, zwso2e    
+      real, Dimension(ialloc2)                   :: zwsalo,zwdalo, zwdago, zwo2ei, zwabwg, zwabwk, zwabrg, zwabrk, zwrodr
+      real, Dimension(ialloc2)                   :: zwrzo, zwrHNF, zworgS, zwss, zwfssg, zwsedS, zwmw, zwpw, zwca, zwlf 
+      real, Dimension(ialloc2)                   :: zwstin, zwtpki, zwtpgr, zwchlk, zwchlg, zwbsP, zwbsN, zwchlb   
+      real, Dimension(ialloc2)                   :: zwn4z, zwn2z, zwn3z, zwPz, zwgN4z, zwkN4z, zwbN4z, zwbn3z, zwgN3z
+      real, Dimension(ialloc2)                   :: zwkN3z, zwsiz, zup_PK, zup_NK, zup_Si, zQ_PK, zQ_NK, zQ_SK, zaktbr 
+      real, Dimension(ialloc2)                   :: zup_PG, zup_NG, zagtbr, zQ_PG, zQ_NG, zwakz, zwaakz, zwagz, zwaagz 
+      real, Dimension(ialloc2)                   :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba 
+      real, Dimension(ialloc2)                   :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_PB, zup_NB, zQ_PB, zQ_NB 
+      real, Dimension(ialloc2)                   :: zabtbr, zwabz, zwaabz, zwCoIs, zwflae, zwlboe, zwSKmo, zww2, zwSdOM 
+      real, Dimension(ialloc2)                   :: zwbso, zwJN2,zwTGZoo, zwColi, zwDOSCF, zwakmor_1, zwagmor_1, zwabmor_1
+      real, Dimension(ialloc2)                   :: zwgsZn, zwglZn, zwgsCad, zwglCad, zwgsCu, zwglCu, zwgsNi, zwglNi
+      real, Dimension(ialloc2)                   :: zwgsAs, zwglAs, zwgsPb, zwglPb, zwgsCr, zwglCr, zwgsFe, zwglFe
+      real, Dimension(ialloc2)                   :: zwgsHg, zwglHg, zwgsMn, zwglMn, zwgsU, zwglU, zwSSeros
+      real, Dimension(ialloc2)                   :: zwZnSed,zwCadSed,zwCuSed,zwNiSed,zwAsSed,zwPbSed
+      real, Dimension(ialloc2)                   :: zwCrSed,zwFeSed,zwHgSed,zwMnSed,zwUSed
+      real, Dimension(ialloc2)                   :: zwKorn, zwFlN3, zwJNO3, zwJNH4, zwJPO4, zwJO2, zwJSi, zwJDOC1, zwJDOC2
+      real, Dimension(ialloc2)                   :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, so2ein, ir, gwdmax, sedx0, don, susn 
+      real, Dimension(ialloc2)                   :: bettn, agrnh4, akinh4, susno, akino3, agrno3, iras, sedalg, sedalk 
+      real, Dimension(ialloc2)                   :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr 
+      real, Dimension(ialloc2)                   :: mw, pw,lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1  
+      real, Dimension(ialloc2)                   :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm, akbcmz, pfldalg 
+      real, Dimension(ialloc2)                   :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss, r
 
-      real, Dimension(1000)                   :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
-      real, Dimension(1000)                   :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, CMy, BACy, CHNFy, BVHNFy, dly  
-      real, Dimension(1000)                   :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gsPy 
-      real, Dimension(1000)                   :: mwy, cay, vphy, tpkiy, tpgry, gsNy, sedn, orgCsd0, susny, bettny, dony
-      real, Dimension(1000)                   :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
-      real, Dimension(1000)                   :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy 
-      real, Dimension(1000)                   :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy, salgoy 
-      real, Dimension(1000)                   :: bsbty, dalgoy, dalaoy, schlry, bsbbey, o2ei1y, ro2dry, zoro2y, po2py  
-      real, Dimension(1000)                   :: po2ry, nl0y, pl0y, extky, JNO3y, JNH4y, JPO4y, JO2y, JSiy, Q_NKy, Q_PKy 
-      real, Dimension(1000)                   :: Q_SKy, Q_NGy, Q_PGy, Q_NBy, Q_PBy, coroy, corosy, ffoody, pfly
-      real, Dimension(1000)                   :: alby, CChlky, CChlgy, CChlby
+      real, Dimension(ialloc2)                   :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
+      real, Dimension(ialloc2)                   :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, CMy, BACy, CHNFy, BVHNFy, dly  
+      real, Dimension(ialloc2)                   :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gsPy 
+      real, Dimension(ialloc2)                   :: mwy, cay, vphy, tpkiy, tpgry, gsNy, sedn, orgCsd0, susny, bettny, dony
+      real, Dimension(ialloc2)                   :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
+      real, Dimension(ialloc2)                   :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy 
+      real, Dimension(ialloc2)                   :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy, salgoy 
+      real, Dimension(ialloc2)                   :: bsbty, dalgoy, dalaoy, schlry, bsbbey, o2ei1y, ro2dry, zoro2y, po2py  
+      real, Dimension(ialloc2)                   :: po2ry, nl0y, pl0y, extky, JNO3y, JNH4y, JPO4y, JO2y, JSiy, Q_NKy, Q_PKy 
+      real, Dimension(ialloc2)                   :: Q_SKy, Q_NGy, Q_PGy, Q_NBy, Q_PBy, coroy, corosy, ffoody, pfly
+      real, Dimension(ialloc2)                   :: alby, CChlky, CChlgy, CChlby
    
-      real, Dimension(1000)                   :: gsZny, glZny, gsCady, glCady, gsCuy, glCuy, gsNiy, glNiy
+      real, Dimension(ialloc2)                   :: gsZny, glZny, gsCady, glCady, gsCuy, glCuy, gsNiy, glNiy
+      real, Dimension(ialloc2)                   :: gsAsy, glAsy, gsPby, glPby, gsCry, glCry, gsFey, glFey
+      real, Dimension(ialloc2)                   :: gsHgy, glHgy, gsMny, glMny, gsUy, glUy
 
-      real, Dimension(1000)                   :: btempy, bno3y, bnh4y, bgelpy, bchlay, bssaly, bsiy, bakiy, bagry, bno2y 
-      real, Dimension(1000)                   :: bvbsby, bvcsby, bo2y, bphy, bcay, bmwy, blfy, bably, bnl0y, bpl0y, bgsPy  
-      real, Dimension(1000)                   :: bgsNy, bCMy, bBACy, bchlky, bchlgy, bdakiy, bdaaky, bsedky, bazoky, bkmory  
-      real, Dimension(1000)                   :: bkigry, bkbcmy, biry, bkiivy, bsisdy, bkmuay, bftkay, bfikay, bfhkay
-      real, Dimension(1000)                   :: bkray, btpkiy, btpgry, btpbly, bdagry, bdaagy, bsedgy, bazogy, bgmory 
-      real, Dimension(1000)                   :: badrky, badrgy, bacoky, bacogy, bgmuay, bfigay, bfhgay, bgray, bzooiy 
-      real, Dimension(1000)                   :: bfibay, bantby, bextky, bdably, bdaaby, bsedby, bazoby, bbmory, badrby
-      real, Dimension(1000)                   :: bacoby, bbmuay, bfhbay, bbray, bchlby, bFlN3y, bbetNy, bJNO3y, bJNH4y
-      real, Dimension(1000)                   :: bJPO4y, bJSiy, bJO2y, bcoliy, volfco, algcok, algcog, algcky, algcgy
-      real, Dimension(1000)                   :: bgsZny, bglZny, bgsCady, bglCady, bgsCuy, bglCuy, bgsNiy, bglNiy  
-      real, Dimension(1000)                   :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs, corol, corosl
-      real, Dimension(1000)                   :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, susO2N
+      real, Dimension(ialloc2)                   :: btempy, bno3y, bnh4y, bgelpy, bchlay, bssaly, bsiy, bakiy, bagry, bno2y 
+      real, Dimension(ialloc2)                   :: bvbsby, bvcsby, bo2y, bphy, bcay, bmwy, blfy, bably, bnl0y, bpl0y, bgsPy  
+      real, Dimension(ialloc2)                   :: bgsNy, bCMy, bBACy, bchlky, bchlgy, bdakiy, bdaaky, bsedky, bazoky, bkmory  
+      real, Dimension(ialloc2)                   :: bkigry, bkbcmy, biry, bkiivy, bsisdy, bkmuay, bftkay, bfikay, bfhkay
+      real, Dimension(ialloc2)                   :: bkray, btpkiy, btpgry, btpbly, bdagry, bdaagy, bsedgy, bazogy, bgmory 
+      real, Dimension(ialloc2)                   :: badrky, badrgy, bacoky, bacogy, bgmuay, bfigay, bfhgay, bgray, bzooiy 
+      real, Dimension(ialloc2)                   :: bfibay, bantby, bextky, bdably, bdaaby, bsedby, bazoby, bbmory, badrby
+      real, Dimension(ialloc2)                   :: bacoby, bbmuay, bfhbay, bbray, bchlby, bFlN3y, bbetNy, bJNO3y, bJNH4y
+      real, Dimension(ialloc2)                   :: bJPO4y, bJSiy, bJO2y, bcoliy, volfco, algcok, algcog, algcky, algcgy
+      real, Dimension(ialloc2)                   :: bgsZny, bglZny, bgsCady, bglCady, bgsCuy, bglCuy, bgsNiy, bglNiy  
+      real, Dimension(ialloc2)                   :: bgsAsy, bglAsy, bgsPby, bglPby, bgsCry, bglCry, bgsFey, bglFey  
+      real, Dimension(ialloc2)                   :: bgsHgy, bglHgy, bgsMny, bglMny, bgsUy, bglUy, bSSeros
+	  
+      real, Dimension(ialloc2)                   :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs, corol, corosl
+      real, Dimension(ialloc2)                   :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, susO2N, SSeros
 
-      real, Dimension(1000,2)                 :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry 
-      real, Dimension(1000,2)                 :: drbar, drbary, drmor, drmory
-      real, Dimension(1000,5)                 :: coro, coros, hcoro, hcoros, coro2, coros2
+      real, Dimension(ialloc2,2)                 :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry 
+      real, Dimension(ialloc2,2)                 :: drbar, drbary, drmor, drmory
+      real, Dimension(ialloc2,5)                 :: coro, coros, hcoro, hcoros, coro2, coros2
 
 
-      real, Dimension(2,1000)                 ::  bCDy, bCPy
+      real, Dimension(2,ialloc2)                 ::  bCDy, bCPy
 
-      real, Dimension(50,1000)                :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelPzy, sizy, chlazy  
-      real, Dimension(50,1000)                :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelPz, siz
-      real, Dimension(50,1000)                :: vz1, akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz 
-      real, Dimension(50,1000)                :: algabz, algzkz, algzgz, algzbz, Uvert, dalgkz, dalgbz, dalggz, akNH4z
-      real, Dimension(50,1000)                :: abNH4z, agNH4z, akNO3z, abNO3z, agNO3z,CChlakzy,CChlabzy,CChlagzy
-      real, Dimension(50,1000)                :: up_NKz, up_PKz, up_Siz, up_N2z, up_NGz, up_PGz, up_NBz, up_PBz
+      real, Dimension(ialloc5,ialloc2)                :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelPzy, sizy, chlazy  
+      real, Dimension(ialloc5,ialloc2)                :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelPz, siz
+      real, Dimension(ialloc5,ialloc2)                :: vz1, akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz 
+      real, Dimension(ialloc5,ialloc2)                :: algabz, algzkz, algzgz, algzbz, Uvert, dalgkz, dalgbz, dalggz, akNH4z
+      real, Dimension(ialloc5,ialloc2)                :: abNH4z, agNH4z, akNO3z, abNO3z, agNO3z,CChlakzy,CChlabzy,CChlagzy
+      real, Dimension(ialloc5,ialloc2)                :: up_NKz, up_PKz, up_Siz, up_N2z, up_NGz, up_PGz, up_NBz, up_PBz
 
-      real, Dimension(1000,100)                :: tausc
+      real, Dimension(:,:), allocatable       :: tausc, M_eros, n_eros, sedroh, aEros, eEros, dsedH, zwdsedH ,btausc
+
+	  real, Dimension(:), allocatable         :: t1e,m1e,n1e,r1e
 
       real, Dimension(:), allocatable         :: STRdt, FZeit, ho2_z, hte_z, hph_z, wsp_UW, WSP_OW, wehrh, wehrb
       real, Dimension(:), allocatable         :: QStrang_1, startkm, endkm 
-      real, Dimension(:,:), allocatable       :: yWlage, Wlage, ymax, Ymin, vmq, Hmq, boeamq, segkm, clado, sedhy
-      real, Dimension(:,:,:), allocatable     :: hClado, bclado, hidras, hdrmas, hdrakr, hdrbar, hRzuwd, hdrmor, tauscg,btausc  
+      real, Dimension(:,:), allocatable       :: yWlage, Wlage, ymax, Ymin, vmq, Hmq, boeamq, segkm, clado
+      real, Dimension(:,:,:), allocatable     :: hClado, bclado, hidras, hdrmas, hdrakr, hdrbar, hRzuwd, hdrmor
       real, Dimension(:,:,:), allocatable     :: sCD, sCP                                                                       
                                                                        
       real, Dimension(:,:), allocatable       :: hsusn, hbettN, hdon, hagnh4, haknh4, habnh4, halNO3, hsedx0, hsusno  
@@ -194,7 +208,7 @@
       real, Dimension(:,:), allocatable       :: hschlr, hDz2D 
    
       real, Dimension(:,:), allocatable       :: hHNFmu, hHNFre, hHNFup, hHNFmo, hHNFex, hHNFdr, hHNFza, hBAmua  
-      real, Dimension(:,:), allocatable       :: sedhg, dlalph, dlbeta, dlgamm, hdlarn, midlan, mxdlan
+      real, Dimension(:,:), allocatable       :: dlalph, dlbeta, dlgamm, hdlarn, midlan, mxdlan
       real, Dimension(:,:), allocatable       :: zdrei, hpfl, zdrel, zdresl, gewdr, hgewdr, VTYP, Rzuwdr, Rzuwdy
       real, Dimension(:,:), allocatable       :: zdreis, CD, CP, migsP, mxgsP, migsN, mxgsN, miaki, mxaki, miagr, mxagr
       integer ilamda  !!wy
@@ -206,8 +220,13 @@
 
       real, Dimension(:,:), allocatable       :: migsZn, mxgsZn, miglZn, mxglZn, migsCad, mxgsCad, miglCad, mxglCad
       real, Dimension(:,:), allocatable       :: migsCu, mxgsCu, miglCu, mxglCu, migsNi, mxgsNi, miglNi, mxglNi
-
+      real, Dimension(:,:), allocatable       :: migsAs, mxgsAs, miglAs, mxglAs, migsPb, mxgsPb, miglPb, mxglPb
+      real, Dimension(:,:), allocatable       :: migsCr, mxgsCr, miglCr, mxglCr, migsFe, mxgsFe, miglFe, mxglFe
+      real, Dimension(:,:), allocatable       :: migsHg, mxgsHg, miglHg, mxglHg, migsMn, mxgsMn, miglMn, mxglMn
+      real, Dimension(:,:), allocatable       :: migsU, mxgsU, miglU, mxglU
       real, Dimension(:,:), allocatable       :: sumgsZn, sumglZn, sumgsCad, sumglCad, sumgsCu, sumglCu, sumgsNi, sumglNi
+      real, Dimension(:,:), allocatable       :: sumgsAs, sumglAs, sumgsPb, sumglPb, sumgsCr, sumglCr, sumgsFe, sumglFe
+      real, Dimension(:,:), allocatable       :: sumgsHg, sumglHg, sumgsMn, sumglMn, sumgsU, sumglU
    
       real, Dimension(:,:), allocatable       :: sumsi, sCM, sBAC, sCHNF, sBVHNF, sumcak, sumcag, sumcab, summw, sumlf  
       real, Dimension(:,:), allocatable       :: sumca, sumo2, sumzo, sumss, sumpfl, sumbal, sgsP, sgsN, scoli, sumvph
@@ -254,6 +273,9 @@
       real, Dimension(:,:), allocatable       :: bsgre, bschlk, bschlg, bsbmue, bsheb, bsbre, bschlb, bsantb, bsbetN 
       real, Dimension(:,:), allocatable       :: bsJNO3, bsJNH4, bsJPO4, bsJO2, bsJSi, bscoli
       real, Dimension(:,:), allocatable       :: bsgsZn, bsglZn, bsgsCad, bsglCad, bsgsCu, bsglCu, bsgsNi, bsglNi
+      real, Dimension(:,:), allocatable       :: bsgsAs, bsglAs, bsgsPb, bsglPb, bsgsCr, bsglCr, bsgsFe, bsglFe
+      real, Dimension(:,:), allocatable       :: bsgsHg, bsglHg, bsgsMn, bsglMn, bsgsU, bsglU
+
       real, Dimension(:,:), allocatable       :: bmxtem, bmitem, bmxno3, bmino3, bmxnh4, bminh4, bmxglp, bmiglp, bmxchl
       real, Dimension(:,:), allocatable       :: bmichl, bmxssa, bmissa, bmxsi, bmisi, bmxzoo, bmizoo, bmxno2, bmino2
       real, Dimension(:,:), allocatable       :: bmibsb, bmxbsb, bmicsb, bmxcsb, bmxgsP, bmigsP, bmxgsN, bmigsN, bmxaki
@@ -262,10 +284,16 @@
 
       real, Dimension(:,:), allocatable       :: bmxgsZn, bmigsZn, bmxglZn, bmiglZn, bmxgsCad, bmigsCad, bmxglCad, bmiglCad
       real, Dimension(:,:), allocatable       :: bmxgsCu, bmigsCu, bmxglCu, bmiglCu, bmxgsNi, bmigsNi, bmxglNi, bmiglNi
+      real, Dimension(:,:), allocatable       :: bmxgsAs, bmigsAs, bmxglAs, bmiglAs, bmxgsPb, bmigsPb, bmxglPb, bmiglPb
+      real, Dimension(:,:), allocatable       :: bmxgsCr, bmigsCr, bmxglCr, bmiglCr, bmxgsFe, bmigsFe, bmxglFe, bmiglFe
+      real, Dimension(:,:), allocatable       :: bmxgsHg, bmigsHg, bmxglHg, bmiglHg, bmxgsMn, bmigsMn, bmxglMn, bmiglMn
+      real, Dimension(:,:), allocatable       :: bmxgsU, bmigsU, bmxglU, bmiglU
 
       real, Dimension(:,:), allocatable       :: bgsZn, bglZn, bgsCad, bglCad, bgsCu, bglCu, bgsNi, bglNi
-      real, Dimension(:,:), allocatable       :: bsedh
-
+      real, Dimension(:,:), allocatable       :: bgsAs, bglAs, bgsPb, bglPb, bgsCr, bglCr, bgsFe, bglFe
+      real, Dimension(:,:), allocatable       :: bgsHg, bglHg, bgsMn, bglMn, bgsU, bglU
+      real, Dimension(:,:), allocatable       :: bZnSed,bCadSed,bCuSed,bNiSed,bAsSed,bPbSed
+      real, Dimension(:,:), allocatable       :: bCrSed,bFeSed,bHgSed,bMnSed,bUSed
 
       real, Dimension(:,:), allocatable       :: hfkm, hqaus, hsvhk, hsvhg, hDOSCF, hsvhb, habbcm, habl, hchlab, hantbl
       real, Dimension(:,:), allocatable       :: htempw, hTsed, hbsb, hcsb, hnh4, hCM, hBAC, ho2, hno3, hno2, hx0, hsi
@@ -275,9 +303,15 @@
       real, Dimension(:,:), allocatable       :: hQ_NK, hQ_PK, hQ_SK, hQ_NG, hQ_PG, hQ_NB, hQ_PB, hpl0, hfrfgr, hffood
       real, Dimension(:,:), allocatable       :: hdl, htau2, hgesP, hgesN, hCD1, hCD2, hCP1, hCP2, hvo2, hextk, hJNO3
       real, Dimension(:,:), allocatable       :: hJNH4, hJPO4, hJSi, hJO2, hFluN3,hJN2, TGZoo, akmor_1, agmor_1, abmor_1
+      integer, Dimension(:,:), allocatable    :: anzZeit, banzZeit, zwanzZeit
+
 
       real, Dimension(:,:), allocatable       :: hglZn, hgsZn, hglCad, hgsCad, hglCu, hgsCu, hglNi, hgsNi
-
+      real, Dimension(:,:), allocatable       :: hglAs, hgsAs, hglPb, hgsPb, hglCr, hgsCr, hglFe, hgsFe
+      real, Dimension(:,:), allocatable       :: hglHg, hgsHg, hglMn, hgsMn, hglU, hgsU
+      real, Dimension(:,:), allocatable       :: ZnSed,CadSed,CuSed,NiSed,AsSed
+      real, Dimension(:,:), allocatable       :: PbSed,CrSed,FeSed,HgSed,MnSed,USed
+	  
       real, Dimension(:,:), allocatable       :: apfl, epfl, pflmxs, pflmis, aschif, eschif, awett, ewett, abal, ebal
       real, Dimension(:,:), allocatable       :: ggbal, gkbal, akdrei, ekdrei, aPOM, ePOM, POMz, BedGSz, sedvvertz, acoro, ecoro
       real, Dimension(:,:), allocatable       :: coro1s, aKSED, eKSED, SPEWKSx, WUEBKx, PSREFSx, extkx, coross, aVEG, eVEG
@@ -292,7 +326,6 @@
 
       real, Dimension(:,:), allocatable       :: hdH2De, Hmax2D
 
-
       real, Dimension(:,:), allocatable       :: RBkm, RBkmLe, RBkm1, WirkLL, abfls, obsbs, ocsbs, vnh4s, vno2s
       real, Dimension(:,:), allocatable       :: vno3s, gesNs, vx0s, vx02s, gelps, gesPs, sis, chlas, vkigrs, antbls 
       real, Dimension(:,:), allocatable       :: zooins, vphs, mws, pws, cas, lfs, ssalgs, tempws, vo2s, CHNFs, BVHNFs
@@ -301,12 +334,16 @@
       real, Dimension(:,:), allocatable       :: Q_NKs, Q_PKs, Q_SKs, Q_NGs, Q_PGs, Q_NBs, Q_PBs 
 
       real, Dimension(:,:), allocatable       :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis 
+      real, Dimension(:,:), allocatable       :: glAss, gsAss, glPbs, gsPbs, glCrs, gsCrs, glFes, gsFes 
+      real, Dimension(:,:), allocatable       :: glHgs, gsHgs, glMns, gsMns, glUs, gsUs 
 
       real, Dimension(:,:), allocatable       :: einlkh, qeinlh, ebsbh, ecsbh, enh4h, ex0h, eo2h, etemph, echlah
       real, Dimension(:,:), allocatable       :: ezindh, egph, esih, eno3h, essh, ewaerh, enl0h, epl0h, ephh, emwh 
       real, Dimension(:,:), allocatable       :: elfh, ecah, ex02h, eno2h, eCHNFh, eBVHNh, egesNh, egesPh, ecolih
       real, Dimension(:,:), allocatable       :: evkgh, eantbh, eCM, eBAC
       real, Dimension(:,:), allocatable       :: egsZn, eglZn, egsCad, eglCad, egsCu, eglCu, egsNi, eglNi
+      real, Dimension(:,:), allocatable       :: egsAs, eglAs, egsPb, eglPb, egsCr, eglCr, egsFe, eglFe
+      real, Dimension(:,:), allocatable       :: egsHg, eglHg, egsMn, eglMn, egsU, eglU
 
       real, Dimension(:,:), allocatable       :: qLh, bsbLh, csbLh, enh4Lh, eno2Lh, eno3Lh, gesNLh, x0Lh, x02Lh
       real, Dimension(:,:), allocatable       :: gpLh, gesPLh, siLh, phLh, caLh, elfLh, ssLh, tempLh, o2Lh, coliLh  
@@ -333,11 +370,11 @@
       real, Dimension(:,:,:), allocatable     :: CChlkzt, CChlbzt, CChlgzt
 
       real :: Cagr,Caki,Cabl,CZoo  ! werden in ini_algae (zuflussrand.f90) gesetzt
-	  character (len = 8)                     :: versionstext,version_alt,version
+	  character (len = 8)                     :: versionstext, dummy
 	  !real                                    :: versio
 
 !###### setting ################
-      linux  = .false.
+      linux  = .true.
       kontroll= .false.
 
 !##### version #################################
@@ -376,65 +413,65 @@
       call GETARG(n1,cpfad) 
       call GETARG(n2,cpfad1)
       call GETARG(n3,cpfad2)
+      print*,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' cpfad2=',trim(cpfad2)
 
       if(cpfad1.eq.' ')cpfad1 = cpfad 
+	  
+  !!################ definition run, doing parameter definition for GUI GERRIS ################!!
 
-      if(cpfad=='/F')then
+!  if(cpfad=='VOR#LAUF')then
+!     cpfad='.'  
+  if(cpfad=='/F')then
+      print*,' definition run '
       j1 = 0
-
-      do i=1,255
-        if(i<255.and.cpfad1(i:i)==' '.and.cpfad1(i+1:i+1)==' ')exit
+      do i=1,254
+        if(cpfad(i:i)==' '.and.cpfad(i+1:i+1)==' ')exit
+      !do i=1,255
+      !  if(i<255.and.cpfad1(i:i)==' '.and.cpfad1(i+1:i+1)==' ')exit
       enddo
-
       j = i
       cpfad1(j:j) = '\'
       if (linux) cpfad1(j:j) = '/' 
       cpfad1 = cpfad1(1:j)
       j1 = j
-
-        call AParamParam(cpfad1,j1)
-
-        call EreigGParam(cpfad1,j1)
-        call ModellGParam(cpfad1,j1)
-        call E_extnctParam(cpfad1,j1)
-        call EreigHParam(cpfad1,j1)
-        call Ergeb2DParam(cpfad1,j1)
-        call ErgebMParam(cpfad1,j1)
-        call ErgebTParam(cpfad1,j1)
-        call WetterParam(cpfad1,j1)
-          else! if(cpfad=='/F')
-           j1 = 0
-           j2 = 0
-      if(cpfad(1:5)==' ')then
-        else
-
-      ifhStr = 0 
-      fhProf = 0.0 
-      cerrts = 'OK' 
-
-      do i=1,255
-        if(i<255.and.cpfad(i:i)==' '.and.cpfad(i+1:i+1)==' ')exit
-      enddo
-
-      j = i
-      cpfad(j:j) = '\'
-      if (linux) cpfad(j:j) = '/' 
-      cpfad = cpfad(1:j)
-      j1 = j
-
-      do i=1,255
-        if(i<255.and.cpfad1(i:i)==' '.and.cpfad1(i+1:i+1)==' ')exit
-      enddo
-
-      j = i
-      cpfad1(j:j) = '\'
-      if (linux) cpfad1(j:j) = '/'
-      cpfad1 = cpfad1(1:j)
-      j2 = j
-
+	  !write(cpfad1,*)'.\'
+      !if (linux) write(cpfad1,*)'./' 
+      call AParamParam(cpfad1,j1)
+      call EreigGParam(cpfad1,j1)
+      call ModellGParam(cpfad1,j1)
+      call E_extnctParam(cpfad1,j1)
+      call EreigHParam(cpfad1,j1)
+      call Ergeb2DParam(cpfad1,j1)
+      call ErgebMParam(cpfad1,j1)
+      call ErgebTParam(cpfad1,j1)
+      call WetterParam(cpfad1,j1)
+		
+  else! if(cpfad=='/F') !!################ main computations ################!!
+      print*,' main run '
+      j1 = 0
+      j2 = 0
+      if(cpfad(1:5)/=' ')then
+         ifhStr = 0 
+         fhProf = 0.0 
+         cerrts = 'OK' 
+         do i=1,254
+           if(cpfad(i:i)==' '.and.cpfad(i+1:i+1)==' ')exit
+         enddo
+         j = i
+         cpfad(j:j) = '\'
+         if (linux) cpfad(j:j) = '/' 
+         cpfad = cpfad(1:j)
+         j1 = j
+         do i=1,254
+           if(cpfad1(i:i)==' '.and.cpfad1(i+1:i+1)==' ')exit
+         enddo
+         j = i
+         cpfad1(j:j) = '\'
+         if (linux) cpfad1(j:j) = '/'
+         cpfad1 = cpfad1(1:j)
+         j2 = j
       endif ! if(cpfad(1:5)==' ')
-        
-      print*,j1,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' versio=',versionstext
+      !print*,j1,' cpfad=',trim(cpfad),' cpfad1=',trim(cpfad1),' versiontext=',versionstext
 
       call fehlermeldungen(cpfad,j1)
 
@@ -444,75 +481,6 @@
       rewind (199) 
       write(199,'(a2)')cerrts 
       rewind (199) 
-!                                                                       
-!...Ausgabe von Bemerkungen
-        write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file2.err' 
-        open(unit=299, file=pfadstring, iostat = open_error)
-      rewind (299)
-
-      read(299,'(A)',iostat=read_error)Version_alt
-      print*,"Version_alt=",Version_alt
-!      if(read_error<0)then
-!        if(versio>=13.20)then
-!          write(*,1200)
-!          1200 format(2x,'ab der Version 13.20 wird das C:Chl-Verhaeltnis statt')
-!          write(*,1202)
-!          1202 format(2x,'des Chla:Biomasse-Verhaeltnisses benutzt!!')
-!          write(*,*)
-!          write(*,1205)
-!          1205 Format(2x,'Eingabe der max. Algenwachstumsraten fuer 20 Grad C !!!')
-!          write(*,1207)
-!          1207 Format(2x,'Default-Werte in <aparam_gerris.xlsx>') 
-!          write(*,*)
-!          write(*,1210)
-!          1210 format(2x,'falls die Werte schon geaendert wurden "weiter mit: w"')
-!          write(*,1215) 
-!          1215 format(2x,'ansonsten "Berechnungsabruch mit: s"')
-!          read(*,'(a1)')ctaste
-!          if(ctaste=='s'.or.ctaste=='S')then
-!            rewind(299)
-!            write(299,'(f5.2)')versio
-!          stop 1
-!          endif
-!          rewind(299)
-!          write(299,'(f5.2)')
-!        endif    
-!      endif
-
-!      if(Version_alt>13.19.and.Versio<=13.19)then
-!         write(*,1220)
-!         1220 format(2x,'Eingabe des Chla:Biomasse-Verhaeltnisses')
-!         write(*,*)
-!         write(*,1210)
-!         write(*,1215)
-!         read(*,'(a1)')ctaste
-!         if(ctaste=='s'.or.ctaste=='S')then
-!           rewind(299)
-!           write(299,'(f5.2)')versio
-!           stop 1
-!         endif
-!       endif
-
-!           if(Version_alt>0.0.and.Version_alt<=13.19.and.Versio>13.19)then
-!              write(*,1200)
-!              write(*,1202)
-!              write(*,*)
-!              write(*,1205)
-!              write(*,1207)
-!              write(*,*)
-!              write(*,1210)
-!              write(*,1215) 
-!              read(*,'(a1)')ctaste
-!              if(ctaste=='s'.or.ctaste=='S')then
-!                rewind(299)
-!                write(299,'(f5.2)')versio
-!                stop 1
-!              endif
-!         endif
-
-              rewind(299)
-              write(299,'(A)')versionstext
-              close (299)
 
         write(pfadstring,'(2A)')trim(adjustl(cpfad)),'qsim.tst' 
         open(unit=89, file=pfadstring, iostat = open_error)
@@ -528,15 +496,20 @@
 !.....Einlesen aus ModellA                                              
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLA.txt' 
       open(unit=10, file=pfadstring, iostat = open_error)
+	  if(open_error.ne. 0) then
+         print*,'qsim.f90 read error MODELLA.txt ',trim(adjustl(pfadstring))
+         stop 2
+      end if
+
       rewind (10) 
       jStr = 0 
       read(10,'(2a)')ckenn_vers
         if(ckenn_vers/='*V')then
           else
             rewind(10)
-            read(10,'(A)')version
+            read(10,1110)dummy !VERSIO
             read(10,'(a2)')chcon 
-            1110 Format(19x,F5.2)  
+            1110 Format(A)  
       endif
       read(10,'(f5.2,2x,f5.2)')GeoB,GeoL 
       read(10,'(I5)')azStrs
@@ -545,11 +518,6 @@
 !  allocieren der Variablen  
 !  ########################
 
-      ialloc1 = 100
-      ialloc2 = 1000
-      ialloc3 = 20
-      ialloc4 = 250
-      ialloc5 = 50
       nazStrs = 2 * azStrs
 
       allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(azStrs*2))
@@ -560,6 +528,7 @@
 
       allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs), i2Ds(azStrs))
       allocate(mWes(azStrs), mVs(azStrs), mZs(azStrs), mAs(azStrs), itsts(azStrs), msts(azStrs), itmaxs(azStrs))
+	  allocate(mEs(azStrs))
       allocate(mmaxs(azStrs), itends(azStrs), mends(azStrs), laits(azStrs), laims(azStrs), laids(azStrs), mStas(azStrs))
       allocate(abfr(azStrs), mwehr(azStrs), mRBs(azStrs), wsp_UW(azStrs),WSP_OW(azStrs), wehrh(azStrs), wehrb(azStrs))
       allocate(QStrang_1(azStrs),startkm(azStrs),endkm(azStrs))
@@ -572,11 +541,15 @@
       allocate(nstrs(azStrs*2), nnstrs(azStrs))
 
       allocate(STRdt(azStrs), FZeit(azStrs), yWlage(azStrs,ialloc3), Wlage(azStrs,ialloc2), ymax(azStrs,ialloc4))
+      allocate( tausc(azStrs,ialloc2), M_eros(azStrs,ialloc2), n_eros(azStrs,ialloc2), sedroh(azStrs,ialloc2) ,btausc(azStrs,ialloc2) )
+	  allocate( dsedH(azStrs,ialloc2), zwdsedH(azStrs,ialloc2) )
+      allocate( t1e(ialloc2), m1e(ialloc2), n1e(ialloc2), r1e(ialloc2) )
+
       allocate(Ymin(azStrs,ialloc4), vmq(azStrs,ialloc2), Hmq(azStrs,ialloc2), boeamq(azStrs,ialloc2))
       allocate(segkm(azStrs,ialloc2), clado(10,ialloc2), hClado(azStrs,5,ialloc2), bclado(azStrs,5,ialloc2))
       allocate(hidras(azStrs,ialloc2,2), hdrmas(azStrs,ialloc2,2), hdrakr(azStrs,ialloc2,2), hdrbar(azStrs,ialloc2,2))
-      allocate(hRzuwd(azStrs,ialloc2,2), hdrmor(azStrs,ialloc2,2), tauscg(azStrs,ialloc2,ialloc4), sCD(azStrs,2,ialloc2))  
-      allocate(sCP(azStrs,2,ialloc2), hsusn(azStrs,ialloc2), hbettN(azStrs,ialloc2), hdon(azStrs,ialloc2),btausc(azStrs,ialloc2,ialloc4))                                                                        
+      allocate(hRzuwd(azStrs,ialloc2,2), hdrmor(azStrs,ialloc2,2), sCD(azStrs,2,ialloc2))  
+      allocate(sCP(azStrs,2,ialloc2), hsusn(azStrs,ialloc2), hbettN(azStrs,ialloc2), hdon(azStrs,ialloc2))                                                                        
       allocate(hagnh4(azStrs,ialloc2), haknh4(azStrs,ialloc2), habnh4(azStrs,ialloc2), halNO3(azStrs,ialloc2))
       allocate(hsedx0(azStrs,ialloc2), hsusno(azStrs,ialloc2), hsedag(azStrs,ialloc2), hsedak(azStrs,ialloc2))
       allocate(hsedab(azStrs,ialloc2), halgzg(azStrs,ialloc2), halgzk(azStrs,ialloc2), halgzb(azStrs,ialloc2))
@@ -597,7 +570,7 @@
       allocate(hDz2D(azStrs,ialloc2), hsedvvert(azStrs,ialloc2))
       allocate(hHNFmu(azStrs,ialloc2), hHNFre(azStrs,ialloc2), hHNFup(azStrs,ialloc2), hHNFmo(azStrs,ialloc2))
       allocate(hHNFex(azStrs,ialloc2), hHNFdr(azStrs,ialloc2), hHNFza(azStrs,ialloc2), hBAmua(azStrs,ialloc2))
-      allocate(sedhg(azStrs,ialloc2), dlalph(azStrs,ialloc2),bsedh(azStrs,ialloc2))
+      allocate(dlalph(azStrs,ialloc2))
       allocate(dlbeta(azStrs,ialloc2), dlgamm(azStrs,ialloc2), hdlarn(azStrs,ialloc2), midlan(azStrs,ialloc2))
       allocate(mxdlan(azStrs,ialloc2), zdrei(ialloc2,2), hpfl(azStrs,ialloc2), zdrel(ialloc2,4))
       allocate(zdresl(ialloc2,4), gewdr(ialloc2,4), hgewdr(ialloc2,4), VTYP(ialloc2,14), Rzuwdr(ialloc2,4))
@@ -619,8 +592,20 @@
       allocate(migsCad(azStrs,ialloc2), mxgsCad(azStrs,ialloc2), miglCad(azStrs,ialloc2), mxglCad(azStrs,ialloc2))
       allocate(migsCu(azStrs,ialloc2), mxgsCu(azStrs,ialloc2), miglCu(azStrs,ialloc2), mxglCu(azStrs,ialloc2))
       allocate(migsNi(azStrs,ialloc2), mxgsNi(azStrs,ialloc2), miglNi(azStrs,ialloc2), mxglNi(azStrs,ialloc2))
+      allocate(migsAs(azStrs,ialloc2), mxgsAs(azStrs,ialloc2), miglAs(azStrs,ialloc2), mxglAs(azStrs,ialloc2))
+      allocate(migsPb(azStrs,ialloc2), mxgsPb(azStrs,ialloc2), miglPb(azStrs,ialloc2), mxglPb(azStrs,ialloc2))
+      allocate(migsCr(azStrs,ialloc2), mxgsCr(azStrs,ialloc2), miglCr(azStrs,ialloc2), mxglCr(azStrs,ialloc2))
+      allocate(migsFe(azStrs,ialloc2), mxgsFe(azStrs,ialloc2), miglFe(azStrs,ialloc2), mxglFe(azStrs,ialloc2))
+      allocate(migsHg(azStrs,ialloc2), mxgsHg(azStrs,ialloc2), miglHg(azStrs,ialloc2), mxglHg(azStrs,ialloc2))
+      allocate(migsMn(azStrs,ialloc2), mxgsMn(azStrs,ialloc2), miglMn(azStrs,ialloc2), mxglMn(azStrs,ialloc2))
+      allocate(migsU(azStrs,ialloc2), mxgsU(azStrs,ialloc2), miglU(azStrs,ialloc2), mxglU(azStrs,ialloc2))
+ 
       allocate(sumgsZn(azStrs,ialloc2), sumglZn(azStrs,ialloc2), sumgsCad(azStrs,ialloc2), sumglCad(azStrs,ialloc2))
       allocate(sumgsCu(azStrs,ialloc2), sumglCu(azStrs,ialloc2), sumgsNi(azStrs,ialloc2), sumglNi(azStrs,ialloc2))
+      allocate(sumgsAs(azStrs,ialloc2), sumglAs(azStrs,ialloc2), sumgsPb(azStrs,ialloc2), sumglPb(azStrs,ialloc2))
+      allocate(sumgsCr(azStrs,ialloc2), sumglCr(azStrs,ialloc2), sumgsFe(azStrs,ialloc2), sumglFe(azStrs,ialloc2))
+      allocate(sumgsHg(azStrs,ialloc2), sumglHg(azStrs,ialloc2), sumgsMn(azStrs,ialloc2), sumglMn(azStrs,ialloc2))
+      allocate(sumgsU(azStrs,ialloc2), sumglU(azStrs,ialloc2))
 
       allocate(sumcs(azStrs,ialloc2), sumn4(azStrs,ialloc2),sumsi(azStrs,ialloc2), sCM(azStrs,ialloc2))
       allocate(sBAC(azStrs,ialloc2), sCHNF(azStrs,ialloc2), sBVHNF(azStrs,ialloc2), sumcak(azStrs,ialloc2))
@@ -715,6 +700,13 @@
 
       allocate(bgsZn(azStrs,ialloc2), bglZn(azStrs,ialloc2), bgsCad(azStrs,ialloc2), bglCad(azStrs,ialloc2))
       allocate(bgsCu(azStrs,ialloc2), bglCu(azStrs,ialloc2), bgsNi(azStrs,ialloc2), bglNi(azStrs,ialloc2))
+      allocate(bgsAs(azStrs,ialloc2), bglAs(azStrs,ialloc2), bgsPb(azStrs,ialloc2), bglPb(azStrs,ialloc2))
+      allocate(bgsCr(azStrs,ialloc2), bglCr(azStrs,ialloc2), bgsFe(azStrs,ialloc2), bglFe(azStrs,ialloc2))
+      allocate(bgsHg(azStrs,ialloc2), bglHg(azStrs,ialloc2), bgsMn(azStrs,ialloc2), bglMn(azStrs,ialloc2))
+      allocate(bgsU(azStrs,ialloc2), bglU(azStrs,ialloc2))
+      allocate(bZnSed(azStrs,ialloc2),bCadSed(azStrs,ialloc2),bCuSed(azStrs,ialloc2),bNiSed(azStrs,ialloc2))
+	  allocate(bAsSed(azStrs,ialloc2),bPbSed(azStrs,ialloc2),bCrSed(azStrs,ialloc2),bFeSed(azStrs,ialloc2))
+	  allocate(bHgSed(azStrs,ialloc2),bMnSed(azStrs,ialloc2),bUSed(azStrs,ialloc2))
 
       allocate(bste(azStrs,ialloc2), bsno3(azStrs,ialloc2), bsn4(azStrs,ialloc2), bsgelp(azStrs,ialloc2))
       allocate(bsno2(azStrs,ialloc2), bschla(azStrs,ialloc2), bsssal(azStrs,ialloc2), bssi(azStrs,ialloc2))
@@ -729,9 +721,13 @@
       allocate(bschlk(azStrs,ialloc2), bschlg(azStrs,ialloc2), bsbmue(azStrs,ialloc2), bsheb(azStrs,ialloc2))
       allocate(bsbre(azStrs,ialloc2), bschlb(azStrs,ialloc2), bsantb(azStrs,ialloc2), bsbetN(azStrs,ialloc2)) 
       allocate(bsJNO3(azStrs,ialloc2), bsJNH4(azStrs,ialloc2), bsJPO4(azStrs,ialloc2), bsJO2(azStrs,ialloc2))
-      allocate(bsJSi(azStrs,ialloc2), bscoli(azStrs,ialloc2), sedhy(azStrs,ialloc2))
+      allocate( bsJSi(azStrs,ialloc2), bscoli(azStrs,ialloc2) )
       allocate(bsgsZn(azStrs,ialloc2), bsglZn(azStrs,ialloc2), bsgsCad(azStrs,ialloc2), bsglCad(azStrs,ialloc2))
       allocate(bsgsCu(azStrs,ialloc2), bsglCu(azStrs,ialloc2), bsgsNi(azStrs,ialloc2), bsglNi(azStrs,ialloc2))
+      allocate(bsgsAs(azStrs,ialloc2), bsglAs(azStrs,ialloc2), bsgsPb(azStrs,ialloc2), bsglPb(azStrs,ialloc2))
+      allocate(bsgsCr(azStrs,ialloc2), bsglCr(azStrs,ialloc2), bsgsFe(azStrs,ialloc2), bsglFe(azStrs,ialloc2))
+      allocate(bsgsHg(azStrs,ialloc2), bsglHg(azStrs,ialloc2), bsgsMn(azStrs,ialloc2), bsglMn(azStrs,ialloc2))
+      allocate(bsgsU(azStrs,ialloc2), bsglU(azStrs,ialloc2))
       allocate(bmxtem(azStrs,ialloc2), bmitem(azStrs,ialloc2), bmxno3(azStrs,ialloc2), bmino3(azStrs,ialloc2))
       allocate(bmxnh4(azStrs,ialloc2), bminh4(azStrs,ialloc2), bmxglp(azStrs,ialloc2), bmiglp(azStrs,ialloc2))
       allocate(bmxchl(azStrs,ialloc2), bmichl(azStrs,ialloc2), bmxssa(azStrs,ialloc2), bmissa(azStrs,ialloc2))
@@ -748,6 +744,13 @@
       allocate(bmxgsCad(azStrs,ialloc2), bmigsCad(azStrs,ialloc2), bmxglCad(azStrs,ialloc2), bmiglCad(azStrs,ialloc2))
       allocate(bmxgsCu(azStrs,ialloc2), bmigsCu(azStrs,ialloc2), bmxglCu(azStrs,ialloc2), bmiglCu(azStrs,ialloc2))
       allocate(bmxgsNi(azStrs,ialloc2), bmigsNi(azStrs,ialloc2), bmxglNi(azStrs,ialloc2), bmiglNi(azStrs,ialloc2))
+      allocate(bmxgsAs(azStrs,ialloc2), bmigsAs(azStrs,ialloc2), bmxglAs(azStrs,ialloc2), bmiglAs(azStrs,ialloc2))
+      allocate(bmxgsPb(azStrs,ialloc2), bmigsPb(azStrs,ialloc2), bmxglPb(azStrs,ialloc2), bmiglPb(azStrs,ialloc2))
+      allocate(bmxgsCr(azStrs,ialloc2), bmigsCr(azStrs,ialloc2), bmxglCr(azStrs,ialloc2), bmiglCr(azStrs,ialloc2))
+      allocate(bmxgsFe(azStrs,ialloc2), bmigsFe(azStrs,ialloc2), bmxglFe(azStrs,ialloc2), bmiglFe(azStrs,ialloc2))
+      allocate(bmxgsHg(azStrs,ialloc2), bmigsHg(azStrs,ialloc2), bmxglHg(azStrs,ialloc2), bmiglHg(azStrs,ialloc2))
+      allocate(bmxgsMn(azStrs,ialloc2), bmigsMn(azStrs,ialloc2), bmxglMn(azStrs,ialloc2), bmiglMn(azStrs,ialloc2))
+      allocate(bmxgsU(azStrs,ialloc2), bmigsU(azStrs,ialloc2), bmxglU(azStrs,ialloc2), bmiglU(azStrs,ialloc2))
 
       allocate(hfkm(azStrs,ialloc2), hqaus(azStrs,ialloc2), hsvhk(azStrs,ialloc2), hsvhg(azStrs,ialloc2))
       allocate(hDOSCF(azStrs,ialloc2), hsvhb(azStrs,ialloc2), habbcm(azStrs,ialloc2), habl(azStrs,ialloc2))
@@ -781,9 +784,17 @@
       allocate(habkml(azStrs,ialloc2), hdlmx(azStrs,ialloc2), hdlmxs(azStrs,ialloc2), hgwdmx(azStrs,ialloc2))
       allocate(hsgwmu(azStrs,ialloc2), hdH2De(azStrs,ialloc2), Hmax2D(azStrs,ialloc2), TGZoo(azStrs,ialloc2))
       allocate(akmor_1(azStrs,ialloc2), agmor_1(azStrs,ialloc2), abmor_1(azStrs,ialloc2))
+	  allocate(anzZeit(azStrs,ialloc2), banzZeit(azStrs,ialloc2), zwanzZeit(azStrs,ialloc2))
 
       allocate(hglZn(azStrs,ialloc2), hgsZn(azStrs,ialloc2), hglCad(azStrs,ialloc2), hgsCad(azStrs,ialloc2))
       allocate(hglCu(azStrs,ialloc2), hgsCu(azStrs,ialloc2), hglNi(azStrs,ialloc2), hgsNi(azStrs,ialloc2))
+      allocate(hglAs(azStrs,ialloc2), hgsAs(azStrs,ialloc2), hglPb(azStrs,ialloc2), hgsPb(azStrs,ialloc2))
+      allocate(hglCr(azStrs,ialloc2), hgsCr(azStrs,ialloc2), hglFe(azStrs,ialloc2), hgsFe(azStrs,ialloc2))
+      allocate(hglHg(azStrs,ialloc2), hgsHg(azStrs,ialloc2), hglMn(azStrs,ialloc2), hgsMn(azStrs,ialloc2))
+      allocate(hglU(azStrs,ialloc2), hgsU(azStrs,ialloc2))
+	  allocate(ZnSed(azStrs,ialloc2),CadSed(azStrs,ialloc2),CuSed(azStrs,ialloc2),NiSed(azStrs,ialloc2))
+	  allocate(AsSed(azStrs,ialloc2),PbSed(azStrs,ialloc2),CrSed(azStrs,ialloc2),FeSed(azStrs,ialloc2))
+	  allocate(HgSed(azStrs,ialloc2),MnSed(azStrs,ialloc2),USed(azStrs,ialloc2))
 
       allocate(RBkm(azStrs,ialloc1), RBkmLe(azStrs,ialloc1), RBkm1(azStrs,ialloc1), WirkLL(azStrs,ialloc1))
       allocate(abfls(azStrs,ialloc1), obsbs(azStrs,ialloc1), ocsbs(azStrs,ialloc1), vnh4s(azStrs,ialloc1))
@@ -802,6 +813,10 @@
 
       allocate(glZns(azStrs,ialloc1), gsZns(azStrs,ialloc1), glCads(azStrs,ialloc1), gsCads(azStrs,ialloc1)) 
       allocate(glCus(azStrs,ialloc1), gsCus(azStrs,ialloc1), glNis(azStrs,ialloc1), gsNis(azStrs,ialloc1)) 
+      allocate(glAss(azStrs,ialloc1), gsAss(azStrs,ialloc1), glPbs(azStrs,ialloc1), gsPbs(azStrs,ialloc1)) 
+      allocate(glCrs(azStrs,ialloc1), gsCrs(azStrs,ialloc1), glFes(azStrs,ialloc1), gsFes(azStrs,ialloc1)) 
+      allocate(glHgs(azStrs,ialloc1), gsHgs(azStrs,ialloc1), glMns(azStrs,ialloc1), gsMns(azStrs,ialloc1)) 
+      allocate(glUs(azStrs,ialloc1), gsUs(azStrs,ialloc1)) 
 
       allocate(einlkh(azStrs,ialloc1), qeinlh(azStrs,ialloc1), ebsbh(azStrs,ialloc1), ecsbh(azStrs,ialloc1))
       allocate(enh4h(azStrs,ialloc1), ex0h(azStrs,ialloc1), eo2h(azStrs,ialloc1), etemph(azStrs,ialloc1))
@@ -814,6 +829,10 @@
 
       allocate(egsZn(azStrs,ialloc1), eglZn(azStrs,ialloc1), egsCad(azStrs,ialloc1), eglCad(azStrs,ialloc1))
       allocate(egsCu(azStrs,ialloc1), eglCu(azStrs,ialloc1), egsNi(azStrs,ialloc1), eglNi(azStrs,ialloc1))
+      allocate(egsAs(azStrs,ialloc1), eglAs(azStrs,ialloc1), egsPb(azStrs,ialloc1), eglPb(azStrs,ialloc1))
+      allocate(egsCr(azStrs,ialloc1), eglCr(azStrs,ialloc1), egsFe(azStrs,ialloc1), eglFe(azStrs,ialloc1))
+      allocate(egsHg(azStrs,ialloc1), eglHg(azStrs,ialloc1), egsMn(azStrs,ialloc1), eglMn(azStrs,ialloc1))
+      allocate(egsU(azStrs,ialloc1), eglU(azStrs,ialloc1))
 
       allocate(qLh(azStrs,ialloc1), bsbLh(azStrs,ialloc1), csbLh(azStrs,ialloc1), enh4Lh(azStrs,ialloc1))
       allocate(eno2Lh(azStrs,ialloc1), eno3Lh(azStrs,ialloc1), gesNLh(azStrs,ialloc1), x0Lh(azStrs,ialloc1))
@@ -823,13 +842,16 @@
       allocate(pl0Lh(azStrs,ialloc1), chlaLh(azStrs,ialloc1), CML(azStrs,ialloc1), BACL(azStrs,ialloc1))
       allocate(afkm2D(azStrs,ialloc1),efkm2D(azStrs,ialloc1))
 
-      allocate(apfl(azStrs,20), epfl(azStrs,20), pflmxs(azStrs,20), pflmis(azStrs,20), aschif(azStrs,20))
-      allocate(eschif(azStrs,20), awett(azStrs,20), ewett(azStrs,20), abal(azStrs,20), ebal(azStrs,20))
-      allocate(ggbal(azStrs,20), gkbal(azStrs,20), akdrei(azStrs,20), ekdrei(azStrs,20), aPOM(azStrs,20))
-      allocate(ePOM(azStrs,20), POMz(azStrs,20), BedGSz(azStrs,20), sedvvertz(azStrs,20), acoro(azStrs,20), ecoro(azStrs,20))
-      allocate(coro1s(azStrs,20), aKSED(azStrs,20), eKSED(azStrs,20), SPEWKSx(azStrs,20), WUEBKx(azStrs,20), extkx(azStrs,20))
-      allocate(PSREFSx(azStrs,20), coross(azStrs,20), aVEG(azStrs,20), eVEG(azStrs,20), VALTAL(azStrs,20))
-      allocate(EDUFAL(azStrs,20), VALTAR(azStrs,20), EDUFAR(azStrs,20))
+      allocate(apfl(azStrs,ialloc3), epfl(azStrs,ialloc3), pflmxs(azStrs,ialloc3), pflmis(azStrs,ialloc3))
+      allocate(aschif(azStrs,ialloc3),eschif(azStrs,ialloc3), awett(azStrs,ialloc3), ewett(azStrs,ialloc3))
+	  allocate(abal(azStrs,ialloc3), ebal(azStrs,ialloc3),ggbal(azStrs,ialloc3), gkbal(azStrs,ialloc3))
+	  allocate(akdrei(azStrs,ialloc3), ekdrei(azStrs,ialloc3), aPOM(azStrs,ialloc3),ePOM(azStrs,ialloc3))
+	  allocate(POMz(azStrs,ialloc3), BedGSz(azStrs,ialloc3), sedvvertz(azStrs,ialloc3), acoro(azStrs,ialloc3))
+	  allocate(ecoro(azStrs,ialloc3), WUEBKx(azStrs,ialloc3), extkx(azStrs,ialloc3), VALTAL(azStrs,ialloc3))
+      allocate(coro1s(azStrs,ialloc3), aKSED(azStrs,ialloc3), eKSED(azStrs,ialloc3), SPEWKSx(azStrs,ialloc3))
+      allocate(PSREFSx(azStrs,ialloc3), coross(azStrs,ialloc3), aVEG(azStrs,ialloc3), eVEG(azStrs,ialloc3))
+      allocate(EDUFAL(azStrs,ialloc3), VALTAR(azStrs,ialloc3), EDUFAR(azStrs,ialloc3))
+	  allocate(aEros(azStrs,ialloc3),eEros(azStrs,ialloc3))
 
       allocate(ho2z_z(azStrs,50), htez_z(azStrs,50), hchlaz_z(azStrs,50), hakiz_z(azStrs,50), hagrz_z(azStrs,50))
       allocate(hablz_z(azStrs,50), hNh4z_z(azStrs,50), hNO2z_z(azStrs,50), hNO3z_z(azStrs,50), hPz_z(azStrs,50))
@@ -894,28 +916,29 @@
       iRB_K1(mstr) = 0
       izufluss(mstr) = 0                     
       do mRB = 1,mRBs(mstr) 
-        read(10,1003)RBNR,RBkm(mstr,mRB),RBtyp(mstr,mRB),Weinl(mstr,mRB),mstrLe(mstr,mRB),RBkmLe(mstr,mRB),cEName(mstr,mRB) 
+         read(10,1003)RBNR,RBkm(mstr,mRB),RBtyp(mstr,mRB),Weinl(mstr,mRB),mstrLe(mstr,mRB),RBkmLe(mstr,mRB),cEName(mstr,mRB) 
 
-      if(RBkm(mstr,mRB)==Stakm(mstr,1).and.mstrLe(mstr,mRB)<0)then
-        RBtyp(mstr,mRB) = 0
-        iRB_K1(mstr) = iRB_K1(mstr) + 1
-        imRB_K1(iRB_K1(mstr)) = mRB
-      endif
+         if(RBkm(mstr,mRB)==Stakm(mstr,1).and.mstrLe(mstr,mRB)<0)then
+            RBtyp(mstr,mRB) = 0
+            iRB_K1(mstr) = iRB_K1(mstr) + 1
+            imRB_K1(iRB_K1(mstr)) = mRB
+         endif
 
-      if(RBkm(mstr,mRB)==endkm(mstr).and.mstrLe(mstr,mRB)<0.and.RBtyp(mstr,mRB)==1)then
-        RBtyp(mstr,mRB) = 2
-        iRB_K1(mstr) = iRB_K1(mstr) + 1
-        imRB_K1(iRB_K1(mstr)) = mRB
-      endif
+         if(RBkm(mstr,mRB)==endkm(mstr).and.mstrLe(mstr,mRB)<0.and.RBtyp(mstr,mRB)==1)then
+	        print*,'###RBkm(mstr,mRB)==endkm(mstr)###',mstr,mRB
+	        !RBtyp(mstr,mRB) = 2
+	        !iRB_K1(mstr) = iRB_K1(mstr) + 1
+	        !imRB_K1(iRB_K1(mstr)) = mRB
+         endif
 
-     izufluss(mstr) = izufluss(mstr) + 1                                                                      
+         izufluss(mstr) = izufluss(mstr) + 1                                                                      
       
-!......Bestimmung der Wirklänge der Diffusen Einleitung                 
+!........Bestimmung der Wirklänge der Diffusen Einleitung                 
                                                                        
-      if(mstrLe(mstr,mRB)<0)cycle 
-      ieinL = ieinL+1 
-      WirkLL(mstr,ieinL) = abs(RBkm(mstr,mRB)-RBkmLe(mstr,mRB))*1000.                                                            
-   enddo
+         if(mstrLe(mstr,mRB)<0)cycle 
+         ieinL = ieinL+1 
+         WirkLL(mstr,ieinL) = abs(RBkm(mstr,mRB)-RBkmLe(mstr,mRB))*1000.                                                            
+      enddo
  
       if(startkm(mstr).gt.endkm(mstr))abfr(mstr) = 0 
       if(startkm(mstr).lt.endkm(mstr))abfr(mstr) = 1 
@@ -961,25 +984,28 @@
       rewind (92) 
 !                                                                       
       read(92,'(A2)')ckenn_vers1
-        if(ckenn_vers1/='*V')then
-          read(92,'(a255)')cEreig 
-          read(92,9200)itags,monats,jahrs,uhrs 
-          read(92,9210)itage,monate,jahre,uhren,izdt  
-          read(92,9220)imitt,ipH,idl,itemp,itracer,ieros                             &
-          ,ischwa,iverfahren,ilongDis,FlongDis
-        else
-             read(92,'(a50)')modell 
-             read(92,'(a255)')cEreig 
-             read(92,9200)itags,monats,jahrs,uhrs 
-             read(92,9210)itage,monate,jahre,uhren,izdt 
-             read(92,9220,iostat=read_error)imitt,ipH,idl,itemp,itracer,ieros        &
-             ,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer               &
-             ,iphy,iformVert,iform_VerdR
-             if(read_error.ne. 0)then ! 
-                ifehl = 33 
-                goto 989 
-             endif
-        endif
+      if(ckenn_vers1/='*V')then
+         read(92,'(a255)')cEreig 
+         read(92,9200)itags,monats,jahrs,uhrs 
+         read(92,9210)itage,monate,jahre,uhren,izdt  
+         read(92,9220)imitt,ipH,idl,itemp,itracer,ieros                             &
+         ,ischwa,iverfahren,ilongDis,FlongDis
+      else
+         read(92,'(a50)')modell 
+         read(92,'(a255)')cEreig 
+         read(92,9200)itags,monats,jahrs,uhrs 
+         read(92,9210)itage,monate,jahre,uhren,izdt 
+         read(92,9220,iostat=read_error)imitt,ipH,idl,itemp,itracer,ieros        &
+         ,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer               &
+         ,iphy,iformVert,iform_VerdR
+         print*,'imitt,ipH,idl,itemp,itracer,ieros',imitt,ipH,idl,itemp,itracer,ieros
+         print*,'ischwa,iverfahren,ilongDis,FlongDis,iColi',ischwa,iverfahren,ilongDis,FlongDis,iColi
+         print*,'ikonsS,iSchwer,iphy,iformVert,iform_VerdR',ikonsS,iSchwer,iphy,iformVert,iform_VerdR
+         if(read_error.ne. 0)then ! 
+            ifehl = 33 
+            goto 989 
+         endif
+      endif
 
         if(iverfahren==0)iverfahren = 1
         if(ilongDis==0)ilongDis = 1
@@ -993,12 +1019,17 @@
         iwsim = 4
         mtracer = 0
       endif
+	  
+      if(iwsim==2.or.iwsim==5)then
+        if(ieros==1)ieros = 0
+        if(iph==1)iph = 0
+      endif
 
       if(icoli==1)iwsim = 2
       if(ikonsS==1)iwsim = 5
       if(iSchwer==1)then
         iwsim = 3
-        ipH = 1
+        if(iFormVert==1)ipH = 1
       endif
                                                                        
       uhren = int(uhren)+((uhren-int(uhren))/0.6) 
@@ -1007,6 +1038,7 @@
 
       if((iphy<1).or.(iphy>4))then !!wy
         ifehl = 34 
+		print*,'iphy=',iphy
         goto 989 !! eror exit
       endif
 
@@ -1016,96 +1048,16 @@
                                                                        
       if(iwsim==4.or.iwsim==5)goto 329
       if(iwsim==2.and.icoli==0)goto 329 
-                                                                       
-!    Einlesen der Konstanten                                            
-                                                                       
-!....APARAM.txt                                                         
-      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'APARAM.txt'
-      open(unit=55, file=pfadstring, iostat = open_error)
-                                                                        
-      read(55,5500,iostat=read_error)agchl,aggmax,IKge,agksn,agksp 
-      read(55,5502,iostat=read_error)agremi,frmuge,bsbgr,csbgr,Qmx_NG 
-      read(55,5504,iostat=read_error)Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG 
-      read(55,5506,iostat=read_error)opgrmi,opgrma,asgre,ToptG,kTemp_Gr
-      read(55,5507,iostat=read_error)akchl,akgmax,IKke,akksn,akksp 
-      read(55,5508,iostat=read_error)akkssi,akremi,frmuke,bsbki,csbki 
-      read(55,5510,iostat=read_error)Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK 
-      read(55,5512,iostat=read_error)Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi 
-      read(55,5514,iostat=read_error)opkima,askie,ToptK,kTemp_Ki,abchl 
-      read(55,5516,iostat=read_error)abgmax,IKbe,abksn,abksp,abremi 
-      read(55,5518,iostat=read_error)frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB 
-      read(55,5520,iostat=read_error)Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi 
-      read(55,5522,iostat=read_error)opblma,asble,ToptB,kTemp_Bl,ifix
-      read(55,5524,iostat=read_error)irmaxe,FopIRe,GRote,zresge,zakie 
-      read(55,5526,iostat=read_error)zagre,zable,ynmx1e,stks1e,anitrie 
-      read(55,5530,iostat=read_error)bnmx1e,bnks1e,ynmx2e,stks2e,anitri2e
-      read(55,5528,iostat=read_error)bnmx2e,bnks2e,KNH4e,KapN3e,hyPe 
-      read(55,5533,iostat=read_error)hymxDe,KsD1e,KsD2e,KsMe,upBACe 
-      read(55,5535,iostat=read_error)YBACe,rsGBACe,FoptDe,upHNFe,BACkse 
-      read(55,5538,iostat=read_error)alamda,fPOC1e,fPOC2e,SorpCape,Klange
-      read(55,5540,iostat=read_error)KdNh3e,RateCde,etaCde,RateCIe,xnueCe
-      read(55,5542,iostat=read_error)RateCGe,RateCSe
-                                                                    
-      close (55) 
 
-      if(read_error<0)then     ! APARAM.txt fehlt
-        ifehl = 3 
-        goto 989 
-      endif
-
-      if(IKge<0.0.or.IKke<0.0.or.KNH4e<0.0.or.KapN3e<0.0.or.hyPe<0.0.or.ToptG<0.0.or.Klange<0.0.or.ifix.lt.0)then                                
-        ifehl = 3 
-        goto 989 
-      endif 
-     if(kTemp_Gr<0.0.or.kTemp_Ki<0.0.or.kTemp_Bl<0.0)then
-       ifehl = 3 
-       goto 989 
-     endif 
-     if(iwsim==3.and.irmaxe<-1.or.FopIRe<-1.)then
-       ifehl = 3 
-        goto 989 
-     endif
-     if(icoli==1)then
-       if(RateCde<0.0.or.etaCde<0.0.or.RateCIe<0.0.or.xnueCe<0.0.or.RateCGe<0.0.or.RateCSe<0.0)then                                                                    
-         ifehl = 26 
-         goto 989 
-       endif
-     endif
-
-     if(icoli/=1)then
-       if(csbki<1.)then
-         ifehl = 27
-         goto 989
-       endif
-     endif
-
+!     reading Parameter (constants)                                            
+!.....out of APARAM.txt into module aparam
+      call aparam_lesen(cpfad,iwsim,icoli,ieros,ifehl) 
+      if(ifehl.gt.0)goto 989 
+  
       nZoo = 0.11 
       pZoo = 0.01 
-                                                                       
- 5500 format(f4.1,2x,f5.2,2x,f6.2,2x,f5.3,2x,f6.4) 
- 5502 format(f5.3,2x,f5.2,2x,f6.4,2x,f6.4,2x,f7.5) 
- 5504 format(f7.5,2x,f7.5,2x,f7.5,2x,f5.3,2x,f5.3) 
- 5506 format(f4.2,2x,f4.2,2x,f5.2,2x,f5.2,2x,f7.5)
- 5507 format(f4.1,2x,f5.2,2x,f6.2,2x,f5.3,2x,f6.4) 
- 5508 format(f5.3,2x,f5.3,2x,f5.2,2x,f6.4,2x,f6.4) 
- 5510 format(f7.5,2x,f7.5,2x,f7.5,2x,f7.5,2x,f7.5) 
- 5512 format(f7.5,2x,f5.3,2x,f5.3,2x,f5.3,2x,f4.2) 
- 5514 format(f4.2,2x,f5.2,2x,f5.2,2x,f7.5,2x,f5.1) 
- 5516 format(f5.2,2x,f6.2,2x,f5.3,2x,f6.4,2x,f5.3) 
- 5518 format(f5.2,2x,f6.4,2x,f6.4,2x,f7.5,2x,f7.5) 
- 5520 format(f7.5,2x,f7.5,2x,f5.3,2x,f5.3,2x,f4.2) 
- 5522 format(f4.2,2x,f5.2,2x,f5.2,2x,f7.5,2x,i2)
- 5524 format(f5.2,2x,f5.2,2x,f5.2,2x,f5.3,2x,f5.2) 
- 5526 format(f5.2,2x,f5.2,2x,f4.2,2x,f5.2,2x,f4.2) 
- 5530 format(f5.2,2x,f5.2,2x,f4.2,2x,f5.2,2x,f4.2) 
- 5528 format(f5.2,2x,f5.2,2x,f5.2,2x,f5.2,2x,f6.3) 
- 5533 format(f6.3,2x,f6.3,2x,f6.3,2x,f6.3,2x,f6.3) 
- 5535 format(f6.3,2x,f6.3,2x,f5.2,2x,f5.2,2x,f6.4) 
- 5538 format(f5.3,2x,f5.2,2x,f5.2,2x,f6.3,2x,f6.3)
- 5540 format(f5.2,2x,f6.3,2x,f5.2,2x,f5.2,2x,f6.2)
- 5542 format(f5.3,2x,f5.3) 
 
-!     Extinktionskoeffizienten von e_extnct.dat lesen jetzt ausserhalb der Algenroutinen und der Zeitschleife
+!     Extinktionskoeffizienten von e_extnct.dat lesen, jetzt ausserhalb der Algenroutinen und der Zeitschleife
       call e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad) !!wy      extk_lamda                             
 
   329 tflie = izdt/1440. 
@@ -1214,6 +1166,7 @@
       mVs(mstr) = mV
       mZs(mstr) = mZ
       mAs(mstr) = mA 
+      mEs(mstr) = mE 
  
 !...i2Daus steuert die Ausgabe in ERGEB2D.txt                           
 !...nur wenn mindestens in einem Strang 2D gerechnet wird,              
@@ -1233,6 +1186,7 @@
       mV = 0
       mZ = 0
       mA = 0
+      mE = 0
       read(103,'(a1,2x,I5)',iostat=read_error)ckenn,mstr 
       if(read_error/=0)goto 339
       nbuhn(mstr) = 0 
@@ -1345,6 +1299,23 @@
       goto 231 
       endif 
 
+      if(ckenn.eq.'E')then 
+      mE = mE+1
+	  if(mE.gt.ialloc3)then
+	     print*,'mE.gt.ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
+	     stop 231
+	  endif
+      read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)	  
+      if(open_error.ne. 0) then
+         print*,' read error erosion parameters ',ckenn,' : ',trim(adjustl(ctext))
+	     print*,ieros,mstr,mE,' E ModellG tau,M,n,roh=',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+         stop 2
+	  else
+	     print*,ieros,mstr,mE,' E ModellG tau,M,n,roh=',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+      end if
+      rewind (77) 
+      goto 231 
+      endif 
                                                                        
   339 continue 
       close (77) 
@@ -1370,7 +1341,36 @@
              VTYPH(j,jj,jjj) = 0.0
            enddo
          enddo
-       enddo  
+       enddo
+
+      !Erosions-Abschnitte...
+      do azStr = 1,azStrs ! alle Stränge
+         mstr = mstra(azStr)
+		 mE=mEs(mstr)
+		 ! umspeichern
+         t1e(1:mE)=tausc(mstr,1:mE)
+         m1e(1:mE)=M_eros(mstr,1:mE)
+         n1e(1:mE)=n_eros(mstr,1:mE)
+         r1e(1:mE)=sedroh(mstr,1:mE)
+		 ! initialisieren = keine Erosion
+         tausc(mstr,:)  = 99999.99
+         M_eros(mstr,:) = 0.0
+         n_eros(mstr,:) = 1.0
+         sedroh(mstr,:) = 2650.0		 
+	     do j=1,mE ! alle Erosionsabschnitte im Strang
+            do mSta = 1,mStas(mstr) ! alle Profile/Stationen im Strang
+		       fkmgit = Stakm(mstr,mSta)
+			   ! wenn aktueller km im Abschnitt
+			   if ((aEros(mstr,mE).le.fkmgit).and.(eEros(mstr,mE).ge.fkmgit)) then
+			      tausc(mstr,mSta)  = t1e(j)
+				  M_eros(mstr,mSta) = m1e(j)
+				  n_eros(mstr,mSta) = n1e(j)
+				  sedroh(mstr,mSta) = r1e(j)
+				  print*,mstr,mSta,' Erosion an km=',fkmgit
+			   endif
+			enddo  ! alle Profile im Strang
+         enddo  ! alle Erosionsabschnitte im Strang	 
+      enddo	 ! alle Stränge
 
       do 335 azStr = 1,azStrs 
       mstr = mstra(azStr) 
@@ -1387,6 +1387,7 @@
       mU = 1
       mZ = 1
       mA = 1 
+      mE = 1 
 !                                                                       
       do 337 kSta = 0,isegs(mstr) 
       if(kSta.eq.0)goto 343 
@@ -1510,9 +1511,9 @@
       endif 
 !                                                                       
       if(fkmgit.ge.ekdrei(mstr,mD).and.fkmgit.ge.akdrei(mstr,mD+1))then 
- 1199 mD = mD+1 
+  199 mD = mD+1 
       if(mD.gt.mDs(mstr))goto 59 
-      if(ekdrei(mstr,mD).lt.fkmgit.and.mD.lt.mDs(mstr))goto 1199 
+      if(ekdrei(mstr,mD).lt.fkmgit.and.mD.lt.mDs(mstr))goto 199 
       do 180 ndr=1,nndr 
       zdreie(ndr) = zdrs(mstr,mD,ndr) 
       zdrese(ndr) = zdrss(mstr,mD,ndr) 
@@ -1833,7 +1834,7 @@
       jsed = 0
 
       call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif,SedOM,SedOMb,dKorn,dKornb    &     
-                   ,raua,vmq,Hmq,nbuhn,bvmq,bHmq,jsed,w2,w2b,ifehl)
+                   ,raua,vmq,Hmq,nbuhn,bvmq,bHmq,jsed,w2,w2b,ifehl,kontroll ,0)
       if(ifehl==26)goto 990
       
                                                                        
@@ -2072,34 +2073,9 @@
       enddo !do ior = 1,hanze(mstr)
         QStrang_1(mstr) = hvabfl(mstr,1) 
  
-!     Vorbelegung fuer Errosionsberechnung                              
-                                                                       
-      tauscs = 1.25 
-
-      if(iwied/=1.and.iwsim/=2.and.ieros/=0.and.iwsim/=5)then 
-
-        sedhmx = 0.001 
-       
-        do ior = 1,hanze(mstr)+1 
-          sedhg(mstr,ior) = 0.0   
-          if(hSedOM(mstr,ior)>0.01)sedhg(mstr,ior) = 0.1
-
-          ischig(mstr,ior) = 100
-          do i = 1, ischig(mstr,ior) 
-            tauscg(mstr,ior,i) = 0.0
-          enddo
+        hSedOM(mstr,hanze(mstr)+1) = hSedOM(mstr,hanze(mstr))  
+        bSedOM(mstr,hanze(mstr)+1) = bSedOM(mstr,hanze(mstr))  
  
-          if(nbuhn(mstr)==1)then
-            bsedh(mstr,ior) = 0.0
-            if(bSedOM(mstr,ior)>0.01)bsedh(mstr,ior) = 0.1
-
-            ibschi(mstr,ior) = 100
-            do i = 1,ibschi(mstr,ior)
-              btausc(mstr,ior,i) = 0.0
-            enddo  
-          endif  !  if(nbuhn(mstr) 
-        enddo ! do ior = 1,hanze(mstr)+1
-      endif ! f(iwied/=1
 	  !print*,azStr,' sysgenou mstra,hanze=',mstra(azStr),hanze(mstra(azStr))
    ENDDO !DO azStr = 1,azStrs 
    
@@ -2135,20 +2111,31 @@
       itime = itimeb 
       endif 
 	  
-!#### Berechnen der Startwerte #####                                         
+!#### Randbedingungen #####                                         
                                                                        
-!## zu Beginn der Simulation werden die Anzahl der Randbedimgungen und die maximale Länge eines Datensatzes bestimmt ##
-
+     ! zuerst werden die Anzahl der Randbedimgungen und die maximale Länge der Randbedingungs-Zeitreihen von EREIGG.txt gelesen
      if(iwied==0)call Randbedingungen(cpfad, i_Rands, iw_max)
 
       istr = 0 
-	  
-      call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs                 &
-                    ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &         
-                    ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,istund                                 &
-                    ,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands               &
-                    ,iw_max,iformVert,ifehl,ifmRB,ifmstr)
-
+	 ! dann werden die Zeitreihen selbst aus EREIGG.txt gelesen
+     call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs                 &
+                   ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &  
+                   ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,glAss,gsAss,glPbs,gsPbs,glCrs,gsCrs    &
+                   ,glFes,gsFes,glHgs,gsHgs,glMns,gsMns,glUs,gsUs                                                    &
+                   ,c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn,VTKoeffDe_Zn                                   &
+                   ,c1Cu,e1Cu,c2Cu,e2Cu,c3Cu,e3Cu,c4Cu,e4Cu,c5Cu,e5Cu,VTKoeffDe_Cu                                   &                              
+                   ,c1Cad,e1Cad,c2Cad,e2Cad,c3Cad,e3Cad,c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad                        &                              
+                   ,c1Ni,e1Ni,c2Ni,e2Ni,c3Ni,e3Ni,c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni                                   &                              
+                   ,c1As,e1As,c2As,e2As,c3As,e3As,c4As,e4As,c5As,e5As,VTKoeffDe_As                                   &                              
+                   ,c1Pb,e1Pb,c2Pb,e2Pb,c3Pb,e3Pb,c4Pb,e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb                                   &                              
+                   ,c1Cr,e1Cr,c2Cr,e2Cr,c3Cr,e3Cr,c4Cr,e4Cr,c5Cr,e5Cr,VTKoeffDe_Cr                                   &                              
+                   ,c1Fe,e1Fe,c2Fe,e2Fe,c3Fe,e3Fe,c4Fe,e4Fe,c5Fe,e5Fe,VTKoeffDe_Fe                                   &                              
+                   ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                   &                              
+                   ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &                              
+                   ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &                              
+                   ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
+                   ,iw_max,iformVert,ifehl,ifmRB,ifmstr)                                                             
+      !print*,'nach funkstar gsPbs(1,1)=',gsPbs(1,1)
                      if(ifehl>0)goto 989
 
       call aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
@@ -2157,12 +2144,9 @@
 
 ! ##### Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall#####
       do azStr = 1,azStrs !Strangschleife ANFANG
-        mstr = mstra(azStr)
-        if(iwied==0)then
-		   exit
-		endif
- 
-       if(iRB_K1(mstr)<=1)cycle
+         mstr = mstra(azStr)
+         if(iwied==0)exit
+         if(iRB_K1(mstr)<=1)cycle
 
 !.or.nnStrs(mstr)==0)cycle ! noch überprüfen
 
@@ -2543,6 +2527,25 @@
          goto 989 
       endif 
 
+!.... Temperatur
+
+      if(iwsim==2.or.iwsim==3.or.iph==1)then
+        if(tempws(mstr,mRB)==-9.99)then
+          ifehl = 35
+          ifhstr = mstr
+          goto 989
+       endif 
+     endif
+
+!..... ph-Wert
+
+      if(iph==1.and.vphs(mstr,mRB)<=0.0)then
+        ifehl = 34
+        print*,mstr,mRB,' iph=',iph,' vphs=',vphs(mstr,mRB)
+        ifhstr = mstr
+        goto 989
+      endif 
+
 !... m-Wert
 
       if(iph==1.and.mws(mstr,mRB)<=0.0)then
@@ -2772,8 +2775,8 @@
          goto 989 
          endif 
 
-      if(RBtyp(mstr,mRB)==0)TGZoo(mstr,1) = GRote
-      if(RBtyp(mstr,mRB)==2)TGZoo(mstr,hanze(mstr)+1) = GRote
+      if(RBtyp(mstr,mRB)==0)TGZoo(mstr,1) = GROT
+      if(RBtyp(mstr,mRB)==2)TGZoo(mstr,hanze(mstr)+1) = GROT
 
 !                                                                       
 !     Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
@@ -2794,7 +2797,7 @@
 !....Berechnung der "BSB-Komponenten" am oberen Rand           !!wy jetzt in zuflussrand.f90            
 !     (auch bei Stundenwert-Generierung)!!!!!                           
        call orgc_start(                                                                    &
-     &     TOC_CSB,bsbZoo,GRote,                                                           &
+     &     TOC_CSB,bsbZoo,GROT,                                                           &
      &     akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                                   &
      &     Caki,Cabl,Cagr,CZoo, bsbki,bsbbl,bsbgr,  csbki,csbbl,csbgr,                     &
      &     zooins(mstr,mRB),vbsbs(mstr,mRB),vcsbs(mstr,mRB),                               &
@@ -2807,7 +2810,7 @@
        call naehr_start(                                                                   &
      &     akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                                   &
      &     vnh4s(mstr,mRB),vNO3s(mstr,mRB),vno2s(mstr,mRB),gesNs(mstr,mRB),                &
-     &     zooins(mstr,mRB),nZoo, pZoo, GRote,                                             &
+     &     zooins(mstr,mRB),nZoo, pZoo, GROT,                                             &
      &     gelPs(mstr,mRB),gesPs(mstr,mRB),                                                &
      &     Q_NKs(mstr,mRB),Q_PKs(mstr,mRB),Q_SKs(mstr,mRB),Q_NGs(mstr,mRB),Q_PGs(mstr,mRB),Q_NBs(mstr,mRB),Q_PBs(mstr,mRB),   &
      &     Qmx_NK,Qmn_NK,Qmx_PK,Qmn_PK,Qmx_SK,Qmn_SK, Qmx_NG,Qmn_NG,Qmx_PG,Qmn_PG, Qmx_NB,Qmn_NB,Qmx_PB,Qmn_PB,               &
@@ -2916,6 +2919,21 @@
       hglCu(mstr,1) = glCus(mstr,mRB) 
       hgsNi(mstr,1) = gsNis(mstr,mRB) 
       hglNi(mstr,1) = glNis(mstr,mRB) 
+      hgsAs(mstr,1) = gsAss(mstr,mRB) 
+      hglAs(mstr,1) = glAss(mstr,mRB)
+      print*,'qsim.f90 gsPbs(mstr,mRB)',gsPbs(mstr,mRB),mstr,mRB 
+      hgsPb(mstr,1) = gsPbs(mstr,mRB) 
+      hglPb(mstr,1) = glPbs(mstr,mRB) 
+      hgsCr(mstr,1) = gsCrs(mstr,mRB) 
+      hglCr(mstr,1) = glCrs(mstr,mRB) 
+      hgsFe(mstr,1) = gsFes(mstr,mRB) 
+      hglFe(mstr,1) = glFes(mstr,mRB) 
+      hgsHg(mstr,1) = gsHgs(mstr,mRB) 
+      hglHg(mstr,1) = glHgs(mstr,mRB) 
+      hgsMn(mstr,1) = gsMns(mstr,mRB) 
+      hglMn(mstr,1) = glMns(mstr,mRB) 
+      hgsU(mstr,1) = gsUs(mstr,mRB) 
+      hglU(mstr,1) = glUs(mstr,mRB) 
     endif
 
 !###############################################################
@@ -3125,7 +3143,7 @@
         js = j
       endif
 
-     if(iFlRi(mstr)==0.and.iwied==1)cycle   
+      !if(iFlRi(mstr)==0.and.iwied==1)cycle   
 
       iein = 0 
       ieinL = 0
@@ -3186,8 +3204,21 @@
             eglCu(mstr,iein) = glCus(mstr,mRB)
             egsNi(mstr,iein) = gsNis(mstr,mRB)
             eglNi(mstr,iein) = glNis(mstr,mRB)
-         
-              else 
+            egsAs(mstr,iein) = gsAss(mstr,mRB)
+            eglAs(mstr,iein) = glAss(mstr,mRB)
+            egsPb(mstr,iein) = gsPbs(mstr,mRB)
+            eglPb(mstr,iein) = glPbs(mstr,mRB)
+            egsCr(mstr,iein) = gsCrs(mstr,mRB)
+            eglCr(mstr,iein) = glCrs(mstr,mRB)
+            egsFe(mstr,iein) = gsFes(mstr,mRB)
+            eglFe(mstr,iein) = glFes(mstr,mRB)
+            egsHg(mstr,iein) = gsHgs(mstr,mRB)
+            eglHg(mstr,iein) = glHgs(mstr,mRB)
+            egsMn(mstr,iein) = gsMns(mstr,mRB)
+            eglMn(mstr,iein) = glMns(mstr,mRB)
+            egsU(mstr,iein) = gsUs(mstr,mRB)
+            eglU(mstr,iein) = glUs(mstr,mRB)
+         else 
                                                                         
 !....Diffuse Einleitung                                                 
                 ieinL = ieinL+1 
@@ -3385,18 +3416,35 @@
        if(glCus(mstr1,mRB).ge.Wtst)hglCu(mstr,ior) = glCus(mstr1,mRB) 
        if(gsNis(mstr1,mRB).ge.Wtst)hgsNi(mstr,ior) = gsNis(mstr1,mRB) 
        if(glNis(mstr1,mRB).ge.Wtst)hglNi(mstr,ior) = glNis(mstr1,mRB) 
+       if(gsAss(mstr1,mRB).ge.Wtst)hgsAs(mstr,ior) = gsAss(mstr1,mRB) 
+       if(glAss(mstr1,mRB).ge.Wtst)hglAs(mstr,ior) = glAss(mstr1,mRB) 
+       if(gsPbs(mstr1,mRB).ge.Wtst)then
+	      hgsPb(mstr,ior) = gsPbs(mstr1,mRB)
+		  !print*,'hgsPb(mstr,ior) = gsPbs(mstr1,mRB)',hgsPb(mstr,ior),mstr,ior,gsPbs(mstr1,mRB),mstr1,mRB
+       endif		  
+       if(glPbs(mstr1,mRB).ge.Wtst)hglPb(mstr,ior) = glPbs(mstr1,mRB) 
+       if(gsCrs(mstr1,mRB).ge.Wtst)hgsCr(mstr,ior) = gsCrs(mstr1,mRB) 
+       if(glCrs(mstr1,mRB).ge.Wtst)hglCr(mstr,ior) = glCrs(mstr1,mRB) 
+       if(gsFes(mstr1,mRB).ge.Wtst)hgsFe(mstr,ior) = gsFes(mstr1,mRB) 
+       if(glFes(mstr1,mRB).ge.Wtst)hglFe(mstr,ior) = glFes(mstr1,mRB) 
+       if(gsHgs(mstr1,mRB).ge.Wtst)hgsHg(mstr,ior) = gsHgs(mstr1,mRB) 
+       if(glHgs(mstr1,mRB).ge.Wtst)hglHg(mstr,ior) = glHgs(mstr1,mRB) 
+       if(gsMns(mstr1,mRB).ge.Wtst)hgsMn(mstr,ior) = gsMns(mstr1,mRB) 
+       if(glMns(mstr1,mRB).ge.Wtst)hglMn(mstr,ior) = glMns(mstr1,mRB) 
+       if(gsUs(mstr1,mRB).ge.Wtst)hgsU(mstr,ior) = gsUs(mstr1,mRB) 
+       if(glUs(mstr1,mRB).ge.Wtst)hglU(mstr,ior) = glUs(mstr1,mRB) 
 
        if(iwsim==4)cycle  ! bei Tracer wird dieser Programmteil nicht ausgeführt!
        algb5 = haki(mstr,ior)*Caki*bsbki+hagr(mstr,ior)*Cagr*bsbgr+habl(mstr,ior)*Cabl*bsbbl
        hvbsb(mstr,ior) = hbsb(mstr,ior)+algb5 
 
-       zoobsb = (hzooi(mstr,ior)*GRote/1000.)*bsbZoo 
+       zoobsb = (hzooi(mstr,ior)*GROT/1000.)*bsbZoo 
        hvbsb(mstr,ior) = hvbsb(mstr,ior)+zoobsb 
                                                                        
        algcs = haki(mstr,ior)*Caki*csbki+habl(mstr,ior)*Cabl*csbbl+hagr(mstr,ior)*Cagr*csbgr
 
        hvcsb(mstr,ior) = hcsb(mstr,ior)+algcs 
-       zoocsb = hzooi(mstr,ior)*(GRote*CZoo/1000.)*TOC_BSB 
+       zoocsb = hzooi(mstr,ior)*(GROT*CZoo/1000.)*TOC_BSB 
        hvcsb(mstr,ior) = hvcsb(mstr,ior)+zoocsb
 
        hFluN3(mstr,ior) = 0.0 
@@ -3511,6 +3559,20 @@
        bglCu(mstr,ior) = hglCu(mstr,ior) 
        bgsNi(mstr,ior) = hgsNi(mstr,ior) 
        bglNi(mstr,ior) = hglNi(mstr,ior) 
+       bgsAs(mstr,ior) = hgsAs(mstr,ior) 
+       bglAs(mstr,ior) = hglAs(mstr,ior) 
+       bgsPb(mstr,ior) = hgsPb(mstr,ior) 
+       bglPb(mstr,ior) = hglPb(mstr,ior) 
+       bgsCr(mstr,ior) = hgsCr(mstr,ior) 
+       bglCr(mstr,ior) = hglCr(mstr,ior) 
+       bgsFe(mstr,ior) = hgsFe(mstr,ior) 
+       bglFe(mstr,ior) = hglFe(mstr,ior) 
+       bgsHg(mstr,ior) = hgsHg(mstr,ior) 
+       bglHg(mstr,ior) = hglHg(mstr,ior) 
+       bgsMn(mstr,ior) = hgsMn(mstr,ior) 
+       bglMn(mstr,ior) = hglMn(mstr,ior) 
+       bgsU(mstr,ior) = hgsU(mstr,ior) 
+       bglU(mstr,ior) = hglU(mstr,ior) 
                                                                 
       enddo ! Ende Schleife über die Ortspunkte ior
 	  
@@ -3626,6 +3688,20 @@
       hcs110 = 0.0 
       hcs111 = 0.0 
       hcs112 = 0.0 
+      hcs113 = 0.0 
+      hcs114 = 0.0 
+      hcs115 = 0.0 
+      hcs116 = 0.0 
+      hcs117 = 0.0 
+      hcs118 = 0.0 
+      hcs119 = 0.0 
+      hcs120 = 0.0 
+      hcs121 = 0.0 
+      hcs122 = 0.0 
+      hcs123 = 0.0 
+      hcs124 = 0.0 
+      hcs125 = 0.0 
+      hcs126 = 0.0 
                                                                        
       hcq = 0.0 
 	  
@@ -3914,7 +3990,20 @@
      hcs106 = hcs106+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCu(ESTRNR(istr,nstr),kanz)                                    
      hcs107 = hcs107+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsNi(ESTRNR(istr,nstr),kanz)                                    
      hcs108 = hcs108+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglNi(ESTRNR(istr,nstr),kanz)                                    
-
+     hcs113 = hcs113+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsAs(ESTRNR(istr,nstr),kanz)                                    
+     hcs114 = hcs114+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglAs(ESTRNR(istr,nstr),kanz)                                    
+     hcs115 = hcs115+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsPb(ESTRNR(istr,nstr),kanz)                                    
+     hcs116 = hcs116+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglPb(ESTRNR(istr,nstr),kanz)                                    
+     hcs117 = hcs117+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCr(ESTRNR(istr,nstr),kanz)                                    
+     hcs118 = hcs118+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCr(ESTRNR(istr,nstr),kanz)                                    
+     hcs119 = hcs119+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsFe(ESTRNR(istr,nstr),kanz)                                    
+     hcs120 = hcs120+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglFe(ESTRNR(istr,nstr),kanz)                                    
+     hcs121 = hcs121+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsHg(ESTRNR(istr,nstr),kanz)                                    
+     hcs122 = hcs122+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglHg(ESTRNR(istr,nstr),kanz)                                    
+     hcs123 = hcs123+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsMn(ESTRNR(istr,nstr),kanz)                                    
+     hcs124 = hcs124+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglMn(ESTRNR(istr,nstr),kanz)                                    
+     hcs125 = hcs125+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsU(ESTRNR(istr,nstr),kanz)                                    
+     hcs126 = hcs126+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglU(ESTRNR(istr,nstr),kanz)                                  
                                                                        
 !......2D-Modellierung                                                  
 
@@ -4114,7 +4203,20 @@
       hcs106 = hcs106/hcq
       hcs107 = hcs107/hcq
       hcs108 = hcs108/hcq
-     
+      hcs113 = hcs113/hcq
+      hcs114 = hcs114/hcq
+      hcs115 = hcs115/hcq
+      hcs116 = hcs116/hcq
+      hcs117 = hcs117/hcq
+      hcs118 = hcs118/hcq
+      hcs119 = hcs119/hcq
+      hcs120 = hcs120/hcq
+      hcs121 = hcs121/hcq
+      hcs122 = hcs122/hcq
+      hcs123 = hcs123/hcq
+      hcs124 = hcs124/hcq
+      hcs125 = hcs125/hcq
+      hcs126 = hcs126/hcq     
 
       do ior = iB,anzej ! Beginn Schleife Belegung des 1. oder letzten Ortspunkts eines Strangs
       hsvhk(mstr,ior) = hcs1 
@@ -4204,7 +4306,22 @@
       hglCu(mstr,ior) = hcs106
       hgsNi(mstr,ior) = hcs107
       hglNi(mstr,ior) = hcs108
-                                                                      
+      hgsAs(mstr,ior) = hcs113
+      hglAs(mstr,ior) = hcs114
+      hgsPb(mstr,ior) = hcs115
+	  !print*,'hcs115: hgsPb(mstr,ior)=',hgsPb(mstr,ior),mstr,ior
+      hglPb(mstr,ior) = hcs116
+      hgsCr(mstr,ior) = hcs117
+      hglCr(mstr,ior) = hcs118
+      hgsFe(mstr,ior) = hcs119
+      hglFe(mstr,ior) = hcs120
+      hgsHg(mstr,ior) = hcs121
+      hglHg(mstr,ior) = hcs122
+      hgsMn(mstr,ior) = hcs123
+      hglMn(mstr,ior) = hcs124
+      hgsU(mstr,ior) = hcs125
+      hglU(mstr,ior) = hcs126
+
 !...nur Tracer                                                          
       if(iwsim==4)cycle 
 
@@ -4341,7 +4458,20 @@
       bglCu(mstr,ior) = hglCu(mstr,ior)
       bgsNi(mstr,ior) = hgsNi(mstr,ior)
       bglNi(mstr,ior) = hglNi(mstr,ior)
-                                                                       
+      bgsAs(mstr,ior) = hgsAs(mstr,ior)
+      bglAs(mstr,ior) = hglAs(mstr,ior)
+      bgsPb(mstr,ior) = hgsPb(mstr,ior)
+      bglPb(mstr,ior) = hglPb(mstr,ior)
+      bgsCr(mstr,ior) = hgsCr(mstr,ior)
+      bglCr(mstr,ior) = hglCr(mstr,ior)
+      bgsFe(mstr,ior) = hgsFe(mstr,ior)
+      bglFe(mstr,ior) = hglFe(mstr,ior)
+      bgsHg(mstr,ior) = hgsHg(mstr,ior)
+      bglHg(mstr,ior) = hglHg(mstr,ior)
+      bgsMn(mstr,ior) = hgsMn(mstr,ior)
+      bglMn(mstr,ior) = hglMn(mstr,ior)
+      bgsU(mstr,ior) = hgsU(mstr,ior)
+      bglU(mstr,ior) = hglU(mstr,ior)
    enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs 
                       
       else !  Abfluss hcq <= 0.0
@@ -4933,15 +5063,15 @@
       VALTBR(ior) = VALTRH(mstr,ior) 
       EDUFBR(ior) = EDUFRH(mstr,ior) 
                                                                        
-      if(ieros>0)then 
-        sedh(ior) = sedhg(mstr,ior)
-  
-        ischic(ior) = ischig(mstr,ior)
-        do itau = 1,ischic(ior) 
-          tausc(ior,itau) = tauscg(mstr,ior,itau) 
-        enddo
-      endif                                                                     
-   enddo
+      !if(ieros>0)then 
+      !  sedh(ior) = sedhg(mstr,ior)
+      !  ischic(ior) = ischig(mstr,ior)
+      !  do itau = 1,ischic(ior) 
+      !    tausc(ior,itau) = tauscg(mstr,ior,itau) 
+      !  enddo
+      !endif                                                                     
+                                                                       
+   enddo !ior=1,anze+1
                                                                 
       dtmin = Strdt(mstr)
       dtmin_Mac = Strdt(mstr) 
@@ -5089,12 +5219,12 @@
  1712 continue 
       mitsedflux=.false. !!wy sediment fluxes switched off temporarily
       if(mitsedflux)then     
-      call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP            &
+         call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP            &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
-                   ,sedalb,sedSS_MQ,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
-                   ,vnh4z,vno3z,gelpz,nkzs,SorpCape,Klange,KdNh3e,fPOC1e,fPOC2e                               &
+                   ,sedalb,sedSS_MQ,KNH4,KapN3,tflie,ilbuhn,itags,monats,uhrz,vo2z                          &
+                   ,vnh4z,vno3z,gelpz,nkzs,SorpCap,Klang,KdNh3,fPOC1,fPOC2                               &
                    ,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB,Q_PB,pl0,nl0,Si,hSised,hJSi           &
-                   ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,yNmx1e,Stks1e,obsb,ocsb        &
+                   ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,YNMAX1,STKS1,obsb,ocsb        &
                    , .FALSE., 0) !!wy ,kontroll, iglob 3D
 	  else ! without sedflux(), fluxes need to be set zero
          hJNO3(:,:)=0.0
@@ -5261,10 +5391,10 @@
  
       call konsum(vkigr,TEMPW,VO2,TFLIE                                 &
      &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
-     &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
-     &,irmaxe,zexki,zexgr,zexbl                                         &
+     &,jiein,FOPTR,GROT,dzres1,dzres2,ZRESG                          &
+     &,irmax,zexki,zexgr,zexbl                                         &
      &,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                      &
-     &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
+     &,rakr,rbar,CHNF,zHNF,ilbuhn,ZAKI,ZAGR,ZABL,HNFza,algzok        &
      &,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
      &,itags,uhrz,mstr,azStrs , .FALSE., 0) !!wy ,kontroll, iglob 3D
 	 
@@ -5507,7 +5637,7 @@
      &,abl,exdrvb,abbcm,algdrb,drfaeb                                   &
      &,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs                 &
      &,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax                            &
-     &,sgwmue,fkm,FoptDe,mstr,azStr, .FALSE., 0) !!wy ,kontroll, iglob 3D
+     &,sgwmue,fkm,FoptD,mstr,azStr, .FALSE., 0) !!wy ,kontroll, iglob 3D
 
       if(nbuhn(mstr)==1)then 
         do ior=1,anze+1
@@ -5552,7 +5682,7 @@
          enddo
       endif     
                                                                        
-!***************hetrero. Nanoflagelaten (HNF)********                   
+!***************hetrero. Nanoflagelaten (HNF)********  ausgeschaltet                 
                                                                        
   218 continue 
 
@@ -5567,11 +5697,11 @@
         goto 1412
       endif
          
-      call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                           &
-     &,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
-     &,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNFe,BACkse       &
-     &,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz, .FALSE., 0) !!wy ,kontroll, iglob 3D
-!                                                                       
+!      call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                           &
+!     &,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
+!     &,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks       &
+!     &,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz, .FALSE., 0) !!wy ,kontroll, iglob 3D
+                                                                       
 !                                                                       
 !***********Kieselalgen***************                                  
 !                                                                       
@@ -5586,13 +5716,22 @@
                 ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda                                                         &
      &          ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                                    & !!wy Licht-Extinktionsparameter
                 ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                                                      &
-                ,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                       &
+                ,akraus,tausc,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GROT,SS,Q_PK,Q_NK,Q_SK                       &
                 ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                                &
                 ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL              &
                 ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki                &
                 ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB                          &
                 ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1,azStrs                                                  &
      &          ,.false.,0)     !!wy kontroll,iglob
+	 
+      !print*,'done algaeski ss(6), ssalg(6), aki(6)',ss(6), ssalg(6), aki(6)
+      isinisi=0
+      do ior=1,anze+1 
+	     if (isnan(aki(ior))) then
+		    !print*,'aki isnan ior=',ior
+			isinisi=isinisi+1
+		 endif
+      enddo
                                              
       if(nbuhn(mstr)==0)goto 1413 
       if(ilbuhn==0)then 
@@ -5819,8 +5958,8 @@
                                                                        
       call                algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir               &
                          ,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl,abchl,abgmax,abksn,abksp,saettb,abremi     &
-                         ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros  &
-                         ,zakie,zagre,zable,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GRote,SS,extk           &
+                         ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tausc,ischif,ilbuhn,ieros  &
+                         ,ZAKI,ZAGR,ZABL,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GROT,SS,extk           &
                          ,extk_lamda                                                                                       &
      &                   ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                               & !!wy Licht-Extinktionsparameter
      &                   ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                      &
@@ -5828,6 +5967,14 @@
                          ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ            &
                          ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                        &
      &                   ,.false.,0)     !!wy kontroll,iglob
+
+      !print*,'done algaesbl ss(6), ssalg(6), abl(6)',ss(6), ssalg(6), abl(6)
+      do ior=1,anze+1 
+	     if (isnan(abl(ior))) then
+		    !print*,'abl isnan ior=',ior
+			isinisi=isinisi+1
+		 endif
+      enddo
 
       if(nbuhn(mstr)==0)goto 1414 
       if(ilbuhn==0)then 
@@ -6010,16 +6157,23 @@
                 ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                   &
      &          ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                     & !!wy Licht-Extinktionsparameter
                 ,tpgr,uhrz,iwied,algcog                                                                                 &
-                ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG       &
+                ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GROT,Q_PG,Q_NG       &
                 ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
                 ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
                 ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
                 ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                                    &
      &          ,.false.,0)     !!wy kontroll,iglob
 
-      !if(mstr==35)print*,'qsim nach algaesgr aki(35/10),Chlaki=',aki(10),Chlaki(10)
-      
-       if(ifehl>0)goto 989                  
+      !print*,'done algaesgr ss(6), ssalg(6), agr(6)',ss(6), ssalg(6), agr(6)
+      do ior=1,anze+1 
+	     if (isnan(agr(ior))) then
+		    !print*,'agr isnan ior=',ior
+			isinisi=isinisi+1
+		 endif
+      enddo
+      if(ifehl>0)goto 989                  
+      ifehl=isinisi
+      if(ifehl>0)goto 989                  
 
       if(nbuhn(mstr)==0)goto 1513 
       if(ilbuhn==0)then 
@@ -6305,12 +6459,13 @@
                 ,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor,jiein,bsbgr,bsbki,akbcm             &
                 ,agbcm,pfl,ezind,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb,csbki,csbgr,ischif,echla               &
                 ,evkigr,eantbl,aki,agr,drfaek,drfaeg,drfaes,ssdr,orgCsd,orgCsd0,orgCsd_abb,CD,CP,CM,BAC,eCD       &
-                ,eCP,eCM,eBAC,TOC_CSB,GRote,vcsb,vkigr,antbl,HNFBAC,BSBHNF,CHNF,zBAC                              &
+                ,eCP,eCM,eBAC,TOC_CSB,GROT,vcsb,vkigr,antbl,HNFBAC,BSBHNF,CHNF,zBAC                              &
                 ,BVHNF,eCHNF,fbsgr,frfgr,fbsgrs,frfgrs,BACmua,dorgSS,ilbuhn,iwied,fkm,bsbct,qeinlL        &
                 ,iorLa,iorLe,ieinLs,pl0,Q_PK,Q_PB,Q_PG,pZoo,nl0,Q_NK,Q_NB,Q_NG,nzoo,etemp,bsbctP          &
-                ,doN,hsdFluB,hyPe,hymxDe,KsD1e,KsD2e,KsMe,upBACe,JDOC1,JDOC2,YBACe,rsGBACe                &
+                ,doN,hsdFluB,HyP1,hymxD,KsD1,KsD2,KsM,upBAC,JDOC1,JDOC2,YBAC,rsGBAC                &
                 ,nkzs,mstr,itags,monats,uhrz,azStrs,bsbZoo                                                &
                 ,.false.,0)     !!wy kontroll,iglob
+      !print*,'done orgC'
       
       if(nbuhn(mstr)==0)goto 1514 
       if(ilbuhn==0)then 
@@ -6575,11 +6730,11 @@
      &,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
      &,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2                     &
      &,agrno3,akino3,jiein,ischif                                       &
-     &,ynmx1e,stks1e,anitrie,bnmx1e,bnks1e,vph,vno2,ij                  &
+     &,YNMAX1,STKS1,ANITR1,BNMX1,BNKS1,vph,vno2,ij                  &
      &,albewg,alberg,albewk,alberk,resdr,aki,agr                        &
-     &,exdrvk,exdrvg,vx02,ex02,eno2,ynmx2e,stks2e,anitri2e              &
+     &,exdrvk,exdrvg,vx02,ex02,eno2,YNMAX2,STKS2,ANITR2              &
      &,abl,ablnh4,ablno3,exdrvb                                         &
-     &,bnmx2e,bnks2e,nl0,zooind,GRote,nzoo,gesN,orgCsd                  &
+     &,BNMX2,BNKS2,nl0,zooind,GROT,nzoo,gesN,orgCsd                  &
      &,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm                      &
      &,CD,CP,CM,BAC,bsbct,nkzs,vnh4z,vno2z,vno3z,dH2D                   &
      &,hJNO3,hJNH4,hJN2,susO2N,hFluN3,akksN,agksN,abksN                 &
@@ -6945,6 +7100,8 @@
              ,jiein,mstr,cpfad,rhyd,WLage,hWS,itags,monats,uhrz,azStrs,iphy                                              &
              ,Caki, Cagr, Cabl	          &				
              ,.false.,0)     !!wy kontroll,iglob
+      !print*,'done ph'
+
       if(nbuhn(mstr)==0)goto 113 
       if(ilbuhn==0)then 
       do ior=1,anze+1 
@@ -6956,7 +7113,6 @@
         zwca(ior) = ca(ior) 
         zwlf(ior) = lf(ior) 
         zwph(ior) = vph(ior)
-        bph_1(ior) = bph(mstr,ior)  
         zwsusn(ior) = susn(ior) 
         zwbetn(ior) = bettn(ior) 
         zwbsbt(ior) = bsbct(ior) 
@@ -7103,7 +7259,9 @@
                   ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL &
                   ,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW,htempw,htempz                    &
                   ,WUEBKS,SPEWKSS,PSREFSS,extkS,ifehl,ifhstr,azStrs,iwsim,iform_VerdR                                   &
-                  ,kontroll,0)     !!wy kontroll,iglob
+                  ,.false.,0)     !!wy kontroll,iglob
+      !print*,'done temperw'
+	  
      if(ifehl>0)goto 989
 !...dtemp zwischenspeichern bei Buhnen                                  
   409 if(nbuhn(mstr)==0)goto 413 
@@ -7186,7 +7344,7 @@
      &,jiein,sedalk,sedalb,sedalg                                       &
      &,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,pl0      &
      &,abl,dalgbl,dalgab,exdrvb,gesP,orgCsd                             &
-     &,zooind,GRote,pZoo,egesP,ilbuhn,iwied                             &
+     &,zooind,GROT,pZoo,egesP,ilbuhn,iwied                             &
      &,CD,CP,CM,BAC,bsbctP,Qmx_PK,Q_PK,up_PKz                           &
      &,Qmx_PG,Q_PG,up_PGz,Qmx_PB,Q_PB,up_PBz,epl0                       &
      &,gelpz,agrtbr,akitbr,abltbr,agrbrz                                &
@@ -7464,9 +7622,6 @@
 !                                                                       
  1517 continue 
  
-
-
-
      if(vo2(1)<0.0)goto 1518 
 
      if(nbuhn(mstr)>0.and.ilbuhn==0)then
@@ -7493,8 +7648,9 @@
                     ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                                 &
                     ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z                  &
                     ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                     &
-                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GRote,iphy                 &  ! chlagr unbenutzt
+                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROT,iphy                 &  ! chlagr unbenutzt
                     ,kontroll,0)     !!wy ,iglob=0
+      !print*,'done oxygen'
 	  
       if(ifehl>0)goto 989 
                                                           
@@ -7654,16 +7810,19 @@
 !***************Schwebstoffe**************                              
 !                                                                       
  1518 continue 
-      if(ssalg(1)<0.0)goto 1519 
+      if(ssalg(1)<0.0)goto 1525 
+      !print*,'going to start schweb'
       call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                      &
      &,tflie,VMITT,flae,flag,elen,ior,anze,ess,ssL,qeinl,qeinlL,vabfl   &
      &,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinLs               &
      &,abl,zexbl,dblmor,drfaeb,jiein                                    &
      &,aki,agr,ssdr,drfaek,drfaeg,drfaes,fssgr,sedss,sedSS_MQ,fssgrs    &
-     &,tauscs,ischif,ilbuhn,fkm,ieros,iwied                             &
-     &,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,GROTe,mstr,itags,monats,uhrz, azStrs &
-     &,.false.,0)     !!wy kontroll,iglob
-      if(nbuhn(mstr)==0)goto 1519 
+     &,tausc,ischif,ilbuhn,fkm,ieros,iwied                             &
+     &,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,mstr,itags,monats,uhrz &
+     &,kontroll,0)     !!wy kontroll,iglob
+      !print*,'done schweb'
+
+      if(nbuhn(mstr)==0)goto 1525 
       if(ilbuhn==0)then 
       do ior=1,anze+1 
         zwtief(ior) = tiefe(ior) 
@@ -7672,7 +7831,6 @@
         zworgS(ior) = dorgSS(ior) 
         zwss(ior) = ss(ior) 
         zwssa(ior) = ssalg(ior)
-        bssalg_1(ior) = bssalg(mstr,ior)         
         zwkmor(ior) = dkimor(ior) 
         zwgmor(ior) = dgrmor(ior) 
         zwbmor(ior) = dblmor(ior) 
@@ -7789,132 +7947,6 @@
       ilbuhn = 0 
       endif 
                                                                        
-                                                                       
- 1519 continue 
-
-!********Schwermetalle***********                                            
-
-      if(ischwer==1)then 
-  1521  call Schwermetalle(vabfl,qeinl,mstr,flag,anze,sedss,sedalk,sedalb,sedalg,hSSalg,SSalg,hph,vph,bssalg,bssalg_1,bph      &
-                          ,bph_1,hglZn,hgsZn,egsZn,eglZn,hglCad,hgsCad,egsCad,eglCad,hglCu,hgsCu,egsCu,eglCu,hglNi,hgsNi       &
-                          ,egsNi,eglNi,eph,ess,jiein,ilbuhn,azStrs,iformVert                                                   &
-                          ,.false.,0)     !!wy kontroll,iglob
-
-        if(nbuhn(mstr)==0)goto 1525
-        if(ilbuhn==0)then 
-      do ior=1,anze+1 
-        zwsedk(ior) = sedalk(ior) 
-        zwsedg(ior) = sedalg(ior) 
-        zwsedb(ior) = sedalb(ior) 
-        zwsedS(ior) = sedss(ior)
-        zwgsZn(ior) = hgsZn(mstr,ior)
-        zwglZn(ior) = hglZn(mstr,ior)
-        zwgsCad(ior) = hgsCad(mstr,ior)
-        zwglCad(ior) = hglCad(mstr,ior)
-        zwgsCu(ior) = hgsCu(mstr,ior)
-        zwglCu(ior) = hglCu(mstr,ior)
-        zwgsNi(ior) = hgsNi(mstr,ior)
-        zwglNi(ior) = hglNi(mstr,ior)
-
-        sedalk(ior) = bsedak(mstr,ior)
-        sedalg(ior) = bsedag(mstr,ior)
-        sedalb(ior) = bsedab(mstr,ior)
-        sedss(ior) = bsedss(mstr,ior) 
-        hgsZn(mstr,ior) = bgsZn(mstr,ior)
-        hglZn(mstr,ior) = bglZn(mstr,ior)
-        hgsCad(mstr,ior) = bgsCad(mstr,ior) 
-        hglCad(mstr,ior) = bglCad(mstr,ior)
-        hgsCu(mstr,ior) = bgsCu(mstr,ior)
-        hglCu(mstr,ior) = bglCu(mstr,ior)
-        hgsNi(mstr,ior) = bgsNi(mstr,ior)
-        hglNi(mstr,ior) = bglNi(mstr,ior)
-      enddo
-      ilbuhn = 1 
-      goto 1521 
-      endif 
-                                                                       
-      if(ilbuhn==1)then 
-      do ior=1,anze+1 
-        bgsZn(mstr,ior) = hgsZn(mstr,ior)
-        bglZn(mstr,ior) = hglZn(mstr,ior)
-        bgsCad(mstr,ior) = hgsCad(mstr,ior)
-        bglCad(mstr,ior) = hglCad(mstr,ior)
-        bgsCu(mstr,ior) = hgsCu(mstr,ior)
-        bglCu(mstr,ior) = hglCu(mstr,ior)
-        bgsNi(mstr,ior) = hgsNi(mstr,ior)
-        bglNi(mstr,ior) = hglNi(mstr,ior)
-
-        hgsZn(mstr,ior) = zwgsZn(ior)
-        hglZn(mstr,ior) = zwglZn(ior)
-        hgsCad(mstr,ior) = zwgsCad(ior)
-        hglCad(mstr,ior) = zwglCad(ior)
-        hgsCu(mstr,ior) = zwgsCu(ior)
-        hglCu(mstr,ior) = zwglCu(ior)
-        hgsNi(mstr,ior) = zwgsNi(ior)
-        hglNi(mstr,ior) = zwglNi(ior)
-
-        sedalk(ior) = zwsedk(ior)
-        sedalg(ior) = zwsedg(ior)
-        sedalb(ior) = zwsedb(ior)
-        sedss(ior) = zwsedS(ior)
-
-      if(ieros==0)then
-        diff1 = bgsZn(mstr,ior)-hgsZn(mstr,ior)
-        diff2 = bglZn(mstr,ior)-hglZn(mstr,ior)
-        diff3 = bgsCad(mstr,ior)-hgsCad(mstr,ior)
-        diff4 = bglCad(mstr,ior)-hglCad(mstr,ior)
-        diff5 = bgsCu(mstr,ior)-hgsCu(mstr,ior)
-        diff6 = bglCu(mstr,ior)-hglCu(mstr,ior)
-        diff7 = bgsNi(mstr,ior)-hgsNi(mstr,ior)
-        diff8 = bglNi(mstr,ior)-hglNi(mstr,ior)
-
-        bdiff1 = hgsZn(mstr,ior)-bgsZn(mstr,ior)
-        bdiff2 = hglZn(mstr,ior)-bglZn(mstr,ior)
-        bdiff3 = hgsCad(mstr,ior)-bgsCad(mstr,ior)
-        bdiff4 = hglCad(mstr,ior)-bglCad(mstr,ior)
-        bdiff5 = hgsCu(mstr,ior)-bgsCu(mstr,ior)
-        bdiff6 = hglCu(mstr,ior)-bglCu(mstr,ior)
-        bdiff7 = hgsNi(mstr,ior)-bgsNi(mstr,ior)
-        bdiff8 = hglNi(mstr,ior)-bglNi(mstr,ior)
-                                                                     
-    if(bleb(mstr,ior)>0.0)then
-      hgsZn(mstr,ior) = hgsZn(mstr,ior)+diff1*(1.-exp(-hctau1(ior))) 
-      hglZn(mstr,ior) = hglZn(mstr,ior)+diff2*(1.-exp(-hctau1(ior))) 
-      hgsCad(mstr,ior) = hgsCad(mstr,ior)+diff3*(1.-exp(-hctau1(ior))) 
-      hglCad(mstr,ior) = hglCad(mstr,ior)+diff4*(1.-exp(-hctau1(ior))) 
-      hgsCu(mstr,ior) = hgsCu(mstr,ior)+diff5*(1.-exp(-hctau1(ior))) 
-      hglCu(mstr,ior) = hglCu(mstr,ior)+diff6*(1.-exp(-hctau1(ior))) 
-      hgsNi(mstr,ior) = hgsNi(mstr,ior)+diff7*(1.-exp(-hctau1(ior))) 
-      hglNi(mstr,ior) = hglNi(mstr,ior)+diff8*(1.-exp(-hctau1(ior))) 
-    endif
-                                                                       
-        if(hctau2(ior)>0.0)then 
-          bgsZn(mstr,ior) = bgsZn(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior))) 
-          bglZn(mstr,ior) = bglZn(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior))) 
-          bgsCad(mstr,ior) = bgsCad(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior))) 
-          bglCad(mstr,ior) = bglCad(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior))) 
-          bgsCu(mstr,ior) = bgsCu(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior))) 
-          bglCu(mstr,ior) = bglCu(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior))) 
-          bgsNi(mstr,ior) = bgsNi(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior))) 
-          bglNi(mstr,ior) = bglNi(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior))) 
-        endif
-      endif
-      enddo
-
-      ilbuhn = 0 
-      endif ! ilbuhn==1
-   else ! no heavy metals
-      hgsZn(mstr,:)=0.0
-      hglZn(mstr,:)=0.0
-      hgsCad(mstr,:)=0.0
-      hglCad(mstr,:)=0.0
-      hgsCu(mstr,:)=0.0
-      hglCu(mstr,:)=0.0
-      hgsNi(mstr,:)=0.0
-      hglNi(mstr,:)=0.0
-   endif ! ischwer==1
-
-                                                                       
 !********Coliform***********                                            
 
  1525 Continue
@@ -7923,10 +7955,12 @@
       if(iwsim/=2)goto 1520 
       if(hcoli(mstr,1)<0.0.and.iwsim==2)goto 118
                                                                        
- 1522 call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GRote,Chla,tempw,jiein,ecoli     &
+      !print*,'going to start COLIFORM'
+ 1522 call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli     &
                    ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs              &
-                   ,RateCde,etaCde,RateCIe,xnueCe,RateCGe,RateCSe,ifehl                                         &
+                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs,ifehl                                         &
                    ,.false.,0)     !!wy kontroll,iglob
+      !print*,'done COLIFORM'
 
       if(ifehl>0)goto 989                             
 
@@ -7985,25 +8019,20 @@
 
 !**************Erosion*******************                               
                                                                        
- 1520 if(ieros==0)goto 118 
+ 1520 if(ieros==0)goto 1519 
 
-      call erosion(anze,fkm,ss,ssalg,tflie,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb              &
-                          ,hgsZn,hgsCad,hgsCu,hgsNi,tiefe,rau,vmitt,mstr,ilbuhn,ischwer,ilang,azStrs &
-                          ,iwied,ianze_max                                                           &
-                          ,.false.,0)     !!wy kontroll,iglob                                           
+      !call erosion(anze,ss,ssalg,tflie,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb                              &
+      !            ,tiefe,rau,vmitt,mstr,ilang,iwied,ianze_max,SSeros,kontroll,1)                          
+	  kontroll=.true.
+	  jjj=6
+      !print*,'going to start erosion tausc(mstr,jjj)=',tausc(mstr,jjj),mstr,jjj
 
-      if(ilbuhn==0)then
+     call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh                              &
+                         ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied,kontroll ,jjj)                          
+      !print*,'done erosion ss, ssalg=',ss(jjj), ssalg(jjj)
+	  kontroll=.false.
 
-      do ior = 1,anze+1 
-        sedhg(mstr,ior) = sedh(ior) 
-        ischig(mstr,ior) = ischic(ior)
-        do itau = 1,ischig(mstr,ior)
-          tauscg(mstr,ior,itau) = tausc(ior,itau) 
-        enddo 
-      enddo
-      endif
- 
-       if(nbuhn(mstr).eq.0)goto 118
+       if(nbuhn(mstr).eq.0)goto 1519
 
       if(ilbuhn.eq.0)then 
       do ior=1,anze+1 
@@ -8014,17 +8043,10 @@
         zwsedS(ior) = sedss(ior)
         zwsedk(ior) = sedalk(ior) 
         zwsedg(ior) = sedalg(ior) 
-        zwsedb(ior) = sedalb(ior) 
-        zwgsZn(ior) = hgsZn(mstr,ior)
-        zwgsCad(ior) = hgsCad(mstr,ior)
-        zwgsCu(ior) = hgsCu(mstr,ior)
-        zwgsNi(ior) = hgsNi(mstr,ior)
-
-      sedh(ior) = bsedh(mstr,ior) 
-      ischic(ior) = ibschi(mstr,ior) 
-      do itau = 1,ischic(ior)
-        tausc(ior,itau) = btausc(mstr,ior,itau)
-      enddo 
+        zwsedb(ior) = sedalb(ior)
+        zwSSeros(ior) = SSeros(ior) 
+        zwdsedH(mstr,ior)=dsedH(mstr,ior)
+        !tausc(mstr,ior) = btausc(mstr,ior) Sedimenteigenschaften unterscheiden sich nicht im Buhnenfeld
         tempw(ior) = btempw(mstr,ior) 
         tiefe(ior) = bh(mstr,ior) 
         vmitt(ior) = vbm(mstr,ior)
@@ -8032,27 +8054,19 @@
         ssalg(ior) = bssalg(mstr,ior) 
         sedalk(ior) = bsedak(mstr,ior) 
         sedalg(ior) = bsedag(mstr,ior) 
-        sedalb(ior) = bsedab(mstr,ior) 
+        sedalb(ior) = bsedab(mstr,ior)
         sedss(ior) = bsedss(mstr,ior) 
-        hgsZn(mstr,ior) = bgsZn(mstr,ior)
-        hgsCad(mstr,ior) = bgsCad(mstr,ior) 
-        hgsCu(mstr,ior) = bgsCu(mstr,ior)
-        hgsNi(mstr,ior) = bgsNi(mstr,ior)
      enddo
-      ilbuhn = 1 
-      goto 1520 
-      endif 
+     ilbuhn = 1 
+     goto 1520 
+     endif 
 
       if(ilbuhn==1)then 
       do ior=1,anze+1 
 
         bss(mstr,ior) = ss(ior)
         bssalg(mstr,ior) = ssalg(ior)
-
-        bgsZn(mstr,ior) = hgsZn(mstr,ior)
-        bgsCad(mstr,ior) = hgsCad(mstr,ior)
-        bgsCu(mstr,ior) = hgsCu(mstr,ior)
-        bgsNi(mstr,ior) = hgsNi(mstr,ior)
+        bSSeros(ior) = SSeros(ior)
 
         tiefe(ior) = zwtief(ior)
         vmitt(ior) = zwvm(ior)
@@ -8062,74 +8076,356 @@
         sedalk(ior) = zwsedk(ior)
         sedalg(ior) = zwsedg(ior)
         sedalb(ior) = zwsedb(ior)
+        SSeros(ior) = zwSSeros(ior)
+        dsedH(mstr,ior)=zwdsedH(mstr,ior)
 
-        hgsZn(mstr,ior) = zwgsZn(ior)
-        hgsCad(mstr,ior) = zwgsCad(ior)
-        hgsCu(mstr,ior) = zwgsCu(ior)
-        hgsNi(mstr,ior) = zwgsNi(ior)
-
-        bsedh(mstr,ior) = sedh(ior) 
-        ibschi(mstr,ior) = ischic(ior) 
-        do itau = 1,ischic(ior)
-          btausc(mstr,ior,itau) = tausc(ior,itau)
-        enddo 
+        ! btausc(mstr,ior) = tausc(mstr,ior)
 
         diff1 = bssalg(mstr,ior)-ssalg(ior)
         diff2 = bss(mstr,ior)-ss(ior)
         diff3 = bfssgr(mstr,ior)-fssgr(ior)
-        diff4 = bgsZn(mstr,ior)-hgsZn(mstr,ior)
-        diff5 = bgsCad(mstr,ior)-hgsCad(mstr,ior)
-        diff6 = bgsCu(mstr,ior)-hgsCu(mstr,ior)
-        diff7 = bgsNi(mstr,ior)-hgsNi(mstr,ior)
-        diff8 = bglZn(mstr,ior)-hglZn(mstr,ior)
-        diff9 = bglCad(mstr,ior)-hglCad(mstr,ior)
-        diff10 = bglCu(mstr,ior)-hglCu(mstr,ior)
-        diff11 = bglNi(mstr,ior)-hglNi(mstr,ior)
-
 
         bdiff1 = ssalg(ior)-bssalg(mstr,ior)
         bdiff2 = ss(ior)-bss(mstr,ior)
         bdiff3 = fssgr(ior)-bfssgr(mstr,ior)                                                                     
-        bdiff4 = hgsZn(mstr,ior)-bgsZn(mstr,ior)
-        bdiff5 = hgsCad(mstr,ior)-bgsCad(mstr,ior)
-        bdiff6 = hgsCu(mstr,ior)-bgsCu(mstr,ior)
-        bdiff7 = hgsNi(mstr,ior)-bgsNi(mstr,ior)
-        bdiff8 = hglZn(mstr,ior)-bglZn(mstr,ior)
-        bdiff9 = hglCad(mstr,ior)-bglCad(mstr,ior)
-        bdiff10 = hglCu(mstr,ior)-bglCu(mstr,ior)
-        bdiff11= hglNi(mstr,ior)-bglNi(mstr,ior)
 
     if(bleb(mstr,ior)>0.0)then
       ssalg(ior) = ssalg(ior)+diff1*(1.-exp(-hctau1(ior))) 
       ss(ior) = ss(ior)+diff2*(1.-exp(-hctau1(ior))) 
       fssgr(ior) = fssgr(ior)+diff3*(1.-exp(-hctau1(ior))) 
-      hgsZn(mstr,ior) = hgsZn(mstr,ior)+diff4*(1.-exp(-hctau1(ior))) 
-      hgsCad(mstr,ior) = hgsCad(mstr,ior)+diff5*(1.-exp(-hctau1(ior))) 
-      hgsCu(mstr,ior) = hgsCu(mstr,ior)+diff6*(1.-exp(-hctau1(ior))) 
-      hgsNi(mstr,ior) = hgsNi(mstr,ior)+diff7*(1.-exp(-hctau1(ior))) 
-      hglZn(mstr,ior) = hglZn(mstr,ior)+diff8*(1.-exp(-hctau1(ior))) 
-      hglCad(mstr,ior) = hglCad(mstr,ior)+diff9*(1.-exp(-hctau1(ior))) 
-      hglCu(mstr,ior) = hglCu(mstr,ior)+diff10*(1.-exp(-hctau1(ior))) 
-      hglNi(mstr,ior) = hglNi(mstr,ior)+diff11*(1.-exp(-hctau1(ior))) 
     endif
                                                                        
         if(hctau2(ior)>0.0)then 
           bssalg(mstr,ior) = bssalg(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior))) 
           bss(mstr,ior) = bss(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior))) 
           bfssgr(mstr,ior) = bfssgr(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior))) 
-          bgsZn(mstr,ior) = bgsZn(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior))) 
-          bgsCad(mstr,ior) = bgsCad(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior))) 
-          bgsCu(mstr,ior) = bgsCu(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior))) 
-          bgsNi(mstr,ior) = bgsNi(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior))) 
-          bglZn(mstr,ior) = bglZn(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior))) 
-          bglCad(mstr,ior) = bglCad(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior))) 
-          bglCu(mstr,ior) = bglCu(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior))) 
-          bglNi(mstr,ior) = bglNi(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior))) 
         endif
       enddo
 
       ilbuhn = 0 
      endif 
+
+
+!********Schwermetalle***********                                            
+
+ 1519 continue 
+      if(ischwer==1)then 
+
+      !print*,'vor  Schwermetalle hglPb(1,1),hgsPb(1,1)=',hglPb(1,1),hgsPb(1,1)
+	  !jjj=1
+   1521 call Schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,iformVert,ianze_max      &
+                          ,hglZn,hgsZn,egsZn,eglZn,ZnSed       &
+						  ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
+						  ,hglCu,hgsCu,egsCu,eglCu,CuSed       &
+						  ,hglNi,hgsNi,egsNi,eglNi,NiSed       &
+						  ,hglAs,hgsAs,egsAs,eglAs,AsSed       &
+						  ,hglPb,hgsPb,egsPb,eglPb,PbSed       &
+						  ,hglCr,hgsCr,egsCr,eglCr,CrSed       & 
+                          ,hglFe,hgsFe,egsFe,eglFe,FeSed       &
+						  ,hglHg,hgsHg,egsHg,eglHg,HgSed       &
+						  ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
+						  ,hglU,hgsU,egsU,eglU,USed            &
+                          ,sedss,sedalk,sedalb,sedalg,SSalg,ess,vph,eph,SSeros      &
+						  ,ilang,iwied,kontroll,jjj)
+      !print*,'done Schwermetalle hglPb(1,1),hgsPb(1,1)=',hglPb(1,1),hgsPb(1,1)
+
+        if(nbuhn(mstr)==0)goto 118
+        if(ilbuhn==0)then 
+      do ior=1,anze+1 
+        zwsedk(ior) = sedalk(ior) 
+        zwsedg(ior) = sedalg(ior) 
+        zwsedb(ior) = sedalb(ior) 
+        zwsedS(ior) = sedss(ior)
+        zwSSeros(ior) = SSeros(ior)	
+        zwssa(ior) = SSalg(ior)
+        zwph(ior) = vph(ior)
+		zwanzZeit(mstr,ior)= anzZeit(mstr,ior)
+		zwjiein(ior) = jiein(ior); jiein(ior)=0
+		
+        zwgsZn(ior) = hgsZn(mstr,ior)
+        zwglZn(ior) = hglZn(mstr,ior)
+        zwZnSed(ior) = ZnSed(mstr,ior)
+        zwgsCad(ior) = hgsCad(mstr,ior)
+        zwglCad(ior) = hglCad(mstr,ior)
+        zwCadSed(ior) = CadSed(mstr,ior)
+        zwgsCu(ior) = hgsCu(mstr,ior)
+        zwglCu(ior) = hglCu(mstr,ior)
+        zwCuSed(ior) = CuSed(mstr,ior)
+        zwgsNi(ior) = hgsNi(mstr,ior)
+        zwglNi(ior) = hglNi(mstr,ior)
+        zwNiSed(ior) = NiSed(mstr,ior)
+        zwgsAs(ior) = hgsAs(mstr,ior)
+        zwglAs(ior) = hglAs(mstr,ior)
+        zwAsSed(ior) = AsSed(mstr,ior)
+        zwgsPb(ior) = hgsPb(mstr,ior)
+        zwglPb(ior) = hglPb(mstr,ior)
+        zwPbSed(ior) = PbSed(mstr,ior)
+        zwgsCr(ior) = hgsCr(mstr,ior)
+        zwglCr(ior) = hglCr(mstr,ior)
+        zwCrSed(ior) = CrSed(mstr,ior)
+        zwgsFe(ior) = hgsFe(mstr,ior)
+        zwglFe(ior) = hglFe(mstr,ior)
+        zwFeSed(ior) = FeSed(mstr,ior)
+        zwgsHg(ior) = hgsHg(mstr,ior)
+        zwglHg(ior) = hglHg(mstr,ior)
+        zwHgSed(ior) = HgSed(mstr,ior)
+        zwgsMn(ior) = hgsMn(mstr,ior)
+        zwglMn(ior) = hglMn(mstr,ior)
+        zwMnSed(ior) = MnSed(mstr,ior)
+        zwgsU(ior) = hgsU(mstr,ior)
+        zwglU(ior) = hglU(mstr,ior)
+        zwUSed(ior) = USed(mstr,ior)
+
+        sedalk(ior) = bsedak(mstr,ior)
+        sedalg(ior) = bsedag(mstr,ior)
+        sedalb(ior) = bsedab(mstr,ior)
+        sedss(ior) = bsedss(mstr,ior)
+        SSeros(ior) = bSSeros(ior) 		
+        SSalg(ior) = bssalg(mstr,ior)
+        bph(mstr,ior) = vph(ior)
+		anzZeit(mstr,ior)=banzZeit(mstr,ior)
+
+        hgsZn(mstr,ior) = bgsZn(mstr,ior)
+        hglZn(mstr,ior) = bglZn(mstr,ior)
+        ZnSed(mstr,ior) = bZnSed(mstr,ior)
+        hgsCad(mstr,ior) = bgsCad(mstr,ior) 
+        hglCad(mstr,ior) = bglCad(mstr,ior)
+        CadSed(mstr,ior) = bCadSed(mstr,ior)
+        hgsCu(mstr,ior) = bgsCu(mstr,ior)
+        hglCu(mstr,ior) = bglCu(mstr,ior)
+        CuSed(mstr,ior) = bCuSed(mstr,ior)
+        hgsNi(mstr,ior) = bgsNi(mstr,ior)
+        hglNi(mstr,ior) = bglNi(mstr,ior)
+        NiSed(mstr,ior) = bNiSed(mstr,ior)
+        hgsAs(mstr,ior) = bgsAs(mstr,ior) 
+        hglAs(mstr,ior) = bglAs(mstr,ior)
+        AsSed(mstr,ior) = bAsSed(mstr,ior)
+        hgsPb(mstr,ior) = bgsPb(mstr,ior) 
+        hglPb(mstr,ior) = bglPb(mstr,ior)
+        PbSed(mstr,ior) = bPbSed(mstr,ior)
+        hgsCr(mstr,ior) = bgsCr(mstr,ior)
+        hglCr(mstr,ior) = bglCr(mstr,ior)
+        CrSed(mstr,ior) = bCrSed(mstr,ior)
+        hgsFe(mstr,ior) = bgsFe(mstr,ior)
+        hglFe(mstr,ior) = bglFe(mstr,ior)
+        FeSed(mstr,ior) = bFeSed(mstr,ior)
+        hgsHg(mstr,ior) = bgsHg(mstr,ior) 
+        hglHg(mstr,ior) = bglHg(mstr,ior)
+        HgSed(mstr,ior) = bHgSed(mstr,ior)
+        hgsMn(mstr,ior) = bgsMn(mstr,ior)
+        hglMn(mstr,ior) = bglMn(mstr,ior)
+        MnSed(mstr,ior) = bMnSed(mstr,ior)
+        hgsU(mstr,ior) = bgsU(mstr,ior)
+        hglU(mstr,ior) = bglU(mstr,ior)
+        USed(mstr,ior) = bUSed(mstr,ior)
+      enddo
+      ilbuhn = 1 
+      goto 1521 
+      endif 
+                                                                       
+      if(ilbuhn==1)then 
+      do ior=1,anze+1 
+        bgsZn(mstr,ior) = hgsZn(mstr,ior)
+        bglZn(mstr,ior) = hglZn(mstr,ior)
+        bZnSed(mstr,ior) = ZnSed(mstr,ior)
+        bgsCad(mstr,ior) = hgsCad(mstr,ior)
+        bglCad(mstr,ior) = hglCad(mstr,ior)
+        bCadSed(mstr,ior) = CadSed(mstr,ior)
+        bgsCu(mstr,ior) = hgsCu(mstr,ior)
+        bglCu(mstr,ior) = hglCu(mstr,ior)
+        bCuSed(mstr,ior) = CuSed(mstr,ior)
+        bgsNi(mstr,ior) = hgsNi(mstr,ior)
+        bglNi(mstr,ior) = hglNi(mstr,ior)
+        bNiSed(mstr,ior) = NiSed(mstr,ior)
+        bgsAs(mstr,ior) = hgsAs(mstr,ior)
+        bglAs(mstr,ior) = hglAs(mstr,ior)
+        bAsSed(mstr,ior) = AsSed(mstr,ior)
+        bgsPb(mstr,ior) = hgsPb(mstr,ior)
+        bglPb(mstr,ior) = hglPb(mstr,ior)
+        bPbSed(mstr,ior) = PbSed(mstr,ior)
+        bgsCr(mstr,ior) = hgsCr(mstr,ior)
+        bglCr(mstr,ior) = hglCr(mstr,ior)
+        bCrSed(mstr,ior) = CrSed(mstr,ior)
+        bgsFe(mstr,ior) = hgsFe(mstr,ior)
+        bglFe(mstr,ior) = hglFe(mstr,ior)
+        bFeSed(mstr,ior) = FeSed(mstr,ior)
+        bgsHg(mstr,ior) = hgsHg(mstr,ior)
+        bglHg(mstr,ior) = hglHg(mstr,ior)
+        bHgSed(mstr,ior) = HgSed(mstr,ior)
+        bgsMn(mstr,ior) = hgsMn(mstr,ior)
+        bglMn(mstr,ior) = hglMn(mstr,ior)
+        bMnSed(mstr,ior) = MnSed(mstr,ior)
+        bgsU(mstr,ior) = hgsU(mstr,ior)
+        bglU(mstr,ior) = hglU(mstr,ior)
+        bUSed(mstr,ior) = USed(mstr,ior)
+
+        hgsZn(mstr,ior) = zwgsZn(ior)
+        hglZn(mstr,ior) = zwglZn(ior)
+        ZnSed(mstr,ior) = zwZnSed(ior)
+        hgsCad(mstr,ior) = zwgsCad(ior)
+        hglCad(mstr,ior) = zwglCad(ior)
+        CadSed(mstr,ior) = zwCadSed(ior)
+        hgsCu(mstr,ior) = zwgsCu(ior)
+        hglCu(mstr,ior) = zwglCu(ior)
+        CuSed(mstr,ior) = zwCuSed(ior)
+        hgsNi(mstr,ior) = zwgsNi(ior)
+        hglNi(mstr,ior) = zwglNi(ior)
+        NiSed(mstr,ior) = zwNiSed(ior)
+        hgsAs(mstr,ior) = zwgsAs(ior)
+        hglAs(mstr,ior) = zwglAs(ior)
+        AsSed(mstr,ior) = zwAsSed(ior)
+        hgsPb(mstr,ior) = zwgsPb(ior)
+        hglPb(mstr,ior) = zwglPb(ior)
+        PbSed(mstr,ior) = zwPbSed(ior)
+        hgsCr(mstr,ior) = zwgsCr(ior)
+        hglCr(mstr,ior) = zwglCr(ior)
+        CrSed(mstr,ior) = zwCrSed(ior)
+        hgsFe(mstr,ior) = zwgsFe(ior)
+        hglFe(mstr,ior) = zwglFe(ior)
+        FeSed(mstr,ior) = zwFeSed(ior)
+        hgsHg(mstr,ior) = zwgsHg(ior)
+        hglHg(mstr,ior) = zwglHg(ior)
+        HgSed(mstr,ior) = zwHgSed(ior)
+        hgsMn(mstr,ior) = zwgsMn(ior)
+        hglMn(mstr,ior) = zwglMn(ior)
+        MnSed(mstr,ior) = zwMnSed(ior)
+        hgsU(mstr,ior) = zwgsU(ior)
+        hglU(mstr,ior) = zwglU(ior)
+        USed(mstr,ior) = zwUSed(ior)
+
+        sedalk(ior) = zwsedk(ior)
+        sedalg(ior) = zwsedg(ior)
+        sedalb(ior) = zwsedb(ior)
+        sedss(ior) = zwsedS(ior)
+        SSeros(ior) = zwSSeros(ior)		
+        SSalg(ior) = zwssa(ior)
+        vph(ior) = zwph(ior)
+		anzZeit(mstr,ior)= zwanzZeit(mstr,ior)
+		jiein(ior) = zwjiein(ior)
+
+        diff1 = bgsZn(mstr,ior)-hgsZn(mstr,ior)
+        diff2 = bglZn(mstr,ior)-hglZn(mstr,ior)
+        diff3 = bgsCad(mstr,ior)-hgsCad(mstr,ior)
+        diff4 = bglCad(mstr,ior)-hglCad(mstr,ior)
+        diff5 = bgsCu(mstr,ior)-hgsCu(mstr,ior)
+        diff6 = bglCu(mstr,ior)-hglCu(mstr,ior)
+        diff7 = bgsNi(mstr,ior)-hgsNi(mstr,ior)
+        diff8 = bglNi(mstr,ior)-hglNi(mstr,ior)
+        diff9 = bgsAs(mstr,ior)-hgsAs(mstr,ior)
+        diff10 = bglAs(mstr,ior)-hglAs(mstr,ior)
+        diff11 = bgsPb(mstr,ior)-hgsPb(mstr,ior)
+        diff12 = bglPb(mstr,ior)-hglPb(mstr,ior)
+        diff13 = bgsCr(mstr,ior)-hgsCr(mstr,ior)
+        diff14 = bglCr(mstr,ior)-hglCr(mstr,ior)
+        diff15 = bgsFe(mstr,ior)-hgsFe(mstr,ior)
+        diff16 = bglFe(mstr,ior)-hglFe(mstr,ior)
+        diff17 = bgsHg(mstr,ior)-hgsHg(mstr,ior)
+        diff18 = bglHg(mstr,ior)-hglHg(mstr,ior)
+        diff19 = bgsMn(mstr,ior)-hgsMn(mstr,ior)
+        diff20 = bglMn(mstr,ior)-hglMn(mstr,ior)
+        diff21 = bgsU(mstr,ior)-hgsU(mstr,ior)
+        diff22 = bglU(mstr,ior)-hglU(mstr,ior)
+
+        bdiff1 = hgsZn(mstr,ior)-bgsZn(mstr,ior)
+        bdiff2 = hglZn(mstr,ior)-bglZn(mstr,ior)
+        bdiff3 = hgsCad(mstr,ior)-bgsCad(mstr,ior)
+        bdiff4 = hglCad(mstr,ior)-bglCad(mstr,ior)
+        bdiff5 = hgsCu(mstr,ior)-bgsCu(mstr,ior)
+        bdiff6 = hglCu(mstr,ior)-bglCu(mstr,ior)
+        bdiff7 = hgsNi(mstr,ior)-bgsNi(mstr,ior)
+        bdiff8 = hglNi(mstr,ior)-bglNi(mstr,ior)
+        bdiff9 = hgsAs(mstr,ior)-bgsAs(mstr,ior)
+        bdiff10 = hglAs(mstr,ior)-bglAs(mstr,ior)
+        bdiff11 = hgsPb(mstr,ior)-bgsPb(mstr,ior)
+        bdiff12 = hglPb(mstr,ior)-bglPb(mstr,ior)
+        bdiff13 = hgsCr(mstr,ior)-bgsCr(mstr,ior)
+        bdiff14 = hglCr(mstr,ior)-bglCr(mstr,ior)
+        bdiff15 = hgsFe(mstr,ior)-bgsFe(mstr,ior)
+        bdiff16 = hglFe(mstr,ior)-bglFe(mstr,ior)
+        bdiff17 = hgsHg(mstr,ior)-bgsHg(mstr,ior)
+        bdiff18 = hglHg(mstr,ior)-bglHg(mstr,ior)
+        bdiff19 = hgsMn(mstr,ior)-bgsMn(mstr,ior)
+        bdiff20 = hglMn(mstr,ior)-bglMn(mstr,ior)
+        bdiff21 = hgsU(mstr,ior)-bgsU(mstr,ior)
+        bdiff22 = hglU(mstr,ior)-bglU(mstr,ior)
+
+    if(bleb(mstr,ior)>0.0)then
+      hgsZn(mstr,ior) = hgsZn(mstr,ior)+diff1*(1.-exp(-hctau1(ior))) 
+      hglZn(mstr,ior) = hglZn(mstr,ior)+diff2*(1.-exp(-hctau1(ior))) 
+      hgsCad(mstr,ior) = hgsCad(mstr,ior)+diff3*(1.-exp(-hctau1(ior))) 
+      hglCad(mstr,ior) = hglCad(mstr,ior)+diff4*(1.-exp(-hctau1(ior))) 
+      hgsCu(mstr,ior) = hgsCu(mstr,ior)+diff5*(1.-exp(-hctau1(ior))) 
+      hglCu(mstr,ior) = hglCu(mstr,ior)+diff6*(1.-exp(-hctau1(ior))) 
+      hgsNi(mstr,ior) = hgsNi(mstr,ior)+diff7*(1.-exp(-hctau1(ior))) 
+      hglNi(mstr,ior) = hglNi(mstr,ior)+diff8*(1.-exp(-hctau1(ior))) 
+      hgsAs(mstr,ior) = hgsAs(mstr,ior)+diff9*(1.-exp(-hctau1(ior))) 
+      hglAs(mstr,ior) = hglAs(mstr,ior)+diff10*(1.-exp(-hctau1(ior))) 
+      hgsPb(mstr,ior) = hgsPb(mstr,ior)+diff11*(1.-exp(-hctau1(ior))) 
+      hglPb(mstr,ior) = hglPb(mstr,ior)+diff12*(1.-exp(-hctau1(ior))) 
+      hgsCr(mstr,ior) = hgsCr(mstr,ior)+diff13*(1.-exp(-hctau1(ior))) 
+      hglCr(mstr,ior) = hglCr(mstr,ior)+diff14*(1.-exp(-hctau1(ior))) 
+      hgsFe(mstr,ior) = hgsFe(mstr,ior)+diff15*(1.-exp(-hctau1(ior))) 
+      hglFe(mstr,ior) = hglFe(mstr,ior)+diff16*(1.-exp(-hctau1(ior))) 
+      hgsHg(mstr,ior) = hgsHg(mstr,ior)+diff17*(1.-exp(-hctau1(ior))) 
+      hglHg(mstr,ior) = hglHg(mstr,ior)+diff18*(1.-exp(-hctau1(ior))) 
+      hgsMn(mstr,ior) = hgsMn(mstr,ior)+diff19*(1.-exp(-hctau1(ior))) 
+      hglMn(mstr,ior) = hglMn(mstr,ior)+diff20*(1.-exp(-hctau1(ior))) 
+      hgsU(mstr,ior) = hgsU(mstr,ior)+diff21*(1.-exp(-hctau1(ior))) 
+      hglU(mstr,ior) = hglU(mstr,ior)+diff22*(1.-exp(-hctau1(ior))) 
+    endif
+                                                                       
+        if(hctau2(ior)>0.0)then 
+          bgsZn(mstr,ior) = bgsZn(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior))) 
+          bglZn(mstr,ior) = bglZn(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior))) 
+          bgsCad(mstr,ior) = bgsCad(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior))) 
+          bglCad(mstr,ior) = bglCad(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior))) 
+          bgsCu(mstr,ior) = bgsCu(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior))) 
+          bglCu(mstr,ior) = bglCu(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior))) 
+          bgsNi(mstr,ior) = bgsNi(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior))) 
+          bglNi(mstr,ior) = bglNi(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior))) 
+          bgsAs(mstr,ior) = bgsAs(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior))) 
+          bglAs(mstr,ior) = bglAs(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior))) 
+          bgsPb(mstr,ior) = bgsPb(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior))) 
+          bglPb(mstr,ior) = bglPb(mstr,ior)+bdiff12*(1.-exp(-hctau2(ior))) 
+          bgsCr(mstr,ior) = bgsCr(mstr,ior)+bdiff13*(1.-exp(-hctau2(ior))) 
+          bglCr(mstr,ior) = bglCr(mstr,ior)+bdiff14*(1.-exp(-hctau2(ior))) 
+          bgsFe(mstr,ior) = bgsFe(mstr,ior)+bdiff15*(1.-exp(-hctau2(ior))) 
+          bglFe(mstr,ior) = bglFe(mstr,ior)+bdiff16*(1.-exp(-hctau2(ior))) 
+          bgsHg(mstr,ior) = bgsHg(mstr,ior)+bdiff17*(1.-exp(-hctau2(ior))) 
+          bglHg(mstr,ior) = bglHg(mstr,ior)+bdiff18*(1.-exp(-hctau2(ior))) 
+          bgsMn(mstr,ior) = bgsMn(mstr,ior)+bdiff19*(1.-exp(-hctau2(ior))) 
+          bglMn(mstr,ior) = bglMn(mstr,ior)+bdiff20*(1.-exp(-hctau2(ior))) 
+          bgsU(mstr,ior) = bgsU(mstr,ior)+bdiff21*(1.-exp(-hctau2(ior))) 
+          bglU(mstr,ior) = bglU(mstr,ior)+bdiff22*(1.-exp(-hctau2(ior)))
+        endif
+      enddo
+
+      ilbuhn = 0 
+      endif ! ilbuhn==1
+   else ! no heavy metals
+      hgsZn(mstr,:)=0.0
+      hglZn(mstr,:)=0.0
+      hgsCad(mstr,:)=0.0
+      hglCad(mstr,:)=0.0
+      hgsCu(mstr,:)=0.0
+      hglCu(mstr,:)=0.0
+      hgsNi(mstr,:)=0.0
+      hglNi(mstr,:)=0.0
+      hgsAs(mstr,:)=0.0
+      hglAs(mstr,:)=0.0
+      hgsPb(mstr,:)=0.0
+      hglPb(mstr,:)=0.0
+      hgsCr(mstr,:)=0.0
+      hglCr(mstr,:)=0.0
+      hgsFe(mstr,:)=0.0
+      hglFe(mstr,:)=0.0
+      hgsHg(mstr,:)=0.0
+      hglHg(mstr,:)=0.0
+      hgsMn(mstr,:)=0.0
+      hglMn(mstr,:)=0.0
+      hgsU(mstr,:)=0.0
+      hglU(mstr,:)=0.0
+   endif ! ischwer==1
 
   118 continue 
                                                                        
@@ -8141,33 +8437,18 @@
       izeits = STRiz(mstr) 
       deltat = STRdt(mstr) 
       jpoin1 = 0 
-
-!      if(mstr==17)then
-!       do ior=1,anze+1
-!          write(89,*)itags,uhrz,ior,akmor_1(mstr,ior)
-!        enddo
-!      endif
-      
-      !if(mstr==35)print*,'qsim vor transport aki(35/10),Chlaki=',aki(10),Chlaki(10)
 	  
  call Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tempw,vo2,vnh4,vno3,vno2,vx0,vx02,Si,mstr   &      
                 ,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr             &      
-                ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN   &
-                ,gesP,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,stind,mw,pw,ca,lf,coli,DOSCF                       &
-                ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2           &                                          
-                ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi    &
-                ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC         &
-                ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,azStrs,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK  &
-                ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1,GRote                                           &
-                ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,mtracer,nkztot_max,ischwer)
-
-      !if(mstr==35)print*,'qsim nach transport aki(35/10),Chlaki=',aki(10),Chlaki(10)
-
-!     if(mstr==17)then
-!        do ior=1,anze+1
-!          write(89,*)ior,ior,akmor_1(mstr,ior)
-!        enddo
-!      endif
+                ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN     &
+                ,gesP,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,stind,mw,pw,ca,lf,coli,DOSCF                         &
+                ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2             &                                          
+                ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
+                ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
+                ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,azStrs,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK    &
+                ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
+                ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
+                ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)                                                                                                      
 
 !###############################
 ! Aufsummierung der Tracermasse
@@ -8203,40 +8484,39 @@
       endif          
 
      if(I2Ds(mstr)==0.or.iwsim==4)then
-       do ior=1,anze+1
-         tempwz(1,ior) = tempw(ior)
-         vnh4z(1,ior) = vnh4(ior) 
-         vno2z(1,ior) = vno2(ior) 
-         vno3z(1,ior) = vno3(ior) 
-         vo2z(1,ior) = vo2(ior) 
-         gelPz(1,ior) = gelp(ior) 
-         Siz(1,ior) = Si(ior) 
-         akiz(1,ior) = aki(ior) 
-         agrz(1,ior) = agr(ior) 
-         ablz(1,ior) = abl(ior) 
-         chlaz(1,ior) = chla(ior) 
-         hchlkz(mstr,1,ior) = chlaki(ior)
-         hchlgz(mstr,1,ior) = chlagr(ior)
-         hchlbz(mstr,1,ior) = chlabl(ior)
-         hgesPz(mstr,1,ior) = gesP(ior)
-         hgesNz(mstr,1,ior) = gesN(ior)
-         hQ_NKz(mstr,1,ior) = Q_NK(ior)
-         hQ_NBz(mstr,1,ior) = Q_NB(ior)
-         hQ_NGz(mstr,1,ior) = Q_NG(ior) 
-         hCChlkz(mstr,1,ior) = akbcm(ior)
-         hCChlbz(mstr,1,ior) = abbcm(ior)
-         hCChlgz(mstr,1,ior) = agbcm(ior)
-       enddo  
-         else
-
-      call Transportz(anze,deltat,izeits,isub_dt,isub_dt_Mac,dtmin_Mac,hvmitt,elen,flag         &
+        do ior=1,anze+1
+           tempwz(1,ior) = tempw(ior)
+           vnh4z(1,ior) = vnh4(ior) 
+           vno2z(1,ior) = vno2(ior) 
+           vno3z(1,ior) = vno3(ior) 
+           vo2z(1,ior) = vo2(ior) 
+           gelPz(1,ior) = gelp(ior) 
+           Siz(1,ior) = Si(ior) 
+           akiz(1,ior) = aki(ior) 
+           agrz(1,ior) = agr(ior) 
+           ablz(1,ior) = abl(ior) 
+           chlaz(1,ior) = chla(ior) 
+           hchlkz(mstr,1,ior) = chlaki(ior)
+           hchlgz(mstr,1,ior) = chlagr(ior)
+           hchlbz(mstr,1,ior) = chlabl(ior)
+           hgesPz(mstr,1,ior) = gesP(ior)
+           hgesNz(mstr,1,ior) = gesN(ior)
+           hQ_NKz(mstr,1,ior) = Q_NK(ior)
+           hQ_NBz(mstr,1,ior) = Q_NB(ior)
+           hQ_NGz(mstr,1,ior) = Q_NG(ior) 
+           hCChlkz(mstr,1,ior) = akbcm(ior)
+           hCChlbz(mstr,1,ior) = abbcm(ior)
+           hCChlgz(mstr,1,ior) = agbcm(ior)
+        enddo  
+     else
+        call Transportz(anze,deltat,izeits,isub_dt,isub_dt_Mac,dtmin_Mac,hvmitt,elen,flag       &
           ,tempwz,vnh4z,vno2z,vno3z,vo2z,gelPz,Siz,akiz,agrz                                    &
           ,ablz,chlaz,hgesPz,hgesNz,nkzs,dH2D,i2Ds,iwsim,mstr                                   &
           ,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz,hQ_NKz,hQ_NBz,hQ_NGz                       &
           ,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz                &
           ,iflRi,dl,iMAC,Uvert,tflie,jpoin1,itags,monats,iwied,uhrz,iverfahren                  &
           ,azStrs,ianze_max,nkztot_max,Qmx_NK,Qmx_NB,Qmx_NG,mtracer)
-      endif
+     endif
  
 !   **** k_eps *****
 
@@ -8338,8 +8618,6 @@
         coros(anze+1,ico) = coros(anze,ico) 
       enddo
                                                                        
-!.... Sedimentgroessen                                                  
-      sedh(anze+1) = sedh(anze) 
 !                                                                       
 !     Prozessraten                                                      
 !                                                                       
@@ -9022,6 +9300,34 @@
       mxgsNi(mstr,ior) = 0.0 
       miglNi(mstr,ior) = 99999999.9 
       mxglNi(mstr,ior) = 0.0 
+      migsAs(mstr,ior) = 99999999.9
+      mxgsAs(mstr,ior) = 0.0 
+      miglAs(mstr,ior) = 99999999.9 
+      mxglAS(mstr,ior) = 0.0 
+      migsPb(mstr,ior) = 99999999.9 
+      mxgsPb(mstr,ior) = 0.0 
+      miglPb(mstr,ior) = 99999999.9 
+      mxglPb(mstr,ior) = 0.0 
+      migsCr(mstr,ior) = 99999999.9 
+      mxgsCr(mstr,ior) = 0.0 
+      miglCr(mstr,ior) = 99999999.9 
+      mxglCr(mstr,ior) = 0.0 
+      migsFe(mstr,ior) = 99999999.9 
+      mxgsFe(mstr,ior) = 0.0 
+      miglFe(mstr,ior) = 99999999.9 
+      mxglFe(mstr,ior) = 0.0 
+      migsHg(mstr,ior) = 99999999.9 
+      mxgsHg(mstr,ior) = 0.0 
+      miglHg(mstr,ior) = 99999999.9 
+      mxglHg(mstr,ior) = 0.0 
+      migsMn(mstr,ior) = 99999999.9 
+      mxgsMn(mstr,ior) = 0.0 
+      miglMn(mstr,ior) = 99999999.9 
+      mxglMn(mstr,ior) = 0.0 
+      migsU(mstr,ior) = 99999999.9 
+      mxgsU(mstr,ior) = 0.0 
+      miglU(mstr,ior) = 99999999.9 
+      mxglU(mstr,ior) = 0.0 
                                                                        
       if(nbuhn(mstr).eq.1)then 
 !      Buhnenfelder                                                     
@@ -9083,7 +9389,35 @@
       bmigsNi(mstr,ior) = 9999999.9 
       bmxglNi(mstr,ior) = 0.0 
       bmiglNi(mstr,ior) = 9999999.9 
-                                                                       
+      bmxgsAs(mstr,ior) = 0.0 
+      bmigsAs(mstr,ior) = 9999999.9 
+      bmxglAs(mstr,ior) = 0.0 
+      bmiglAs(mstr,ior) = 9999999.9 
+      bmxgsPb(mstr,ior) = 0.0 
+      bmigsPb(mstr,ior) = 9999999.9 
+      bmxglPb(mstr,ior) = 0.0 
+      bmiglPb(mstr,ior) = 9999999.9 
+      bmxgsCr(mstr,ior) = 0.0 
+      bmigsCr(mstr,ior) = 9999999.9 
+      bmxglCr(mstr,ior) = 0.0 
+      bmiglCr(mstr,ior) = 9999999.9 
+      bmxgsFe(mstr,ior) = 0.0 
+      bmigsFe(mstr,ior) = 9999999.9 
+      bmxglFe(mstr,ior) = 0.0 
+      bmiglFe(mstr,ior) = 9999999.9 
+      bmxgsHg(mstr,ior) = 0.0 
+      bmigsHg(mstr,ior) = 9999999.9 
+      bmxglHg(mstr,ior) = 0.0 
+      bmiglHg(mstr,ior) = 9999999.9 
+      bmxgsMn(mstr,ior) = 0.0 
+      bmigsMn(mstr,ior) = 9999999.9 
+      bmxglMn(mstr,ior) = 0.0 
+      bmiglMn(mstr,ior) = 9999999.9 
+      bmxgsU(mstr,ior) = 0.0 
+      bmigsU(mstr,ior) = 9999999.9 
+      bmxglU(mstr,ior) = 0.0 
+      bmiglU(mstr,ior) = 9999999.9 
+                                                                        
       endif 
 !                                                                       
 !.....Null setzen der Summen für Mittelwertberechnung der Ausgaben      
@@ -9136,6 +9470,20 @@
       sumglCu(mstr,ior) = 0.0 
       sumgsNi(mstr,ior) = 0.0 
       sumglNi(mstr,ior) = 0.0 
+      sumgsAs(mstr,ior) = 0.0 
+      sumglAs(mstr,ior) = 0.0 
+      sumgsPb(mstr,ior) = 0.0 
+      sumglPb(mstr,ior) = 0.0 
+      sumgsCr(mstr,ior) = 0.0 
+      sumglCr(mstr,ior) = 0.0 
+      sumgsFe(mstr,ior) = 0.0 
+      sumglFe(mstr,ior) = 0.0 
+      sumgsHg(mstr,ior) = 0.0 
+      sumglHg(mstr,ior) = 0.0 
+      sumgsMn(mstr,ior) = 0.0 
+      sumglMn(mstr,ior) = 0.0 
+      sumgsU(mstr,ior) = 0.0 
+      sumglU(mstr,ior) = 0.0 
 
 !....Dreissena                                                          
       do 836 ndr=1,nndr 
@@ -9265,6 +9613,20 @@
       bsglCu(mstr,ior) = 0.0
       bsgsNi(mstr,ior) = 0.0
       bsglNi(mstr,ior) = 0.0
+      bsgsAs(mstr,ior) = 0.0
+      bsglAs(mstr,ior) = 0.0
+      bsgsPb(mstr,ior) = 0.0
+      bsglPb(mstr,ior) = 0.0
+      bsgsCr(mstr,ior) = 0.0
+      bsglCr(mstr,ior) = 0.0
+      bsgsFe(mstr,ior) = 0.0
+      bsglFe(mstr,ior) = 0.0
+      bsgsHg(mstr,ior) = 0.0
+      bsglHg(mstr,ior) = 0.0
+      bsgsMn(mstr,ior) = 0.0
+      bsglMn(mstr,ior) = 0.0
+      bsgsU(mstr,ior) = 0.0
+      bsglU(mstr,ior) = 0.0
                                                                        
 !......Raten                                                            
 !                                                                       
@@ -9327,6 +9689,13 @@
          print*,'unit=155 open_error ERGEBT.txt ',cpfad,pfadstring
          stop 2
       end if
+      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ausgabe156.csv'
+      open(unit=156, file=pfadstring, iostat = open_error)
+      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ausgabe157schwermetall.csv'
+      open(unit=157, file=pfadstring, iostat = open_error)
+      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ausgabe158algae.csv'
+      open(unit=158, file=pfadstring, iostat = open_error)
+
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'ERGEB2D.txt'
       open(unit=255, file=pfadstring, iostat = open_error)
       if(open_error.ne. 0) then
@@ -9346,6 +9715,9 @@
           call ergebTFormat() 
         write(155,'(a50)')modell 
         write(155,'(a255)')cEreig 
+        write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ; gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
+        write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs'
+        write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ; aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
 
         write(255,4557)versionstext
         4557 format('*V  QSim  ERGEB2D',2x,A)  
@@ -9466,7 +9838,21 @@
       glCuy(mSta) = hglCu(mstr,iior) 
       gsNiy(mSta) = hgsNi(mstr,iior) 
       glNiy(mSta) = hglNi(mstr,iior) 
-                                                                       
+      gsAsy(mSta) = hgsAs(mstr,iior)  
+      glAsy(mSta) = hglAs(mstr,iior) 
+      gsPby(mSta) = hgsPb(mstr,iior) 
+      glPby(mSta) = hglPb(mstr,iior) 
+      gsCry(mSta) = hgsCr(mstr,iior) 
+      glCry(mSta) = hglCr(mstr,iior) 
+      gsFey(mSta) = hgsFe(mstr,iior) 
+      glFey(mSta) = hglFe(mstr,iior) 
+      gsHgy(mSta) = hgsHg(mstr,iior) 
+      glHgy(mSta) = hglHg(mstr,iior) 
+      gsMny(mSta) = hgsMn(mstr,iior) 
+      glMny(mSta) = hglMn(mstr,iior) 
+      gsUy(mSta) = hgsU(mstr,iior) 
+      glUy(mSta) = hglU(mstr,iior) 
+
       algzky(mSta) = 0.0
       algzgy(mSta) = 0.0
       algzby(mSta) = 0.0
@@ -9578,9 +9964,6 @@
 !                                                                       
       dly(mSta) = hdl(mstr,iior) 
                                                                         
-!....sedhy = Sedimentdicke in mm                                        
-      sedhy(mstr,mSta) = -1. 
-      if(ieros.eq.1)sedhy(mstr,mSta) = sedhg(mstr,iior)*1000.                                                            
 !                                                                       
       gsPy(mSta) = hgesP(mstr,iior) 
       gsNy(mSta) = hgesN(mstr,iior) 
@@ -9633,6 +10016,20 @@
       bglCuy(msta) = bglCu(mstr,iior) 
       bgsNiy(msta) = bgsNi(mstr,iior) 
       bglNiy(msta) = bglNi(mstr,iior) 
+      bgsAsy(msta) = bgsAs(mstr,iior)
+      bglAsy(msta) = bglAs(mstr,iior) 
+      bgsPby(msta) = bgsPb(mstr,iior) 
+      bglPby(msta) = bglPb(mstr,iior) 
+      bgsCry(msta) = bgsCr(mstr,iior) 
+      bglCry(msta) = bglCr(mstr,iior) 
+      bgsFey(msta) = bgsFe(mstr,iior) 
+      bglFey(msta) = bglFe(mstr,iior) 
+      bgsHgy(msta) = bgsHg(mstr,iior) 
+      bglHgy(msta) = bglHg(mstr,iior) 
+      bgsMny(msta) = bgsMn(mstr,iior) 
+      bglMny(msta) = bglMn(mstr,iior) 
+      bgsUy(msta) = bgsU(mstr,iior) 
+      bglUy(msta) = bglU(mstr,iior) 
                                                                        
       bdakiy(mSta) = bdaki(mstr,iior) 
       bdagry(mSta) = bdagr(mstr,iior) 
@@ -9820,8 +10217,30 @@
      &,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
      &,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
      &,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
-     &,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),sedhy(mstr,iior)    &
-     &,tracer(iior)                                                     
+     &,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
+     &,tracer(iior) 
+      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)	               &
+     &,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
+     &,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
+     &,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
+	 &,';',dsedH(mstr,iior),';',tracer(iior)
+	  write(156,'(a)')adjustl(trim(langezeile))
+ 
+      write(155,5207)gsPby(iior),glPby(iior),gsCady(iior),glCady(iior),gsCry(iior),glCry(iior),gsFey(iior),glFey(iior)     &
+                     ,gsCuy(iior),glCuy(iior),gsMny(iior),glMny(iior),gsNiy(iior),glNiy(iior),gsHgy(iior),glHgy(iior)      & 
+                     ,gsUy(iior),glUy(iior),gsZny(iior),glZny(iior),gsAsy(iior),glAsy(iior)               
+      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	               &
+	                    ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
+                        ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
+                        ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'      &
+						,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)   
+	  write(157,'(a)')adjustl(trim(langezeile))
+	  
+	  write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	               &
+                         ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
+                         ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
+	  write(158,'(a)')adjustl(trim(langezeile))
+	  
 !                                                                       
 !Umrechnung von Zeitschrittweite auf pro Stunde                         
       hcUmt = 60./(tflie*1440.) 
@@ -9862,6 +10281,13 @@
      &,bsiy(iior),bchlay(iior),bzooiy(iior),bphy(iior),bmwy(iior)       &
      &,bcay(iior),blfy(iior),bssaly(iior),btempy(iior),bo2y(iior)       &
      &,bHNFy,bcoliy(iior),tau2y(iior),btracer(iior)                           
+
+      write(155,5207)bgsPby(iior),bglPby(iior),bgsCady(iior),bglCady(iior)          &
+                     ,bgsCry(iior),bglCry(iior),bgsFey(iior),bglFey(iior)           &                      
+                     ,bgsCuy(iior),bglCuy(iior),bgsMny(iior),bglMny(iior)           &
+                     ,bgsNiy(iior),bglNiy(iior),bgsHgy(iior),bglHgy(iior)           &
+                     ,bgsUy(iior),bglUy(iior),bgsZny(iior),bglZny(iior)             &
+                     ,bgsAsy(iior),bglAsy(iior)
 !                                                                       
 !                                                                       
  5103 FORMAT(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I5) 
@@ -9878,6 +10304,9 @@
      &,2x,f9.3)                                                         
 !                                                                       
  5205 Format(f8.6,2x,f8.6,2x,f8.6,2x,f8.6,2x,f6.2,2x,f6.2,2x,f6.2,2x,F8.6,2x,f10.8,2x,f8.6) 
+ 5207 Format(F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F6.2,2x,F6.2,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2           &
+             ,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F7.3,2x,F7.3,2x,F8.1,2x,F8.1       &
+             ,2x,F5.1,2x,F5.1)
 !                                                                       
 !...Ausgabe der Ergebnisse der 2D-Modellierung                          
 !                                                                       
@@ -10089,6 +10518,48 @@
       sumglNi(mstr,iior) = sumglNi(mstr,iior)+glNiy(iior) 
       if(glNiy(iior)>mxglNi(mstr,iior))mxglNi(mstr,iior) = glNiy(iior)                                  
       if(glNiy(iior)<miglNi(mstr,iior))miglNi(mstr,iior) = glNiy(iior)                                  
+      sumgsAs(mstr,iior) = sumgsAs(mstr,iior)+gsAsy(iior)               
+      if(gsAsy(iior)>mxgsAs(mstr,iior))mxgsAs(mstr,iior) = gsAsy(iior)                                  
+      if(gsAsy(iior)<migsAs(mstr,iior))migsAs(mstr,iior) = gsAsy(iior)                                  
+      sumglAs(mstr,iior) = sumglAs(mstr,iior)+glAsy(iior) 
+      if(glAsy(iior)>mxglAs(mstr,iior))mxglAs(mstr,iior) = glAsy(iior)                                  
+      if(glAsy(iior)<miglAs(mstr,iior))miglAs(mstr,iior) = glAsy(iior)                                  
+      sumgsPb(mstr,iior) = sumgsPb(mstr,iior)+gsPby(iior) 
+      if(gsPby(iior)>mxgsPb(mstr,iior))mxgsPb(mstr,iior) = gsPby(iior)                                  
+      if(gsPby(iior)<migsPb(mstr,iior))migsPb(mstr,iior) = gsPby(iior)                                  
+      sumglPb(mstr,iior) = sumglPb(mstr,iior)+glPby(iior) 
+      if(glPby(iior)>mxglPb(mstr,iior))mxglPb(mstr,iior) = glPby(iior)                                  
+      if(glPby(iior)<miglPb(mstr,iior))miglPb(mstr,iior) = glPby(iior)                                  
+      sumgsCr(mstr,iior) = sumgsCr(mstr,iior)+gsCry(iior) 
+      if(gsCry(iior)>mxgsCr(mstr,iior))mxgsCr(mstr,iior) = gsCry(iior)                                  
+      if(gsCry(iior)<migsCr(mstr,iior))migsCr(mstr,iior) = gsCry(iior)                                  
+      sumglCr(mstr,iior) = sumglCr(mstr,iior)+glCry(iior) 
+      if(glCry(iior)>mxglCr(mstr,iior))mxglCr(mstr,iior) = glCry(iior)                                  
+      if(glCry(iior)<miglCr(mstr,iior))miglCr(mstr,iior) = glCry(iior)                                  
+      sumgsFe(mstr,iior) = sumgsFe(mstr,iior)+gsFey(iior) 
+      if(gsFey(iior)>mxgsFe(mstr,iior))mxgsFe(mstr,iior) = gsFey(iior)                                  
+      if(gsFey(iior)<migsFe(mstr,iior))migsFe(mstr,iior) = gsFey(iior)                                  
+      sumglFe(mstr,iior) = sumglFe(mstr,iior)+glFey(iior) 
+      if(glFey(iior)>mxglFe(mstr,iior))mxglFe(mstr,iior) = glFey(iior)                                  
+      if(glFey(iior)<miglFe(mstr,iior))miglFe(mstr,iior) = glFey(iior)                                  
+      sumgsHg(mstr,iior) = sumgsHg(mstr,iior)+gsHgy(iior) 
+      if(gsHgy(iior)>mxgsHg(mstr,iior))mxgsHg(mstr,iior) = gsHgy(iior)                                  
+      if(gsHgy(iior)<migsHg(mstr,iior))migsHg(mstr,iior) = gsHgy(iior)                                  
+      sumglHg(mstr,iior) = sumglHg(mstr,iior)+glHgy(iior) 
+      if(glHgy(iior)>mxglHg(mstr,iior))mxglHg(mstr,iior) = glHgy(iior)                                  
+      if(glHgy(iior)<miglHg(mstr,iior))miglHg(mstr,iior) = glHgy(iior)                                  
+      sumgsMn(mstr,iior) = sumgsMn(mstr,iior)+gsMny(iior) 
+      if(gsMny(iior)>mxgsMn(mstr,iior))mxgsMn(mstr,iior) = gsMny(iior)                                  
+      if(gsMny(iior)<migsMn(mstr,iior))migsMn(mstr,iior) = gsMny(iior)                                  
+      sumglMn(mstr,iior) = sumglMn(mstr,iior)+glMny(iior) 
+      if(glMny(iior)>mxglMn(mstr,iior))mxglMn(mstr,iior) = glMny(iior)                                  
+      if(glMny(iior)<miglMn(mstr,iior))miglMn(mstr,iior) = glMny(iior)                                  
+      sumgsU(mstr,iior) = sumgsU(mstr,iior)+gsUy(iior) 
+      if(gsUy(iior)>mxgsU(mstr,iior))mxgsU(mstr,iior) = gsUy(iior)                                  
+      if(gsUy(iior)<migsU(mstr,iior))migsU(mstr,iior) = gsUy(iior)                                  
+      sumglU(mstr,iior) = sumglU(mstr,iior)+glUy(iior) 
+      if(glUy(iior)>mxglU(mstr,iior))mxglU(mstr,iior) = glUy(iior)                                  
+      if(glUy(iior)<miglU(mstr,iior))miglU(mstr,iior) = glUy(iior)                                  
 
 !....Dreissena                                                          
       do 838 ndr=1,nndr 
@@ -10316,6 +10787,48 @@
       bsglNi(mstr,iior) = bsglNi(mstr,iior) + bglNiy(iior)
       if(bglNiy(iior).gt.bmxglNi(mstr,iior))bmxglNi(mstr,iior) = bglNiy(iior) 
       if(bglNiy(iior).lt.bmiglNi(mstr,iior))bmiglNi(mstr,iior) = bglNiy(iior) 
+      bsgsAs(mstr,iior) = bsgsAs(mstr,iior) + bgsAsy(iior)                       
+      if(bgsAsy(iior).gt.bmxgsAs(mstr,iior))bmxgsAs(mstr,iior) = bgsAsy(iior) 
+      if(bgsAsy(iior).lt.bmigsAs(mstr,iior))bmigsAs(mstr,iior) = bgsAsy(iior) 
+      bsglAs(mstr,iior) = bsglAs(mstr,iior) + bglAsy(iior)
+      if(bglAsy(iior).gt.bmxglAs(mstr,iior))bmxglAs(mstr,iior) = bglAsy(iior) 
+      if(bglAsy(iior).lt.bmiglAs(mstr,iior))bmiglAs(mstr,iior) = bglAsy(iior) 
+      bsgsPb(mstr,iior) = bsgsPb(mstr,iior) + bgsPby(iior)
+      if(bgsPby(iior).gt.bmxgsPb(mstr,iior))bmxgsPb(mstr,iior) = bgsPby(iior) 
+      if(bgsPby(iior).lt.bmigsPb(mstr,iior))bmigsPb(mstr,iior) = bgsPby(iior) 
+      bsglPb(mstr,iior) = bsglPb(mstr,iior) + bglPby(iior)
+      if(bglPby(iior).gt.bmxglPb(mstr,iior))bmxglPb(mstr,iior) = bglPby(iior) 
+      if(bglPby(iior).lt.bmiglPb(mstr,iior))bmiglPb(mstr,iior) = bglPby(iior) 
+      bsgsCr(mstr,iior) = bsgsCr(mstr,iior) + bgsCry(iior)
+      if(bgsCry(iior).gt.bmxgsCr(mstr,iior))bmxgsCr(mstr,iior) = bgsCry(iior) 
+      if(bgsCry(iior).lt.bmigsCr(mstr,iior))bmigsCr(mstr,iior) = bgsCry(iior) 
+      bsglCr(mstr,iior) = bsglCr(mstr,iior) + bglCry(iior)
+      if(bglCry(iior).gt.bmxglCr(mstr,iior))bmxglCr(mstr,iior) = bglCry(iior) 
+      if(bglCry(iior).lt.bmiglCr(mstr,iior))bmiglCr(mstr,iior) = bglCry(iior) 
+      bsgsFe(mstr,iior) = bsgsFe(mstr,iior) + bgsFey(iior)
+      if(bgsFey(iior).gt.bmxgsFe(mstr,iior))bmxgsFe(mstr,iior) = bgsFey(iior) 
+      if(bgsFey(iior).lt.bmigsFe(mstr,iior))bmigsFe(mstr,iior) = bgsFey(iior) 
+      bsglFe(mstr,iior) = bsglFe(mstr,iior) + bglFey(iior)
+      if(bglFey(iior).gt.bmxglFe(mstr,iior))bmxglFe(mstr,iior) = bglFey(iior) 
+      if(bglFey(iior).lt.bmiglFe(mstr,iior))bmiglFe(mstr,iior) = bglFey(iior) 
+      bsgsHg(mstr,iior) = bsgsHg(mstr,iior) + bgsHgy(iior)
+      if(bgsHgy(iior).gt.bmxgsHg(mstr,iior))bmxgsHg(mstr,iior) = bgsHgy(iior) 
+      if(bgsHgy(iior).lt.bmigsHg(mstr,iior))bmigsHg(mstr,iior) = bgsHgy(iior) 
+      bsglHg(mstr,iior) = bsglHg(mstr,iior) + bglHgy(iior)
+      if(bglHgy(iior).gt.bmxglHg(mstr,iior))bmxglHg(mstr,iior) = bglHgy(iior) 
+      if(bglHgy(iior).lt.bmiglHg(mstr,iior))bmiglHg(mstr,iior) = bglHgy(iior) 
+      bsgsMn(mstr,iior) = bsgsMn(mstr,iior) + bgsMny(iior)
+      if(bgsMny(iior).gt.bmxgsMn(mstr,iior))bmxgsMn(mstr,iior) = bgsMny(iior) 
+      if(bgsMny(iior).lt.bmigsMn(mstr,iior))bmigsMn(mstr,iior) = bgsMny(iior) 
+      bsglMn(mstr,iior) = bsglMn(mstr,iior) + bglMny(iior)
+      if(bglMny(iior).gt.bmxglMn(mstr,iior))bmxglMn(mstr,iior) = bglMny(iior) 
+      if(bglMny(iior).lt.bmiglMn(mstr,iior))bmiglMn(mstr,iior) = bglMny(iior) 
+      bsgsU(mstr,iior) = bsgsU(mstr,iior) + bgsUy(iior)
+      if(bgsUy(iior).gt.bmxgsU(mstr,iior))bmxgsU(mstr,iior) = bgsUy(iior) 
+      if(bgsUy(iior).lt.bmigsU(mstr,iior))bmigsU(mstr,iior) = bgsUy(iior) 
+      bsglU(mstr,iior) = bsglU(mstr,iior) + bglUy(iior)
+      if(bglUy(iior).gt.bmxglU(mstr,iior))bmxglU(mstr,iior) = bglUy(iior) 
+      if(bglUy(iior).lt.bmiglU(mstr,iior))bmiglU(mstr,iior) = bglUy(iior) 
                                                                        
 !......Raten                                                            
 !                                                                       
@@ -10428,6 +10941,34 @@
       if(gsNiy(iior).lt.Ymin(mstr,199))Ymin(mstr,199) = gsNiy(iior) 
       if(glNiy(iior).gt.Ymax(mstr,200))Ymax(mstr,200) = glNiy(iior) 
       if(glNiy(iior).lt.Ymin(mstr,200))Ymin(mstr,200) = glNiy(iior) 
+      if(gsAsy(iior).gt.Ymax(mstr,201))Ymax(mstr,201) = gsAsy(iior) 
+      if(gsAsy(iior).lt.Ymin(mstr,201))Ymin(mstr,201) = gsAsy(iior) 
+      if(glAsy(iior).gt.Ymax(mstr,202))Ymax(mstr,202) = glAsy(iior) 
+      if(glAsy(iior).lt.Ymin(mstr,202))Ymin(mstr,202) = glAsy(iior) 
+      if(gsPby(iior).gt.Ymax(mstr,203))Ymax(mstr,203) = gsPby(iior) 
+      if(gsPby(iior).lt.Ymin(mstr,203))Ymin(mstr,203) = gsPby(iior) 
+      if(glPby(iior).gt.Ymax(mstr,204))Ymax(mstr,204) = glPby(iior) 
+      if(glPby(iior).lt.Ymin(mstr,204))Ymin(mstr,204) = glPby(iior) 
+      if(gsCry(iior).gt.Ymax(mstr,205))Ymax(mstr,205) = gsCry(iior) 
+      if(gsCry(iior).lt.Ymin(mstr,205))Ymin(mstr,205) = gsCry(iior) 
+      if(glCry(iior).gt.Ymax(mstr,206))Ymax(mstr,206) = glCry(iior) 
+      if(glCry(iior).lt.Ymin(mstr,206))Ymin(mstr,206) = glCry(iior) 
+      if(gsFey(iior).gt.Ymax(mstr,207))Ymax(mstr,207) = gsFey(iior) 
+      if(gsFey(iior).lt.Ymin(mstr,207))Ymin(mstr,207) = gsFey(iior) 
+      if(glFey(iior).gt.Ymax(mstr,208))Ymax(mstr,208) = glFey(iior) 
+      if(glFey(iior).lt.Ymin(mstr,208))Ymin(mstr,208) = glFey(iior) 
+      if(gsHgy(iior).gt.Ymax(mstr,209))Ymax(mstr,209) = gsHgy(iior) 
+      if(gsHgy(iior).lt.Ymin(mstr,209))Ymin(mstr,209) = gsHgy(iior) 
+      if(glHgy(iior).gt.Ymax(mstr,210))Ymax(mstr,210) = glHgy(iior) 
+      if(glHgy(iior).lt.Ymin(mstr,210))Ymin(mstr,210) = glHgy(iior) 
+      if(gsMny(iior).gt.Ymax(mstr,211))Ymax(mstr,211) = gsMny(iior) 
+      if(gsMny(iior).lt.Ymin(mstr,211))Ymin(mstr,211) = gsMny(iior) 
+      if(glMny(iior).gt.Ymax(mstr,212))Ymax(mstr,212) = glMny(iior) 
+      if(glMny(iior).lt.Ymin(mstr,212))Ymin(mstr,212) = glMny(iior) 
+      if(gsUy(iior).gt.Ymax(mstr,213))Ymax(mstr,213) = gsUy(iior) 
+      if(gsUy(iior).lt.Ymin(mstr,213))Ymin(mstr,213) = gsUy(iior) 
+      if(glUy(iior).gt.Ymax(mstr,214))Ymax(mstr,214) = glUy(iior) 
+      if(glUy(iior).lt.Ymin(mstr,214))Ymin(mstr,214) = glUy(iior) 
 
       if(CHNFy(iior).le.0.0)then 
       Ymax(mstr,20) = -1. 
@@ -10438,8 +10979,8 @@
       if(CHNFy(iior).lt.Ymin(mstr,20))Ymin(mstr,20) = CHNFy(iior) 
   139 if(dly(iior).gt.Ymax(mstr,21))Ymax(mstr,21) = Dly(iior) 
       if(dly(iior).lt.Ymin(mstr,21))Ymin(mstr,21) = Dly(iior) 
-      if(sedhy(mstr,iior).gt.Ymax(mstr,22))Ymax(mstr,22) = sedhy(mstr,iior)                                  
-      if(sedhy(mstr,iior).lt.Ymin(mstr,22))Ymin(mstr,22) = sedhy(mstr,iior)                                  
+      if(dsedH(mstr,iior).gt.Ymax(mstr,22))Ymax(mstr,22) = dsedH(mstr,iior)                                  
+      if(dsedH(mstr,iior).lt.Ymin(mstr,22))Ymin(mstr,22) = dsedH(mstr,iior)                                  
       if(hpfl(mstr,iior).gt.Ymax(mstr,23))Ymax(mstr,23) = hpfl(mstr,iior)                                   
       if(hpfl(mstr,iior).lt.Ymin(mstr,23))Ymin(mstr,23) = hpfl(mstr,iior)                                   
       sbal = habgml(mstr,iior)+habkml(mstr,iior) 
@@ -10599,12 +11140,12 @@
       if(rbary(iior).gt.Ymax(mstr,74))Ymax(mstr,74) = rbary(iior) 
       if(rbary(iior).lt.Ymin(mstr,74))Ymin(mstr,74) = rbary(iior) 
 
-      cbsbab = vbsby(iior)-akiy(iior)*Caki*bsbki+ably(iior)*Cabl*bsbbl+agry(iior)*Cagr*bsbgr+(zooiny(iior)*GRote/1000.)*bsbzoo
+      cbsbab = vbsby(iior)-akiy(iior)*Caki*bsbki+ably(iior)*Cabl*bsbbl+agry(iior)*Cagr*bsbgr+(zooiny(iior)*GROT/1000.)*bsbzoo
     
       if(cbsbab.gt.Ymax(mstr,75))Ymax(mstr,75) = cbsbab 
       if(cbsbab.lt.Ymin(mstr,75))Ymin(mstr,75) = cbsbab 
       abbau = -.1 
-      if(iwsim.eq.3)abbau = vbsby(iior)/vcsby(iior) 
+      if(iwsim.eq.3.and.vcsby(iior)>0.0)abbau = vbsby(iior)/vcsby(iior) 
       if(abbau.gt.Ymax(mstr,76))Ymax(mstr,76) = abbau 
       if(abbau.lt.Ymin(mstr,76))Ymin(mstr,76) = abbau 
       if(CMy(iior).gt.Ymax(mstr,77))Ymax(mstr,77) = CMy(iior) 
@@ -10838,10 +11379,6 @@
       if(JO2y(iior).lt.Ymin(mstr,181))Ymin(mstr,181) = JO2y(iior) 
       if(JSiy(iior).gt.Ymax(mstr,185))Ymax(mstr,185) = JSiy(iior) 
       if(JSiy(iior).lt.Ymin(mstr,185))Ymin(mstr,185) = JSiy(iior) 
-
-
-
-
                                                                         
     enddo               ! Ende Stationenschleife 
   enddo                 ! Ende Strangschleife 
@@ -10910,6 +11447,20 @@
       xglCu = sumglCu(mstr,iior)/itime 
       xgsNi = sumgsNi(mstr,iior)/itime 
       xglNi = sumglNi(mstr,iior)/itime 
+      xgsAs = sumgsAs(mstr,iior)/itime 
+      xglAs = sumglAs(mstr,iior)/itime 
+      xgsPb = sumgsPb(mstr,iior)/itime 
+      xglPb = sumglPb(mstr,iior)/itime 
+      xgsCr = sumgsCr(mstr,iior)/itime 
+      xglCr = sumglCr(mstr,iior)/itime 
+      xgsFe = sumgsFe(mstr,iior)/itime 
+      xglFe = sumglFe(mstr,iior)/itime 
+      xgsHg = sumgsHg(mstr,iior)/itime 
+      xglHg = sumglHg(mstr,iior)/itime 
+      xgsMn = sumgsMn(mstr,iior)/itime 
+      xglMn = sumglMn(mstr,iior)/itime 
+      xgsU = sumgsU(mstr,iior)/itime 
+      xglU = sumglU(mstr,iior)/itime 
                                                                       
       xdlarn = sumdln(mstr,iior)/itime 
       xss = sumss(mstr,iior)/itime 
@@ -11029,11 +11580,11 @@
            xakigr = xagr*Cagr + xaki*Caki+xabl*Cabl 
       endif                                                                        
 
-      cbsbab = xbsb5-xaki*Caki*bsbki+xabl*Cabl*bsbbl+xagr*Cagr*bsbgr+(xzooind*GRote/1000.)*bsbzoo
+      cbsbab = xbsb5-xaki*Caki*bsbki+xabl*Cabl*bsbbl+xagr*Cagr*bsbgr+(xzooind*GROT/1000.)*bsbzoo
                                                                         
 !     Berechnung der Abbaubarkeit                                       
-                                                                       
-      abbau = xbsb5/xcsb 
+      abbau = -.1
+      if(xcsb>0.0)abbau = xbsb5/xcsb 
                                                                        
       if(xBVHNF.le.0.0)then 
       xCHNFi = -1. 
@@ -11116,17 +11667,42 @@
       bxglCad = bsglCad(mstr,iior)/itime
       bxgsCu = bsgsCu(mstr,iior)/itime
       bxglCu = bsglCu(mstr,iior)/itime
-      bxgsNi = bsgsZn(mstr,iior)/itime
-      bxglNi = bsglZn(mstr,iior)/itime
+      bxgsNi = bsgsNi(mstr,iior)/itime
+      bxglNi = bsglNi(mstr,iior)/itime
+      bxgsAs = bsgsAs(mstr,iior)/itime
+      bxglAs = bsglAs(mstr,iior)/itime
+      bxgsPb = bsgsPb(mstr,iior)/itime
+      bxglPb = bsglPb(mstr,iior)/itime
+      bxgsCr = bsgsCr(mstr,iior)/itime
+      bxglCr = bsglCr(mstr,iior)/itime
+      bxgsFe = bsgsFe(mstr,iior)/itime
+      bxglFe = bsglFe(mstr,iior)/itime
+      bxgsHg = bsgsHg(mstr,iior)/itime
+      bxglHg = bsglHg(mstr,iior)/itime
+      bxgsMn = bsgsMn(mstr,iior)/itime
+      bxglMn = bsglMn(mstr,iior)/itime
+      bxgsU = bsgsU(mstr,iior)/itime
+      bxglU = bsglU(mstr,iior)/itime  
                                                                        
-      bxaldr = bxaldr*24./(bxaki+bxagr+bxabl) 
-      bxalco = bxalco*24./(bxaki+bxagr+bxabl) 
-      bxalgz = bxalgz*24./(bxaki+bxagr+bxabl) 
-      bxdalg = bxdalg*24./(bxaki+bxagr+bxabl) 
-      bxdaa = bxdaa*24./(bxaki+bxagr+bxabl) 
-      bxamor = bxamor*24./(bxaki+bxagr+bxabl) 
-      bxseda = bxseda*24./(bxaki+bxagr+bxabl) 
-      bxakg = bxaki*Caki+bxabl*Cabl+bxagr*Cagr 
+     if((bxaki+bxagr+bxabl)>0.0)then
+       bxaldr = bxaldr*24./(bxaki+bxagr+bxabl) 
+       bxalco = bxalco*24./(bxaki+bxagr+bxabl) 
+       bxalgz = bxalgz*24./(bxaki+bxagr+bxabl) 
+       bxdalg = bxdalg*24./(bxaki+bxagr+bxabl) 
+       bxdaa = bxdaa*24./(bxaki+bxagr+bxabl) 
+       bxamor = bxamor*24./(bxaki+bxagr+bxabl) 
+       bxseda = bxseda*24./(bxaki+bxagr+bxabl) 
+       bxakg = bxaki*Caki+bxabl*Cabl+bxagr*Cagr 
+         else
+           bxaldr = -.1
+           bxalco = -.1 
+           bxalgz = -.1
+           bxdalg = -.1
+           bxdaa = -.1
+           bxamor = -.1
+           bxseda = -.1
+           bxakg = -.1                                                       
+       endif
 !                                                                       
       endif 
 !                                                                       
@@ -11210,6 +11786,49 @@
       bmiglNi(mstr,iior) = -1. 
       bxglNi = -1. 
       bmxglNi(mstr,iior) = -1. 
+
+      bmigsAs(mstr,iior) = -1. 
+      bxgsAs = -1. 
+      bmxgsAs(mstr,iior) = -1. 
+      bmiglAs(mstr,iior) = -1. 
+      bxglAs = -1. 
+      bmxglAs(mstr,iior) = -1. 
+      bmigsPb(mstr,iior) = -1. 
+      bxgsPb = -1. 
+      bmxgsPb(mstr,iior) = -1. 
+      bmiglPb(mstr,iior) = -1. 
+      bxglPb = -1. 
+      bmxglPb(mstr,iior) = -1. 
+      bmigsCr(mstr,iior) = -1. 
+      bxgsCr = -1. 
+      bmxgsCr(mstr,iior) = -1. 
+      bmiglCr(mstr,iior) = -1. 
+      bxglCr = -1. 
+      bmxglCr(mstr,iior) = -1. 
+      bmigsFe(mstr,iior) = -1. 
+      bxgsFe = -1. 
+      bmxgsFe(mstr,iior) = -1. 
+      bmiglFe(mstr,iior) = -1. 
+      bxglFe = -1. 
+      bmxglFe(mstr,iior) = -1.
+      bmigsHg(mstr,iior) = -1. 
+      bxgsHg = -1. 
+      bmxgsHg(mstr,iior) = -1. 
+      bmiglHg(mstr,iior) = -1. 
+      bxglHg = -1. 
+      bmxglHg(mstr,iior) = -1. 
+      bmigsMn(mstr,iior) = -1. 
+      bxgsMn = -1. 
+      bmxgsMn(mstr,iior) = -1. 
+      bmiglMn(mstr,iior) = -1. 
+      bxglMn = -1. 
+      bmxglMn(mstr,iior) = -1. 
+      bmigsU(mstr,iior) = -1. 
+      bxgsU = -1. 
+      bmxgsU(mstr,iior) = -1. 
+      bmiglU(mstr,iior) = -1. 
+      bxglU = -1. 
+      bmxglU(mstr,iior) = -1.
                                                                        
 !...Raten                                                               
                                                                        
@@ -11279,13 +11898,24 @@
                    ,miLf(mstr,iior),xLf,mxLf(mstr,iior),miSS(mstr,iior),xSS             &
                    ,mxSS(mstr,iior),mitemp(mstr,iior),xtempw,mxtemp(mstr,iior)          &
                    ,miO2(mstr,iior),xO2,mxO2(mstr,iior),miColi(mstr,iior)               &
-                   ,xColi,mxColi(mstr,iior),miKonsS,xKonsS,mxKonsS,migsZn(mstr,iior)    &                                           
-                   ,xgsZn,mxgsZn(mstr,iior),miglZn(mstr,iior),xglZn,mxglZn(mstr,iior)   &
+                   ,xColi,mxColi(mstr,iior),miKonsS,xKonsS,mxKonsS,migsPb(mstr,iior)    &                                           
+                   ,xgsPb,mxgsPb(mstr,iior),miglPb(mstr,iior),xglPb,mxglPb(mstr,iior)   &
                    ,migsCad(mstr,iior),xgsCad,mxgsCad(mstr,iior),miglCad(mstr,iior)     &
-                   ,xglCad,mxglCad(mstr,iior),migsCu(mstr,iior),xgsCu,mxgsCu(mstr,iior) &
-                   ,miglCu(mstr,iior),xglCu,mxglCu(mstr,iior),migsNi(mstr,iior)         & 
-                   ,xgsNi,mxgsNi(mstr,iior),miglNi(mstr,iior),xglNi,mxglNi(mstr,iior)   
-                                                                   
+                   ,xglCad,mxglCad(mstr,iior),migsCr(mstr,iior),xgsCr,mxgsCr(mstr,iior) &
+                   ,miglCr(mstr,iior),xglCr,mxglCr(mstr,iior),migsFe(mstr,iior)         & 
+                   ,xgsFe,mxgsFe(mstr,iior),miglFe(mstr,iior),xglFe,mxglFe(mstr,iior)    
+
+      write(45,4104)migsCu(mstr,iior),xgsCu,mxgsCu(mstr,iior),miglCu(mstr,iior),xglCu   &
+                   ,mxglCu(mstr,iior),migsMn(mstr,iior),xgsMn,mxgsMn(mstr,iior)         &
+                   ,miglMn(mstr,iior),xglMn,mxglMn(mstr,iior),migsNi(mstr,iior),xgsNi   &                                                                  
+                   ,mxgsNi(mstr,iior),miglNi(mstr,iior),xglNi,mxglNi(mstr,iior)         &
+                   ,migsHg(mstr,iior),xgsHg,mxgsHg(mstr,iior),miglHg(mstr,iior),xglHg   &
+                   ,mxglHg(mstr,iior),migsU(mstr,iior),xgsU,mxgsU(mstr,iior)            &
+                   ,miglU(mstr,iior),xglU,mxglU(mstr,iior),migsZn(mstr,iior)            &
+                   ,xgsZn,mxgsZn(mstr,iior),miglZn(mstr,iior),xglZn,mxglZn(mstr,iior)   &
+                   ,migsAs(mstr,iior),xgsAs,mxgsAs(mstr,iior),miglAs(mstr,iior),xglAs   &
+                   ,mxglAs(mstr,iior)
+
       write(45,4001)xPfl 
                                                                        
       write(45,4002)xbal 
@@ -11315,7 +11945,7 @@
       write(45,4017)xo2nit,xalgo,xalgao,xbsbt,xschlr,xJO2,xbsbbe,xo2phy,xabeow,xabeor    &
                    ,xro2dr,xzooro,xpo2p,xpo2r            
                                                                        
-      write(45,4018)sedhy(mstr,iior) 
+      write(45,4018)dsedH(mstr,iior) 
                                                                        
       bxmicl = bxcoli 
       bxmxcl = bxcoli 
@@ -11336,10 +11966,18 @@
                    ,bxzooi,bmxzoo(mstr,iior),bmiph(mstr,iior),bxph,bmxph(mstr,iior),bmimw(mstr,iior),bxmw,bmxmw(mstr,iior),bmica(mstr,iior),bxca     &
                    ,bmxca(mstr,iior),bmilf(mstr,iior),bxlf,bmxlf(mstr,iior),bmissa(mstr,iior),bxssal,bmxssa(mstr,iior),bmitem(mstr,iior)             &
                    ,bxtemp,bmxtem(mstr,iior),bmio2(mstr,iior),bxo2,bmxo2(mstr,iior),bxmicl,bxcoli,bxmxcl,bmiKonsS,bxKonsS,bmxKonsS                   &
-                   ,bmigsZn(mstr,iior),bxgsZn,bmxgsZn(mstr,iior),bmiglZn(mstr,iior),bxglZn,bmxglZn(mstr,iior)                                        &                                             
-                   ,bmigsCad(mstr,iior),bxgsCad,bmxgsCad(mstr,iior),bmiglCad(mstr,iior),bxglCad,bmxglCad(mstr,iior)                                  &                                             
-                   ,bmigsCu(mstr,iior),bxgsCu,bmxgsCu(mstr,iior),bmiglCu(mstr,iior),bxglCu,bmxglCu(mstr,iior)                                        &                                             
-                   ,bmigsNi(mstr,iior),bxgsNi,bmxgsNi(mstr,iior),bmiglNi(mstr,iior),bxglNi,bmxglNi(mstr,iior)                                                                                   
+                   ,bmigsPb(mstr,iior),bxgsPb,bmxgsPb(mstr,iior),bmiglPb(mstr,iior),bxglPb,bmxglPb(mstr,iior)                                        &       
+                   ,bmigsCad(mstr,iior),bxgsCad,bmxgsCad(mstr,iior),bmiglCad(mstr,iior),bxglCad,bmxglCad(mstr,iior)                                  &
+                   ,bmigsCr(mstr,iior),bxgsCr,bmxgsCr(mstr,iior),bmiglCr(mstr,iior),bxglCr,bmxglCr(mstr,iior)                                        &
+                   ,bmigsFe(mstr,iior),bxgsFe,bmxgsFe(mstr,iior),bmiglFe(mstr,iior),bxglFe,bmxglFe(mstr,iior)
+
+      write(45,4104)bmigsCu(mstr,iior),bxgsCu,bmxgsCu(mstr,iior),bmiglCu(mstr,iior),bxglCu,bmxglCu(mstr,iior)                                        &                              
+                   ,bmigsMn(mstr,iior),bxgsMn,bmxgsMn(mstr,iior),bmiglMn(mstr,iior),bxglMn,bmxglMn(mstr,iior)                                        &                              
+                   ,bmigsNi(mstr,iior),bxgsNi,bmxgsNi(mstr,iior),bmiglNi(mstr,iior),bxglNi,bmxglNi(mstr,iior)                                        &                              
+                   ,bmigsHg(mstr,iior),bxgsHg,bmxgsHg(mstr,iior),bmiglHg(mstr,iior),bxglHg,bmxglHg(mstr,iior)                                        &                              
+                   ,bmigsU(mstr,iior),bxgsU,bmxgsU(mstr,iior),bmiglU(mstr,iior),bxglU,bmxglU(mstr,iior)                                              &                        
+                   ,bmigsZn(mstr,iior),bxgsZn,bmxgsZn(mstr,iior),bmiglZn(mstr,iior),bxglZn,bmxglZn(mstr,iior)                                        &                              
+                   ,bmigsAs(mstr,iior),bxgsAs,bmxgsAs(mstr,iior),bmiglAs(mstr,iior),bxglAs,bmxglAs(mstr,iior)                                                                      
                                                                      
       write(45,4010)bxakg,bxdalg,bxdaa,bxamor,bxseda,bxalgz,bxaldr,bxdrpf,xbnaeh,bxvkg                               &
                    ,bxantb,bxalco,bxfik,bxfig,bxfib,bxkmue,bxgmue,bxbmue,bxhek,bxheg,bxheb,bxkre,bxgre,bxbre         &
@@ -11357,7 +11995,10 @@
             ,3(f5.2,2x),3(f6.3,2x),3(f5.2,2x),3(f5.2,2x),3(f6.2,2x)             &
             ,3(f7.1,2x),3(f5.2,2x),3(f5.2,2x),3(f5.1,2x),3(f8.1,2x)             &
             ,3(f8.2,2x),3(f5.2,2x),3(f5.2,2x),3(E9.2,2x),3(f7.1,2x)             & 
-            ,6(f9.2,2x),6(f8.4,2x),6(f7.3,2x),6(f7.3,2x))
+            ,6(f6.2,2x),6(f7.3,2x),6(f6.2,2x),6(f8.1,2x))                        
+
+ 4104 FORMAT(6(F6.2,2x),6(f8.1,2x),6(f6.2,2x),6(f7.3,2x),6(F7.3,2x)             &
+            ,6(f8.1,2x),6(F5.1,2x))  
               
  4001 FORMAT(F7.2) 
  4002 FORMAT(f7.2) 
@@ -11417,6 +12058,13 @@
      &,Ymin(mstr,20),Ymin(mstr,19),Ymin(mstr,21),Ymin(mstr,22)          &
      &,Ymin(mstr,169)                                                   
 !                                                                       
+      write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)                   &
+                     ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)                  & 
+                     ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)                  &
+                     ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)                  &
+                     ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)                  &
+                     ,Ymin(mstr,201),Ymin(mstr,202)                  
+   
       write(155,5205)(Ymin(mstr,104)*hcUmt),(Ymin(mstr,93)*4.33*hcUmt),(Ymin(mstr,108)*hcUmt)      &
                       ,(Ymin(mstr,102)*hcUmt),Ymin(mstr,187),Ymin(mstr,188)                        &
                       ,Ymin(mstr,189),(Ymin(mstr,112)*hcUmt),(Ymin(mstr,105)*hcUmt)                &
@@ -11431,6 +12079,13 @@
      &,Ymin(mstr,133),Ymin(mstr,171),Ymin(mstr,168)                     &
      &,Ymin(mstr,170)                                                   
 !                                                                       
+      write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)                   &
+                     ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)                  & 
+                     ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)                  &
+                     ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)                  &
+                     ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)                  &
+                     ,Ymin(mstr,201),Ymin(mstr,202)                 
+
       write(45,'(a7,7x,I5,2x,F8.3,2x,i5)')cmin,mstr,Stakm(mstr,iior),STRID(mstr)                                     
       write(45,4103)Ymin(mstr,1),Ymin(mstr,1),Ymin(mstr,1)                           &
                    ,Ymin(mstr,2),Ymin(mstr,2),Ymin(mstr,2)                           &
@@ -11452,15 +12107,28 @@
                    ,Ymin(mstr,18),Ymin(mstr,18),Ymin(mstr,18)                        &
                    ,Ymin(mstr,19),Ymin(mstr,19),Ymin(mstr,19)                        &                                               
                    ,Ymin(mstr,17),Ymin(mstr,17),Ymin(mstr,17)                        &
-                   ,Ymin(mstr,193),Ymin(mstr,193),Ymin(mstr,193)                     &                                               
-                   ,Ymin(mstr,194),Ymin(mstr,194),Ymin(mstr,194)                     &                                               
+                   ,Ymin(mstr,203),Ymin(mstr,203),Ymin(mstr,203)                     &                                               
+                   ,Ymin(mstr,204),Ymin(mstr,204),Ymin(mstr,204)                     &                                               
                    ,Ymin(mstr,195),Ymin(mstr,195),Ymin(mstr,195)                     &                                               
                    ,Ymin(mstr,196),Ymin(mstr,196),Ymin(mstr,196)                     &                                               
-                   ,Ymin(mstr,197),Ymin(mstr,197),Ymin(mstr,197)                     &                         
-                   ,Ymin(mstr,198),Ymin(mstr,198),Ymin(mstr,198)                     &                           
-                   ,Ymin(mstr,199),Ymin(mstr,199),Ymin(mstr,199)                     &                          
-                   ,Ymin(mstr,200),Ymin(mstr,200),Ymin(mstr,200)                                               
-
+                   ,Ymin(mstr,205),Ymin(mstr,205),Ymin(mstr,205)                     &                         
+                   ,Ymin(mstr,206),Ymin(mstr,206),Ymin(mstr,206)                     &                           
+                   ,Ymin(mstr,207),Ymin(mstr,207),Ymin(mstr,207)                     &                          
+                   ,Ymin(mstr,208),Ymin(mstr,208),Ymin(mstr,208)                                               
+      write(45,4104)Ymin(mstr,197),Ymin(mstr,197),Ymin(mstr,197)                     &
+                   ,Ymin(mstr,198),Ymin(mstr,198),Ymin(mstr,198)                     &                               
+                   ,Ymin(mstr,211),Ymin(mstr,211),Ymin(mstr,211)                     & 
+                   ,Ymin(mstr,212),Ymin(mstr,212),Ymin(mstr,212)                     & 
+                   ,Ymin(mstr,199),Ymin(mstr,199),Ymin(mstr,199)                     &
+                   ,Ymin(mstr,200),Ymin(mstr,200),Ymin(mstr,200)                     &
+                   ,Ymin(mstr,209),Ymin(mstr,209),Ymin(mstr,209)                     &
+                   ,Ymin(mstr,210),Ymin(mstr,210),Ymin(mstr,210)                     &
+                   ,Ymin(mstr,213),Ymin(mstr,213),Ymin(mstr,213)                     &
+                   ,Ymin(mstr,214),Ymin(mstr,214),Ymin(mstr,214)                     &
+                   ,Ymin(mstr,193),Ymin(mstr,193),Ymin(mstr,193)                     &
+                   ,Ymin(mstr,194),Ymin(mstr,194),Ymin(mstr,194)                     & 
+                   ,Ymin(mstr,201),Ymin(mstr,201),Ymin(mstr,201)                     &
+                   ,Ymin(mstr,202),Ymin(mstr,202),Ymin(mstr,202)                     
 !                                                                       
       write(45,4001)Ymin(mstr,23) 
 !                                                                       
@@ -11532,14 +12200,28 @@
                    ,Ymin(mstr,132),Ymin(mstr,132),Ymin(mstr,132)                     &
                    ,Ymin(mstr,133),Ymin(mstr,133),Ymin(mstr,133)                     &
                    ,Ymin(mstr,131),Ymin(mstr,131),Ymin(mstr,131)                     &
-                   ,Ymin(mstr,193),Ymin(mstr,193),Ymin(mstr,193)                     &                                               
-                   ,Ymin(mstr,194),Ymin(mstr,194),Ymin(mstr,194)                     &                                               
+                   ,Ymin(mstr,203),Ymin(mstr,203),Ymin(mstr,203)                     &                                               
+                   ,Ymin(mstr,204),Ymin(mstr,204),Ymin(mstr,204)                     &                                               
                    ,Ymin(mstr,195),Ymin(mstr,195),Ymin(mstr,195)                     &                                               
                    ,Ymin(mstr,196),Ymin(mstr,196),Ymin(mstr,196)                     &                                               
-                   ,Ymin(mstr,197),Ymin(mstr,197),Ymin(mstr,197)                     &                         
-                   ,Ymin(mstr,198),Ymin(mstr,198),Ymin(mstr,198)                     &                           
-                   ,Ymin(mstr,199),Ymin(mstr,199),Ymin(mstr,199)                     &                          
-                   ,Ymin(mstr,200),Ymin(mstr,200),Ymin(mstr,200)                                               
+                   ,Ymin(mstr,205),Ymin(mstr,205),Ymin(mstr,205)                     &                         
+                   ,Ymin(mstr,206),Ymin(mstr,206),Ymin(mstr,206)                     &                           
+                   ,Ymin(mstr,207),Ymin(mstr,207),Ymin(mstr,207)                     &                          
+                   ,Ymin(mstr,208),Ymin(mstr,208),Ymin(mstr,208)                                               
+      write(45,4104)Ymin(mstr,197),Ymin(mstr,197),Ymin(mstr,197)                     &
+                   ,Ymin(mstr,198),Ymin(mstr,198),Ymin(mstr,198)                     &                               
+                   ,Ymin(mstr,211),Ymin(mstr,211),Ymin(mstr,211)                     & 
+                   ,Ymin(mstr,212),Ymin(mstr,212),Ymin(mstr,212)                     & 
+                   ,Ymin(mstr,199),Ymin(mstr,199),Ymin(mstr,199)                     &
+                   ,Ymin(mstr,200),Ymin(mstr,200),Ymin(mstr,200)                     &
+                   ,Ymin(mstr,209),Ymin(mstr,209),Ymin(mstr,209)                     &
+                   ,Ymin(mstr,210),Ymin(mstr,210),Ymin(mstr,210)                     &
+                   ,Ymin(mstr,213),Ymin(mstr,213),Ymin(mstr,213)                     &
+                   ,Ymin(mstr,214),Ymin(mstr,214),Ymin(mstr,214)                     &
+                   ,Ymin(mstr,193),Ymin(mstr,193),Ymin(mstr,193)                     &
+                   ,Ymin(mstr,194),Ymin(mstr,194),Ymin(mstr,194)                     & 
+                   ,Ymin(mstr,201),Ymin(mstr,201),Ymin(mstr,201)                     &
+                   ,Ymin(mstr,202),Ymin(mstr,202),Ymin(mstr,202)                     
                                                                        
       write(45,4010)Ymin(mstr,134),Ymin(mstr,135),Ymin(mstr,136)        &
      &,Ymin(mstr,137),Ymin(mstr,138),Ymin(mstr,139)                     &
@@ -11578,6 +12260,13 @@
      &,Ymax(mstr,20),Ymax(mstr,19),Ymax(mstr,21),Ymax(mstr,22)          &
      &,Ymax(mstr,169)                                                   
                                                                        
+      write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)                   &
+                     ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)                  & 
+                     ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)                  &
+                     ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)                  &
+                     ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)                  &
+                     ,Ymax(mstr,201),Ymax(mstr,202)                  
+
       write(155,5205)(Ymax(mstr,104)*hcUmt),(Ymax(mstr,93)*4.33*hcUmt),(Ymax(mstr,108)*hcUmt)        &
                      ,(Ymax(mstr,102)*hcUmt),Ymax(mstr,187),Ymax(mstr,188)                           &
                      ,Ymax(mstr,189),(Ymax(mstr,112)*hcUmt),(Ymax(mstr,105)*hcUmt)                   &
@@ -11590,8 +12279,15 @@
      &,Ymax(mstr,127),Ymax(mstr,128),Ymax(mstr,129)                     &
      &,Ymax(mstr,130),Ymax(mstr,131),Ymax(mstr,132)                     &
      &,Ymax(mstr,133),Ymax(mstr,171),Ymax(mstr,168)                     &
-     &,Ymax(mstr,170)                                                   
-                                                                       
+     &,Ymax(mstr,170)    
+	 
+      write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)                   &
+                     ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)                  & 
+                     ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)                  &
+                     ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)                  &
+                     ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)                  &
+                     ,Ymax(mstr,201),Ymax(mstr,202)
+                                                                                            
       write(45,'(a7,7x,I5,2x,F8.3,2x,i5)')cmax,mstr,Stakm(mstr,iior),STRID(mstr)                                     
       write(45,4103)Ymax(mstr,1),Ymax(mstr,1),Ymax(mstr,1)                           &
                    ,Ymax(mstr,2),Ymax(mstr,2),Ymax(mstr,2)                           &
@@ -11613,15 +12309,29 @@
                    ,Ymax(mstr,18),Ymax(mstr,18),Ymax(mstr,18)                        &
                    ,Ymax(mstr,19),Ymax(mstr,19),Ymax(mstr,19)                        &                        
                    ,Ymax(mstr,17),Ymax(mstr,17),Ymax(mstr,17)                        &                        
-                   ,Ymax(mstr,193),Ymax(mstr,193),Ymax(mstr,193)                     &                                               
-                   ,Ymax(mstr,194),Ymax(mstr,194),Ymax(mstr,194)                     &                                               
+                   ,Ymax(mstr,203),Ymax(mstr,203),Ymax(mstr,203)                     &                                               
+                   ,Ymax(mstr,204),Ymax(mstr,204),Ymax(mstr,204)                     &                                               
                    ,Ymax(mstr,195),Ymax(mstr,195),Ymax(mstr,195)                     &                                               
                    ,Ymax(mstr,196),Ymax(mstr,196),Ymax(mstr,196)                     &                                               
-                   ,Ymax(mstr,197),Ymax(mstr,197),Ymax(mstr,197)                     &                         
-                   ,Ymax(mstr,198),Ymax(mstr,198),Ymax(mstr,198)                     &                           
-                   ,Ymax(mstr,199),Ymax(mstr,199),Ymax(mstr,199)                     &                          
-                   ,Ymax(mstr,200),Ymax(mstr,200),Ymax(mstr,200)                                               
-                                                                       
+                   ,Ymax(mstr,205),Ymax(mstr,205),Ymax(mstr,205)                     &                         
+                   ,Ymax(mstr,206),Ymax(mstr,206),Ymax(mstr,206)                     &                           
+                   ,Ymax(mstr,207),Ymax(mstr,207),Ymax(mstr,207)                     &                          
+                   ,Ymax(mstr,208),Ymax(mstr,208),Ymax(mstr,208)                                               
+      write(45,4104)Ymax(mstr,197),Ymax(mstr,197),Ymax(mstr,197)                     &
+                   ,Ymax(mstr,198),Ymax(mstr,198),Ymax(mstr,198)                     &                               
+                   ,Ymax(mstr,211),Ymax(mstr,211),Ymax(mstr,211)                     & 
+                   ,Ymax(mstr,212),Ymax(mstr,212),Ymax(mstr,212)                     & 
+                   ,Ymax(mstr,199),Ymax(mstr,199),Ymax(mstr,199)                     &
+                   ,Ymax(mstr,200),Ymax(mstr,200),Ymax(mstr,200)                     &
+                   ,Ymax(mstr,209),Ymax(mstr,209),Ymax(mstr,209)                     &
+                   ,Ymax(mstr,210),Ymax(mstr,210),Ymax(mstr,210)                     &
+                   ,Ymax(mstr,213),Ymax(mstr,213),Ymax(mstr,213)                     &
+                   ,Ymax(mstr,214),Ymax(mstr,214),Ymax(mstr,214)                     &
+                   ,Ymax(mstr,193),Ymax(mstr,193),Ymax(mstr,193)                     &
+                   ,Ymax(mstr,194),Ymax(mstr,194),Ymax(mstr,194)                     & 
+                   ,Ymax(mstr,201),Ymax(mstr,201),Ymax(mstr,201)                     &
+                   ,Ymax(mstr,202),Ymax(mstr,202),Ymax(mstr,202)                    
+                                                                        
       write(45,4001)Ymax(mstr,23) 
                                                                        
       write(45,4002)Ymax(mstr,24) 
@@ -11771,6 +12481,7 @@
   989 continue 
 
       if(ifehl.eq.0)goto 990 
+	  print*,'ein fehler trat auf: ',ifehl
       i = 0 
       open(unit=599,file='Fehlermeldungen.txt')                                       
        rewind(599) 
@@ -11801,6 +12512,9 @@
 
       write(*,*)ifehl
       close (155) 
+      close (156) 
+      close (157) 
+      close (158) 
       close (255) 
       close (199) 
 	  !close (345) 

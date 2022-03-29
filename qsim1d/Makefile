@@ -38,7 +38,8 @@ PV= qsim1d_14.10
 #====================================================================
 
 #compiler:
-FC              = gfortran
+# FC              = gfortran
+FC              = mpif90
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
 
@@ -82,7 +83,7 @@ date:
 
 
 qsim:	
-	@cd ../metabolism; make metabol; cd ../qsim1d
+	@cd ../metabolism; make metabol; cp *.mod ../qsim1d; cd ../qsim1d
 
 %.o: %.f90
 	$(FC) $(FFLAGS) $<
@@ -99,7 +100,7 @@ qsim1d:	$(Q1)
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod
-	rm -f ../metabolism/*.o ../metabolism/*.a
+	rm -f ../metabolism/*.o ../metabolism/*.a ../metabolism/*.mod
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 

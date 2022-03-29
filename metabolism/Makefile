@@ -52,7 +52,9 @@ metabol:$(QSIM)
 	@echo "libqsim.a done"
 
 %.o: %.f90
-	$(FC) $(FFLAGS) $<
+	$(FC) $(FFLAGS) -c -o $@  $<
+	
+	#$(FC) $(FFLAGS) $<
 
 clean:
 	@echo "cleaning ..."
