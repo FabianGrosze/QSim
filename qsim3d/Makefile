@@ -79,7 +79,7 @@
 # PV='qsim3d14.07doku'
 # PV='qsim3d14.07Cu'
 # PV='qsim3d14.07.01'
-PV='qsim3d14.10.00'
+PV='qsim3d14.10.01'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -224,7 +224,7 @@ qsim:
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
-     zonen.o wetter.o ganglinien.o schnitt.o\
+     zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
