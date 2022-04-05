@@ -3,7 +3,7 @@
 
 adding additional heavy metal concentrations.
 
-restructure modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
+restructured modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
 
 enable input of erosion parameters
 
