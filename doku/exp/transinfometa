@@ -1,0 +1,9 @@
+# Modell: /mreferate/wyrwa/casulli/test08/1f1b
+# Berechnet am: Tue Jul 10 17:24:32 2012
+# mit casu Version: 4. 7. 2012
+### Zeitschrittweite Hydraulik (integer) <wird von casu geschrieben>
+150
+### Ursprung der Zeitachse, d.h. Datum und Uhrzeit an dem casu mit der Sekunde 0 loslegt.
+### tag, monat, jahr, stunde, minute, sekunde (alles integer) formatfrei
+ 01  01  2010  00  00  00
+###!!! Diese letzte Zeile muss von Hand ergaenzt werden, damit diese von casu geschriebene Datei von QSim3D verwendet werden kann. !!!###

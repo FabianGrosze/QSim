@@ -10,11 +10,12 @@ qsim_doku.taz
 !doku/docmd/
 !doku/readme.md
 doku/dox/*
-doku/exp/*
+!doku/exp/*
 doku/html/*
 doku/img/*
 doku/pdf/*
 doku/taz/*
+doku/doku_offline/*
 doku/*.zip
 backup-dokufiles/*
 qsim1d/*.o

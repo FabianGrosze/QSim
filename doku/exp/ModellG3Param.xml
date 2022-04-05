@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<GerrisParam FileType="ModellG3" QsimVersion="1.0.2">
+<ParamSetDef Ident="L" Text="Laichperiode" Help="Laichperiode" Scope="Zone">
+  <Parameter Ident="StartTag" Text="Start-Tag" Unit="" Format="I2" Null="-1" Help="Tag des Beginns der Laichperiode" Min="1" Max="31" Default="" />
+  <Parameter Ident="StartMonat" Text="Start-Monat" Unit="" Format="I2" Null="-1" Help="Monat des Beginns der Laichperiode" Min="1" Max="12" Default="" />
+  <Parameter Ident="Dauer" Text="Dauer" Unit="" Format="I2" Null="-1" Help="Dauer der Laichperiode in Tagen" Min="0" Max="9999" Default="" />
+</ParamSetDef>
+<ParamSetDef Id="M" Text="Makrophyten" Help="Makrophyten-Wachstum" Scope="Zone">
+  <Parameter Ident="StartTag" Text="Start-Tag" Unit="" Format="I2" Null="-1" Help="Tag des Wachstumsbeginns der Makrophyten" Min="1" Max="31" Default="" />
+  <Parameter Ident="StartMonat" Text="Start-Monat" Unit="" Format="I2" Null="-1" Help="Monat des Wachstumsbeginns der Makrophyten" Min="1" Max="12" Default="" />
+  <Parameter Ident="MaxTag" Text="Max.-Tag" Unit="" Format="I2" Null="-1" Help="Tag, an dem die Makrophytenbiomasse ihr Maximum hat" Min="1" Max="31" Default="" />
+  <Parameter Ident="MaxMonat" Text="Max.-Monat" Unit="" Format="I2" Null="-1" Help="Monat, in dem die Makrophytenbiomasse ihr Maximum hat" Min="1" Max="12" Default="" />
+  <Parameter Ident="EndTag" Text="Ende-Tag" Unit="" Format="I2" Null="-1" Help="Tag, an dem die Makrophytenbiomasse ihr Minimum erreicht hat. Hier endet das Makrophytenwachstum" Min="1" Max="31" Default="" />
+  <Parameter Ident="EndMonat" Text="Ende-Monat" Unit="" Format="I2" Null="-1" Help="Monat, in dem die Makrophytenbiomasse ihr Minimum erreicht hat" Min="1" Max="12" Default="" />
+</ParamSetDef>
+<ParamSetDef Id="F" Text="Schiffsverkehr" Help="Schiffsverkehr auf den Gewässer-Abschnitten" Scope="Abschnitt">
+  <Parameter Ident="VSCHIFF" Text="Schiffsgeschwindigkeit" Unit="m/s" Format="F5.2" Null="-1" Help="" Min="0" Max="99.99" Default="1.5" />
+  <Parameter Ident="UPROP" Text="Drehzahl des Propellers" Unit="U/s" Format="F5.2" Null="-1" Help="" Min="0" Max="99.99" Default="3.33" />
+</ParamSetDef>
+<ParamSetDef Id="T" Text="Wetterstation" Help="Wetterstations-Zuordnung" Scope="Abschnitt">
+  <Parameter Ident="WStation" Text="Wetterstation" Unit="" Format="I4" Null="-1" Help="Zugehörige Wetterstation" Min="" Max="" Default="" />
+  <Parameter Ident="WLage" Text="Lage der Station" Unit="m üb. NN" Format="F7.1" Null="-1" Help="" Min="" Max="" Default="" />
+</ParamSetDef>
+<ParamSetDef Id="R" Text="Rauheit" Help="Rauheit/Reibungsbeiwert" Scope="Zone">
+  <Parameter Ident="Rauheit" Text="Sandrauheit" Unit="" Format="F7.4" Null="-1" Help="Sandrauheit nach Nikuradse in m" Min="" Max="" Default="" />
+</ParamSetDef>
+<ParamSetDef Id="I" Text="Initialisierung" Help="Initialisierung der Zone" Scope="Zone">
+  <Parameter Ident="Rand" Text="Zugeordneter Rand" Unit="" Format="I5" Null="-1" Help="Nummer des Randes, mit dessen Werten die Zone initialisiert wird" Min="1" Max="99999" Default="" />
+</ParamSetDef>
+</GerrisParam>

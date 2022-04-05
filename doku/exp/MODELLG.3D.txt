@@ -1,0 +1,157 @@
+# Versionskennzeichnung
+*V  QSim  ModellG  13.10
+# Modellname
+annular flume                             
+# zonenanzahl
+    2
+# leerzeile
+
+#S zonen_nummer "Bezeichnung"
+S      1         "null"
+#R rauheit/reibungsbeiwert o.g. Zone Sandrauheit nach Nikuradse in m
+R 0.01
+#I Initialisieren o.g. Zone mit Werten aus Rand Nummer:
+I  1
+#L unbenutzt
+L  -1  -1  -1
+#M unbenutzt
+M  -1  -1  -1  -1  -1  -1
+#F z.Z. unbenutzt, in QSim-1D: if((endKm-anfangsKm).gt.0)schifffahrts_zone(izoni)=1
+F   733.500   865.500  15.00  333.00
+#T Wetterstation: anfangsKm,endKm(unbenutzt)  wetterstations_nummer wetterstations_lage(müNN)
+T   585.050   609.000         1                     16.0
+# leerzeile
+
+#Z zonen_nummer zonen-name
+Z   0   "gebu"
+#R rauheit/reibungsbeiwert o.g. Zone Sandrauheit nach Nikuradse in m
+R  0.01
+#I Initialisieren o.g. Zone mit Werten aus Rand Nummer:
+I   2
+#T o.g. Zone zugeordnete Wetterstation: anfangsKm,endKm(unbenutzt)  wetterstations_nummer wetterstations_lage(müNN)
+T  77.77   99.99   1    0.0
+#E tau_krit, M_eros, n_eros, sed_roh
+E  1.25      0.00075 3.2     1450.0
+
+L  Laichperiode						Laichperiode						Strang
+W  Wehr							Parameter des Wehres					Strang
+M  Makrophyten						Makrophyten-Wachstum					Strang
+P  Dichte der Makrophyten				Makrophyten-Dichte					Abschnitt
+F  Schiffsverkehr					Schiffsverkehr auf den Gewässer-Abschnitten		Abschnitt
+D  Dreissena						Dreissena-Bewuchs in den Gewässer-Abschnitten		Abschnitt
+C  Corophium						Corophium-Vorkommen in den Gewässer-Abschnitten		Abschnitt
+B  Benth.Algen						Benth.Algen-Vorkommen in den Gewässer-Abschnitten	Abschnitt
+T  Wetterstation					Wetterstations-Zuordnung				Abschnitt
+V  2D-Modellierung					Abschnitte mit 2D-Modellierung				Abschnitt
+U  Buhnen						Parameter für Buhnenfelder				Abschnitt
+O  Anteil der Vegetationstypen				Anteil der Vegetationstypen				Abschnitt
+Z  Sediment-Kenngrößen					Sediment-Kenngrößen in den Gewässer-Abschnitten		Abschnitt
+S  Kenngrössen für Temperatur/Sedimenttemperatur	Kenngrößen für die Gewässerabschnitten			Abschnitt
+E  Erosions-Parameter 
+
+
+ WRITE(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
+  WRITE(1, '(A)') '<GerrisParam FileType="ModellG" QsimVersion="13.10">'  
+  WRITE(1, '(A)') '<ParamSetDef Ident="QL" Text="Laichperiode" Help="Laichperiode" Scope="Strang">'
+  WRITE(1, '(A)') '  <Parameter Ident="StartTag" Text="Start-Tag" Unit="" Format="I2" Null="-1" Help="Tag des Beginns der Laichperiode" Min="1" Max="31" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="StartMonat" Text="Start-Monat" Unit="" Format="I2" Null="-1" Help="Monat des Beginns der Laichperiode" Min="1" Max="12" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="Dauer" Text="Dauer" Unit="" Format="I2" Null="-1" Help="Dauer der Laichperiode in Tagen" Min="0" Max="9999" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QW" Text="Wehr" Help="Parameter des Wehres" Scope="Strang">'
+  WRITE(1, '(A)') '  <Parameter Ident="IstAktiv" Text="Aktiv" Unit="" Format="I1" Null="0" Help="Wehr nicht berücksichtigen: 0; Wehr berücksichtigen: 1" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="Breite" Text="Breite [m]" Unit="m" Format="F7.2" Null="-1" Help="Breite des Wehres >0 : Wehrbelüftung" Min="0" Max="9999.999" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="Hoehe" Text="Höhe [m]" Unit="m" Format="F7.2" Null="-1" Help="Falls Breite >0 Wehrhöhe aus Wasserspiegeldifferenz OW/UW berechnen: -1; ansonsten Höhe >0" Min="0" Max="999.999" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QM" Text="Makrophyten" Help="Makrophyten-Wachstum" Scope="Strang">'
+  WRITE(1, '(A)') '  <Parameter Ident="StartTag" Text="Start-Tag" Unit="" Format="I2" Null="-1" Help="Tag des Wachstumsbeginns der Makrophyten" Min="1" Max="31" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="StartMonat" Text="Start-Monat" Unit="" Format="I2" Null="-1" Help="Monat des Wachstumsbeginns der Makrophyten" Min="1" Max="12" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MaxTag" Text="Max.-Tag" Unit="" Format="I2" Null="-1" Help="Tag, an dem die Makrophytenbiomasse ihr Maximum hat" Min="1" Max="31" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MaxMonat" Text="Max.-Monat" Unit="" Format="I2" Null="-1" Help="Monat, in dem die Makrophytenbiomasse ihr Maximum hat" Min="1" Max="12" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="EndTag" Text="Ende-Tag" Unit="" Format="I2" Null="-1" Help="Tag, an dem die Makrophytenbiomasse ihr Minimum erreicht hat. Hier endet das Makrophytenwachstum" Min="1" Max="31" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="EndMonat" Text="Ende-Monat" Unit="" Format="I2" Null="-1" Help="Monat, in dem die Makrophytenbiomasse ihr Minimum erreicht hat" Min="1" Max="12" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QP" Text="Dichte der Makrophyten" Help="Makrophyten-Dichte" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="PflMin" Text="min. Dichte (Winter)" Unit="g/m²" Format="F7.2" Null="-1" Help="Minimale Dichte der Makrophyten im Winter" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="PflMax" Text="max. Dichte (Sommer)" Unit="g/m²" Format="F7.2" Null="-1" Help="Maximale Dichte der Makrophyten im Sommer" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QF" Text="Schiffsverkehr" Help="Schiffsverkehr auf den Gewässer-Abschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="VSCHIFF" Text="Schiffsgeschwindigkeit" Unit="m/s" Format="F5.2" Null="-1" Help="" Min="0" Max="99.99" Default="1.5" />'
+  WRITE(1, '(A)') '  <Parameter Ident="UPROP" Text="Drehzahl des Propellers" Unit="U/s" Format="F5.2" Null="-1" Help="" Min="0" Max="99.99" Default="3.33" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QD" Text="Dreissena" Help="Dreissena-Bewuchs in den Gewässer-Abschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="MBoesch0" Text="Biomasse 0.Koh. Böschung" Unit="g/m²" Format="F7.2" Null="-1" Help="Dreissena-Biomasse der 0. Kohorte (Schalenlänge kl. 8 mm) im Abschnitt an der Böschung" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MSohle0" Text="Biomasse 0.Koh. Sohle" Unit="g/m²" Format="F7.2" Null="-1" Help="Dreissena-Biomasse der 0. Kohorte im Abschnitt an der Sohle" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="Gewicht0" Text="Mittl. Muschelgewicht 0.Koh." Unit="mgC" Format="F7.3" Null="-1" Help="Gewicht einer Muschel als Mittelwert der 0. Kohorte" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MBoesch1" Text="Biomasse 1.Koh. Böschung" Unit="g/m²" Format="F7.2" Null="-1" Help="Dreissena-Biomasse der 1. Kohorte (Schalenlänge gr.= 8 mm) im Abschnitt an der Böschung" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="MSohle1" Text="Biomasse 1.Koh. Sohle" Unit="g/m²" Format="F7.2" Null="-1" Help="Dreissena-Biomasse der 1. Kohorte im Abschnitt an der Sohle" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="Gewicht1" Text="Mittl. Muschelgewicht 1.Koh." Unit="mgC" Format="F7.3" Null="-1" Help="Gewicht einer Muschel als Mittelwert der 1. Kohorte." Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QC" Text="Corophium" Help="Corophium-Vorkommen in den Gewässer-Abschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="DBoesch" Text="Ind.dichte Böschung" Unit="Ind/m²" Format="F8.1" Null="-1" Help="Individuen-Dichte im Abschnitt an der Böschung" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="DSohle" Text="Ind.dichte Sohle" Unit="Ind/m²" Format="F8.1" Null="-1" Help="Individuen-Dichte im Abschnitt an der Sohle" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QB" Text="Benth.Algen" Help="Benth.Algen-Vorkommen in den Gewässer-Abschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="GGruen" Text="Gewicht Grünalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Grünalgen" Min="" Max="" Default="-1" />'
+  WRITE(1, '(A)') '  <Parameter Ident="GKiesel" Text="Gewicht Kieselalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Kieselalgen" Min="" Max="" Default="-1" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QT" Text="Wetterstation" Help="Wetterstations-Zuordnung" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="WStation" Text="Wetterstation" Unit="" Format="I4" Null="-1" Help="Zugehörige Wetterstation" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="WLage" Text="Lage der Station" Unit="m üb. NN" Format="F7.1" Null="-1" Help="" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QV" Text="2D-Modellierung" Help="Abschnitte mit 2D-Modellierung" Scope="Abschnitt">'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QU" Text="Buhnen" Help="Parameter für Buhnenfelder" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="DLB" Text="Long. Disp.koeff." Unit="m²/s" Format="F7.2" Null="-1" Help="Longitudinaler Dispersionskoeffizient" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="TAU2B" Text="max. Austauschzeit" Unit="h" Format="F7.2" Null="-1" Help="Austauschzeit zwischen Buhnen und Hauptstrom" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="ALPHAB" Text="Alpha" Unit="" Format="F6.2" Null="-1" Help="Exponent beim -Breite/Tiefe-Term- zur Berechnung der longitudinalen Dispersion (nicht bei Elder) Deng: 1.67; Li: 1.3; Iwasa: 1.5" Min="" Max="" Default="" />'
+  WRITE(1, '(A)') '  <Parameter Ident="POMsedb" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1." />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QO" Text="Anteil der Vegetationstypen" Help="Anteil der Vegetationstypen" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP1" Text="Niedervegetation (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP2" Text="Buschwerk (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP3" Text="Weichholzaue (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP4" Text="Laubwald (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP5" Text="Nadelwald (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP6" Text="Bebauung (links)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VALTBL" Text="Höhe d. Bebauung (links)" Unit="m" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="EDUFBL" Text="Uferabstand d. Bebauung (links)" Unit="m" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP7" Text="Niedervegetation (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP8" Text="Buschwerk (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP9" Text="Weichholzaue (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP10" Text="Laubwald (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP11" Text="Nadelwald (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP12" Text="Bebauung (rechts)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VALTBR" Text="Höhe d. Bebauung (rechts)" Unit="m" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="EDUFBR" Text="Uferabstand d. Bebaung (rechts)" Unit="m" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP13" Text="Laubwald (beidseitig)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '  <Parameter Ident="VTYP14" Text="Nadelwald (beidseitig)" Unit="%" Format="F6.2" Null="-1" Help="" Min="" Max="" Default="0" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" />'
+  WRITE(1, '(A)') '  <Parameter Ident="BedGSed" Text="Bedeckungsgrad der Sohle mit Sediment (0-1)" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'
+  WRITE(1, '(A)') '  <Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'
+
+  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QS" Text="Kenngrössen für Temperatur/Sedimenttemperatur" Help="Kenngrößen für die Gewässerabschnitten" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="SPEWKS" Text="Spez. WärmeKapazität Sediment" Unit="KJ/(kg*K)" Format="F6.2" Null="-1" Help="Ton: 0.83; Sand: 0.88" Min="0.8" Max="4.5" Default="-1" />'
+  WRITE(1, '(A)') '  <Parameter Ident="WUEBK" Text="Wärmeübergangskoeffizient" Unit="KJ/(K*m2*h)" Format="F7.2" Null="-1" Help="" Min="0" Max="1000" Default="-1." />'
+  WRITE(1, '(A)') '  <Parameter Ident="PSREFS" Text="Reflektionsanteil der Strahlung an der Sedimentoberfläche" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'
+  WRITE(1, '(A)') '  <Parameter Ident="EXTKS" Text="Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!)" Unit="-" Format="F5.2" Null="-1" Help="" Min="" Max="" Default="-1." />'
+  WRITE(1, '(A)') '</ParamSetDef>'
+
+!  WRITE(1, '(A)') '<ParamSetDef Id="Q1" Text="Platzhalter1" Help="Platzhalter1" Scope="Abschnitt">'
+!  WRITE(1, '(A)') '</ParamSetDef>'
+!  WRITE(1, '(A)') '<ParamSetDef Id="Q2" Text="Platzhalter2" Help="Platzhalter2" Scope="Abschnitt">'
+!  WRITE(1, '(A)') '</ParamSetDef>'
+!  WRITE(1, '(A)') '<ParamSetDef Id="Q3" Text="Platzhalter3" Help="Platzhalter3" Scope="Abschnitt">'
+!  WRITE(1, '(A)') '</ParamSetDef>'
+!  WRITE(1, '(A)') '<ParamSetDef Id="Q4" Text="Platzhalter4" Help="Platzhalter4" Scope="Abschnitt">'
+!  WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '</GerrisParam>'
+  
+!!  WRITE(1, '(A)') '  <Parameter Ident="tau_krit" Text="kritische Sohlschubspannung ab der Erosion auftritt"       Unit="N/m²"      Format="F7.3" Null="-1" Help="" Max="" Default="9999.99" />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="M_eros"   Text="Erodibilitätskonstante"                                    Unit="kg/(m²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/m³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
+
+

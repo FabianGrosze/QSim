@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<GerrisParam FileType="EreigG" QsimVersion="13.10">
+<ParamSetDef Ident="EreigG" Text="Randbedingungs-Parameter" Help="Parameter der Randbedingungen">
+  <Parameter Ident="OBSB" Text="C-BSB5" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="C-BSB5" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="OCSB" Text="CSB" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="CSB" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VNH4" Text="NH4-N" IsLoad="1" Unit="mg/l" Format="F6.2" Null="-1" Help="NH4-N Gehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VNO2" Text="Nitrit-N" IsLoad="1" Unit="mg/l" Format="F6.3" Null="-1" Help="Nitrit-Stickstoffgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VNO3" Text="Nitrat-N" IsLoad="1" Unit="mg/l" Format="F5.2" Null="-1" Help="Nitrat-Stickstoffgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="GESN" Text="Gesamt-N" IsLoad="1" Unit="mg/l" Format="F5.2" Null="-1" Help="Gesamt-Stickstoff" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VX0" Text="Nitrosomonas" IsLoad="0" Unit="mg/l" Format="F8.5" Null="-1" Help="suspendierte Nitrosomonasbiomasse" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VX02" Text="Nitrobacter" IsLoad="0" Unit="mg/l" Format="F8.5" Null="-1" Help="suspendierte Nitrobacterbiomasse" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="GELP" Text="Gelöster Phosphor" IsLoad="1" Unit="mg/l" Format="F6.3" Null="-1" Help="gelöster Phosphorgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="GESP" Text="Gesamt-Phosphor" IsLoad="1" Unit="mg/l" Format="F5.2" Null="-1" Help="Gesamt-Phosphor" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="SI" Text="Silizium" IsLoad="0" Unit="mg/l" Format="F5.2" Null="-1" Help="gelöster Siliziumgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="CHLA" Text="Chlorophyll-a" IsLoad="0" Unit="µg/l" Format="F6.2" Null="-1" Help="Chlorophyll-a-Gehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VKIGR" Text="Kieselalgen" IsLoad="0" Unit="0-1" Format="F5.2" Null="-1" Help="Anteil der Kieselalgen am Gesamt-Chlorophyll-a" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="ANTBL" Text="Blaualgen" IsLoad="0" Unit="0-1" Format="F5.2" Null="-1" Help="Anteil der Blaualgen am Gesamt-Chlorophyll-a" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="ZOOIND" Text="Rotatorien" IsLoad="0" Unit="Ind/l" Format="F7.1" Null="-1" Help="Rotatoriendichte" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="VPH" Text="pH-Wert" IsLoad="0" Unit="" Format="F5.2" Null="-1" Help="pH-Wert" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="MW" Text="m-Wert" IsLoad="0" Unit="mmol/l" Format="F5.2" Null="-1" Help="m-Wert" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="CA" Text="Calcium" IsLoad="0" Unit="mg/l" Format="F5.1" Null="-1" Help="Calciumkonzentration" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="LF" Text="Leitfähigkeit" IsLoad="0" Unit="µS/cm" Format="F8.1" Null="-1" Help="Leitfähigkeit" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="SS" Text="Schwebstoff" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="Schwebstoffgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="TEMPW" Text="Wassertemperatur" IsLoad="0" Unit="°C" Format="F5.2" Null="-9.99" Help="Wassertemperatur" Min="" Max="" Default="" Module="Alle,Temperatur" />
+  <Parameter Ident="VO2" Text="Sauerstoff" IsLoad="0" Unit="mg/l" Format="F5.2" Null="-1" Help="Sauerstoffgehalt" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="CHNF" Text="Nanoflagellaten" IsLoad="0" Unit="Ind/ml" Format="F8.1" Null="-1" Help="Heterotrophe Nanoflagellaten" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="BVHNF" Text="HNF Biovolumen" IsLoad="0" Unit="µm³" Format="F6.1" Null="-1" Help="Biovolumen der HNF" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="COLI" Text="Coliforme" IsLoad="0" Unit="Ind/100 ml" Format="F8.1" Null="-1" Help="Fäkalcoliforme Bakterien" Min="" Max="" Default="" Module="Alle" />
+  <Parameter Ident="EWAERM" Text="Wärme" IsLoad="0" Unit="MJ/s" Format="F5.1" Null="-99.9" Help="Menge der eingeleiteten Wärme (Kraftwerk)" Min="" Max="" Default="" Module="Alle,Temperatur" />
+  <Parameter Ident="TRACER" Text="Tracermenge" IsLoad="0" Unit="µg/l" Format="F9.3" Null="-1" Help="Tracerkonzentration" Min="" Max="" Default="" Module="Tracer" />
+</ParamSetDef>
+<TpEquations>
+  <TpEquation Value="1" Text="CIP (Semi-Lagrange-Verfahren)" Help="Semi-Lagrange-Verfahren" />
+  <TpEquation Value="2" Text="LAX-WENDROFF-Verfahren (finite Differenzen-Verfahren)" Help="finite Differenzen-Verfahren" />
+  <TpEquation Value="3" Text="QUICKEST-Verfahren (finite Volumen-Verfahren)" Help="finite Volumen-Verfahren (hier: Masseerhaltend)" />
+</TpEquations>
+<DlEquations>
+  <DlEquation Value="1" Text="nach Deng(2001): Dx = (0.15/8*Dy)*(v/u*)^2*(B/H)^1.67" Help="Dx = (0.15/8*Dy)*(v/u*)^2*(B/H)^1.67" />
+  <DlEquation Value="2" Text="nach Li(1998): Dx = 0.2*(v/u*)^1.2*(B/H)^1.3*H*u* " Help="Dx = 0.2*(v/u*)^1.2*(B/H)^1.3*H*u*" />
+  <DlEquation Value="3" Text="nach Iwasa and Aya(1991): Dx = 2*(B/H)^1.5*H*u* " Help="Dx = 2*(B/H)^1.5*H*u*" />
+  <DlEquation Value="4" Text="nach Elder(1959): Dx = 5.93*H*u*" Help="Dx = 5.93*H*u*" />
+</DlEquations>
+</GerrisParam>

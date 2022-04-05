@@ -1,0 +1,55 @@
+#
+# Die Knotennummern zählen im Fortran-Programm QSim3D ab 1
+# casu und paraview als c++ und Janet als Java Programme zählen ab 0
+### !!! daher muss zu einer in paraview oder Janet ermittelten Knotennummer 1 hinzugezählt werden,
+### !!! um an diesem Knoten eine Ganlinie aus QSim3D ausgeben zu lassen.
+# 
+# 
+#Gütemessstation Bunthaus
+18087
+# Pegel StPauli km 623,1
+6073
+#Gütemessstation Seemannshöft
+18037 
+# Pegel Blankenese Km 634,8
+41306
+# Pegel Lühort Km 645,5
+38527
+# Pegel Grauerort Km 660,6
+34262
+# Pegel Brockdorf Km 684,2
+28962
+#
+# D1 Hanskalbsand Km 643,0
+39248
+# D2 Julesand Km 651,3
+36875
+# D3 Pagensand Nord Km 664,7
+32802
+# D4 Rhinplate Nord Km 676,5
+30541
+#
+### Baggerstellen an Schwingungsknoten:
+# km 702 M2/3
+#25813
+# km 674 M2/5
+#30986
+# km 660 M2/7
+#34552
+# km 652 M2/9
+#36803
+### Löcher an Schwingungsbäuchen ???
+# km 656
+#35788
+# km 667
+#32414
+# km 681
+#27710
+# km 690
+#28276
+#
+# Fahrrinne Blankenese
+#41863
+# Watt Mühlenberger Loch
+#41385
+#
