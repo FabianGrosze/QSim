@@ -28,18 +28,24 @@
 !! \ref qsimdateikopfzeilev 
 
 !> \page qsimdateimodellg3 ModellG.3D.txt
-!! Die Datei ModellG.3D.txt dient der zonenweisen Zuordnung von Parametern, Rand- und Anfangsbedingungen.\n
-!! Sie ist hervorgegangen aus der Datei ModellG.txt in QSim-1D, die eine Zuordnung zu Abschnitten in Strängen des 1D-Modells erlaubte.\n\n
-!! Welcher Knoten zu welcher <b>Zone</b> gehört, ist in der Datei points (siehe \ref Datenmodell) festgelegt. Die Zonen-Einteilung des Modellgebiets wird z. Z. mit dem
+!! Die Datei <a href="./exp/MODELLG.3D.txt" target="_blank">ModellG.3D.txt</a> 
+!! dient der zonenweisen Zuordnung von Parametern, Rand- und Anfangsbedingungen.\n
+!! Sie ist hervorgegangen aus der Datei <a href="./exp/ModellG_beispiel.txt" target="_blank">ModellG.txt</a> 
+!! in QSim-1D, welche eine Zuordnung zu Abschnitten in Strängen des 1D-Modells erlaubte.
+!! \n\n
+!! Welcher Knoten zu welcher <b>Zone</b> gehört, ist in der Datei points (siehe \ref Datenmodell) festgelegt. 
+!! Die Zonen-Einteilung des Modellgebiets wird z. Z. mit dem
 !! Netzerstellungswerkzeug JANET vorgenommen. Diese Zonen-Einteilung geschieht vor der hydraulischen Simulation
 !! und wird vom Gütemodell übernommen.
 !! \n\n
-!! Beispiel:\n
-!! <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>\n
-!! Zeilen,die mit # beginnen, sind Kommentarzeilen und werden von QSim3D überlesen.
+!! Beispiele:\n
+!! 3D: <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>
+!! Zeilen, die mit # beginnen, sind Kommentarzeilen und werden von QSim3D überlesen.\n
+!! 1D: <a href="./exp/ModellG_beispiel.txt" target="_blank">ModellG_beispiel.txt</a>
+!! Die mit # gekennzeichneten Zeilen dienen der Erläuterung und müssen entfernt werden um die Datei als Eingabe für QSim1D zu verwenden.
 !! \n\n
 !! Die Datei MODELLG.3D.txt gliedert sich in einen Kopfbereich und nachfolgende Datenblöcke für die einzelnen Zonen (Zonen-Blöcke).
-!! 
+!! \n
 !! <h2>Kopfbereich</h2>
 !! Der Kopfbereich besteht aus drei Zeilen.
 !! <table>
