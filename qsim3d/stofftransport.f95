@@ -301,33 +301,33 @@
       integer :: i, n, j
 
       do i=1,part ! all i elements/nodes on this process
-	     iglob=(i+meinrang*part)
-		 if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph=",  &
+         iglob= i + meinrang * part
+         if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph=",  &
          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
       end do
       call ph2hplus()
       call mpi_barrier (mpi_komm_welt, ierr)
-	  
+      
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
          call gather_planktkon()
-         if(meinrang.eq.0)then !! nur prozessor 0
-			if(kontrollknoten.ge.1)print*,'0  vor stofftransport_casu: ph,lf=',  &
-		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
-					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
+         if (meinrang.eq.0) then !! nur prozessor 0
+            if (kontrollknoten.ge.1) print*,'0  vor stofftransport_casu: ph,lf=',  &
+               planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
+               planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
             call stofftransport_casu()
-			if(kontrollknoten.ge.1)print*,'0 nach stofftransport_casu: ph,lf=',  &
-		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
-					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
+            if (kontrollknoten.ge.1) print*,'0 nach stofftransport_casu: ph,lf=',  &
+               planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
+               planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(2) ! Untrim² netCDF
          call gather_planktkon()
          if(meinrang.eq.0)then !! nur prozessor 0
             call stofftransport_untrim()
-			if(kontrollknoten.ge.1)print*,'nach stofftransport_untrim: lf,ph=',  &
-		            planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
-					planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
+            if (kontrollknoten.ge.1) print*,'nach stofftransport_untrim: lf,ph=',  &
+               planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
+               planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
@@ -335,15 +335,15 @@
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
       end select
-	  
+      
       call mpi_barrier (mpi_komm_welt, ierr)
       call hplus2ph()
       call mpi_barrier (mpi_komm_welt, ierr)
-	  call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
-	  
+      call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
+      
       do i=1,part ! all i elements/nodes on this process
-	     iglob=(i+meinrang*part)
-		 if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph=",  &
+         iglob=(i+meinrang*part)
+         if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph=",  &
          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
       end do
 
@@ -417,11 +417,11 @@ if(meinrang.eq.0)then ! prozess 0 only
       case(2) ! Untrim² netCDF
          !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
          allocate( el_vol(number_plankt_point), el_area(number_plankt_point), stat = alloc_status )
-         if(alloc_status.ne.0)call qerror('allocate (el_vol( failed')
+         if(alloc_status.ne.0)call qerror('allocate (el_vol(number_plankt_point), el_area(number_plankt_point)) failed')
          allocate( ed_flux(kantenanzahl), ed_area(kantenanzahl), stat = alloc_status )
-         if(alloc_status.ne.0)call qerror('allocate( ed_flux(kantenanzahl), failed')
+         if(alloc_status.ne.0)call qerror('allocate( ed_area(kantenanzahl) ) failed')
          allocate( ed_vel_x(kantenanzahl), ed_vel_y(kantenanzahl), stat = alloc_status )
-         if(alloc_status.ne.0)call qerror('allocate( ed_vel(kantenanzahl), failed')
+         if(alloc_status.ne.0)call qerror('allocate( ed_vel(kantenanzahl) ) failed')
          allocate (wicht(5*number_plankt_point), stat = alloc_status )
          if(alloc_status.ne.0)then
             write(fehler,*)' Rueckgabewert   von   allocate  wicht(5* :', alloc_status
@@ -444,23 +444,21 @@ end if ! only prozessor 0
       subroutine ph2hplus()
       use modell
       implicit none
-	  real*8 mue,ph,lf,hplus,hk,lgh
-	  integer i
-	  
-      do i=1,part ! all i elements/nodes on this process
-	     iglob=(i+meinrang*part)
-         lf=planktonic_variable_p(65+(i-1)*number_plankt_vari)
-         ph=planktonic_variable_p(66+(i-1)*number_plankt_vari)
-	     mue = 1.7e-5*lf 
-         if(mue.lt.0.0)mue = 0.0 
-         hk = (0.5*sqrt(mue))/(1.+1.4*sqrt(mue)) 
-         lgh = ph-hk 
-         hplus = 10**(-lgh)
-	     planktonic_variable_p(66+(i-1)*number_plankt_vari)=hplus
-		 if(iglob.eq.kontrollknoten)print*,meinrang,i,' ph2hplus: ph,hplus,part,number_plankt_vari=',  &
-		                                            ph,hplus,part,number_plankt_vari
+      real(8) :: mue, ph, lf, hplus, hk
+      integer :: i
+      
+      do i = 1,part ! all i elements/nodes on this process
+         iglob = i + meinrang * part
+         lf = planktonic_variable_p(65 + (i-1) * number_plankt_vari)
+         ph = planktonic_variable_p(66 + (i-1) * number_plankt_vari)
+         mue = sqrt(max(0.0, 1.7e-5 * lf))
+         hk = mue / (2. + 2.8 * mue)
+         hplus = 10**(hk - ph)
+         planktonic_variable_p(66+(i-1)*number_plankt_vari) = hplus
+         if (iglob == kontrollknoten) print*, meinrang, i, ' ph2hplus: ph, hplus, part, number_plankt_vari = ',  &
+                                              ph, hplus, part, number_plankt_vari
       end do ! all i elements/nodes on this process
-	  
+      
       return
       END subroutine ph2hplus
 !----+-----+----
@@ -470,23 +468,21 @@ end if ! only prozessor 0
       subroutine hplus2ph()
       use modell
       implicit none
-	  real*8 mue,ph,lf,hplus,hk,lgh
-	  integer i
-	  
+      real(8) :: mue, ph, lf, hplus, hk
+      integer :: i
+      
       do i=1,part ! all i elements/nodes on this process
-	     iglob=(i+meinrang*part)
-         lf   =planktonic_variable_p(65+(i-1)*number_plankt_vari)
-         hplus=planktonic_variable_p(66+(i-1)*number_plankt_vari)
-	     mue = 1.7e-5*lf 
-         if(mue.lt.0.0)mue = 0.0 
-         hk = (0.5*sqrt(mue))/(1.+1.4*sqrt(mue)) 
-         ph = log10(hplus)
-         ph = (-1.*ph)+hk
-	     planktonic_variable_p(66+(i-1)*number_plankt_vari)=ph
-		 if(iglob.eq.kontrollknoten)print*,meinrang,i,' hplus2ph: ph,hplus,part,number_plankt_vari=',  &
-		                                   ph,hplus,part,number_plankt_vari
+         iglob = i + meinrang * part
+         lf    = planktonic_variable_p(65 + (i-1) * number_plankt_vari)
+         hplus = planktonic_variable_p(66 + (i-1) * number_plankt_vari)
+         mue = sqrt(max(0.0, 1.7e-5 * lf))
+         hk = mue / (2. + 2.8 * mue)
+         ph = hk - log10(hplus)
+         planktonic_variable_p(66+(i-1)*number_plankt_vari) = ph
+         if (iglob == kontrollknoten) print*, meinrang, i, ' hplus2ph: ph, hplus, part, number_plankt_vari = ',  &
+                                              ph, hplus, part, number_plankt_vari
       end do ! alle j elements/nodes
-	  
+      
       return
       END subroutine hplus2ph
 

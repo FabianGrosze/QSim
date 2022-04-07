@@ -70,7 +70,7 @@
 # PV=qsim3d_1404final
 # PV=qsim3d_final_v
 # PV=qsim3d_pHtrans
-# PV=qsim3d_pHtrans_gather
+#PV=qsim3d_pHtrans_gather
 # PV=qsim3d_sc21
 # PV=qsim3d_14.06entw
 # PV=qsim3d_14.07
@@ -215,6 +215,9 @@ qsim:
 #%.o: %.F95
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
+%.o: %.f90
+	$(FC) $(FFLAGS) -c -o $@  $<
+
 %.o: %.f95
 	$(FC) $(FFLAGS) -c -o $@  $<
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
@@ -223,7 +226,7 @@ Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o \
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o wetter.o ganglinien.o schnitt.o\
-     planktische_variablen.o parallel.o \
+     planktische_variablen.o module_suspendedMatter.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
      oxygen_huelle.o orgc_huelle.o ph_huelle.o \
