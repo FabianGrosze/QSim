@@ -60,7 +60,6 @@
       subroutine parallel_ini()
       use modell
       use QSimDatenfelder
-      !use aparam                                                   
 !!!####	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
 
@@ -86,8 +85,8 @@
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
-      !use aparam                                                   
-!!!###	  use schism_msgp, only: myrank,parallel_abort !,nproc
+      use mod_suspendedMatter, only: init_suspendedMatter
+!!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
       integer kontroll_lokal
 
@@ -113,9 +112,16 @@
       call randbedingungen_parallel()
       !print*,meinrang," randbedingungen_parallel() ... danach"
       call mpi_barrier (mpi_komm_welt, ierr)
-      call schwebstoff_salz_parallel()
-      !print*,meinrang," schwebstoff_salz_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      ! initialize SPM (and salinity)
+      if (iEros>=0) then
+         call schwebstoff_salz_parallel()
+         !print*,meinrang," schwebstoff_salz_parallel() ... danach"
+         call mpi_barrier (mpi_komm_welt, ierr)
+      else
+         call init_suspendedMatter
+      end if
+      
       call alter_parallel()
       !print*,meinrang," alter_parallel() ... danach"
       call mpi_barrier (mpi_komm_welt, ierr)
@@ -146,7 +152,6 @@
       subroutine modell_parallel()
       use modell
       use QSimDatenfelder
-      !use aparam                                                   
       implicit none
       integer n, alloc_status
       !print*,meinrang," modell_parallel() ... startet"

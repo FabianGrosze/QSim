@@ -129,9 +129,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !-------------------------------------------------------------------------------parallel_datenfelder
 ! Beschreibung in parallel.f95
 !> nummer und Gesamtzahl prozessoren (MPI)
-      integer :: meinrang, part, proz_anz
-      !!wy integer :: mpi_komm_welt, ierror
-      integer :: mpi_komm_welt, ierr
+      integer :: meinrang, part, proz_anz, ierr
+      integer :: mpi_komm_welt
 
 !-------------------------------------------------------------------------------Modell+Netz
 !> modellverzeichnis etc.
@@ -161,6 +160,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !> \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
       integer :: itracer
 !> \anchor ieros Erosions-flag mit Erosion=1 ohne=0 in QSim3D bisher unbenutzt
+!#FG: temporary dirty hack: iEros<0 for reading 'SS' from UnTRIM2; 'abs(iEros)' sets the number of classes to be read (finest to coarsest)
       integer :: ieros
 !> \anchor ischwa mit ereigg2=1 ohne=0 ??? in QSim3D bisher unbenutzt
       integer :: ischwa
