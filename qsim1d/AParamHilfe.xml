@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
-<GerrisParam FileType="AParamHilfe" QsimVersion="14.07.01">
+<GerrisParam FileType="AParamHilfe" QsimVersion="14.07.02">
   <ParamSetHelp>
      <ParamHelp Ident="AGCHL"><![CDATA[]]>
       <Value Label="Grünalgen Geider (1987)">20.6</Value>

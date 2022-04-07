@@ -27,50 +27,6 @@
 
 #====================================================================
 
-# PV=qsim3d
-# PV=qsim3d_nurtemp
-# PV=qsim3d_oxy
-# PV=qsim3d_silikat
-# PV=qsim3d_po4s
-# PV=qsim3d_po4s_12
-# PV=qsim3d_ph
-# PV=qsim3d_ph_mintief
-# PV=qsim3d_ncyc
-# ~/qsource/qsim3d> diff stoffumsatz.f95 stoffumsatz_seflux.f95
-# ~/qsource/qsim3d> cp stoffumsatz_nurtemp.f95 stoffumsatz.f95
-# PV=qsim3d_nurtempsed
-# PV=qsim3d_sedflux
-# PV=qsim3d_ncyc_pp
-# PV=qsim3d_orgc_pp
-# PV=qsim3d_algae_pp
-# PV=qsim3d_algae_pp_amor
-# PV=qsim3d_alter
-# PV=qsim3d_konsum_slurm
-# PV=qsim3d_coroph
-# PV=qsim3d_aug19_slurm
-# PV=qsim3d_rumpf_03sep19
-# PV=qsim3d_dreissen_preprocess
-# PV=qsim3d_zone
-# PV=qsim3d_hnf
-# PV=qsim3d_coli
-# PV=qsim3d_rumpf_03sep19i
-# PV=qsim3d_dreissen_nan
-# PV=qsim3d_coli2
-# PV=qsim3d_ohnehnf
-# PV=qsim3d_albenth
-# PV=qsim3d_mphyt
-# PV=qsim3d_voll2
-# PV=qsim3d_wsp
-# PV=qsim3d_schismQ
-# PV=qsim3d_untrimWeser
-# PV=qsim3d_unterweser
-# PV=qsim3d_pwert_korr
-# PV=qsim3d_strukt_ph
-# PV=qsim3d_1404entw
-# PV=qsim3d_1404final
-# PV=qsim3d_final_v
-# PV=qsim3d_pHtrans
-#PV=qsim3d_pHtrans_gather
 # PV=qsim3d_sc21
 # PV=qsim3d_14.06entw
 # PV=qsim3d_14.07
@@ -78,7 +34,7 @@
 # PV='qsim14.06doku'
 # PV='qsim3d14.07doku'
 # PV='qsim3d14.07Cu'
-PV='qsim3d14.07.01'
+PV='qsim3d14.07.02'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 

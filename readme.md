@@ -1,4 +1,5 @@
-
+## 14.07.02
+added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qims3d/module_suspendedMatter.f90)
 
 ## 14.07.01
 compiled at 16.mae.2022 
