@@ -1021,9 +1021,11 @@ end if ! nur Prozessor 0
       SUBROUTINE mesh_output(ion)
       use modell                                                   
       implicit none
-      integer ion,n
+      character(len=longname) :: dateiname
+      integer ion,n,igr3
+      integer io_error
       !print*,'mesh_output: starting'
-
+!----------------------------------------------------------------- .vtk
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'Simlation QSim3D'
       write(ion,'(A)')'ASCII'
@@ -1098,6 +1100,41 @@ end if ! nur Prozessor 0
       do n=1,knotenanzahl2D
          write(ion,'(f27.6)') real(knoten_rand(n))
       end do ! alle Knoten
+      !close (ion) !channel number is handeled by subroutine show_mesh
+	  
+!----------------------------------------------------------------- .gr3
+	  if(meinrang.ne.0)call qerror("mesh_output may only be called from process 0") ! nur auf Prozessor 0 bearbeiten
+	  
+      write(dateiname,'(2A)')trim(modellverzeichnis),'mesh.gr3'
+      igr3=107
+      open ( unit =igr3 , file = dateiname, status ='unknown', action ='write ', iostat = io_error )
+         if(io_error.ne.0) then
+         print*,'mesh.gr3, io_error=',io_error
+         close (igr3)
+         return
+      end if ! io_error.ne.0
+          
+      write(igr3,'(A,2x,A)') 'Grid written by QSim3D',modellverzeichnis
+      write(igr3,*)n_elemente, knotenanzahl2D
+      
+      do n=1,knotenanzahl2D
+         ! write(igr3,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
+         write(igr3,*)n, knoten_x(n), knoten_y(n), knoten_z(n)
+      end do ! alle Knoten
+              
+      do n=1,n_elemente ! alle Elemente
+         if (cornernumber(n).eq.3)then
+            write(igr3,*) & 
+            n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+         end if
+         if (cornernumber(n).eq.4)then
+            write(igr3,*) &
+            n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+         end if
+      end do ! alle Elemente
+                
+      close (igr3)
+      !print*,'written mesh.gr3'
 
       !print*,'mesh_output: finished'
       RETURN

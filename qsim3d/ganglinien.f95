@@ -194,7 +194,13 @@
                print*,'ganglinien nr. ',i,' am Element ',knot_gangl(i),' Ort: ',element_x(knot_gangl(i)), element_y(knot_gangl(i))
             endif
          end do
-         print*,'### randlinie_zusammenstellen und querschnitt_lesen für Untrim netCDF noch nicht implementiert ###'
+         !print*,'### randlinie_zusammenstellen und querschnitt_lesen für Untrim netCDF noch nicht implementiert ###'
+         querschneiden=querschnitt_lesen()
+         if(querschneiden)then
+            print*,'querschneiden für Untrim netCDF'
+         else
+            print*,'nicht querschneiden für Untrim netCDF'
+         end if
       case(3) ! SCHISM
          print*,'no cross sections possible with SCHISM'                              
       case default
