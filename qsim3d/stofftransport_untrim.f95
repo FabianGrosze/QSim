@@ -180,7 +180,8 @@
                wicht((n-1)*5+j)=0.0
             end do !alle 5
          end do ! alle n Elemente
-         do n=1,kantenanzahl ! 
+		 
+###      do n=1,kantenanzahl ! edge fluxes  
             laeng=( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
             ed_flux(n)=0.0
             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! volume-flux to the left
@@ -254,6 +255,7 @@
                end do
             end do ! alle n Konzentrationen
          end do ! alle j Elemente
+		 
          do j=1,number_plankt_point ! alle j Elemente
             if (.not.inflow(j)) then ! Zuflusselemente auslassen
                do n=1,number_plankt_vari

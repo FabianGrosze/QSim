@@ -185,7 +185,7 @@
       logical function querschnitt_lesen()
       use modell
       implicit none
-      integer :: nio, io_error, alloc_status, i, j, n, k, l, l1,l2, el(2), nel, bt, tp
+      integer :: nio, io_error, alloc_status, i, j, n, k, l, l1,l2, el(2), nel, bt, tp, nelkntp, nelknbt
       character (len=300) :: dateiname
       real :: lang
 
@@ -268,9 +268,16 @@
          do j=1,querschnitt(i)%schnittlinie%anzkanten !! alle j Kanten 
             bt=querschnitt(i)%schnittlinie%knoten(j)
             tp=querschnitt(i)%schnittlinie%knoten(j+1)
-            nel=0
+            print*," querschnitt_lesen Kante ",j," top,bottom=",tp,bt
+            nel=0 ; nelkntp =0 ; nelknbt =0
             do n=1,n_elemente ! alle n Elemente
                do l=1,cornernumber(n)
+			      if(elementnodes(n,l).eq.tp)then
+   				     nelkntp=nelkntp+1 ;print*,tp,'=tp an Element=',n,l,"ter Knoten"
+				  endif
+			      if(elementnodes(n,l).eq.bt)then
+				     nelknbt=nelknbt+1 ;print*,bt,'=bt an Element=',n,l,"ter Knoten"
+				  endif
                   if(l.eq.1)then
                      l1=cornernumber(n)
                   else
@@ -288,7 +295,8 @@
                   end if ! kante bt-tp erkannt
                end do ! alle l (3 oder 4) Ecken von Element k
             end do ! alle n Elemente im Netz
-            print*,"An Kante ",j," bt ",bt," tp ",tp, " von Querschnitt #",i," wurden ", nel ," Elemente gezählt"
+            print*,"An Kante ",j," bottom= ",bt," top= ",tp, " von Querschnitt #",i," wurden ", nel ," Elemente gezählt"
+            print*,nelkntp," elemente an top ",nelknbt," elemente an bottom"
             if(nel.eq.2)then
                print*," Element 1 =",el(1)," Element 2 =",el(2)
             else
