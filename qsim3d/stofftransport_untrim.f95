@@ -127,7 +127,7 @@
       use modell                                                   
       implicit none
       include 'netcdf.inc'
-      integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status
+      integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status, iq, jq
       real :: laeng, cu_max, cu_min, dt_sub, sumwicht, cu_mean_CuGT1, volFrac_CuGT1
       real , allocatable , dimension (:,:) :: zwischen
       !integer , parameter :: num_sub=12
@@ -142,6 +142,7 @@
      &        ,startzeitpunkt, zeitpunkt, deltat, endzeitpunkt
       dt_sub=real(deltat)/real(num_sub)
       print*,'stofftransport_untrim:',num_sub,' Sub-zeitschritte von der Länge=',dt_sub
+      querschnitt(:)%vol_flux=0.0
 
       do nt=1,num_sub ! alle Transport (zwischen) Zeitschritte
          if((kontrollknoten.gt.0).and.(kontrollknoten.le.number_plankt_point))then ! Ausgabe
@@ -175,13 +176,13 @@
          !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim  ################
          !end do ! alle n Elemente
 
-         do n=1,number_plankt_point ! initialize volume exchange
-            do j=1,5
-               wicht((n-1)*5+j)=0.0
-            end do !alle 5
-         end do ! alle n Elemente
+      do n=1,number_plankt_point ! initialize volume exchange
+         do j=1,5
+            wicht((n-1)*5+j)=0.0
+         end do !alle 5
+      end do ! alle n Elemente
 		 
-###      do n=1,kantenanzahl ! edge fluxes  
+      do n=1,kantenanzahl ! edge fluxes  
             laeng=( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
             ed_flux(n)=0.0
             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! volume-flux to the left
@@ -189,10 +190,20 @@
      &         ed_flux(n)=(ed_vel_x(n)*edge_normal_x(n)+ed_vel_y(n)*edge_normal_y(n))/laeng
             ed_flux(n)=ed_flux(n)*ed_area(n)
             !summing outflow into my own wicht
-            if( (left_element(n).gt. 0).and.(ed_flux(n).lt. 0.0) )  &  !left_element !flux to the right
+            if( (left_element(n).gt. 0).and.(ed_flux(n).lt. 0.0) )  &    !left_element !flux to the right
      &            wicht((left_element(n)-1)*5+1)=wicht((left_element(n)-1)*5+1)-ed_flux(n)
             if( (right_element(n).gt. 0).and.(ed_flux(n).gt. 0.0) ) &
      &         wicht((right_element(n)-1)*5+1)=wicht((right_element(n)-1)*5+1)+ed_flux(n)
+	 
+            do iq=1,anzahl_quer !! all iq cross sections
+               do jq=1,querschnitt(iq)%schnittlinie%anzkanten !! alle j Kanten des jeweiligen Querschnitts 
+                  if(n.eq.querschnitt(iq)%schnittlinie%kante(jq)%num) &
+				     querschnitt(iq)%vol_flux=querschnitt(iq)%vol_flux +ed_flux(n)*dt_sub
+                  if((-1*n).eq.querschnitt(iq)%schnittlinie%kante(jq)%num) &
+				     querschnitt(iq)%vol_flux=querschnitt(iq)%vol_flux -ed_flux(n)*dt_sub
+			   end do ! all jq
+            end do ! all iq cross sections
+
          end do ! alle n kanten
 
          do n=1,n_elemente ! gathering inflows
@@ -305,6 +316,10 @@
 
          !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
          !allocate( el_vol(nonu), el_area(nonu), stat = alloc_status )
+		 
+      do iq=1,anzahl_quer !! all iq cross sections
+	     print*,zeitpunkt,iq," volume=",querschnitt(iq)%vol_flux," flux=",querschnitt(iq)%vol_flux/real(deltat)
+	  end do
 
       RETURN
       END subroutine stofftransport_untrim

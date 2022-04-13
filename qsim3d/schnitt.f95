@@ -25,7 +25,7 @@
 !! wird von ganglinien_zeitschritt() aufgerufen
 !! \n\n aus schnitt.f95 , zurück: \ref Ergebnisse
 !!
-      SUBROUTINE querschnitt_flux(zeitzaehler)
+      SUBROUTINE querschnitt_flux_casu(zeitzaehler)
       use modell
       implicit none
       integer :: zeitzaehler, i,j,k, bt,tp, no
@@ -63,7 +63,7 @@
             !! u1 und u2 sind bereits das Produkt aus Normalgeschwindigkeitskomponente mal Kantenlänge !!
             c1= planktonic_variable(71+(bt-1)*number_plankt_vari) !! passiver alters-tracer
             c2= planktonic_variable(71+(tp-1)*number_plankt_vari)
-            call flux(deltax,d1,d2,u1,u2,c1,c2,p(bt),p(tp),u(bt),u(tp),la,flae,vox,pox,kix,masx)
+            call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(bt),p(tp),u(bt),u(tp),la,flae,vox,pox,kix,masx)
             lang=lang + la
             flaeche=flaeche + flae
             vol_strom=vol_strom + vox
@@ -87,7 +87,7 @@
       ! deallocate(massen_flux)
 
       RETURN
-      END subroutine querschnitt_flux
+      END subroutine querschnitt_flux_casu
 
 !----+-----+----
 !
@@ -99,7 +99,7 @@
 !! Fluss kinetische Energie Integral(rho*0.5*v*v*d*u)dx ; alle 4 lin. über x (v*v-Quadrat des Geschwindigkeitsbetrages)\n
 !! u1 und u2 sind bereits das Produkt aus Normalgeschwindigkeitskomponente mal Kantenlänge !!\n
 !! \n\n aus schnitt.f95
-      SUBROUTINE flux(deltax,d1,d2,u1,u2,c1,c2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix,masx)
+      SUBROUTINE flux_casu(deltax,d1,d2,u1,u2,c1,c2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix,masx)
       !use modell
       implicit none
       real :: deltax,d1,d2,u1,u2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix
@@ -174,7 +174,7 @@
                call qerror("Fall-Unterscheidung fehlgeschlagen in flux()")
             end select
       RETURN
-      END subroutine flux
+      END subroutine flux_casu
 
 !----+-----+----
 !
@@ -268,7 +268,19 @@
          do j=1,querschnitt(i)%schnittlinie%anzkanten !! alle j Kanten 
             bt=querschnitt(i)%schnittlinie%knoten(j)
             tp=querschnitt(i)%schnittlinie%knoten(j+1)
-            print*," querschnitt_lesen Kante ",j," top,bottom=",tp,bt
+            querschnitt(i)%schnittlinie%kante(j)%normal_x=-1*(knoten_y(tp)-knoten_y(bt))
+            querschnitt(i)%schnittlinie%kante(j)%normal_y=(knoten_x(tp)-knoten_x(bt))
+            querschnitt(i)%schnittlinie%kante(j)%bottom=bt
+            querschnitt(i)%schnittlinie%kante(j)%top=tp
+			querschnitt(i)%schnittlinie%kante(j)%laengs=( (querschnitt(i)%schnittlinie%kante(j)%normal_x**2)  &
+    &                   + (querschnitt(i)%schnittlinie%kante(j)%normal_y**2) )**0.5
+            do n=1,kantenanzahl ! alle Kanten
+			   if((bottom_node(n).eq.bt).and.(top_node(n).eq.tp))querschnitt(i)%schnittlinie%kante(j)%num=n
+			   if((bottom_node(n).eq.tp).and.(top_node(n).eq.bt))querschnitt(i)%schnittlinie%kante(j)%num=-1*n
+            end do ! alle n Kanten
+            print*," querschnitt_lesen Kante ",j," top,bottom=",tp,bt  &
+			      ,"Länge=",querschnitt(i)%schnittlinie%kante(j)%laengs  &
+				  ," Nummer=",querschnitt(i)%schnittlinie%kante(j)%num				  
             nel=0 ; nelkntp =0 ; nelknbt =0
             do n=1,n_elemente ! alle n Elemente
                do l=1,cornernumber(n)
@@ -302,12 +314,7 @@
             else
                call qerror("Querschnittskante nicht innerhalb des Berechnungsgebiets")
             endif
-            querschnitt(i)%schnittlinie%kante(j)%normal_x=-1*(knoten_y(tp)-knoten_y(bt))
-            querschnitt(i)%schnittlinie%kante(j)%normal_y=(knoten_x(tp)-knoten_x(bt))
-            querschnitt(i)%schnittlinie%kante(j)%bottom=bt
-            querschnitt(i)%schnittlinie%kante(j)%top=tp
-            lang=lang + ( (querschnitt(i)%schnittlinie%kante(j)%normal_x**2)  &
-    &                   + (querschnitt(i)%schnittlinie%kante(j)%normal_y**2) )**0.5
+            lang=lang + querschnitt(i)%schnittlinie%kante(j)%laengs
          end do ! alle j Kanten in Querschnitt i
          print*,"Querschnitt #",i, "hat ",querschnitt(i)%schnittlinie%anzkanten," Kanten und ist ",lang," lang"
       end do ! alle i Querschnitte

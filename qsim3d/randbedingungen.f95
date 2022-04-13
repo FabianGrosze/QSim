@@ -1460,7 +1460,7 @@ end if !! nur prozessor 0
             ! do k=1,n_pl ! ausgabe-plankt.vari. in Ganglinie speichern
             !    print*,"rand_flux:c1(",k,")=",c1(k)," c2=",c2(k)," massen_flux=",massen_flux(k)," masx=", masx(k)
             ! end do! alle k Ausgabe-Variablen
-            call flux(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
+            call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
             vox2=0.5*(u1*d1 + u2*d2) !! Volumentromermittlung stückweise zu Testzwecken
      !       print*,"Rand #",n," Kante #",i," pox=",pox
      !&            ," deltax=",deltax," la=",la," vox=",vox," vox2=",vox2  &

@@ -718,7 +718,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       type :: qusch
          integer ::  nr_qs
          type (rb_streckenzug) :: schnittlinie
-         real , allocatable , dimension (:) :: vol_flux !! für jeden Zeitschritt wie Ganglinien
+         real :: vol_flux !! für jeden Zeitschritt wie Ganglinien
          real , allocatable , dimension (:,:) :: tr_flux !! für jeden Zeitschritt und für jede zu notierende Variable
       end type qusch
       type(qusch) , allocatable , dimension (:) :: querschnitt
