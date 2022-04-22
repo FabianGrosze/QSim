@@ -341,10 +341,10 @@
             print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
          end if
          print*,'transport nt=',nt,' start ende= ',startzeitpunkt, endzeitpunkt
-         do iq=1,anzahl_quer !! all iq cross sections
-            print*,nt,"schnittflux: ",zeitpunkt,izeit,iq," flux,volume="  &
-                  ,schnittflux_gang(iq,izeit, 1 ),schnittflux_gang(iq,izeit, 2 )
-         end do
+         !do iq=1,anzahl_quer !! all iq cross sections
+         !   print*,nt,"schnittflux: ",zeitpunkt,izeit,iq," flux,volume="  &
+         !         ,schnittflux_gang(iq,izeit, 1 ),schnittflux_gang(iq,izeit, 2 )
+         !end do
 
       end do ! alle nt Subzeitschritte
 
@@ -361,8 +361,7 @@
       do iq=1,anzahl_quer !! all iq cross sections
          q_gangl(izeit)=zeitpunkt
          schnittflux_gang(iq,izeit, 1 )= schnittflux_gang(iq,izeit, 1 )/real(num_sub)
-         schnittflux_gang(iq,izeit, 2 )= schnittflux_gang(iq,izeit, 2 )/real(deltat)
-         print*,"schnittflux: ",zeitpunkt,izeit,iq," flux=",schnittflux_gang(iq,izeit, 2 )
+         print*,"schnittflux: ",zeitpunkt,izeit,iq," flux=",schnittflux_gang(iq,izeit, 1 )
       end do
 
       RETURN

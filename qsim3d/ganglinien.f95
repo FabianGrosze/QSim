@@ -420,52 +420,55 @@ if(meinrang.eq.0)then ! prozess 0 only
      print*,'Z.Z. keine Ausgabe von Rand-Flüssen'
      goto 123
         do n=1,ianz_rb !! alle Ränder
-           write(nummer,*)rabe(n)%nr_rb
-           write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/r',trim(adjustl(nummer)),'.txt'
-           if(errcode .ne. 0)call qerror('ganglinien_schliessen writing filename ganglinien/r*.txt failed')
-           open ( unit = 12345+n , file = dateiname, status ='new', action ='write ', iostat = open_error )
-           write(12345+n,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
+            write(nummer,*)rabe(n)%nr_rb
+            write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/r',trim(adjustl(nummer)),'.txt'
+            if(errcode .ne. 0)call qerror('ganglinien_schliessen writing filename ganglinien/r*.txt failed')
+            open ( unit = 12345+n , file = dateiname, status ='new', action ='write ', iostat = open_error )
+            write(12345+n,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
      &                    ,n,"-ten Rand, Nr.=",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
-           do j=1,zeitschrittanzahl+1
-              zeitpunkt=r_gang(1,j)
-              call zeitsekunde()
-              write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
+            do j=1,zeitschrittanzahl+1
+               zeitpunkt=r_gang(1,j)
+               call zeitsekunde()
+               write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
      &                        jahr  ,monat ,  tag  ,   stunde , minute , sekunde
-              do i=1, 6
-                 write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), randflux_gang(n,j,i)   ! r_gang(i,j)
-              end do ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
-              write(12345+n,'(A)')trim(adjustl(r_zeile))
-           end do ! alle j Zeitschritte
-           rewind(12345+n)
-           close(12345+n) ! 
-           print*,'Ausgabe Rand-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
-        end do ! alle Ränder
-
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Querschnitts-Flüsse ausgeben
+               do i=1, 6
+                  write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), randflux_gang(n,j,i)   ! r_gang(i,j)
+               end do ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
+               write(12345+n,'(A)')trim(adjustl(r_zeile))
+            end do ! alle j Zeitschritte
+            rewind(12345+n)
+            close(12345+n) ! 
+            print*,'Ausgabe Rand-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
+         end do ! alle Ränder
  123  continue
+
+      ! --- output cross section fluxes ---
       if(querschneiden)then
-        do n=1,anzahl_quer !! alle n Querschnitte
-           write(nummer,*)n
-           write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/q',trim(adjustl(nummer)),'.txt'
-           if(errcode .ne. 0)call qerror('ganglinien_schliessen writing filename ganglinien/q*.txt failed')
-           open ( unit = 9876+n , file = dateiname, status ='new', action ='write ', iostat = open_error )
-		   write(beschriftung,'(A)')"#        Zeitpunkt | Durchfluss |"
- 		   do i=1,number_plankt_vari
-              if(output_plankt(i))then ! planktic output conc.
-                 beschriftung=trim(beschriftung)//planktonic_variable_name(i)//" | "
+         do n=1,anzahl_quer !! all n cross sections
+            write(nummer,*)n
+            write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/q',trim(adjustl(nummer)),'.txt'
+            if(errcode .ne. 0)call qerror('ganglinien_schliessen writing filename ganglinien/q*.txt failed')
+            open ( unit = 9876+n , file = dateiname, status ='new', action ='write ', iostat = open_error )
+            write(r_zeile,*)"#   Datum| Uhrzeit| Zeitpunkt(sec.) | Durchfluss | Wasservolumen im Zeitschritt=",deltat
+            do i=1,number_plankt_vari
+               if(output_plankt(i))then ! planktic output conc.
+                  r_zeile=trim(r_zeile)//planktonic_variable_name(i)//" | "
               end if
- 		   end do
-           write(9876+n,*)trim(adjustl(beschriftung))! Kopfzeile schreiben
-           do j=1,zeitschrittanzahl+1
-              write(r_zeile,*)q_gangl(j),(schnittflux_gang(n,j,i),i=1,n_pl+2)
-              write(9876+n,'(A)')trim(adjustl(r_zeile))
-           end do ! alle j Zeitschritte
-           rewind(9876+n) ! 
-           close(9876+n) ! 
-           print*,'Ausgabe Querschnitts-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
-        end do ! alle n Querschnitte
+            end do
+            write(9876+n,*)trim(adjustl(r_zeile))! write header
+            do j=1,zeitschrittanzahl
+               zeitpunkt=q_gangl(j)
+               call zeitsekunde()
+               write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
+                            jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
+               write(r_zeile,*)trim(r_zeile),(schnittflux_gang(n,j,i),i=1,n_pl+2)
+               write(9876+n,'(A)')trim(r_zeile)
+            end do ! all j timesteps 
+            rewind(9876+n) ! 
+            close(9876+n) ! 
+            print*,'Ausgabe Querschnitts-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
+         end do ! alle n cross sections
       endif ! querschneiden
- 124  continue
 
 end if ! only prozessor 0
         call mpi_barrier (mpi_komm_welt, ierr)
