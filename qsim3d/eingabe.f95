@@ -476,7 +476,7 @@
                          
       implicit none
       integer :: i, j, n, n_cal
-      logical :: vorhanden, only
+      logical :: vorhanden, only, querschnitt_lesen
       integer mtag, mmonat ,mjahr
       real :: muhrzeit_stunde
       integer , allocatable , dimension (:) :: randzaehl
@@ -574,7 +574,12 @@
       print*,"wetter_readallo0() gemacht"
 
       call ganglinien_lesen()
-      !! darin rand_zusammenhang() und querschnitt_zusammenhang()
+      querschneiden=querschnitt_lesen()
+      if(querschneiden)then
+         print*,'querschneiden'
+      else
+         print*,'keine Querschnitte'
+      end if
 
       !! nachschauen, ob und zu welchen Zeitpunkten 
       !! Verteilungen der Trübung/Schwebstoff und des Salzgehalts offline bereitliegen.

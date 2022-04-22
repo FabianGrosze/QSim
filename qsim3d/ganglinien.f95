@@ -27,10 +27,6 @@
          implicit none
          integer :: i,j, alloc_status, agp
 
-         n_pl=0
-         n_ue=0
-         n_bn=0
-
          call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
          if(meinrang.ne.0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
          call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
@@ -53,16 +49,12 @@
  
          ! planktonic variables
          call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_plankt_vari
-            if(output_plankt(j))n_pl=n_pl+1
-         end do
          call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_plankt_vari_vert
-            if(output_plankt_vert(j))n_pl=n_pl+1
-         end do
+         call MPI_Bcast(n_pl,1,MPI_INT,0,mpi_komm_welt,ierr)
          print*,'ganglinien_parallel:', n_pl,' planktische Variablen für ganglinienausgabe (n_pl)'
          allocate (pl_gang(anz_gangl,zeitschrittanzahl+1,n_pl), stat = alloc_status )
          if(alloc_status.ne.0) call qerror("allocate (pl_gang fehlgeschlagen")
+		 
          ! Randflüsse:
          ! 1 WSP-Länge, 2 Querschnittsfläche 3=Volumenrstrom, 4=potentielle und 5=kinetische Energie;
          ! 6 = Fluss des passiven alters-tracers planktonic_variable(71
@@ -70,35 +62,25 @@
          if(alloc_status.ne.0) then
             write(fehler,*)'allocate (randflux_gang(ianz_rb, fehlgeschlagen'
             call qerror(fehler)
-         else
-            print*,"Speicherplatz wurde allociert für Randflüsse an ",ianz_rb," Rändern für ",zeitschrittanzahl+1  &
-     &            ," Zeitpunkte (Initialisierung wird mitnotiert)."
-            print*,"An diesen Rändern werden 5 Größen ermittelt"  &
-     &            ," (Wasserspiegellänge, Querschnittsfläche, Volumenstrom, Fluss der potentiellen und kinetischen Energie)."  &
-     &            ," Ausserdem werden die Massenflüsse für die ",n_pl  &
-     &            ," Variablen bestimmt, die in ausgabekonzentrationen.txt gewählt wurden."
+!         else
+!            print*,"Speicherplatz wurde allociert für Randflüsse an ",ianz_rb," Rändern für ",zeitschrittanzahl+1  &
+!     &            ," Zeitpunkte (Initialisierung wird mitnotiert)."
+!            print*,"An diesen Rändern werden 5 Größen ermittelt"  &
+!     &            ," (Wasserspiegellänge, Querschnittsfläche, Volumenstrom, Fluss der potentiellen und kinetischen Energie)."  &
+!     &            ," Ausserdem werden die Massenflüsse für die ",n_pl  &
+!     &            ," Variablen bestimmt, die in ausgabekonzentrationen.txt gewählt wurden."
          end if ! alloc_status .ne.0
 
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
          call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_benth_distr
-            if(output_benth_distr(j))n_bn=n_bn+1
-         end do
+         call MPI_Bcast(n_bn,1,MPI_INT,0,mpi_komm_welt,ierr)
          allocate (bn_gang(anz_gangl,zeitschrittanzahl+1,n_bn), stat = alloc_status )
 
          !transfer_quantities
          call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_trans_val
-            if(output_trans_val(j))n_ue=n_ue+1
-         end do
          call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_trans_quant
-            if(output_trans_quant(j))n_ue=n_ue+1
-         end do
          call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-         do j=1,number_trans_quant_vert
-            if(output_trans_quant_vert(j))n_ue=n_ue+1
-         end do
+         call MPI_Bcast(n_ue,1,MPI_INT,0,mpi_komm_welt,ierr)
          allocate (ue_gang(anz_gangl,zeitschrittanzahl+1,n_ue), stat = alloc_status )
 
       END subroutine ganglinien_parallel
@@ -170,12 +152,6 @@
       select case (hydro_trieb)
       case(1) ! casu-transinfo                                           
          call randlinie_zusammenstellen()
-         querschneiden=querschnitt_lesen()
-         if(querschneiden)then
-            print*,'querschneiden'
-         else
-            print*,'nicht querschneiden'
-         end if
          do i=1,anz_gangl
 		    if((knot_gangl(i).le.0).or.(knot_gangl(i).gt.knotenanzahl2D))then
                write(fehler,*)i,'ganglinien_knoten.txt nummer ',knot_gangl(i),' nicht zwischen 1 und ',knotenanzahl2D
@@ -195,18 +171,12 @@
             endif
          end do
          !print*,'### randlinie_zusammenstellen und querschnitt_lesen für Untrim netCDF noch nicht implementiert ###'
-         querschneiden=querschnitt_lesen()
-         if(querschneiden)then
-            print*,'querschneiden für Untrim netCDF'
-         else
-            print*,'nicht querschneiden für Untrim netCDF'
-         end if
       case(3) ! SCHISM
          print*,'no cross sections possible with SCHISM'                              
       case default
          call qerror('ganglinien_lesen: Hydraulischer Antrieb unbekannt')
       end select
-
+	  
       END subroutine ganglinien_lesen
 !
 !----+-----+----
@@ -236,14 +206,22 @@
             do k=1,number_plankt_vari
                if(output_plankt(k))then ! planktic output conc.
                   n=n+1
-                  if(n.gt.n_pl) call qerror('ganglinien_zeitschritt n.gt.n_pl')
+				  if(n.gt.n_pl)then
+				     write(fehler,*)'ganglinien_zeitschritt output_plankt(k) (n.gt.n_pl)'  &
+					                ,k,n,n_pl, trim(planktonic_variable_name(k))
+                     call qerror(fehler)
+			      endif
                   pl_gang(i,izeit_gang,n)=planktonic_variable_p(k+(nk-1)*number_plankt_vari)
                endif ! planktic output conc.
             end do ! alle k planktonic_variable
             do k=1,number_plankt_vari_vert
                if(output_plankt_vert(k))then ! planktic_vert output conc.
                   n=n+1
-                  if(n.gt.n_pl) call qerror('ganglinien_zeitschritt (n.gt.n_pl)')
+                  if(n.gt.n_pl)then
+				     write(fehler,*)'ganglinien_zeitschritt output_plankt_vert(k) (n.gt.n_pl)'  &
+					                ,k,n,n_pl, trim(plankt_vari_vert_name(k))
+                     call qerror(fehler)
+			      endif
                   pl_gang(i,izeit_gang,n) =  &
                   plankt_vari_vert_p(gangl_level+(k-1)*num_lev+(nk-1)*number_plankt_vari_vert*num_lev)
                endif ! planktic output conc.
@@ -438,7 +416,7 @@ if(meinrang.eq.0)then ! prozess 0 only
 
          ! if(nur_alter) call alter_ausgabe() !! Alters-Ausgabe
 
-        ! Rand-Flüsse ausgeben
+     ! Rand-Flüsse ausgeben
      print*,'Z.Z. keine Ausgabe von Rand-Flüssen'
      goto 123
         do n=1,ianz_rb !! alle Ränder
@@ -463,36 +441,30 @@ if(meinrang.eq.0)then ! prozess 0 only
            print*,'Ausgabe Rand-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
         end do ! alle Ränder
 
-     ! Querschnitts-Flüsse ausgeben
- 123 print*,'Z.Z. keine Ausgabe von Querschnitts-Flüssen'
-     goto 124
-        do j=1,number_plankt_vari ! Kontrollausgabe
-            if(output_plankt(j))then
-               print*,"querschnitt_flux für plankt.Var. ",trim(planktonic_variable_name(j))
-            end if
-        end do
+     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Querschnitts-Flüsse ausgeben
+ 123  continue
+      if(querschneiden)then
         do n=1,anzahl_quer !! alle n Querschnitte
            write(nummer,*)n
            write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/q',trim(adjustl(nummer)),'.txt'
            if(errcode .ne. 0)call qerror('ganglinien_schliessen writing filename ganglinien/q*.txt failed')
            open ( unit = 9876+n , file = dateiname, status ='new', action ='write ', iostat = open_error )
-           write(9876+n,*)"## Flüsse nach Backbord",  &
-     &                    " (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71)",  &
-     &                    " für den ",n,"-ten Querschnitts, ##" ! Kopfzeile schreiben
+		   write(beschriftung,'(A)')"#        Zeitpunkt | Durchfluss |"
+ 		   do i=1,number_plankt_vari
+              if(output_plankt(i))then ! planktic output conc.
+                 beschriftung=trim(beschriftung)//planktonic_variable_name(i)//" | "
+              end if
+ 		   end do
+           write(9876+n,*)trim(adjustl(beschriftung))! Kopfzeile schreiben
            do j=1,zeitschrittanzahl+1
-              zeitpunkt=r_gang(1,j)
-              call zeitsekunde()
-              write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-     &                             jahr  ,monat ,tag   ,stunde,minute,sekunde
-              do i=1, 6
-                 write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), schnittflux_gang(n,j,i)   ! r_gang(i,j)
-              end do ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
+              write(r_zeile,*)q_gangl(j),(schnittflux_gang(n,j,i),i=1,n_pl+2)
               write(9876+n,'(A)')trim(adjustl(r_zeile))
            end do ! alle j Zeitschritte
            rewind(9876+n) ! 
            close(9876+n) ! 
            print*,'Ausgabe Querschnitts-Fluss ', trim(dateiname), ' meinrang=',meinrang," n_pl=",n_pl
         end do ! alle n Querschnitte
+      endif ! querschneiden
  124  continue
 
 end if ! only prozessor 0

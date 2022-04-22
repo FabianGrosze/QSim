@@ -67,12 +67,15 @@
          count3 = (/ kantenanzahl, 1, 1 /)
          !float Mesh2_edge_Durchflussflaeche_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
+         !call check_err( nf_inq_varid(ncid,'Mesh2_edge_mit_hor_durchstroemte_Kantenflaeche_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
          !float Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
+         !call check_err( nf_inq_varid(ncid,'Mesh2_edge_hor_Wassertransport_Kantenflaeche_2d', varid) )
+         !call check_err( nf90_get_var(ncid, varid, ed_flux, start3, count3 ) )
          !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
          do n=1,kantenanzahl
             !Mesh2_edge_Durchflussflaeche_2d:_FillValue = 1.e+31f ; 
@@ -127,22 +130,22 @@
       use modell                                                   
       implicit none
       include 'netcdf.inc'
-      integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status, iq, jq
-      real :: laeng, cu_max, cu_min, dt_sub, sumwicht, cu_mean_CuGT1, volFrac_CuGT1
+      integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status, iq, jq, no, nedel
+      real :: laeng, cu_max, cu_min, dt_sub, sumwicht, cu_mean_CuGT1, volFrac_CuGT1, fluxi, flow
       real , allocatable , dimension (:,:) :: zwischen
       !integer , parameter :: num_sub=12
       integer , parameter :: num_sub=6
+      logical found
 
       if(meinrang.ne.0)call qerror('stofftransport_untrim darf nur von prozessor 0 aufgerufen werden')
 
       allocate (zwischen(number_plankt_vari, number_plankt_point), stat = alloc_status )
       if(alloc_status.ne.0) call qerror('allocate (zwischen(number_plankt_vari failed')
 
-      print*,'stofftransport_untrim: startzeitpunkt, zeitpunkt, deltat, endzeitpunkt' &
-     &        ,startzeitpunkt, zeitpunkt, deltat, endzeitpunkt
+      print*,'stofftransport_untrim: izeit, startzeitpunkt, zeitpunkt, deltat, endzeitpunkt' &
+     &        ,izeit,startzeitpunkt, zeitpunkt, deltat, endzeitpunkt
       dt_sub=real(deltat)/real(num_sub)
       print*,'stofftransport_untrim:',num_sub,' Sub-zeitschritte von der Länge=',dt_sub
-      querschnitt(:)%vol_flux=0.0
 
       do nt=1,num_sub ! alle Transport (zwischen) Zeitschritte
          if((kontrollknoten.gt.0).and.(kontrollknoten.le.number_plankt_point))then ! Ausgabe
@@ -181,30 +184,64 @@
             wicht((n-1)*5+j)=0.0
          end do !alle 5
       end do ! alle n Elemente
-		 
-      do n=1,kantenanzahl ! edge fluxes  
-            laeng=( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
-            ed_flux(n)=0.0
-            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! volume-flux to the left
-            if(laeng.gt.0.0) &
-     &         ed_flux(n)=(ed_vel_x(n)*edge_normal_x(n)+ed_vel_y(n)*edge_normal_y(n))/laeng
-            ed_flux(n)=ed_flux(n)*ed_area(n)
-            !summing outflow into my own wicht
-            if( (left_element(n).gt. 0).and.(ed_flux(n).lt. 0.0) )  &    !left_element !flux to the right
-     &            wicht((left_element(n)-1)*5+1)=wicht((left_element(n)-1)*5+1)-ed_flux(n)
-            if( (right_element(n).gt. 0).and.(ed_flux(n).gt. 0.0) ) &
-     &         wicht((right_element(n)-1)*5+1)=wicht((right_element(n)-1)*5+1)+ed_flux(n)
-	 
-            do iq=1,anzahl_quer !! all iq cross sections
-               do jq=1,querschnitt(iq)%schnittlinie%anzkanten !! alle j Kanten des jeweiligen Querschnitts 
-                  if(n.eq.querschnitt(iq)%schnittlinie%kante(jq)%num) &
-				     querschnitt(iq)%vol_flux=querschnitt(iq)%vol_flux +ed_flux(n)*dt_sub
-                  if((-1*n).eq.querschnitt(iq)%schnittlinie%kante(jq)%num) &
-				     querschnitt(iq)%vol_flux=querschnitt(iq)%vol_flux -ed_flux(n)*dt_sub
-			   end do ! all jq
-            end do ! all iq cross sections
 
-         end do ! alle n kanten
+      do n=1,kantenanzahl ! edge fluxes  
+         laeng=( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
+         ed_flux(n)=0.0
+         ! volume-flux to the left
+         if(laeng.gt.0.0)then
+            ed_flux(n)=(ed_vel_x(n)*edge_normal_x(n)+ed_vel_y(n)*edge_normal_y(n))/laeng
+            ed_flux(n)=ed_flux(n)*ed_area(n)
+         endif
+         ! --- summing outflow into my own wicht
+         ! left_element !flux to the right
+         if( (left_element(n).gt. 0).and.(ed_flux(n).lt. 0.0) )  &   
+            wicht((left_element(n)-1)*5+1)=wicht((left_element(n)-1)*5+1)-ed_flux(n)
+         if( (right_element(n).gt. 0).and.(ed_flux(n).gt. 0.0) ) &
+            wicht((right_element(n)-1)*5+1)=wicht((right_element(n)-1)*5+1)+ed_flux(n)
+
+         if(querschneiden)then
+         do iq=1,anzahl_quer ! all iq cross sections
+            do jq=1,querschnitt(iq)%schnittlinie%anzkanten !! all jq edges of this cross section 
+               found=.false.
+               if(n     .eq.querschnitt(iq)%schnittlinie%kante(jq)%num) then
+                  fluxi =      ed_flux(n)*dt_sub
+                  nedel=left_element(n)
+                  if(fluxi.le.0.0)nedel=right_element(n)
+                  found=.true.
+               endif
+               if((-1*n).eq.querschnitt(iq)%schnittlinie%kante(jq)%num) then
+                  fluxi = (-1)*ed_flux(n)*dt_sub
+                  nedel=right_element(n)
+                  if(fluxi.le.0.0)nedel=left_element(n)
+                  found=.true.
+               endif
+               if(found)then
+                  flow=0.0
+                  if(ed_area(n) > 0.0)flow=ed_flux(n)/ed_area(n)
+                  !print*,fluxi,'fluxi edge n=',n,' part=',jq,' of section=',iq,  &
+                  !      'l,A,fl,v=',laeng,ed_area(n),flow,((ed_vel_x(n)**2.0)+(ed_vel_y(n)**2.0) )**0.5 ,  &
+                  !      'left,right=',left_element(n),right_element(n)
+                  schnittflux_gang(iq,izeit, 1 )= schnittflux_gang(iq,izeit, 1 )+ fluxi/dt_sub
+                  schnittflux_gang(iq,izeit, 2 )= schnittflux_gang(iq,izeit, 2 )+ fluxi
+                  if((nedel.lt.1) .or. (nedel.gt.n_elemente))then
+                     write(fehler,*)'nedel not in range n,nedel,iq,jq,izeit=',n,nedel,iq,jq,izeit
+                     call qerror(fehler)
+                  endif
+                  no=0
+                  do k=1,number_plankt_vari
+                     if(output_plankt(k))then ! planktic output conc.
+                        no=no+1
+                        schnittflux_gang(iq,izeit, no+2 )= schnittflux_gang(iq,izeit, no+2 )+  &
+                        fluxi * planktonic_variable(k+(nedel-1)*number_plankt_vari)
+                     endif ! planktic output conc.
+                  end do ! all k planktic variables
+               endif ! found
+            end do ! all jq
+         end do ! all iq cross sections
+         endif ! querschneiden
+         
+      end do ! alle n edges
 
          do n=1,n_elemente ! gathering inflows
             do k=1,cornernumber(n) 
@@ -304,6 +341,10 @@
             print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
          end if
          print*,'transport nt=',nt,' start ende= ',startzeitpunkt, endzeitpunkt
+         do iq=1,anzahl_quer !! all iq cross sections
+            print*,nt,"schnittflux: ",zeitpunkt,izeit,iq," flux,volume="  &
+                  ,schnittflux_gang(iq,izeit, 1 ),schnittflux_gang(iq,izeit, 2 )
+         end do
 
       end do ! alle nt Subzeitschritte
 
@@ -314,12 +355,15 @@
       deallocate (zwischen, stat = alloc_status )
       if(alloc_status.ne.0) call qerror('deallocate (zwischen, failed')
 
-         !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
-         !allocate( el_vol(nonu), el_area(nonu), stat = alloc_status )
-		 
+      !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
+      !allocate( el_vol(nonu), el_area(nonu), stat = alloc_status )
+
       do iq=1,anzahl_quer !! all iq cross sections
-	     print*,zeitpunkt,iq," volume=",querschnitt(iq)%vol_flux," flux=",querschnitt(iq)%vol_flux/real(deltat)
-	  end do
+         q_gangl(izeit)=zeitpunkt
+         schnittflux_gang(iq,izeit, 1 )= schnittflux_gang(iq,izeit, 1 )/real(num_sub)
+         schnittflux_gang(iq,izeit, 2 )= schnittflux_gang(iq,izeit, 2 )/real(deltat)
+         print*,"schnittflux: ",zeitpunkt,izeit,iq," flux=",schnittflux_gang(iq,izeit, 2 )
+      end do
 
       RETURN
       END subroutine stofftransport_untrim

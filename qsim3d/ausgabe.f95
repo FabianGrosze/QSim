@@ -325,6 +325,13 @@ endif ! Tageswechsel
       !>integer :: k_ausgabe
       !>integer , allocatable , dimension (:) :: ausgabe_konz
 
+      output_plankt(:)=.false.
+	  output_plankt_vert(:)=.false.
+	  output_benth_distr(:)=.false.
+	  output_trans_val(:)=.false.
+	  output_trans_quant(:)=.false.
+	  output_trans_quant_vert(:)=.false.
+
       write(dateiname,'(2A)')trim(modellverzeichnis),'ausgabekonzentrationen.txt'
       ion=103
       open ( unit =ion , file = dateiname, status ='old', action ='read ', iostat = open_error )
@@ -422,6 +429,29 @@ endif ! Tageswechsel
          output_plankt(74)=.true. ! age_arith
          output_plankt(75)=.true. ! age_growth
       end if ! nuralter
+	  
+	  n_pl=0
+      do j=1,number_plankt_vari
+         if(output_plankt(j))n_pl=n_pl+1
+      end do
+      do j=1,number_plankt_vari_vert
+         if(output_plankt_vert(j))n_pl=n_pl+1
+      end do
+	  n_bn=0
+      do j=1,number_benth_distr
+         if(output_benth_distr(j))n_bn=n_bn+1
+      end do
+	  n_ue=0
+      do j=1,number_trans_val
+         if(output_trans_val(j))n_ue=n_ue+1
+      end do
+      do j=1,number_trans_quant
+         if(output_trans_quant(j))n_ue=n_ue+1
+      end do
+      do j=1,number_trans_quant_vert
+         if(output_trans_quant_vert(j))n_ue=n_ue+1
+      end do
+      print*,'ausgabekonzentrationen n_pl,n_bn,n_ue=',n_pl,n_bn,n_ue
 
 !     writing output variable list moved to SUBROUTINE eingabe()
       !text='ausgabekonzentrationen_beispiel.txt'

@@ -711,15 +711,13 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       integer :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
       real , allocatable , dimension (:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
 
-!-------------------------------------------------------------------------------Querschnitte
-! Beschreibung in schnitt.f95
+!-------------------------------------------------------------------------------Querschnitte - cross-sections
+! description in schnitt.f95 fluxes in array: schnittflux_gang
       logical :: querschneiden
       integer :: anzahl_quer
       type :: qusch
          integer ::  nr_qs
          type (rb_streckenzug) :: schnittlinie
-         real :: vol_flux !! für jeden Zeitschritt wie Ganglinien
-         real , allocatable , dimension (:,:) :: tr_flux !! für jeden Zeitschritt und für jede zu notierende Variable
       end type qusch
       type(qusch) , allocatable , dimension (:) :: querschnitt
 
@@ -753,6 +751,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:,:) :: t_gang, u_gang, tlmax_gang,  tlmin_gang
       real , allocatable , dimension (:,:,:) :: pl_gang, ue_gang, bn_gang
       real , allocatable , dimension (:,:,:) :: randflux_gang, schnittflux_gang
+	  integer , allocatable , dimension (:) :: q_gangl
       integer :: n_pl, n_ue, n_bn
       integer, parameter :: gangl_level=1
 
