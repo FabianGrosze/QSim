@@ -707,7 +707,7 @@
       read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
      &                                   ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
       print*,'Zeile 5 von EREIGG.txt:'
-	  print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
+      print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
       print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
       if(read_error.ne.0) then
          print*,'EREIGG.txt Zeilentext: ',trim(ctext)

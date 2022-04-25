@@ -163,14 +163,16 @@
          diffprev=transinfo_zeit(transinfo_zuord(transinfo_anzahl))-transinfo_zeit(transinfo_zuord(1))
          do n=1,transinfo_anzahl
             diff= abs(subtim-transinfo_zeit(transinfo_zuord(n)) )
-            if( (diff.gt.diffprev).and.(nti.lt. 1) ) nti=n-1
+            if(diff <= diffprev)then
+               nti=n
+            endif
             diffprev=diff
          end do ! alle n Zeitschritte
-         if(nti.lt. 1) then
+         print*,'stofftransport_untrim: substep-time,nti,diff=',subtim,nti,diff
+         if(nti <= 0) then
             call qerror('stofftransport_untrim: kein untrim Zeitpunkt identifiziert')
          else
-            print*,'stofftransport_untrim: substep-time=',subtim   &
-     &            ,' transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
+            print*,'transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
          end if
 
          call holen_trans_untrim(nti)
@@ -841,8 +843,8 @@ if(meinrang.eq.0)then ! prozess 0 only
       call check_err( nf90_get_var(ncid, didi, zeitstunde) )
       print*,'netcdf nMesh2_data_time ',transinfo_anzahl,' timesteps starting: ',zeitstunde(1),' until: ' &
      &      ,zeitstunde(transinfo_anzahl),' h'
-	  !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
-	  delt=(zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
+      !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
+      delt=(zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
       !print*,'nc_sichten: delt=',delt,(delt*3600.0),int(delt*3600.0)
       do n=1,transinfo_anzahl ! timestep exactly equal
          transinfo_zeit(n)= (n-1)*int(delt*3600.0) + int(zeitstunde(1)*3600.0)
