@@ -152,21 +152,23 @@
          end if !kontrollknoten
 
          subtim=startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
-
+         
          if(subtim.lt.transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
          if(subtim.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
          nti=0
          diffprev=transinfo_zeit(transinfo_zuord(transinfo_anzahl))-transinfo_zeit(transinfo_zuord(1))
          do n=1,transinfo_anzahl
             diff= abs(subtim-transinfo_zeit(transinfo_zuord(n)) )
-            if( (diff.gt.diffprev).and.(nti.lt. 1) ) nti=n-1
+            if(diff <= diffprev)then
+               nti=n
+            endif
             diffprev=diff
          end do ! alle n Zeitschritte
-         if(nti.lt. 1) then
+         print*,'stofftransport_untrim: substep-time,nti,diff=',subtim,nti,diff
+         if(nti <= 0) then
             call qerror('stofftransport_untrim: kein untrim Zeitpunkt identifiziert')
          else
-            print*,'stofftransport_untrim: substep-time=',subtim   &
-     &            ,' transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
+            print*,'transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
          end if
 
          call holen_trans_untrim(nti)
