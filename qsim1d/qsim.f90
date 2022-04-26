@@ -995,7 +995,7 @@
          read(92,'(a255)')cEreig 
          read(92,9200)itags,monats,jahrs,uhrs 
          read(92,9210)itage,monate,jahre,uhren,izdt 
-         read(92,9220,iostat=read_error)imitt,ipH,idl,itemp,itracer,ieros        &
+         read(92,*,iostat=read_error)imitt,ipH,idl,itemp,itracer,ieros        &
          ,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer               &
          ,iphy,iformVert,iform_VerdR
          print*,'imitt,ipH,idl,itemp,itracer,ieros',imitt,ipH,idl,itemp,itracer,ieros
