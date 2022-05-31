@@ -316,18 +316,18 @@
 		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
 					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
             call stofftransport_casu()
-			if(kontrollknoten.ge.1)print*,'0 nach stofftransport_casu: ph,lf=',  &
-		            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
-					planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
+         if(kontrollknoten.ge.1)print*,'0 nach stofftransport_casu: ph,lf=',  &
+            planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
+            planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(2) ! Untrim² netCDF
          call gather_planktkon()
          if(meinrang.eq.0)then !! nur prozessor 0
             call stofftransport_untrim()
-			if(kontrollknoten.ge.1)print*,'nach stofftransport_untrim: lf,ph=',  &
-		            planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
-					planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
+            if(kontrollknoten.ge.1)print*,'nach stofftransport_untrim: lf,ph=',  &
+               planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
+               planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
@@ -335,16 +335,16 @@
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
       end select
-	  
+
       call mpi_barrier (mpi_komm_welt, ierr)
       call hplus2ph()
       call mpi_barrier (mpi_komm_welt, ierr)
-	  call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
-	  
+      call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
+
       do i=1,part ! all i elements/nodes on this process
-	     iglob=(i+meinrang*part)
-		 if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph=",  &
-         planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+         iglob=(i+meinrang*part)
+         if(kontrollknoten.eq.iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph=",  &
+            planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
       end do
 
       call mpi_barrier (mpi_komm_welt, ierr)

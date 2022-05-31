@@ -614,7 +614,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !>    uedau überstaudauer-flag
       logical , parameter :: uedau_flag=.false.
 
-      integer, parameter :: anzrawe=51  ! 28
+      integer, parameter :: anzrawe=51  ! 28 ! max number of Boundary Concentrations
+      integer :: n_active_concentrations ! used number of Boundary Concentrations
       integer :: ianz_rb, max_rand_nr
       type :: rb_zeile
          integer :: itag,imonat,ijahrl

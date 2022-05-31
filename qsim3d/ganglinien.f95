@@ -459,9 +459,11 @@ if(meinrang.eq.0)then ! prozess 0 only
             do j=1,zeitschrittanzahl
                zeitpunkt=q_gangl(j)
                call zeitsekunde()
-               write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
+               write(r_zeile,'(I4.4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
                             jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
-               write(r_zeile,*)trim(r_zeile),(schnittflux_gang(n,j,i),i=1,n_pl+2)
+               do i=1,n_pl+2
+                  write(r_zeile,'(A,6X,E16.10)')trim(r_zeile),schnittflux_gang(n,j,i)
+               end do ! all i fluxes
                write(9876+n,'(A)')trim(r_zeile)
             end do ! all j timesteps 
             rewind(9876+n) ! 

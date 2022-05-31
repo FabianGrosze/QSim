@@ -211,9 +211,11 @@
       subroutine planktkon_parallel()
          use modell
          implicit none
-         integer as,j,k,i
+         integer as,j,k,i,iloka
 
          !print*,meinrang, ' planktkon_parallel starting'
+         if((meinrang.eq.0).and.(kontrollknoten.gt.0))print*,'0 planktkon_parallel starting GlMn=(',kontrollknoten,')='   &
+            ,planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
 
          ! depth averaged
          allocate (planktonic_variable_p(number_plankt_vari*part), stat = as )
@@ -221,12 +223,12 @@
             write(fehler,*)' return value allocate planktonic_variable_p :', as
             call qerror(fehler)
          end if 
-         !do k=1,part ! i
-         !   do j=1,number_plankt_vari ! initialise all concentrations to -1
-         !      planktonic_variable_p(j+(k-1)*number_plankt_vari)=-1.0
-         !   end do
-         !end do
-		 planktonic_variable_p(:)=-2.0
+         do k=1,part ! i
+            do j=1,number_plankt_vari ! initialise all concentrations to -1
+               planktonic_variable_p(j+(k-1)*number_plankt_vari)=-2.0
+            end do
+         end do
+         !planktonic_variable_p(:)=-2.0
 
          ! vertical profiles i.e. full 3D
          allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
@@ -244,8 +246,16 @@
 
          !call mpi_barrier (mpi_komm_welt, ierr)
          call scatter_planktkon()
-         !call mpi_barrier (mpi_komm_welt, ierr)
-         !print*,meinrang, ' planktkon_parallel finish'
+         call mpi_barrier (mpi_komm_welt, ierr)
+         
+         if(kontrollknoten.gt.0)then
+            iloka=kontrollknoten-(meinrang*part)
+            if((iloka > 0) .and. (iloka<=part))print*,meinrang,part,iloka,kontrollknoten,number_plankt_vari,  &
+               'planktkon_parallel finish GlMn_p=',planktonic_variable_p(99+(iloka-1)*number_plankt_vari)
+            if(meinrang.eq.0)print*,'0 planktkon_parallel finish GlMn=(',kontrollknoten,')='   &
+               ,planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
+         endif ! kontrollknoten
+
          return
       END subroutine planktkon_parallel
 !----+-----+----

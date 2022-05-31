@@ -8023,14 +8023,14 @@
 
       !call erosion(anze,ss,ssalg,tflie,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb                              &
       !            ,tiefe,rau,vmitt,mstr,ilang,iwied,ianze_max,SSeros,kontroll,1)                          
-	  kontroll=.true.
-	  jjj=6
+	  !kontroll=.true.
+	  jjj=0
       !print*,'going to start erosion tausc(mstr,jjj)=',tausc(mstr,jjj),mstr,jjj
 
      call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh                              &
                          ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied,kontroll ,jjj)                          
       !print*,'done erosion ss, ssalg=',ss(jjj), ssalg(jjj)
-	  kontroll=.false.
+	  !kontroll=.false.
 
        if(nbuhn(mstr).eq.0)goto 1519
 

@@ -312,7 +312,7 @@
                   if (isNaN(zwischen(n,j))) then
                      print*,'stofftransport_untrim isNaN(zwischen) , plankt_point=',j,' plankt_vari=',n
                      print*,'planktonic_variable_name',n, planktonic_variable_name(n)
-                     print*,'wicht !! self =',wicht((j-1)*5+1)
+                     print*,'self !! wicht,plankt =',wicht((j-1)*5+1),planktonic_variable(n+(j-1)*number_plankt_vari)
                      print*,'intereck((j-1)*4+k)=',( intereck((j-1)*4+k),k=1,4 )
                      print*,'wicht !! neighbours = ',(wicht((j-1)*5+1+k),k=1,4)
                      do k=1,4 ! all 4 neighbour (elements) if existing

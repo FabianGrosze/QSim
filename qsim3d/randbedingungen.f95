@@ -413,6 +413,10 @@ end if !! nur prozessor 0
                   planktonic_variable(96+nk)= rabe(zaehl)%wert_jetzt(44) ! Quecksilber gesamt
                   planktonic_variable(97+nk)= rabe(zaehl)%wert_jetzt(45) ! Quecksilber gelöst
                   planktonic_variable(98+nk)= rabe(zaehl)%wert_jetzt(40) ! Mangan gesamt
+                  if(isNaN(rabe(zaehl)%wert_jetzt(41)))then
+                     print*,'randwert_planctonic isNaN 41 jjj,zaehl=',jjj,zaehl
+                     call qerror("isNaN(rabe(zaehl)%wert_jetzt(41))Mangan gelöst")
+                  endif
                   planktonic_variable(99+nk)= rabe(zaehl)%wert_jetzt(41) ! Mangan gelöst
 
                   planktonic_variable(100+nk)= rabe(zaehl)%wert_jetzt(46) ! Uran gesamt
@@ -801,15 +805,13 @@ end if !! nur prozessor 0
       use modell
       implicit none
       integer n,j,k
-      integer t, zeit_vor, zeit_nach, n_active_concentrations
+      integer t, zeit_vor, zeit_nach
       real ::a, wert_vor, wert_nach, wert
       logical :: randwert_gueltig, vor_da, nach_da
 
-      n_active_concentrations=anzrawe
-      if(ischwer==0 .and. ikonss==0)n_active_concentrations=28
-
       do n=1,ianz_rb !! alle Randbedingungen
-         do k=1,n_active_concentrations !alle Rand-Variablen
+         rabe(n)%wert_jetzt(:)= 0.0 ! initialize unused boundary concentrations
+         do k=1,n_active_concentrations !all active boundary concentrations
             vor_da=.false.
             nach_da=.false.
             do j=1,rabe(n)%anz_rb ! alle Zeitpunkte dieser RB
@@ -893,8 +895,8 @@ end if !! nur prozessor 0
       real :: wert
       randwert_gueltig=.false.
 
-      if((n.gt.anzrawe).or.(n.le. 0))then
-         write(fehler,*)'234 keine gültige Randwertnummer #### Abbruch ####'
+      if((n.gt.n_active_concentrations).or.(n.le. 0))then
+         write(fehler,*)n,' keine gültige Randwertnummer #### Abbruch ####'
          call qerror(fehler)
       end if
 
@@ -938,6 +940,9 @@ end if !! nur prozessor 0
       type(rb_zeile) , allocatable , dimension (:) :: lesezeil
 
       print*,'ereigg_Randbedingungen_lesen() startet:'
+      
+      n_active_concentrations=anzrawe
+      if(ischwer==0 .and. ikonss==0)n_active_concentrations=28
 
       write(dateiname,'(2A)')trim(modellverzeichnis),'EREIGG.txt'
       ion=92
@@ -1025,25 +1030,32 @@ end if !! nur prozessor 0
          do ini=1,anzi
             lesezeil(ini)%itag=0
          end do
+         
          i=0
          do m=1,anzi !alle Zeitpunkte dieser Randlinie
             !! HIER !! wird die Randbedingungszeile in die Struktur rb_zeile gelesen    !! HIER !!                             
             if(.not.zeile(ion)) call qerror('ereigg_Randbedingungen_lesen() alle Zeitpunkte dieser Randlinie lesen schlägt fehl')
-			lesezeil(m)%werts(:)=-1.0
-			if(ischwer==0 .and. ikonss==0)then ! last part of Boundary concentrations irrelevant in simulation without heavy metals
-			   read(ctext, *, iostat = read_error)lesezeil(m)%itag, lesezeil(m)%imonat , lesezeil(m)%ijahrl, lesezeil(m)%uhrl  &
-			   ,lesezeil(m)%werts(1:28)
-			else ! full set of BC's needed:
-               read(ctext, *, iostat = read_error) lesezeil(m)
-			endif
+            lesezeil(m)%werts(:)=-1.0
+            read(ctext, *, iostat = read_error)lesezeil(m)%itag, lesezeil(m)%imonat , lesezeil(m)%ijahrl, lesezeil(m)%uhrl  &
+               ,lesezeil(m)%werts(1:n_active_concentrations)
             if(read_error.ne.0)then
-			  print*,read_error,'=read_error anzrawe=',anzrawe, ischwer,'=ischwer ikonss',ikonss
-              print*,m,anzi,n,'=m-th line of anzi in n-th RB , ctext:'
-              print*,trim(ctext)
-              print*,'lesezeil(m):'
-              print*,lesezeil(m)
-              call qerror("read_error EREIGG.txt ... Zeitpunkt Datenzeile lesen")
+               print*,read_error,'=read_error n_active_concentrations,anzrawe='
+               print*,n_active_concentrations,anzrawe, ischwer,'=ischwer ikonss',ikonss
+               print*,m,anzi,n,'=m-th line of anzi in n-th RB , ctext:'
+               print*,trim(ctext)
+               print*,'lesezeil(m):'
+               print*,lesezeil(m)
+               call qerror("read_error EREIGG.txt ... Zeitpunkt Datenzeile lesen")
             endif
+            do j=1,anzrawe
+               if(isNaN(lesezeil(m)%werts(j)))then
+                  print*,m,j,"isNaN(lesezeil(m)%werts(j))"
+                  print*,trim(ctext)
+                  print*,'lesezeil(m):'
+                  print*,lesezeil(m)
+                  call qerror("isNaN(lesezeil(m)%werts(j)")
+               endif !isnan
+            end do !anzrawe
             if(randwert_gueltig(lesezeil(m)%werts(22),22)) then
                i=i+1
             end if ! temperatur positif
