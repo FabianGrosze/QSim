@@ -34,13 +34,13 @@
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d14.14.01
+PV= qsim1d14.10.03
 
 #====================================================================
 
 #compiler:
-# FC              = gfortran
-FC              = mpif90
+FC              = gfortran
+# FC              = mpif90
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
 
@@ -97,6 +97,7 @@ van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_ein
 qsim1d:	$(Q1)
 	$(FC) $(Q1) $(QSIM_LIB) -o $(PV)
 	cp -pf ./$(PV) $(MY_BIN)/$(PV)
+	cp -pf ./$(PV) /srv/cifs-mounts/u2/Projekte/QSim/Teststrategie/JensWyrwa/ErprobungSchwermetall14.14/ElbeGerd/GerdMai22/EQ164q1linux/qsim1d
 
 clean:
 	@echo "cleaning ..."

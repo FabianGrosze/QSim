@@ -20,45 +20,46 @@
 !---------------------------------------------------------------------------------------
 
       subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tempw,vo2,vnh4,vno3,vno2,vx0       &
-                ,vx02,Si,mstr,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr  &      
+                ,vx02,Si,mstr,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr  &
                 ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN     &
                 ,gesP,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,stind,mw,pw,ca,lf,coli,DOSCF                         &
-                ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2             &                                          
+                ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2             &
                 ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
                 ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
-                ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,azStrs,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK    &
-                ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1,GRote                                             &
-                ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,mtracer,nkztot_max,ischwer)                                                                                                      
-                                                                       
-                                                                         
-                                                                       
+                ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK    &
+                ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                             &
+                ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
+                ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
                                                                        
 !     AUTOR:VOLKER KIRCHESCH                                            
                                                                        
-!     STAND: 08.01.2014                                                  
+!     STAND: 25.07.2019                                                  
                                                                        
+      use allodim                                                   
                                                                        
-      integer                                 :: anze, azStrs
+      integer                                 :: anze
       integer, Dimension(azStrs)              :: iflRi, imac, isub_dt, isub_dt_Mac 
-      integer, Dimension(1000)                :: iore, flag, nkzs
+      integer, Dimension(ialloc2)                :: iore, flag, nkzs
 
       real                                    :: mue, lgh
-      real, Dimension(1000)                   :: x, elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
-      real, Dimension(1000)                   :: gelP, dl, obsb, ocsb, vbsb, vcsb, CHNF, BVHNF, CM, BAC, zooind, chla
-      real, Dimension(1000)                   :: aki, agr, abl, SKmor, chlaki, chlagr, chlabl, vkigr, antbl, abrzo1 
-      real, Dimension(1000)                   :: ssalg, ss, svhemk, svhemg, svhemb, akbcm, agbcm, stind, abbcm, fbsgr
-      real, Dimension(1000)                   :: fssgr, gesN, gesP, frfgr, nl0, pl0, Q_NK, Q_PK, Q_SK, Q_NG, Q_PG
-      real, Dimension(1000)                   :: Q_NB, Q_PB, mw, pw, ca,lf, coli, DOSCF, dlarvn, vph, vh   
-      real, Dimension(2,1000)                 :: CD, CP
+      real, Dimension(ialloc2)                   :: x, elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
+      real, Dimension(ialloc2)                   :: gelP, dl, obsb, ocsb, vbsb, vcsb, CHNF, BVHNF, CM, BAC, zooind, chla
+      real, Dimension(ialloc2)                   :: aki, agr, abl, SKmor, chlaki, chlagr, chlabl, vkigr, antbl, abrzo1 
+      real, Dimension(ialloc2)                   :: ssalg, ss, svhemk, svhemg, svhemb, akbcm, agbcm, stind, abbcm, fbsgr
+      real, Dimension(ialloc2)                   :: fssgr, gesN, gesP, frfgr, nl0, pl0, Q_NK, Q_PK, Q_SK, Q_NG, Q_PG
+      real, Dimension(ialloc2)                   :: Q_NB, Q_PB, mw, pw, ca,lf, coli, DOSCF, dlarvn, vph, vh   
+      real, Dimension(2,ialloc2)                 :: CD, CP
 
-      real, Dimension(50,1000)                :: Uvert
-      real, Dimension(azStrs,1000)            :: hvmitt, hDOSCF, htempw, hgesN, hgesP, hbsb, hcsb, hCHNF, hBVHNF, hBAC
-      real, Dimension(azStrs,1000)            :: hCM, hnh4, ho2, hno3, hno2, hx0, hx02, hsi, hchla, haki, hagr, habl
-      real, Dimension(azStrs,1000)            :: hchlak, hchlag, hchlab, hvkigr, hantbl, hssalg, hss, hzooi, hgelp 
-      real, Dimension(azStrs,1000)            :: hmw, hpw, hca, hlf, hph, hdlarn, hcoli, hvbsb, hvcsb, hSKmor,hFluN3
-      real, Dimension(azStrs,1000)            :: TGZoo, akmor_1, agmor_1, abmor_1 
-      real, Dimension(azStrs,1000)            :: hgsZn, hglZn, hgsCad, hglCad, hgsCu, hglCu, hgsNi, hglNi
-      real, Dimension(azStrs,2,1000)          :: hCD, hCP   
+      real, Dimension(50,ialloc2)                :: Uvert
+      real, Dimension(azStrs,ialloc2)            :: hvmitt, hDOSCF, htempw, hgesN, hgesP, hbsb, hcsb, hCHNF, hBVHNF, hBAC
+      real, Dimension(azStrs,ialloc2)            :: hCM, hnh4, ho2, hno3, hno2, hx0, hx02, hsi, hchla, haki, hagr, habl
+      real, Dimension(azStrs,ialloc2)            :: hchlak, hchlag, hchlab, hvkigr, hantbl, hssalg, hss, hzooi, hgelp 
+      real, Dimension(azStrs,ialloc2)            :: hmw, hpw, hca, hlf, hph, hdlarn, hcoli, hvbsb, hvcsb, hSKmor,hFluN3
+      real, Dimension(azStrs,ialloc2)            :: TGZoo, akmor_1, agmor_1, abmor_1 
+      real, Dimension(azStrs,ialloc2)            :: hgsZn, hglZn, hgsCad, hglCad, hgsCu, hglCu, hgsNi, hglNi
+      real, Dimension(azStrs,ialloc2)            :: hgsAs, hglAs, hgsPb, hglPb, hgsCr, hglCr, hgsFe, hglFe
+      real, Dimension(azStrs,ialloc2)            :: hgsHg, hglHg, hgsMn, hglMn, hgsU, hglU
+      real, Dimension(azStrs,2,ialloc2)          :: hCD, hCP   
  
                                                                        
 !                                                                       
@@ -70,8 +71,8 @@
       isub_dtx = isub_dt(mstr)
       if(imac(mstr)==1)isub_dtx = isub_dt_Mac(mstr)  
 
-      kktrans = 77 !! nötig??? kktrans = 69
-      if(ischwer==1)kktrans = 77
+      kktrans = 69
+      if(ischwer==1)kktrans = 91
 
       do 1811 itime = 1,izeits 
       ktrans = 1 
@@ -91,9 +92,7 @@
 !      if(iflRi(mstr).eq.0)goto 911
 
      if(U(1)<0.0.and.ktrans/=1.and.ktrans/=57)goto 911
-
-       !print*,"Transport: ktrans,anze,ianze_max,azStrs,kktrans,iverfahren=",ktrans,anze,ianze_max,azStrs,kktrans,iverfahren
-
+ 
       call AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                           &
                   ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                            &
                   ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,azStrs,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)                               
@@ -105,7 +104,8 @@
            ,690,692,694,696,698,500,502,504,506,508                          &
            ,510,512,514,516,518,520,522,524,526,528                          &
            ,530,532,534,536,537,539,540,560,565,570                          &
-           ,542,544,546,548,550,552,554,556)ktrans                                       
+           ,542,544,546,548,550,552,554,556,558,580,582,584                  &
+           ,586,588,590,592,594,596,598,400,402,404)ktrans                                       
                                                                        
   600 do ior = 1,anze+1 
         tempw(ior) = U(ior) 
@@ -598,7 +598,91 @@
   556 do ior = 1, anze+1
         hglNi(mstr,ior) = U(ior)
       enddo
+      ktrans = ktrans+1
+      goto 858 
 
+  558 do ior = 1, anze+1
+        hgsAs(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 880 
+
+  580 do ior = 1, anze+1
+        hglAs(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 882 
+
+  582 do ior = 1, anze+1
+        hgsPb(mstr,ior) = U(ior)
+      enddo
+	  !print*,'transport: hgsPb(1,1)=',hgsPb(1,1)
+      ktrans = ktrans+1
+      goto 884 
+
+  584 do ior = 1, anze+1
+        hglPb(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 886 
+
+  586 do ior = 1, anze+1
+        hgsCr(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 890 
+
+  588 do ior = 1, anze+1
+        hglCr(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 892 
+
+  590 do ior = 1, anze+1
+        hgsFe(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 894 
+
+  592 do ior = 1, anze+1
+        hglFe(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 896 
+
+  594 do ior = 1, anze+1
+        hgsHg(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 898 
+
+  596 do ior = 1, anze+1
+        hglHg(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 900 
+
+  598 do ior = 1, anze+1
+        hgsMn(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 902 
+
+  400 do ior = 1, anze+1
+        hglMn(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 904 
+
+  402 do ior = 1, anze+1
+        hgsU(mstr,ior) = U(ior)
+      enddo
+      ktrans = ktrans+1
+      goto 906 
+
+  404 do ior = 1, anze+1
+        hglU(mstr,ior) = U(ior)
+      enddo
       goto 1811 
                                                                        
                                                                        
@@ -1719,7 +1803,7 @@
 
 !.....Trockengewicht Zooplankter                                                   
   840 j = 1 
-      temp0 = GRote 
+      temp0 = TGZoo(mstr,1) 
       tempn = TGZoo(mstr,anze+1) 
                                                                        
       do ior = 1,anze+1 
@@ -1777,7 +1861,7 @@
         U(ior) = hglZn(mstr,ior)
         if(U(1)<0.0)then
           ktrans = ktrans+1
-          goto 1811
+          goto 846
         endif 
       enddo 
       goto 888 
@@ -1853,6 +1937,188 @@
  
       do ior = 1,anze+1 
         U(ior) = hglNi(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 858  
+        endif 
+      enddo 
+      goto 888 
+
+   858 j = 1
+       temp0 = hgsAs(mstr,1) 
+       tempn = hgsAs(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsAs(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 880
+        endif 
+      enddo 
+      goto 888 
+
+   880 j = 1
+       temp0 = hglAs(mstr,1) 
+       tempn = hglAs(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglAs(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 882
+        endif 
+      enddo 
+      goto 888 
+
+   882 j = 1 
+       temp0 = hgsPb(mstr,1) 
+       tempn = hgsPb(mstr,anze+1)
+
+      do ior = 1,anze+1 
+        U(ior) = hgsPb(mstr,ior)
+        if(U(1)<0.0)then
+        ktrans = ktrans+1
+        goto 884
+        endif 
+      enddo 
+      goto 888 
+
+   884 j = 1
+       temp0 = hglPb(mstr,1) 
+       tempn = hglPb(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglPb(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 886
+        endif 
+      enddo 
+      goto 888 
+
+   886 j = 1
+       temp0 = hgsCr(mstr,1) 
+       tempn = hgsCr(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsCr(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 890
+        endif 
+      enddo 
+      goto 888 
+
+   890 j = 1
+       temp0 = hglCr(mstr,1) 
+       tempn = hglCr(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglCr(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 892
+        endif 
+      enddo 
+      goto 888 
+
+   892 j = 1
+       temp0 = hgsFe(mstr,1) 
+       tempn = hgsFe(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsFe(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 894
+        endif 
+      enddo 
+      goto 888 
+
+   894 j = 1
+       temp0 = hglFe(mstr,1) 
+       tempn = hglFe(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglFe(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 896
+        endif 
+      enddo 
+      goto 888 
+
+   896 j = 1
+       temp0 = hgsHg(mstr,1) 
+       tempn = hgsHg(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsHg(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 898
+        endif 
+      enddo 
+      goto 888 
+
+   898 j = 1
+       temp0 = hglHg(mstr,1) 
+       tempn = hglHg(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglHg(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 900
+        endif 
+      enddo 
+      goto 888 
+
+   900 j = 1
+       temp0 = hgsMn(mstr,1) 
+       tempn = hgsMn(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsMn(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 902
+        endif 
+      enddo 
+      goto 888 
+
+   902 j = 1
+       temp0 = hglMn(mstr,1) 
+       tempn = hglMn(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglMn(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 904
+        endif 
+      enddo 
+      goto 888 
+
+   904 j = 1
+       temp0 = hgsU(mstr,1) 
+       tempn = hgsU(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hgsU(mstr,ior)
+        if(U(1)<0.0)then
+          ktrans = ktrans+1
+          goto 906
+        endif 
+      enddo 
+      goto 888 
+
+   906 j = 1
+       temp0 = hglU(mstr,1) 
+       tempn = hglU(mstr,anze+1)
+ 
+      do ior = 1,anze+1 
+        U(ior) = hglU(mstr,ior)
         if(U(1)<0.0)then
           ktrans = ktrans+1
           goto 1811
