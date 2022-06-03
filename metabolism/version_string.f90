@@ -24,7 +24,7 @@
 	  implicit none
  	  character (len = 8)                     :: versionstext
 	  
-	  versionstext = '14.07.02'
+	  versionstext = '14.08.00'
 	  
 	  return
       END subroutine version_string
