@@ -44,12 +44,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "BfG"
             VALUE "FileDescription", "Gewaesserguete Simulation"
-            VALUE "FileVersion", "14.7.2.0"
+            VALUE "FileVersion", "14.8.0.0"
             VALUE "InternalName", "version.rc"
             VALUE "LegalCopyright", "Copyright (C) Bundesanstalt fuer Gewaesserkunde 2022"
             VALUE "OriginalFilename", "version.rc"
             VALUE "ProductName", "QSim1D"
-            VALUE "ProductVersion", "14.7.2.0"
+            VALUE "ProductVersion", "14.8.0.0"
         END
     END
     BLOCK "VarFileInfo"
