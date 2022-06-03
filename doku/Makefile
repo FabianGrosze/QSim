@@ -12,7 +12,7 @@ CONFIG_OFF=./confi_offline
 # ADDITIONAL=/srv/cifs-mounts/u2/U/U2/QSim/Dokumentation_u_Handbuecher/QSim-3D
 # ADDITIONAL=/srv/cifs-mounts/u2/U/U2/QSim/Dokumentation_und_Handbuecher/QSim/QSim-Dokuportal/Dokuportal_ergaenzendes_Material
 ADDITIONAL=/srv/cifs-mounts/u2/Projekte/QSim/Dokumentation_und_Handbuecher/QSim/QSim-Dokuportal/Dokuportal_ergaenzendes_Material
-INSTALL=/home/Wyrwa/public_html/dokuport07
+INSTALL=/home/Frassl/public_html/dokuport_neu
 
 #------------------------------------------------------------- -------
 

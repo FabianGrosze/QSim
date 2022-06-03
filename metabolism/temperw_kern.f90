@@ -65,12 +65,12 @@
 !    xtypw      :   Wolkentyp (0-6)
 !    xschwi     :   Globalstrahlung am Querprofil [cal/(cm2*h)]
 !    xextk      :   Lichtextinktion [1/m]
-!    xhWS       :   Wasserspiegellage am Querprofil, Höhe ü NN [m]
+!    xhWS       :   Wasserspiegellage am Querprofil, Höhe ü. NN [m]
 !    xtempl     :   Lufttemperatur im Zeitschritt [°C]
 !    xro        :   relative Luftfeuchte im Zeitschritt [%]
 !    xwge       :   die in der Höhe zWmess gemessene Windgeschwindigkeit [m/s]
 !    xcloud     :   Bedeckungsgrad in achtel
-!    xWlage     :   Lage der Wetterstation, Höhe ü NN [m]
+!    xWlage     :   Lage der Wetterstation, Höhe ü. NN [m]
 !    xdtemp_mit :   mittlere Temperaturänderung in der Wassersäule [°C]  
 !    xtempwz    :   Temperatur in der Tiefenschicht nkz am Querprofil [°C] 
 !    xtempw     :   Mittelwert der Wassertemperatur im Querprofil [°C]
@@ -190,7 +190,7 @@ if(kontroll)print*,"Beginn temperw_kern jjj=",jjj," xtempw,xTsed,xtempl=",xtempw
 
 ! ##### Windkorrektur ######
 
-!.... zWmess Höhe der Windmessung, Lage der Wetterstation
+!.... zWmess Höhe der Windmessung, wLage = Lage der Wetterstation
 !.... zW2 Wind in 2 m Höhe über der Wasseroberfläche
  
       zW2 = 2.

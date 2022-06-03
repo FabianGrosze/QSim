@@ -10,18 +10,18 @@ Die vereinfachte Wärmehaushaltsgleichung lautet:
 
 \f[ \frac{\partial T_w}{\partial t} = \frac{q_S - q_V - q_K + q_{US} + q_U - q_E }{c_w \cdot h \cdot \rho_w}   \f]
 
-\f$\partial T_w \f$: &ensp; Wassertemperatur [°C] \n
-\f$t \f$: &ensp; Zeit [h] \n
-\f$q_S \f$: &ensp; Wärmestromdichte aus Strahlung [\f$ kJ/(h \cdot m²) \f$]  \n
-\f$q_V \f$: &ensp; Wärmestromdichte aus Verdunstung (latente Wärme) [\f$  kJ/(h \cdot m²) \f$] \n
-\f$q_K \f$: &ensp; Wärmestromdichte aus Konvektion [\f$  kJ/(h \cdot m²) \f$] \n
-\f$q_{US} \f$: &ensp; Wärmestromdichte aus dem Sediment [\f$ kJ/(h \cdot m²) \f$]  \n
-\f$q_U \f$: &ensp; Wärmestromdichte in das Sediment [\f$ kJ/(h \cdot m²) \f$] \n
-\f$q_E \f$: &ensp; Wärmestromdichte aus direkter Einleitung [\f$ kJ/(h \cdot m²) \f$] \n
-\f$c_w \f$: &ensp; spez. Wärmekapazität von Wasser = 4,1868 103 [\f$ kJ/(kg \cdot K) \f$] \n
+\f$\partial T_w \f$:  Wassertemperatur [°C] \n
+\f$t \f$: Zeit [h] \n
+\f$q_S \f$: Wärmestromdichte aus Strahlung [\f$ kJ/(h \cdot m²) \f$]  \n
+\f$q_V \f$: Wärmestromdichte aus Verdunstung (latente Wärme) [\f$  kJ/(h \cdot m²) \f$] \n
+\f$q_K \f$: Wärmestromdichte aus Konvektion [\f$  kJ/(h \cdot m²) \f$] \n
+\f$q_{US} \f$: Wärmestromdichte aus dem Sediment [\f$ kJ/(h \cdot m²) \f$]  \n
+\f$q_U \f$: Wärmestromdichte in das Sediment [\f$ kJ/(h \cdot m²) \f$] \n
+\f$q_E \f$: Wärmestromdichte aus direkter Einleitung [\f$ kJ/(h \cdot m²) \f$] \n
+\f$c_w \f$: spez. Wärmekapazität von Wasser = 4,1868 103 [\f$ kJ/(kg \cdot K) \f$] \n
 <!-- #tbw: c_w laut Lexikon Cheime 4,1851 bei 20 °C -->
-\f$h \f$: &ensp; mittlere Wassertiefe [m] \n
-\f$\rho_w \f$: &ensp; Dichte des Wassers = 1.000 [kg/m3] \n
+\f$h \f$: mittlere Wassertiefe [m] \n
+\f$\rho_w \f$: Dichte des Wassers = 1.000 [kg/m3] \n
 
 Alle weiteren evtl. beeinflussenden Komponenten, wie z.B. die Wärmeeinleitung aus der Schifffahrt 
 oder aus chemischen bzw. biologischen Prozessen, sind quantitativ meist nur von untergeordneter
@@ -59,21 +59,21 @@ lediglich in der Parametrisierung der Gleichung:
 \f[ E = (a + b  \cdot  \nu_{wind} )  \cdot  (p_S - p_D )  \cdot  \frac{p_{L,Ort}}{p_{L,Meer}}  \cdot  1/24000 \f]    
 <!-- #tbw: bei der Formel müssen die Einheiten noch überprüft werden -->
 
-\f$ E \f$: &ensp; Verdunstungsrate [\f$m  \cdot  h^{-1}\f$] \n
+\f$ E \f$: Verdunstungsrate [\f$m  \cdot  h^{-1}\f$] \n
 <!-- schauen, ob E und q_V das gleiche sind oder nicht (wenn ja, dann E durch q_V ersetzen -->
-\f$a \f$:  &ensp; empirische Konstanten (s.u.) [-]
+\f$a \f$:  empirische Konstanten (s.u.) [-]
 <!-- #mf: bzw. stand in Tabelle am Ende der Kurzdoku:
 a [m  \cdot  s-1  \cdot  hPa-1]: Koeffizient für den windunabhängigen Teil der Verdunstung; Wert = 0,13; Ref = WMO 1966 
 b [m  \cdot  s-1  \cdot  hPa-1]: Koeffizient für den überlagernden windbedingten Anteil; Wert = 0,0936; Ref = WMO 1966 -->
 
-\f$ \nu_{wind} \f$: &ensp;	Windgeschwindigkeit in 2 m über der Wasseroberfläche [\f$ m s^{-1} \f$] \n
-\f$p_S \f$: &ensp;	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
-\f$p_D \f$: &ensp;	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen 
+\f$ \nu_{wind} \f$:	Windgeschwindigkeit in 2 m über der Wasseroberfläche [\f$ m s^{-1} \f$] \n
+\f$p_S \f$:	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
+\f$p_D \f$:	Partialdampfdruck bei der Lufttemperatur, gemessen am trockenen 
            Thermometer [mbar] \n
-\f$p_{L,Ort} \f$: &ensp;	Luftdruck bezogen auf Ortshöhe [mbar] \n
+\f$p_{L,Ort} \f$:	Luftdruck bezogen auf Ortshöhe [mbar] \n
 <!-- #tbw: Wird der Luftdruck irgendwo eingegeben und berücksichtigt? Wenn nicht, weglassen. -->
 <!-- #mf: ich meine auch, dass hier ein anderer Faktor berecnet wird (ATkor = exp(-9.81 \cdot hWS(mstr,ior)/(287.*(templ(ior)+273.16)))  im Code) --> 
-\f$p_{L,Meer} \f$: &ensp;	Luftdruck bezogen auf Meereshöhe [mbar] \n
+\f$p_{L,Meer} \f$:	Luftdruck bezogen auf Meereshöhe [mbar] \n
 
 E errechnet sich nach obiger Gleichung in mm/d. Die Umrechnung in m/h erfolgt durch Multiplikation 
 mit 1/24000.
@@ -100,9 +100,9 @@ Nach Hargreaves, Delclaux et al. (2007):
 \f[ E = a3  \cdot  \frac{p_S - p_D}{p_S}  \cdot  (T_{L, Tr} + b3)  \cdot  \frac{abs(R_n)}{\lambda} \f]
 <!-- #mf: T_{L, Tr} in °C: Einheit passt noch nicht -->
 
-\f$ \Delta \f$: &ensp; Steigung der Sättigungsdampfdruck-Kurve [\f$ mbar  \cdot  °C^{-1}\f$] \n
-\f$ \lambda \f$: &ensp; Verdampfungswärme von Wasser [\f$ KJ  \cdot  m^{-3} \f$]	  \n
-\f$ \gamma \f$: &ensp; Psychrometer-Konstante [\f$ mbar  \cdot  °C^{-1}\f$] \n
+\f$ \Delta \f$: Steigung der Sättigungsdampfdruck-Kurve [\f$ mbar  \cdot  °C^{-1}\f$] \n
+\f$ \lambda \f$: Verdampfungswärme von Wasser [\f$ KJ  \cdot  m^{-3} \f$]	  \n
+\f$ \gamma \f$: Psychrometer-Konstante [\f$ mbar  \cdot  °C^{-1}\f$] \n
 * \f$ \gamma =\frac{cp_{air} \cdot p}{C_{v,t} \cdot \nu} \f$
 * \f$ cp_{air}\f$:	spezifische Wärmekapazität von Luft: 1,005 \f$ [KJ \cdot kg^{-1} \cdot K-1] \f$
 * *p*: atmosphärischer Druck \f$ [mbar] \f$ 
@@ -135,9 +135,9 @@ auch auf, sollte abgestimmt werden -->
 \f[ fkWind = \left(\frac{2}{h_{Wetter} - h_{WS}}\right)^{0.11} \f]
 <!-- #mf: Klammersetzung in der Gleichung nochmal gegenchecken -->
 
-\f$fkWind \f$: &ensp; Korrekturfaktor für die Windgeschwindigkeit [-] \n
-\f$h_{Wetter} \f$: &ensp; Höhe der Wetterstation [m ü NN]  \n
-\f$h_{WS} \f$: &ensp; Wasserspiegellage am Querprofil [m ü NN] \n
+\f$fkWind \f$: Korrekturfaktor für die Windgeschwindigkeit [-] \n
+\f$h_{Wetter} \f$: Höhe der Wetterstation [m ü NN]  \n
+\f$h_{WS} \f$: Wasserspiegellage am Querprofil [m ü NN] \n
 
 Der Sättigungsdampfdruck \f$p_S\f$ an der Wasseroberfläche berechnet sich aus der Wassertemperatur
 \f$T_W\f$ [°C] nach der Magnus Formel zu:
@@ -145,10 +145,10 @@ Der Sättigungsdampfdruck \f$p_S\f$ an der Wasseroberfläche berechnet sich aus 
 
 \f[p_S = p_0 \cdot e^\left({\frac{c_2 \cdot T_W}{c_3 + T_W}}\right) \f]
 
-\f$p_S \f$: &ensp;	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
-\f$p_0 \f$: &ensp;	Dampfdruck bei der Wassertemperatur 0; \f$ p(T_W = 0) \f$ = 6,10780 [mbar] \n
-\f$c_2 \f$: &ensp;	spezifische Verdampfungswärme = 17,08085 [-] \n
-\f$c_3 \f$: &ensp;	spezifische Gaskonstante = 234,175 [°C] \n
+\f$p_S \f$:	Sättigungsdampfdruck bei der Wassertemperatur an der Wasseroberfläche [mbar] \n
+\f$p_0 \f$:	Dampfdruck bei der Wassertemperatur 0; \f$ p(T_W = 0) \f$ = 6,10780 [mbar] \n
+\f$c_2 \f$:	spezifische Verdampfungswärme = 17,08085 [-] \n
+\f$c_3 \f$:	spezifische Gaskonstante = 234,175 [°C] \n
 
 Der Partialdampfdruck der Luft \f$p_D\f$ bei gemessener Lufttemperatur am trockenen 
 Thermometer \f$T_{L, Tr}\f$ [°C] berechnet sich äquivalent zu \f$p_S\f$ unter Berücksichtigung der 
