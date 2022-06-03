@@ -21,12 +21,13 @@ Die einzelnen Kapitel können über die Baumstruktur links oder über die
 folgende Liste angesprochen werden.
 - \subpage lnk_ueberblick
 - \subpage lnk_waerme 
+- \subpage lnk_orgC
 - \subpage lnk_naehrstoffe
 - \subpage lnk_primaer
 - \subpage lnk_konsumenten
-- \subpage Sauerstoffgehalt
+- \subpage lnk_sauerstoff
 - \subpage lnk_ph
-- \subpage Sedimentflux
+- \subpage lnk_sediment <!--Sedimentflux-->
 - \subpage lnk_unrein
 - \subpage Aufenthaltszeit
 - \subpage Stofftransport
@@ -36,5 +37,6 @@ folgende Liste angesprochen werden.
 - \subpage lnk_download
 - \subpage lnk_literatur
 - \subpage lnk_kontakt
+- \subpage lnk_todo
 
 Textquelle: main.md

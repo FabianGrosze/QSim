@@ -194,8 +194,8 @@
       SUBROUTINE alter_parallel()
       use modell
       implicit none
-         call MPI_Bcast(nur_alter,1,MPI_LOGICAL,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(nur_temp,1,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(nur_alter,1,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(nur_temp,1,MPI_LOGICAL,0,mpi_komm_welt,ierr)
       RETURN
       END subroutine alter_parallel
 !----+-----+----

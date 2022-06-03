@@ -29,16 +29,16 @@
       use modell                                                   
       implicit none
       include 'netcdf.inc'
-      integer :: start3(3), count3(3)
-      integer :: start2(2), count2(2)
-      integer nt, n,j,k, varid, alloc_status
-	  real c
+      integer   :: start3(3), count3(3)
+      integer   :: start2(2), count2(2)
+      integer   :: nt, n,j,k, varid, alloc_status
+      real      :: c
 
          !---------------elemente
          print*,'holen_trans_untrim: zeitpunkt,nt=',transinfo_zeit(transinfo_zuord(nt)),nt
          start3 = (/ 1, 1, nt /)
          count3 = (/ n_elemente, 1, 1 /)
-	 !float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
+         !float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
          call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, el_vol, start3, count3 ) )
          do n=1,n_elemente ! 
@@ -56,23 +56,24 @@
          call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, el_area, start2, count2 ) )
          do n=1,n_elemente ! 
-            if ((el_area(n).le. 0.0).and.(el_area(n).gt. 1.e+30)) el_area(n)=0.0
+            if ((el_area(n).le. 0.0).or.(el_area(n).gt. 1.e+30)) el_area(n)=0.0
          end do ! alle n elemente
          !print*,'stofftransport_untrim: got Mesh2_face_Wasserflaeche_2d'
 
          !---------------kanten
-		 ed_vel_x(:)=0.0;ed_vel_y(:)=0.0
+         ed_vel_x(:)=0.0
+         ed_vel_y(:)=0.0
          start3 = (/ 1, 1, nt /)
          count3 = (/ kantenanzahl, 1, 1 /)
          !float Mesh2_edge_Durchflussflaeche_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
- 	 !float Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
+         !float Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
          call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
          call check_err( nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
-	     !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
+         !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
          do n=1,kantenanzahl
             !Mesh2_edge_Durchflussflaeche_2d:_FillValue = 1.e+31f ; 
             if ((ed_area(n).le. 0.0).or.(ed_area(n).gt. 1.e+30)) then ! Kante trocken ?
@@ -80,24 +81,24 @@
                ed_vel_x(n)=0.0
                ed_vel_y(n)=0.0
             end if ! Kante trocken
-			!print*,n,ed_vel_x(n),ed_vel_y(n)
-		    ! Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d:_FillValue = 1.e+31f ;
-			if(ed_vel_x(n)>100.0)ed_vel_x(n)=0.0
-			if(ed_vel_y(n)>100.0)ed_vel_y(n)=0.0
+            !print*,n,ed_vel_x(n),ed_vel_y(n)
+            ! Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d:_FillValue = 1.e+31f ;
+            if(ed_vel_x(n)>100.0)ed_vel_x(n)=0.0
+            if(ed_vel_y(n)>100.0)ed_vel_y(n)=0.0
          end do ! alle n kanten
 
          do n=1,n_elemente ! mean velocity magnitude in element
             u(n)= 0.0
             do k=1,cornernumber(n) 
                u(n)= u(n)+ (ed_vel_x(elementedges(n,k))**2 + ed_vel_y(elementedges(n,k))**2)**0.5
-			   if(u(n)>huge(u(n)))then
-			      print*,"ed_vel_x,y,elementedges,n,k=",  &
-     &   		  ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
-			      call qerror("holen_trans_untrim u infinity")
+               if (u(n)>huge(u(n))) then
+                  print*,"ed_vel_x,y,elementedges,n,k=",  &
+     &                   ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
+                  call qerror("holen_trans_untrim u infinity")
                endif
             end do ! alle k Kanten im Element
-			c=real(cornernumber(n))
-			if(c .le. 0.0)call qerror("cornernumber(n) ist null ???")
+            c=real(cornernumber(n))
+            if(c .le. 0.0)call qerror("cornernumber(n) ist null ???")
             u(n)= u(n)/c
 
             inflow(n)=.false.
@@ -127,7 +128,7 @@
       implicit none
       include 'netcdf.inc'
       integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status
-      real :: laeng, cu_max, cu_min, dt_sub, sumwicht
+      real :: laeng, cu_max, cu_min, dt_sub, sumwicht, cu_mean_CuGT1, volFrac_CuGT1
       real , allocatable , dimension (:,:) :: zwischen
       !integer , parameter :: num_sub=12
       integer , parameter :: num_sub=6
@@ -151,21 +152,23 @@
          end if !kontrollknoten
 
          subtim=startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
-
+         
          if(subtim.lt.transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
          if(subtim.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
          nti=0
          diffprev=transinfo_zeit(transinfo_zuord(transinfo_anzahl))-transinfo_zeit(transinfo_zuord(1))
          do n=1,transinfo_anzahl
             diff= abs(subtim-transinfo_zeit(transinfo_zuord(n)) )
-            if( (diff.gt.diffprev).and.(nti.lt. 1) ) nti=n-1
+            if(diff <= diffprev)then
+               nti=n
+            endif
             diffprev=diff
          end do ! alle n Zeitschritte
-         if(nti.lt. 1) then
+         print*,'stofftransport_untrim: substep-time,nti,diff=',subtim,nti,diff
+         if(nti <= 0) then
             call qerror('stofftransport_untrim: kein untrim Zeitpunkt identifiziert')
          else
-            print*,'stofftransport_untrim: substep-time=',subtim   &
-     &            ,' transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
+            print*,'transportiert mit untrim-Strömungsfeld zeit=',transinfo_zeit(transinfo_zuord(nti))
          end if
 
          call holen_trans_untrim(nti)
@@ -203,8 +206,9 @@
      &            wicht((n-1)*5+(1+k))= -1.0 * ed_flux(elementedges(n,k))
             end do ! alle k Kanten im Element
          end do ! alle n Elemente
-         cu_max=-50000.0 
-         cu_min=50000.0
+         cu_max = -50000.0 
+         cu_min =  50000.0
+         cu = 0.
          do n=1,n_elemente ! Gewichtsfaktoren aus Volumenverhältnissen ermitteln
             if(el_vol(n).gt. 0.0)then ! Element wet
                cu(n)=(wicht((n-1)*5+1)*dt_sub)/el_vol(n)
@@ -237,21 +241,27 @@
                end do !alle 5
             endif ! sumwicht.gt.0.0
          end do ! alle n Elemente
-         print*,'stofftransport_untrim: cu_max,cu_min,deltat=',cu_max ,cu_min, deltat
+         ! calculate water volume fraction with Courant number > 1 and average cu in cells with cu > 1
+         cu_mean_CuGT1 = sum(el_vol * cu, cu>1.) / max(1., sum(el_vol, cu>1.))
+         volFrac_CuGT1 = sum(el_vol     , cu>1.) / max(1., sum(el_vol))
+         print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu>1), volume fraction (cu>1), deltat=', &
+                cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
 
          do j=1,number_plankt_point ! all j elements (*levels?)
             do n=1,number_plankt_vari ! all transported concentrations i.e. variables
+               if (iEros<0 .and. (n==52 .or. n==53)) cycle    ! skip SSalg and SS if SS read from file
                zwischen(n,j)= planktonic_variable(n+(j-1)*number_plankt_vari) *wicht((j-1)*5+1) !! self
-               do k=1,4 ! all 4 neighbour (elements) if existing
-                  if( intereck((j-1)*4+k) .gt. 0) zwischen(n,j)=zwischen(n,j) +  &
+               do k = 1,4 ! all 4 neighbour (elements) if existing
+                  if (intereck((j-1)*4+k) .gt. 0) zwischen(n,j)=zwischen(n,j) +  &
      &               planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari) *wicht((j-1)*5+1+k)
-               end do !all 4
+               end do
             end do ! alle n Konzentrationen
          end do ! alle j Elemente
          do j=1,number_plankt_point ! alle j Elemente
-            if(.not.inflow(j))then ! Zuflusselemente auslassen
+            if (.not.inflow(j)) then ! Zuflusselemente auslassen
                do n=1,number_plankt_vari
-                  if(isNaN(zwischen(n,j)))then
+                  if (iEros<0 .and. (n==52 .or. n==53)) cycle    ! skip SSalg and SS if SS read from file
+                  if (isNaN(zwischen(n,j))) then
                      print*,'stofftransport_untrim isNaN(zwischen) , plankt_point=',j,' plankt_vari=',n
                      print*,'planktonic_variable_name',n, planktonic_variable_name(n)
                      print*,'wicht !! self =',wicht((j-1)*5+1)
@@ -548,8 +558,8 @@
       if(alloc_status.ne.0) call qerror('allocate (edge_normal failed')
       do n=1,kantenanzahl ! alle Kanten
          ! Normalenvektor von Kantenlänge nach links 
-         edge_normal_x(n)=-1*( knoten_y(top_node(n))-knoten_y(bottom_node(n)) )
-         edge_normal_y(n)=   ( knoten_x(top_node(n))-knoten_x(bottom_node(n)) )
+         edge_normal_x(n)= knoten_y(bottom_node(n)) - knoten_y(top_node(n))
+         edge_normal_y(n)= knoten_x(top_node(n))    - knoten_x(bottom_node(n))
       end do ! alle n Kanten
       allocate (left_element(kantenanzahl),right_element(kantenanzahl), stat = alloc_status )
       if(alloc_status.ne.0) call qerror('allocate (left,right_element  failed')
@@ -560,36 +570,36 @@
       if(alloc_status.ne.0) call qerror('allocate (boundary_number(kantenanzahl) failed')
       anzahl_randkanten=0
       do n=1,kantenanzahl ! alle Kanten
-         nele_links=ed_fa(1,n)+1
-         nele_rechts=ed_fa(2,n)+1
-         nixlinks =( (nele_links .lt. 1).or.(nele_links .gt.n_elemente) )
-         nixrechts=( (nele_rechts.lt. 1).or.(nele_rechts.gt.n_elemente) )
+         nele_links  = ed_fa(1,n)+1
+         nele_rechts = ed_fa(2,n)+1
+         nixlinks  = ( (nele_links .lt. 1).or.(nele_links .gt.n_elemente) )
+         nixrechts = ( (nele_rechts.lt. 1).or.(nele_rechts.gt.n_elemente) )
          left_element(n)=-999
          right_element(n)=-999
-         if(nixlinks.and.nixrechts)  call qerror("read_mesh_nc:kanten-elemente konnektivität schrott")
-         if(nixlinks.or.nixrechts) then  !Randkante
-            anzahl_randkanten=anzahl_randkanten+1
-            boundary_number(n)=1
+         if (nixlinks.and.nixrechts) call qerror("read_mesh_nc:kanten-elemente konnektivität schrott")
+         if (nixlinks.or.nixrechts) then  !Randkante
+            anzahl_randkanten = anzahl_randkanten + 1
+            boundary_number(n) = 1
          else !keine Randkante
-            boundary_number(n)=0
+            boundary_number(n) = 0
          endif   !Randekante
-         if( .not. nixlinks )then !left_element(n) vorhanden ?
-            nach_links= edge_normal_x(n)*(element_x(nele_links)-knoten_x(bottom_node(n)))  &
-     &                + edge_normal_y(n)*(element_y(nele_links)-knoten_y(bottom_node(n)))
+         if( .not.nixlinks ) then !left_element(n) vorhanden ?
+            nach_links = edge_normal_x(n) * (element_x(nele_links) - knoten_x(bottom_node(n))) +  &
+     &                   edge_normal_y(n) * (element_y(nele_links) - knoten_y(bottom_node(n)))
             if(nach_links.ge.0.0)then ! links auf der linken seite?
-               left_element(n) = nele_links
-               if(.not.nixrechts) right_element(n)= nele_rechts
+               left_element(n)  = nele_links
+               if (.not.nixrechts) right_element(n) = nele_rechts
             else !links ist rechts
-               right_element(n)= nele_links
-               if(.not.nixrechts) left_element(n) = nele_rechts
+               right_element(n) = nele_links
+               if (.not.nixrechts) left_element(n)  = nele_rechts
             end if ! links auf der linken seite?
          else ! left_element(n) nicht vorhanden 
-            nach_links= edge_normal_x(n)*(element_x(nele_rechts)-knoten_x(bottom_node(n)))  &
-     &                + edge_normal_y(n)*(element_y(nele_rechts)-knoten_y(bottom_node(n)))
-            if(nach_links.ge.0.0)then ! rechts auf der linken seite?
-               left_element(n) = nele_rechts
+            nach_links = edge_normal_x(n) * (element_x(nele_rechts) - knoten_x(bottom_node(n))) +  &
+     &                   edge_normal_y(n) * (element_y(nele_rechts) - knoten_y(bottom_node(n)))
+            if (nach_links.ge.0.0) then ! rechts auf der linken seite?
+               left_element(n)  = nele_rechts
             else !rechts ist rechts
-               right_element(n)= nele_rechts
+               right_element(n) = nele_rechts
             end if ! rechts auf der linken seite?
          end if ! left_element(n) vorhanden ???
       end do ! alle n Kanten
@@ -620,8 +630,8 @@
          end do
          do k=1,cornernumber(n)
             ! Nachbarelemente
-            if( left_element(elementedges(n,k)) .eq. n) intereck((n-1)*4+k) = right_element(elementedges(n,k))
-            if(right_element(elementedges(n,k)) .eq. n) intereck((n-1)*4+k) =  left_element(elementedges(n,k))
+            if ( left_element(elementedges(n,k)) .eq. n) intereck((n-1)*4+k) = right_element(elementedges(n,k))
+            if (right_element(elementedges(n,k)) .eq. n) intereck((n-1)*4+k) =  left_element(elementedges(n,k))
          end do ! alle k Kanten im Element
       end do ! alle n Elemente
 
@@ -848,7 +858,7 @@ if(meinrang.eq.0)then ! prozess 0 only
       deallocate(zeitstunde) !,secuz)
 
 end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       RETURN
   227 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since start of year ",I4)
   228 FORMAT (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock  = ",I9," sec. since ",A)

@@ -23,15 +23,17 @@
 
 !  Ausgabe der Definition von AParam
 
-  character(200)  :: cpfad1  
+  character(200)              :: cpfad1  
   character (len=275)         :: pfadstring
-
+  character (len = 8)         :: versionstext
+  
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'AParamParam.xml'
   open(unit=200, file=pfadstring, encoding='UTF-8')
-  
+
   WRITE(200, '(A)')'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(200, '(A)') '<GerrisParam FileType="AParam" QsimVersion="14.02">'  
-  WRITE(200, '(A)') '<ParamSetDef Ident="AParam" Text="Allg. Parameter" Null="-1" Help="Allgemeine Simulations-Parameter" Scope="Modell" IsGrouped="0">'
+  call version_string(versionstext)
+  WRITE(200, '(3A)') '<GerrisParam FileType="AParam" QsimVersion="',versionstext,'">'  
+  WRITE(200, '(A)') ' <ParamSetDef Ident="AParam" Text="Allg. Parameter" Null="-1" Help="Allgemeine Simulations-Parameter" Scope="Modell" IsGrouped="0">'
   WRITE(200, '(A)') '  <Parameter Ident="AGCHL" Text="Kohlenstoff/Chlorophyll Grünalgen (dunkeladaptiert) bei 20°C" Unit="mgC/mgChla" Format="F4.1" Null="-1" Help="" Default="12.4" Min="0" Max="99.9" Gruppe="Grünalgen" Kategorie="C Biomasse" />'
   WRITE(200, '(A)') '  <Parameter Ident="AGGMAX" Text="Max. Wachstumsrate d. Grünalgen bei 20°C" Unit="1/d" Format="F5.2" Null="-1" Help="" Default="1.2" Min="0" Max="99.99" Gruppe="Grünalgen" Kategorie="Wachstum" />'
   WRITE(200, '(A)') '  <Parameter Ident="IKg" Text="Lichtsättigung für kohlenstoffspez. Photosynthese der Grünalgen bei 20°C" Unit="µE/(m2*s)" Format="F6.2" Null="-1" Help="" Default="58.6" Min="0" Max="999.99" Gruppe="Grünalgen" Kategorie="Licht" />' 

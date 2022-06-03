@@ -101,7 +101,7 @@
 !! \n\n
 !! zurück zu: \ref lnk_ueberblick ; Quelle: oxygen_huelle.f95
 
-!! Das nebenstehende Bild vom Fischsterben im Main, April 1971, ist der Webseite der 
+!! Das nebenstehende Bild vom Fischsterben im Main, April 1971, ist der Webseite der
 !! <a href="http://www.frankfurter-fischerzunft.de/Galarie/1971_fischsterben.htm"  target="_blank">
 !! Frankfurter Fischerzunft</a> entnommen.\n\n
 
@@ -188,277 +188,277 @@
 !! <tr><td>  gelp(1)  </td><td>  planktische_variablen::planktonic_variable_p (6+nk) </td><td> geloester ortho-Phosphat-P, tiefengemittelt (unbenutzt) </td></tr>
 !! <tr><td>  ssalg(1)  </td><td>  planktische_variablen::planktonic_variable_p (52+(i-1)*number_plankt_vari) </td><td> ??? (unbenutzt) </td></tr>
 !! <tr><td>  ir(1)  </td><td>  uebergabe_werte::transfer_quantity_p (42+(i-1)*number_trans_quant) </td><td> Ingestionsrate der Rotatorien in mg/(l*h) | konsum() (unbenutzt) </td></tr>
-!! <tr><td>  vNH4(1)  </td><td>  planktische_variablen::planktonic_variable_p ( 3+nk)  </td><td> ammonium (unbenutzt) </td></tr>
-!! <tr><td>  vno3(1)  </td><td>  planktische_variablen::planktonic_variable_p ( 5+nk)  </td><td> nitrat (unbenutzt) </td></tr>
-!! <tr><td>  bsbbet(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (7+(i-1)*number_benth_distr) </td><td> Sauerstoffverbrauch durch Organismen auf Makrophyten, Ausgabewert bsbtb ??? (unbenutzt) </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td> zooro2(1)  </td><td>  uebergabe_werte::transfer_quantity_p (43+(i-1)*number_trans_quant) </td><td> Sauerstoffverbrauch durch Zooplanktonrespiration (Rückgabewert) </td></tr>
-!! <tr><td>  rO2HNF(1)  </td><td>  uebergabe_werte::transfer_quantity_p (44+(i-1)*number_trans_quant) </td><td> Respiration HNF ??? </td></tr>
-!! <tr><td>  ilbuhn </td><td> 0    </td><td> keine Buhnen </td></tr>
-!! <tr><td>  iwied </td><td> 0 </td><td> unbenutzte Variable </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td>    vo2z(j,1) </td><td> planktische_variablen::plankt_vari_vert_p (j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) </td></tr>
-!! <tr><td>  susO2N(1) </td><td>  0.0     </td><td> unbenutzte Variable </td></tr>
-!! <tr><td>  nkzs(1) </td><td> 1 </td><td> nur eine Tiefenschicht </td></tr>
-!! <tr><td>  dH2D  </td><td>  0.25 </td><td> Dicke Tiefenschicht ??? Übergabe an Einleiter_Misch() | qsim.f90: dH2D = 0.25 </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td>    agnh4z(j,1)  </td><td>  trans_quant_vert_p(j+(10-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Grün-Algen </td></tr>
-!! <tr><td>     aknh4z(j,1)  </td><td>  trans_quant_vert_p(j+(9-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Kiesel-Algen </td></tr>
-!! <tr><td>     abnh4z(j,1)  </td><td>  trans_quant_vert_p(j+(11-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Blau-Algen </td></tr>
-!! <tr><td>     dalgkz(j,1)  </td><td>  trans_quant_vert_p(j+(12-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     dalgbz(j,1)  </td><td>  trans_quant_vert_p(j+(14-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     dalggz(j,1)  </td><td>  trans_quant_vert_p(j+(13-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     agno3z(j,1)  </td><td>  trans_quant_vert_p(j+(16-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Grün-Algen </td></tr>
-!! <tr><td>     akno3z(j,1)  </td><td>  trans_quant_vert_p(j+(15-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Kiesel-Algen </td></tr>
-!! <tr><td>     abno3z(j,1)  </td><td>  trans_quant_vert_p(j+(17-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Blau-Algen </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td>    algakz(j,1)  </td><td>  trans_quant_vert_p(j+(18-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     algagz(j,1)  </td><td>  trans_quant_vert_p(j+(19-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     algabz(j,1)  </td><td>  trans_quant_vert_p(j+(20-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td>  </td></tr>
-!! <tr><td>     vz1(j,1)  </td><td>  trans_quant_vert_p(j+(21-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> lokale Sauerstoffzehrung/produktion tiefenaufgelöst </td></tr>
-!! <tr><td>     tempwz(j,1) </td><td>  planktische_variablen::plankt_vari_vert_p (j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) </td><td> wassertemperatur tiefenaufgelöst </td></tr>
-!! <tr><td>  saett(1)  </td><td>  uebergabe_werte::transfer_quantity_p (45+(i-1)*number_trans_quant) </td><td> Sauerstoff Sättigungs-Konzentration in mgO2/l  </td></tr>
-!! <tr><td>  mstr </td><td> 1 </td><td> Strangzähler ein Strang mit nur einem Profil in Hüllroutine </td></tr>
-!! <tr><td>  ij </td><td> 0 </td><td> unbenutzte Variable </td></tr>
-!! <tr><td>  itags </td><td> tag </td><td> Tag im Monat module ::modell zeitsekunde() </td></tr>
-!! <tr><td>  monats </td><td> monat </td><td> Monat im Jahr module ::modell zeitsekunde() (unbenutzt) </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td> etemp(1) </td><td> 0.0  </td><td> Einleite-Temperatur (da keine Einleitungen - nicht verwendet) </td></tr>
-!! <tr><td>  dH2De  </td><td> 0.0   </td><td> unbenutzt </td></tr>
-!! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td> iphyw  </td><td>  0 </td><td> Ansteuerung der Belüftungsformel: ??? </td></tr>
-!! <tr><td>  iphy  </td><td>  0  </td><td> Ansteuerung der Belüftungsformel: </td></tr>
-!! <tr><td>  zwgmes  </td><td>  0.0 </td><td> Ansteuerung der Belüftungsformel:  </td></tr>
-!! <tr><td>  kontroll </td><td> (i.eq.kontrollknoten) </td><td>  </td></tr>
+!! <tr><td> vNH4(1) </td><td> planktische_variablen::planktonic_variable_p ( 3+nk) </td><td> ammonium (unbenutzt) </td></tr>
+!! <tr><td> vno3(1) </td><td> planktische_variablen::planktonic_variable_p ( 5+nk) </td><td> nitrat (unbenutzt) </td></tr>
+!! <tr><td> bsbbet(1) </td><td> benthische_verteilungen::benthic_distribution_p (7+(i-1)*number_benth_distr) </td><td> Sauerstoffverbrauch durch Organismen auf Makrophyten, Ausgabewert bsbtb ??? (unbenutzt) </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> zooro2(1) </td><td> uebergabe_werte::transfer_quantity_p (43+(i-1)*number_trans_quant) </td><td> Sauerstoffverbrauch durch Zooplanktonrespiration (Rückgabewert) </td></tr>
+!! <tr><td> rO2HNF(1) </td><td> uebergabe_werte::transfer_quantity_p (44+(i-1)*number_trans_quant) </td><td> Respiration HNF ??? </td></tr>
+!! <tr><td> ilbuhn </td><td> 0 </td><td> keine Buhnen </td></tr>
+!! <tr><td> iwied </td><td> 0 </td><td> unbenutzte Variable </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> vo2z(j,1) </td><td> planktische_variablen::plankt_vari_vert_p (j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) </td></tr>
+!! <tr><td> susO2N(1) </td><td> 0.0 </td><td> unbenutzte Variable </td></tr>
+!! <tr><td> nkzs(1) </td><td> 1 </td><td> nur eine Tiefenschicht </td></tr>
+!! <tr><td> dH2D </td><td> 0.25 </td><td> Dicke Tiefenschicht ??? Übergabe an Einleiter_Misch() | qsim.f90: dH2D = 0.25 </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> agnh4z(j,1) </td><td> trans_quant_vert_p(j+(10-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Grün-Algen </td></tr>
+!! <tr><td> aknh4z(j,1) </td><td> trans_quant_vert_p(j+(9-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Kiesel-Algen </td></tr>
+!! <tr><td> abnh4z(j,1) </td><td> trans_quant_vert_p(j+(11-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Ammoniumaufnahme Blau-Algen </td></tr>
+!! <tr><td> dalgkz(j,1) </td><td> trans_quant_vert_p(j+(12-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> dalgbz(j,1) </td><td> trans_quant_vert_p(j+(14-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> dalggz(j,1) </td><td> trans_quant_vert_p(j+(13-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> agno3z(j,1) </td><td> trans_quant_vert_p(j+(16-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Grün-Algen </td></tr>
+!! <tr><td> akno3z(j,1) </td><td> trans_quant_vert_p(j+(15-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Kiesel-Algen </td></tr>
+!! <tr><td> abno3z(j,1) </td><td> trans_quant_vert_p(j+(17-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> Nitrataufnahme Blau-Algen </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> algakz(j,1) </td><td> trans_quant_vert_p(j+(18-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> algagz(j,1) </td><td> trans_quant_vert_p(j+(19-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> algabz(j,1) </td><td> trans_quant_vert_p(j+(20-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> </td></tr>
+!! <tr><td> vz1(j,1) </td><td> trans_quant_vert_p(j+(21-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) </td><td> lokale Sauerstoffzehrung/produktion tiefenaufgelöst </td></tr>
+!! <tr><td> tempwz(j,1) </td><td> planktische_variablen::plankt_vari_vert_p (j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) </td><td> wassertemperatur tiefenaufgelöst </td></tr>
+!! <tr><td> saett(1) </td><td> uebergabe_werte::transfer_quantity_p (45+(i-1)*number_trans_quant) </td><td> Sauerstoff Sättigungs-Konzentration in mgO2/l </td></tr>
+!! <tr><td> mstr </td><td> 1 </td><td> Strangzähler ein Strang mit nur einem Profil in Hüllroutine </td></tr>
+!! <tr><td> ij </td><td> 0 </td><td> unbenutzte Variable </td></tr>
+!! <tr><td> itags </td><td> tag </td><td> Tag im Monat module ::modell zeitsekunde() </td></tr>
+!! <tr><td> monats </td><td> monat </td><td> Monat im Jahr module ::modell zeitsekunde() (unbenutzt) </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> etemp(1) </td><td> 0.0 </td><td> Einleite-Temperatur (da keine Einleitungen - nicht verwendet) </td></tr>
+!! <tr><td> dH2De </td><td> 0.0 </td><td> unbenutzt </td></tr>
+!! <tr><td> </td><td> </td><td> </td></tr>
+!! <tr><td> iphyw </td><td> 0 </td><td> Ansteuerung der Belüftungsformel: ??? </td></tr>
+!! <tr><td> iphy </td><td> 0 </td><td> Ansteuerung der Belüftungsformel: </td></tr>
+!! <tr><td> zwgmes </td><td> 0.0 </td><td> Ansteuerung der Belüftungsformel: </td></tr>
+!! <tr><td> kontroll </td><td> (i.eq.kontrollknoten) </td><td> </td></tr>
 !! </table>
 !! \n
 !! \n\n
 !! zurück zu: \ref lnk_ueberblick ; Quelle: oxygen_huelle.f95
-!                                                                       !                                                                       
+! !
 !> \page ZehrProdO2 Summe der Änderung des Sauerstoffgehalts infolge lokaler Produktion und Zehrung
 !! hier wird nun die Aufsummation der Änderung der Sauerstoffkonzentration infolge von lokalen Zehrungs- und
 !! Produktionsprozessen zum Zwischenwert \f$ \widetilde{\Delta O_2} \f$ formelmäßig dargestellt:\n
 !! \f{eqnarray*}{
-!!    \widetilde{\Delta O_2} &=& \Delta {O_2}_{alg,prod} - \Delta {O_2}_{alg,resp} \\
-!!    &-& \Delta {O_2}_{N} - \Delta {O_2}_{orgC} - \Delta {O_2}_{Sed} \\
-!!    &+& \Delta {O_2}_{mph,prod} - \Delta {O_2}_{mph,resp} \\
-!!    &+& \Delta {O_2}_{bent,gr,prod} - \Delta {O_2}_{bent,gr,resp} + \Delta {O_2}_{bent,ki,prod} - \Delta {O_2}_{bent,ki,resp} \\
-!!    &-& \Delta {O_2}_{rot} - \Delta {O_2}_{drs} - \Delta {O_2}_{HNF} \\
+!! \widetilde{\Delta O_2} &=& \Delta {O_2}_{alg,prod} - \Delta {O_2}_{alg,resp} \
+!! &-& \Delta {O_2}_{N} - \Delta {O_2}_{orgC} - \Delta {O_2}_{Sed} \
+!! &+& \Delta {O_2}_{mph,prod} - \Delta {O_2}_{mph,resp} \
+!! &+& \Delta {O_2}_{bent,gr,prod} - \Delta {O_2}_{bent,gr,resp} + \Delta {O_2}_{bent,ki,prod} - \Delta {O_2}_{bent,ki,resp} \
+!! &-& \Delta {O_2}_{rot} - \Delta {O_2}_{drs} - \Delta {O_2}_{HNF} \
 !! \f}
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th><th> Herkunft </th></tr>
-!!<tr><td> \f$ \widetilde{\Delta O_2} \f$  </td><td> v </td><td width="50%" > Änderung der Sauerstoffkonzentration infolge Zehrung + Produktion </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> - </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{alg,prod} \f$  </td><td> dalgo </td><td> Sauerstoff-Produktion der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td>  </td><td> \ref prodO2alg </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{alg,resp} \f$  </td><td> dalgao </td><td> Sauerstoff-Verbrauch (Respiration) der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td>  </td><td> \ref Respirationalgen </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{N} \f$  </td><td> go2n </td><td> Verbrauch durch Nitrifikation pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> ncyc() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{orgC} \f$  </td><td> bsbt </td><td> Zehrung infolge Umsetzung von org. C-Verbindungen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> \ref o2zehr  orgc </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{Sed} \f$  </td><td> hSchlr </td><td> Sauerstoffzehrung des Sediments je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> sedflux() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{mph,prod} \f$  </td><td> po2p </td><td> Produktion durch Makrophyten pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> mphyt() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{mph,resp} \f$  </td><td> po2r </td><td> Respiration durch Makrophyten pro Zeitschritt </td><td> mgO2/l je Zeitschritt  </td><td> ? </td><td> mphyt() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{bent,gr,prod} \f$  </td><td> abeowg </td><td> Produktion durch benthische Grünalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{bent,gr,resp} \f$  </td><td> abeorg </td><td> Respiration durch benthische Grünalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{bent,ki,prod} \f$  </td><td> abeowk </td><td> Produktion durch benthische Kieselalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{bent,ki,resp} \f$  </td><td> abeork </td><td> Respiration durch benthische Kieselalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{rot} \f$  </td><td> vo2leb </td><td> Sauerstoffverbrauch Zooplankton-Respiration pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> konsum() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{drs} \f$  </td><td> ro2dr </td><td> Respiration Dreissena-Muscheln pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> dreissen() </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{HNF} \f$  </td><td> rO2HNF </td><td> Respiration Heterotropher Nanoflagelaten pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> hnf() </td></tr>
-!!</table>\n
-!! 2D \n
-!!      if(nkzs(ior).eq.1)goto 190 \n
-!!      do 189 nkz = 1,nkzs(ior) \n
-!!      vz1(nkz,ior) = -go2n(ior)-bsbt(ior)+dalgoz(nkz,ior)               &\n
-!!     &-algaoz(nkz,ior)-vo2leb+po2p(ior)-po2r(ior)+abeowg(ior)           &\n
-!!     &-abeorg(ior)+abeowk(ior)-abeork(ior)-ro2dr(ior)                   &\n
-!!     &-rO2HNF(ior)                                                      \n
-!! \n\n
-!! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
-!
-!> \page diskretO2 zeitliche Diskretisierung der Sauerstoffänderung
-!! Weil die Belüftungsrate vom Sauerstoffgehalt selbst abhängig ist, wird hier eine semi implizite Diskretisierung
-!! zur Berechnung des Sauerstoffgehaltes am Ende des aktuellen Zeitschritts  \f$ {O_2}(t + \Delta t)\f$ verwendet:
-!! \f[ 
-!!   {O_2}(t + \Delta t) - {O_2}(t) = \frac{\widetilde{\Delta O_2}+(b \cdot \Delta_{saett})}{1 + 0.5 \cdot b}
-!! \f]\n mit
-!! \f[ 
-!!    b= \Delta t \cdot \frac{ ( k_l + k_w ) \cdot f_{temp} }{H} 
-!! \f] siehe \ref lueftO2\n
-!!<table >
-!!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th><th> Herkunft </th></tr>
-!!<tr><td> \f$ \widetilde{\Delta O_2} \f$  </td><td> v </td><td> \ref ZehrProdO2 </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> - </td></tr>
-!!<tr><td> \f$ \Delta_{saett} \f$  </td><td> Defiz </td><td> Sauerstoffdefizit (Untersättigung) siehe \ref lueftO2 </td><td>  mgO2/l </td><td> ? </td><td>  </td></tr>
-!!</table>
-!! \n\n
-!! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
-!
-!> \page prodO2alg Sauerstoffproduktion der Kiesel-, Gruen- und Blaualgen
-!!     planktische Gruenalgen  \n                                                       
-!!      if(agrnh4(ior)==0.0)agrnh4(ior) = 0.00001 \n
-!!      falgo = agrno3(ior)/agrnh4(ior) \n
-!!      falgo = (opgrmi+falgo*opgrma)/(1.+falgo) \n
-!!      dalgo(ior) = dalggr(ior)*falgo \n
-!!     Benthische Gruenalgen   \n                                          
-!!      abeowg(ior) = albewg(ior)*falgo 
-!!     planktische kieselalgen!     \n                                                 
-!!      if(akinh4(ior)==0.0)akinh4(ior) = 0.00001 \n
-!!      falgo = akino3(ior)/akinh4(ior) \n
-!!      falgo = (opkimi+falgo*opkima)/(1.+falgo) \n
-!!      dalgo(ior) = dalgo(ior)+dalgki(ior)*falgo \n
-!!     Benthische Kieselalgen                    \n                        
-!!      abeowk(ior) = albewk(ior)*falgo \n
-!!     planktische Blaualgen!            \n                                            
-!!      if(ablnh4(ior)==0.0)ablnh4(ior) = 0.00001 \n
-!!      falgo = ablno3(ior)/ablnh4(ior) \n
-!!      falgo = (opblmi+falgo*opblma)/(1.+falgo) \n
-!!      dalgo(ior) = dalgo(ior)+dalgbl(ior)*falgo \n
+!!<tr><td> \f$ \widetilde{\Delta O_2} \f$ </td><td> v </td><td width="50%" > Änderung der Sauerstoffkonzentration infolge Zehrung + Produktion </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> - </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{alg,prod} \f$ </td><td> dalgo </td><td> Sauerstoff-Produktion der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> </td><td> \ref prodO2alg </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{alg,resp} \f$ </td><td> dalgao </td><td> Sauerstoff-Verbrauch (Respiration) der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> </td><td> \ref Respirationalgen </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{N} \f$ </td><td> go2n </td><td> Verbrauch durch Nitrifikation pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> ncyc() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{orgC} \f$ </td><td> bsbt </td><td> Zehrung infolge Umsetzung von org. C-Verbindungen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> \ref o2zehr orgc </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{Sed} \f$ </td><td> hSchlr </td><td> Sauerstoffzehrung des Sediments je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> sedflux() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{mph,prod} \f$ </td><td> po2p </td><td> Produktion durch Makrophyten pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> mphyt() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{mph,resp} \f$ </td><td> po2r </td><td> Respiration durch Makrophyten pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> mphyt() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{bent,gr,prod} \f$ </td><td> abeowg </td><td> Produktion durch benthische Grünalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{bent,gr,resp} \f$ </td><td> abeorg </td><td> Respiration durch benthische Grünalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{bent,ki,prod} \f$ </td><td> abeowk </td><td> Produktion durch benthische Kieselalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{bent,ki,resp} \f$ </td><td> abeork </td><td> Respiration durch benthische Kieselalgen pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> albenth() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{rot} \f$ </td><td> vo2leb </td><td> Sauerstoffverbrauch Zooplankton-Respiration pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> konsum() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{drs} \f$ </td><td> ro2dr </td><td> Respiration Dreissena-Muscheln pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> dreissen() </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{HNF} \f$ </td><td> rO2HNF </td><td> Respiration Heterotropher Nanoflagelaten pro Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> hnf() </td></tr>
+ !!</table>\n
+ !! 2D \n
+ !! if(nkzs(ior).eq.1)goto 190 \n
+ !! do 189 nkz = 1,nkzs(ior) \n
+ !! vz1(nkz,ior) = -go2n(ior)-bsbt(ior)+dalgoz(nkz,ior) &\n
+ !! &-algaoz(nkz,ior)-vo2leb+po2p(ior)-po2r(ior)+abeowg(ior) &\n
+ !! &-abeorg(ior)+abeowk(ior)-abeork(ior)-ro2dr(ior) &\n
+ !! &-rO2HNF(ior) \n
+ !! \n\n
+ !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
+ !
+ !> \page diskretO2 zeitliche Diskretisierung der Sauerstoffänderung
+ !! Weil die Belüftungsrate vom Sauerstoffgehalt selbst abhängig ist, wird hier eine semi implizite Diskretisierung
+ !! zur Berechnung des Sauerstoffgehaltes am Ende des aktuellen Zeitschritts \f$ {O_2}(t + \Delta t)\f$ verwendet:
+ !! \f[
+ !! {O_2}(t + \Delta t) - {O_2}(t) = \frac{\widetilde{\Delta O_2}+(b \cdot \Delta_{saett})}{1 + 0.5 \cdot b}
+ !! \f]\n mit
+ !! \f[
+ !! b= \Delta t \cdot \frac{ ( k_l + k_w ) \cdot f_{temp} }{H}
+ !! \f] siehe \ref lueftO2\n
+ !!<table >
+ !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th><th> Herkunft </th></tr>
+ !!<tr><td> \f$ \widetilde{\Delta O_2} \f$ </td><td> v </td><td> \ref ZehrProdO2 </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> - </td></tr>
+ !!<tr><td> \f$ \Delta_{saett} \f$ </td><td> Defiz </td><td> Sauerstoffdefizit (Untersättigung) siehe \ref lueftO2 </td><td> mgO2/l </td><td> ? </td><td> </td></tr>
+ !!</table>
+ !! \n\n
+ !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
+ !
+ !> \page prodO2alg Sauerstoffproduktion der Kiesel-, Gruen- und Blaualgen
+ !! planktische Gruenalgen \n
+ !! if(agrnh4(ior)==0.0)agrnh4(ior) = 0.00001 \n
+ !! falgo = agrno3(ior)/agrnh4(ior) \n
+ !! falgo = (opgrmi+falgo*opgrma)/(1.+falgo) \n
+ !! dalgo(ior) = dalggr(ior)*falgo \n
+ !! Benthische Gruenalgen \n
+ !! abeowg(ior) = albewg(ior)*falgo
+ !! planktische kieselalgen! \n
+ !! if(akinh4(ior)==0.0)akinh4(ior) = 0.00001 \n
+ !! falgo = akino3(ior)/akinh4(ior) \n
+ !! falgo = (opkimi+falgo*opkima)/(1.+falgo) \n
+ !! dalgo(ior) = dalgo(ior)+dalgki(ior)*falgo \n
+ !! Benthische Kieselalgen \n
+ !! abeowk(ior) = albewk(ior)*falgo \n
+!! planktische Blaualgen! \n
+!! if(ablnh4(ior)==0.0)ablnh4(ior) = 0.00001 \n
+!! falgo = ablno3(ior)/ablnh4(ior) \n
+!! falgo = (opblmi+falgo*opblma)/(1.+falgo) \n
+!! dalgo(ior) = dalgo(ior)+dalgbl(ior)*falgo \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th width="60%" > Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta {O_2}_{alg,prod} \f$  </td><td> dalgo </td><td> Sauerstoff-Produktion der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta M_{alg,ki} \f$  </td><td> dalgki </td><td> Massenzuwachs der Kieselalgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta M_{alg,gr} \f$  </td><td> dalggr </td><td> Massenzuwachs der Grünalgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta M_{alg,bl} \f$  </td><td> dalgbl </td><td> Massenzuwachs der Blaualgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
-!!</table>\n\n
+!!<tr><td> \f$ \Delta {O_2}_{alg,prod} \f$ </td><td> dalgo </td><td> Sauerstoff-Produktion der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta M_{alg,ki} \f$ </td><td> dalgki </td><td> Massenzuwachs der Kieselalgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta M_{alg,gr} \f$ </td><td> dalggr </td><td> Massenzuwachs der Grünalgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta M_{alg,bl} \f$ </td><td> dalgbl </td><td> Massenzuwachs der Blaualgen je Zeitschritt </td><td> mgBiom./l je Zeitschritt </td><td> ? </td></tr>
+ !!</table>\n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
-!                                                                       
+! ! Respiration der benthischen Gruenalgen und Kieselalgen \n
 !> \page Respirationalgen Respiration der Gruen-, Kiesel-, und Blaualgen
-!!      dalgao(ior) = dalgag(ior)*opgrmi+dalgak(ior)*opkimi+dalgab(ior)*opblmi    \n                                           
-!!      if(nkzs(ior)>1)then     ! 2D-Modellierung \n
-!!        do nkz = 1,nkzs(ior) \n
-!!          algaoz(nkz,ior) = algagz(nkz,ior)*opgrmi+algakz(nkz,ior)*opkimi+algabz(nkz,ior)*opblmi\n
-!!        enddo\n
-!!      endif                                    \n
-!!!     Respiration der benthischen Gruenalgen und Kieselalgen   \n         
-!!      abeorg(ior) = alberg(ior)*opgrmi \n
-!!      abeork(ior) = alberk(ior)*opkimi \n
-!!      if(nkzs(ior)>1)then \n
-!!        do nkz = 1,nkzs(ior) ! O2-Produktion der Algen bei 2D-Modellierung \n
-!!          if(agnh4z(nkz,ior)==0.0)agnh4z(nkz,ior) = 0.00001   ! Gruenalgen \n
-!!          falgo = agno3z(nkz,ior)/agnh4z(nkz,ior) \n
-!!          falgo = (opgrmi+falgo*opgrma)/(1.+falgo) \n
-!!          dalgoz(nkz,ior) = dalggz(nkz,ior)*falgo \n
-!!          if(aknh4z(nkz,ior)==0.0)aknh4z(nkz,ior) = 0.00001    ! Kieselalgen \n
-!!          falgo = akno3z(nkz,ior)/aknh4z(nkz,ior) \n
-!!          falgo = (opkimi+falgo*opkima)/(1.+falgo) \n
-!!          dalgoz(nkz,ior) = dalgoz(nkz,ior)+dalgkz(nkz,ior)*falgo \n
-!!          if(abnh4z(nkz,ior)==0.0)abnh4z(nkz,ior) = 0.00001   !Blaualgen \n
-!!          falgo = abno3z(nkz,ior)/abnh4z(nkz,ior) \n
-!!          falgo = (opblmi+falgo*opblma)/(1.+falgo) \n
-!!          dalgoz(nkz,ior) = dalgoz(nkz,ior)+dalgbz(nkz,ior)*falgo \n
-!!        enddo                                                     \n                  
-!!      endif                                                       \n           
+!! dalgao(ior) = dalgag(ior)*opgrmi+dalgak(ior)*opkimi+dalgab(ior)*opblmi \n
+!! if(nkzs(ior)>1)then ! 2D-Modellierung \n
+!! do nkz = 1,nkzs(ior) \n
+!! algaoz(nkz,ior) = algagz(nkz,ior)*opgrmi+algakz(nkz,ior)*opkimi+algabz(nkz,ior)*opblmi\n
+!! enddo\n
+!! endif \n
+!!
+!! abeorg(ior) = alberg(ior)*opgrmi \n
+!! abeork(ior) = alberk(ior)*opkimi \n
+!! if(nkzs(ior)>1)then \n
+!! do nkz = 1,nkzs(ior) ! O2-Produktion der Algen bei 2D-Modellierung \n
+!! if(agnh4z(nkz,ior)==0.0)agnh4z(nkz,ior) = 0.00001 ! Gruenalgen \n
+!! falgo = agno3z(nkz,ior)/agnh4z(nkz,ior) \n
+!! falgo = (opgrmi+falgo*opgrma)/(1.+falgo) \n
+!! dalgoz(nkz,ior) = dalggz(nkz,ior)*falgo \n
+!! if(aknh4z(nkz,ior)==0.0)aknh4z(nkz,ior) = 0.00001 ! Kieselalgen \n
+!! falgo = akno3z(nkz,ior)/aknh4z(nkz,ior) \n
+!! falgo = (opkimi+falgo*opkima)/(1.+falgo) \n
+!! dalgoz(nkz,ior) = dalgoz(nkz,ior)+dalgkz(nkz,ior)*falgo \n
+!! if(abnh4z(nkz,ior)==0.0)abnh4z(nkz,ior) = 0.00001 !Blaualgen \n
+!! falgo = abno3z(nkz,ior)/abnh4z(nkz,ior) \n
+!! falgo = (opblmi+falgo*opblma)/(1.+falgo) \n
+!! dalgoz(nkz,ior) = dalgoz(nkz,ior)+dalgbz(nkz,ior)*falgo \n
+!! enddo \n
+!! endif \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta {O_2}_{alg,resp} \f$  </td><td> dalgao </td><td> Sauerstoff-Verbrauch der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td>  </td></tr>
-!!<tr><td> \f$  \f$  </td><td>  </td><td>  pro Zeitschritt </td><td> mgO2/l </td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$  \f$  </td><td>  </td><td>  </td><td>  </td><td>  </td><td>  </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{alg,resp} \f$ </td><td> dalgao </td><td> Sauerstoff-Verbrauch der Algen je Zeitschritt </td><td> mgO2/l je Zeitschritt </td><td> </td></tr>
+!!<tr><td> \f$ \f$ </td><td> </td><td> pro Zeitschritt </td><td> mgO2/l </td><td> </td><td> </td></tr>
+!!<tr><td> \f$ \f$ </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
-!                                                                       
-!> \page Zooplanktonrespiration Sauerstoffverbrauch durch Zooplanktonrespiration                  
-!!      ft = 1.047**(tempw(ior)-20.) \n
-!!      vo2leb = (dzres1(ior)+dzres2(ior))*1.5 \n
-!!      vo2leb = vo2leb*ft \n
-!!      zooro2(ior) = vo2leb \n
+!
+!> \page Zooplanktonrespiration Sauerstoffverbrauch durch Zooplanktonrespiration
+!! ft = 1.047**(tempw(ior)-20.) \n
+!! vo2leb = (dzres1(ior)+dzres2(ior))*1.5 \n
+!! vo2leb = vo2leb*ft \n
+!! zooro2(ior) = vo2leb \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta O_2 \f$  </td><td> v </td><td> lokale Änderung des Sauerstoffgehalts pro Zeitschritt </td><td> mgO2/l </td><td>  </td></tr>
-!!<tr><td> \f$ \Delta {O_2}_{orgC} \f$  </td><td> bsbt </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
-!!<tr><td> \f$  \f$  </td><td> tempw </td><td>  pro Zeitschritt </td><td> mgO2/l </td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$  \f$  </td><td>  </td><td>  </td><td>  </td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$  \f$  </td><td>  </td><td>  pro Zeitschritt </td><td> mgO2/l </td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$  \f$  </td><td>  </td><td>  </td><td>  </td><td>  </td><td>  </td></tr>
+!!<tr><td> \f$ \Delta O_2 \f$ </td><td> v </td><td> lokale Änderung des Sauerstoffgehalts pro Zeitschritt </td><td> mgO2/l </td><td> </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{orgC} \f$ </td><td> bsbt </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
+!!<tr><td> \f$ \f$ </td><td> tempw </td><td> pro Zeitschritt </td><td> mgO2/l </td><td> </td><td> </td></tr>
+!!<tr><td> \f$ \f$ </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+!!<tr><td> \f$ \f$ </td><td> </td><td> pro Zeitschritt </td><td> mgO2/l </td><td> </td><td> </td></tr>
+!!<tr><td> \f$ \f$ </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
-!                                                                       
+!
 !> \page SedFluxO2 Sauerstoffaustausch mit dem Sediment
-!! \f[ 
-!!    \Delta {O_2}_{Sed} = Sedflux_{O_2} \cdot \frac{\Delta t}{h}
+!! \f[
+!! \Delta {O_2}_{Sed} = Sedflux_{O_2} \cdot \frac{\Delta t}{h}
 !! \f]
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta {O_2}_{Sed} \f$  </td><td> hSchlr </td><td> Sauerstoffzehrung des Sediments je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
-!!<tr><td> \f$ Sedflux_{O_2} \f$  </td><td> hJO2 </td><td> Sauerstofffluss ins Sediments aus sedflux() </td><td> mgO2/(m² d) </td><td> ? </td></tr>
-!!<tr><td> \f$ \Delta t \f$  </td><td> tflie </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
-!!<tr><td> \f$ h \f$  </td><td> tiefe </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
+!!<tr><td> \f$ \Delta {O_2}_{Sed} \f$ </td><td> hSchlr </td><td> Sauerstoffzehrung des Sediments je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
+!!<tr><td> \f$ Sedflux_{O_2} \f$ </td><td> hJO2 </td><td> Sauerstofffluss ins Sediments aus sedflux() </td><td> mgO2/(m² d) </td><td> ? </td></tr>
+!!<tr><td> \f$ \Delta t \f$ </td><td> tflie </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
+!!<tr><td> \f$ h \f$ </td><td> tiefe </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
 !!</table>\n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
 !
 !> \page lueftO2 Belüftung über die Gewässeroberfläche
-!! Zur Erläuterung wird hier der Massenstrom an Sauerstoff über die Gewässeroberfläche 
+!! Zur Erläuterung wird hier der Massenstrom an Sauerstoff über die Gewässeroberfläche
 !! zunächst als Änderungsrate einer tiefengemittelten Konzentration angeschrieben.
-!! \f[ 
-!!    {\frac{\delta O_2}{\delta t}}_{lueft} = (k_l + k_w) \cdot \Delta_{saett}  \cdot f_{temp} \cdot \frac{1}{H}
+!! \f[
+!! {\frac{\delta O_2}{\delta t}}_{lueft} = (k_l + k_w) \cdot \Delta_{saett} \cdot f_{temp} \cdot \frac{1}{H}
 !! \f]
 !! darin ist das Sauerstoffdefizit (Untersättigung):
-!! \f[ 
-!!    \Delta_{saett}={O_2}_{saett}-O_2
+!! \f[
+!! \Delta_{saett}={O_2}_{saett}-O_2
 !! \f]
-!! Die Sättigungskonzentration von Sauerstoff im Wasser ist temperaturabhängig 
+!! Die Sättigungskonzentration von Sauerstoff im Wasser ist temperaturabhängig
 !! und lässt sich wie folgt berechnen: \n
 !! (Wassertemperatur T in Grad Celsius)
-!! \f[ 
-!!    {O_2}_{saett}= 14.603 - 0.40215 \cdot T + 0.007687 \cdot T^2 - 0.0000693 \cdot T^3
+!! \f[
+!! {O_2}_{saett}= 14.603 - 0.40215 \cdot T + 0.007687 \cdot T^2 - 0.0000693 \cdot T^3
 !! \f]
 !! Für die Temperaturabhängigkeit des Belüftungsprozesses wird der folgende empirische Faktor angesetzt:\n
-!! \f[ 
-!!    f_{temp} = 1.024^{T-20}
+!! \f[
+!! f_{temp} = 1.024^{T-20}
 !! \f]
 !! \n
 !! <h3>Einmischung mittels Turbulenz infolge Sohlreibung</h3>
-!! Zur Berechnung der Belüftung des Gewässers über die Oberfläche wird standardgemäß die Formel nach Wolf(1972) verwendet: 
+!! Zur Berechnung der Belüftung des Gewässers über die Oberfläche wird standardgemäß die Formel nach Wolf(1972) verwendet:
 !! Der vom Fließzustand abhängige Beiwert \f$ k_l \f$ hat die Dimension einer Geschwindigkeit;\n
 !! für ihn gibt Wolf(1972) die folgende dimensionsbehaftete empirische Formel an:
-!! \f[ 
-!!    k_l = (3+\frac{40}{K_{St}})\frac{V}{H} + 0.5 
+!! \f[
+!! k_l = (3+\frac{40}{K_{St}})\frac{V}{H} + 0.5
 !! \f]
-!!   78 bbeiw = ((3.+40./rau(ior))*abs(vmitt(ior))/tiefe(ior)**2)+0.5/tiefe(ior)   \n                                                    
-!! mit \f$ k_l \f$ in m/s, dem Stricklerbeiwert \f$ K_{St} \f$ in m^(1/3)/s, 
+!! 78 bbeiw = ((3.+40./rau(ior))*abs(vmitt(ior))/tiefe(ior)**2)+0.5/tiefe(ior) \n
+!! mit \f$ k_l \f$ in m/s, dem Stricklerbeiwert \f$ K_{St} \f$ in m^(1/3)/s,
 !! dem Geschwindigkeitsbetrag V in m/s und der Wassertiefe H in m.
 !!\n
 !! <h3>Alternative</h3>
-!! Als Alternative kann die Belüftungsformel von MELCHING und FLORES (1999) angewählt werden (iphy = 2)                
-!!    81 FN = 1./RAU(ior) \n
-!!       G = 9.81 \n
-!!       UST = ((FN*G**0.5)/tiefe(ior)**0.166667)*abs(VMITT(ior)) \n
-!!       Slope = UST**2/(g*Tiefe(ior)) \n
-!!       Breite = flae(ior)/tiefe(ior) \n
-!!       bbeiw = (142.*(abs(vmitt(ior))*Slope)**0.333)/((tiefe(ior)**0.66)*(Breite**0.243))             \n                
-!! \f[ 
-!!    k_l = 
+!! Als Alternative kann die Belüftungsformel von MELCHING und FLORES (1999) angewählt werden (iphy = 2)
+!! 81 FN = 1./RAU(ior) \n
+!! G = 9.81 \n
+!! UST = ((FN*G**0.5)/tiefe(ior)**0.166667)*abs(VMITT(ior)) \n
+!! Slope = UST**2/(g*Tiefe(ior)) \n
+!! Breite = flae(ior)/tiefe(ior) \n
+!! bbeiw = (142.*(abs(vmitt(ior))*Slope)**0.333)/((tiefe(ior)**0.66)*(Breite**0.243)) \n
+!! \f[
+!! k_l =
 !! \f]
 !! \n
-!!........BELUEFTUNGSBEIWERT NACH HAJEK,NEUMANN,BISCHOFSBERGER IN     \n   
-!!   73 BBEIw = (3+40./RAU(ior))*(abs(VMITT(ior))**0.7+0.5*tiefe(ior)**0.7)/tiefe(ior)**1.7   \n                              
+!!........BELUEFTUNGSBEIWERT NACH HAJEK,NEUMANN,BISCHOFSBERGER IN \n
+!! 73 BBEIw = (3+40./RAU(ior))*(abs(VMITT(ior))**0.7+0.5*tiefe(ior)**0.7)/tiefe(ior)**1.7 \n
 !! \n
 !! <h3>Windeinfluss</h3>
 !! Der Windeinfluss auf die Belüftung wird berücksichtigt, wenn er mittels (iphyw != 0) angewählt wurde:
 !! \n\n
-!! Die gemessene Windgeschwindigkeit in der Höhe der Messung wird in eine 
+!! Die gemessene Windgeschwindigkeit in der Höhe der Messung wird in eine
 !! Windgeschwindigkeit 10 m über der Wasseroberfläche umgerechnet:
-!! \f[ 
-!!    W_{10} = W_{mess} /  {\left( \frac{z_{mess}}{10.} \right) }^{0.17} 
+!! \f[
+!! W_{10} = W_{mess} / {\left( \frac{z_{mess}}{10.} \right) }^{0.17}
 !! \f]
-!! \image html windgeschw.svg "Windgeschwindigkeit"  
-!! \f[ 
-!!    k_w = 0.19 \cdot W_{10} - 0.015 \cdot {W_{10}}^2 + 0.002 \cdot {W_{10}}^3
+!! \image html windgeschw.svg "Windgeschwindigkeit"
+!! \f[
+!! k_w = 0.19 \cdot W_{10} - 0.015 \cdot {W_{10}}^2 + 0.002 \cdot {W_{10}}^3
 !! \f]\n
-!! \image html windwirk_flaute.svg. "Belüftungswirkung schwache Winde"  
-!! \image html windwirk.svg "Belüftungswirkung starke Winde"  \n
+!! \image html windwirk_flaute.svg. "Belüftungswirkung schwache Winde"
+!! \image html windwirk.svg "Belüftungswirkung starke Winde" \n
 !! Im Falle der Nichtberücksichtigung des Windes wird \f$ k_w=0 \f$ gesetzt
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ H \f$  </td><td> tiefe </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
-!!<tr><td> \f$ T \f$  </td><td> TEMPW </td><td> Wasser-Temperatur </td><td> Grad Celsius </td><td> 0 ... ca. 25 </td></tr>
-!!<tr><td> \f$ O_2 \f$  </td><td> vo2 </td><td> Sauerstoffgehalt </td><td> mg O2 /l </td><td> 0 ... 10 ... 20 </td></tr>
-!!<tr><td> \f$ k_l \f$  </td><td> (bbeiw) </td><td> Belüftungsgeschwindigkeit Wasserbewegung</td><td> m/d </td><td> ? </td></tr>
-!!<tr><td> \f$ k_w \f$  </td><td> (bbeil) </td><td> Belüftungsgeschwindigkeit Luftbewegung</td><td> m/d </td><td> ? </td></tr>
+!!<tr><td> \f$ H \f$ </td><td> tiefe </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
+!!<tr><td> \f$ T \f$ </td><td> TEMPW </td><td> Wasser-Temperatur </td><td> Grad Celsius </td><td> 0 ... ca. 25 </td></tr>
+!!<tr><td> \f$ O_2 \f$ </td><td> vo2 </td><td> Sauerstoffgehalt </td><td> mg O2 /l </td><td> 0 ... 10 ... 20 </td></tr>
+!!<tr><td> \f$ k_l \f$ </td><td> (bbeiw) </td><td> Belüftungsgeschwindigkeit Wasserbewegung</td><td> m/d </td><td> ? </td></tr>
+!!<tr><td> \f$ k_w \f$ </td><td> (bbeil) </td><td> Belüftungsgeschwindigkeit Luftbewegung</td><td> m/d </td><td> ? </td></tr>
 !!</table>\n\n
 !! Die \subpage diskretO2 ergibt dann den Wert der Sauerstoffkonzentration am Ende eines jeweiligen Zeitschritt
 !! \n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
 
-!> SUBROUTINE oxygen_huelle() ruft QSim-Subroutine oxygen() auf.\n                               
+!> SUBROUTINE oxygen_huelle() ruft QSim-Subroutine oxygen() auf.\n
 !! (Zum Hüllroutinen-Konzept siehe: !\ref hüllen )
-!! \n\n 
+!! \n\n
 !! Beschreibung: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
 !! \n\n
 !! oxygen_huelle(i) WIRD parallel VON ALLEN PROZOREN AUFGERUFEN !!! ; i ist der prozessor-lokale Knotenzähler !!
@@ -470,7 +470,6 @@
 
 !     i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
       iglob=(i+meinrang*part) ! globale Knotennummer 
-      if (iglob.gt. knotenanzahl2D) return ! überstehende Nummern nicht bearbeiten.
       i2=zone(point_zone(iglob))%wettstat%wetterstations_nummer !! ist parallel !!!
       nk=(i-1)*number_plankt_vari ! Ort im Feld der transporterten, planktischen Variablen 
       kontroll=(iglob.eq.kontrollknoten)
@@ -710,7 +709,7 @@
          call qerror('iphy out of range 1...4 , aeration method, set in EREIGG.txt') ! Reaeration rate
       endif
 
-      if(kontroll) print*,'oxygen (davor): vo2(1),vo2(2),i,FLAE(1)=',vo2(1),vo2(2),i, FLAE(1)
+      if(kontroll) print*,'oxygen (davor): vo2(1),vo2(2),i,FLAE(1),TEMPWz(1,1)=',vo2(1),vo2(2),i, FLAE(1),TEMPWz(1,1)
       do k=1,number_benth_distr
          if(isnan(benthic_distribution_p(k+(i-1)*number_benth_distr)))then
             print*,'vor oxygen: isnan(benthic_distribution_p  node#',iglob,' variable# ',k

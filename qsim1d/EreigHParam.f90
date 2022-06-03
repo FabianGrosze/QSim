@@ -25,12 +25,14 @@
 
   character(255) :: cpfad1
   character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'EreigHParam.xml' 
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="EreigH" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="EreigH" QsimVersion="',versionstext,'">' 
   WRITE(1, '(A)') '<ParamSetDef Ident="EreigH" Text="Hydraulische Ereignisdaten" Help="Die von Qsim verwendeten hydraulischen Ereignisdaten">'
   WRITE(1, '(A)') '  <Parameter Ident="W" Text="W" Unit="m ü.NN" Format="F9.4" Help="Wasserstand" Quantity="W" />'
   WRITE(1, '(A)') '  <Parameter Ident="Q" Text="Q" Unit="m3/s" Format="F13.6" Help="Durchfluss" Quantity="Q" />'

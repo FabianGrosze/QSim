@@ -141,7 +141,7 @@ end if ! nur auf Prozessor 0 bearbeiten
 !!          planktonic_variable_name(65)= "                lf"\n
  !!         planktonic_variable_name(72)= "              salz"\n
 !! 
-!! aus Datei initialisieren.f95 ; zurück: \ref Anfangsbedingungen\n\n
+!! aus Datei initialisieren.f95 ; zurück: \ref Anfangsbedingungen \n\n
       SUBROUTINE ini_schwebstoff_salz()
       use modell
       implicit none

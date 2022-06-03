@@ -38,10 +38,10 @@
 !!                                                              Tagesminimum der Lufttemperatur (nur bei der Verwendung von Tagesmittelwerten verwendet)</td><td>  Grad Celsius  </td></tr>
 !!<tr><td>4</td><td>\anchor RO RO	</td><td> \anchor ro_T ro_T		</td><td> 63 				</td><td> Luftfeuchte 		</td><td> % </td></tr>
 !!<tr><td>5</td><td>\anchor WGE WGE 	</td><td> \anchor wge_T wge_T		</td><td> 65 				</td><td> Windgeschwindigkeit 	</td><td> m/s </td></tr>
-!!<tr><td>6</td><td>\anchor cloud cloud </td><td> \anchor cloud_T cloud_T	</td><td> 66 				</td><td> Bewölkungsdichte 	</td><td> Achtel </td></tr>
-!!<tr><td>7</td><td>\anchor typw typw 	</td><td> \anchor typw_T typw_T		</td><td> 67 				</td><td> Wolkentyp 		</td><td> 
+!!<tr><td>6</td><td>\ref cloud cloud </td><td> \anchor cloud_T cloud_T	</td><td> 66 				</td><td> Bewölkungsdichte 	</td><td> Achtel </td></tr>
+!!<tr><td>7</td><td>\ref typw typw 	</td><td> \anchor typw_T typw_T		</td><td> 67 				</td><td> Wolkentyp 		</td><td> 
 !! 									       siehe <a href="./pdf/QSimDoku_5Strahlung.pdf" target="_blank">Dokumentation Strahlung</a> </td></tr>
-!!<tr><td>-</td><td>\anchor templ templ </td><td> \anchor tlmed_T tlmed_T 	</td><td> 62 				</td><td> aktuelle Lufttemperatur aus temperl_wetter() 	</td><td> Grad Celsius </td></tr>
+!!<tr><td>-</td><td>\ref templ templ </td><td> \anchor tlmed_T tlmed_T 	</td><td> 62 				</td><td> aktuelle Lufttemperatur aus temperl_wetter() 	</td><td> Grad Celsius </td></tr>
 !!<tr><td>-</td><td>\anchor SCHWI SCHWI </td><td> \anchor schwi_T schwi_T	</td><td> 64 				</td><td> 
 !!                 Globalstrahlung an der Wasseroberflaeche unter Beruecksichtigung der Reflektion an der Wasseroberflaeche aus strahlg_wetter()	</td><td> cal/(cm2*h) </td></tr>
 !!</table>\n
@@ -117,12 +117,12 @@
       implicit none
       integer :: alloc_status
 
-      call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
       if(meinrang.eq. 0)print*,'meinrang, IWETTs_T, IMET_T, mwettmax_T'
       print*, meinrang, IWETTs_T, IMET_T, mwettmax_T
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
 if(meinrang.ne.0)then ! alle Prozesse ausser 0
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
@@ -220,16 +220,16 @@ if(meinrang.ne.0)then ! alle Prozesse ausser 0
 
 end if !! alle Prozesse ausser 0
 
-      call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(itagw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(monatw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(jahrw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierror)
-      !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(itagw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(monatw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(jahrw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierr)
 
       return
       end subroutine wetter_parallel
@@ -598,6 +598,12 @@ end if !! nur prozessor 0
       call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
       call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
 
+      do i2 = 1,IWETTs_T   !! Schleife über alle Wetterstationen
+	     if((kontrollknoten.gt.0).and.(meinrang.eq.0))		&
+	     print*,i2,meinrang," update_weather: tlmed_T,ro_T,schwi_T,wge_T,cloud_T,typw_T=",  &
+		        tlmed_T(i2),ro_T(i2),schwi_T(i2),wge_T(i2),cloud_T(i2),typw_T(i2)
+      end do ! i Schleife über alle Wetterstationen
+
       ! transfer to nodes via transfer_quantity_p array
       do i=1,part ! Alle Knoten auf diesem Prozessor 
          iglob=(i+meinrang*part)
@@ -767,6 +773,7 @@ end if !! nur prozessor 0
          TLMIN(1)=tlmin_T(i)
          call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
          tlmed_T(i)=TEMPL(1)
+         if((kontrollknoten.gt.0).and.(meinrang.eq.0))		&
          print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
 
       end do ! alle Wetterstationen i
@@ -834,7 +841,7 @@ end if !! nur prozessor 0
          glob(1)=glob_T(i)     ! Eingangsdaten
          !print*,'glob=',glob(1)
          uhrz=uhrzeit_stunde
-         !call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife TQsim gemacht
+         !call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
          !print*,'vor sasu tagdesjahres=',tagdesjahres,' meinrang=', meinrang
          tdj=tagdesjahres !! wird von sasu verändert (wozu ist unklar)
      !    print*,'strahlg_wetter0 station',Wetterstationskennung_T(i),' tag, monat, tagdesjahres=',tag, monat, tagdesjahres &
@@ -844,9 +851,15 @@ end if !! nur prozessor 0
         geol=modell_geol
         geob=modell_geob
         call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl) 
-     !    print*,'SASU nachher tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl=' &
-     !&                       ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+        if(kontrollknoten.gt.0)		&
+        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
+     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
 		if (ifehl.ne. 0)call qerror("SASU fehlgeschlagen")
+		if(sa.gt.su)then
+		   print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
+		   ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+		   call qerror("strahlg_wetter: computing daylight hours went wrong")
+		endif
          !if(meinrang.ge.(proz_anz-3)) then
          !   print*,'strahlg_wetter,sasu: meinrang,Wetterstationen, tag, monat, geob, geol, sa, su, zg, zlk, dk, tagdesjahres'
          !   print*,meinrang,i,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tagdesjahres
@@ -868,14 +881,17 @@ end if !! nur prozessor 0
          anze=1    ! nur an einem Punkt/Profil
          ifehl=1     !
          ifhStr=1     !
-         !print*,'strahlg_wetter1 station',Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
+         if(kontrollknoten.gt.0)		&
+         print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
          ij=1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
          azStr = 1 ! Laufindex über alle Stränge =1 in 3D
 
          call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   & 
      &               ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
      &               ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
-	     !print*,meinrang," strahlg_wetter glob,uhrz,sa,su,schwi",glob(1),uhrz,sa,su,schwi(1)
+	 
+         if(kontrollknoten.gt.0)		&
+	     print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
 
 !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &                                           
 !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr

@@ -25,13 +25,15 @@
 
   character(255)  :: cpfad1
   character (len=275)         :: pfadstring 
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'WetterParam.xml' 
   open(unit=1, file=pfadstring, encoding='UTF-8')
 
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="Wetter" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="Wetter" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="Wetter" Text="Wetterdaten" Help="Parameter des Wetters">'
   WRITE(1, '(A)') '  <Parameter Ident="GStrahl" Text="Globalstrahlung" Help="Tagessumme der Globalstrahlung oder Globalstrahlungsintensität" Unit="J/cm² oder J/(cm²*h)" Format="F7.2" Null="-1" Default="" Min="" Max="" />'
   WRITE(1, '(A)') '  <Parameter Ident="MaxTemp" Text="Max.Lufttemp." Help="Maximale Lufttemperatur im Messzeitraum" Unit="°C" Format="F6.2" Null="-99.99" Default="" Min="" Max="" />'

@@ -1,14 +1,14 @@
 !---------------------------------------------------------------------------------------
 !
-!   QSim - Programm zur Simulation der Wasserqualit‰t
+!   QSim - Programm zur Simulation der Wasserqualit√§t
 !
-!   Copyright (C) 2020 Bundesanstalt f¸r Gew‰sserkunde, Koblenz, Deutschland, http://www.bafg.de
+!   Copyright (C) 2020 Bundesanstalt f√ºr Gew√§sserkunde, Koblenz, Deutschland, http://www.bafg.de
 !
-!   Dieses Programm ist freie Software. Sie kˆnnen es unter den Bedingungen der 
+!   Dieses Programm ist freie Software. Sie k√∂nnen es unter den Bedingungen der 
 !   GNU General Public License, Version 3,
-!   wie von der Free Software Foundation verˆffentlicht, weitergeben und/oder modifizieren. 
-!   Die Verˆffentlichung dieses Programms erfolgt in der Hoffnung, daﬂ es Ihnen von Nutzen sein wird, 
-!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT F‹R EINEN BESTIMMTEN ZWECK. 
+!   wie von der Free Software Foundation ver√∂ffentlicht, weitergeben und/oder modifizieren. 
+!   Die Ver√∂ffentlichung dieses Programms erfolgt in der Hoffnung, da√ü es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT F√úR EINEN BESTIMMTEN ZWECK. 
 !   Details finden Sie in der GNU General Public License.
 !   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
 !   Falls nicht, siehe http://www.gnu.org/licenses/.  
@@ -25,7 +25,7 @@
                           ,kontroll ,jjj ) !!wy  
                                                                        
 !     Programm zur Berechnung der Konzentration E. Coli, faecal coliformer und coliformer      
-!     Bakterien in Fliessgew‰sser                                       
+!     Bakterien in Fliessgew√§sser                                       
 
 !     AUTOR:VOLKER KIRCHESCH                                            
                                                                        
@@ -55,8 +55,8 @@
 !                                                                       
 !     APARA 	Anteil des PARS Strahlung an der Globalstrahlung             
 !     WirkDC	Wirkdosis ab der die Coliformen absterben in J/m2/h         
-!     VRATED	Lichtunabh‰ngige, Temperaturabh‰ngige Mortalit‰tsrate [1/d]
-!     VRATEI	Lichtabh‰ngige Mortalit‰tsrate [1/d]                       
+!     VRATED	Lichtunabh√§ngige, Temperaturabh√§ngige Mortalit√§tsrate [1/d]
+!     VRATEI	Lichtabh√§ngige Mortalit√§tsrate [1/d]                       
 
 ! ### Fehlermeldung  ####
       ifehl = 0
@@ -76,7 +76,7 @@
       RateCGz = RateCGe    ! 1/d                                                                            
       RateCSd = RateCSe    ! 1/d 
                                                                        
-!....Ber¸cksichtigung der Linienquelle                                  
+!....Ber√ºcksichtigung der Linienquelle                                  
     
    if(ilbuhn==1)then
      else 
@@ -93,11 +93,11 @@
      enddo   ! Ende Schleife Linienquellen
   ENDIF
 
-      do ior=1,anze+1  ! Schleife ¸ber die Ortspunkte 
+      do ior=1,anze+1  ! Schleife √ºber die Ortspunkte 
 
       if(ilbuhn==1)then
           else if(flag(ior)/=4)then
-            else                        ! Ber¸cksichtigung der Einleitungen
+            else                        ! Ber√ºcksichtigung der Einleitungen
               m = 1
               ihcQ = 0
               if(vabfl(ior-1)<0.0.and.vabfl(ior)<0.0)m = -1
@@ -105,7 +105,7 @@
                                                               ! ist gleich der Konzentration der Einleitung 
 
               
-              hcColi = Coli(ior-m)     ! Umbenennen der benˆtigten Variablen
+              hcColi = Coli(ior-m)     ! Umbenennen der ben√∂tigten Variablen
               hcDOSCF = DOSCF(ior-m)
               hcQ = vabfl(ior-m)
               if(hcQ<0.0)hcQ = abs(hcQ)
@@ -144,7 +144,7 @@
       UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior)) 
                                                                        
 !     Berechnung des mittleren vertikalen Dispersionskoeffizient        
-!     nach Fischer im ein-dimensionalen Fall (gute N‰herung)            
+!     nach Fischer im ein-dimensionalen Fall (gute N√§herung)            
                                                                        
       a = 0.4*ust 
       xmuet = a*tiefe(ior)/6. 
@@ -185,7 +185,7 @@
 
       extk(ior) = -1.                                                                       
                                                                        
-    ENDDO    ! Ende Scleife ¸ber die Ortspunkte 
+    ENDDO    ! Ende Scleife √ºber die Ortspunkte 
                                                                        
       coli(anze+1) = colit
       DOSCF(anze+1) = DOSCFt

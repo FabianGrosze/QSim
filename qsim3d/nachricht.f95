@@ -35,7 +35,7 @@
          if(errcode .ne. 0)then
             !print*,systemaufruf
             print*,'qerror system call rm -rf fortschritt failed'
-            call MPI_Abort(mpi_komm_welt, errcode, ierror)
+            call MPI_Abort(mpi_komm_welt, errcode, ierr)
          end if !
          call system(systemaufruf,sysa)
          if(sysa.ne.0) then
@@ -45,7 +45,7 @@
          write(systemaufruf,'(5A)',iostat = errcode)'echo "',trim(fehlermeldung),'" >',trim(modellverzeichnis),'abbruch'
          if(errcode .ne. 0)then
             print*,'qerror system call echo abbruch failed'
-            call MPI_Abort(mpi_komm_welt, errcode, ierror)
+            call MPI_Abort(mpi_komm_welt, errcode, ierr)
          end if !
          call system(systemaufruf,sysa)
          if(sysa.ne.0) then
@@ -53,7 +53,7 @@
          end if !
 
          write(errcode,*)' ### controlled error exit ### QSim3D ### '
-         call MPI_Abort(mpi_komm_welt, errcode, ierror)
+         call MPI_Abort(mpi_komm_welt, errcode, ierr)
          stop
       END subroutine qerror
 !-----+-----+-----+-----+
@@ -124,7 +124,7 @@ if(meinrang.eq.0)then !! alles nur auf Prozessor 0
          if(sysa.ne.0) then
             print*,'open error file fortschritt, directory blocked by another run?'
             print*,'### uncontrolled error exit ### QSim3D ### '
-            call MPI_Abort(mpi_komm_welt, errcode, ierror)
+            call MPI_Abort(mpi_komm_welt, errcode, ierr)
          else
             rewind (ion)
             write(ion,'(f9.6)') 0.0
@@ -274,9 +274,9 @@ if(meinrang.eq.0)then !! alles nur auf Prozessor 0
 
 endif !! nur auf Prozessor 0 
 
-      call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_BCAST(modellverzeichnis, longname, MPI_CHARACTER,0,mpi_komm_welt,ierror) 
-      call MPI_Bcast(kontrollknoten,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_BCAST(modellverzeichnis, longname, MPI_CHARACTER,0,mpi_komm_welt,ierr) 
+      call MPI_Bcast(kontrollknoten,1,MPI_INT,0,mpi_komm_welt,ierr)
       !print*,meinrang," ",adjustl(trim(modellverzeichnis))," ",kontrollknoten
 
       if((meinrang.eq.(proz_anz-1)).and.(n.eq.0))then  !! timestep in between ; controll values at non zero (central) process
@@ -286,7 +286,7 @@ endif !! nur auf Prozessor 0
   223 FORMAT (" ============= zeitpunkt:",I10,"s, Zeitschritt: ",I7,'  ',I2.2,'.',I2.2,'.',I4,'  ',I2.2,':',I2.2,':',I2.2, &
      &        " von ",I10," bis ",I10," =============")
 
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       return
       END subroutine fortschritt
 

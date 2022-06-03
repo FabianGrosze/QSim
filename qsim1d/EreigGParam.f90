@@ -1,4 +1,4 @@
-!---------------------------------------------------------------------------------------
+﻿!---------------------------------------------------------------------------------------
 !
 !   QSim - Programm zur Simulation der Wasserqualität
 !
@@ -23,12 +23,14 @@ subroutine EreigGParam(cpfad1,j1)
 
   character(255) :: cpfad1
   character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'EreigGParam.xml'
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="EreigG" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="EreigG" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="EreigG" Text="Randbedingungs-Parameter" Help="Parameter der Randbedingungen">'
   WRITE(1, '(A)') '  <Parameter Ident="OBSB" Text="C-BSB5" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="C-BSB5" Min="0" Max="999.99" Default="" Module="Alle" />'
   WRITE(1, '(A)') '  <Parameter Ident="OCSB" Text="CSB" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="CSB" Min="0" Max="999.99" Default="" Module="Alle" />'
@@ -81,7 +83,7 @@ subroutine EreigGParam(cpfad1,j1)
   WRITE(1, '(A)') '<AerFormulas>'
   WRITE(1, '(A)') '<AerFormula Value="1" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16+K2wind (mit Wind)" Help="Berechnung nach Kirchesch" />´'
   WRITE(1, '(A)') '<AerFormula Value="2" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16 (ohne Wind)" Help="Berechnung nach Kirchesch" />'
-  WRITE(1, '(A)') '<AerFormula Value="3" Text="k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'
+  WRITE(1, '(A)') '<AerFormula Value="3" Text="##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'
   WRITE(1, '(A)') '<AerFormula Value="4" Text="K2=142*(v*S)^0.333*H^-0.66*B^-0.243 (Melching 1999)" Help="Berechnung nach Melching" />'
   WRITE(1, '(A)') '</AerFormulas>'
   WRITE(1, '(A)') '<HmFormulas>'
@@ -89,6 +91,13 @@ subroutine EreigGParam(cpfad1,j1)
   WRITE(1, '(A)') '<HmFormula Value="2" Text="Verteilungskoeff. nach Deltares (2010)" Help="" />'
   WRITE(1, '(A)') '<HmFormula Value="3" Text="noch nicht belegt" Help="" />'
   WRITE(1, '(A)') '</HmFormulas>'
+  WRITE(1, '(A)') '<EvapoFormulas>'
+  WRITE(1, '(A)') '  <EvapoFormula Value="1" Text="Windabhängigk. nach WMO" Help="fwind = 0,13 + 0,0936 * uw [m/s]" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="2" Text="nach Sweers (1976)" Help="fwind = 0,153 + 0,063 * uw [m/s]" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="3" Text="nach Rimsha und Donschenko" Help="fwind = 0,211 + 0,103 * uw [m/s])" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="4" Text="ohne Wind nach Priestley-Taylor (1972)" Help="ohne Wind nach Priestley-Taylor (1972)" />'
+  WRITE(1, '(A)') '  <EvapoFormula Value="5" Text="ohne Wind nach Delclaux et al. (2007)" Help="ohne Wind nach Delclaux et al. (2007)" />'
+  WRITE(1, '(A)') '</EvapoFormulas>'
   WRITE(1, '(A)') '</GerrisParam>'
  
   CLOSE(1)

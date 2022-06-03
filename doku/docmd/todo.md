@@ -3,9 +3,11 @@ ToDo {#lnk_todo}
 
 # Eine lose Sammlung der Dinge, die noch gemacht werden müssen im Dokuportal
 
-## noch einzusortieren
-Weil es an anderer Stelle nicht funktioniert. Wirds temporär hier verlinkt:
+## noch zu schreiben (und zu verlinken)
+- die Einmischung von Stoffkonzentrationen an den Rändern allgemein formuliert
+(sollte gleich sein für sämtliche Nährstoffe, Produzenten etc. !?) 
 
+## noch einzusortieren
 Die folgenden Seiten scheinen gerade nicht verlinkt zu sein und müssen noch
 an passender Stelle eingehängt werden.
 
