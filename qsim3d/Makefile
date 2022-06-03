@@ -27,52 +27,15 @@
 
 #====================================================================
 
-# PV=qsim3d
-# PV=qsim3d_nurtemp
-# PV=qsim3d_oxy
-# PV=qsim3d_silikat
-# PV=qsim3d_po4s
-# PV=qsim3d_po4s_12
-# PV=qsim3d_ph
-# PV=qsim3d_ph_mintief
-# PV=qsim3d_ncyc
-# ~/qsource/qsim3d> diff stoffumsatz.f95 stoffumsatz_seflux.f95
-# ~/qsource/qsim3d> cp stoffumsatz_nurtemp.f95 stoffumsatz.f95
-# PV=qsim3d_nurtempsed
-# PV=qsim3d_sedflux
-# PV=qsim3d_ncyc_pp
-# PV=qsim3d_orgc_pp
-# PV=qsim3d_algae_pp
-# PV=qsim3d_algae_pp_amor
-# PV=qsim3d_alter
-# PV=qsim3d_konsum_slurm
-# PV=qsim3d_coroph
-# PV=qsim3d_aug19_slurm
-# PV=qsim3d_rumpf_03sep19
-# PV=qsim3d_dreissen_preprocess
-# PV=qsim3d_zone
-# PV=qsim3d_hnf
-# PV=qsim3d_coli
-# PV=qsim3d_rumpf_03sep19i
-# PV=qsim3d_dreissen_nan
-# PV=qsim3d_coli2
-# PV=qsim3d_ohnehnf
-# PV=qsim3d_albenth
-# PV=qsim3d_mphyt
-# PV=qsim3d_voll2
-# PV=qsim3d_wsp
-# PV=qsim3d_schismQ
-# PV=qsim3d_untrimWeser
-# PV=qsim3d_unterweser
-# PV=qsim3d_pwert_korr
-# PV=qsim3d_strukt_ph
-# PV=qsim3d_1404entw
-# PV=qsim3d_1404final
-# PV=qsim3d_final_v
-# PV=qsim3d_pHtrans
-#PV=qsim3d_pHtrans_gather
-#PV=qsim3d_sc21
-PV=qsim3d_14.05
+# PV=qsim3d_sc21
+# PV=qsim3d_14.06entw
+# PV=qsim3d_14.07
+# PV=qsim_14.06git05
+# PV='qsim14.06doku'
+# PV='qsim3d14.07doku'
+# PV='qsim3d14.07Cu'
+PV='qsim3d14.08.00'
+
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
 #compiler:
@@ -148,8 +111,8 @@ endif
 #--------------------------------------------------------------------
 
 #usual: modu check date qsim qsim3d
-#usual: check date schism qsim qsim3d
 usual: check date qsim qsim3d
+#usual: check date qsim qsim3d
 
 modu:
 	/usr/bin/modulecmd bash purge
@@ -183,7 +146,7 @@ date:
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \
-     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+    $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
 #     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
@@ -208,6 +171,9 @@ qsim:
 #%.o: %.F95
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
+%.o: %.f90
+	$(FC) $(FFLAGS) -c -o $@  $<
+
 %.o: %.f95
 	$(FC) $(FFLAGS) -c -o $@  $<
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
@@ -216,7 +182,7 @@ Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o \
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o wetter.o ganglinien.o schnitt.o\
-     planktische_variablen.o parallel.o \
+     planktische_variablen.o module_suspendedMatter.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
      oxygen_huelle.o orgc_huelle.o ph_huelle.o \
@@ -229,8 +195,8 @@ Q3 = version.co trans_read.co \
      stoffumsatz.o \
      QSim3D.o
 
+#  screen_schism_nc.o stofftransport_schism.o 
 #	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
-# 	 read_mesh_nc_sc.o screen_schism_nc.o get_schism_step.o stofftransport_schism.o\
 
 
 qsim3d:	$(Q3)
@@ -270,8 +236,9 @@ taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
 	tar cvfz ../$(FN) ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
-	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml ../qsim1d/convert.exe \
+	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
 	../metabolism/*.f90 ../metabolism/*.txt ../metabolism/Makefile* \
+	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt
 	cp ../$(FN) .
 

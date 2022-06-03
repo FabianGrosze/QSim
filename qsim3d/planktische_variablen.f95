@@ -220,9 +220,9 @@
             end do !all j variables
          end do ! all k nodes in subdomain
 
-         !call mpi_barrier (mpi_komm_welt, ierror)
+         !call mpi_barrier (mpi_komm_welt, ierr)
          call scatter_planktkon()
-         !call mpi_barrier (mpi_komm_welt, ierror)
+         !call mpi_barrier (mpi_komm_welt, ierr)
          !print*,meinrang, ' planktkon_parallel finish'
          return
       END subroutine planktkon_parallel
@@ -235,16 +235,16 @@
 
          !print*,'scatter_planktkon part,number_plankt_vari,meinrang=',part, number_plankt_vari, meinrang
          call MPI_Scatter(planktonic_variable, part*number_plankt_vari, MPI_FLOAT,  &
-         planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierror)
-         if(ierror.ne.0)then
-            write(fehler,*)' 13 MPI_Scatter(planktonic_variable failed :', ierror
+         planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+         if(ierr.ne.0)then
+            write(fehler,*)' 13 MPI_Scatter(planktonic_variable failed :', ierr
             call qerror(fehler)
          end if 
 
          call MPI_Scatter(plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
-         plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierror)
-         if(ierror.ne.0)then
-            write(fehler,*)' 14 MPI_Scatter(plankt_vari_vert failed :', ierror
+         plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
+         if(ierr.ne.0)then
+            write(fehler,*)' 14 MPI_Scatter(plankt_vari_vert failed :', ierr
             call qerror(fehler) 
          end if 
 
@@ -261,16 +261,16 @@
          !print*,'gather_planktkon'
 
          call MPI_Gather(planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT,  &
-         planktonic_variable, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierror)
-         if(ierror.ne.0)then
-            write(fehler,*)' 15 MPI_Gather(planktonic_variable failed :', ierror
+         planktonic_variable, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+         if(ierr.ne.0)then
+            write(fehler,*)' 15 MPI_Gather(planktonic_variable failed :', ierr
             call qerror(fehler)
          end if 
 
          call MPI_Gather(plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
-         plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierror)
-         if(ierror.ne.0)then
-            write(fehler,*)' 16 MPI_Gather(plankt_vari_vert failed :', ierror
+         plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
+         if(ierr.ne.0)then
+            write(fehler,*)' 16 MPI_Gather(plankt_vari_vert failed :', ierr
             call qerror(fehler)
          end if 
          

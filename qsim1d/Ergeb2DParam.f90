@@ -23,14 +23,16 @@
 
 !  Ausgabe der Definition von Ergeb2D
 
-   character(255) :: cpfad1
-   character (len=275)         :: pfadstring
+  character(255) :: cpfad1
+  character (len=275)         :: pfadstring
+  character (len = 8)         :: versionstext
 
   write(pfadstring,'(2A)')trim(adjustl(cpfad1(1:j1))),'Ergeb2DParam.xml'
   open(unit=1, file=pfadstring, encoding='UTF-8')
   
   WRITE(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-  WRITE(1, '(A)') '<GerrisParam FileType="Ergeb2D" QsimVersion="14.02">'  
+  call version_string(versionstext)
+  WRITE(1, '(3A)') '<GerrisParam FileType="Ergeb2D" QsimVersion="',versionstext,'">'  
   WRITE(1, '(A)') '<ParamSetDef Ident="Ergeb2D" Text="2D-Zeitschritt-Ergebnisparameter" Help="Die von QSim in 2D- und Zeitschritt-Auflösung berechneten Parameter">'
   WRITE(1, '(A)') '  <Parameter Ident="VNH4" Text="NH4-N" Unit="mg/l" Format="F6.2" Help="..." Group="1" Quantity="NH4" />'
   WRITE(1, '(A)') '  <Parameter Ident="VNO2" Text="NO2-N" Unit="mg/l" Format="F5.3" Help="..." Group="1" Quantity="NO2" />'

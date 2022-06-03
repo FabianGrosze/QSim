@@ -31,9 +31,9 @@
          n_ue=0
          n_bn=0
 
-         call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
          if(meinrang.ne.0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
-         call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
 
          !! Knoten aussortieren, die nicht zu diesem Prozess gehören
          agp=0 !!
@@ -46,17 +46,17 @@
             end if
          end do
 
-         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
          allocate (r_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
          allocate (t_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
          allocate (u_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
  
          ! planktonic variables
-         call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_plankt_vari
             if(output_plankt(j))n_pl=n_pl+1
          end do
-         call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_plankt_vari_vert
             if(output_plankt_vert(j))n_pl=n_pl+1
          end do
@@ -80,22 +80,22 @@
          end if ! alloc_status .ne.0
 
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
-         call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_benth_distr
             if(output_benth_distr(j))n_bn=n_bn+1
          end do
          allocate (bn_gang(anz_gangl,zeitschrittanzahl+1,n_bn), stat = alloc_status )
 
          !transfer_quantities
-         call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_trans_val
             if(output_trans_val(j))n_ue=n_ue+1
          end do
-         call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_trans_quant
             if(output_trans_quant(j))n_ue=n_ue+1
          end do
-         call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
          do j=1,number_trans_quant_vert
             if(output_trans_quant_vert(j))n_ue=n_ue+1
          end do
@@ -129,7 +129,7 @@
             return
          end if ! open_error.ne.0
 
-         do while( zeile(ionumber))
+         do while( zeile(ionumber)) !! zunächst Anzahl der Ganglinien feststellen 
             if (ctext(1:1).ne.'#') then !! keine Kommentarzeile
                anz_gangl=anz_gangl+1
                read(ctext,*,iostat=io_error)knumm
@@ -138,10 +138,6 @@
                   call qerror(fehler)
                end if ! io_error.ne.0
                print*,'ganglinien_knoten.txt  ',anz_gangl,' :', trim(ctext), ' #',knumm
-               if((knumm.le.0).or.(knumm.gt.knotenanzahl2D))then
-                  write(fehler,*)'ganglinien_knoten.txt nummer ',knumm,' ungültig in diesem Modell. '
-                  call qerror(fehler)
-               end if ! Knotennummer ungültig in diesem Modell
             end if !! keine Kommentarzeile
          end do ! zeile
          rewind (ionumber) ! ganglinien_knoten.txt zurückspulen
@@ -180,12 +176,19 @@
          else
             print*,'nicht querschneiden'
          end if
+         do i=1,anz_gangl
+            if((knot_gangl(i).le.0).or.(knot_gangl(i).gt.knotenanzahl2D))then
+               write(fehler,*)i,'ganglinien_knoten.txt nummer ',knot_gangl(i),' nicht zwischen 1 und ',knotenanzahl2D
+               call qerror(fehler)
+            end if ! Knotennummer ungültig in diesem Modell
+         end do
       case(2) ! Untrim² netCDF
          print*,'Konzentrationsvariablen bei Untrim-Netzen sind Element-Mitten,' 
          print*,'daher müssen in ganglinien_knoten.txt Elementnummern eingetragen werden'
          do i=1,anz_gangl
             if((knot_gangl(i).lt.1).or.(knot_gangl(i).gt.n_elemente))then
-               write(fehler,*)'ganglinien_lesen,Untrim ### Nummer flasch ###: knot_gangl(',i,')=',knot_gangl(i)
+               write(fehler,*)'ganglinien_lesen,Untrim ### Element-Nummer falsch ###: knot_gangl(',i,')=' &
+     &                        ,knot_gangl(i),'nicht zwischen 1 und ',n_elemente
                call qerror(fehler)
             else
                print*,'ganglinien nr. ',i,' am Element ',knot_gangl(i),' Ort: ',element_x(knot_gangl(i)), element_y(knot_gangl(i))
@@ -294,7 +297,7 @@
       end if ! hydro_trieb=1=casu
       end if ! meinrang.eq. 0
 
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       END subroutine ganglinien_zeitschritt
 !!
@@ -487,8 +490,8 @@ if(meinrang.eq.0)then ! prozess 0 only
  124  continue
 
 end if ! only prozessor 0
-        call mpi_barrier (mpi_komm_welt, ierror)
-        call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierror)
+        call mpi_barrier (mpi_komm_welt, ierr)
+        call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierr)
 
          ! lueftung! beschriftung=trim(beschriftung)//"|        delo2_last|"
 
@@ -531,33 +534,19 @@ end if ! only prozessor 0
 !     &                           monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
             write(beschriftung,'(A, 2("       ",F7.2))')trim(beschriftung), t_gang(i,j), u_gang(i,j)
             do k=1,n_pl
-               write(beschriftung,'(A,"      ",F16.9)')trim(beschriftung),pl_gang(i,j,k)
+               write(beschriftung,2578)trim(beschriftung),pl_gang(i,j,k)
             end do
             do k=1,n_bn
-               write(beschriftung,'(A,"      ",F16.9)')trim(beschriftung),bn_gang(i,j,k)
+               write(beschriftung,2578)trim(beschriftung),bn_gang(i,j,k)
             end do
             do k=1,n_ue
-               write(beschriftung,'(A,"      ",F16.9)')trim(beschriftung),ue_gang(i,j,k)
+               write(beschriftung,2578)trim(beschriftung),ue_gang(i,j,k)
             end do
-            ! write(beschriftung,'(A,"   ",F16.9)')trim(beschriftung),lueftung ! aus oxygen
- 
-            write(ionumber+i,'(A)')trim(beschriftung)
-            !!write(ionumber+i,230)       &
-            !write(ionumber+i,*)       &
-            !r_gang(i,j), t_gang(i,j), u_gang(i,j)  &
-            !,pl_gang(i,j,1:n_pl)   &
-            !,ue_gang(i,j,1)
-!   230      FORMAT (I12.2, 2("    ",F7.2), 73("   ",F16.9) )
-!   230      FORMAT (I12.2, 2("    ",F7.2), 72("   ",F16.9) )
-!            if(number_plankt_vari.gt.72)then
-!               print*,'module_ganglinien.f95 Ausgabeformat 230 muss auf ',number_plankt_vari,' erweitert werden.'
-!               stop 
-!            end if
-! silikat   230      FORMAT (I12.2,"    ",F14.9,"    ",F14.9,"    ",F14.9,"    ",F14.9,"    ",F14.9,"    ",F14.9)
-! po4s               (I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",I12.2 &
-!                    ,"    ",F7.2,"    ",F7.2,"    ",F7.2 &
-!                    ,"    ",F7.2,"    ",F7.2,"    ",F7.2,"    ",F14.9 &
-!                    ,"    ",F14.9,"    ",F14.9)
+ 2578       format( A,6X,E16.10 )
+! 2578       format(A,6X,F16.9)
+
+            write(ionumber+i,'(A)')trim(beschriftung) ! final line output
+
          end do ! alle j Zeitschritte
          end if ! knoten auf diesem Prozess
          end do ! alle i Ausgabe-Knoten

@@ -34,6 +34,7 @@
 !!     Nach dem gemeinsamen Transport (Advektions-Diffusions-Simulation)
 !!     werden die Datenfelder wieder auf die parallelen Prozesse verteilt 
 !!     (MPI_scatter in scatter_planktkon()).
+!!     \n \subpage lnk_partik_planktik
 !! \n\n</li>
 !! <li>\subpage benthische_verteilungen, beschreibt Eigenschaften der Gewässersohle
 !!     Diese Variablen sind ortsfest und 2-dimensional. 
@@ -67,6 +68,36 @@
 !! 
 !! \subpage Parallelisierung \n
 !! 
+!! \section lnk_benennung Benennung der Variablen und Parameter im QSimCode
+!!
+!! Der Bennenung von Variablen und Parametern im QSim-Code unterliegt eine 
+!! gewisse Struktur, die in der folgenden Tabelle zusammengefasst ist.
+!! Achtung: Die Tabelle ist unvollständig und im Aufbau. Zum Teil wird von der 
+!! Struktur abgewichen.
+!!<table variable_naming>
+!!<tr><th> Zusatz </th><th> Platz </th><th> Beispiel </th><th> Bedeutung </th></tr>
+!!<tr><td> a </th><th> vorangestellt </th><th> apfl </th><th> ?? </td></tr>
+!!<tr><td> b </td><td> vorangestellt </td><td> bgesN </td><td> Buhnenfeld </td></tr>
+!!<tr><td> e </td><td> vorangestellt </td><td> egesN </td><td> Einleiter (?) </td></tr>
+!!<tr><td> e und h </td><td> vor- und nachgestellt </td><td> egesNh </td><td> ?? </td></tr>
+!!<tr><td> h </td><td> vorangestellt </td><td> hgesN </td><td> geht über alle Stränge (?) </td></tr>
+!!<tr><td> L </td><td> nachgestellt </td><td> gesnL </td><td> Linieneinleiter (?) </td></tr>
+!!<tr><td> LH </td><td> nachgestellt </td><td> gesnLH  </td><td> Linieneinleiter (?) </td></tr>
+!!<tr><td> max </td><td> nachgestellt </td><td> pflmax </td><td> Maximum über ?? </td></tr>
+!!<tr><td> min </td><td> nachgestellt </td><td> pflmin </td><td> Minimum über ?? </td></tr>
+!!<tr><td> mis </td><td> nachgestellt </td><td> pflmis </td><td> ?? </td></tr>
+!!<tr><td> mxs </td><td> nachgestellt </td><td> pflmxs </td><td> ?? </td></tr>
+!!<tr><td> s </td><td> vorangestellt </td><td> svx0 </td><td> ?? </td></tr>
+!!<tr><td> s </td><td> nachgestellt </td><td> gesns </td><td> Variable lokal in Subroutine </td></tr>
+!!<tr><td> sum </td><td> vorangestellt </td><td> sumpfl </td><td> Summe über ?? </td></tr>
+!!<tr><td> t </td><td> nachgestellt </td><td> vo2t </td><td> jeweilige Größe am jeweiligen Profil (am Ende der jeweiligen Knotenschleife) </td></tr>
+!!<tr><td> y </td><td> nachgestellt  </td><td> vx0y </td><td> für Mittelung (?) </td></tr>
+!!<tr><td> z </td><td> nachgestellt </td><td> hgesnz </td><td> tiefenaufgelöst </td></tr>
+!!<tr><td> zt </td><td> nachgestellt </td><td> gesnzt </td><td> ?? </td></tr>
+!!<tr><td> zw </td><td> vorangestellt </td><td> zwgesN </td><td> Zwischengröße </td></tr>
+!!<tr><td> z_z </td><td> nachgestellt </td><td> hgesnz_z </td><td> dreifach indiziert (?)  </td></tr>
+!!</table variable_naming>
+!!
 !! \n\n aus Datei: module_modell.f95 ; zurück:\ref index
 
 !--------------------------------------------------------------------------------------------------------------
@@ -128,8 +159,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !-------------------------------------------------------------------------------parallel_datenfelder
 ! Beschreibung in parallel.f95
 !> nummer und Gesamtzahl prozessoren (MPI)
-      integer :: meinrang, part, proz_anz
-      integer :: mpi_komm_welt, ierror
+      integer :: meinrang, part, proz_anz, ierr
+      integer :: mpi_komm_welt
 
 !-------------------------------------------------------------------------------Modell+Netz
 !> modellverzeichnis etc.
@@ -159,6 +190,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !> \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
       integer :: itracer
 !> \anchor ieros Erosions-flag mit Erosion=1 ohne=0 in QSim3D bisher unbenutzt
+!#FG: temporary dirty hack: iEros<0 for reading 'SS' from UnTRIM2; 'abs(iEros)' sets the number of classes to be read (finest to coarsest)
       integer :: ieros
 !> \anchor ischwa mit ereigg2=1 ohne=0 ??? in QSim3D bisher unbenutzt
       integer :: ischwa
@@ -177,9 +209,18 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !> \anchor iphy Berechnungsoption für Oberflächenbelüftung in oxygen.f90:\n
 !!     iphy = 1       ! neue Formel von mir mit Wind\n
 !!     iphy = 2       ! neue Formel von mir ohne Wind\n
-!!     iphy = 3       ! Formel von Wolf\n
+!!     iphy = 3       ! Formel von Wolf ##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'\n
 !!     iphy = 4       ! Formel von Melching\n
       integer :: iphy
+!> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010
+      integer :: iformVert
+!> \anchor IFORM_VERDR:   Schalter für die Auswahl der Verdunstungsformeln in temperw_kern.f90 \n
+!!    iform_VerdR==1 ! WMO (FGSM-Handbuch)
+!!    iform_VerdR==2 ! Sweers (1976) over Land
+!!    iform_VerdR==3 ! Rimsha & Donschenko
+!!    iform_VerdR==4 ! Priestley-Taylor (1972)
+!!    iform_VerdR==5 ! Delclaux et al. (2007)
+      integer :: iform_verdr
 
 !> \anchor iwsim Kennung, Simulationstyp ?
       integer :: iwsim
@@ -454,11 +495,15 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 
       integer :: nst_prev ! stack number of preveously read timestep
 !> Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-      integer :: na_transinfo, ne_transinfo, anz_transinfo
+      integer :: na_transinfo, ne_transinfo, anz_transinfo, n_trans
 !> SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
       integer ::n_stacks
-!> Zeitschrittweite der Transportinformation
+!> \anchor dttrans timestep for transport simulation in sec.
       real :: dttrans
+!> \anchor deltatrans timestep for transport simulation in whole sec. (integer)
+      integer :: deltatrans !! in ganzen Sekunden
+!> \anchor nub_sub_trans number of sub-steps in transport simulation 
+      integer :: nub_sub_trans
 !> Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w
 !! werden im  /ref zuflussranddaten ??? übernommen und auf die Prozesse verteilt.
       real , allocatable , dimension (:) :: p, u, dir, w, vel_x, vel_y !! , tief

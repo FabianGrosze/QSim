@@ -63,14 +63,14 @@
 !!!####	  use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
 
-      call mpi_init(ierror)
-      if (ierror.ne.0)call qerror('mpi_init(ierror).ne.0')
+      call mpi_init(ierr)
+      if (ierr.ne.0)call qerror('mpi_init(ierr).ne.0')
       mpi_komm_welt=MPI_COMM_WORLD
-      call mpi_comm_size(mpi_komm_welt,proz_anz, ierror)
-      if (ierror.ne.0)call qerror('mpi_comm_size(mpi_komm_welt,proz_anz, ierror).ne.0')
-      call mpi_comm_rank(mpi_komm_welt,meinrang,ierror)
+      call mpi_comm_size(mpi_komm_welt,proz_anz, ierr)
+      if (ierr.ne.0)call qerror('mpi_comm_size(mpi_komm_welt,proz_anz, ierr).ne.0')
+      call mpi_comm_rank(mpi_komm_welt,meinrang,ierr)
 !!!####	  myrank=meinrang
-      if (ierror.ne.0)call qerror('mpi_comm_rank(mpi_komm_welt,meinrang,ierror).ne.0')
+      if (ierr.ne.0)call qerror('mpi_comm_rank(mpi_komm_welt,meinrang,ierr).ne.0')
       write(*,*)'Prozess #',meinrang,' started mit PID=',getpid()
 
       return
@@ -85,38 +85,46 @@
       subroutine parallel_vorbereiten()
       use modell
       use QSimDatenfelder
-!!!###	  use schism_msgp, only: myrank,parallel_abort !,nproc
+      use mod_suspendedMatter, only: init_suspendedMatter
+!!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
       implicit none
       integer kontroll_lokal
 
       ! prepare for parallel
       call modell_parallel()
       !print*,meinrang," modell_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call planktkon_parallel() !calls scatter_planktkon() 
       !print*,meinrang," planktkon_parallel() ... fertig"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call benthic_parallel()
       !print*,meinrang," benthic_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call ueber_parallel()
       !print*,meinrang," ueber_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call zonen_parallel()
       !print*,meinrang," zonen_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call wetter_parallel()
       !print*,meinrang," wetter_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       call randbedingungen_parallel()
       !print*,meinrang," randbedingungen_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
-      call schwebstoff_salz_parallel()
-      !print*,meinrang," schwebstoff_salz_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      ! initialize SPM (and salinity)
+      if (iEros>=0) then
+         call schwebstoff_salz_parallel()
+         !print*,meinrang," schwebstoff_salz_parallel() ... danach"
+         call mpi_barrier (mpi_komm_welt, ierr)
+      else
+         call init_suspendedMatter
+      end if
+      
       call alter_parallel()
       !print*,meinrang," alter_parallel() ... danach"
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       kontroll_lokal=kontrollknoten-(meinrang*part)
       if((kontroll_lokal.gt. 0).and.(kontroll_lokal.le.part))then
@@ -132,7 +140,7 @@
       call ausgeben_parallel()
 
       if(meinrang.eq.0)print*,'parallel_vorbereiten done'
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       return
       END subroutine parallel_vorbereiten
 
@@ -148,52 +156,54 @@
       integer n, alloc_status
       !print*,meinrang," modell_parallel() ... startet"
 
-         call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(rechenzeit,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(rechenzeit,1,MPI_INT,0,mpi_komm_welt,ierr)
          zeitpunkt=rechenzeit
-         call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(time_offset,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(knotenanzahl3D,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(n_elemente,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(kontrollknoten,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(modell_geob,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(modell_geol,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(time_offset,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(knotenanzahl3D,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(n_elemente,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(kontrollknoten,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(modell_geob,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(modell_geol,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
 
       ! start + end time
-      call MPI_Bcast(itags,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(monats,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(jahrs,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(uhrs,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(startzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(itage,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(monate,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(jahre,1,MPI_INT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(uhren,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
-      call MPI_Bcast(endzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierror)
+      call MPI_Bcast(itags,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(monats,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(jahrs,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(uhrs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(startzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(itage,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(monate,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(jahre,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(uhren,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(endzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
 
          ! Berechnung- und Ausgabeflags
          !read(92,9220)imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy  aus EREIGG.txt
-         call MPI_Bcast(imitt,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(ipH,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(idl,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(itemp,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(itracer,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(ieros,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(ischwa,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(iverfahren,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(ilongDis,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(FlongDis,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(iColi,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(ikonsS,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(iSchwer,1,MPI_INT,0,mpi_komm_welt,ierror)
-         call MPI_Bcast(iphy,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(imitt,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(ipH,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(idl,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(itemp,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(itracer,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(ieros,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(ischwa,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iverfahren,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(ilongDis,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(FlongDis,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iColi,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(ikonsS,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iSchwer,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iphy,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iformVert,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(iform_verdr,1,MPI_INT,0,mpi_komm_welt,ierr)
 
-         !call MPI_Bcast(min_tief,1,MPI_FLOAT,0,mpi_komm_welt,ierror)
+         !call MPI_Bcast(min_tief,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
          !print*,meinrang," modell_parallel() min_tief,n_elemente=", min_tief,n_elemente
 
-         call MPI_Bcast(number_plankt_point,1,MPI_INT,0,mpi_komm_welt,ierror)
+         call MPI_Bcast(number_plankt_point,1,MPI_INT,0,mpi_komm_welt,ierr)
          !print*,meinrang," modell_parallel() number_plankt_point=", number_plankt_point
 
     !     !partitioning of variable arrays needed earlier now in eingabe()
@@ -212,10 +222,10 @@
                  call qerror(fehler)
              end if ! allocate fehlgeschlagen
          end if !! nicht 0-Prozess
-         call mpi_barrier (mpi_komm_welt, ierror)
-         call MPI_Bcast(knoten_z,knotenanzahl2D,MPI_FLOAT,0,mpi_komm_welt,ierror)
+         call mpi_barrier (mpi_komm_welt, ierr)
+         call MPI_Bcast(knoten_z,knotenanzahl2D,MPI_FLOAT,0,mpi_komm_welt,ierr)
 
-      call mpi_barrier (mpi_komm_welt, ierror)
+      call mpi_barrier (mpi_komm_welt, ierr)
       !if(meinrang .eq.0)print*,"modell_parallel fertig"
       !print*,"modell_parallel fertig ",meinrang
       return

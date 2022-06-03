@@ -128,7 +128,7 @@
 !!                 , \ref abl, \ref abbcm, \ref bsbbl, \ref csbbl, \ref dblmor, \ref zexbl, \ref drfaeb  \n
 !!                 , \ref csbki, \ref csbgr, \ref ischif, \ref echla, \ref evkigr, \ref eantbl            \n
 !!                 , \ref aki, \ref agr, \ref drfaek, \ref drfaeg, \ref drfaes, \ref ssdr, \ref orgCsd     \n
-!!                 , CD=\ref cd1+\ref cd2, CP=\ref cp1+\ref cp2, *CM*, *BAC*, \ref o2bsb, \ref GRote, \ref vcsb, \ref vkigr, \ref antbl   \n
+!!                 , CD=\ref cd1 + \ref cd2, CP=\ref cp1 + \ref cp2, *CM*, *BAC*, \ref o2bsb, \ref GRote, \ref vcsb, \ref vkigr, \ref antbl   \n
 !!                 , \ref HNFBAC *BSBHNF*, *CHNF*, \ref echnf, \ref fbsgr, \ref frfgr, \ref fbsgrs, \ref frfgrs   \n
 !!                 , \ref bacmua, \ref dorgSS, \ref ilbuhn, \ref iwied, \ref fkm, \ref bsbct   \n
 !!                 , \ref pl0, \ref Q_PK, \ref Q_PB, \ref Q_PG, \ref pZoo, \ref nl0, \ref Q_NK, \ref Q_NB, \ref Q_NG, \ref nzoo   \n
@@ -177,11 +177,11 @@
 !! \n\n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$  hy_{P,i} \f$  </td><td> hyP(i) </td><td> Hydrolyserate für die partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> 1/d </td><td> 0.12 </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit </td><td> - </td><td> 0.2 ... 1 </td></tr>
-!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1 + \ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ T \f$  </td><td> \ref tempw </td><td> Wassertemperatur </td><td> C° </td><td> 0 ... 30 </td></tr>
 !!<tr><td> \f$ T_{opt} \f$  </td><td> Topt </td><td> optimale Temperatur </td><td>  C°  </td><td>  25 hartcodiert  </td></tr>
 !!<tr><td> \f$ dti \f$  </td><td> dti </td><td> Bezugs-Temperatur </td><td>  C°  </td><td> 20 hartcodiert </td></tr>
@@ -234,7 +234,7 @@
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ hy_{D,i} \f$  </td><td> hyP(i) </td><td> Hydrolyserate für die gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> 1/d </td><td> ?? </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit, siehe: \ref hyp </td><td> - </td><td> 0.2 ... 1 </td></tr>
 !!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
@@ -326,7 +326,7 @@
 !! \n\n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ pfl \f$  </td><td> \ref pfl </td><td> Pflanzentrockengewicht Makrophyten </td><td> g/m² </td><td>  </td></tr>
 !!<tr><td> \f$ h \f$  </td><td> tiefe </td><td> Wassertiefe </td><td> m </td><td> 0 ... 25 </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit, siehe: \ref hyp </td><td> - </td><td> 0.2 ... 1 </td></tr>
@@ -486,7 +486,7 @@
 !! \f]
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ \Delta {CP_i}_{drs} \f$  </td><td> CD(i = \ref cd1+\ref cd2 </td><td> Änderung an partikulären C-Verbindungen in einem Zeitschritt </td><td> mgC/l je Zeitschritt </td><td>  </td></tr>
+!!<tr><td> \f$ \Delta {CP_i}_{drs} \f$  </td><td> CD(i = \ref cd1 + \ref cd2 </td><td> Änderung an partikulären C-Verbindungen in einem Zeitschritt </td><td> mgC/l je Zeitschritt </td><td>  </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> - </td><td> Index 1 leicht abbaubar, 2 schwer abbaubar </td><td> - </td><td> 1,2 </td></tr>
 !!<tr><td> \f$ \Delta {C_{ref}}_{drs} \f$  </td><td> - </td><td> Änderung an refrakteren C-Verbindungen in einem Zeitschritt  </td><td>  mgC/l je Zeitschritt  </td><td>  </td></tr>
 !!<tr><td> \f$ ssdr \f$  </td><td> \ref ssdr </td><td> Schwebstoffaufnahme durch Dreissena </td><td>  mg/l je Zeitschritt  </td><td>  </td></tr>
@@ -596,7 +596,7 @@
 !!<tr><td> \f$ res_{HBAC} \f$  </td><td> resbac </td><td> Respirationsrate der heterotrophen Bakterien, siehe: \ref BACm </td><td> 1/d </td><td> ? </td></tr>
 !!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ O_2dC \f$  </td><td> \ref o2bsb </td><td> Sauerstoff-Kohlenstoffverhältnis beim C-Abbau </td><td> mgO2/mgC </td><td>  </td></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ C-BSB_5 \f$  </td><td> \ref obsb </td><td> - </td><td> - </td><td> - </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td><td> ? </td></tr>
@@ -604,7 +604,7 @@
 !!<tr><td> \f$ h \f$  </td><td> *TIEFE* </td><td> Wassertiefe </td><td> m </td><td> 0 ... ca. 25 </td></tr>
 !!<tr><td> \f$ f_T \f$  </td><td> ftemp </td><td> Faktor der Temperaturabhängigkeit, siehe: \ref hyp </td><td> - </td><td> 0.2 ... 1 </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref </td><td> Konzentration der refraktären (nicht abbaubaren) C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
-!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1 + \ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ C_{HNF} \f$  </td><td> *CHNF* </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
 !!</table>\n
@@ -752,7 +752,7 @@
 !!<table>
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ \Delta SS_{org} \f$  </td><td>  *dorgSS* </td><td> Veränderung von suspendierten Sedimenten aus C-Verbindungen </td><td> mg SS /l je Zeitschritt </td><td> ? </td></tr>
-!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1 + \ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref </td><td> Konzentration der refraktären (nicht abbaubaren) C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
@@ -795,7 +795,7 @@
 !! mit:
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1 + \ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ \Delta t \f$  </td><td> tflie </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
@@ -819,7 +819,7 @@
 !! welches auch nicht massenerhaltend ist.\n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2</td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2</td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
 !!<tr><td> \f$ \Delta t \f$  </td><td> *TFLIE* </td><td> Zeitschrittweite </td><td> d </td><td> 0.01 ... 1 </td></tr>
 !!</table>\n
@@ -897,9 +897,9 @@
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
 !!<tr><td> \f$ C_{ref} \f$  </td><td> Cref </td><td> Konzentration der refraktären (nicht abbaubaren) C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ CSB \f$  </td><td> \ref ocsb </td><td> Kohlenstoffbürtiger chemischer Sauerstoffbedarf </td><td> mgO2/l </td><td> ? </td></tr>
-!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1+\ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
+!!<tr><td> \f$ CP_i \f$  </td><td> CP(i, \ref cp1 + \ref cp2 </td><td> Konzentration der partikulären organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ i \f$  </td><td> i </td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td><td> 1, 2 </td></tr>
-!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1+\ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
+!!<tr><td> \f$ CD_i \f$  </td><td> CD(i, \ref cd1 + \ref cd2 </td><td> Konzentration der gelösten organischen C-Verbindungen der i-ten Stoffgruppe </td><td> mgC/l</td><td> ? </td></tr>
 !!<tr><td> \f$ CM \f$  </td><td> *CM* </td><td> Konzentration der monomolekularen organischen C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ HBAC \f$  </td><td> *BAC* </td><td> Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen </td><td> mgC/l </td><td> ? </td></tr>
 !!<tr><td> \f$ C_{HNF} \f$  </td><td> *CHNF* </td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td><td> ? </td></tr>
@@ -1368,8 +1368,8 @@
 !!<tr><td> \f$ C_{HNF} \f$  	</td><td> *CHNF*	</td><td> C-Masse der heterotrophen Nanoflagelaten </td><td> mgC/l </td></tr>
 !!<tr><td> \f$ V_{HNF} \f$  	</td><td> \ref bvhnf	</td><td> Biovolumen der HNF  </td><td> µm3 ?? </td></tr>
 !!<tr><td> \f$ v \f$  		</td><td> vcbe 		</td><td> Verhältnis \ref obsb/ \ref ocsb </td><td> - </td></tr>
-!!<tr><td> \f$ CP_i \f$  	</td><td> CP(i=\ref cp1+\ref cp2, </td><td> \ref bilaCP in der i-ten Stoffgruppe </td><td> mgC/l </td></tr>
-!!<tr><td> \f$ CD_i \f$  	</td><td> CD(i=\ref cd1+\ref cd2 </td><td> \ref bilaCD in der i-ten Stoffgruppe </td><td> mgC/l</td></tr>
+!!<tr><td> \f$ CP_i \f$  	</td><td> CP(i=\ref cp1 + \ref cp2, </td><td> \ref bilaCP in der i-ten Stoffgruppe </td><td> mgC/l </td></tr>
+!!<tr><td> \f$ CD_i \f$  	</td><td> CD(i=\ref cd1 + \ref cd2 </td><td> \ref bilaCD in der i-ten Stoffgruppe </td><td> mgC/l</td></tr>
 !!<tr><td> \f$ i \f$  		</td><td> i 		</td><td> Index Abbaubarkeit  - i=1: leicht abbaubar; i=2: schwer abbaubar</td><td> - </td></tr>
 !!<tr><td> \f$ CM \f$  		</td><td> *CM*	</td><td> planktonic_variable 41</td><td> \ref bilaCM </td><td> mgC/l /td></tr>
 !!<tr><td> \f$ HBAC \f$  	</td><td> *BAC*	</td><td> planktonic_variable 42</td><td> \ref bilaBAC </td><td> mgC/l </td></tr>
@@ -1388,7 +1388,7 @@
 !!
 !! QSim berechnet dieses Sauerstoff-Kohlenstoffverhältnis (Variable 43, O2BSB, aus dem planktonic_variablen.h ) 
 !! nur bei der Aufteilung
-!! der vorgebenen Randbedingungen in die Berechnungsvariablen siehe:\ref orgc_aufteilung.\n
+!! der vorgebenen Randbedingungen in die Berechnungsvariablen siehe:\ref orgc_aufteilung. \n
 !! D.h. Dieses Verhältnis kann sich zwar mit anderen Einleitungen mischen, bleibt aber ansonsten konstant.
 !! \n\n
 !! In dem schematischen Testfall 

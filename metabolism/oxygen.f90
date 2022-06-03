@@ -27,8 +27,8 @@
                     ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                                   &
                     ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z                    &
                     ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                       &
-                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROTe,iphy                   &        ! chlagr  unbenutzt                                       
-                    ,kontroll ,jjj ) !!wy  
+                    ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROTe,iphy                   &
+                    ,kontroll ,jjj ) !!wy  					! chlagr  unbenutzt                                       
                                                                        
 !##############################################################
 !PROGRAMM ZUR BERECHNUNG DES SAUERSTOFFGEHALTS IN FLIEßGEWÄSSER
@@ -291,6 +291,8 @@
         !call Belueftung_K2(rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wge,IDWe,iphy,bbei,mstr,ior,azStrs)
 		call Belueftung_K2(rau(ior),tiefe(ior),vmitt(ior),rhyd(ior),flae(ior),tempw(ior)   &
      &                    ,WLage(mstr,ior),hWS(mstr,ior),wge(IDWe(mstr,ior)),iphy,bbei(ior))
+       !call Belueftung_K2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,iphys,bbeis)
+ !subroutine Belueftung_K2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,iphys,bbeis)
      else
         bbei(ior)=0.0
      endif
@@ -301,10 +303,14 @@
       if(nkzs(ior)>1)DEFIZ_1D = DEFIZ 
 
       o2ein = saett(ior)*(1-exp(-bbei(ior)*tflie)) 
-      o2ein1(ior) = DEFIZ_1D*(1-exp(-bbei(ior)*tflie)) 
+      o2ein1(ior) = DEFIZ_1D*(1-exp(-bbei(ior)*tflie))
+	  
       if(kontroll)then
-        print*,'oxygen oberflächenbelüftung, o2ein1,DEFIZ_1D,bbei,tflie,tiefe,vmitt,Rau,rhyd=' &
-     &        ,o2ein1(ior),DEFIZ_1D,bbei(ior),tflie,tiefe(ior),vmitt(ior),Rau(ior),rhyd(ior)
+        print*,'oxygen oberflächenbelüftung, o2ein1,DEFIZ_1D,SAETT,TEMPWz(1,VO2=' &
+     &        ,o2ein1(ior),DEFIZ_1D,SAETT(ior),TEMPWz(1,ior),VO2(ior)
+        print*,'rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wge,iphy,bbei='  &
+	 &        ,rau(ior),tiefe(ior),vmitt(ior),rhyd(ior),flae(ior),tempw(ior)   &
+     &        ,WLage(mstr,ior),hWS(mstr,ior),wge(IDWe(mstr,ior)),iphy,bbei(ior)
       endif
     
       if(ior>1)then

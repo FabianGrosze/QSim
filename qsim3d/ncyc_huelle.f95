@@ -420,7 +420,7 @@
 !!\n \n
 !! zurück: \ref lnk_ueberblick ; Code: ncyc_huelle() ; Quelle: ncyc_huelle.f95
 !
-!> Beschreibung: \ref Stickstoff\n\n
+!> Beschreibung: \ref Stickstoff \n\n
 !! WIRD VON ALLEN PROZESSEN AUFGERUFEN !!! (parallel)
       SUBROUTINE ncyc_huelle(i)
       use modell                                                 

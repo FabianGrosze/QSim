@@ -21,7 +21,7 @@
 
 !> \page PH-Wert pH-Wert_Vorgängerversion
 !!
-!! Nachfolge: Markdown Doku \subpage ph_doku
+!! Nachfolge: [Markdown Doku](\ref lnk_ph)
 !!
 !! <h2>Herkunft</h2>
 !!     ph() \n 
@@ -227,7 +227,6 @@
 
       !! ---
       iglob=(i+meinrang*part) ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-      if (iglob.gt. knotenanzahl2D) return ! überstehende Nummern nicht bearbeiten.
       tflie=real(deltat)/86400
       tiefes=rb_hydraul_p(2+(i-1)*number_rb_hydraul)
       raus=strickler( zone(point_zone(iglob))%reib , tiefes )

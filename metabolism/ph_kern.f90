@@ -1,14 +1,14 @@
 !---------------------------------------------------------------------------------------
 !
-!   QSim - Programm zur Simulation der Wasserqualität
+!   QSim - Programm zur Simulation der WasserqualitÃ¤t
 !
-!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
+!   Copyright (C) 2020 Bundesanstalt fÃ¼r GewÃ¤sserkunde, Koblenz, Deutschland, http://www.bafg.de
 !
-!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
+!   Dieses Programm ist freie Software. Sie kÃ¶nnen es unter den Bedingungen der 
 !   GNU General Public License, Version 3,
-!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
-!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
-!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
+!   wie von der Free Software Foundation verÃ¶ffentlicht, weitergeben und/oder modifizieren. 
+!   Die VerÃ¶ffentlichung dieses Programms erfolgt in der Hoffnung, daÃŸ es Ihnen von Nutzen sein wird, 
+!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÃœR EINEN BESTIMMTEN ZWECK. 
 !   Details finden Sie in der GNU General Public License.
 !   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
 !   Falls nicht, siehe http://www.gnu.org/licenses/.  
@@ -29,19 +29,19 @@
 					,susns,po2ps,po2rs,ssalgs,stinds                   &
                     ,kontroll ,jjj )
 					
-!!!!! in der Kernroutine ist allen Übergabe-Variablen ein "s" im Namen angehängt, \n
+!!!!! in der Kernroutine ist allen Ãœbergabe-Variablen ein "s" im Namen angehÃ¤ngt, \n
 !!!!! um zu kennzeichen, dass es sich um lokale (Einzel-)Variablen in dieser Subroutine handelt \n
 !!!!! und nicht um die globalen Felder des Hauptprogramms. \n
 	  
       implicit none
  
-      ! m-Wert,p-Wert,Calcium,Leitf.,T°C,pH, CO2
+      ! m-Wert,p-Wert,Calcium,Leitf.,TÂ°C,pH, CO2
 	  real mws,pws,cas,lfs,tempws,vphs,vco2s
-	  !dt,Kst,Geschw.,Tiefe,hydr.Rad.,Oberfläche
+	  !dt,Kst,Geschw.,Tiefe,hydr.Rad.,OberflÃ¤che
 	  real tflie,raus,vmitts,tiefes,rhyds,flaes
-	  !Windgeschw.,Höhenlage,WSP
+	  !Windgeschw.,HÃ¶henlage,WSP
 	  real wges,WLages,hWSs
-	  ! Steuerung Belüftungsverfahren
+	  ! Steuerung BelÃ¼ftungsverfahren
       integer iphys
 	  ! CO2 Produktion von: Bakterien, Muscheln und Zooplankton
 	  real bsbcts, resdrs,dzres1s,dzres2s
@@ -163,7 +163,15 @@
 
       bkco2 = hcon*bbeis 
 
-      DCO2o = defco2*(1.-exp(-bkco2*tflie)) 
+      DCO2o = defco2*(1.-exp(-bkco2*tflie))
+
+      if(kontroll)then
+        print*,'ph_kern oberflÃ¤chenbelÃ¼ftung, DCO2o,defco2,saetco2,MGCO2=' &
+     &        ,DCO2o,defco2,saetco2,MGCO2
+        print*,'rau,tiefe,vmitt,rhyd,flae,tempw,WLage,hws,wges,iphy,bbei='  &
+	 &        ,raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,iphys,bbeis
+      endif
+	  
                                                                        
 !##### CO2 Lieferung durch C-abbau #####                                       
                                                                        
@@ -186,7 +194,7 @@
       alhco3 = 0.0 
       co2alw = dalgkis*Caki + dalggrs*Cagr + dalgbls*Cabl + albewgs*Cagr + albewks*Caki                                  
 
-      co2pfw = po2ps*(44.0/32.0) ! Umrechnung Molmasse CO2/ O2 ! War fälsclicherwiese: co2pfw = po2ps/1.3 
+      co2pfw = po2ps*(44.0/32.0) ! Umrechnung Molmasse CO2/ O2 ! War fÃ¤lsclicherwiese: co2pfw = po2ps/1.3 
 
       if((co2alw+co2pfw).gt.mgco2)then 
       if((co2pfw+co2alw).eq.0.0)then 
@@ -248,10 +256,10 @@
       uebca = moca*moco3/kca 
       tind = (1577.*exp(-0.0496*uebca))*10./ssalgs
       if(tind.gt.stinds)then
-	     if(kontroll)print*,'pH keine Calcium Änderung tind,stinds,uebca,Ca=',tind,stinds,uebca,cat
+	     if(kontroll)print*,'pH keine Calcium Ã„nderung tind,stinds,uebca,Ca=',tind,stinds,uebca,cat
 	     goto 55
 	  else
-	     if(kontroll)print*,'pH Calcium Änderung tind,stinds,uebca,Ca=',tind,stinds,uebca,cat
+	     if(kontroll)print*,'pH Calcium Ã„nderung tind,stinds,uebca,Ca=',tind,stinds,uebca,cat
 	  endif
    72 continue 
                                                                        
