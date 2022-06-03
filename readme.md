@@ -1,25 +1,23 @@
 ## 14.08.00
 Stable release comprising evaporation options in temperature module (see 14.06) and reading of UnTRIM SPM (see 14.07.02)
 
+
 ## 14.07.02
 added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qims3d/module_suspendedMatter.f90)
+
 
 ## 14.07.01
 compiled at 16.mae.2022 
 
 
 ## TAG 14.06
-
 including extended and restructured temperature module `temperw_kern.f90`
 * evaporation (different formulas) added - in Gerris, use "Verdunstungsberechnung nach Sweers (1976)" für Vergleichbarkeit mit bisherigen Versionen
 * including subroutine into QSim3D
 
 
 ## tag 14.04
-
 Restrukturierung und Dokumentation pH-Modul
-
- 
 Dokumentationsportal in eigenem Verzeichnis (27aug20):
  
 Die Dokumentation umfasst ergänzende Materialien wie PDF's, Bilder, Beispieldateien u.a., 
@@ -34,8 +32,7 @@ im doku Verzeichnis entpackt werden.
 Werden bei Arbeiten am Dokumentationsportal Ergänzungen oder Änderungen in den ergänzenden Materialien vorgenommen,
 ist es nötig, diese vorab mittels "make save" in ein .taz Archiv einzubinden, das dann bei einer 
 Neuerstellung des Dokumentationsportals mittels "make" im doku Verzeichnis wieder ins Dokumentationsportal hochgeladen wird.
- 
- 
+
  
 ## tag 14.02
 Neu in 14.02 (20aug20):
