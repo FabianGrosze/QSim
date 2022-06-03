@@ -19,7 +19,7 @@
 !
 !---------------------------------------------------------------------------------------
 
-!> \page Phosphor Phosphor
+!> \page Phosphor Phosphor_Vorläuferversion
 !! <center> 
 !! \image html phosphor2.png "Stationen im Phosphorkreislaufs"
 !! </center>

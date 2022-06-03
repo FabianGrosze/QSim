@@ -38,10 +38,10 @@
 !!                                                              Tagesminimum der Lufttemperatur (nur bei der Verwendung von Tagesmittelwerten verwendet)</td><td>  Grad Celsius  </td></tr>
 !!<tr><td>4</td><td>\anchor RO RO	</td><td> \anchor ro_T ro_T		</td><td> 63 				</td><td> Luftfeuchte 		</td><td> % </td></tr>
 !!<tr><td>5</td><td>\anchor WGE WGE 	</td><td> \anchor wge_T wge_T		</td><td> 65 				</td><td> Windgeschwindigkeit 	</td><td> m/s </td></tr>
-!!<tr><td>6</td><td>\anchor cloud cloud </td><td> \anchor cloud_T cloud_T	</td><td> 66 				</td><td> Bewölkungsdichte 	</td><td> Achtel </td></tr>
-!!<tr><td>7</td><td>\anchor typw typw 	</td><td> \anchor typw_T typw_T		</td><td> 67 				</td><td> Wolkentyp 		</td><td> 
+!!<tr><td>6</td><td>\ref cloud cloud </td><td> \anchor cloud_T cloud_T	</td><td> 66 				</td><td> Bewölkungsdichte 	</td><td> Achtel </td></tr>
+!!<tr><td>7</td><td>\ref typw typw 	</td><td> \anchor typw_T typw_T		</td><td> 67 				</td><td> Wolkentyp 		</td><td> 
 !! 									       siehe <a href="./pdf/QSimDoku_5Strahlung.pdf" target="_blank">Dokumentation Strahlung</a> </td></tr>
-!!<tr><td>-</td><td>\anchor templ templ </td><td> \anchor tlmed_T tlmed_T 	</td><td> 62 				</td><td> aktuelle Lufttemperatur aus temperl_wetter() 	</td><td> Grad Celsius </td></tr>
+!!<tr><td>-</td><td>\ref templ templ </td><td> \anchor tlmed_T tlmed_T 	</td><td> 62 				</td><td> aktuelle Lufttemperatur aus temperl_wetter() 	</td><td> Grad Celsius </td></tr>
 !!<tr><td>-</td><td>\anchor SCHWI SCHWI </td><td> \anchor schwi_T schwi_T	</td><td> 64 				</td><td> 
 !!                 Globalstrahlung an der Wasseroberflaeche unter Beruecksichtigung der Reflektion an der Wasseroberflaeche aus strahlg_wetter()	</td><td> cal/(cm2*h) </td></tr>
 !!</table>\n

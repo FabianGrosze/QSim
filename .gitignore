@@ -15,6 +15,7 @@ doku/img/*
 doku/pdf/*
 doku/taz/*
 doku/*.zip
+doku/doxygen.exe
 backup-dokufiles/*
 
 

@@ -253,7 +253,7 @@ subroutine orgc_start(                                    &
 END subroutine orgc_start
 !----+-----+---- 
 
-!> SUBROUTINE naehr_start() wird beschrieben in: \ref Stickstoff und \ref Phosphor  \n
+!> SUBROUTINE naehr_start() wird beschrieben in: \ref lnk_stickstoff und \ref lnk_phosphor  \n
 !! Quelle zuflussrand.f90\n
 subroutine naehr_start(                                                             &
      &     akis ,abls ,agrs ,                                   &
