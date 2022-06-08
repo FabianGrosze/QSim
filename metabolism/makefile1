@@ -11,8 +11,8 @@
 PV= metabol_qsim
 
 # compiler
-#FC1              = gfortran
-FC              = mpif90
+FC              = gfortran
+#FC3              = mpif90
 
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)

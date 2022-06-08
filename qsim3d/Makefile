@@ -80,7 +80,7 @@
 # PV='qsim3d14.07Cu'
 # PV='qsim3d14.07.01'
 # PV='qsim3d_schnitt14.14'
-PV='qsim3d_schwer14.10.03'
+PV='qsim3d_schwer14.10.05'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -207,7 +207,7 @@ schism: $(SC)
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 qsim:	
-	@cd ../metabolism; make metabol; cp *.mod ../qsim3d; cd ../qsim3d
+	@cd ../metabolism; cp makefile3 Makefile; make metabol; cp *.mod ../qsim3d; cd ../qsim3d
 
 %.co: %.c
 	$(CC) -c  $(CCLAGS) $< -o $@

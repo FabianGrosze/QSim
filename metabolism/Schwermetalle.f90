@@ -19,20 +19,21 @@
 !
 !---------------------------------------------------------------------------------------
 
+
   subroutine Schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,iformVert,ianze_max      &
-                          ,hglZn,hgsZn,egsZn,eglZn,ZnSed       & 
-						  ,hglCad,hgsCad,egsCad,eglCad,CadSed       & 
-						  ,hglCu,hgsCu,egsCu,eglCu,CuSed       & 
-						  ,hglNi,hgsNi,egsNi,eglNi,NiSed       & 
-						  ,hglAs,hgsAs,egsAs,eglAs,AsSed       & 
-						  ,hglPb,hgsPb,egsPb,eglPb,PbSed       & 
-						  ,hglCr,hgsCr,egsCr,eglCr,CrSed       & 
+                          ,hglZn,hgsZn,egsZn,eglZn,ZnSed       &
+                          ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
+                          ,hglCu,hgsCu,egsCu,eglCu,CuSed       & 
+                          ,hglNi,hgsNi,egsNi,eglNi,NiSed       & 
+                          ,hglAs,hgsAs,egsAs,eglAs,AsSed       & 
+                          ,hglPb,hgsPb,egsPb,eglPb,PbSed       & 
+                          ,hglCr,hgsCr,egsCr,eglCr,CrSed       & 
                           ,hglFe,hgsFe,egsFe,eglFe,FeSed       & 
-						  ,hglHg,hgsHg,egsHg,eglHg,HgSed       & 
-						  ,hglMn,hgsMn,egsMn,eglMn,MnSed       & 
-						  ,hglU,hgsU,egsU,eglU,USed            &
-                          ,sedss,sedalk,sedalb,sedalg,SSalg,ess,vph,eph,SSeros       & 
-						  ,ilang,iwied,kontroll,jjj)
+                          ,hglHg,hgsHg,egsHg,eglHg,HgSed       & 
+                          ,hglMn,hgsMn,egsMn,eglMn,MnSed       & 
+                          ,hglU,hgsU,egsU,eglU,USed            &
+                          ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros       & 
+                          ,ilang,iwied,kontroll,jjj)
 
 !##############################################
 !    Berechnung der Schwermetallkonzentrationen
@@ -48,20 +49,22 @@
       implicit none
       logical                              :: kontroll
       integer                              :: azStr, anze, jjj,ieros,ilang,iformVert,ianze_max,mstr,iz
-	  integer                              :: iein,iwied,ior,m,ihcq,ior_flag,ji,j
-	  real                                 :: eross,hcq,hcQE,hcss,hcph
+      integer                              :: iein,iwied,ior,m,ihcq,ior_flag,ji,j
+      real                                 :: eross,hcq,hcQE,hcss,hcph
       integer, Dimension(ialloc2)          :: flag, jiein
-	  real :: hcgsCad,hcglCad,hcgsZn,hcglZn,hcgsCu,hcglCu,hcgsNi,hcglNi,hcgsAs,hcglAs
-	  real :: hcgsPb,hcglPb,hcgsCr,hcglCr,hcgsFe,hcglFe,hcgsHg,hcglHg,hcgsMn,hcglMn,hcgsU,hcglU
-	  real :: hcgsCadE,hcglCadE,hcgsZnE,hcglZnE,hcgsCuE,hcglCuE,hcgsNiE,hcglNiE
-	  real :: hcgsAsE,hcglAsE,hcgsPbE,hcglPbE,hcgsCrE,hcglCrE,hcgsFeE,hcglFeE
-	  real :: hcgsHgE,hcglHgE,hcgsMnE,hcglMnE,hcgsUE,hcglUE
+      real :: hcgsCad,hcglCad,hcgsZn,hcglZn,hcgsCu,hcglCu,hcgsNi,hcglNi,hcgsAs,hcglAs
+      real :: hcgsPb,hcglPb,hcgsCr,hcglCr,hcgsFe,hcglFe,hcgsHg,hcglHg,hcgsMn,hcglMn,hcgsU,hcglU
+      real :: hcgsCadE,hcglCadE,hcgsZnE,hcglZnE,hcgsCuE,hcglCuE,hcgsNiE,hcglNiE
+      real :: hcgsAsE,hcglAsE,hcgsPbE,hcglPbE,hcgsCrE,hcglCrE,hcgsFeE,hcglFeE
+      real :: hcgsHgE,hcglHgE,hcgsMnE,hcglMnE,hcgsUE,hcglUE
 
       real                                 :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni
       real                                 :: VTKoeff_As, VTKoeff_Pb, VTKoeff_Cr, VTKoeff_Fe
       real                                 :: VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-      real, Dimension(ialloc1)                :: qeinl, eph, ess
-      real, Dimension(ialloc2)                :: vabfl, sedss, SSalg, vph, sedalk, sedalb, sedalg
+      real, Dimension(ialloc1)             :: qeinl, eph, ess
+      real, Dimension(ialloc2)             :: vabfl, sedss, SSalg, vph, sedalk, sedalb, sedalg
+      real, Dimension(azStrs,ialloc2)      :: hssalg, hph
+
       real, Dimension(ialloc2)                :: SSeros
       real, Dimension(azStrs,ialloc1)         :: egsZn, eglZn, egsCad, eglCad, egsCu, eglCu, egsNi, eglNi
       real, Dimension(azStrs,ialloc1)         :: egsAs, eglAs, egsPb, eglPb, egsCr, eglCr, egsFe, eglFe
@@ -73,8 +76,8 @@
       real, Dimension(azStrs,ialloc2)         :: ZnSed, CadSed, CuSed, NiSed 
       real, Dimension(azStrs,ialloc2)         :: AsSed, PbSed, CrSed, FeSed 
       real, Dimension(azStrs,ialloc2)         :: HgSed, MnSed, USed 
-	  
-	  integer, Dimension(azStrs,ialloc2)      ::anzZeit
+
+      integer, Dimension(azStrs,ialloc2)      ::anzZeit
 
 !   open(unit=292,file='Schwermetalle.tst')
        !if(kontroll)print*,mstr,jjj,' Schwermetalle starting hgsU(1,1)=',hgsU(1,1)
@@ -467,7 +470,7 @@
       !	  kontroll=.false.
       !endif
 
-      call schwermetalle_kern(SSalg(ior),vph(ior),SSeros(ior),iformVert                                    &
+      call schwermetalle_kern(hssalg(mstr,ior),SSalg(ior),hph(mstr,ior),vph(ior),SSeros(ior),iformVert                                    &
 	             ,anzZeit(mstr,ior),sedss(ior),sedalk(ior),sedalg(ior),sedalb(ior)                &
 				 ,hgsZn(mstr,ior),hglZn(mstr,ior),hgsCad(mstr,ior),hglCad(mstr,ior)               &
 				 ,hgsCu(mstr,ior),hglCu(mstr,ior),hgsNi(mstr,ior),hglNi(mstr,ior)                 &

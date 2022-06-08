@@ -1,3 +1,4 @@
+
 #!---------------------------------------------------------------------------------------
 #!
 #!   QSim - Programm zur Simulation der Wasserqualität
@@ -34,7 +35,7 @@
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d14.10.03
+PV= qsim1d_schwer14.10.06
 
 #====================================================================
 
@@ -84,7 +85,7 @@ date:
 
 
 qsim:	
-	@cd ../metabolism; make metabol; cp *.mod ../qsim1d; cd ../qsim1d
+	@cd ../metabolism; cp makefile1 Makefile; make metabol; cp *.mod ../qsim1d; cd ../qsim1d
 
 %.o: %.f90
 	$(FC) $(FFLAGS) $<
@@ -97,7 +98,6 @@ van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_ein
 qsim1d:	$(Q1)
 	$(FC) $(Q1) $(QSIM_LIB) -o $(PV)
 	cp -pf ./$(PV) $(MY_BIN)/$(PV)
-	cp -pf ./$(PV) /srv/cifs-mounts/u2/Projekte/QSim/Teststrategie/JensWyrwa/ErprobungSchwermetall14.14/ElbeGerd/GerdMai22/EQ164q1linux/qsim1d
 
 clean:
 	@echo "cleaning ..."
@@ -110,7 +110,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile*
+	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/makefile*
 
 store:
 	cp $(FN) $(MY_ARC)

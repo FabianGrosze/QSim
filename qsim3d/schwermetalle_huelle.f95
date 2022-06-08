@@ -34,24 +34,29 @@
       npla=(i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
       ntra=(i-1)*number_trans_quant
       nben=(i-1)*number_benth_distr
-	  
-!      subroutine schwermetalle_kern(SSalgs,vphs,SSeross,iformVert,anzZeits,sedsss,sedalks,sedalbs,sedalgs  &
-!	       ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs                &
-!		   ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                                &
-!		   ,kontroll,jjj)
+
+!     subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert                      &
+!         ,anzZeits,sedsss,sedalks,sedalbs,sedalgs                                                  &
+!         ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs                &
+!         ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                                &
+!         ,kontroll,jjj)
+
+!!### Schwebstoff und ph: hssalg,hph aus vorangegangenem Zeitschritt in 3D noch nicht implementiert ###
 
       call schwermetalle_kern(          &
        planktonic_variable_p( 52+npla)  &
+      ,planktonic_variable_p( 52+npla)  &
       ,planktonic_variable_p( 66+npla)  &
-	  ,transfer_quantity_p(12+ntra)     &
-	  ,iformVert                        &
-	  ,anzZeit                          &
-	  ,transfer_quantity_p( 5+ntra)     &
-	  ,benthic_distribution_p(26+nben)  &
-	  ,benthic_distribution_p(27+nben)  &
-	  ,benthic_distribution_p(28+nben)  &
+      ,planktonic_variable_p( 66+npla)  &
+      ,transfer_quantity_p(12+ntra)     &
+      ,iformVert                        &
+      ,anzZeit                          &
+      ,transfer_quantity_p( 5+ntra)     &
+      ,benthic_distribution_p(26+nben)  &
+      ,benthic_distribution_p(27+nben)  &
+      ,benthic_distribution_p(28+nben)  &
       ,planktonic_variable_p( 80+npla)  &
-	  ,planktonic_variable_p( 81+npla)  &
+      ,planktonic_variable_p( 81+npla)  &
       ,planktonic_variable_p( 82+npla)  &
       ,planktonic_variable_p( 83+npla)  &
       ,planktonic_variable_p( 84+npla)  &
@@ -72,7 +77,7 @@
       ,planktonic_variable_p( 99+npla)  &
       ,planktonic_variable_p(100+npla)  &
       ,planktonic_variable_p(101+npla)  &
-	  ,kontroll,iglob)
+      ,kontroll,iglob)
 
       RETURN 
       END subroutine schwermetalle_huelle

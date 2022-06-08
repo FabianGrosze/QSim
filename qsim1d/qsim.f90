@@ -8115,18 +8115,18 @@
 	  !jjj=1
    1521 call Schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,iformVert,ianze_max      &
                           ,hglZn,hgsZn,egsZn,eglZn,ZnSed       &
-						  ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
-						  ,hglCu,hgsCu,egsCu,eglCu,CuSed       &
-						  ,hglNi,hgsNi,egsNi,eglNi,NiSed       &
-						  ,hglAs,hgsAs,egsAs,eglAs,AsSed       &
-						  ,hglPb,hgsPb,egsPb,eglPb,PbSed       &
-						  ,hglCr,hgsCr,egsCr,eglCr,CrSed       & 
+                          ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
+                          ,hglCu,hgsCu,egsCu,eglCu,CuSed       &
+                          ,hglNi,hgsNi,egsNi,eglNi,NiSed       &
+                          ,hglAs,hgsAs,egsAs,eglAs,AsSed       &
+                          ,hglPb,hgsPb,egsPb,eglPb,PbSed       &
+                          ,hglCr,hgsCr,egsCr,eglCr,CrSed       & 
                           ,hglFe,hgsFe,egsFe,eglFe,FeSed       &
-						  ,hglHg,hgsHg,egsHg,eglHg,HgSed       &
-						  ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
-						  ,hglU,hgsU,egsU,eglU,USed            &
-                          ,sedss,sedalk,sedalb,sedalg,SSalg,ess,vph,eph,SSeros      &
-						  ,ilang,iwied,kontroll,jjj)
+                          ,hglHg,hgsHg,egsHg,eglHg,HgSed       &
+                          ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
+                          ,hglU,hgsU,egsU,eglU,USed            &
+                          ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros      &
+                          ,ilang,iwied,kontroll,jjj)
       !print*,'done Schwermetalle hglPb(1,1),hgsPb(1,1)=',hglPb(1,1),hgsPb(1,1)
 
         if(nbuhn(mstr)==0)goto 118
@@ -8139,9 +8139,9 @@
         zwSSeros(ior) = SSeros(ior)	
         zwssa(ior) = SSalg(ior)
         zwph(ior) = vph(ior)
-		zwanzZeit(mstr,ior)= anzZeit(mstr,ior)
-		zwjiein(ior) = jiein(ior); jiein(ior)=0
-		
+        zwanzZeit(mstr,ior)= anzZeit(mstr,ior)
+        zwjiein(ior) = jiein(ior); jiein(ior)=0
+
         zwgsZn(ior) = hgsZn(mstr,ior)
         zwglZn(ior) = hglZn(mstr,ior)
         zwZnSed(ior) = ZnSed(mstr,ior)
