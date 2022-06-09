@@ -309,6 +309,8 @@
       real, Dimension(:,:), allocatable       :: hglZn, hgsZn, hglCad, hgsCad, hglCu, hgsCu, hglNi, hgsNi
       real, Dimension(:,:), allocatable       :: hglAs, hgsAs, hglPb, hgsPb, hglCr, hgsCr, hglFe, hgsFe
       real, Dimension(:,:), allocatable       :: hglHg, hgsHg, hglMn, hgsMn, hglU, hgsU
+      real, Dimension(:,:), allocatable       :: hSSeros,hsedalk,hsedalg,hsedalb,hsedss
+
       real, Dimension(:,:), allocatable       :: ZnSed,CadSed,CuSed,NiSed,AsSed
       real, Dimension(:,:), allocatable       :: PbSed,CrSed,FeSed,HgSed,MnSed,USed
 	  
@@ -784,7 +786,7 @@
       allocate(habkml(azStrs,ialloc2), hdlmx(azStrs,ialloc2), hdlmxs(azStrs,ialloc2), hgwdmx(azStrs,ialloc2))
       allocate(hsgwmu(azStrs,ialloc2), hdH2De(azStrs,ialloc2), Hmax2D(azStrs,ialloc2), TGZoo(azStrs,ialloc2))
       allocate(akmor_1(azStrs,ialloc2), agmor_1(azStrs,ialloc2), abmor_1(azStrs,ialloc2))
-	  allocate(anzZeit(azStrs,ialloc2), banzZeit(azStrs,ialloc2), zwanzZeit(azStrs,ialloc2))
+      allocate(anzZeit(azStrs,ialloc2), banzZeit(azStrs,ialloc2), zwanzZeit(azStrs,ialloc2))
 
       allocate(hglZn(azStrs,ialloc2), hgsZn(azStrs,ialloc2), hglCad(azStrs,ialloc2), hgsCad(azStrs,ialloc2))
       allocate(hglCu(azStrs,ialloc2), hgsCu(azStrs,ialloc2), hglNi(azStrs,ialloc2), hgsNi(azStrs,ialloc2))
@@ -792,9 +794,10 @@
       allocate(hglCr(azStrs,ialloc2), hgsCr(azStrs,ialloc2), hglFe(azStrs,ialloc2), hgsFe(azStrs,ialloc2))
       allocate(hglHg(azStrs,ialloc2), hgsHg(azStrs,ialloc2), hglMn(azStrs,ialloc2), hgsMn(azStrs,ialloc2))
       allocate(hglU(azStrs,ialloc2), hgsU(azStrs,ialloc2))
-	  allocate(ZnSed(azStrs,ialloc2),CadSed(azStrs,ialloc2),CuSed(azStrs,ialloc2),NiSed(azStrs,ialloc2))
-	  allocate(AsSed(azStrs,ialloc2),PbSed(azStrs,ialloc2),CrSed(azStrs,ialloc2),FeSed(azStrs,ialloc2))
-	  allocate(HgSed(azStrs,ialloc2),MnSed(azStrs,ialloc2),USed(azStrs,ialloc2))
+      allocate(hSSeros(azStrs,ialloc2),hsedalk(azStrs,ialloc2),hsedalg(azStrs,ialloc2),hsedalb(azStrs,ialloc2),hsedss(azStrs,ialloc2))
+      allocate(ZnSed(azStrs,ialloc2),CadSed(azStrs,ialloc2),CuSed(azStrs,ialloc2),NiSed(azStrs,ialloc2))
+      allocate(AsSed(azStrs,ialloc2),PbSed(azStrs,ialloc2),CrSed(azStrs,ialloc2),FeSed(azStrs,ialloc2))
+      allocate(HgSed(azStrs,ialloc2),MnSed(azStrs,ialloc2),USed(azStrs,ialloc2))
 
       allocate(RBkm(azStrs,ialloc1), RBkmLe(azStrs,ialloc1), RBkm1(azStrs,ialloc1), WirkLL(azStrs,ialloc1))
       allocate(abfls(azStrs,ialloc1), obsbs(azStrs,ialloc1), ocsbs(azStrs,ialloc1), vnh4s(azStrs,ialloc1))
@@ -8132,11 +8135,17 @@
         if(nbuhn(mstr)==0)goto 118
         if(ilbuhn==0)then 
       do ior=1,anze+1 
+        hSSeros(mstr,ior) = SSeros(ior)
+        hsedalk(mstr,ior) = sedalk(ior) 
+        hsedalg(mstr,ior) = sedalg(ior) 
+        hsedalb(mstr,ior) = sedalb(ior) 
+        hsedss(mstr,ior) = sedss(ior)
+
         zwsedk(ior) = sedalk(ior) 
         zwsedg(ior) = sedalg(ior) 
         zwsedb(ior) = sedalb(ior) 
         zwsedS(ior) = sedss(ior)
-        zwSSeros(ior) = SSeros(ior)	
+        zwSSeros(ior) = SSeros(ior)
         zwssa(ior) = SSalg(ior)
         zwph(ior) = vph(ior)
         zwanzZeit(mstr,ior)= anzZeit(mstr,ior)
@@ -8183,7 +8192,7 @@
         SSeros(ior) = bSSeros(ior) 		
         SSalg(ior) = bssalg(mstr,ior)
         bph(mstr,ior) = vph(ior)
-		anzZeit(mstr,ior)=banzZeit(mstr,ior)
+        anzZeit(mstr,ior)=banzZeit(mstr,ior)
 
         hgsZn(mstr,ior) = bgsZn(mstr,ior)
         hglZn(mstr,ior) = bglZn(mstr,ior)
@@ -9716,7 +9725,7 @@
         write(155,'(a50)')modell 
         write(155,'(a255)')cEreig 
         write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ; gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
-        write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs'
+        write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ; SSeros; sedalk; sedalg; sedalb; sedss'
         write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ; aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
 
         write(255,4557)versionstext
@@ -10219,7 +10228,7 @@
      &,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
      &,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
      &,tracer(iior) 
-      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)	               &
+      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)	           &
      &,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
      &,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
      &,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
@@ -10229,18 +10238,20 @@
       write(155,5207)gsPby(iior),glPby(iior),gsCady(iior),glCady(iior),gsCry(iior),glCry(iior),gsFey(iior),glFey(iior)     &
                      ,gsCuy(iior),glCuy(iior),gsMny(iior),glMny(iior),gsNiy(iior),glNiy(iior),gsHgy(iior),glHgy(iior)      & 
                      ,gsUy(iior),glUy(iior),gsZny(iior),glZny(iior),gsAsy(iior),glAsy(iior)               
-      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	               &
-	                    ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
+      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	             &
+                        ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                         ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
-                        ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'      &
-						,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)   
-	  write(157,'(a)')adjustl(trim(langezeile))
-	  
-	  write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	               &
+                        ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
+                        ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
+                        ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
+
+      write(157,'(a)')adjustl(trim(langezeile))
+
+      write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'	               &
                          ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
                          ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
-	  write(158,'(a)')adjustl(trim(langezeile))
-	  
+      write(158,'(a)')adjustl(trim(langezeile))
+
 !                                                                       
 !Umrechnung von Zeitschrittweite auf pro Stunde                         
       hcUmt = 60./(tflie*1440.) 

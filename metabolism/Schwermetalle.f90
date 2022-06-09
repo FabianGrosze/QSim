@@ -71,7 +71,10 @@
       real, Dimension(azStrs,ialloc1)         :: egsHg, eglHg, egsMn, eglMn, egsU, eglU
       real, Dimension(azStrs,ialloc2)         :: hglZn, hgsZn, hglCad, hgsCad, hglCu, hgsCu, hglNi, hgsNi   
       real, Dimension(azStrs,ialloc2)         :: hglAs, hgsAs, hglPb, hgsPb, hglCr, hgsCr, hglFe, hgsFe   
-      real, Dimension(azStrs,ialloc2)         :: hglHg, hgsHg, hglMn, hgsMn, hglU, hgsU   
+      real, Dimension(azStrs,ialloc2)         :: hglHg, hgsHg, hglMn, hgsMn, hglU, hgsU
+      
+      real hgsZnt,hgsCadt,hgsCut,hgsNit,hgsAst,hgsPbt,hgsCrt,hgsFet,hgsHgt,hgsMnt,hgsUt
+      real hglZnt,hglCadt,hglCut,hglNit,hglAst,hglPbt,hglCrt,hglFet,hglHgt,hglMnt,hglUt
 
       real, Dimension(azStrs,ialloc2)         :: ZnSed, CadSed, CuSed, NiSed 
       real, Dimension(azStrs,ialloc2)         :: AsSed, PbSed, CrSed, FeSed 
@@ -462,6 +465,56 @@
            endif
     endif                               ! Ende Einleitungs-flag                                                                  
                                                                        
+                                                                       
+                                                                       
+      if(ior>1)then 
+        hglZn(mstr,ior-1) = hglZnt
+        hgsZn(mstr,ior-1) = hgsZnt
+        hglCad(mstr,ior-1) = hglCadt
+        hgsCad(mstr,ior-1) = hgsCadt
+        hglCu(mstr,ior-1) = hglCut
+        hgsCu(mstr,ior-1) = hgsCut
+        hglNi(mstr,ior-1) = hglNit
+        hgsNi(mstr,ior-1) = hgsNit
+        hglAs(mstr,ior-1) = hglAst
+        hgsAs(mstr,ior-1) = hgsAst
+        hglPb(mstr,ior-1) = hglPbt
+        hgsPb(mstr,ior-1) = hgsPbt
+        hglCr(mstr,ior-1) = hglCrt
+        hgsCr(mstr,ior-1) = hgsCrt
+        hglFe(mstr,ior-1) = hglFet
+        hgsFe(mstr,ior-1) = hgsFet
+        hglHg(mstr,ior-1) = hglHgt
+        hgsHg(mstr,ior-1) = hgsHgt
+        hglMn(mstr,ior-1) = hglMnt
+        hgsMn(mstr,ior-1) = hgsMnt
+        hglU(mstr,ior-1) = hglUt
+        hgsU(mstr,ior-1) = hgsUt
+      endif 
+
+      hglZnt = hglZn(mstr,ior)
+      hgsZnt = hgsZn(mstr,ior)
+      hglCadt = hglCad(mstr,ior)
+      hgsCadt = hgsCad(mstr,ior)
+      hglCut = hglCu(mstr,ior)
+      hgsCut = hgsCu(mstr,ior)
+      hglNit = hglNi(mstr,ior)
+      hgsNit = hgsNi(mstr,ior)
+      hglAst = hglAs(mstr,ior)
+      hgsAst = hgsAs(mstr,ior)
+      hglPbt = hglPb(mstr,ior)
+      hgsPbt = hgsPb(mstr,ior)
+      hglCrt = hglCr(mstr,ior)
+      hgsCrt = hgsCr(mstr,ior)
+      hglFet = hglFe(mstr,ior)
+      hgsFet = hgsFe(mstr,ior)
+      hglHgt = hglHg(mstr,ior)
+      hgsHgt = hgsHg(mstr,ior)
+      hglMnt = hglMn(mstr,ior)
+      hgsMnt = hgsMn(mstr,ior)
+      hglUt = hglU(mstr,ior)
+      hgsUt = hgsU(mstr,ior)
+
       !if(mstr==1 .and. ior==1)then
       !	  print*,jjj,'vor schwermetalle_kern hgsPb(1,1...3)=',hgsPb(mstr,1),hgsPb(mstr,2),hgsPb(mstr,3)
       !	  kontroll=.true.
@@ -472,12 +525,12 @@
 
       call schwermetalle_kern(hssalg(mstr,ior),SSalg(ior),hph(mstr,ior),vph(ior),SSeros(ior),iformVert                                    &
 	             ,anzZeit(mstr,ior),sedss(ior),sedalk(ior),sedalg(ior),sedalb(ior)                &
-				 ,hgsZn(mstr,ior),hglZn(mstr,ior),hgsCad(mstr,ior),hglCad(mstr,ior)               &
-				 ,hgsCu(mstr,ior),hglCu(mstr,ior),hgsNi(mstr,ior),hglNi(mstr,ior)                 &
-				 ,hgsAs(mstr,ior),hglAs(mstr,ior),hgsPb(mstr,ior),hglPb(mstr,ior)                 &
-				 ,hgsCr(mstr,ior),hglCr(mstr,ior),hgsFe(mstr,ior),hglFe(mstr,ior)                 &
-				 ,hgsHg(mstr,ior),hglHg(mstr,ior),hgsMn(mstr,ior),hglMn(mstr,ior)                 &
-				 ,hgsU(mstr,ior),hglU(mstr,ior)                                                   &
+				 ,hgsZnt,hglZnt,hgsCadt,hglCadt               &
+				 ,hgsCut,hglCut,hgsNit,hglNit                 &
+				 ,hgsAst,hglAst,hgsPbt,hglPbt                 &
+				 ,hgsCrt,hglCrt,hgsFet,hglFet                 &
+				 ,hgsHgt,hglHgt,hgsMnt,hglMnt                 &
+				 ,hgsUt,hglUt                                                   &
 				 ,kontroll,jjj)
 
     enddo     ! Ende Schleife longitudinale Gitterpunkte  
