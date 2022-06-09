@@ -185,28 +185,28 @@
       lf(ior-1) = lft 
       vph(ior-1) = vpht 
       endif 
-	  
+
       if((iphy<1).or.(iphy>4))then
          write(*,*)'ph: aeration flag iphy',iphy,' out of bounds ior,mstr=',ior,mstr
          stop 17
       endif
-	  
-      call ph_kern( mw(ior),pw(ior),ca(ior),lf(ior),tempw(ior),vph(ior),vco2(ior)                  &
-     &              ,tflie,rau(ior),vmitt(ior),tiefe(ior),rhyd(ior),flae(ior)                     &
-	 &              ,wge(IDWe(mstr,ior)),WLage(mstr,ior),hWS(mstr,ior),iphy                        &
-	 &              ,bsbct(ior),resdr(ior),dzres1(ior),dzres2(ior)                                &
-	 &              ,dalgki(ior),dalggr(ior),dalgbl(ior),dalgak(ior),dalgag(ior),dalgab(ior)      &
-	 &              ,Caki, Cagr, Cabl                                                             &
-	 &              ,alberg(ior),alberk(ior),albewg(ior),albewk(ior)                              &
-	 &              ,susn(ior),po2p(ior),po2r(ior),ssalg(ior),stind(ior)                          &
-     &              ,kontroll ,jjj )
-					
-      cat = ca(ior)
-      mwt = mw(ior)
-      pwt = pw(ior)
-      lft = lf(ior)
+
+      cat  = ca(ior)
+      mwt  = mw(ior)
+      pwt  = pw(ior)
+      lft  = lf(ior)
       vpht = vph(ior)
- 	  
+
+      call ph_kern( mwt,pwt,cat,lft,tempw(ior),vpht,vco2(ior)                                    &
+     &             ,tflie,rau(ior),vmitt(ior),tiefe(ior),rhyd(ior),flae(ior)                     &
+     &             ,wge(IDWe(mstr,ior)),WLage(mstr,ior),hWS(mstr,ior),iphy                       &
+     &             ,bsbct(ior),resdr(ior),dzres1(ior),dzres2(ior)                                &
+     &             ,dalgki(ior),dalggr(ior),dalgbl(ior),dalgak(ior),dalgag(ior),dalgab(ior)      &
+     &             ,Caki, Cagr, Cabl                                                             &
+     &             ,alberg(ior),alberk(ior),albewg(ior),albewk(ior)                              &
+     &             ,susn(ior),po2p(ior),po2r(ior),ssalg(ior),stind(ior)                          &
+     &             ,kontroll ,jjj )
+
    enddo   ! Ende Schleife Ortspunkte 
 
       ca(anze+1) = cat 

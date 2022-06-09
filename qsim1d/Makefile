@@ -26,6 +26,8 @@
 
 #====================================================================
 
+VERSION = 14.10.07
+
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
 # PV= qsim1d_formatfrei
@@ -35,7 +37,7 @@
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d_schwer14.10.06
+PV= qsim1d_schwer$(VERSION)
 
 #====================================================================
 
