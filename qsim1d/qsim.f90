@@ -339,11 +339,13 @@
 !###### setting ################
       linux  = .false.
       kontroll= .false.
+      mitsedflux=.false. !!wy sediment fluxes switched off temporarily
 
 !##### version #################################
       call version_string(versionstext)
-	  !read(versionstext,*)versio
-	  print*,"QSim1D Version ",versionstext," starting ..."
+      !read(versionstext,*)versio
+      print*,"QSim1D Version ",versionstext," starting ..."
+      if(mitsedflux)then;print*,'## sedflux ### active';else;print*,'sedflux switched off'
                                     
 !.....Schalter für "Regeln bei Kraftwerksbetrieb"                       
 !               iRHKW = 1 > Betrieb der HKW's unterliegt gewissen Regeln
@@ -5087,7 +5089,6 @@
 !***************Sediment-Stofffluxe******** 
                             
  1712 continue 
-      mitsedflux=.false. !!wy sediment fluxes switched off temporarily
       if(mitsedflux)then     
       call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP            &
                    ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                                 &
