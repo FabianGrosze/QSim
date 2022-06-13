@@ -24,10 +24,11 @@
       Program QSim3D 
 !
       use netcdf
-      use modell                                                   
+      use modell
       use QSimDatenfelder
+      use mod_suspendedMatter, only: step_suspendedMatter
       !use netcdf
-      !use mpi                                               
+      !use mpi
       implicit none
       include 'netcdf.inc'
       integer :: i,ni,j,k,n, system_error
@@ -64,8 +65,12 @@
          call randbedingungen_setzen()
 
          !-------------------------------------------------- suspended matter module 
-         !call schwebstoff_salz()    ! currently only reading distribuions from input
+         if (iEros>=0) then
+            call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
+         else
+            call step_suspendedMatter
+         end if
 
          !------------------------------------------------- all metabolic processes 
          call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

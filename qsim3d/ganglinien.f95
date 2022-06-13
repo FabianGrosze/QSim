@@ -153,7 +153,7 @@
       case(1) ! casu-transinfo                                           
          call randlinie_zusammenstellen()
          do i=1,anz_gangl
-		    if((knot_gangl(i).le.0).or.(knot_gangl(i).gt.knotenanzahl2D))then
+            if((knot_gangl(i).le.0).or.(knot_gangl(i).gt.knotenanzahl2D))then
                write(fehler,*)i,'ganglinien_knoten.txt nummer ',knot_gangl(i),' nicht zwischen 1 und ',knotenanzahl2D
                call qerror(fehler)
             end if ! Knotennummer ungültig in diesem Modell

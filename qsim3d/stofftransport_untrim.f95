@@ -156,7 +156,7 @@
          end if !kontrollknoten
 
          subtim=startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
-
+         
          if(subtim.lt.transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
          if(subtim.gt.transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
          nti=0
@@ -298,6 +298,7 @@
 
          do j=1,number_plankt_point ! all j elements (*levels?)
             do n=1,number_plankt_vari ! all transported concentrations i.e. variables
+               if (iEros<0 .and. (n==52 .or. n==53)) cycle    ! skip SSalg and SS if SS read from file
                zwischen(n,j)= planktonic_variable(n+(j-1)*number_plankt_vari) *wicht((j-1)*5+1) !! self
                do k = 1,4 ! all 4 neighbour (elements) if existing
                   if (intereck((j-1)*4+k) .gt. 0) zwischen(n,j)=zwischen(n,j) +  &
@@ -309,6 +310,7 @@
          do j=1,number_plankt_point ! alle j Elemente
             if (.not.inflow(j)) then ! Zuflusselemente auslassen
                do n=1,number_plankt_vari
+                  if (iEros<0 .and. (n==52 .or. n==53)) cycle    ! skip SSalg and SS if SS read from file
                   if (isNaN(zwischen(n,j))) then
                      print*,'stofftransport_untrim isNaN(zwischen) , plankt_point=',j,' plankt_vari=',n
                      print*,'planktonic_variable_name',n, planktonic_variable_name(n)

@@ -10,9 +10,9 @@ Silizium wird von den Kieselalgen (lat.: Diatomea) für den Aufbau ihres
 Kieselsäuregerüstes benötigt und kann beim Wachstum die limitierende Größe darstellen. 
 Silizium ist nur als im Wasser gelöstes Silikat bioverfügbar.
 Silikat wird in erster Linie aus Kläranlagen und über diffuse Quellen in die Gewässer 
-eingetragen. Im Modell wird neben der Siliziumaufnahme durch Kieselalgen die 
-Rücklösung aus dem Sediment berücksichtigt. Wobei die Rücklösung nur einen
-geringen Anteil der Konzentrationsänderungen ausmacht.
+eingetragen. Im Modell wird zurzeit nur die Siliziumaufnahme durch planktische 
+Kieselalgen berücksichtigt. Die Rücklösung aus dem Sediment ist ausgeschaltet,
+sie macht nur einen geringen Anteil der Konzentrationsänderungen aus.
 
 Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
 - \subpage lnk_silikat_prozesse : Erläuterung der im Silikat-Baustein 

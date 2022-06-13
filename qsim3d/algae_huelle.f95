@@ -260,7 +260,8 @@
 !! und bieten Algen dadurch z. T. sehr unterschiedliche Lebensräume.
 !! Dies kann durch die 2D-Option in QSim1D 
 !! (Die Tiefenverteilung macht aus dem querschnittsgemittelten Modell ein breitengemitteltes)
-!! berücksichtigt werden. \n zur Realisierung von Tiefenverteilungen in QSim3D siehe \ref *tiefenverteilung* \n
+!! berücksichtigt werden. \n zur Realisierung von Tiefenverteilungen in QSim3D siehe *tiefenverteilung* \n
+! #mf ref tiefenverteilung funnzt nicht
 !! \n Aber auch vertikal gut durchmischte, zumeist schnell fließende Gewässer, in denen sich 
 !! keine großen Unterschiede in Temperatur und Nährstoffen ausbilden können, weisen Lichtgradienten auf.
 !! Diese Fälle lassen sich hydraulisch und vom Stofftransport zwar in guter Näherung tiefengemittelt berechnen,

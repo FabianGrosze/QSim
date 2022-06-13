@@ -68,7 +68,7 @@
 !! Diese kommunikation wird in den 3D Optionen eingerichtet:
 !! \n\n
 !! <em> hier fehlt noch das Bild (siehe Code, auskommentiert) </em>
-! ! \image html 3Doptionen.png 
+!! \image html 3Doptionen.png 
 !! \n\n 
 !!! Server-URL\n
 !! 	URL oder ip-Adresse des Servers, auf dem QSim3D gerechnet weden soll. Zwischen dem Server und dem lokalen Arbeitsrechner muss eine ssh-Verbindung möglich sein.
@@ -523,7 +523,7 @@
       call ini_planktkon0(n_cal)
       call ini_benthic0(n_cal)
       call ini_ueber(n_cal)
-      call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
+     
       if(meinrang.eq.0)then ! only prozessor 0
          call ausgabekonzentrationen_beispiel()
          if (kontrollknoten .eq. 0)then
@@ -549,8 +549,14 @@
       case default
          call qerror('Hydraulischer Antrieb unbekannt; sichten')
       end select
+      
+      !#FG: reading model settings here to ensure iEros is known (required for SS from file)
+      if (meinrang.eq.0) call ereigg_modell() ! read time-stepping information at first
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
 
-   if(meinrang.eq.0)then ! only prozessor 0
+      if (meinrang.eq.0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
@@ -567,7 +573,7 @@
       call extnct_lesen()
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
-!
+
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
 
       call wetter_readallo0()
@@ -714,6 +720,14 @@
          write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'
          call qerror(fehler)
       end if ! open_error.ne.0
+      
+      !#FG: check that suspended matter ('SS') is only read from hydrodynamic forcing ('iEros<0') when UnTRIM2 is used ('hydro_trieb=2')
+      !#FG: dirty(!!!) temporary hack to use 'iEros' for this
+      if (iEros<0 .and. hydro_trieb/=2) then
+         write(fehler,'(a)') "eingabe.f95: Can only read 'SS' (iEros<0) from UnTRIM hydrodynamics (hydro_trieb=2)"
+         call qerror(fehler)
+      end if
+      
       if(imitt.eq. 1) &
      &   print*,'### Warnung ###, die in EREIGG.txt mittels imitt=1 angeforderte Ausgabe von Tagesmittelwerten ', &
      &          'ist in QSim3D nicht implementiert.'

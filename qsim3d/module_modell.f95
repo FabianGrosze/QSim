@@ -68,6 +68,36 @@
 !! 
 !! \subpage Parallelisierung \n
 !! 
+!! \section lnk_benennung Benennung der Variablen und Parameter im QSimCode
+!!
+!! Der Bennenung von Variablen und Parametern im QSim-Code unterliegt eine 
+!! gewisse Struktur, die in der folgenden Tabelle zusammengefasst ist.
+!! Achtung: Die Tabelle ist unvollständig und im Aufbau. Zum Teil wird von der 
+!! Struktur abgewichen.
+!!<table variable_naming>
+!!<tr><th> Zusatz </th><th> Platz </th><th> Beispiel </th><th> Bedeutung </th></tr>
+!!<tr><td> a </th><th> vorangestellt </th><th> apfl </th><th> ?? </td></tr>
+!!<tr><td> b </td><td> vorangestellt </td><td> bgesN </td><td> Buhnenfeld </td></tr>
+!!<tr><td> e </td><td> vorangestellt </td><td> egesN </td><td> Einleiter (?) </td></tr>
+!!<tr><td> e und h </td><td> vor- und nachgestellt </td><td> egesNh </td><td> ?? </td></tr>
+!!<tr><td> h </td><td> vorangestellt </td><td> hgesN </td><td> geht über alle Stränge (?) </td></tr>
+!!<tr><td> L </td><td> nachgestellt </td><td> gesnL </td><td> Linieneinleiter (?) </td></tr>
+!!<tr><td> LH </td><td> nachgestellt </td><td> gesnLH  </td><td> Linieneinleiter (?) </td></tr>
+!!<tr><td> max </td><td> nachgestellt </td><td> pflmax </td><td> Maximum über ?? </td></tr>
+!!<tr><td> min </td><td> nachgestellt </td><td> pflmin </td><td> Minimum über ?? </td></tr>
+!!<tr><td> mis </td><td> nachgestellt </td><td> pflmis </td><td> ?? </td></tr>
+!!<tr><td> mxs </td><td> nachgestellt </td><td> pflmxs </td><td> ?? </td></tr>
+!!<tr><td> s </td><td> vorangestellt </td><td> svx0 </td><td> ?? </td></tr>
+!!<tr><td> s </td><td> nachgestellt </td><td> gesns </td><td> Variable lokal in Subroutine </td></tr>
+!!<tr><td> sum </td><td> vorangestellt </td><td> sumpfl </td><td> Summe über ?? </td></tr>
+!!<tr><td> t </td><td> nachgestellt </td><td> vo2t </td><td> jeweilige Größe am jeweiligen Profil (am Ende der jeweiligen Knotenschleife) </td></tr>
+!!<tr><td> y </td><td> nachgestellt  </td><td> vx0y </td><td> für Mittelung (?) </td></tr>
+!!<tr><td> z </td><td> nachgestellt </td><td> hgesnz </td><td> tiefenaufgelöst </td></tr>
+!!<tr><td> zt </td><td> nachgestellt </td><td> gesnzt </td><td> ?? </td></tr>
+!!<tr><td> zw </td><td> vorangestellt </td><td> zwgesN </td><td> Zwischengröße </td></tr>
+!!<tr><td> z_z </td><td> nachgestellt </td><td> hgesnz_z </td><td> dreifach indiziert (?)  </td></tr>
+!!</table variable_naming>
+!!
 !! \n\n aus Datei: module_modell.f95 ; zurück:\ref index
 
 !--------------------------------------------------------------------------------------------------------------
@@ -129,9 +159,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !-------------------------------------------------------------------------------parallel_datenfelder
 ! Beschreibung in parallel.f95
 !> nummer und Gesamtzahl prozessoren (MPI)
-      integer :: meinrang, part, proz_anz
-      !!wy integer :: mpi_komm_welt, ierror
-      integer :: mpi_komm_welt, ierr
+      integer :: meinrang, part, proz_anz, ierr
+      integer :: mpi_komm_welt
 
 !-------------------------------------------------------------------------------Modell+Netz
 !> modellverzeichnis etc.
@@ -161,6 +190,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !> \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
       integer :: itracer
 !> \anchor ieros Erosions-flag mit Erosion=1 ohne=0 in QSim3D bisher unbenutzt
+!#FG: temporary dirty hack: iEros<0 for reading 'SS' from UnTRIM2; 'abs(iEros)' sets the number of classes to be read (finest to coarsest)
       integer :: ieros
 !> \anchor ischwa mit ereigg2=1 ohne=0 ??? in QSim3D bisher unbenutzt
       integer :: ischwa

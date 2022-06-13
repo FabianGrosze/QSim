@@ -1,14 +1,13 @@
+# --- Dateitypen ---
 *.taz
 *.zip
-qsim_doku.taz
-!doku/*
-!doku/Makefile
-!doku/confi
-!doku/customdoxygen.css
-!doku/footer.html
-!doku/header.html
-!doku/docmd/
-!doku/readme.md
+*.aps
+*.o
+*.mod
+*.csv
+*.png
+
+# --- Doku ---
 doku/dox/*
 !doku/exp/*
 doku/html/*
@@ -17,22 +16,26 @@ doku/pdf/*
 doku/taz/*
 doku/doku_offline/*
 doku/*.zip
+doku/doxygen.exe
 backup-dokufiles/*
-qsim1d/*.o
-qsim1d/*.sln
-qsim1d/*.u2d
-qsim1d/*.vfproj
-qsim1d/x64/*
-qsim1d/.vs/*
-qsim3d/*.o
-metabolism/*.o
-metabolism/*.mod
-metabolism/libqsim.a
 
-qsim3d/f95_gerris.zip
+
+# --- QSim 3D ---
 qsim3d/*.co
-qsim3d/*.mod
 qsim3d/version.h
 qsim3d/code_source.h
-qsim3d/*.taz
-qsim3d/*.zip
+
+# --- Metabolism ---
+metabolism/libqsim.a
+
+
+# --- Visual Studio ---
+/qsim1d/x64
+qsim1d/x64/*
+.vs
+qsim1d/.vs/*
+test/rotatorien/x64
+
+
+
+.Rproj.user
