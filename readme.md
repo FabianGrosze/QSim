@@ -1,3 +1,7 @@
+## 14.09.00
+* enabling cross sections in 3D (schnitt.txt)
+* additional heavy metals 
+
 ## 14.08.00
 Stable release comprising evaporation options in temperature module (see 14.06) and reading of UnTRIM SPM (see 14.07.02)
 
