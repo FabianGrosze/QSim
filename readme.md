@@ -1,3 +1,7 @@
+## 14.09.00
+* enabling cross sections in 3D (schnitt.txt)
+* additional heavy metals 
+
 ## 14.08.00
 Stable release comprising evaporation options in temperature module (see 14.06) and reading of UnTRIM SPM (see 14.07.02)
 
@@ -5,6 +9,13 @@ Stable release comprising evaporation options in temperature module (see 14.06) 
 ## 14.07.02
 added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qims3d/module_suspendedMatter.f90)
 
+## 14.10
+
+adding additional heavy metal concentrations.
+
+restructured modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
+
+enable input of erosion parameters
 
 ## 14.07.01
 compiled at 16.mae.2022 

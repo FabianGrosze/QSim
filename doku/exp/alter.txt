@@ -1,0 +1,21 @@
+# Datei "alter.txt" für die Aufenthaltszeitberechnung nach Shen & Wang 2007
+# wenn sie im Modellverzeichnis vorhanden ist, wird nur diese Berechnung und kein anderer Stoffumsatz durchgeführt.
+# Leerzeilen und Kommentarzeilen, die mit # beginnen, werden überlesen.
+#
+# Es gibt zwei Varianten von Aufenthaltszeitberechnungen, Zonen oder Ränder: 
+
+# Zonen-Variante: 
+# es wird die Zeit gemessen, wie lange es her ist, dass sich das Fluid in einer bestimmten Zone befunden hat.
+## Diese Variante ist dafür geeignet einzelne Zonen anzutracern. 
+# Kennbuchstabe z in der ersten Spalte, danach die Zonennummer
+z  5
+#Z   5   "inseln"
+#z 6 "Este"
+
+# Randbedingungs-Variante:
+# es wird die Zeit gemessen, wie lange es her ist, das das Fluid über einen bestimmten Rand zugeflossen ist.
+# Kennbuchstabe r in der ersten Spalte, Randnummer danach
+# r 3
+# rand 1 ist Zufluss Geesthacht
+# rand 2 Seerand Wasserstand Kuglbaake
+# rand 3 zufluss Este Buxtehude

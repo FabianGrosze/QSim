@@ -1,0 +1,26 @@
+*V  QSim  ModellG  14.04  Gerris  2.1.12.847
+EQ159:2;EH27:1/OA100:2/OS96:2/OQ119:8/OT98:1;33/S:1/B:1;Schmilka/Geest
+-1  -1   -1
+    2
+
+S      1     S3
+L  -1  -1   -1
+M  15   4  15   7  15  11
+T     0.000   130.000     1    227.0
+T   130.000   135.000     1    227.0
+T   135.000   250.000     2    105.0
+T   250.000   269.900     2    105.0
+T   269.900   295.000     3     76.0
+T   295.000   318.000     3     76.0
+#      read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+#E  km_anfang  km_ende	Tau_cr     M(Erodibilitätsk.)   n(Exponent)   Sed.Dichte
+E   295.000    318.000  1.25       7.5e-4               3.2           1450.
+#E(Default) --  --      99999.99   0.0                  1.0           2650.0		 
+
+
+S      2     S1
+L  -1  -1   -1
+M  -1  -1  -1  -1  -1  -1
+T   318.000   456.000     3     76.0
+T   456.000   500.000     4     21.0
+T   500.000   585.050     4     21.0

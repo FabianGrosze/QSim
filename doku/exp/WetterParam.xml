@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<GerrisParam FileType="Wetter" QsimVersion="13.10">
+<ParamSetDef Ident="Wetter" Text="Wetterdaten" Help="Parameter des Wetters">
+  <Parameter Ident="GStrahl" Text="Globalstrahlung" Help="Globalstrahlung im Messzeitraum" Unit="J/(cm²*d)" Format="F7.2" Null="-1" Default="" Min="" Max="" />
+  <Parameter Ident="MaxTemp" Text="Max.Lufttemp." Help="Maximale Lufttemperatur im Messzeitraum" Unit="°C" Format="F6.2" Null="-99.99" Default="" Min="" Max="" />
+  <Parameter Ident="MinTemp" Text="Min.Lufttemp." Help="Minimale Lufttemperatur im Messzeitraum" Unit="°C" Format="F6.2" Null="-99.99" Default="" Min="" Max="" />
+  <Parameter Ident="Feuchte" Text="Rel.Feuchte" Help="Relative Luftfeuchtigkeit" Unit="%" Format="F6.2" Null="-1" Default="" Min="" Max="" />
+  <Parameter Ident="Wind" Text="Windgeschw." Help="Windgeschwindigkeit" Unit="m/s" Format="F6.2" Null="-1" Default="" Min="" Max="" />
+  <Parameter Ident="Wdichte" Text="Bewölkungsdichte" Help="Bewölkungsdichte" Unit="" Format="F4.1" Null="-1" Default="" Min="" Max="" />
+  <Parameter Ident="Wtyp" Text="Wolkentyp" Help="Wolkentyp" Unit="" Format="F4.1" Null="-1" Default="" Min="" Max="" />
+</ParamSetDef>
+</GerrisParam>

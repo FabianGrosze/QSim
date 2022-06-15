@@ -120,6 +120,12 @@
   WRITE(1, '(A)') '  <Parameter Ident="PSREFS" Text="Reflektionsanteil der Strahlung an der Sedimentoberfläche" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'
   WRITE(1, '(A)') '  <Parameter Ident="EXTKS" Text="Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!)" Unit="-" Format="F5.2" Null="-1" Help="" Min="" Max="" Default="-1." />'
   WRITE(1, '(A)') '</ParamSetDef>'
+  WRITE(1, '(A)') '<ParamSetDef Id="QE" Text="Erosions-Parameter" Help="Kenngrößen für die Gewässerabschnitte" Scope="Abschnitt">'
+  WRITE(1, '(A)') '  <Parameter Ident="tau_krit" Text="kritische Sohlschubspannung ab der Erosion auftritt"       Unit="N/m²"      Format="F7.3" Null="-1" Help="" Max="" Default="9999.99" />'
+  WRITE(1, '(A)') '  <Parameter Ident="M_eros"   Text="Erodibilitätskonstante"                                    Unit="kg/(m²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
+  WRITE(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
+  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/m³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
+  WRITE(1, '(A)') '</ParamSetDef>'
 
 !  WRITE(1, '(A)') '<ParamSetDef Id="Q1" Text="Platzhalter1" Help="Platzhalter1" Scope="Abschnitt">'
 !  WRITE(1, '(A)') '</ParamSetDef>'

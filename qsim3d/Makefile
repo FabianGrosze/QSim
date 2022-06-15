@@ -34,7 +34,9 @@
 # PV='qsim14.06doku'
 # PV='qsim3d14.07doku'
 # PV='qsim3d14.07Cu'
-PV='qsim3d14.08.00'
+# PV='qsim3d14.07.01'
+# PV='qsim3d_schnitt14.14'
+PV='qsim3d_schwer14.09.00'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -82,7 +84,8 @@ CFLAGS2             = -O -g -fbounds-check ## develop ##
 # GEN_CFLAGS          = -I../lib -I/usr/include
 CCLAGS       = $(CFLAGS2) $(MPICH2_INCLUDE)
 # FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) -finit-local-zero ## develop ##
-FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFINC) -finit-local-zero ## develop ##
+FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFINC) -finit-local-zero -J../metabolism  ## develop ##
+# -J Modules include
 ## production ## FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFMOD)
 
 #loader-flags:
@@ -160,7 +163,7 @@ schism: $(SC)
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 qsim:	
-	@cd ../metabolism; make metabol; cd ../qsim3d
+	@cd ../metabolism; cp makefile3 Makefile; make metabol; cp *.mod ../qsim3d; cd ../qsim3d
 
 %.co: %.c
 	$(CC) -c  $(CCLAGS) $< -o $@
@@ -179,16 +182,17 @@ qsim:
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
 Q3 = version.co trans_read.co \
-     module_modell.o module_QSimDatenfelder.o nachricht.o \
+     module_modell.o module_QSimDatenfelder.o nachricht.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
-     zonen.o wetter.o ganglinien.o schnitt.o\
+     zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o module_suspendedMatter.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
      oxygen_huelle.o orgc_huelle.o ph_huelle.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
-	 eingabe.o initialisieren.o randbedingungen.o\
+	 eingabe.o initialisieren.o randbedingungen.o \
+	 schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
      stofftransport_casu.o \
 	 stofftransport_untrim.o stofftransport.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
@@ -224,7 +228,7 @@ kombit: $(KT)
 clean:	
 	@echo "cleaning ..."
 	rm -f *.o *.co $(PV) version.h code_source.h *~ *.mod libschism.a
-	rm -f ../metabolism/*.o ../metabolism/*.a
+	rm -f ../metabolism/*.o ../metabolism/*.mod ../metabolism/*.a
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 # systemaufruf='cp '//trim(adjustl(codesource))//'/*source*.taz'

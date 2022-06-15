@@ -325,6 +325,13 @@ endif ! Tageswechsel
       !>integer :: k_ausgabe
       !>integer , allocatable , dimension (:) :: ausgabe_konz
 
+      output_plankt(:)=.false.
+	  output_plankt_vert(:)=.false.
+	  output_benth_distr(:)=.false.
+	  output_trans_val(:)=.false.
+	  output_trans_quant(:)=.false.
+	  output_trans_quant_vert(:)=.false.
+
       write(dateiname,'(2A)')trim(modellverzeichnis),'ausgabekonzentrationen.txt'
       ion=103
       open ( unit =ion , file = dateiname, status ='old', action ='read ', iostat = open_error )
@@ -339,13 +346,14 @@ endif ! Tageswechsel
       do while( zeile(ion)) !!  read all lines and understand
          if((ctext(1:1).eq.'x').or.(ctext(1:1).eq.'X'))then ! line marked ?
             found=.false.
+			!print*,trim(ctext)
 
             do j=1,number_plankt_vari ! all depth averaged planktic con.
                write(text,'(A18)')trim(planktonic_variable_name(j))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for planktic concentration j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  print*,meinrang,iscan,' output for planktic concentration j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_plankt(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -354,8 +362,8 @@ endif ! Tageswechsel
                write(text,'(A18)')trim(plankt_vari_vert_name(j))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output only for level 1; plankt_vari_vert j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output only for level 1; plankt_vari_vert j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_plankt_vert(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -365,8 +373,8 @@ endif ! Tageswechsel
                write(text,'(A)')ADJUSTL(trim(benth_distr_name(j)))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for benthic distribution j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output for benthic distribution j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_benth_distr(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -378,8 +386,8 @@ endif ! Tageswechsel
                write(text,'(A)')ADJUSTL(trim(trans_val_name(j)))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'ausgabe globaler uebergabe wert j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  print*,'ausgabe globaler uebergabe wert j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_trans_val(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -388,8 +396,8 @@ endif ! Tageswechsel
                write(text,'(A)')ADJUSTL(trim(trans_quant_name(j)))
                iscan=index(trim(ctext),trim(text))
                if(iscan.gt.0)then ! found
-                  print*,'output for exchange concentration j=',j,' parameter: ',trim(text),' line:'
-                  print*,trim(ctext)
+                  if(meinrang==0)print*,'output for exchange concentration j=',j,' parameter: ',trim(text)
+                  !print*,trim(ctext)
                   output_trans_quant(j)=.true.
                   found=.true.
                end if !! in string ctext
@@ -400,8 +408,8 @@ endif ! Tageswechsel
                   write(text,'(A)')ADJUSTL(trim(trans_quant_vert_name(j)))
                   iscan=index(trim(ctext),trim(text))
                   if(iscan.gt.0)then ! found
-                     print*,'output only for level 1; trans_quant_vert j=',j,' parameter: ',trim(text),' line:'
-                     print*,trim(ctext)
+                     if(meinrang==0)print*,'output only for level 1; trans_quant_vert j=',j,' parameter: ',trim(text)
+                     !print*,trim(ctext)
                      output_trans_quant_vert(j)=.true.
                      found=.true.
                   end if !! in string ctext
@@ -409,7 +417,7 @@ endif ! Tageswechsel
 
             if (.not.found) then
                print*,'no parameter found for choice:'
-               print*,trim(ctext)
+               !print*,trim(ctext)
             end if ! not found
          end if ! marked line
       end do ! no further line
@@ -421,6 +429,29 @@ endif ! Tageswechsel
          output_plankt(74)=.true. ! age_arith
          output_plankt(75)=.true. ! age_growth
       end if ! nuralter
+	  
+	  n_pl=0
+      do j=1,number_plankt_vari
+         if(output_plankt(j))n_pl=n_pl+1
+      end do
+      do j=1,number_plankt_vari_vert
+         if(output_plankt_vert(j))n_pl=n_pl+1
+      end do
+	  n_bn=0
+      do j=1,number_benth_distr
+         if(output_benth_distr(j))n_bn=n_bn+1
+      end do
+	  n_ue=0
+      do j=1,number_trans_val
+         if(output_trans_val(j))n_ue=n_ue+1
+      end do
+      do j=1,number_trans_quant
+         if(output_trans_quant(j))n_ue=n_ue+1
+      end do
+      do j=1,number_trans_quant_vert
+         if(output_trans_quant_vert(j))n_ue=n_ue+1
+      end do
+      print*,'ausgabekonzentrationen n_pl,n_bn,n_ue=',n_pl,n_bn,n_ue
 
 !     writing output variable list moved to SUBROUTINE eingabe()
       !text='ausgabekonzentrationen_beispiel.txt'
@@ -1020,9 +1051,11 @@ end if ! nur Prozessor 0
       SUBROUTINE mesh_output(ion)
       use modell                                                   
       implicit none
-      integer ion,n
+      character(len=longname) :: dateiname
+      integer ion,n,igr3
+      integer io_error
       !print*,'mesh_output: starting'
-
+!----------------------------------------------------------------- .vtk
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'Simlation QSim3D'
       write(ion,'(A)')'ASCII'
@@ -1097,6 +1130,41 @@ end if ! nur Prozessor 0
       do n=1,knotenanzahl2D
          write(ion,'(f27.6)') real(knoten_rand(n))
       end do ! alle Knoten
+      !close (ion) !channel number is handeled by subroutine show_mesh
+	  
+!----------------------------------------------------------------- .gr3
+	  if(meinrang.ne.0)call qerror("mesh_output may only be called from process 0") ! nur auf Prozessor 0 bearbeiten
+	  
+      write(dateiname,'(2A)')trim(modellverzeichnis),'mesh.gr3'
+      igr3=107
+      open ( unit =igr3 , file = dateiname, status ='unknown', action ='write ', iostat = io_error )
+         if(io_error.ne.0) then
+         print*,'mesh.gr3, io_error=',io_error
+         close (igr3)
+         return
+      end if ! io_error.ne.0
+          
+      write(igr3,'(A,2x,A)') 'Grid written by QSim3D',modellverzeichnis
+      write(igr3,*)n_elemente, knotenanzahl2D
+      
+      do n=1,knotenanzahl2D
+         ! write(igr3,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
+         write(igr3,*)n, knoten_x(n), knoten_y(n), knoten_z(n)
+      end do ! alle Knoten
+              
+      do n=1,n_elemente ! alle Elemente
+         if (cornernumber(n).eq.3)then
+            write(igr3,*) & 
+            n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+         end if
+         if (cornernumber(n).eq.4)then
+            write(igr3,*) &
+            n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+         end if
+      end do ! alle Elemente
+                
+      close (igr3)
+      !print*,'written mesh.gr3'
 
       !print*,'mesh_output: finished'
       RETURN

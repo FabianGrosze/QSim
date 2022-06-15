@@ -25,7 +25,7 @@
 !! wird von ganglinien_zeitschritt() aufgerufen
 !! \n\n aus schnitt.f95 , zurück: \ref Ergebnisse
 !!
-      SUBROUTINE querschnitt_flux(zeitzaehler)
+      SUBROUTINE querschnitt_flux_casu(zeitzaehler)
       use modell
       implicit none
       integer :: zeitzaehler, i,j,k, bt,tp, no
@@ -63,7 +63,7 @@
             !! u1 und u2 sind bereits das Produkt aus Normalgeschwindigkeitskomponente mal Kantenlänge !!
             c1= planktonic_variable(71+(bt-1)*number_plankt_vari) !! passiver alters-tracer
             c2= planktonic_variable(71+(tp-1)*number_plankt_vari)
-            call flux(deltax,d1,d2,u1,u2,c1,c2,p(bt),p(tp),u(bt),u(tp),la,flae,vox,pox,kix,masx)
+            call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(bt),p(tp),u(bt),u(tp),la,flae,vox,pox,kix,masx)
             lang=lang + la
             flaeche=flaeche + flae
             vol_strom=vol_strom + vox
@@ -73,7 +73,7 @@
          end do ! alle j Kanten in Querschnitt i
          schnittflux_gang(i,zeitzaehler,1)= lang!!
          schnittflux_gang(i,zeitzaehler,2)= flaeche !!
-         schnittflux_gang(i,zeitzaehler,3)= vol_strom !! 
+         schnittflux_gang(i,zeitzaehler,3)= vol_strom !! in m³
          schnittflux_gang(i,zeitzaehler,4)= pot_ener_flux/1000000 !! in mega-Watt
          schnittflux_gang(i,zeitzaehler,5)= kin_ener_flux/1000000 !! in mega-Watt
          schnittflux_gang(i,zeitzaehler,6)= massen_flux !! 71
@@ -87,7 +87,7 @@
       ! deallocate(massen_flux)
 
       RETURN
-      END subroutine querschnitt_flux
+      END subroutine querschnitt_flux_casu
 
 !----+-----+----
 !
@@ -99,7 +99,7 @@
 !! Fluss kinetische Energie Integral(rho*0.5*v*v*d*u)dx ; alle 4 lin. über x (v*v-Quadrat des Geschwindigkeitsbetrages)\n
 !! u1 und u2 sind bereits das Produkt aus Normalgeschwindigkeitskomponente mal Kantenlänge !!\n
 !! \n\n aus schnitt.f95
-      SUBROUTINE flux(deltax,d1,d2,u1,u2,c1,c2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix,masx)
+      SUBROUTINE flux_casu(deltax,d1,d2,u1,u2,c1,c2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix,masx)
       !use modell
       implicit none
       real :: deltax,d1,d2,u1,u2,wsp1,wsp2,v1,v2,la,flae,vox,pox,kix
@@ -174,7 +174,7 @@
                call qerror("Fall-Unterscheidung fehlgeschlagen in flux()")
             end select
       RETURN
-      END subroutine flux
+      END subroutine flux_casu
 
 !----+-----+----
 !
@@ -185,7 +185,7 @@
       logical function querschnitt_lesen()
       use modell
       implicit none
-      integer :: nio, io_error, alloc_status, i, j, n, k, l, l1,l2, el(2), nel, bt, tp
+      integer :: nio, io_error, alloc_status, i, j, n, k, l, l1,l2, el(2), nel, bt, tp, nelkntp, nelknbt
       character (len=300) :: dateiname
       real :: lang
 
@@ -226,7 +226,7 @@
          end if ! keine nächste Zeile
          read (ctext, * , iostat = io_error) querschnitt(i)%schnittlinie%anzkanten
          if(io_error.eq.0) then
-            print*,"schnitt #",i," soll ", querschnitt(i)%schnittlinie%anzkanten," Knoten enthalten"
+            !print*,"schnitt #",i," soll ", querschnitt(i)%schnittlinie%anzkanten," Knoten enthalten"
          else
             print*,"schnitt #",i
             call qerror("Lesefehler schnitt.txt Knotenanzahl")
@@ -239,7 +239,7 @@
             if(.not.naechste_zeile(nio)) call qerror("Lesefehler schnitt.txt Knotennummer")
             read (ctext, * , iostat = io_error) querschnitt(i)%schnittlinie%knoten(j)
             if(io_error.eq.0) then
-               print*,"schnitt #",i," knoten ",j, " #",querschnitt(i)%schnittlinie%knoten(j)
+               !print*,"schnitt #",i," knoten ",j, " #",querschnitt(i)%schnittlinie%knoten(j)
             else
                print*,"schnitt #",i," knoten ",j
                call qerror("Lesefehler schnitt.txt Knotennummer")
@@ -247,11 +247,16 @@
          end do ! alle j Knoten in Querschnitt i
       end do ! alle i Querschnitte
       ! Ganglinen allocieren
-      allocate (schnittflux_gang(anzahl_quer,zeitschrittanzahl+1, 6 ), stat = alloc_status )
+      allocate (schnittflux_gang(anzahl_quer,zeitschrittanzahl+1, n_pl+2 ), stat = alloc_status )
       if(alloc_status.ne.0) then
          write(fehler,*)'allocate (schnittflux_gang(anzahl_quer, fehlgeschlagen'
          call qerror(fehler)
+	  else
+	     print*,"allocate (schnittflux_gang",anzahl_quer,zeitschrittanzahl,n_pl
       end if ! alloc_status .ne.0
+	  schnittflux_gang(:,:,:)=0.0
+      allocate (q_gangl(zeitschrittanzahl+1), stat = alloc_status )
+	  q_gangl(:)=0
 
       rewind (nio)
       close (nio)
@@ -268,9 +273,28 @@
          do j=1,querschnitt(i)%schnittlinie%anzkanten !! alle j Kanten 
             bt=querschnitt(i)%schnittlinie%knoten(j)
             tp=querschnitt(i)%schnittlinie%knoten(j+1)
-            nel=0
+            querschnitt(i)%schnittlinie%kante(j)%normal_x=-1*(knoten_y(tp)-knoten_y(bt))
+            querschnitt(i)%schnittlinie%kante(j)%normal_y=(knoten_x(tp)-knoten_x(bt))
+            querschnitt(i)%schnittlinie%kante(j)%bottom=bt
+            querschnitt(i)%schnittlinie%kante(j)%top=tp
+			querschnitt(i)%schnittlinie%kante(j)%laengs=( (querschnitt(i)%schnittlinie%kante(j)%normal_x**2)  &
+    &                   + (querschnitt(i)%schnittlinie%kante(j)%normal_y**2) )**0.5
+            do n=1,kantenanzahl ! alle Kanten
+			   if((bottom_node(n).eq.bt).and.(top_node(n).eq.tp))querschnitt(i)%schnittlinie%kante(j)%num=n
+			   if((bottom_node(n).eq.tp).and.(top_node(n).eq.bt))querschnitt(i)%schnittlinie%kante(j)%num=-1*n
+            end do ! alle n Kanten
+            !print*," querschnitt_lesen Kante ",j," top,bottom=",tp,bt  &
+			!      ,"Länge=",querschnitt(i)%schnittlinie%kante(j)%laengs  &
+		    !      ," Nummer=",querschnitt(i)%schnittlinie%kante(j)%num				  
+            nel=0 ; nelkntp =0 ; nelknbt =0
             do n=1,n_elemente ! alle n Elemente
                do l=1,cornernumber(n)
+			      if(elementnodes(n,l).eq.tp)then
+   				     nelkntp=nelkntp+1 ;!print*,tp,'=tp an Element=',n,l,"ter Knoten"
+				  endif
+			      if(elementnodes(n,l).eq.bt)then
+				     nelknbt=nelknbt+1 ;!print*,bt,'=bt an Element=',n,l,"ter Knoten"
+				  endif
                   if(l.eq.1)then
                      l1=cornernumber(n)
                   else
@@ -288,20 +312,21 @@
                   end if ! kante bt-tp erkannt
                end do ! alle l (3 oder 4) Ecken von Element k
             end do ! alle n Elemente im Netz
-            print*,"An Kante ",j," bt ",bt," tp ",tp, " von Querschnitt #",i," wurden ", nel ," Elemente gezählt"
+            !print*,"An Kante ",j," bottom= ",bt," top= ",tp, " von Querschnitt #",i," wurden ", nel ," Elemente gezählt"
+            !print*,nelkntp," elemente an top ",nelknbt," elemente an bottom"
             if(nel.eq.2)then
-               print*," Element 1 =",el(1)," Element 2 =",el(2)
+               !print*," Element 1 =",el(1)," Element 2 =",el(2)
             else
                call qerror("Querschnittskante nicht innerhalb des Berechnungsgebiets")
             endif
-            querschnitt(i)%schnittlinie%kante(j)%normal_x=-1*(knoten_y(tp)-knoten_y(bt))
-            querschnitt(i)%schnittlinie%kante(j)%normal_y=(knoten_x(tp)-knoten_x(bt))
-            querschnitt(i)%schnittlinie%kante(j)%bottom=bt
-            querschnitt(i)%schnittlinie%kante(j)%top=tp
-            lang=lang + ( (querschnitt(i)%schnittlinie%kante(j)%normal_x**2)  &
-    &                   + (querschnitt(i)%schnittlinie%kante(j)%normal_y**2) )**0.5
+            lang=lang + querschnitt(i)%schnittlinie%kante(j)%laengs
          end do ! alle j Kanten in Querschnitt i
          print*,"Querschnitt #",i, "hat ",querschnitt(i)%schnittlinie%anzkanten," Kanten und ist ",lang," lang"
+         do j=1,querschnitt(i)%schnittlinie%anzkanten !! alle j Kanten 
+            print*,j,' n,l,bt,tp=',querschnitt(i)%schnittlinie%kante(j)%num,querschnitt(i)%schnittlinie%kante(j)%laengs  &
+                  ,querschnitt(i)%schnittlinie%kante(j)%bottom,querschnitt(i)%schnittlinie%kante(j)%top
+
+         end do ! alle j Kanten in Querschnitt i
       end do ! alle i Querschnitte
 
       querschnitt_lesen=.true.

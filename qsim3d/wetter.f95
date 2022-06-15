@@ -851,9 +851,9 @@ end if !! nur prozessor 0
         geol=modell_geol
         geob=modell_geob
         call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl) 
-        if(kontrollknoten.gt.0)		&
-        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
-     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
+!        if(kontrollknoten.gt.0)		&
+!        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
+!     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
 		if (ifehl.ne. 0)call qerror("SASU fehlgeschlagen")
 		if(sa.gt.su)then
 		   print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
@@ -882,7 +882,7 @@ end if !! nur prozessor 0
          ifehl=1     !
          ifhStr=1     !
          if(kontrollknoten.gt.0)		&
-         print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
+         !print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
          ij=1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
          azStr = 1 ! Laufindex über alle Stränge =1 in 3D
 
@@ -891,7 +891,7 @@ end if !! nur prozessor 0
      &               ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
 	 
          if(kontrollknoten.gt.0)		&
-	     print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
+	     !print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
 
 !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &                                           
 !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr

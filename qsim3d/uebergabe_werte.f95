@@ -200,6 +200,7 @@
       subroutine ueber_parallel()
       use modell
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer :: allostat
 
@@ -632,10 +633,10 @@ end if !! nur prozessor 0
 !!<tr><td>  | </td><td> \anchor toptb toptb	</td><td> optimal Temperatur für Blaualgenwachstum </td><td> °C </td><td>   Format= F5.2  Null= -1  Help= optimal Temperatur für Blaualgenwachstum  </td></tr>
 !!<tr><td>  | </td><td> \anchor tmaxb tmaxb	</td><td> Letal-Temperatur für Blaualgenwachstum </td><td> °C </td><td>   Format= F5.2  Null= -1  Help= Letal-Temperatur für Blaualgenwachstum  </td></tr>
 !!<tr><td>  | </td><td> \anchor ifix ifix	</td><td> Luftstickstofffixierer (0/1) </td><td>  </td><td>   Format= I2  Null= -1  Help= Luftstickstofffixierer(0:Nein/1:Ja)  </td></tr>
-!!<tr><td bgcolor="#888888"></td>Zeile 14 :</td><td>irmaxe,FopIRe,GRote,zresge,zakie </td></tr>
+!!<tr><td bgcolor="#888888"></td>Zeile 14 :</td><td>irmaxe,FopIRe,GROT,zresge,zakie </td></tr>
 !!<tr><td>  | </td><td> \anchor irmaxe irmaxe	</td><td> max. Gewichtsspez. Algenaufnahmerate d. Rotatorien </td><td> µgC*µgC-2/3*d-1 ??? </td><td>   Format= F5.2  Null= -1  Help= Max. Ingestionsrate für Rotatorien  </td></tr>
 !!<tr><td>  | </td><td> \anchor fopire fopire	</td><td> Halbsättigungskonstante für Futteraufnahme d. Rotatorien </td><td> mg/l </td><td>   Format= F5.2  Null= -1  Help= Optimale Futterkonzentration für Rotatorienwachstum  </td></tr>
-!!<tr><td>  | </td><td> \anchor grote grote	</td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µg </td><td>   Format= F5.2  Null= -1  Help= Gewicht einer Rotatorie  </td></tr>
+!!<tr><td>  | </td><td> \anchor GROT GROT	</td><td> durchschnittliches Gewicht einer Rotatorie </td><td> µg </td><td>   Format= F5.2  Null= -1  Help= Gewicht einer Rotatorie  </td></tr>
 !!<tr><td>  | </td><td> \anchor zresge zresge	</td><td> Grundrespiration Rotatorien </td><td> 1/d </td><td>   Format= F5.3  Null= -1  Help= Grundrespiration der Rotatorien  </td></tr>
 !!<tr><td>  | </td><td> \anchor zakie zakie	</td><td> Filtrierbarkeit Kieselalgen </td><td> 0-1 </td><td>   Format= F5.2  Null= -1  Help= Filtrierbarkeit der Kieselalgen durch Rotatorien  </td></tr>
 !!<tr><td bgcolor="#888888"></td>Zeile 15 :</td><td>zagre,zable,ynmx1e,stks1e,anitrie </td></tr>
@@ -715,7 +716,7 @@ end if !! nur prozessor 0
 !!       read(55,5518,iostat=read_error)frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB 
 !!       read(55,5520,iostat=read_error)Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi 
 !!       read(55,5522,iostat=read_error)opblma,asble,ToptB,kTemp_Bl,ifix
-!!       read(55,5524,iostat=read_error)irmaxe,FopIRe,GRote,zresge,zakie 
+!!       read(55,5524,iostat=read_error)irmaxe,FopIRe,GROT,zresge,zakie 
 !!       read(55,5526,iostat=read_error)zagre,zable,ynmx1e,stks1e,anitrie 
 !!       read(55,5530,iostat=read_error)bnmx1e,bnks1e,ynmx2e,stks2e,anitrie
 !!       read(55,5528,iostat=read_error)bnmx2e,bnks2e,KNH4e,KapN3e,hyPe 
@@ -726,11 +727,10 @@ end if !! nur prozessor 0
 !! \endverbatim</code>
 !! aus module_uebergabe_werte.f95
 
-
-
       subroutine broadcast_parameter()
       use modell
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
 
 !----------------------------------------------------------------- APARAM.txt
@@ -812,56 +812,56 @@ end if !! nur prozessor 0
       call MPI_Bcast(kTemp_Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
       call MPI_Bcast(ifix,1,MPI_INT,0,mpi_komm_welt,ierr) !
 
-      call MPI_Bcast(irmaxe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(FopIRe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(GRote,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(zresge,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(zakie ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(IRMAX,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(FOPTR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(GROT,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ZRESG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ZAKI ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(zagre,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(zable,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(ynmx1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(stks1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(anitrie ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ZAGR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ZABL,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(YNMAX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(STKS1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ANITR1 ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(bnmx1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(bnks1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(ynmx2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(stks2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(anitri2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(BNMX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(BNKS1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(YNMAX2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(STKS2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(ANITR2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(bnmx2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(bnks2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(KNH4e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(KapN3e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(hyPe ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(BNMX2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(BNKS2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(KNH4,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(KapN3,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(HyP1 ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(hymxDe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(KsD1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(KsD2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(KsMe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(upBACe ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(hymxD,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(KsD1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(KsD2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(KsM,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(upBAC ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(YBACe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(rsGBACe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(FoptDe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(upHNFe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(BACkse ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(YBAC,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(rsGBAC,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(FoptD,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(upHNF,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(BACks ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
       call MPI_Bcast(alamda,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(fPOC1e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(fPOC2e,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(SorpCape,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
-      call MPI_Bcast(Klange,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(fPOC1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(fPOC2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(SorpCap,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
+      call MPI_Bcast(Klang,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
 
-      call MPI_Bcast(KdNh3e,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(ratecde,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(etacde,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(ratecie,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(xnuece,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(KdNh3,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(ratecd,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(etacd,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(rateci,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(xnuec,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
 
-      call MPI_Bcast(ratecge,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-      call MPI_Bcast(ratecse,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(ratecg,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(ratecs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
 
 !-----------------------------------------------------------------weitere (ini_algae)
       call MPI_Bcast(Cagr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) ! 
@@ -890,250 +890,4 @@ end if !! nur prozessor 0
 
       RETURN
       END subroutine broadcast_parameter
-
-!
-!> <h1>SUBROUTINE aparam_lesen()</h1>
-!! Beschreibung siehe: \ref globaleParameter \n
-!! Quelle: module_uebergabe_werte.f95
-      SUBROUTINE aparam_lesen()
-      use modell
-      use QSimDatenfelder
-      implicit none
-      character(500) dateiname
-      integer :: io_error, j,i
-      logical :: logi
-      real dummy
-
-      !print*,'Parameter sollen gelesen werden'
-      write(dateiname,'(2A)')trim(modellverzeichnis),'APARAM.txt'
-      open ( unit =55 , file = dateiname, status ='old', action ='read ', iostat = io_error )
-      !open(unit=55, DEFAULTFILE=cpfad, file='APARAM.txt') 
-      if(io_error.ne.0)call qerror('open_error APARAM.txt ... Datei vorhanden?')
-      rewind (55) 
-
-      if(zeile(55))read(ctext,*,iostat=io_error)agchl,aggmax,IKge,agksn,agksp 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)agremi,frmuge,bsbgr,csbgr,Qmx_NG 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)opgrmi,opgrma,asgre,ToptG,kTemp_Gr
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)akchl,akgmax,IKke,akksn,akksp 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)akkssi,akremi,frmuke,bsbki,csbki 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi 
-      if(io_error.ne.0) goto 198
-!      if(zeile(55))read(ctext,*,iostat=io_error)opkima,askie,ToptK,TmaxK,abchl 
-      if(zeile(55))read(ctext,*,iostat=io_error)opkima,askie,ToptK,kTemp_Ki,abchl 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)abgmax,IKbe,abksn,abksp,abremi 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)opblma,asble,ToptB,kTemp_Bl,ifix
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)irmaxe,FopIRe,GRote,zresge,zakie 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)zagre,zable,ynmx1e,stks1e,anitrie 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)bnmx1e,bnks1e,ynmx2e,stks2e,anitri2e
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)bnmx2e,bnks2e,KNH4e,KapN3e,hyPe 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)hymxDe,KsD1e,KsD2e,KsMe,upBACe 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)YBACe,rsGBACe,FoptDe,upHNFe,BACkse 
-      if(io_error.ne.0) goto 198
-      if(zeile(55))read(ctext,*,iostat=io_error)alamda,fPOC1e,fPOC2e,SorpCape,Klange
-      if(io_error.ne.0) goto 198
-      ratecde = 0.0 ! coliform evt. nicht angegeben
-      etacde = 0.0
-      ratecie = 0.0
-      xnuece = 0.0
-      ratecge = 0.0
-      ratecse = 0.0
-      if(zeile(55))then
-         read(ctext,*,iostat=io_error)KdNh3e
-         if(io_error.ne.0) goto 198
-         read(ctext,*,iostat=io_error)dummy,ratecde,etacde,ratecie,xnuece
-         if(io_error.eq.0)then
-            print*,'APARAM.txt coliform parameters present'
-            if(zeile(55))read(ctext,*,iostat=io_error)ratecge,ratecse
-            !if(io_error.ne.0) goto 198
-		 else
-            print*,'APARAM.txt coliform parameters missing'
-         endif ! coliformpresent
-      end if !zeile 21
-
-      if(kontrollknoten.gt.0)then
-         print*,'agchl,aggmax,IKge,agksn,agksp =',agchl,aggmax,IKge,agksn,agksp
-         print*,'agremi,frmuge,bsbgr,csbgr,Qmx_NG =',agremi,frmuge,bsbgr,csbgr,Qmx_NG
-         print*,'Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG =',Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG
-         print*,'opgrmi,opgrma,asgre,ToptG,kTemp_Gr =',opgrmi,opgrma,asgre,ToptG,kTemp_Gr
-         print*,'akchl,akgmax,IKke,akksn,akksp =',akchl,akgmax,IKke,akksn,akksp
-         print*,'akkssi,akremi,frmuke,bsbki,csbki =',akkssi,akremi,frmuke,bsbki,csbki
-         print*,'Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK =',Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK
-         print*,'Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi =',Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi
-         print*,'opkima,askie,ToptK,kTemp_Ki,abchl =',opkima,askie,ToptK,kTemp_Ki,abchl 
-         print*,'abgmax,IKbe,abksn,abksp,abremi =',abgmax,IKbe,abksn,abksp,abremi
-         print*,'frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB =',frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB
-         print*,'Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi =',Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi
-         print*,'opblma,asble,ToptB,kTemp_Bl,ifix =',opblma,asble,ToptB,kTemp_Bl,ifix
-         print*,'irmaxe,FopIRe,GRote,zresge,zakie =',irmaxe,FopIRe,GRote,zresge,zakie
-         print*,'zagre,zable,ynmx1e,stks1e,anitrie =',zagre,zable,ynmx1e,stks1e,anitrie
-         print*,'bnmx1e,bnks1e,ynmx2e,stks2e,anitri2e =',bnmx1e,bnks1e,ynmx2e,stks2e,anitri2e
-         print*,'bnmx2e,bnks2e,KNH4e,KapN3e,hyPe =',bnmx2e,bnks2e,KNH4e,KapN3e,hyPe
-         print*,'hymxDe,KsD1e,KsD2e,KsMe,upBACe =',hymxDe,KsD1e,KsD2e,KsMe,upBACe
-         print*,'YBACe,rsGBACe,FoptDe,upHNFe,BACkse =',YBACe,rsGBACe,FoptDe,upHNFe,BACkse
-         print*,'alamda,fPOC1e,fPOC2e,SorpCape,Klange =',alamda,fPOC1e,fPOC2e,SorpCape,Klange
-         print*,'KdNh3e,ratecde,etacde,ratecie,xnuece =',KdNh3e,ratecde,etacde,ratecie,xnuece
-         print*,'ratecge,ratecse =',ratecge,ratecse
-      endif
-      print*,'read successfully 107 parameters from APARAM.txt.'
-
-      if( agchl .lt. 0.0)call qerror('APARAM.txt agchl negativ (nicht zulässig in QSim3D)')
-      if( aggmax .lt. 0.0)call qerror('APARAM.txt aggmax negativ (nicht zulässig in QSim3D)')
-      if( IKge .lt. 0.0)call qerror('APARAM.txt IKge negativ (nicht zulässig in QSim3D)')
-      if( agksn .lt. 0.0)call qerror('APARAM.txt agksn negativ (nicht zulässig in QSim3D)')
-      if( agksp .lt. 0.0)call qerror('APARAM.txt agksp negativ (nicht zulässig in QSim3D)')
-
-      if( agremi .lt. 0.0)call qerror('APARAM.txt agremi negativ (nicht zulässig in QSim3D)')
-      if( frmuge .lt. 0.0)call qerror('APARAM.txt frmuge negativ (nicht zulässig in QSim3D)')
-      if( bsbgr .lt. 0.0)call qerror('APARAM.txt bsbgr negativ (nicht zulässig in QSim3D)')
-      if( csbgr .lt. 0.0)call qerror('APARAM.txt csbgr negativ (nicht zulässig in QSim3D)')
-      if( Qmx_NG .lt. 0.0)call qerror('APARAM.txt Qmx_NG negativ (nicht zulässig in QSim3D)')
-
-      if( Qmx_PG .lt. 0.0)call qerror('APARAM.txt Qmx_PG negativ (nicht zulässig in QSim3D)')
-      if( Qmn_NG .lt. 0.0)call qerror('APARAM.txt Qmn_NG negativ (nicht zulässig in QSim3D)')
-      if( Qmn_PG .lt. 0.0)call qerror('APARAM.txt Qmn_PG negativ (nicht zulässig in QSim3D)')
-      if( upmxNG .lt. 0.0)call qerror('APARAM.txt upmxNG negativ (nicht zulässig in QSim3D)')
-      if( upmxPG .lt. 0.0)call qerror('APARAM.txt upmxPG negativ (nicht zulässig in QSim3D)')
-
-      if( opgrmi .lt. 0.0)call qerror('APARAM.txt opgrmi negativ (nicht zulässig in QSim3D)')
-      if( opgrma .lt. 0.0)call qerror('APARAM.txt opgrma negativ (nicht zulässig in QSim3D)')
-      if( asgre .lt. 0.0)call qerror('APARAM.txt asgre negativ (nicht zulässig in QSim3D)')
-      if( ToptG .lt. 0.0)call qerror('APARAM.txt ToptG negativ (nicht zulässig in QSim3D)')
-      if( kTemp_Gr .lt. 0.0)call qerror('APARAM.txt kTemp_Gr negativ (nicht zulässig in QSim3D)')
-
-      if( akchl .lt. 0.0)call qerror('APARAM.txt akchl negativ (nicht zulässig in QSim3D)')
-      if( akgmax .lt. 0.0)call qerror('APARAM.txt akgmax negativ (nicht zulässig in QSim3D)')
-      if( IKke .lt. 0.0)call qerror('APARAM.txt IKke negativ (nicht zulässig in QSim3D)')
-      if( akksn .lt. 0.0)call qerror('APARAM.txt akksn negativ (nicht zulässig in QSim3D)')
-      if( akksp .lt. 0.0)call qerror('APARAM.txt akksp negativ (nicht zulässig in QSim3D)')
-
-      if( akkssi .lt. 0.0)call qerror('APARAM.txt akkssi negativ (nicht zulässig in QSim3D)')
-      if( akremi .lt. 0.0)call qerror('APARAM.txt akremi negativ (nicht zulässig in QSim3D)')
-      if( frmuke .lt. 0.0)call qerror('APARAM.txt frmuke negativ (nicht zulässig in QSim3D)')
-      if( bsbki .lt. 0.0)call qerror('APARAM.txt bsbki negativ (nicht zulässig in QSim3D)')
-      if( csbki .lt. 0.0)call qerror('APARAM.txt csbki negativ (nicht zulässig in QSim3D)')
-
-      if( Qmx_NK .lt. 0.0)call qerror('APARAM.txt Qmx_NK negativ (nicht zulässig in QSim3D)')
-      if( Qmx_PK .lt. 0.0)call qerror('APARAM.txt Qmx_PK negativ (nicht zulässig in QSim3D)')
-      if( Qmx_SK .lt. 0.0)call qerror('APARAM.txt Qmx_SK negativ (nicht zulässig in QSim3D)')
-      if( Qmn_NK .lt. 0.0)call qerror('APARAM.txt Qmn_NK negativ (nicht zulässig in QSim3D)')
-      if( Qmn_PK .lt. 0.0)call qerror('APARAM.txt Qmn_PK negativ (nicht zulässig in QSim3D)')
-
-      if( Qmn_SK .lt. 0.0)call qerror('APARAM.txt Qmn_SK negativ (nicht zulässig in QSim3D)')
-      if( upmxNK .lt. 0.0)call qerror('APARAM.txt upmxNK negativ (nicht zulässig in QSim3D)')
-      if( upmxPK .lt. 0.0)call qerror('APARAM.txt upmxPK negativ (nicht zulässig in QSim3D)')
-      if( upmxSK .lt. 0.0)call qerror('APARAM.txt upmxSK negativ (nicht zulässig in QSim3D)')
-      if( opkimi .lt. 0.0)call qerror('APARAM.txt opkimi negativ (nicht zulässig in QSim3D)')
-
-      if( opkima .lt. 0.0)call qerror('APARAM.txt opkima negativ (nicht zulässig in QSim3D)')
-      if( askie .lt. 0.0)call qerror('APARAM.txt askie negativ (nicht zulässig in QSim3D)')
-      if( ToptK .lt. 0.0)call qerror('APARAM.txt ToptK negativ (nicht zulässig in QSim3D)')
-      if( kTemp_Ki .lt. 0.0)call qerror('APARAM.txt kTemp_Ki negativ (nicht zulässig in QSim3D)')
-      if( abchl .lt. 0.0)call qerror('APARAM.txt abchl negativ (nicht zulässig in QSim3D)')
- 
-      if( abgmax .lt. 0.0)call qerror('APARAM.txt abgmax negativ (nicht zulässig in QSim3D)')
-      if( IKbe .lt. 0.0)call qerror('APARAM.txt IKbe negativ (nicht zulässig in QSim3D)')
-      if( abksn .lt. 0.0)call qerror('APARAM.txt abksn negativ (nicht zulässig in QSim3D)')
-      if( abksp .lt. 0.0)call qerror('APARAM.txt abksp negativ (nicht zulässig in QSim3D)')
-      if( abremi .lt. 0.0)call qerror('APARAM.txt abremi negativ (nicht zulässig in QSim3D)')
-
-      if( frmube .lt. 0.0)call qerror('APARAM.txt frmube negativ (nicht zulässig in QSim3D)')
-      if( bsbbl .lt. 0.0)call qerror('APARAM.txt bsbbl negativ (nicht zulässig in QSim3D)')
-      if( csbbl .lt. 0.0)call qerror('APARAM.txt csbbl negativ (nicht zulässig in QSim3D)')
-      if( Qmx_NB .lt. 0.0)call qerror('APARAM.txt Qmx_NB negativ (nicht zulässig in QSim3D)')
-      if( Qmx_PB .lt. 0.0)call qerror('APARAM.txt Qmx_PB negativ (nicht zulässig in QSim3D)')
-
-      if( Qmn_NB .lt. 0.0)call qerror('APARAM.txt Qmn_NB negativ (nicht zulässig in QSim3D)')
-      if( Qmn_PB .lt. 0.0)call qerror('APARAM.txt Qmn_PB negativ (nicht zulässig in QSim3D)')
-      if( upmxNB .lt. 0.0)call qerror('APARAM.txt upmxNB negativ (nicht zulässig in QSim3D)')
-      if( upmxPB .lt. 0.0)call qerror('APARAM.txt upmxPB negativ (nicht zulässig in QSim3D)')
-      if( opblmi .lt. 0.0)call qerror('APARAM.txt opblmi negativ (nicht zulässig in QSim3D)')
-
-      if( opblma .lt. 0.0)call qerror('APARAM.txt opblma negativ (nicht zulässig in QSim3D)')
-      if( asble .lt. 0.0)call qerror('APARAM.txt asble negativ (nicht zulässig in QSim3D)')
-      if( ToptB .lt. 0.0)call qerror('APARAM.txt ToptB negativ (nicht zulässig in QSim3D)')
-      if( kTemp_Bl .lt. 0.0)call qerror('APARAM.txt kTemp_Bl negativ (nicht zulässig in QSim3D)')
-      if( ifix .lt. 0.0)call qerror('APARAM.txt ifix negativ (nicht zulässig in QSim3D)')
-
-      if( irmaxe .lt. 0.0)print*,'irmaxe wird berechnet in konsum()'
-      if( FopIRe .lt. 0.0)print*,'FopIRe wird berechnet in konsum()'
-      if( GRote .lt. 0.0)call qerror('APARAM.txt GRote negativ (nicht zulässig in QSim3D)')
-      if( zresge .lt. 0.0)call qerror('APARAM.txt zresge negativ (nicht zulässig in QSim3D)')
-      if( zakie .lt. 0.0)call qerror('APARAM.txt zakie negativ (nicht zulässig in QSim3D)')
-
-      if( zagre .lt. 0.0)call qerror('APARAM.txt zagre negativ (nicht zulässig in QSim3D)')
-      if( zable .lt. 0.0)call qerror('APARAM.txt zable negativ (nicht zulässig in QSim3D)')
-      if( ynmx1e .lt. 0.0)call qerror('APARAM.txt ynmx1e negativ (nicht zulässig in QSim3D)')
-      if( stks1e .lt. 0.0)call qerror('APARAM.txt stks1e negativ (nicht zulässig in QSim3D)')
-      if( anitrie .lt. 0.0)call qerror('APARAM.txt anitrie negativ (nicht zulässig in QSim3D)')
-
-      if( bnmx1e .lt. 0.0)call qerror('APARAM.txt bnmx1e negativ (nicht zulässig in QSim3D)')
-      if( bnks1e .lt. 0.0)call qerror('APARAM.txt bnks1e negativ (nicht zulässig in QSim3D)')
-      if( ynmx2e .lt. 0.0)call qerror('APARAM.txt ynmx2e negativ (nicht zulässig in QSim3D)')
-      if( stks2e .lt. 0.0)call qerror('APARAM.txt stks2e negativ (nicht zulässig in QSim3D)')
-      if( anitri2e .lt. 0.0)call qerror('APARAM.txt anitri2e negativ (nicht zulässig in QSim3D)')
-
-      if( bnmx2e .lt. 0.0)call qerror('APARAM.txt bnmx2e negativ (nicht zulässig in QSim3D)')
-      if( bnks2e .lt. 0.0)call qerror('APARAM.txt bnks2e negativ (nicht zulässig in QSim3D)')
-      if( KNH4e .lt. 0.0)call qerror('APARAM.txt KNH4e negativ (nicht zulässig in QSim3D)')
-      if( KapN3e .lt. 0.0)call qerror('APARAM.txt KapN3e negativ (nicht zulässig in QSim3D)')
-      if( hyPe .lt. 0.0)call qerror('APARAM.txt hyPe negativ (nicht zulässig in QSim3D)')
-
-      if( hymxDe .lt. 0.0)call qerror('APARAM.txthymxDe  negativ (nicht zulässig in QSim3D)')
-      if( KsD1e .lt. 0.0)call qerror('APARAM.txt KsD1e negativ (nicht zulässig in QSim3D)')
-      if( KsD2e .lt. 0.0)call qerror('APARAM.txt KsD2e negativ (nicht zulässig in QSim3D)')
-      if( KsMe .lt. 0.0)call qerror('APARAM.txt KsMe negativ (nicht zulässig in QSim3D)')
-      if( upBACe .lt. 0.0)call qerror('APARAM.txt upBACe negativ (nicht zulässig in QSim3D)')
-
-      if( YBACe .lt. 0.0)call qerror('APARAM.txt YBACe negativ (nicht zulässig in QSim3D)')
-      if( rsGBACe .lt. 0.0)call qerror('APARAM.txt rsGBACe negativ (nicht zulässig in QSim3D)')
-      if( FoptDe .lt. 0.0)call qerror('APARAM.txt FoptDe negativ (nicht zulässig in QSim3D)')
-      if( upHNFe .lt. 0.0)call qerror('APARAM.txt upHNFe negativ (nicht zulässig in QSim3D)')
-      if( BACkse .lt. 0.0)call qerror('APARAM.txt BACkse negativ (nicht zulässig in QSim3D)')
-
-      if( alamda .lt. 0.0)call qerror('APARAM.txt alamda negativ (nicht zulässig in QSim3D)')
-      if( fPOC1e .lt. 0.0)call qerror('APARAM.txt fPOC1e negativ (nicht zulässig in QSim3D)')
-      if( fPOC2e .lt. 0.0)call qerror('APARAM.txt fPOC2e negativ (nicht zulässig in QSim3D)')
-      if( SorpCape .lt. 0.0)call qerror('APARAM.txt SorpCape negativ (nicht zulässig in QSim3D)')
-      if( Klange .lt. 0.0)call qerror('APARAM.txt Klange negativ (nicht zulässig in QSim3D)')
-
-      if( KdNh3e .lt. 0.0)print*,'Partitionskoeffizient für Ammonium KdNh3e wird berechnet in sedflux()'
-      if( ratecde .lt. 0.0)call qerror('APARAM.txt ratecde negativ (nicht zulässig in QSim3D)')
-      if( etacde .lt. 0.0)call qerror('APARAM.txt etacde negativ (nicht zulässig in QSim3D)')
-      if( ratecie .lt. 0.0)call qerror('APARAM.txt ratecie negativ (nicht zulässig in QSim3D)')
-      if( xnuece .lt. 0.0)call qerror('APARAM.txt xnuece negativ (nicht zulässig in QSim3D)')
-
-      if( ratecge .lt. -1.0)call qerror('APARAM.txt ratecge kleiner -1 (nicht zulässig in QSim3D)')
-      if( ratecse .lt. -1.0)call qerror('APARAM.txt ratecse kleiner -1 (nicht zulässig in QSim3D)')
-
-      close (55)
-      RETURN
-
-  198 continue
-      print*,io_error,trim(ctext)
-      call qerror('Lesefehler APARAM.txt')
-
-      END subroutine aparam_lesen
-
-!----+-----+----
 

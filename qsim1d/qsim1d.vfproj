@@ -66,11 +66,14 @@
 		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
 		<File RelativePath="..\metabolism\einleiter_Misch.f90"/>
 		<File RelativePath="..\metabolism\erosion.f90"/>
+		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
 		<File RelativePath="..\metabolism\hnf.f90"/>
 		<File RelativePath="..\metabolism\konsum.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>
+		<File RelativePath="..\metabolism\module_allodim.f90"/>
+		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\ncyc.f90"/>
 		<File RelativePath="..\metabolism\orgc.f90"/>
@@ -85,12 +88,15 @@
 		<File RelativePath="..\metabolism\sasu.f90"/>
 		<File RelativePath="..\metabolism\schiff.f90"/>
 		<File RelativePath="..\metabolism\schweb.f90"/>
+		<File RelativePath="..\metabolism\schweb_kern.f90"/>
 		<File RelativePath="..\metabolism\Schwermetalle.f90"/>
+		<File RelativePath="..\metabolism\Schwermetalle_kern.f90"/>
 		<File RelativePath="..\metabolism\Sed_DiffK.f90"/>
 		<File RelativePath="..\metabolism\sed_pom.f90"/>
 		<File RelativePath="..\metabolism\SedFlux.f90"/>
 		<File RelativePath="..\metabolism\sediment.f90"/>
 		<File RelativePath="..\metabolism\Sedimentation.f90"/>
+		<File RelativePath="..\metabolism\Sedimentbelastung.f90"/>
 		<File RelativePath="..\metabolism\silikat.f90"/>
 		<File RelativePath="..\metabolism\strahlg.f90"/>
 		<File RelativePath="..\metabolism\tage.f90"/>
@@ -99,6 +105,7 @@
 		<File RelativePath="..\metabolism\temperw_kern.f90"/>
 		<File RelativePath="..\metabolism\uptake.f90"/>
 		<File RelativePath="..\metabolism\version_string.f90"/>
+		<File RelativePath="..\metabolism\verteilungskoeff.f90"/>
 		<File RelativePath="..\metabolism\wettles.f90"/>
 		<File RelativePath="..\metabolism\zuflussrand.f90"/></Filter>
 		<Filter Name="qsim1d">
@@ -132,7 +139,6 @@
 		<File RelativePath=".\trimat_z.f90"/>
 		<File RelativePath=".\v_konz.f90"/>
 		<File RelativePath=".\van_veen.f90"/>
-		<File RelativePath=".\verteilungskoeff.f90"/>
 		<File RelativePath=".\wehr.f90"/>
 		<File RelativePath=".\wehrles.f90"/>
 		<File RelativePath=".\WetterParam.f90"/>

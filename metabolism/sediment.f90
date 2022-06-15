@@ -20,7 +20,7 @@
 !---------------------------------------------------------------------------------------
 
       subroutine Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif,SedOM             &
-                         ,SedOMb,dKorn,dKornb,raua,vmq,Hmq,nbuhn,bvmq,bHmq,jsed,w2,w2b,ifehl)                                    
+                         ,SedOMb,dKorn,dKornb,raua,vmq,Hmq,nbuhn,bvmq,bHmq,jsed,w2,w2b,ifehl,kontroll ,jjj)                                    
 !                                                                       
 !                                                                       
 !                                                                       
@@ -32,6 +32,8 @@
 !     Berechnung des schlammzehrungspotentials                          
 !                                                                       
 
+      logical kontroll
+      integer jjj
       integer                               :: azStr, azStrs
       integer, Dimension(azStrs)            :: mStas, mSs, abfr, mStra, nbuhn 
 
@@ -163,7 +165,7 @@
       PhytoC = 3.4   !1.3 
       GesSS = 55.            ! 16. 
 
-      call Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b)                                
+      call Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b,kontroll,jjj)                                
                                                                        
    50 continue 
    35 continue 

@@ -426,6 +426,7 @@
       use modell                                                 
       use isotope
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer :: i,j,nk
       real :: f
@@ -724,9 +725,9 @@
 
             call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,flag,elen,ior,anze                 &                 
                      ,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2         &                 
-                     ,agrno3,akino3,jiein,ischif,ynmx1e,stks1e,anitrie,bnmx1e,bnks1e,vph,vno2,ij                         &
-                     ,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,vx02,ex02,eno2,ynmx2e,stks2e,anitri2e      &                 
-                     ,abl,ablnh4,ablno3,exdrvb,bnmx2e,bnks2e,nl0,zooind,GRote,nzoo,gesN,orgCsd                           &
+                     ,agrno3,akino3,jiein,ischif,YNMAX1,STKS1,ANITR1,BNMX1,BNKS1,vph,vno2,ij                         &
+                     ,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,vx02,ex02,eno2,YNMAX2,STKS2,ANITR2      &                 
+                     ,abl,ablnh4,ablno3,exdrvb,BNMX2,BNKS2,nl0,zooind,GROT,nzoo,gesN,orgCsd                           &
                      ,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm,CD,CP,CM,BAC,bsbct,nkzs,vnh4z,vno2z,vno3z,dH2D         &                 
                      ,hJNO3,hJNH4,hJN2,susO2N,hFluN3,akksN,agksN,abksN,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB      &
                      ,Q_NB,up_NBz,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z,abno3z,vo2z,abltbr             &

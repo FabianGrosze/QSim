@@ -22,7 +22,8 @@ cd $DIR
 rm -rf vtk.zip
 
 #zip --no-dir-entries vtk.zip *.vtk >/dev/null 2>/dev/null
-zip --no-dir-entries vtk.zip *.vtk
+zip --no-dir-entries vtk.zip *.vtk *.grd  *.gr3
+
 
 echo "vtk output of Model $DIR was zipped to vtk.zip."
 

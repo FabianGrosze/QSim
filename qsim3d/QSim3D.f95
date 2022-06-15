@@ -67,7 +67,7 @@
          !-------------------------------------------------- suspended matter module 
          if (iEros>=0) then
             call schwebstoff_salz()    ! currently only reading distribuions from input
-            call mpi_barrier (mpi_komm_welt, ierr)
+         call mpi_barrier (mpi_komm_welt, ierr)
          else
             call step_suspendedMatter
          end if

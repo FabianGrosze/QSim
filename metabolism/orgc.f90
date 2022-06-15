@@ -434,7 +434,7 @@
       jsed = 1
       ZellV = 0.0
 
-      call Sedimentation(ior,tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+      call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
 
       Ceq1 = CP1sd*qsgr 
       Ceq2 = CP2sd*qsgr 

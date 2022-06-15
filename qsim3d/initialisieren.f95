@@ -29,6 +29,7 @@
 !
       use modell                                                   
       use QSimDatenfelder
+      use aparam                                                   
            
       implicit none
       integer i,j,k,nini,nuzo, nt, irn
@@ -110,25 +111,33 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
             call qerror(fehler)
          end if
 
-         if(j.eq.kontrollknoten)then
-            print*,'vor randwert_planctonic ini_randnr(',nuzo,')=',zone(nuzo)%ini_randnr
-            print*,'rabe(',zone(nuzo)%ini_randnr,')%wert_jetzt(22)='  &
-                  , rabe(  zone(nuzo)%ini_randnr  )%wert_jetzt(22)
-         endif
+         !if(j.eq.kontrollknoten)then
+         !   print*,'vor randwert_planctonic ini_randnr(',nuzo,')=',zone(nuzo)%ini_randnr
+         !   print*,'rabe(',zone(nuzo)%ini_randnr,')%wert_jetzt(22)='  &
+         !         , rabe(  zone(nuzo)%ini_randnr  )%wert_jetzt(22)
+         !endif
          irn=zone(nuzo)%ini_randnr
+         !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                     &
+            !print*,'initialisieren1: tempw,chla,glMn=',                    &
+            !planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari), &
+            !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari), &
+            !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari) 
          call randwert_planctonic(j, irn,einmal)
+         !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                       &
+            !print*,'initialisieren randwert_planctonic: tempw,chla,glMn=',   &
+            !planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),   &
+            !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),   &
+            !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari) 
          call randbedingungen_ergaenzen(j,einmal)
-
+         !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                             &
+            !print*,'initialisieren randbedingungen_ergaenzen: tempw,chla,glMn=',   &
+            !planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),         &
+            !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),         &
+            !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari) 
          call tiefenprofil(j)
 
       end do ! alle j knoten
       !print*,'initialisieren: randbedingungen_ergaenzen done', meinrang
-
-      if(kontrollknoten.gt.0)print*,'nach initialisieren mit Randbedingung: tempw,chla,obsb,ocsb=',  &
-             planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),  &
-             planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),  &
-             planktonic_variable(17+(kontrollknoten-1)*number_plankt_vari),  &
-             planktonic_variable(18+(kontrollknoten-1)*number_plankt_vari) 
 
 !     allocate arrays for hydraulic parameters
       call alloc_hydraul_BC(number_plankt_point)
@@ -177,9 +186,10 @@ if(meinrang.eq.0)then ! nur auf Prozessor 0 bearbeiten
       !   benthic_distribution(47+(j-1)*number_benth_distr) =  0.0
      ! end do ! alle j knoten
 
-      if(kontrollknoten.gt.0)print*,'initialisieren(): tempw,chla=',  &
-             planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),  &
-             planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
+      !if((kontrollknoten.gt.0).and.(meinrang.eq.0))print*,'initialisieren4: tempw,chla,glMn=',   &
+      !       planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),                     &
+      !       planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),                     &
+      !       planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari) 
 
       !print*,'initialisieren(): tracer testbelegung #########'
       !do j=1,number_plankt_point ! 
@@ -214,10 +224,18 @@ end if !! nur prozessor 0
       call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
       call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
       if(hydro_trieb.eq. 3)then ! get first schism flowfield for initialization in parallel
-	     !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
+         !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
          !!!### call get_schism_step(nt)
-	  end if ! hydro_trieb=SCHISM,3
+      end if ! hydro_trieb=SCHISM,3
       call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &
+      !   print*,'nach initialisieren: tempw,chla,obsb,ocsb,glMn=',                     &
+      !       planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),            &
+      !       planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),            &
+      !       planktonic_variable(17+(kontrollknoten-1)*number_plankt_vari),            &
+      !       planktonic_variable(18+(kontrollknoten-1)*number_plankt_vari),            &
+      !       planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari) 
 
       RETURN
       END subroutine initialisieren

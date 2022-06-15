@@ -281,7 +281,9 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       integer minute
 !> \anchor sekunde sekunde berechnet von zeitsekunde() aus \ref zeitpunkt
       integer sekunde
-
+!> \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurÃ¼ck: \ref lnk_schwermetalle
+      integer anzZeit
+	  
 !> Vermaschung Elemente
       logical :: element_vorhanden
       integer :: n_elemente, summ_ne
@@ -415,6 +417,19 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
          real :: pflmin,pflmax
       end type madi
 
+!!  WRITE(1, '(A)') '<ParamSetDef Id="QE" Text="Erosions-Parameter" Help="KenngrÃ¶ÃŸen fÃ¼r die GewÃ¤sserabschnitte" Scope="Abschnitt">'
+!!  WRITE(1, '(A)') '  <Parameter Ident="tau_krit" Text="kritische Sohlschubspannung ab der Erosion auftritt"       Unit="N/mÂ²"      Format="F7.3" Null="-1" Help="" Max="" Default="9999.99" />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="M_eros"   Text="ErodibilitÃ¤tskonstante"                                    Unit="kg/(mÂ²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
+!!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/mÂ³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
+      type :: Erosion
+!>    \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/mÂ², von MODELLG.3D Zeile E gelesen
+!>    \anchor M_eros zone()%erosi%M_eros ErodibilitÃ¤tskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
+!>    \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss , von MODELLG.3D Zeile E gelesen
+!>    \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/mÂ³ , von MODELLG.3D Zeile E gelesen
+         real ::tau_krit, M_eros, n_eros, sed_roh
+      end type Erosion
+	  
       type :: ddr
          character(200) :: zonen_name
          integer :: nr_zone, ini_randnr, zonen_nummer
@@ -430,6 +445,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
          type (benth_al) ::  albenthi        ! B Benthische Algen
          type (wetterstation) :: wettstat         ! T Wetterstation
          !type () ::          ! O Anteil der Vegetationstypen
+		 type (Erosion) :: erosi                 ! E Erosions-Parameter
       end type ddr
       type(ddr) , allocatable , dimension (:) :: zone
 
@@ -521,7 +537,10 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 ! Beschreibung in planktische_variablen.f95
 
 !>    Anzahl der planktischen, transportierten, tiefengemittelten Variablen
-      integer, parameter :: number_plankt_vari=79 ! 71 nur mit Leitfähigkeit !! 72 incl. salz !! 75 Alter(varianten) 76 TGzoo, 79 akmor_1,agmor_1,abmor_1
+!!    71 nur mit Leitfähigkeit !! 72 incl. salz !! 75 Alter(varianten) 76 TGzoo, 79 akmor_1,agmor_1,abmor_1
+!!    101 mit Schwermetallen,
+      integer, parameter :: number_plankt_vari=101
+	  
 !>    point-number ???
       integer :: number_plankt_point
 !>    QSim-1D Namen, die zu den planktischen, transportierten, tiefengemittelten Variablen gehören.
@@ -625,7 +644,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
 !>    uedau überstaudauer-flag
       logical , parameter :: uedau_flag=.false.
 
-      integer, parameter :: anzrawe=28
+      integer, parameter :: anzrawe=51  ! 28 ! max number of Boundary Concentrations
+      integer :: n_active_concentrations ! used number of Boundary Concentrations
       integer :: ianz_rb, max_rand_nr
       type :: rb_zeile
          integer :: itag,imonat,ijahrl
@@ -638,8 +658,8 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       ! allocate (rabe(n)%punkt(i), stat = alloc_status )
       ! rabe(n)%anz_rb=i
       type :: rb_kante
-         integer :: top, bottom, element
-         real :: normal_x, normal_y ! Auswärts gerichteter Normalenvektor mit Kantenlänge !
+         integer :: top, bottom, element, num
+         real :: normal_x, normal_y, laengs ! Auswärts gerichteter Normalenvektor mit Kantenlänge !
       end type rb_kante
       type :: rb_streckenzug
          integer :: anzkanten, start_knoten, end_knoten
@@ -722,15 +742,13 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       integer :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
       real , allocatable , dimension (:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
 
-!-------------------------------------------------------------------------------Querschnitte
-! Beschreibung in schnitt.f95
+!-------------------------------------------------------------------------------Querschnitte - cross-sections
+! description in schnitt.f95 fluxes in array: schnittflux_gang
       logical :: querschneiden
       integer :: anzahl_quer
       type :: qusch
          integer ::  nr_qs
          type (rb_streckenzug) :: schnittlinie
-         real , allocatable , dimension (:) :: vol_flux !! für jeden Zeitschritt wie Ganglinien
-         real , allocatable , dimension (:,:) :: tr_flux !! für jeden Zeitschritt und für jede zu notierende Variable
       end type qusch
       type(qusch) , allocatable , dimension (:) :: querschnitt
 
@@ -764,6 +782,7 @@ include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mp
       real , allocatable , dimension (:,:) :: t_gang, u_gang, tlmax_gang,  tlmin_gang
       real , allocatable , dimension (:,:,:) :: pl_gang, ue_gang, bn_gang
       real , allocatable , dimension (:,:,:) :: randflux_gang, schnittflux_gang
+	  integer , allocatable , dimension (:) :: q_gangl
       integer :: n_pl, n_ue, n_bn
       integer, parameter :: gangl_level=1
 

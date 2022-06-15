@@ -19,15 +19,14 @@
 !
 !---------------------------------------------------------------------------------------
 
-  subroutine Sedimentation(ior,xtiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV    &
-     &                ,kontroll ,jjj ) !!wy  
- 
-                                                                       
-      logical kontroll !!wy
-      integer jjj !!wy
-    double precision :: sedoc, ws 
+  subroutine Sedimentation(tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV,kontroll,jjj ) 
 
-     real, Dimension(1000)    :: xtiefe
+      implicit none
+      logical kontroll
+      integer jjj
+      real    :: tiefe,ust,qsgr,oc,Oc0,ytflie,wst,ZellV
+	  real    :: ased,bsed,prop,  WsAlg,wsgr,fwst,qssed,ws0, ws
+      integer :: ised,jsed
                                                                        
   if(jsed==0)then
 !   Algen                                                                
@@ -86,7 +85,6 @@
       qsgr = 1./(1+ased*exp(-bsed*alog10(wsgr))) 
 
       qssed = (1+qsgr)/2. 
-      if(kontroll)print*,"Sedimentation: qssed-1.)-log(ased))/(-bsed),ust",qssed,ased,bsed,ust
       ws = 0.0
       ws0 = 0.0
       if((qssed.ne. 1.0).and.(bsed.ne. 0.0)) ws = (log(1./qssed-1.)-log(ased))/(-bsed)
@@ -101,12 +99,15 @@
       if(fwst.gt.1.)fwst = 1. 
                                                                        
       wst = ws*fwst 
-      if(kontroll)print*,"Sedimentation: prop*wst*yTFLIE*86400./xTIEFE(ior)",prop,wst,yTFLIE,xTIEFE(ior)
-      Oc = 1./(EXP(prop*wst*yTFLIE*86400./xTIEFE(ior))) 
+      Oc = 1./(EXP(prop*wst*yTFLIE*86400./tiefe)) 
       oc = 1.-Oc 
 
-      Oc0 = 1./(EXP(prop*ws0*yTFLIE*86400./xTIEFE(ior))) ! sedimentierter Anteil in ruhendem Medium
+      Oc0 = 1./(EXP(prop*ws0*yTFLIE*86400./tiefe)) ! sedimentierter Anteil in ruhendem Medium
       OC0 = 1. - Oc0
-
+	  
+      if(kontroll)then
+	     print*,'Sedimentation: tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV='    &
+	                    ,tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV
+	  endif
                                                                        
   END subroutine Sedimentation    

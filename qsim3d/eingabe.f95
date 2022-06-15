@@ -13,9 +13,9 @@
 !   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
 !   Falls nicht, siehe http://www.gnu.org/licenses/.  
 !   
-!   Programmiert von:
-!   1979 bis 2018 Volker Kirchesch
-!   seit 2011 Jens Wyrwa, Wyrwa@bafg.de
+!	Programmiert von:
+!	1979 bis 2018 Volker Kirchesch
+!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
 !
 !---------------------------------------------------------------------------------------
 !> \page Modellerstellung Modellerstellung
@@ -71,52 +71,52 @@
 !! \image html 3Doptionen.png 
 !! \n\n 
 !!! Server-URL\n
-!!    URL oder ip-Adresse des Servers, auf dem QSim3D gerechnet weden soll. Zwischen dem Server und dem lokalen Arbeitsrechner muss eine ssh-Verbindung möglich sein.
+!! 	URL oder ip-Adresse des Servers, auf dem QSim3D gerechnet weden soll. Zwischen dem Server und dem lokalen Arbeitsrechner muss eine ssh-Verbindung möglich sein.
 !! \n\n
 !! User-Name \n
-!!    Name des Benutzers, mit dem auf dem Server gerechnet werden soll. Die ssh-Anmeldung erfolgt über diesen Benutzer.
+!! 	Name des Benutzers, mit dem auf dem Server gerechnet werden soll. Die ssh-Anmeldung erfolgt über diesen Benutzer.
 !! \n\n
 !! Ereignisliste-Skript \n
-!!    Pfad zu einem Skript auf dem Server, welches eine Liste aller auf dem Server vorhandenen hydraulischen Modelle/Ereignisse auf die Standartausgabe ausgibt.
+!! 	Pfad zu einem Skript auf dem Server, welches eine Liste aller auf dem Server vorhandenen hydraulischen Modelle/Ereignisse auf die Standartausgabe ausgibt.
 !! \n\n
-!!    Jede Zeile der Ausgabe steht dabei für ein Modell/Ereignis und besteht aus vier bis sechs Feldern, die durch ein Semikolon(;) getrennt sind:
+!! 	Jede Zeile der Ausgabe steht dabei für ein Modell/Ereignis und besteht aus vier bis sechs Feldern, die durch ein Semikolon(;) getrennt sind:
 !! \n\n
 !!<table Ereignisliste>
-!!<tr><td> Verzeichnispfad  </td><td> Vollständiger Pfad des Modellverzeichnisses auf dem Server   </td></tr>
-!!<tr><td> Startzeitpunkt  </td><td> Startzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde   </td></tr>
-!!<tr><td> Endzeitpunkt  </td><td> Endzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde   </td></tr>
-!!<tr><td> Zeitschrittweite  </td><td> Zeitschrittweite des Ereignisses in Sekunden als ganze Zahl   </td></tr>
-!!<tr><td> Modellname  </td><td> optional: Modellname   </td></tr>
-!!<tr><td> Projektname  </td><td> optional: Projektname (nur wenn auch Modellname angegegeben)   </td></tr>
+!!<tr><td> Verzeichnispfad  </td><td> Vollständiger Pfad des Modellverzeichnisses auf dem Server	</td></tr>
+!!<tr><td> Startzeitpunkt  </td><td> Startzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde	</td></tr>
+!!<tr><td> Endzeitpunkt  </td><td> Endzeitpunkt des Ereignisses im Format Jahr-Monat-Tag Stunde:Minute:Sekunde	</td></tr>
+!!<tr><td> Zeitschrittweite  </td><td> Zeitschrittweite des Ereignisses in Sekunden als ganze Zahl	</td></tr>
+!!<tr><td> Modellname  </td><td> optional: Modellname	</td></tr>
+!!<tr><td> Projektname  </td><td> optional: Projektname (nur wenn auch Modellname angegegeben)	</td></tr>
 !!</table>
 !! \n\n
-!!    Beispiel Ausgabezeile: \n
+!! 	Beispiel Ausgabezeile: \n
 !! <code>\verbatim
-!!    /home/username/fluss/;2011-01-01 00:00:00;2011-08-15 00:00:00;600;Flussmodell;Flussprojekt
+!! 	/home/username/fluss/;2011-01-01 00:00:00;2011-08-15 00:00:00;600;Flussmodell;Flussprojekt
 !! \endverbatim</code>
 !! \n\n
 !! QSim-3D-Skript \n
-!!    Pfad zu einem Skript auf dem Server, welches den QSim3D-Rechenlauf startet.
-!!    Wird in Gerris ein Rechenlauf gestartet, wird dieses Skript zusammen mit dem Projektverzeichnis als Parameter aufgerufen. Im Projektverzeichnis wird dadurch das Skript "qsim3d.sbatch" ausgeführt.
-!!    \n
-!!    Dabei müssen in "qsim3d.sbatch" alle für den Rechenlauf relevanten SLURM-Parameter definiert und das QSim-Executable zusammen mit dem Projektverzeichnis aufgerufen werden.
+!! 	Pfad zu einem Skript auf dem Server, welches den QSim3D-Rechenlauf startet.
+!! 	Wird in Gerris ein Rechenlauf gestartet, wird dieses Skript zusammen mit dem Projektverzeichnis als Parameter aufgerufen. Im Projektverzeichnis wird dadurch das Skript "qsim3d.sbatch" ausgeführt.
+!! 	\n
+!! 	Dabei müssen in "qsim3d.sbatch" alle für den Rechenlauf relevanten SLURM-Parameter definiert und das QSim-Executable zusammen mit dem Projektverzeichnis aufgerufen werden.
 !! \n\n
 !! Definitionen-Skript \n
-!!    Pfad zu einem Skript auf dem Server, welches Definitionsdateien, die an der Schnittstelle von Qsim3d und Gerris benötigt werden, bereitstellt. Aus einem zentralen Verzeichnis werden dazu die folgenden Dateien in das Projektverzeichnis kopiert.
-!!       AParamParam.xml                        enthält Definitionen der globalen QSim-Modellparameter
-!!       ausgabekonzentrationen_beispiel.txt    enthält eine Liste der Namen der Modell-Variablen, die von der aktuellen QSim-3D Version ausgegeben werden können
-!!       EreigGParam.xml                        enthält Definitionen der Ereignisparameter
-!!       ModellG3Param.xml                      enthält Definitionen der Zonen-Parameter
-!!       WetterParam.xml                        enthält Definitionen der Wetter-Parameter
+!! 	Pfad zu einem Skript auf dem Server, welches Definitionsdateien, die an der Schnittstelle von Qsim3d und Gerris benötigt werden, bereitstellt. Aus einem zentralen Verzeichnis werden dazu die folgenden Dateien in das Projektverzeichnis kopiert.
+!! 		AParamParam.xml 						enthält Definitionen der globalen QSim-Modellparameter
+!! 		ausgabekonzentrationen_beispiel.txt 	enthält eine Liste der Namen der Modell-Variablen, die von der aktuellen QSim-3D Version ausgegeben werden können
+!! 		EreigGParam.xml							enthält Definitionen der Ereignisparameter
+!! 		ModellG3Param.xml						enthält Definitionen der Zonen-Parameter
+!! 		WetterParam.xml							enthält Definitionen der Wetter-Parameter
 !! \n\n
 !! IsoQ-Skript \n
-!!    Pfad zu einem Skript auf dem Server, welches die Visualisierung QSim-3D-Ergebnissen ermöglicht.
+!! 	Pfad zu einem Skript auf dem Server, welches die Visualisierung QSim-3D-Ergebnissen ermöglicht.
 !! \n\n
 !! Ncdump \n
-!!    Name des Programmaufrufs, um auf dem Server Daten aus NetCDF-Dateien zu lesen.
+!! 	Name des Programmaufrufs, um auf dem Server Daten aus NetCDF-Dateien zu lesen.
 !! \n\n
 !! E-Mail \n
-!!    E-Mail-Adresse, an die eine Benachrichtigung bei Berechnungsende geschickt wird.
+!! 	E-Mail-Adresse, an die eine Benachrichtigung bei Berechnungsende geschickt wird.
 !! \n\n
 !! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellstruktur
 
@@ -132,25 +132,25 @@
 !! ergeben.
 !! \n\n
 !!<table >
-!!<tr><th> Datei-Name\n(Spezifikation verlinkt)            </th><th> Format </th><th> Änderung zu QSim   </th><th> Kurz-Beschreibung      </th><th> wird gelesen von (Details) </th></tr>
+!!<tr><th> Datei-Name\n(Spezifikation verlinkt)				</th><th> Format </th><th> Änderung zu QSim	</th><th> Kurz-Beschreibung		</th><th> wird gelesen von (Details) </th></tr>
 !!<tr><td> Gütemodell </td></tr>
-!!<tr><td> \subpage qsimdateiereigg </td>   <td> ascii </td><td> keine      </td><td> \ref Ablaufsteuerung </td><td> ereigg_modell(), ereigg_Randbedingungen_lesen() </td></tr>
-!!<tr><td> \subpage qsimdateimodella </td>   <td> ascii </td><td> keine      </td><td> es werden von QSim-3D nur noch Modellname und die Geologischen Breiten- und Längenkoordinaten daraus gelesen </td><td> modella() </td></tr>
-!!<tr><td> \subpage qsimdateiwetter </td>   <td> ascii </td><td> keine      </td><td> \ref wetter_rb </td><td> wetter_readallo0() </td></tr>
-!!<tr><td> \subpage qsimdateimodellg3 </td>   <td> ascii </td><td> ja, ehemals ModellG.txt </td><td> \ref lokaleParameter und \ref Anfangsbedingungen</td><td> modellg() </td></tr>
-!!<tr><td><a href="./exp/APARAM_200314.txt" target="_blank">APARAM.txt</a></td><td>ascii</td><td>  keine      </td><td> \ref globaleParameter </td><td> aparam_lesen() </td></tr>
-!!<tr><td><a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a></td><td>ascii</td><td>  keine      </td><td> \subpage extnct_rb </td><td> e_extnct_lesen() </td></tr>
+!!<tr><td> \subpage qsimdateiereigg </td>	<td> ascii </td><td> keine		</td><td> \ref Ablaufsteuerung </td><td> ereigg_modell(), ereigg_Randbedingungen_lesen() </td></tr>
+!!<tr><td> \subpage qsimdateimodella </td>	<td> ascii </td><td> keine		</td><td> es werden von QSim-3D nur noch Modellname und die Geologischen Breiten- und Längenkoordinaten daraus gelesen </td><td> modella() </td></tr>
+!!<tr><td> \subpage qsimdateiwetter </td>	<td> ascii </td><td> keine		</td><td> \ref wetter_rb </td><td> wetter_readallo0() </td></tr>
+!!<tr><td> \subpage qsimdateimodellg3 </td>	<td> ascii </td><td> ja, ehemals ModellG.txt </td><td> \ref lokaleParameter und \ref Anfangsbedingungen</td><td> modellg() </td></tr>
+!!<tr><td><a href="./exp/APARAM_200314.txt" target="_blank">APARAM.txt</a></td><td>ascii</td><td>  keine		</td><td> \ref globaleParameter </td><td> aparam_lesen() </td></tr>
+!!<tr><td><a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a></td><td>ascii</td><td>  keine		</td><td> \subpage extnct_rb </td><td> e_extnct_lesen() </td></tr>
 !!<tr><td> Hydraulischer Treiber </td></tr>
-!!<tr><td><a href="./exp/points" target="_blank">points</a> <br>      </td><td>ascii</td><td> neu, wird von casu (transinfo) ausgegeben. Nicht die converti-Version verwenden! </td><td> Infos zu den knoten: Lage (x+y), Höhe (z), Zonen_nummer(n), Randnummer, Zellfläche </td><td> points() </td></tr>
-!!<tr><td><a href="./exp/file.elements" target="_blank">file.elements</a>   </td><td>ascii</td><td> converti, casu-eingabe-Datei   </td><td> Vermaschung Netz, wird zur Ergebnis-Darstellung benötigt   </td><td> elements() </td></tr>
-!!<tr><td><a href="./exp/transinfometa" target="_blank">transinfo/meta</a>  </td><td>ascii</td><td>   neu, wird von casu ausgegeben   </td><td> Meta-Infos zu den Transportinformationen </td><td> transinfo_sichten() </td></tr>
-!!<tr><td>  transinfo/t*                     </td><td>binär</td><td> neu, wird von casu ausgegeben   </td><td> \ref Transportinformationen </td><td> holen_trans() </td></tr>
+!!<tr><td><a href="./exp/points" target="_blank">points</a> <br>		</td><td>ascii</td><td> neu, wird von casu (transinfo) ausgegeben. Nicht die converti-Version verwenden! </td><td> Infos zu den knoten: Lage (x+y), Höhe (z), Zonen_nummer(n), Randnummer, Zellfläche </td><td> points() </td></tr>
+!!<tr><td><a href="./exp/file.elements" target="_blank">file.elements</a>	</td><td>ascii</td><td> converti, casu-eingabe-Datei	</td><td> Vermaschung Netz, wird zur Ergebnis-Darstellung benötigt	</td><td> elements() </td></tr>
+!!<tr><td><a href="./exp/transinfometa" target="_blank">transinfo/meta</a>  </td><td>ascii</td><td>	neu, wird von casu ausgegeben	</td><td> Meta-Infos zu den Transportinformationen </td><td> transinfo_sichten() </td></tr>
+!!<tr><td>  transinfo/t*							</td><td>binär</td><td> neu, wird von casu ausgegeben	</td><td> \ref Transportinformationen </td><td> holen_trans() </td></tr>
 !!<tr><td> Ausgabesteuerung </td></tr>
 !!<tr><td><a href="./exp/ganglinien_knoten.txt" target="_blank">ganglinien_knoten.txt</a></td><td>ascii</td><td> neu </td><td> Knotennummern, an denen Ganglinien ausgegeben werden sollen </td><td> ganglinien_lesen(), ganglinien_zeitschritt(), ganglinien_schliessen() </td></tr>
 !!<tr><td><a href="./exp/ausgabezeitpunkte.txt" target="_blank">ausgabezeitpunkte.txt</a></td><td>ascii</td><td> neu </td><td> Zeitpunkte, zu denen komplette Konzentrationsfelder ausgegeben werden sollen </td><td> ausgabezeitpunkte() </td></tr>
-!!<tr><td><a href="./exp/ausgabekonzentrationen.txt" target="_blank">ausgabekonzentrationen.txt</a> ausgabekonzentrationen_beispiel.txt </td><td>ascii</td><td> neu   </td><td>Angabe, welche Konzentrationen als Ganglinen und als komplette Konzentrrationsfelder ausgegeben werden sollen (Liste zum Ankreuzen x=ja 0=nein). Die Liste aller verfügbaren Variablenn wird von qsim3d als "ausgabekonzentrationen_beispiel.txt" bei jedem lauf angegeben.</td><td> ausgabekonzentrationen() </td></tr>
-!!<tr><td><a href="./exp/kilonummer" target="_blank">kilonummer</a></td><td>ascii</td><td> neu   </td><td>Zuordnung von Längsschnittknoten zu Kilometern </td><td> \ref laengsschnitt </td></tr>
-!!<tr><td><a href="./exp/email.txt" target="_blank">email.txt</a></td><td>ascii</td><td> neu   </td><td>eine Zeile mit der Emailadresse unter der/die Bearbeiter/in über das Ende des Rechenlaufes unterrichtet werden möchte</td><td> modell_vollstaendig() </td></tr>
+!!<tr><td><a href="./exp/ausgabekonzentrationen.txt" target="_blank">ausgabekonzentrationen.txt</a> ausgabekonzentrationen_beispiel.txt </td><td>ascii</td><td> neu	</td><td>Angabe, welche Konzentrationen als Ganglinen und als komplette Konzentrrationsfelder ausgegeben werden sollen (Liste zum Ankreuzen x=ja 0=nein). Die Liste aller verfügbaren Variablenn wird von qsim3d als "ausgabekonzentrationen_beispiel.txt" bei jedem lauf angegeben.</td><td> ausgabekonzentrationen() </td></tr>
+!!<tr><td><a href="./exp/kilonummer" target="_blank">kilonummer</a></td><td>ascii</td><td> neu	</td><td>Zuordnung von Längsschnittknoten zu Kilometern </td><td> \ref laengsschnitt </td></tr>
+!!<tr><td><a href="./exp/email.txt" target="_blank">email.txt</a></td><td>ascii</td><td> neu	</td><td>eine Zeile mit der Emailadresse unter der/die Bearbeiter/in über das Ende des Rechenlaufes unterrichtet werden möchte</td><td> modell_vollstaendig() </td></tr>
 !!</table>\n\n
 !! Ein- und Ausgabe sind nicht parallelisiert, d.h. sie laufen nur auf Prozess 0 !
 !!\n\n
@@ -471,10 +471,12 @@
       SUBROUTINE eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
 !
       use modell                                                   
+      use QSimDatenfelder
+      use aparam	  
                          
       implicit none
       integer :: i, j, n, n_cal
-      logical :: vorhanden, only
+      logical :: vorhanden, only, querschnitt_lesen
       integer mtag, mmonat ,mjahr
       real :: muhrzeit_stunde
       integer , allocatable , dimension (:) :: randzaehl
@@ -510,12 +512,12 @@
       end select
 
       ! partitioning of variable arrays
-      part=n_cal/proz_anz
-      n=part*proz_anz
-      !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
-      if(n.lt.n_cal)part=part+1
-      print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
-     &      ," modell_parallel() n_cal=", n_cal
+         part=n_cal/proz_anz
+         n=part*proz_anz
+         !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
+         if(n.lt.n_cal)part=part+1
+         print*,'part=', part, ' part*proz_anz=',part*proz_anz," meinrang=",meinrang  &
+     &         ," modell_parallel() n_cal=", n_cal
 
       call mpi_barrier (mpi_komm_welt, ierr)
       call ini_planktkon0(n_cal)
@@ -555,32 +557,44 @@
       call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
 
       if (meinrang.eq.0) then ! only prozessor 0
-         call modellg() ! read zone-information aus from MODELLG.3D.txt
-         call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
-         call ereigg_modell() ! read time-stepping information at first
-         call ereigg_Randbedingungen_lesen() ! next read BC-development
-!        read global model-parameters now in module ::uebergabe_werte
-         call aparam_lesen()
-         call extnct_lesen()
-         call ausgabezeitpunkte() !! reading points in time for output
-         call ausgabekonzentrationen() !! reading output-values
+      call modellg() ! read zone-information aus from MODELLG.3D.txt
+      call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
+      call ereigg_modell() ! read time-stepping information at first
+      call ereigg_Randbedingungen_lesen() ! next read BC-development
+!     read global model-parameters now in module ::uebergabe_werte
+      write(cpfad,*,iostat=ifehl)trim(adjustl(modellverzeichnis))
+	  if(ifehl.ne.0)call qerror('eingabe: write(cpfad went wrong')
+	  call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl)   
+	  if(ifehl.ne.0)then
+	     print*,'cpfad,iwsim,icoli,ieros=',trim(cpfad),iwsim,icoli,ieros
+	     write(fehler,*)'eingabe: aparam_lesen went wrong, ifehl=',ifehl
+	     call qerror(fehler)
+	  endif
+      call extnct_lesen()
+      call ausgabezeitpunkte() !! reading points in time for output
+      call ausgabekonzentrationen() !! reading output-values
 
-         call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
+      call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
 
-         call wetter_readallo0()
-         print*,"wetter_readallo0() gemacht"
+      call wetter_readallo0()
+      print*,"wetter_readallo0() gemacht"
 
-         call ganglinien_lesen()
-         !! darin rand_zusammenhang() und querschnitt_zusammenhang()
+      call ganglinien_lesen()
+      querschneiden=querschnitt_lesen()
+      if(querschneiden)then
+         print*,'querschneiden'
+      else
+         print*,'keine Querschnitte'
+      end if
 
-         !! nachschauen, ob und zu welchen Zeitpunkten 
-         !! Verteilungen der Trübung/Schwebstoff und des Salzgehalts offline bereitliegen.
-         call schwebstoff_salz_sichten()
+      !! nachschauen, ob und zu welchen Zeitpunkten 
+      !! Verteilungen der Trübung/Schwebstoff und des Salzgehalts offline bereitliegen.
+      call schwebstoff_salz_sichten()
 
-         !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
-         if(nur_alter) call alter_lesen() 
-      end if ! only prozessor 0
-      call mpi_barrier (mpi_komm_welt, ierr)
+      !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
+      if(nur_alter) call alter_lesen() 
+   end if ! only prozessor 0
+   call mpi_barrier (mpi_komm_welt, ierr)
 
       RETURN
   222 FORMAT (A,'rechenzeit=',I15,' Temperatur_Wasser=',F8.3,' Temperatur_Sediment=',F8.3)

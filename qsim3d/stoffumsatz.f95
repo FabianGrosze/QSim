@@ -32,6 +32,7 @@
       real , allocatable , dimension (:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
       real , allocatable , dimension (:) :: tempsed_k, tempw_k
 
+      if(meinrang==0)print*,'stoffumsatz start'
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
       do i=1,part ! Alle Knoten auf diesem Prozessor 
          iglob=(i+meinrang*part)
@@ -146,18 +147,23 @@
          call silikat_huelle(i)
 
          !------------------------------------------------------------------------ Sauerstoff
-         call oxygen_huelle(i) ! oxygen()
+         call oxygen_huelle(i)
 
-! schweb
-!  1521  call Schwermetalle(vabfl,qeinl,mstr,flag,anze,sedss,sedalk,sedalb,sedalg,hSSalg,SSalg,hph,vph,bssalg,bssalg_1,bph      &
-
+         !------------------------------------------------------------------------ Schwebstoff-Bilanz + Sedimentation Min.
+         call schweb_huelle(i)
+		 
          !------------------------------------------------------------------------ coliforme Keime
          if(iColi==1)then
 		       call coliform_huelle(i)
          else
 		       planktonic_variable_p(61+(i-1)*number_plankt_vari)=0.0
          endif
-
+		 
+         !------------------------------------------------------------------------ Erosion von Schwebstoffe
+         if(ieros==1)call erosion_huelle(i)
+		 
+         !------------------------------------------------------------------------ Schwermetalle
+         if(iSchwer==1)call schwermetalle_huelle(i)
 ! erosion
 
          end if ! .not. nur_temp

@@ -1,3 +1,4 @@
+
 #!---------------------------------------------------------------------------------------
 #!
 #!   QSim - Programm zur Simulation der Wasserqualität
@@ -25,6 +26,8 @@
 
 #====================================================================
 
+VERSION = 14.10.07
+
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
 # PV= qsim1d_formatfrei
@@ -32,12 +35,15 @@
 # PV= qsim1d_mit_sedflux
 # PV= qsim1d_entwicklung
 # PV= qsim1d_final_v
-PV= qsim1d_14.08.00
+# PV= qsim1d_14.06
+# PV= qsim1d14.10.01
+PV= qsim1d_schwer$(VERSION)
 
 #====================================================================
 
 #compiler:
 FC              = gfortran
+# FC              = mpif90
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
 
@@ -81,7 +87,7 @@ date:
 
 
 qsim:	
-	@cd ../metabolism; make metabol; cd ../qsim1d
+	@cd ../metabolism; cp makefile1 Makefile; make metabol; cp *.mod ../qsim1d; cd ../qsim1d
 
 %.o: %.f90
 	$(FC) $(FFLAGS) $<
@@ -89,7 +95,7 @@ qsim:
 Q1= AdvDiff.o ALBEDO.o aparamles.o AParamParam.o ctracer.o E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
 Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
 qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-van_veen.o verteilungskoeff.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o 
+van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o 
 
 qsim1d:	$(Q1)
 	$(FC) $(Q1) $(QSIM_LIB) -o $(PV)
@@ -98,7 +104,7 @@ qsim1d:	$(Q1)
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod
-	rm -f ../metabolism/*.o ../metabolism/*.a
+	rm -f ../metabolism/*.o ../metabolism/*.a ../metabolism/*.mod
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 
@@ -106,7 +112,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile*
+	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/makefile*
 
 store:
 	cp $(FN) $(MY_ARC)

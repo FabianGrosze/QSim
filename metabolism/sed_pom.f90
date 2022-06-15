@@ -19,13 +19,15 @@
 !
 !---------------------------------------------------------------------------------------
 
-  subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b)                         
+  subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b, &
+     &               kontroll ,jjj)                         
                                                                        
                                                                        
 
+    logical kontroll
+    integer jjj
     integer                                  :: azStrs
  
-    real, Dimension(1000)                    :: xtiefe1 
     real,Dimension(azStrs,1000)              :: SedOM, dKorn, SedOMb, dKornb, w2, w2b  
     double precision                         :: sedoc,ws 
 
@@ -33,11 +35,10 @@
     do ised = 1,3 
                                                                        
       xtflie = 1.
-      xtiefe1(1) = tiefe1
       ior = 1
       ZellV = 500.
 
-      call Sedimentation(ior,xtiefe1,ised,ust,qsgr,oc,Oc0,xtflie,wst,jsed,ZellV,.FALSE.,1)
+      call Sedimentation(tiefe1,ised,ust,qsgr,oc,Oc0,xtflie,wst,jsed,ZellV,kontroll,jjj)
 
       ceq = qsgr 
       

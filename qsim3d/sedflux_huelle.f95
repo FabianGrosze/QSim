@@ -91,6 +91,7 @@
 
       use modell                                                 
       use QSimDatenfelder
+      use aparam                                                   
       implicit none
       integer i,j,nk
       ! für Sediment
@@ -281,10 +282,10 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 
       call sedflux (tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP,Tempw,anze,mstr          &
-                   ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4e,kapN3e                                   &
-                   ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCape,Klange                               &
-                   ,KdNh3e,fPOC1e,fPOC2e,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                                 &
-                   ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,yNmx1e,Stks1e     &
+                   ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4,KapN3                                   &
+                   ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCap,Klang                               &
+                   ,KdNh3,fPOC1,fPOC2,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                                 &
+                   ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,YNMAX1,STKS1     &
                    ,obsb,ocsb,  kontroll ,iglob ) !!wy  
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Datenrückgabe: 
