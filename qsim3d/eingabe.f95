@@ -564,7 +564,7 @@
 !     read global model-parameters now in module ::uebergabe_werte
       write(cpfad,*,iostat=ifehl)trim(adjustl(modellverzeichnis))
 	  if(ifehl.ne.0)call qerror('eingabe: write(cpfad went wrong')
-	  call aparam_lesen(cpfad,iwsim,icoli,ieros,ifehl)   
+	  call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl)   
 	  if(ifehl.ne.0)then
 	     print*,'cpfad,iwsim,icoli,ieros=',trim(cpfad),iwsim,icoli,ieros
 	     write(fehler,*)'eingabe: aparam_lesen went wrong, ifehl=',ifehl

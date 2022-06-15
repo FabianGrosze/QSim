@@ -1054,7 +1054,7 @@
 
 !     reading Parameter (constants)                                            
 !.....out of APARAM.txt into module aparam
-      call aparam_lesen(cpfad,iwsim,icoli,ieros,ifehl) 
+      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl) 
       if(ifehl.gt.0)goto 989 
   
       nZoo = 0.11 

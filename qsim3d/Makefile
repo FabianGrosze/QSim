@@ -36,7 +36,7 @@
 # PV='qsim3d14.07Cu'
 # PV='qsim3d14.07.01'
 # PV='qsim3d_schnitt14.14'
-PV='qsim3d_schwer14.10.06'
+PV='qsim3d_schwer14.09.00'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 

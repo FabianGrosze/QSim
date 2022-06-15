@@ -9,12 +9,11 @@
 
 # --- Doku ---
 doku/dox/*
-!doku/exp/*
+doku/exp/*
 doku/html/*
 doku/img/*
 doku/pdf/*
 doku/taz/*
-doku/doku_offline/*
 doku/*.zip
 doku/doxygen.exe
 backup-dokufiles/*
