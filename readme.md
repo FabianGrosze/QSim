@@ -1,3 +1,6 @@
+## 14.09.01
+* apply parts of style guide rules to sourcecode. No changes in calculations.
+
 ## 14.09.00
 * enabling cross sections in 3D (schnitt.txt)
 * additional heavy metals 
