@@ -28,12 +28,12 @@ METABOL_LIB           = -L. -lqsim
 #-------------------------------------------------
 
 QSIM = module_allodim.o module_aparam.o albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
-       coliform.o  COROPH.o  Dichte.o\
-       dreissen.o  e_extnct_lesen.o  einleiter_Misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
-       lin_spline.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o phstart.o \
-       po4s.o  pro_Runge_Kutta.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \
-       Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o TEMPERW.o \
-       uptake.o ANZTAG.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o version_string.o \
+       coliform.o  coroph.o  dichte.o\
+       dreissen.o  e_extnct_lesen.o  einleiter_misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
+       lin_spline.o  lin_sys.0  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o \
+       po4s.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \
+       Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o temperw.o \
+       uptake.o anztag.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o version_string.o \
        verteilungskoeff.o Sedimentbelastung.o Schwermetalle.o Schwermetalle_kern.o erosion.o erosion_kern.o schweb.o schweb_kern.o
 
 metabol:$(QSIM)

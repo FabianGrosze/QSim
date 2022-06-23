@@ -1,34 +1,39 @@
-!---------------------------------------------------------------------------------------
-!
-!   QSim - Programm zur Simulation der Wasserqualität
-!
-!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
-!
-!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
-!   GNU General Public License, Version 3,
-!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
-!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
-!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
-!   Details finden Sie in der GNU General Public License.
-!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
-!   Falls nicht, siehe http://www.gnu.org/licenses/.  
-!   
-!	Programmiert von:
-!	1979 bis 2018 Volker Kirchesch
-!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
-!
-!---------------------------------------------------------------------------------------
-
+! --------------------------------------------------------------------------- !
+!  QSim - Programm zur Simulation der Wasserqualität                          !
+!                                                                             !
+!  Copyright (C) 2022                                                         !
+!  Bundesanstalt für Gewässerkunde                                            !
+!  Koblenz (Deutschland)                                                      !
+!  http://www.bafg.de                                                         !
+!                                                                             !
+!  Dieses Programm ist freie Software. Sie können es unter den Bedingungen    !
+!  der GNU General Public License, Version 3, wie von der Free Software       !
+!  Foundation veröffentlicht, weitergeben und/oder modifizieren.              !
+!                                                                             !
+!  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
+!  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
+!  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        !
+!  bestimmten Zweck.                                                          !
+!                                                                             !
+!  Details finden Sie in der GNU General Public License.                      !
+!  Sie sollten ein Exemplar der GNU General Public License zusammen mit       !
+!  diesem Programm erhalten haben.                                            !
+!  Falls nicht, siehe http://www.gnu.org/licenses/.                           !
+!                                                                             !
+!  Programmiert von                                                           !
+!  1979 bis 2018   Volker Kirchesch                                           !
+!  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
+! --------------------------------------------------------------------------- !
 !> \page Transport_SCHISM Transportinformationen von SCHISM
 !! dargestellt im Bericht ...
 !!
-!! \n\n 
+!! \n\n
 !!    subroutine do_transport_tvd(it,ltvd,ntr,difnum_max_l) \n
-!!    integer, intent(in) :: it !time stepping #; info only \n 
-!!    logical, intent(in) :: ltvd !true if TVD is used (must be for all tracers) \n 
-!!    integer, intent(in) :: ntr !# of tracers (for dimensioning) \n 
+!!    integer, intent(in) :: it !time stepping #; info only \n
+!!    logical, intent(in) :: ltvd !true if TVD is used (must be for all tracers) \n
+!!    integer, intent(in) :: ntr !# of tracers (for dimensioning) \n
 !!    real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
-!! \n\n 
+!! \n\n
 !!   use schism_glbl, only:\n
 !!   Hydro/schism_init.F90:su2=0.d0; sv2=0.d0 | param.nml:  iof_hydro(26) = 1 !horizontal vel vector defined at side [m/s] needed for QSim\n
 !!   tr_el   <- alle 3D-Konzentratienen in Elementmitte, tracer concentration @ prism center; used as temp. storage. tr_el(ntracers,nvrt,nea2)\n
@@ -117,51 +122,45 @@
 !!   delj ! Distance between adjacent elements of an internal side; used only in horizontal diffusion , delj(ns)\n
 !! \n
 !!       use schism_msgp, only: myrank,comm,ierr  & \n
-!!      & , parallel_abort &   		! Abort parallel environment \n
-!!      & , exchange_e3dw &  		! 3D-whole-level ghost element exchange \n
-!!      & , exchange_e3d_tr2 &  	! Tracer transport ghost element exchange of type (ntracers,nvrt,nm) where nm>=nea \n
-!!      & , exchange_e3d_2t_tr  &  	! 2-tier ghost elem. exchange of type (ntracers,nvrt,nm) where nm>=nea2 \n
-!!      & , exchange_s3d_tr2 &  	! ghost side exchange of type (ntracers,nvrt,nm) where nm>=nsa \n
-!!      & , exchange_e2di_2t &  	! 2-tier ghost elem. exchange of type (nm) where nm>=nea2 \n
-!!      & , exchange_s3dw  		    ! 3D-whole-level ghost side exchange \n
+!!      & , parallel_abort &         ! Abort parallel environment \n
+!!      & , exchange_e3dw &        ! 3D-whole-level ghost element exchange \n
+!!      & , exchange_e3d_tr2 &     ! Tracer transport ghost element exchange of type (ntracers,nvrt,nm) where nm>=nea \n
+!!      & , exchange_e3d_2t_tr  &     ! 2-tier ghost elem. exchange of type (ntracers,nvrt,nm) where nm>=nea2 \n
+!!      & , exchange_s3d_tr2 &     ! ghost side exchange of type (ntracers,nvrt,nm) where nm>=nsa \n
+!!      & , exchange_e2di_2t &     ! 2-tier ghost elem. exchange of type (nm) where nm>=nea2 \n
+!!      & , exchange_s3dw            ! 3D-whole-level ghost side exchange \n
 !! \n\n
 !! aus Datei stofftransport_schism.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
-
-
-      SUBROUTINE stofftransport_schism()
-      use netcdf
-      use modell  
-      use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
-      use schism_msgp, only: myrank,parallel_abort !,nproc
-                                                 
-      implicit none
-      include 'netcdf.inc'
-	  integer,parameter :: maxsubst = 60      ! max. number of substeps
-      integer nt, n,j,k, subtim, diff, diffprev, alloc_status
-      real :: laeng, cu_max, cu_min, dt_sub, sumwicht
-      real , allocatable , dimension (:,:) :: zwischen
-      integer :: num_sub
-	  integer nti(maxsubst)
-
-if(meinrang.eq.0)then !! prozessor 0 only
-      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt  
+subroutine stofftransport_schism()
+   use netcdf
+   use modell
+   use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
+   use schism_msgp, only: myrank,parallel_abort !,nproc
+   
+   implicit none
+   include 'netcdf.inc'
+   integer,parameter :: maxsubst = 60      ! max. number of substeps
+   integer nt, n,j,k, subtim, diff, diffprev, alloc_status
+   real :: laeng, cu_max, cu_min, dt_sub, sumwicht
+   real , allocatable , dimension (:,:) :: zwischen
+   integer :: num_sub
+   integer nti(maxsubst)
+   if (meinrang == 0) then !! prozessor 0 only
+      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt
       call qerror("preliminary Interrupt")
-endif
-      RETURN
-      END subroutine stofftransport_schism
-
+   endif
+   return
+end subroutine stofftransport_schism
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-
-
-      subroutine sc_read_rough()
-      use netcdf
-      use modell                                                   
-      implicit none
-      integer :: n
-      do n=1,number_benthic_points
-         benthic_distribution(5+(n-1)*number_benth_distr)= 70.0 !! Strickler Reibungsbeiwert Kst_rau (Mannings n, here: Kst=1/n)
-      end do ! alle n Knoten
-      print*,"##### preliminary ##### modellg: call sc_read_rough: Strickler=70 ######"
-      RETURN
-      END subroutine sc_read_rough
+subroutine sc_read_rough()
+   use netcdf
+   use modell
+   implicit none
+   integer :: n
+   do n = 1,number_benthic_points
+      benthic_distribution(5+(n-1)*number_benth_distr) = 70.0 !! Strickler Reibungsbeiwert Kst_rau (Mannings n, here: Kst=1/n)
+   end do ! alle n Knoten
+   print*,"##### preliminary ##### modellg: call sc_read_rough: Strickler = 70 ######"
+   return
+end subroutine sc_read_rough
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

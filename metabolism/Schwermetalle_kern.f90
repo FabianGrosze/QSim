@@ -1,87 +1,81 @@
-!---------------------------------------------------------------------------------------
-!
-!   QSim - Programm zur Simulation der Wasserqualit‰t
-!
-!   Copyright (C) 2020 Bundesanstalt f¸r Gew‰sserkunde, Koblenz, Deutschland, http://www.bafg.de
-!
-!   Dieses Programm ist freie Software. Sie kˆnnen es unter den Bedingungen der 
-!   GNU General Public License, Version 3,
-!   wie von der Free Software Foundation verˆffentlicht, weitergeben und/oder modifizieren. 
-!   Die Verˆffentlichung dieses Programms erfolgt in der Hoffnung, daﬂ es Ihnen von Nutzen sein wird, 
-!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT F‹R EINEN BESTIMMTEN ZWECK. 
-!   Details finden Sie in der GNU General Public License.
-!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
-!   Falls nicht, siehe http://www.gnu.org/licenses/.  
-!   
-!   Programmiert von:
-!   1979 bis 2018 Volker Kirchesch
-!   seit 2011 Jens Wyrwa, Wyrwa@bafg.de
-!
-!---------------------------------------------------------------------------------------
-
-!> subroutine schwermetalle_kern : balance of heavy metal concentrations \n\n
-!! file: schwermetalle_kern.f90 zur¸ck: \ref lnk_schwermetalle
-     subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert             &
-             ,anzZeits,sedsss,sedalks,sedalgs,sedalbs                                     &
-             ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs   &
-             ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                   &
-             ,kontroll,jjj)
-     
-      implicit none
-      logical :: kontroll
-      integer :: jjj, anzZeits,iformVert
-     
-      real    :: hssalgs,SSalgs,hphs,vphs,SSeross  
-      real    :: sedsss,sedalks,sedalbs,sedalgs  
-      real    :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis
-      real    :: glAss, gsAss, glPbs, gsPbs, glCrs, gsCrs, glFes, gsFes
-      real    :: glHgs, gsHgs, glMns, gsMns, glUs, gsUs
-
-!     1-previous timestep(hssalgs,hphs) 2-current timestep(SSalgs,vphs) 3-Formula (17)
-      real, Dimension(2)    :: VTKoeffZn, VTKoeffCad, VTKoeffCu, VTKoeffNi
-      real, Dimension(2)    :: VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe
-      real, Dimension(2)    :: VTKoeffHg, VTKoeffMn, VTKoeffU
-
-      real    :: ZnSeds,CadSeds,CuSeds,NiSeds,AsSeds,PbSeds
-      real    :: CrSeds,FeSeds,Hgseds,MnSeds,USeds   
-
-      real    :: Css,ph
-      
-      logical  ,parameter  :: siebzehn = .TRUE. ! Formel 17 f¸r Verteilungskoeffizienten aus Einleitungen
-
-      !if(kontroll)print*,jjj,' schwermetalle_kern anfa glZns,gsZns,glPbs,gsPbs=',glZns,gsZns,glPbs,gsPbs
-
-
-!     ########################################################################################
-!     Berechnung der Verteilungskoeffizienten VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi
-!                                             VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe 
-!                                             VTKoeffHg, VTKoeffMn, VTKoeffU 
-!     VTKoff.. in l/g aus dem Verh‰ltnis gesamt- und gelˆster Schwermetall-Konz.
-!     ########################################################################################
-
-      ! Minimum von Schwebstoffkonzentration und pH-Wert f¸r Berechnung von Verteilungskoeffizient und Sedimentbelastung ... 
-      Css = min(100.,hSSalgs)
-      ph = max(4.,hphs)
-      call Verteilungskoeff(Css,ph  &
-             ,VTKoeffZn(1),VTKoeffCu(1),VTKoeffCad(1),VTKoeffNi(1),VTKoeffAs(1),VTKoeffPb(1)    &
-             ,VTKoeffCr(1),VTKoeffFe(1),VTKoeffHg(1) ,VTKoeffMn(1), VTKoeffU(1)                 &
-             ,iformVert,kontroll ,jjj)                              
-      Css = min(100.,SSalgs)
-      ph = max(4.,vphs)
-      call Verteilungskoeff(Css,ph  &
-             ,VTKoeffZn(2),VTKoeffCu(2),VTKoeffCad(2),VTKoeffNi(2),VTKoeffAs(2),VTKoeffPb(2)    &
-             ,VTKoeffCr(2),VTKoeffFe(2),VTKoeffHg(2) ,VTKoeffMn(2), VTKoeffU(2)                 &
-             ,iformVert,kontroll ,jjj)
-             
-
-!     #############################################################
-!     Formel (17) ... zugeflossene Verteilung
-!     ##############################################################
-
-if(siebzehn)then
+! --------------------------------------------------------------------------- !
+!  QSim - Programm zur Simulation der Wasserqualit√§t                          !
+!                                                                             !
+!  Copyright (C) 2022                                                         !
+!  Bundesanstalt f√ºr Gew√§sserkunde                                            !
+!  Koblenz (Deutschland)                                                      !
+!  http://www.bafg.de                                                         !
+!                                                                             !
+!  Dieses Programm ist freie Software. Sie k√∂nnen es unter den Bedingungen    !
+!  der GNU General Public License, Version 3, wie von der Free Software       !
+!  Foundation ver√∂ffentlicht, weitergeben und/oder modifizieren.              !
+!                                                                             !
+!  Die Ver√∂ffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
+!  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
+!  implizite Garantie der Makrtreife oder der Verwendbarkeit f√ºr einen        !
+!  bestimmten Zweck.                                                          !
+!                                                                             !
+!  Details finden Sie in der GNU General Public License.                      !
+!  Sie sollten ein Exemplar der GNU General Public License zusammen mit       !
+!  diesem Programm erhalten haben.                                            !
+!  Falls nicht, siehe http://www.gnu.org/licenses/.                           !
+!                                                                             !
+!  Programmiert von                                                           !
+!  1979 bis 2018   Volker Kirchesch                                           !
+!  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
+! --------------------------------------------------------------------------- !
+!> balance of heavy metal concentrations
+!! file: schwermetalle_kern.f90 zur√ºck: \ref lnk_schwermetalle
+subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert             &
+                              ,anzZeits,sedsss,sedalks,sedalgs,sedalbs                                     &
+                              ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs   &
+                              ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                   &
+                              ,kontroll,jjj)
+   
+   implicit none
+   integer               :: anzZeits,iformVert
+   real                  :: hssalgs,SSalgs,hphs,vphs,SSeross
+   real                  :: sedsss,sedalks,sedalbs,sedalgs
+   real                  :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis
+   real                  :: glAss, gsAss, glPbs, gsPbs, glCrs, gsCrs, glFes, gsFes
+   real                  :: glHgs, gsHgs, glMns, gsMns, glUs, gsUs
+   ! 1-previous timestep(hssalgs,hphs) 2-current timestep(SSalgs,vphs) 3-Formula (17)
+   real, dimension(2)    :: VTKoeffZn, VTKoeffCad, VTKoeffCu, VTKoeffNi
+   real, dimension(2)    :: VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe
+   real, dimension(2)    :: VTKoeffHg, VTKoeffMn, VTKoeffU
+   real                  :: ZnSeds,CadSeds,CuSeds,NiSeds,AsSeds,PbSeds
+   real                  :: CrSeds,FeSeds,Hgseds,MnSeds,USeds
+   real                  :: Css,ph
+   
+   logical, intent(in)   :: kontroll !< debugging
+   integer, intent(in)   :: jjj      !< debugging
+   
+   logical  ,parameter  :: siebzehn = .TRUE. ! Formel 17 f√ºr Verteilungskoeffizienten aus Einleitungen
+   
+   ! Berechnung der Verteilungskoeffizienten
+   ! VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi
+   ! VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe
+   ! VTKoeffHg, VTKoeffMn, VTKoeffU
+   ! VTKoff.. in l/g aus dem Verh√§ltnis gesamt- und gel√∂ster Schwermetall-Konz.
+   ! Minimum von Schwebstoffkonzentration und pH-Wert f√ºr Berechnung von Verteilungskoeffizient und Sedimentbelastung
+   Css = min(100.,hSSalgs)
+   ph = max(4.,hphs)
+   call Verteilungskoeff(Css,ph  &
+                         ,VTKoeffZn(1),VTKoeffCu(1),VTKoeffCad(1),VTKoeffNi(1),VTKoeffAs(1),VTKoeffPb(1)    &
+                         ,VTKoeffCr(1),VTKoeffFe(1),VTKoeffHg(1) ,VTKoeffMn(1), VTKoeffU(1)                 &
+                         ,iformVert,kontroll ,jjj)
+   Css = min(100.,SSalgs)
+   ph = max(4.,vphs)
+   call Verteilungskoeff(Css,ph  &
+                         ,VTKoeffZn(2),VTKoeffCu(2),VTKoeffCad(2),VTKoeffNi(2),VTKoeffAs(2),VTKoeffPb(2)    &
+                         ,VTKoeffCr(2),VTKoeffFe(2),VTKoeffHg(2) ,VTKoeffMn(2), VTKoeffU(2)                 &
+                         ,iformVert,kontroll ,jjj)
+   
+   ! Formel (17) zugeflossene Verteilung
+   if (siebzehn) then
       Css = SSalgs/1000.0
       VTKoeffZn(2) = (((gsZns/glZns)-1.)/Css)*(VTKoeffZn(2)/VTKoeffZn(1))
-      VTKoeffCad(2)= (((gsCads/glCads)-1.)/Css)*(VTKoeffCad(2)/VTKoeffCad(1))
+      VTKoeffCad(2) = (((gsCads/glCads)-1.)/Css)*(VTKoeffCad(2)/VTKoeffCad(1))
       VTKoeffCu(2) = (((gsCus/glCus)-1.)/Css)*(VTKoeffCu(2)/VTKoeffCu(1))
       VTKoeffNi(2) = (((gsNis/glNis)-1.)/Css)*(VTKoeffNi(2)/VTKoeffNi(1))
       VTKoeffAs(2) = (((gsAss/glAss)-1.)/Css)*(VTKoeffAs(2)/VTKoeffAs(1))
@@ -90,108 +84,92 @@ if(siebzehn)then
       VTKoeffFe(2) = (((gsFes/glFes)-1.)/Css)*(VTKoeffFe(2)/VTKoeffFe(1))
       VTKoeffHg(2) = (((gsHgs/glHgs)-1.)/Css)*(VTKoeffHg(2)/VTKoeffHg(1))
       VTKoeffMn(2) = (((gsMns/glMns)-1.)/Css)*(VTKoeffMn(2)/VTKoeffMn(1))
-      VTKoeffU(2)  = (((gsUs/glUs)-1.)/Css)*(VTKoeffU(2)/VTKoeffU(1))
-endif ! siebzehn
-
-!     ########################################################################################
-!     Berechnung der Sedimentbelastung ZnSeds bis USeds
-!     Hochz‰hlen der erosionslosen Zeitschritte anzZeits
-!     ########################################################################################
-      call Sedimentbelastung(SSalgs                    &
-                               ,gsZns,glZns,ZnSeds      &
-                        ,gsCads,glCads,CadSeds       &
-                               ,gsCus,glCus,CuSeds      &
-                        ,gsNis,glNis,NiSeds      &
-                        ,gsAss,glAss,AsSeds      &
-                        ,gsPbs,glPbs,PbSeds        &
-                               ,gsCrs,glCrs,CrSeds      &
-                        ,gsFes,glFes,FeSeds      &
-                        ,gsHgs,glHgs,HgSeds      &
-                        ,gsMns,glMns,MnSeds        &
-                               ,gsUs,glUs,USeds         &
-                        ,anzZeits,SSeross            &
-                        ,kontroll ,jjj)
-
-!     ########################################################################################
-!     +++++ Verringerung der Gesamt-Schwermetallkonz. durch Sedimentation +++++++
-!     ########################################################################################
-
-      Css = SSalgs
-      if(gsZns>0.0) gsZns = gsZns-(gsZns - glZns)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsCads>0.0) gsCads = gsCads-(gsCads - glCads)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsCus>0.0) gsCus = gsCus-(gsCus - glCus)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsNis>0.0) gsNis = gsNis-(gsNis - glNis)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsAss>0.0) gsAss = gsAss-(gsAss - glAss)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsPbs>0.0) gsPbs = gsPbs-(gsPbs - glPbs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-        !if(kontroll)print*,'schwermetalle_kern Sedimentation glPbs,gsPbs,Css=',glPbs,gsPbs,Css
-      if(gsCrs>0.0) gsCrs = gsCrs-(gsCrs - glCrs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsFes>0.0) gsFes = gsFes-(gsFes - glFes)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsHgs>0.0) gsHgs = gsHgs-(gsHgs - glHgs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsMns>0.0) gsMns = gsMns-(gsMns - glMns)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-      if(gsUs>0.0) gsUs = gsUs-(gsUs - glUs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-
-!     ########################################################################################
-!     +++++ Erhˆhung der Gesamt-Schwermetallkonz. durch Erosion +++++++
-!     ########################################################################################
-
-      if(SSeross>0.0) then
-        gsZns = gsZns + SSeross*ZnSeds
-        gsCads= gsCads+ SSeross*CadSeds
-        gsCus = gsCus + SSeross*CuSeds
-        gsNis = gsNis + SSeross*NiSeds
-        gsAss = gsAss + SSeross*AsSeds
-        gsPbs = gsPbs + SSeross*PbSeds
-         !if(kontroll)print*,'schwermetalle_kern Erosion gsPbs,SSeross=',gsPbs,SSeross
-        gsCrs = gsCrs + SSeross*CrSeds
-        gsFes = gsFes + SSeross*FeSeds
-        gsHgs = gsHgs + SSeross*Hgseds
-        gsMns = gsMns + SSeross*MnSeds
-        gsUs  = gsUs  + SSeross*USeds
-      endif ! Erosion taking Place
-     
-!     #############################################################
-!     Clipping negativer Konzentrationen:
-!     ##############################################################
-      if(gsZns<=0.0)gsZns = 0.0
-      if(glZns<=0.0)glZns = 0.0
-      if(gsCads<=0.0)gsCads = 0.0
-      if(glCads<=0.0)glCads = 0.0
-      if(gsCus<=0.0)gsCus = 0.0
-      if(glCus<=0.0)glCus = 0.0
-      if(gsNis<=0.0)gsNis = 0.0
-      if(glNis<=0.0)glNis = 0.0
-      if(gsAss<=0.0)gsAss = 0.0
-      if(glAss<=0.0)glAss = 0.0
-      if(gsPbs<=0.0)gsPbs = 0.0
-      if(glPbs<=0.0)glPbs = 0.0
-      if(gsCrs<=0.0)gsCrs = 0.0
-      if(glCrs<=0.0)glCrs = 0.0
-      if(gsFes<=0.0)gsFes = 0.0
-      if(glFes<=0.0)glFes = 0.0
-      if(gsHgs<=0.0)gsHgs = 0.0
-      if(glHgs<=0.0)glHgs = 0.0
-      if(gsMns<=0.0)gsMns = 0.0
-      if(glMns<=0.0)glMns = 0.0
-      if(gsUs <=0.0)gsUs =  0.0
-      if(glUs <=0.0)glUs =  0.0
-
-!     #############################################################
-!     Neuverteilung gelˆste <-> gesamte Konzentration nach dem Zeitschritt tflie 
-!     ##############################################################
-
-      Css = SSalgs/1000.0
-      if(gsZns>0.0) glZns = gsZns/(1.+VTKoeffZn(2)*Css)
-      if(gsCads>0.0) glCads = gsCads/(1.+VTKoeffCad(2)*Css)
-      if(gsCus>0.0) glCus = gsCus/(1.+VTKoeffCu(2)*Css)
-      if(gsNis>0.0) glNis = gsNis/(1.+VTKoeffNi(2)*Css)
-      if(gsAss>0.0) glAss = gsAss/(1.+VTKoeffAs(2)*Css)
-      if(gsPbs>0.0) glPbs = gsPbs/(1.+VTKoeffPb(2)*Css)
-      if(gsCrs>0.0) glCrs = gsCrs/(1.+VTKoeffCr(2)*Css)
-      if(gsFes>0.0) glFes = gsFes/(1.+VTKoeffFe(2)*Css)
-      if(gsHgs>0.0) glHgs = gsHgs/(1.+VTKoeffHg(2)*Css)
-      if(gsMns>0.0) glMns = gsMns/(1.+VTKoeffMn(2)*Css)
-      if(gsUs>0.0) glUs = gsUs/(1.+VTKoeffU(2)*Css)
- 
-      !if(kontroll)print*,jjj,' schwermetalle_kern ende glZns,gsZns,glPbs,gsPbs=',glZns,gsZns,glPbs,gsPbs
- 
-      end subroutine schwermetalle_kern
+      VTKoeffU(2) = (((gsUs/glUs)-1.)/Css)*(VTKoeffU(2)/VTKoeffU(1))
+   endif
+   
+   ! Berechnung der Sedimentbelastung ZnSeds bis USeds
+   ! Hochz√§hlen der erosionslosen Zeitschritte anzZeits
+   call Sedimentbelastung(SSalgs,                 &
+                          gsZns,glZns,ZnSeds,     &
+                          gsCads,glCads,CadSeds,  &
+                          gsCus,glCus,CuSeds,     &
+                          gsNis,glNis,NiSeds,     &
+                          gsAss,glAss,AsSeds,     &
+                          gsPbs,glPbs,PbSeds,     &
+                          gsCrs,glCrs,CrSeds,     &
+                          gsFes,glFes,FeSeds,     &
+                          gsHgs,glHgs,HgSeds,     &
+                          gsMns,glMns,MnSeds,     &
+                          gsUs,glUs,USeds,        &
+                          anzZeits,SSeross,       &
+                          kontroll ,jjj)
+   ! Verringerung der Gesamt-Schwermetallkonz. durch Sedimentation
+   Css = SSalgs
+   if (gsZns > 0.0) gsZns = gsZns-(gsZns - glZns)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsCads > 0.0) gsCads = gsCads-(gsCads - glCads)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsCus > 0.0) gsCus = gsCus-(gsCus - glCus)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsNis > 0.0) gsNis = gsNis-(gsNis - glNis)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsAss > 0.0) gsAss = gsAss-(gsAss - glAss)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsPbs > 0.0) gsPbs = gsPbs-(gsPbs - glPbs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   !if(kontroll)print*,'schwermetalle_kern Sedimentation glPbs,gsPbs,Css=',glPbs,gsPbs,Css
+   if (gsCrs > 0.0) gsCrs = gsCrs-(gsCrs - glCrs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsFes > 0.0) gsFes = gsFes-(gsFes - glFes)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsHgs > 0.0) gsHgs = gsHgs-(gsHgs - glHgs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsMns > 0.0) gsMns = gsMns-(gsMns - glMns)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   if (gsUs > 0.0) gsUs = gsUs-(gsUs - glUs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
+   
+   ! Erh√∂hung der Gesamt-Schwermetallkonz. durch Erosion
+   if (SSeross > 0.0) then
+      gsZns = gsZns + SSeross*ZnSeds
+      gsCads = gsCads+ SSeross*CadSeds
+      gsCus = gsCus + SSeross*CuSeds
+      gsNis = gsNis + SSeross*NiSeds
+      gsAss = gsAss + SSeross*AsSeds
+      gsPbs = gsPbs + SSeross*PbSeds
+      !if(kontroll)print*,'schwermetalle_kern Erosion gsPbs,SSeross=',gsPbs,SSeross
+      gsCrs = gsCrs + SSeross*CrSeds
+      gsFes = gsFes + SSeross*FeSeds
+      gsHgs = gsHgs + SSeross*Hgseds
+      gsMns = gsMns + SSeross*MnSeds
+      gsUs = gsUs  + SSeross*USeds
+   endif
+   
+   ! Clipping negativer Konzentrationen:
+   if (gsZns <= 0.0)gsZns = 0.0
+   if (glZns <= 0.0)glZns = 0.0
+   if (gsCads <= 0.0)gsCads = 0.0
+   if (glCads <= 0.0)glCads = 0.0
+   if (gsCus <= 0.0)gsCus = 0.0
+   if (glCus <= 0.0)glCus = 0.0
+   if (gsNis <= 0.0)gsNis = 0.0
+   if (glNis <= 0.0)glNis = 0.0
+   if (gsAss <= 0.0)gsAss = 0.0
+   if (glAss <= 0.0)glAss = 0.0
+   if (gsPbs <= 0.0)gsPbs = 0.0
+   if (glPbs <= 0.0)glPbs = 0.0
+   if (gsCrs <= 0.0)gsCrs = 0.0
+   if (glCrs <= 0.0)glCrs = 0.0
+   if (gsFes <= 0.0)gsFes = 0.0
+   if (glFes <= 0.0)glFes = 0.0
+   if (gsHgs <= 0.0)gsHgs = 0.0
+   if (glHgs <= 0.0)glHgs = 0.0
+   if (gsMns <= 0.0)gsMns = 0.0
+   if (glMns <= 0.0)glMns = 0.0
+   if (gsUs <= 0.0)gsUs = 0.0
+   if (glUs <= 0.0)glUs = 0.0
+   
+   ! Neuverteilung gel√∂ste <-> gesamte Konzentration nach dem Zeitschritt tflie
+   Css = SSalgs/1000.0
+   if (gsZns > 0.0) glZns = gsZns/(1.+VTKoeffZn(2)*Css)
+   if (gsCads > 0.0) glCads = gsCads/(1.+VTKoeffCad(2)*Css)
+   if (gsCus > 0.0) glCus = gsCus/(1.+VTKoeffCu(2)*Css)
+   if (gsNis > 0.0) glNis = gsNis/(1.+VTKoeffNi(2)*Css)
+   if (gsAss > 0.0) glAss = gsAss/(1.+VTKoeffAs(2)*Css)
+   if (gsPbs > 0.0) glPbs = gsPbs/(1.+VTKoeffPb(2)*Css)
+   if (gsCrs > 0.0) glCrs = gsCrs/(1.+VTKoeffCr(2)*Css)
+   if (gsFes > 0.0) glFes = gsFes/(1.+VTKoeffFe(2)*Css)
+   if (gsHgs > 0.0) glHgs = gsHgs/(1.+VTKoeffHg(2)*Css)
+   if (gsMns > 0.0) glMns = gsMns/(1.+VTKoeffMn(2)*Css)
+   if (gsUs > 0.0) glUs = gsUs/(1.+VTKoeffU(2)*Css)
+   
+end subroutine schwermetalle_kern
