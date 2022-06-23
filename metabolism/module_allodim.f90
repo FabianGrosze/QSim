@@ -1,22 +1,43 @@
+! --------------------------------------------------------------------------- !
+!  QSim - Programm zur Simulation der Wasserqualität                          !
+!                                                                             !
+!  Copyright (C) 2022                                                         !
+!  Bundesanstalt für Gewässerkunde                                            !
+!  Koblenz (Deutschland)                                                      !
+!  http://www.bafg.de                                                         !
+!                                                                             !
+!  Dieses Programm ist freie Software. Sie können es unter den Bedingungen    !
+!  der GNU General Public License, Version 3, wie von der Free Software       !
+!  Foundation veröffentlicht, weitergeben und/oder modifizieren.              !
+!                                                                             !
+!  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
+!  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
+!  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        !
+!  bestimmten Zweck.                                                          !
+!                                                                             !
+!  Details finden Sie in der GNU General Public License.                      !
+!  Sie sollten ein Exemplar der GNU General Public License zusammen mit       !
+!  diesem Programm erhalten haben.                                            !
+!  Falls nicht, siehe http://www.gnu.org/licenses/.                           !
+!                                                                             !
+!  Programmiert von                                                           !
+!  1979 bis 2018   Volker Kirchesch                                           !
+!  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
+! --------------------------------------------------------------------------- !
 
-!> <h1> module allodim </h1>
-!! array dimenions \n  Felddimensionierungs-Parameter  \n
+!> array dimenions
+!!
+!! Felddimensionierungs-Parameter
+!!
 !! from Datei qsim.f09 ; back zu \ref Main
-      module allodim
-      implicit none
-      save
+module allodim
+   implicit none
+   save
 
-!> \anchor azstrs Stranganzahl 
-    integer :: azStrs
-!> \anchor ialloc1 Einleiter pro strang
-    integer , parameter :: ialloc1 = 100  !!!##### do not change !!!!
-!> \anchor ialloc2 Querprofile im Strang 
-    integer , parameter :: ialloc2=1000  !!!##### do not change !!!!
-!> \anchor ialloc3 Abschnitte im strang?
-    integer , parameter :: ialloc3 = 20  !!!##### do not change !!!!
-!> \anchor ialloc4 Sedimentschichten ???
-    integer , parameter :: ialloc4 = 250  !!!##### do not change !!!!
-!> \anchor ialloc5 Tiefenschichtenanzahl
-    integer , parameter :: ialloc5 = 50  !!!##### do not change !!!!
-
-      end module allodim
+   integer             :: azStrs         !< \anchor azstrs Stranganzahl
+   integer , parameter :: ialloc1 = 100  !> \anchor ialloc1 Einleiter pro Strang
+   integer , parameter :: ialloc2 = 1000 !> \anchor ialloc2 Querprofile im Strang
+   integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im strang?
+   integer , parameter :: ialloc4 = 250  !> \anchor ialloc4 Sedimentschichten ?
+   integer , parameter :: ialloc5 = 50   !> \anchor ialloc5 Tiefenschichtenanzahl
+end module allodim

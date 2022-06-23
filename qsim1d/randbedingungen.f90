@@ -1,71 +1,87 @@
-!---------------------------------------------------------------------------------------
-!
-!   QSim - Programm zur Simulation der Wasserqualit‰t
-!
-!   Copyright (C) 2020 Bundesanstalt f¸r Gew‰sserkunde, Koblenz, Deutschland, http://www.bafg.de
-!
-!   Dieses Programm ist freie Software. Sie kˆnnen es unter den Bedingungen der 
-!   GNU General Public License, Version 3,
-!   wie von der Free Software Foundation verˆffentlicht, weitergeben und/oder modifizieren. 
-!   Die Verˆffentlichung dieses Programms erfolgt in der Hoffnung, daﬂ es Ihnen von Nutzen sein wird, 
-!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT F‹R EINEN BESTIMMTEN ZWECK. 
-!   Details finden Sie in der GNU General Public License.
-!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
-!   Falls nicht, siehe http://www.gnu.org/licenses/.  
-!   
-!	Programmiert von:
-!	1979 bis 2018 Volker Kirchesch
-!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
-!
-!---------------------------------------------------------------------------------------
+! --------------------------------------------------------------------------- !
+!  QSim - Programm zur Simulation der Wasserqualit√§t                          !
+!                                                                             !
+!  Copyright (C) 2022                                                         !
+!  Bundesanstalt f√ºr Gew√§sserkunde                                            !
+!  Koblenz (Deutschland)                                                      !
+!  http://www.bafg.de                                                         !
+!                                                                             !
+!  Dieses Programm ist freie Software. Sie k√∂nnen es unter den Bedingungen    !
+!  der GNU General Public License, Version 3, wie von der Free Software       !
+!  Foundation ver√∂ffentlicht, weitergeben und/oder modifizieren.              !
+!                                                                             !
+!  Die Ver√∂ffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
+!  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
+!  implizite Garantie der Makrtreife oder der Verwendbarkeit f√ºr einen        !
+!  bestimmten Zweck.                                                          !
+!                                                                             !
+!  Details finden Sie in der GNU General Public License.                      !
+!  Sie sollten ein Exemplar der GNU General Public License zusammen mit       !
+!  diesem Programm erhalten haben.                                            !
+!  Falls nicht, siehe http://www.gnu.org/licenses/.                           !
+!                                                                             !
+!  Programmiert von                                                           !
+!  1979 bis 2018   Volker Kirchesch                                           !
+!  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
+! --------------------------------------------------------------------------- !
 
-      subroutine Randbedingungen(cpfad, i_Rands, iw_max)
-
-      implicit none
-      character*255               :: cpfad
-      character (len=275)         :: pfadstring 
-      integer                     :: read_error,open_error
-      integer                     :: mstr,i_hcon,iws_RB,i_Rands,itagl,iw_max,iwe
-      integer                     :: RBNR
-
-        write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt' 
-        open(unit=92, file=pfadstring, iostat = open_error)
-        if(open_error.ne. 0) then
-           print*,'open_error Randbedingungen EREIGG.txt',pfadstring
-           stop 3
-        end if
-        rewind (92) 
-                                                                       
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-        read(92,'(2x)') 
-
-        iw_max = 0
-        i_rands = 0
-                                                                        
-        do                 ! Randbedingungsschleife Beginn     
-          read(92,9230,iostat=read_error) mstr, RBNR, i_hcon, iws_RB                                             
-
-          if(read_error<0.0)exit
-                                                                       
-          if(iws_RB==0)cycle
-
-          if(iws_RB>iw_max)iw_max = iws_RB 
-
-          i_Rands = i_Rands + 1                 ! Summenbildung der Randbedingungen  
-                                                                       
-          do iwe = 1,iws_RB    ! Einlesen der Randbedingungswerte f¸r den Strang <mstr>, hier Schleifenbeginn 
-            read(92,9240)itagl            
-          enddo                             ! Schleifenende
-        enddo                                 ! Randbedingungsschleife Ende 
-                                                                       
-   9230 format(I5,2x,I5,2x,I1,2x,I5) 
-   9240 format(i2) 
-
-      close(92)  
-      print*,'subroutine Randbedingungen found ',i_Rands,' boundaries in EREIGG.txt'   
-                                                                       
-  end subroutine Randbedingungen
+subroutine randbedingungen(cpfad, i_Rands, iw_max)
+   implicit none
+   
+   character*255               :: cpfad
+   integer                     :: i_rands, iw_max
+   
+   character (len = 275)       :: pfadstring
+   integer                     :: read_error,open_error
+   integer                     :: mstr,i_hcon,iws_RB,itagl,iwe
+   integer                     :: RBNR
+   
+   
+   pfadstring =  trim(adjustl(cpfad)) // 'EREIGG.txt'
+   open(unit = 92, file = pfadstring, iostat = open_error)
+   if (open_error /= 0) then
+      print*,'open_error Randbedingungen EREIGG.txt',pfadstring
+      stop 3
+   end if
+   rewind (92)
+   
+   ! skip file header
+   read(92,'(2x)')
+   read(92,'(2x)')
+   read(92,'(2x)')
+   read(92,'(2x)')
+   read(92,'(2x)')
+   read(92,'(2x)')
+   
+   
+   iw_max = 0
+   i_rands = 0
+   do 
+      ! read boundary header 
+      ! mstr      Nummer des Strangs der Randbedingung gem√§√ü MODELLA.txt
+      ! rbnr      Nummer der Randbedingung im Strang gem√§√ü MODELLA.txt
+      ! i_hcon    Art der Eingabewerte der Randbedingung: (0 = Tagesmittelwerte, 1 = uhrzeitbezogene Einzelwerte)
+      ! iws_rb    Anzahl der folgenden Zeitpunkt-Wert-Zeilen der Randbedingung
+      read(92,9230,iostat = read_error) mstr, RBNR, i_hcon, iws_RB
+      ! eof
+      if (read_error < 0.0) exit
+      
+      if (iws_RB == 0) cycle
+      if (iws_RB > iw_max)iw_max = iws_RB
+      ! Summenbildung der Randbedingungen
+      i_Rands = i_Rands + 1
+      
+      do iwe = 1,iws_RB
+          ! Einlesen der Randbedingungswerte f√ºr den Strang <mstr>
+          read(92,'(I2)') itagl
+      enddo
+   enddo ! Randbedingungsschleife Ende
+   
+   9230 format(I5,2x,I5,2x,I1,2x,I5)
+   
+   close(92)
+   
+   print '(a)'    , 'subroutine randbedingungen():'
+   print '(a, I0)', 'boundaries found in EREIGG.txt: ', i_rands
+   
+end subroutine randbedingungen
