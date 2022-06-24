@@ -26,8 +26,8 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 14,09,01,0
- PRODUCTVERSION 14,09,01,0
+ FILEVERSION 14,09,02,0
+ PRODUCTVERSION 14,09,02,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -49,7 +49,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) Bundesanstalt fuer Gewaesserkunde 2022"
             VALUE "OriginalFilename", "version.rc"
             VALUE "ProductName", "QSim1D"
-            VALUE "ProductVersion", "14.09.01.0"
+            VALUE "ProductVersion", "14.09.02.0"
         END
     END
     BLOCK "VarFileInfo"

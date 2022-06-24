@@ -7440,7 +7440,6 @@ program qsim
       if (iwsim == 5)goto 118
       if (iwsim /= 2)goto 1520
       if (hcoli(mstr,1) < 0.0 .and. iwsim == 2)goto 118
-      
       1522 continue
       call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli &
                    ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs         &
@@ -7504,8 +7503,8 @@ program qsim
       if (ieros == 0)goto 1519
       
       call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
-                   ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied,     &
-                   ,.false.,0)
+                   ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &
+                   ,kontroll,0)
       
       if (nbuhn(mstr) == 0)goto 1519
       if (ilbuhn == 0) then
@@ -7591,7 +7590,7 @@ program qsim
                            ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
                            ,hglU,hgsU,egsU,eglU,USed            &
                            ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros      &
-                           ,ilang,iwied,                        &
+                           ,ilang,iwied                        &
                            ,.false., 0)
          if (nbuhn(mstr) == 0)goto 118
          if (ilbuhn == 0) then

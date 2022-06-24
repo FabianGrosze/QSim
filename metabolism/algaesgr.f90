@@ -30,7 +30,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
                     ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                    &
                     ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                    & !!wy, Einlesen von e_extnct.dat nicht hier
                     ,tpgr,uhrz,iwied,algcog                                                                                 &
-                    ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG       &
+                    ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG        &
                     ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
                     ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
                     ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
@@ -45,13 +45,12 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    
    
    !     UNTERPROGRAMME :TAGE,ALBEDO
-   
+  
    logical kontroll !wy
    integer jjj !wy
    character (len = 255) cpfad
    character (len = 275)                      :: pfadstring
    character (len = 2) ckenn_Vers1
-   
    integer                                  :: anze, azStrs
    integer, dimension(1000)                 :: flag, jiein, ischif, nkzs
    real                                     :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
@@ -72,6 +71,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    real, dimension(50,1000)                 :: vNH4z, vNO3z, gelPz, dalggz, tempwz, chlaz
    real, dimension(azStrs,1000)             :: sedAlg_MQ, agmor_1
    real, dimension(azStrs,50,1000)          :: hchlkz, hchlgz, hchlbz, hCChlgz, hQ_NGz
+   real, dimension(azStrs,1000)             :: tausc
    save Cchlaz, agrzt
    
    ispek = 0
@@ -173,6 +173,8 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       !############################
       !...Beginn der Segmentschleife
       do 111 ior = 1,anze+1
+         
+      
          sumac = 0.0
          do i = 1,ilamda
             sumac = sumac+(ack(i)*vkigr(ior)+acg(i)*(1.-vkigr(ior)-antbl(ior))+acb(i)*antbl(ior))
@@ -605,7 +607,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          ! ##### SEDIMENTATION DER ALGEN #####
          !
          !....Schiffseinfluss
-         ustkri = sqrt(tauscs/1000.)
+         ustkri = sqrt(tausc(mstr,ior)/1000.)
          vkrit = (ustkri*tiefe(ior)**0.166667)/((1./rau(ior))*g)
          !
          tiefe1 = tiefe(ior)

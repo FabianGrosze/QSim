@@ -57,9 +57,7 @@ subroutine ph(mw,pw,ca,lf,tempw,tflie,susn,bsbct,dalgki,dalggr,dalgak,dalgag,po2
    
    Crot = 0.45
    CDR = 0.38
-   Caki = 0.48
-   Cabl = 0.48
-   Cagr = 0.48
+   
    !      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'funk.dat' !!wy
    !      open(unit=555, file=pfadstring)
    !      read(555,'(a2)',end=66)cwert

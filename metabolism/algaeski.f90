@@ -30,7 +30,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
                     ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda                                                       &
                     ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                                  & !!wy
                     ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                                                    &
-                    ,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                     &
+                    ,akraus,tausc,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                      &
                     ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                              &
                     ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL            &
                     ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki              &
@@ -49,9 +49,10 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    logical kontroll !!wy
    integer jjj !!wy
    
-   character (len = 255)                        :: cpfad
-   character (len = 275)                        :: pfadstring
-   character (len = 2)                          :: ckenn_vers1
+  
+   character (len = 255)                      :: cpfad
+   character (len = 275)                      :: pfadstring
+   character (len = 2)                        :: ckenn_vers1
    integer                                    :: anze, azStrs
    integer, dimension(1000)                   :: flag, jiein, ischif, nkzs
    integer, dimension(azStrs)                 :: ieinLs
@@ -75,6 +76,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    real, dimension(50,1000)                   :: up_Siz, algakz, algzkz, dkmorz, chlaz, akiz, ablz, agrz
    real, dimension(azStrs,1000)               :: sedAlg_MQ, extkS, akmor_1, agmor_1, abmor_1
    real, dimension(azStrs,50,1000)            :: hchlkz, hchlgz, hchlbz, hQ_NKz, hQ_NGz, hQ_NBz, hCChlkz, hCChlbz, hCChlgz
+   real, dimension(azstrs,1000)               :: tausc
    save Cchlaz, hcakbcm, hcabbcm, hcagbcm, hcsvhemk, hcsvhemg, hcsvhemb, hcChla1, hcvkigr1, hcantbl1, hcchla1z, xmuet, akizt
    
    iein = 1
@@ -870,7 +872,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
          ! ##### SEDIMENTATION DER ALGEN ######
          !
          ! ....Schiffseinfluss
-         ustkri = sqrt(tauscs/1000.)
+         ustkri = sqrt(tausc(mstr,ior)/1000.)
          vkrit = (ustkri*tiefe(ior)**0.166667)/((1./rau(ior))*g)
          !
          tiefe1 = tiefe(ior)

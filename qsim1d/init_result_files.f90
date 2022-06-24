@@ -40,7 +40,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    
    ! --- dummy arguments ---
    character(len = 255), intent(in)   :: cpfad           !< path to directory for output
-   character(len = 255), intent(in)   :: modell          !< modelname (Gerris)
+   character(len = *),   intent(in)   :: modell          !< modelname (Gerris)
    character(len = 255), intent(in)   :: cEreig          !< meta data (Gerris)
    logical, intent(in)                :: write_csv_files !< switch to turn of .csv-outputs
    
