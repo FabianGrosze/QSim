@@ -1,3 +1,8 @@
+## 14.09.02
+bug fixing:
+* correct format for output files
+* correct dimensions of `tausc` in alagae
+
 ## 14.09.01
 * apply parts of style guide rules to sourcecode. No changes in calculations.
 
