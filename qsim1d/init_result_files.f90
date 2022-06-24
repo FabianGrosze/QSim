@@ -69,7 +69,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    end if
    
    
-   write(45,*)'*V  QSim  ERGEBM  ', versionstext
+   write(45,'(a,a)')'*V  QSim  ERGEBM  ', versionstext
    call ergebMFormat()
    write(45,'(a50)')  modell
    write(45,'(a255)') cEreig
@@ -83,7 +83,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       stop 2
    end if
    
-   write(155,*) '*V  QSim  ERGEBT  ', versionstext
+   write(155,'(a,a)') '*V  QSim  ERGEBT  ', versionstext
    call ergebTFormat()
    write(155,'(a50)')modell
    write(155,'(a255)')cEreig
@@ -97,7 +97,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       stop 2
    end if
    
-   write(255,*) '*V  QSim  ERGEB2D  ', versionstext
+   write(255,'(a,a)') '*V  QSim  ERGEB2D  ', versionstext
    call ergeb2DFormat()
    write(255,'(a50)')modell
    write(255,'(a255)')cEreig
