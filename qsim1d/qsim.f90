@@ -330,7 +330,7 @@ program qsim
    linux = .true.
    kontroll = .false.
    mitsedflux = .false.    ! sediment fluxes switched off temporarily
-   write_csv_out = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
+   write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
    ! --- get arguments ---
    call get_paths(linux)
@@ -11835,6 +11835,16 @@ program qsim
    write(199,'(120a)')cfehlr
    
    990 close (45)
+   
+if (write_csv_output) then 
+   do azStr = 1,azStrs ! reliminary notice on km of stations
+      mstr = mstra(azStr)
+      do ior = 1,mStas(mstr)
+         write(159,*)mstr,ior,' km=',hfkm(mstr,ior)
+      end do
+   end do
+endif
+
    write(*,*)ifehl
    close (155)
    close (156)
