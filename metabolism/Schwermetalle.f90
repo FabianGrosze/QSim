@@ -475,7 +475,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
       hglUt = hglU(mstr,ior)
       hgsUt = hgsU(mstr,ior)
       
-      !if(ior.eq.1)print*,'schwermetalle_kern mstr=',mstr
+      if(ior.eq.1)print*,'schwermetalle_kern mstr=',mstr
       call schwermetalle_kern(hssalg(mstr,ior),SSalg(ior),hph(mstr,ior),vph(ior),SSeros(ior),iformVert &
                               ,anzZeit(mstr,ior),sedss(ior),sedalk(ior),sedalg(ior),sedalb(ior)        &
                               ,hgsZnt,hglZnt,hgsCadt,hglCadt               &

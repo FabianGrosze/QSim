@@ -51,6 +51,19 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    logical, intent(in)   :: kontroll !< debugging
    integer, intent(in)   :: jjj      !< debugging
    
+   ! kontrolle
+   if(gsZns<glZns)print*,jjj,'gsZns<glZns',gsZns,glZns
+   if(gsCads<glCads)print*,jjj,'gsCads<glCads',gsCads,glCads
+   if(gsCus<glCus)print*,jjj,'gsCus<glCus',gsCus,glCus
+   if(gsNis<glNis)print*,jjj,'gsNis<glNis',gsNis,glNis
+   if(gsAss<glAss)print*,jjj,'gsAss<glAss',gsAss,glAss
+   if(gsPbs<glPbs)print*,jjj,'gsPbs<glPbs',gsPbs,glPbs
+   if(gsCrs<glCrs)print*,jjj,'gsCrs<glCrs',gsCrs,glCrs
+   if(gsFes<glFes)print*,jjj,'gsFes<glFes',gsFes,glFes
+   if(gsHgs<glHgs)print*,jjj,'gsHgs<glHgs',gsHgs,glHgs
+   if(gsMns<glMns)print*,jjj,'gsMns<glMns',gsMns,glMns
+   if(gsUs<glUs)print*,jjj,'gsUs<glUs',gsUs,glUs
+   
    ! Berechnung der Verteilungskoeffizienten
    ! VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi
    ! VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe
@@ -135,7 +148,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    VTKoeffCr(3) = max(0.0,min(1.0,VTKoeffCr(3)))
    VTKoeffFe(3) = max(0.0,min(1.0,VTKoeffFe(3)))
    VTKoeffHg(3) = max(0.0,min(1.0,VTKoeffHg(3)))
-   VTKoeffMn(3) = max(0.0,min(1.0,VTKoeffU(3)))
+   VTKoeffMn(3) = max(0.0,min(1.0,VTKoeffMN(3)))
    VTKoeffU(3)  = max(0.0,min(1.0,VTKoeffU(3)))
       
    ! Berechnung der Sedimentbelastung ZnSeds bis USeds
