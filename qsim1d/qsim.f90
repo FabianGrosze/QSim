@@ -330,7 +330,7 @@ program qsim
    linux = .true.
    kontroll = .false.
    mitsedflux = .false.    ! sediment fluxes switched off temporarily
-   write_csv_out = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
+   write_csv_output = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
    ! --- get arguments ---
    call get_paths(linux)
