@@ -345,7 +345,7 @@
       call version_string(versionstext)
       !read(versionstext,*)versio
       print*,"QSim1D Version ",versionstext," starting ..."
-      if(mitsedflux)then;print*,'## sedflux ### active';else;print*,'sedflux switched off'
+      if(mitsedflux)then;print*,'## sedflux ### active';else;print*,'sedflux switched off';endif
                                     
 !.....Schalter für "Regeln bei Kraftwerksbetrieb"                       
 !               iRHKW = 1 > Betrieb der HKW's unterliegt gewissen Regeln
