@@ -4435,7 +4435,7 @@ program qsim
    ! Strangschleife für Berechnung
    if (iwsim == 4) sumTracer = 0.0  ! Aufsummierung der "Tracermasse"
    
-   do azStr = 1,azStrs
+   do azStr = 1,azStrs  ! ###7777
       mstr = mstra(azStr)
       anze = hanze(mstr)
       iein = 0
@@ -7595,11 +7595,6 @@ program qsim
          if (nbuhn(mstr) == 0)goto 118
          if (ilbuhn == 0) then
             do ior = 1,anze+1
-               hSSeros(mstr,ior) = SSeros(ior)
-               hsedalk(mstr,ior) = sedalk(ior)
-               hsedalg(mstr,ior) = sedalg(ior)
-               hsedalb(mstr,ior) = sedalb(ior)
-               hsedss(mstr,ior) = sedss(ior)
                zwsedk(ior) = sedalk(ior)
                zwsedg(ior) = sedalg(ior)
                zwsedb(ior) = sedalb(ior)
@@ -8490,6 +8485,12 @@ program qsim
          hJNH4(mstr,ior) = hJNH4(mstr,ior)
          hJPO4(mstr,ior) = hJPO4(mstr,ior)
          hJO2(mstr,ior) = hJO2(mstr,ior)
+		 
+         hSSeros(mstr,ior) = SSeros(ior)
+         hsedalk(mstr,ior) = sedalk(ior)
+         hsedalg(mstr,ior) = sedalg(ior)
+         hsedalb(mstr,ior) = sedalb(ior)
+         hsedss(mstr,ior) = sedss(ior)
          
          hdl(mstr,ior) = dl(ior)
          htiefe(mstr,ior) = tiefe(ior)
@@ -8517,7 +8518,7 @@ program qsim
          
       enddo ! Ende Hauptschleife
       
-   enddo ! Ende Strangschleife
+   enddo ! Ende Strangschleife ###7777
    7777 continue
    
    ! iwied = 0 : allererster Zeitschritt, danach iwied = 1
@@ -9555,7 +9556,7 @@ program qsim
                                ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
                                ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
-                               ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
+                               ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior),';'                                      &
                                ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
             write(157,'(a)')adjustl(trim(langezeile))
             write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &

@@ -52,17 +52,17 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    integer, intent(in)   :: jjj      !< debugging
    
    ! kontrolle
-   if(gsZns<glZns)print*,jjj,'gsZns<glZns',gsZns,glZns
-   if(gsCads<glCads)print*,jjj,'gsCads<glCads',gsCads,glCads
-   if(gsCus<glCus)print*,jjj,'gsCus<glCus',gsCus,glCus
-   if(gsNis<glNis)print*,jjj,'gsNis<glNis',gsNis,glNis
-   if(gsAss<glAss)print*,jjj,'gsAss<glAss',gsAss,glAss
-   if(gsPbs<glPbs)print*,jjj,'gsPbs<glPbs',gsPbs,glPbs
-   if(gsCrs<glCrs)print*,jjj,'gsCrs<glCrs',gsCrs,glCrs
-   if(gsFes<glFes)print*,jjj,'gsFes<glFes',gsFes,glFes
-   if(gsHgs<glHgs)print*,jjj,'gsHgs<glHgs',gsHgs,glHgs
-   if(gsMns<glMns)print*,jjj,'gsMns<glMns',gsMns,glMns
-   if(gsUs<glUs)print*,jjj,'gsUs<glUs',gsUs,glUs
+   !if(gsZns<glZns)print*,jjj,'gsZns<glZns',gsZns,glZns
+   !if(gsCads<glCads)print*,jjj,'gsCads<glCads',gsCads,glCads
+   !if(gsCus<glCus)print*,jjj,'gsCus<glCus',gsCus,glCus
+   !if(gsNis<glNis)print*,jjj,'gsNis<glNis',gsNis,glNis
+   !if(gsAss<glAss)print*,jjj,'gsAss<glAss',gsAss,glAss
+   !if(gsPbs<glPbs)print*,jjj,'gsPbs<glPbs',gsPbs,glPbs
+   !if(gsCrs<glCrs)print*,jjj,'gsCrs<glCrs',gsCrs,glCrs
+   !if(gsFes<glFes)print*,jjj,'gsFes<glFes',gsFes,glFes
+   !if(gsHgs<glHgs)print*,jjj,'gsHgs<glHgs',gsHgs,glHgs
+   !if(gsMns<glMns)print*,jjj,'gsMns<glMns',gsMns,glMns
+   !if(gsUs<glUs)print*,jjj,'gsUs<glUs',gsUs,glUs
    
    ! Berechnung der Verteilungskoeffizienten
    ! VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi

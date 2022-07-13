@@ -261,8 +261,9 @@ subroutine fortschritt(n,f)
       print 223, zeitpunkt, izeit,  &
       tag,monat,jahr,stunde,minute,sekunde, startzeitpunkt, endzeitpunkt !, meinrang, tagdesjahres
    endif
-   223 format (" ==  ==  ==  ==  ==  == = zeitpunkt:",I10,"s, Zeitschritt: ",I7,'  ',I2.2,'.',I2.2,'.',I4,'  ',I2.2,':',I2.2,':',I2.2, &
-                   " von ",I10," bis ",I10," ==  ==  ==  ==  ==  == =")
+   223 format (" ==  ==  ==  ==  ==  == = zeitpunkt:",I10,"s, Zeitschritt: ",  &
+               I7,'  ',I2.2,'.',I2.2,'.',I4,'  ',I2.2,':',I2.2,':',I2.2,       &
+               " von ",I10," bis ",I10," ==  ==  ==  ==  ==  == =")
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine fortschritt
