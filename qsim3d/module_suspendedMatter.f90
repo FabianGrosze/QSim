@@ -31,7 +31,7 @@
 module mod_suspendedMatter
    use netcdf
    use modell
-   use QSimDatenfelder, only: Grote
+   use aparam, only: Grot
    
    implicit none
    
@@ -152,8 +152,8 @@ contains
          end select
          ! write SPM min/max to log file
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
-                                                 'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),        &
-                                                 ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
+              'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),         &
+              ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
       end if
       
       ! synchronize all parallel processes
@@ -172,7 +172,7 @@ contains
          if (iGlob > number_plankt_point) exit
          j = (i - 1) * number_plankt_vari
          ! sum up zooplankton (from zooind) and phytoplankton biomasses (aki, agr and abl)
-         livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * Grote
+         livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * Grot
          do k = 1,nPhyto
             livingMatter = livingMatter + planktonic_variable_p(iPhyto(k) + j)
          end do

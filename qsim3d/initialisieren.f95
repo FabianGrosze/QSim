@@ -74,8 +74,8 @@ subroutine initialisieren()
             ,' wird initialisiert mit Rand ',zone(i)%ini_randnr,' mit Nr.',rabe(zone(i)%ini_randnr)%nr_rb
          else
             write(fehler,*)' 99 Zone ',i,' mit Nr. ',zone(i)%zonen_nummer  &
-                                                            ,' möchte initialisieren mit Rand ', zone(i)%ini_randnr  &
-                                                            ," nini = ",nini,' Diese Vorgabe (Randnummer) ist unmöglich ### Abbruch'
+                 ,' möchte initialisieren mit Rand ', zone(i)%ini_randnr  &
+                 ," nini = ",nini,' Diese Vorgabe (Randnummer) ist unmöglich ### Abbruch'
             call qerror(fehler)
          endif
       end do ! alle i zonen

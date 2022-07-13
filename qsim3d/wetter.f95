@@ -126,7 +126,7 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
-                                                                                             , meinrang, alloc_status
+                        , meinrang, alloc_status
          call qerror(fehler)
       end if
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
@@ -531,14 +531,14 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
             end if ! Wetterstation, die von der Zone in MODELLG.3D.txt in WETTER.txt vorhanden
          end do ! alle wetterstationen
          if ( .not. existing_station) then
-            write(fehler,*)'Die von Zone ',i ,' mit der Zonen-Kennnummer = ',zone(i)%zonen_nummer,  &
-                                                                           ' benötigte Wetterstation mit der Kennung '&
-                                                                           ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
+            write(fehler,*)'Die von Zone ',i ,' mit der Zonen-Kennnummer = ',zone(i)%zonen_nummer,    &
+                           ' benötigte Wetterstation mit der Kennung '                                &
+                           ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
             call qerror(fehler)
          else ! existing_station
-            print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "  &
-                                                               , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
-                                                               , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
+            print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "      &
+                  , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
+                  , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
          end if ! nicht vorhanden
       end do ! alle Zonen
       !

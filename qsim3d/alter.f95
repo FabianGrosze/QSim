@@ -274,9 +274,8 @@ subroutine alter_zeitschritt(izeit_gang)
       if (j == kontrollknoten) then ! Ausgabe kontrollknoten
          if (tief >= min_tief ) then
             print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = '  &
-                   ,c,tief,knoten_flaeche(j)  &
-                   
-                   point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
+                  ,c,tief,knoten_flaeche(j)                                                                    &
+                  ,point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
          endif ! Knoten nass
       end if ! kontrollknoten
    end do ! alle j Knoten
@@ -305,12 +304,12 @@ subroutine alter_ausgabe()
       zeitpunkt = r_gang(1,j)
       call zeitsekunde()
       write(zeitig,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-                                                                       jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
+           jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
       write(beschriftung1,'(A)')trim(zeitig)
       ! Ganglinienausgabe zonenintegrale auf tracer.txt
       do i = 1,zonen_anzahl
          write(beschriftung1,'(A,"       ",F16.0," ",F16.0," ",F18.2)')trim(beschriftung1)  &
-                                                                       ,tr_integral_zone(i,j),vol_integral_zone(i,j),ent_integral_zone(i,j)
+              ,tr_integral_zone(i,j),vol_integral_zone(i,j),ent_integral_zone(i,j)
       end do ! alle i zonen
       write(444444,'(A)')trim(beschriftung1)
    end do ! alle j Zeitpunkte

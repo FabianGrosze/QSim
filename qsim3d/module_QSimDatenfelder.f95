@@ -282,9 +282,9 @@ module QSimDatenfelder
    real, dimension(1000)               :: dorgSS, dalgki, dalggr, dalgbl, dalgak, dalgag, dalgab
    real, dimension(1000)               :: vco2, dzres1, dzres2, susn
    !>  \ref nzoo nzoo Stickstoffanteil in der Rotatorienbiomasse  mgN/mgBiom.
-   real                                :: nzoo
+   !real                                :: nzoo  >>> module aparam
    !>  \ref pZoo pZoo Phosphoranteil in der Rotatorienbiomasse  mgP/mgBiom.
-   real                                :: pZoo
+   !real                                :: pZoo  >>> module aparam
    !                                       benthische Verteilungen
    real, dimension(1000)               :: tsed    ! Temperatur des Sediments
    !>  \anchor sised sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
@@ -420,7 +420,7 @@ module QSimDatenfelder
    real, dimension(1,50,1000)            :: hCChlkz, hCChlbz, hCChlgz
    !> \anchor caki \anchor cagr \anchor cabl \anchor czoo Kohlenstoffgehalt der Biomassen
    !!Kiese-,Grün- und Balualgen, Zooplankton ; mgC/mgBio; in ini_algae() konstant gesetzt.
-   real  Caki, Cagr, Cabl, CZoo
+   ! real  Caki, Cagr, Cabl, CZoo >>> module aparam
    !> \anchor a1Ki \anchor a2Ki \anchor a3Ki
    !! ; in ini_algae() gesetzt
    real  a1Ki, a2Ki, a3Ki

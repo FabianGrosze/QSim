@@ -98,7 +98,7 @@
 !!     & , \ref hcchlkz, \ref hcchlbz, \ref hcchlgz                         &\n
 !!     & , \ref dz2d, \ref toptk                              &\n
 !!     & , \ref ktemp_ki                                  &\n
-!!     & , \ref ifix                               &\n
+!!     & , \ref ifixi                               &\n
 !!     & , \ref chlabl, \ref chlagr, *a1ki*, *a2ki*, *a3ki*, \ref sedalg_mq, \ref sedalk0, \ref hq_nkz                  & !! noch unbearbeitet #################\n
 !!     & , *hQ_NGz*, *hQ_NBz*, *Q_PG*, *Q_NG*, *Q_PB*, *Q_NB*                        &\n
 !!     & , *extkS*, \ref akmor_1, \ref agmor_1, \ref abmor_1
@@ -122,7 +122,7 @@
 !! , \ref upmxpb, \ref qmx_nb, \ref qmn_nb, \ref upmxnb, \ref q_nb, \ref q_pb, \ref ikbe
 !! , \ref frmube, \ref alamda, \ref abltbr, \ref ablbrz, \ref up_n2z, \ref ablz               &\n
 !! , \ref chlabl, \ref a1bl, \ref a2bl, \ref a3bl, \ref hchlbz, \ref hcchlbz, \ref algabz, \ref algzbz
-!! , \ref dz2d, \ref toptb, *ktemp_bl*, \ref ifix, \ref sedalg_mq            &                      \n
+!! , \ref dz2d, \ref toptb, *ktemp_bl*, \ref ifixi, \ref sedalg_mq            &                      \n
 !! , *sedalb0*, \ref hq_nbz, \ref  mstr, \ref itags, \ref monats, \ref isim_end, \ref azstrs                                                &\n
 !! , \ref ialloc2  , \ref kontroll , \ref iglob )              !!wy
 !! </code>
@@ -145,7 +145,7 @@
 !! , \ref qmn_pg, \ref upmxpg, \ref qmx_ng, \ref qmn_ng, \ref upmxng, \ref ikge, \ref frmuge, \ref alamda
 !! , \ref agrtbr, \ref agrbrz, \ref akiz, \ref agrz, \ref ablz                     &\n
 !! , \ref chlaz, \ref hchlkz, \ref hchlgz, \ref hchlbz, \ref hcchlgz, \ref algagz, \ref algzgz, \ref dz2d
-!! , \ref toptg, *ktemp_gr*, \ref ifix, \ref sedalg_mq, *sedalg0*, \ref  hq_ngz    &\n
+!! , \ref toptg, *ktemp_gr*, \ref ifixi, \ref sedalg_mq, *sedalg0*, \ref  hq_ngz    &\n
 !! , \ref a1gr, \ref a2gr, \ref a3gr, \ref ifehl, \ref ifhstr, \ref isim_end, \ref azstrs & \n
 !! , \ref kontroll , \ref iglob )  !!wy \n
 !! </code>
@@ -807,7 +807,7 @@ subroutine algae_huelle(i)
    implicit none
    
    integer :: i,j,k,nk,i2,string_write_error
-   integer :: ieros_flag
+   integer :: ieros_flag, ifixi
    logical :: error
    
    !if(i==1)print*,'algae_huelle läuft an'
@@ -1170,7 +1170,7 @@ subroutine algae_huelle(i)
    !ToptK, ToptG, ToptB ; ! Optimal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
    !TmaxK, TmaxG, TmaxB ; ! Letal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
    !TkTemp_Ki  ! empirische Konstante KT(µ) für Temperaturabhängigkeit (Exponent), direkt aus QSimDatenfelder | APARAM.txt
-   ifix = 1 ! neu in runge-kutta ???
+   ifixi = 1 ! neu in runge-kutta ???
    sedAlg_MQ(1,1) = benthic_distribution_p(52+(i-1)*number_benth_distr) ! ?? wird aus sedflux kommen
    sedAlg_MQ(1,2) = sedAlg_MQ(1,1)
    if (kontroll) print*,'vor algaeski: sedAlg_MQ = ', sedAlg_MQ(1,1)
@@ -1242,7 +1242,7 @@ subroutine algae_huelle(i)
                  ,hCChlkz,hCChlbz,hCChlgz                                       &
                  ,Dz2D,ToptK                                                    &
                  ,kTemp_Ki                                                      &
-                 ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz    &
+                 ,ifixi,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz    &
                  ,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB                             &
                  ,mstr,it_h,itags,monats,isim_end                               &
                  ,extkS                                                         &
@@ -1258,7 +1258,7 @@ subroutine algae_huelle(i)
                  ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                             &
                  ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                    &
                  ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz             &
-                 ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ          &
+                 ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifixi,sedAlg_MQ          &
                  ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                      &
                  ,kontroll ,iglob )
    
@@ -1271,7 +1271,7 @@ subroutine algae_huelle(i)
                  ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GROT,Q_PG,Q_NG   &
                  ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG            &
                  ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                &
-                 ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0,hQ_NGz&
+                 ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifixi,sedAlg_MQ,sedAlg0,hQ_NGz&
                  ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                               &
                  ,kontroll,iglob)
    
@@ -1697,7 +1697,7 @@ end subroutine algae_aufteilung
 !!<tr><td> ToptK   </td><td> \ref globaleParameter 9/3 </td><td> optimal Temperatur für Kieselalgenwachstum | APARAM.txt </td><td> </td></tr>
 !!<tr><td> TmaxK   </td><td> \ref globaleParameter 9/4 </td><td> Letal-Temperatur für Kieselalgenwachstum | APARAM.txt </td><td> </td></tr>
 !!<tr><td> </td><td> </td><td>  </td><td> </td></tr>
-!!<tr><td> ifix      </td><td> ?? </td><td> nicht in Gebrauch </td><td> </td></tr>
+!!<tr><td> ifixi      </td><td> ?? </td><td> nicht in Gebrauch </td><td> </td></tr>
 !!<tr><td> </td><td> </td><td>  </td><td> </td></tr>
 !!<tr><td> mstr      </td><td> 1  </td><td> Strangzähler | nur ein Profil in einem Strang </td><td> </td></tr>
 !!<tr><td> itags   </td><td> tag     </td><td> Tag im Monat module::modell zeitsekunde()    </td><td> </td></tr>

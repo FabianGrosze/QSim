@@ -279,7 +279,7 @@ subroutine stofftransport_untrim()
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
       print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu > 1), volume fraction (cu > 1), deltat = ', &
-                                                                                                          cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+            cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! skip SSalg and SS if SS read from file

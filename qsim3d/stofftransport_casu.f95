@@ -125,8 +125,9 @@ subroutine stofftransport_casu()
                   print*,'tief,l = 1,3',(rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul),l = 1,3)
                   if (ieck(4) > 0)print*,'tief(ieck(4) = ',rb_hydraul(2+(ieck(4)-1)*number_rb_hydraul) ! nur bei vierecken 4.Knoten
                   print*,'(planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3) = ',  &
-                                                                                     (planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3)
-                  if (ieck(4) > 0)print*,'planktonic_variable(n+(ieck(4) = ',planktonic_variable(n+(ieck(4)-1)*number_plankt_vari) ! nur bei vierecken 4.Knoten
+                        (planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3)
+                  if (ieck(4) > 0)print*,'planktonic_variable(n+(ieck(4) = '  &
+                                        ,planktonic_variable(n+(ieck(4)-1)*number_plankt_vari) ! nur bei vierecken 4.Knoten
                   print*,'planktonic_variable_name',n, planktonic_variable_name(n)
                   write(fehler,*)'stofftransport: isNaN(zwischen planktonic_variable_name',planktonic_variable_name(n)
                   call qerror(fehler)
@@ -474,14 +475,14 @@ subroutine transinfo_sichten()
                                                            ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
                time_offset = zeitpunkt !! Offset vom Referenzjahr zum transinfo/meta Zeitursprung
                write(time_offset_string,'(I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr")')  &
-                                                                                                  tag,monat,jahr,stunde,minute,sekunde
+                    tag,monat,jahr,stunde,minute,sekunde
             end if ! io_error.ne.0
          end if ! not vorhanden
       end if ! not #
    end do ! Zeile in /transinfo/meta'
    if ( .not. offsetvorhanden) then
       write(fehler,*)'Fehler in der Datei ', trim(dateiname), ' beim Lesen der Verschiebung', &
-                                                            ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
+            ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
       call qerror(fehler)
    end if ! offset nicht vorhanden
    ! write(*,'(A,2x,F15.2,2x,I9)')'time-offset=',real(time_offset),time_offset
@@ -517,11 +518,11 @@ subroutine transinfo_sichten()
    zeitpunkt = transinfo_zeit(transinfo_zuord(1))
    call zeitsekunde()
    write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                                                                                                trim(transinfo_datei(transinfo_zuord(1)))
+        trim(transinfo_datei(transinfo_zuord(1)))
    zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    call zeitsekunde()
    write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                                                                                                trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
+        trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
    !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
    print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
    return

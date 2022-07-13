@@ -1221,7 +1221,7 @@ subroutine ereigg_Randbedingungen_lesen()
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben. -SCHISM'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j)  &
-                                                                                                 , ' Randbedingungen angegeben. -SCHISM'
+                     , ' Randbedingungen angegeben. -SCHISM'
                call qerror(fehler)
             end if
          end do ! alle j Randnummern
@@ -1490,9 +1490,9 @@ subroutine randlinie_zusammenstellen()
          end if ! Normalfall
          if (nexi >= 3) then ! unerwünschter Sonderfall
             ! anzel=anzel+2 ! unerwünschter Sonderfall
-            write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
-                                                  "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
-                                                  ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
+            write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j                            &
+                           ,"hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
+                           ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
             print*,trim(fehler)
             !call qerror(fehler)
          end if ! unerwünscht
