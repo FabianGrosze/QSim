@@ -780,11 +780,12 @@ contains
          kontrollknoten = -1
          print*,'no control node, no extra output ', kontrollknoten
       end if ! kontrollknoten
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2> /dev/null'
       if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
+      call system(trim(systemaufruf),sysa)
       !print*,'sysa',sysa
       if (sysa /= 0) then
+         print*,trim(systemaufruf)
          call qerror('Das Verzeichnis, welches das Modell enthalten sollte, existiert nicht.')
          !print*,'Umgebungsvariabel $TQM (Pfad des Modellordners)  >',trim(pfad)
          !print*,'export $TQM=... | in .bashrc ???'
