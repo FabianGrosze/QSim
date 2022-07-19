@@ -34,13 +34,14 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
    real                  :: WLages, hwss
    integer               :: iphys
    
-   real                  :: FN,G,UST,Slope,Breite,zw10,fkWind,zWmess,wge10,&
-                            SC,Wind_Kl,bbeiw
+   real                  :: FN,G,UST,Slope,Breite,zw10,fkWind,zWmess,wge10,  &
+                            SC,Wind_Kl,bbeiw,tau
    
    
    FN = 1./raus
    G = 9.81
-   UST = ((FN*G**0.5)/tiefes**0.166667)*abs(vmitts)
+   !UST = ((FN*G**0.5)/tiefes**0.166667)*abs(vmitts)
+   call bottom_friction_strickler(tau,UST,raus,tiefes,vmitts)
    Slope = (vmitts/(raus*rhyds**0.6667))**2
    Breite = flaes/tiefes
    zw10 = 10.

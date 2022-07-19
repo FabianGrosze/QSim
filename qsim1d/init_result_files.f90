@@ -117,7 +117,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       
       write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
                        glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
-                       SSeros; sedalk; sedalg; sedalb; sedss'
+                       SSeros; sedalk; sedalg; sedalb; sedss ; tau'
       
       ! --- Ausagbe 158 Algae ---
       print*, '> ausgabe158_algae.csv'

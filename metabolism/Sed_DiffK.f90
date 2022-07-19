@@ -34,7 +34,7 @@ subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,po
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
    integer                         :: azStrs
-   real                            :: Kappa, K, kVis, nueSternmx, nueStern, nue, nue0, nueStern_2
+   real                            :: Kappa, K, kVis, nueSternmx, nueStern, nue, nue0, nueStern_2, tau
    real, dimension(azStrs,1000)    :: hdKorn
    real, dimension(1000)           :: Tiefe, vmitt,rau
    
@@ -57,7 +57,9 @@ subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,po
       DiffK1 = (kvis/SCO)*86400.
       DiffK2 = (kvis/SCO)*86400.
    else
-      ust = ((raun*sqrt(g))/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      !ust = ((raun*sqrt(g))/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      call bottom_friction_strickler(tau,ust,rau(ior),tiefe(ior),vmitt(ior))
+
       W = Ust
       U = Ust
       K = 5.6e-3*poros**3*dKorn**2*g/((1.-Poros)**2*kVis)

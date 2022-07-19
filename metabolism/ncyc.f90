@@ -48,7 +48,7 @@ subroutine ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,
    integer, dimension(100)         :: iorLa, iorLe
    integer, dimension(1000)        :: flag, jiein, ischif, nkzs
    real                            :: nzoo, NDR, KD_N2, KNH3_X1, KHNO2_X1, KNH3_X2, KHNO2_X2, KMO_NO3, KM_NO3
-   real                            :: nwgr, nwki, nhno, nreski, nresgr, nbiogr, nresbl, nl0t  , suma
+   real                            :: nwgr, nwki, nhno, nreski, nresgr, nbiogr, nresbl, nl0t  , suma, tau
    real, dimension(50)             :: vnh4zt, vno2zt, vno3zt, nwgrz, nwkiz, nwblz, vxzt, susNz
    real, dimension(50)             :: nresgz, nreskz, nresbz, hcvNH4z, hcvNO2z, hcvNO3z, hcgesNz, dNO3Denz, susN2z, vx2zt
    real, dimension(50)             :: hcvnh41z, hcvno21z, hcvno31z, alpha_upN4k, alpha_upN4g, alpha_upN4b, hgesNzt
@@ -487,7 +487,8 @@ subroutine ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,
       if (kontroll) print*,"2. Stufe NO2N - > NO3N: vxT = vxzt(1)",vxT,vxzt(1)
       !**** SEDIMENTATION DER NITRIFIKANTEN***************
       g = sqrt(9.81)
-      ust = (((1./rau(ior))*g)/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      !ust = (((1./rau(ior))*g)/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      call bottom_friction_strickler(tau,ust,rau(ior),tiefe(ior),vmitt(ior))
       CSEDN = VX0(ior)*0.69
       CSEDN2 = vx02(ior)*0.69
       ised = 4

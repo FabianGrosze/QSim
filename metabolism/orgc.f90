@@ -40,7 +40,7 @@ subroutine orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsb
    
    logical, intent(in)                  :: kontroll !< debugging
    integer, intent(in)                  :: jjj      !< debugging
-   real                                 :: sumC
+   real                                 :: sumC, tau
    integer                              :: anze, azStrs
    integer, dimension(azStrs)           :: ieinLs
    integer, dimension(100)              :: iorLa, iorLe
@@ -383,8 +383,10 @@ subroutine orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsb
       
       g = sqrt(9.81)
       ust = 0.0
-      if ( (rau(ior) > 0.0) .and. (tiefe(ior) > 0.0) )   &
-          ust = (((1/rau(ior))*g)/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      if ( (rau(ior) > 0.0) .and. (tiefe(ior) > 0.0) ) then
+          !ust = (((1/rau(ior))*g)/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+         call bottom_friction_strickler(tau,ust,rau(ior),tiefe(ior),vmitt(ior))
+      endif
       
       ASEDC = 1.44E-6
       BSEDC = 3.13

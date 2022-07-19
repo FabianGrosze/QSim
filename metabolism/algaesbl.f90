@@ -46,7 +46,7 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    character (len = 2)                       :: ckenn_Vers1
    integer                                   :: anze, azStrs
    integer, dimension(1000)                  :: ischif, jiein, flag, nkzs
-   real                                      :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp
+   real                                      :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp, tau
    real, dimension(1000)                     :: tempw, chla, vno3, elen, vnh4, gelp, ir, vco2, svhemb, dalgbl
    real, dimension(1000)                     :: dalgab, vabfl, vmitt, rau, tiefe, sedalb, algzob, dblmor, fkm
    real, dimension(1000)                     :: tpbl, zooind, abbcm, abl, chlabl, fibaus, abmuea, fhebas, abreau
@@ -186,8 +186,9 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
       ! Berechnung der Schubspannungsgeschwindigkeit
       FN = 1./RAU(ior)
       G = 9.81
-      UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
-      
+      !UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+      call bottom_friction_strickler(tau,UST,RAU(ior),TIEFE(ior),VMITT(ior))
+   
       ! Berechnung des mittleren vertikalen Dispersionskoeffizient
       ! nach Fischer im ein-dimensionalen Fall (gute Näherung)
       a = 0.4*ust

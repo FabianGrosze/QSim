@@ -54,7 +54,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    integer                                  :: anze, azStrs
    integer, dimension(1000)                 :: flag, jiein, ischif, nkzs
    real                                     :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
-   real                                     :: Icmit, kTresp
+   real                                     :: Icmit, kTresp, tau
    real, dimension(40)                      :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
    real, dimension(50)                      :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
    real, dimension(50)                      :: Y, YY, hc_temp, Q_PGz, dmorChlgz, agresz, dzMasse, Masse_neu, dzMasse0
@@ -243,7 +243,8 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          !
          FN = 1./RAU(ior)
          G = 9.81
-         UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+         !UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+         call bottom_friction_strickler(tau,UST,RAU(ior),TIEFE(ior),VMITT(ior))
          
          !     Berechnung des mittleren vertikalen Dispersionskoeffizient
          !     nach Fischer im ein-dimensionalen Fall (gute Näherung)

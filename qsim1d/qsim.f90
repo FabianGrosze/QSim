@@ -172,6 +172,7 @@ program qsim
    real, dimension(ialloc5,ialloc2)        :: abNH4z, agNH4z, akNO3z, abNO3z, agNO3z,CChlakzy,CChlabzy,CChlagzy
    real, dimension(ialloc5,ialloc2)        :: up_NKz, up_PKz, up_Siz, up_N2z, up_NGz, up_PGz, up_NBz, up_PBz
    real, dimension(:,:), allocatable       :: tausc, M_eros, n_eros, sedroh, aEros, eEros, dsedH, zwdsedH ,btausc
+   real, dimension(:,:), allocatable       :: htau
    real, dimension(:), allocatable         :: t1e,m1e,n1e,r1e
    real, dimension(:), allocatable         :: STRdt, FZeit, ho2_z, hte_z, hph_z, wsp_UW, WSP_OW, wehrh, wehrb
    real, dimension(:), allocatable         :: QStrang_1, startkm, endkm
@@ -444,6 +445,7 @@ program qsim
    allocate(nstrs(azStrs*2), nnstrs(azStrs))
    allocate(STRdt(azStrs), FZeit(azStrs), yWlage(azStrs,ialloc3), Wlage(azStrs,ialloc2), ymax(azStrs,ialloc4))
    allocate(tausc(azStrs,ialloc2), M_eros(azStrs,ialloc2), n_eros(azStrs,ialloc2), sedroh(azStrs,ialloc2) ,btausc(azStrs,ialloc2) )
+   allocate(htau(azStrs,ialloc2))
    allocate(dsedH(azStrs,ialloc2), zwdsedH(azStrs,ialloc2) )
    allocate(t1e(ialloc2), m1e(ialloc2), n1e(ialloc2), r1e(ialloc2) )
    allocate(Ymin(azStrs,ialloc4), vmq(azStrs,ialloc2), Hmq(azStrs,ialloc2), boeamq(azStrs,ialloc2))
@@ -1780,7 +1782,7 @@ program qsim
    ! =========================================================================
    ! initialize result files
    ! =========================================================================
-   call init_result_files(cpfad, modell, cEreig, write_csv_output)
+   call init_result_files(cpfad, modell, cEreig, write_csv_output) ! auch 157
    
    ! ==========================================================================
    ! ABLAUF.txt vorbereiten
@@ -7503,8 +7505,8 @@ program qsim
       if (ieros == 0)goto 1519
       
       call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
-                   ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &
-                   ,kontroll,0)
+                   ,tflie,tiefe,rau,vmitt,htau,anze,mstr,ilang,iwied     &
+                   ,kontroll,ior)
       
       if (nbuhn(mstr) == 0)goto 1519
       if (ilbuhn == 0) then
@@ -9552,12 +9554,13 @@ program qsim
             write(156,'(a)')adjustl(trim(langezeile))
             
             
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
+            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                 &
                                ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
                                ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
                                ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior),';'                                      &
-                               ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
+                               ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';'           &
+                               ,hsedss(mstr,iior),';',htau(mstr,iior)
             write(157,'(a)')adjustl(trim(langezeile))
             write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
                                ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &

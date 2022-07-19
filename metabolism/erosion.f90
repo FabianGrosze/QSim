@@ -34,12 +34,13 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
    use allodim
    implicit none
    
-   logical                                 :: kontroll,kontroll_kern
+   logical                                 :: kontroll
    integer                                 :: anze, jjj, iwied, mstr, ilang, ior
    real                                    :: tflie
    real, dimension(ialloc2)                :: tiefe, ss, ssalg, SSeros
    real, dimension(ialloc2)                :: vmitt, rau
    real, dimension(azStrs,ialloc2)         :: tausc
+   real, dimension(azStrs,ialloc2)         :: htau
    real, dimension(azStrs,ialloc2)         :: M_eros
    real, dimension(azStrs,ialloc2)         :: n_eros
    real, dimension(azStrs,ialloc2)         :: sedroh !< Rohdichte des Sediments [Kg*m-3]
@@ -63,20 +64,11 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
    do ior = 1,anze+1
       !if(ilang==0)exit
       
-      kontroll_kern = .false.
-      if (kontroll .and. ior == jjj) then
-         kontroll_kern = .true.
-         !print*,"vor erosion_kern ss(",jjj,"),ssalg=",ss(jjj),ssalg(jjj)
-      endif
-      
-      call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior)  &
+      call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior)  &
                         ,SSeros(ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
-                        ,kontroll_kern,jjj)
+                        ,kontroll,ior,mstr)
       
-      if (kontroll_kern) then
-         !print*,"nach erosion_kern ss(",jjj,"),ssalg=",ss(jjj),ssalg(jjj)
-      endif
    enddo
    
    if(kontroll) then 

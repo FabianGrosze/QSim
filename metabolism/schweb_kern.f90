@@ -40,7 +40,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    real                 :: sss      !< organische und anorganischer Schwebstoffe (ohen Algen und Zooplankton)
    real                 :: ssalgs   !< Gesamtschwebstoffe
    integer              :: ischifs,ieros,ised,jsed
-   real                 :: akis,agrs,abls
+   real                 :: akis,agrs,abls, tau
    real                 :: zooinds, dorgSSs, dkimors,dgrmors,dblmor, dblmors, drfaebs
    real                 :: ssdrs,drfaeks,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs
    real                 :: tflie,TIEFEs,RAUs,VMITTs,tauscs
@@ -54,7 +54,9 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    if (kontroll) print*,'schweb_kern TIEFE,RAU,VMITT,tausc = ',TIEFEs,RAUs,VMITTs,tauscs
    fssgrv = fssgrs
    g = sqrt(9.81)
-   ust = (((1./raus)*g)/(tiefes**0.16667))*abs(vmitts)
+   !ust = (((1./raus)*g)/(tiefes**0.16667))*abs(vmitts)
+   call bottom_friction_strickler(tau,ust,raus,tiefes,vmitts)
+
    ustkri = sqrt(tauscs/1000.)
    vkrit = (ustkri*tiefes**0.166667)/((1./raus)*g)
    

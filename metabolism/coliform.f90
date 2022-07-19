@@ -40,7 +40,7 @@ subroutine COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,G
    integer, dimension(100)       :: iorLa, iorLe
    integer, dimension(1000)      :: flag, jiein
    integer, dimension(azStrs)    :: ieinLs
-   real                          :: IUV0, IUVH, mRepair, nueI
+   real                          :: IUV0, IUVH, mRepair, nueI, tau
    real, dimension(13)           :: eta, aw, achl, as, ah
    real, dimension(100)          :: qeinl, ecoli, coliL, qeinlL
    real, dimension(1000)         :: tiefe, elen, flae, vabfl, ss, zooind, chla, tempw, coli, extk, schwi, DOSCF
@@ -133,7 +133,9 @@ subroutine COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,G
          ! Berechnung der Schubspannungsgeschwindigkeit
          FN = 1./RAU(ior)
          G = 9.81
-         UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+         !UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+         call bottom_friction_strickler(tau,UST,RAU(ior),TIEFE(ior),VMITT(ior))
+
          
          ! Berechnung des mittleren vertikalen Dispersionskoeffizient
          ! nach Fischer im ein-dimensionalen Fall (gute Näherung)

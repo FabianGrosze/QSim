@@ -35,7 +35,7 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
 
    integer                         :: azStr, azStrs
    integer, dimension(azStrs)      :: mStas, mSs, abfr, mStra, nbuhn
-   real                            :: oc, wst
+   real                            :: oc, wst, tau
    real, dimension(azStrs,20)      :: aschif, eschif
    real, dimension(azStrs,1000)    :: dKorn, SedOM, raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
    logical, intent(in)             :: kontroll  !< debugging
@@ -120,8 +120,9 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
             if (vmitt1 == 0.0)vmitt1 = 0.00001
             if (tiefe1 == 0.0)tiefe1 = 0.00001
             vmitt1 = abs(vmitt1)
-            ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
-            
+            !ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
+            call bottom_friction_strickler(tau,ust,raua(mstr,mSta),tiefe1,vmitt1)
+
             ! ischif = 0 -> kein Schiffsverkehr
             !        = 1 -> Schiffsverkehr
             ! v6 - Schiffsgeschwindigkeit
@@ -142,7 +143,9 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
                fsch = 1.
                if (ischif == 1) then
                   vmitt1 = vmitt1*2.5
-                  ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
+                  !ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
+                  call bottom_friction_strickler(tau,ust,raua(mstr,mSta),tiefe1,vmitt1)
+
                else
                endif
             endif
