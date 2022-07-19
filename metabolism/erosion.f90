@@ -28,8 +28,8 @@
 !> Bestimmung der Erosionsrate
 !! @author Volker Kirchesch Jens Wyrwa
 !! @date 01.11.2021
-subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
-                   tflie, tiefe, rau, vmitt, anze, mstr, ilang, iwied,        &
+subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,         &
+                   tflie, tiefe, rau, vmitt, htau, anze, mstr, ilang, iwied,        &
                    kontroll, jjj)
    use allodim
    implicit none
