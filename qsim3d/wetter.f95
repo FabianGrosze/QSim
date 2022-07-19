@@ -382,7 +382,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          !write(87,'(I8,2x,I5)')Wetterstationskennung_T(iwett_T),mWetts_T(iwett_T)  ! 87 delta
          !qsim.f90_13.10 read(86,'(I8,2x,I5)',end=161)IWSta(iwett),mWetts(iwett)
          if (IMET_T /= 1) then
-            !           Tagesmittelwerte
+            ! Tagesmittelwerte
             hcTmx2_T = -999.
             do 123 mWett_T = 1,mWetts_T(iwett_T) !! Wetterdaten an der jeweiligen Station für den jeweiligen Tag lesen ...
                !read(86,2013,iostat=io_error )itagw(iwett,mwett),monatw(iwett,mwett) &
@@ -415,19 +415,19 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
                   ,f7.2,2x,  f6.2,2x,f6.2,2x,  f6.2,2x,f6.2,2x,f4.1,2x,f4.1)
                endif
                if (wertw_T(iwett_T,3,mwett_T) > hcTmx2_T)hcTmx2_T = wertw_T(iwett_T,3,mwett_T)
-               !               if(wertw(iwett,3,mwett).gt.hcTmx2)hcTmx2 = wertw(iwett,3,mwett)
+               ! if(wertw(iwett,3,mwett).gt.hcTmx2)hcTmx2 = wertw(iwett,3,mwett)
                uhrzw_T(iwett_T,mwett_T) = 12.0
-            123       continue
-            !           Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
+            123 continue
+            ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
             if (hcTmx2_T == (-1.)) then
                ifehl_T = 4
                ifhStr_T = IWETT_T
-               !              goto 989 -->Fehlermeldung
+               ! goto 989 -->Fehlermeldung
                write(fehler,*)'Fehler wetter_qsim hcTmx2 == (-1.)'
                call qerror(fehler)
             endif
          else
-            !           Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) )
+            ! Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) )
             do 124 mWett_T = 1,mWetts_T(iwett_T) !! Wetterdaten an der jeweiligen Station für die jeweilige Stunde lesen ...
                !read(86,2023,iostat=io_error )itagw(iwett,mwett),monatw(iwett,mwett) &
                read(86,*,iostat = io_error )itagw_T(iwett_T,mwett_T),monatw_T(iwett_T,mwett_T) &
@@ -437,7 +437,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
                   write(fehler,*)'Lesefehler wetter()itagw(iwett,mwett)....Stundenwerte'
                   call qerror(fehler)
                endif
-            124       continue
+            124 continue
          endif ! (IMET.ne.1)
          do mWett_T = 1,mWetts_T(iwett_T) !! Zeitpunkte in Sekunden ermitteln:
             if (IMET_T /= 1) then
@@ -452,14 +452,14 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
             jahr = jahrw_T(iwett_T,mwett_T)
             call sekundenzeit(2)
             zeitpunktw(iwett_T,mwett_T) = zeitpunkt
-            !            call zeitsekunde(tag, monat, jahr, uhrzeit_stunde, zeitpunktw(iwett_T,mwett_T),tagdesjahres)
-            !            print*, 'hin:',itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T), jahrw_T(iwett_T,mwett_T) &
-            !     &            , 'sec:', zeitpunktw(iwett_T,mwett_T)
-            !     &            , 'zurück:',tagdesjahres,tag, monat, jahr
+            ! call zeitsekunde(tag, monat, jahr, uhrzeit_stunde, zeitpunktw(iwett_T,mwett_T),tagdesjahres)
+            ! print*, 'hin:',itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T), jahrw_T(iwett_T,mwett_T) &
+            ! &            , 'sec:', zeitpunktw(iwett_T,mwett_T)
+            ! &            , 'zurück:',tagdesjahres,tag, monat, jahr
             call zeitsekunde() !! damit auch die Uhrzeit stimmt
-            !            print *,"wetter_readallo0: zeitpunktw",jahr, monat, tag, stunde, minute, sekunde, zeitpunktw(iwett_T,mwett_T) &
-            !                     , wertw_T(iwett_T,2,mwett_T), wertw_T(iwett_T,3,mwett_T)
-            !   229      FORMAT ("wetter_readallo0: ",I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2,"    ",F7.2)
+            ! print *,"wetter_readallo0: zeitpunktw",jahr, monat, tag, stunde, minute, sekunde, zeitpunktw(iwett_T,mwett_T) &
+            !        , wertw_T(iwett_T,2,mwett_T), wertw_T(iwett_T,3,mwett_T)
+            ! 229 FORMAT ("wetter_readallo0: ",I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2,"    ",F7.2)
          end do !mWett_T
          do mWett_T = 2,mWetts_T(iwett_T) !! Zeitfolge prüfen:
             if (zeitpunktw(iwett_T,mwett_T) <= zeitpunktw(iwett_T,mwett_T-1)) then
@@ -532,13 +532,13 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          end do ! alle wetterstationen
          if ( .not. existing_station) then
             write(fehler,*)'Die von Zone ',i ,' mit der Zonen-Kennnummer = ',zone(i)%zonen_nummer,  &
-                                                                           ' benötigte Wetterstation mit der Kennung '&
-                                                                           ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
+                 ' benötigte Wetterstation mit der Kennung '&
+                 ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
             call qerror(fehler)
          else ! existing_station
-            print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "  &
-                                                               , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
-                                                               , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
+            print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "      &
+                  , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
+                  , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
          end if ! nicht vorhanden
       end do ! alle Zonen
       !

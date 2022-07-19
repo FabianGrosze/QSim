@@ -192,14 +192,15 @@ subroutine fortschritt(n,f)
             else
                print*,'keine Beenden-Email verschickt'
             endif
-            write(systemaufruf,'(3A)',iostat = errcode) 'stat ',trim(adjustl(codesource)),'/*source*.taz > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode) &
+                  'stat ',trim(adjustl(codesource)),'/*source*.taz > /dev/null 2 > /dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf stat codesource')
             call system(trim(systemaufruf),system_error)
             if (system_error /= 0) then
                print*,'keine source-code Sicherung (*source*.taz) verfügbar in ',trim(adjustl(codesource))
             else
                write(systemaufruf,'(5A)',iostat = errcode)'cp ',trim(adjustl(codesource)),'/*source*.taz '  &
-                                                  ,adjustl(trim(modellverzeichnis)),' > /dev/null 2 > /dev/null'
+                    ,adjustl(trim(modellverzeichnis)),' > /dev/null 2 > /dev/null'
                if (errcode /= 0)call qerror('fortschritt systemaufruf cp  codesource')
                call system(trim(systemaufruf),system_error)
                if (system_error == 0) then
@@ -261,8 +262,9 @@ subroutine fortschritt(n,f)
       print 223, zeitpunkt, izeit,  &
       tag,monat,jahr,stunde,minute,sekunde, startzeitpunkt, endzeitpunkt !, meinrang, tagdesjahres
    endif
-   223 format (" ==  ==  ==  ==  ==  == = zeitpunkt:",I10,"s, Zeitschritt: ",I7,'  ',I2.2,'.',I2.2,'.',I4,'  ',I2.2,':',I2.2,':',I2.2, &
-                   " von ",I10," bis ",I10," ==  ==  ==  ==  ==  == =")
+   223 format (" ============= zeitpunkt:",I10,"s, Zeitschritt: ",        &
+               &I7,'  ',I2.2,'.',I2.2,'.',I4,'  ',I2.2,':',I2.2,':',I2.2,  &
+               &" von ",I10," bis ",I10," =============")
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine fortschritt

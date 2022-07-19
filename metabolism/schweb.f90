@@ -48,6 +48,7 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
    integer                          :: iein,mstr,itags,monats,ieinL,ior,j,ior_flag,ilbuhn,m,ihcq,iwied,ji,ieros
    real                             :: tflie,uhrz
    real                             :: hcss,hcsse,HCFSSG,HCQ,HCQE, akie, agre, able, hcfssgE, FSSGRS
+   real                             :: Caki, Cabl, Cagr
    integer, dimension(ialloc1)      :: iorLa, iorLe
    integer, dimension(ialloc2)      :: flag, jiein, ischif
    real, dimension(ialloc1)         :: ess, echla, ezind, qeinl, ssL, qeinlL
@@ -56,14 +57,13 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
    real, dimension(ialloc2)         :: ssdr, drfaek, drfaeg, drfaes, fssgr, sedss, vkigr, antbl, akbcm, agbcm, abbcm
    real, dimension(azStrs,ialloc2)  :: sedSS_MQ
    real, dimension(azStrs,ialloc2)  :: tausc
-   integer, dimension(azStrs) :: ieinLs
+   integer, dimension(azStrs)       :: ieinLs
    
    iein = 1
    
-   ! is now defined in module aparam
-   ! Cagr = 0.48
-   ! Caki = 0.48
-   ! Cabl = 0.48
+   Cagr = 0.48
+   Caki = 0.48
+   Cabl = 0.48
    
    !....Berücksichtigung der Linienquelle
    
