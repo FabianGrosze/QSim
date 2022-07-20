@@ -49,7 +49,7 @@ subroutine sedimentbelastung(SSalgs,                     &
    implicit none
    
    integer                  :: anzZeits
-   real                     :: SSalgs,SSeross
+   real                     :: SSalgs,SSeross, schweba
    real                     :: hgsZns,hglZns,ZnSeds
    real                     :: hgsCads,hglCads,CadSeds
    real                     :: hgsCus,hglCus,CuSeds
@@ -64,35 +64,37 @@ subroutine sedimentbelastung(SSalgs,                     &
    logical, intent(in)      :: kontroll  !< debugging
    integer, intent(in)      :: jjj       !< debugging
    
+   schweba=SSalgs*1000.0 ! Schwebstoffgehalt in mueg/l
+   
    ! counting timesteps without erosion
    if (SSeross <= 0.0)anzZeits = anzZeits+1
    if (anzZeits <= 0) then ! no deposition yet, sediment equals suspension
       !print*,'Sedimentbelastung timecounter anzZeits .le. zero'
-      ZnSeds = 1000 * (hgsZns-hglZns)/SSalgs
-      CadSeds = 1000*(hgsCads-hglCads)/SSalgs
-      CuSeds = 1000 * (hgsCus-hglCus)/SSalgs
-      NiSeds = 1000 * (hgsNis-hglNis)/SSalgs
-      AsSeds = 1000 * (hgsAss-hglAss)/SSalgs
-      PbSeds = 1000 * (hgsPbs-hglPbs)/SSalgs
-      CrSeds = 1000 * (hgsCrs-hglCrs)/SSalgs
-      FeSeds = 1000 * (hgsFes-hglFes)/SSalgs
-      HgSeds = 1000 * (hgsHgs-hglHgs)/SSalgs
-      MnSeds = 1000 * (hgsMns-hglMns)/SSalgs
-      USeds = 1000 * (hgsUs-hglUs)  /SSalgs
+      ZnSeds = (hgsZns-hglZns)/schweba
+      CadSeds =(hgsCads-hglCads)/schweba
+      CuSeds = (hgsCus-hglCus)/schweba
+      NiSeds = (hgsNis-hglNis)/schweba
+      AsSeds = (hgsAss-hglAss)/schweba
+      PbSeds = (hgsPbs-hglPbs)/schweba
+      CrSeds = (hgsCrs-hglCrs)/schweba
+      FeSeds = (hgsFes-hglFes)/schweba
+      HgSeds = (hgsHgs-hglHgs)/schweba
+      MnSeds = (hgsMns-hglMns)/schweba
+      USeds = (hgsUs-hglUs)  /schweba
       !stop
    else
       ! compute sedimentcontent from median of water content in erosionfree timesteps
-      ZnSeds = ( ZnSeds*(anzZeits-1)+(1000 * (hgsZns-hglZns)/SSalgs) )/real(anzZeits)
-      CadSeds = (CadSeds*(anzZeits-1)+(1000*(hgsCads-hglCads)/SSalgs) )/real(anzZeits)
-      CuSeds = ( CuSeds*(anzZeits-1)+(1000 * (hgsCus-hglCus)/SSalgs) )/real(anzZeits)
-      NiSeds = ( NiSeds*(anzZeits-1)+(1000 * (hgsNis-hglNis)/SSalgs) )/real(anzZeits)
-      AsSeds = ( AsSeds*(anzZeits-1)+(1000 * (hgsAss-hglAss)/SSalgs) )/real(anzZeits)
-      PbSeds = ( PbSeds*(anzZeits-1)+(1000 * (hgsPbs-hglPbs)/SSalgs) )/real(anzZeits)
-      CrSeds = ( CrSeds*(anzZeits-1)+(1000 * (hgsCrs-hglCrs)/SSalgs) )/real(anzZeits)
-      FeSeds = ( FeSeds*(anzZeits-1)+(1000 * (hgsFes-hglFes)/SSalgs) )/real(anzZeits)
-      HgSeds = ( HgSeds*(anzZeits-1)+(1000 * (hgsHgs-hglHgs)/SSalgs) )/real(anzZeits)
-      MnSeds = ( MnSeds*(anzZeits-1)+(1000 * (hgsMns-hglMns)/SSalgs) )/real(anzZeits)
-      USeds = (  USeds*(anzZeits-1)+(1000 * (hgsUs-hglUs)  /SSalgs) )/real(anzZeits)
+      ZnSeds = ( ZnSeds*(anzZeits-1)+((hgsZns-hglZns)/schweba) )/real(anzZeits)
+      CadSeds = (CadSeds*(anzZeits-1)+((hgsCads-hglCads)/schweba) )/real(anzZeits)
+      CuSeds = ( CuSeds*(anzZeits-1)+((hgsCus-hglCus)/schweba) )/real(anzZeits)
+      NiSeds = ( NiSeds*(anzZeits-1)+((hgsNis-hglNis)/schweba) )/real(anzZeits)
+      AsSeds = ( AsSeds*(anzZeits-1)+((hgsAss-hglAss)/schweba) )/real(anzZeits)
+      PbSeds = ( PbSeds*(anzZeits-1)+((hgsPbs-hglPbs)/schweba) )/real(anzZeits)
+      CrSeds = ( CrSeds*(anzZeits-1)+((hgsCrs-hglCrs)/schweba) )/real(anzZeits)
+      FeSeds = ( FeSeds*(anzZeits-1)+((hgsFes-hglFes)/schweba) )/real(anzZeits)
+      HgSeds = ( HgSeds*(anzZeits-1)+((hgsHgs-hglHgs)/schweba) )/real(anzZeits)
+      MnSeds = ( MnSeds*(anzZeits-1)+((hgsMns-hglMns)/schweba) )/real(anzZeits)
+      USeds = (  USeds*(anzZeits-1)+((hgsUs-hglUs)  /schweba) )/real(anzZeits)
    endif
    return
 end subroutine sedimentbelastung

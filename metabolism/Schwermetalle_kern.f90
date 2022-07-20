@@ -34,7 +34,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    
    implicit none
    integer               :: anzZeits,iformVert
-   real                  :: hssalgs,SSalgs,hphs,vphs,SSeross
+   real                  :: hssalgs,SSalgs,hphs,vphs,SSeross,schwebero
    real                  :: sedsss,sedalks,sedalbs,sedalgs
    real                  :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis
    real                  :: glAss, gsAss, glPbs, gsPbs, glCrs, gsCrs, glFes, gsFes
@@ -184,18 +184,20 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    
    ! Erhöhung der Gesamt-Schwermetallkonz. durch Erosion
    if (SSeross > 0.0) then
-      gsZns = gsZns + SSeross*ZnSeds
-      gsCads = gsCads+ SSeross*CadSeds
-      gsCus = gsCus + SSeross*CuSeds
-      gsNis = gsNis + SSeross*NiSeds
-      gsAss = gsAss + SSeross*AsSeds
-      gsPbs = gsPbs + SSeross*PbSeds
-      !if(kontroll)print*,'schwermetalle_kern Erosion gsPbs,SSeross=',gsPbs,SSeross
-      gsCrs = gsCrs + SSeross*CrSeds
-      gsFes = gsFes + SSeross*FeSeds
-      gsHgs = gsHgs + SSeross*Hgseds
-      gsMns = gsMns + SSeross*MnSeds
-      gsUs = gsUs  + SSeross*USeds
+      schwebero=SSeross*1000.0 ! Konzentrationszuwachs durch Erosion in mueg/l
+
+      gsZns = gsZns + schwebero*ZnSeds
+      gsCads = gsCads+ schwebero*CadSeds
+      gsCus = gsCus + schwebero*CuSeds
+      gsNis = gsNis + schwebero*NiSeds
+      gsAss = gsAss + schwebero*AsSeds
+      gsPbs = gsPbs + schwebero*PbSeds
+      !if(kontroll)print*,'schwermetalle_kern Erosion gsPbs,schwebero=',gsPbs,schwebero
+      gsCrs = gsCrs + schwebero*CrSeds
+      gsFes = gsFes + schwebero*FeSeds
+      gsHgs = gsHgs + schwebero*Hgseds
+      gsMns = gsMns + schwebero*MnSeds
+      gsUs = gsUs  + schwebero*USeds
    endif
    
    ! Clipping negativer Konzentrationen:
