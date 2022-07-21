@@ -43,39 +43,50 @@ subroutine schweb_huelle(i)
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
    if (tiefes <= min_tief)tiefes = min_tief ! minimale Wassertiefe erhalten
    raus = strickler( zone(point_zone(iglob))%reib , tiefes )
-   ! ischif zone(point_zone(iglob))%schiff%schifffahrts_zone schifffahrt in dieser module::zonen ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
-   !  SUBROUTINE SCHWEB_kern(zooinds,dorgSSs,sss,ssalgs,tiefes,raus,tflie,VMITTs
-   !                ,dkimors,dgrmors,abszos,zexkis,zexgrs,abls,zexbls,dblmor,drfaebs,akis,agrs,ssdrs,drfaeks      &
-   !             ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs,tauscs,ischifs,ieros,kontroll ,jjj )
-   call SCHWEB_kern (                       &
-                     planktonic_variable_p(50+npla)          &
+   !subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs                     &
+   !                      ,tiefes,raus,tflie,VMITTs                       &
+   !                      ,dkimors,dgrmors,abszos,zexkis                  &
+   !                      ,zexgrs,abls,zexbls,dblmor                      &
+   !                      ,drfaebs,akis,agrs,ssdrs                        &
+   !                      ,drfaeks,drfaegs,drfaess,fssgrs                 &
+   !                      ,sedsss,sedSS_MQs,tauscs,ischifs                &
+   !                      ,ieros,kontroll,jjj)
+
+   call SCHWEB_kern ( planktonic_variable_p(50+npla)          &
                      ,transfer_quantity_p(19+ntra)            &
                      ,planktonic_variable_p(52+npla)          &
                      ,planktonic_variable_p(53+npla)          &
+                     &
                      ,tiefes                                  &
                      ,raus                                    &
                      ,tflie                                   &
                      ,rb_hydraul_p(1+(i-1)*number_rb_hydraul) &
+                     &
                      ,transfer_quantity_p(7+ntra)             &
                      ,transfer_quantity_p(8+ntra)             &
                      ,transfer_quantity_p(6+ntra)             &
                      ,transfer_quantity_p(16+ntra)            &
+                     &
                      ,transfer_quantity_p(17+ntra)            &
                      ,planktonic_variable_p(10+npla)          &
                      ,transfer_quantity_p(18+ntra)            &
                      ,transfer_quantity_p(9+ntra)             &
+                     &
                      ,transfer_quantity_p(15+ntra)            &
                      ,planktonic_variable_p(8+npla)           &
                      ,planktonic_variable_p(9+npla)           &
                      ,benthic_distribution_p(4+(i-1)*number_benth_distr) &
+                     &
                      ,transfer_quantity_p(13+ntra)            &
                      ,transfer_quantity_p(14+ntra)            &
                      ,transfer_quantity_p(95+ntra)            &
                      ,planktonic_variable_p(54+npla)          &
+                     &
                      ,transfer_quantity_p(5+ntra)             &
                      ,sedSS_MQ                                &
-                     ,tauscs                                  &
+                     ,zone(point_zone(iglob))%erosi%tau_krit  &
                      ,zone(point_zone(iglob))%schiff%schifffahrts_zone &
+                     &
                      ,ieros                                   &
                      ,kontroll                                &
                      ,iglob ) !!wy
