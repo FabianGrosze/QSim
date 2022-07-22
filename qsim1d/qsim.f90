@@ -25,6 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 program qsim
+
    use allodim
    use aparam
    use mod_model_settings
@@ -40,7 +41,7 @@ program qsim
    character (len = 255)                   :: filestring
    character (len = 275)                   :: pfadstring
    character (len = 6000)                  :: langezeile
-   logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
+   logical                                 :: kontroll, einmalig, linux,mitsedflux
    integer                                 :: iglob, open_error, jjj
    character (len = 120)                   :: cfehlr
    character(len=50),dimension(ialloc5,ialloc1) :: cEname
@@ -56,6 +57,11 @@ program qsim
    integer, dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, i2Ds, mWes, mVs, mZs, mAs, mEs
    integer, dimension(:), allocatable      :: itsts, msts, itmaxs, mmaxs, itends, mends, laits, laims, laids, mStas
    integer, dimension(:), allocatable      :: abfr, mwehr, mRBs, nstrs, nnstrs, iFlRi_l
+   
+   logical                                 :: write_csv_output
+   !integer, dimension(output_crossections) :: output_strang, output_querprofil
+   integer, dimension(700) :: output_strang, output_querprofil
+   integer                                 :: anz_csv_output
    
    integer, dimension(:,:), allocatable    :: it_h, it_hy, iorLah, iorLeh, typh, ischig, ikWSta, idWe, mstrLe, istund
    integer, dimension(:,:), allocatable    :: RBtyp, Weinl, NRSchr, hnkzs, nkzmx, znkzs, inkzs, ibschi
@@ -1782,7 +1788,7 @@ program qsim
    ! =========================================================================
    ! initialize result files
    ! =========================================================================
-   call init_result_files(cpfad, modell, cEreig, write_csv_output) ! auch 157
+   call init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output) ! auch 157
    
    ! ==========================================================================
    ! ABLAUF.txt vorbereiten
@@ -9545,27 +9551,31 @@ program qsim
                         ,gsUy(iior),glUy(iior),gsZny(iior),glZny(iior),gsAsy(iior),glAsy(iior)
          
          ! Write results to csv-files for debugging
-         if (write_csv_output) then 
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
-                               ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
-                               ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
-                               ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
-                               ,';',dsedH(mstr,iior),';',tracer(iior)
-            write(156,'(a)')adjustl(trim(langezeile))
+         if (write_csv_output) then
+            do iji=1,anz_csv_output 
+               if((output_strang(iji)==mstr).and.(output_querprofil(iji)==iior))then         
+                  write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
+                               ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),           &
+                               ';',gelpy(iior) ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',         &
+                               mwy(iior),';',cay(iior),';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',                &
+                               CHNFy(iior),';',coliy(iior),';',Dly(iior),';',dsedH(mstr,iior),';',tracer(iior)
+                  write(156,'(a)')adjustl(trim(langezeile))
             
-            
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                 &
+                  write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',iior,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'  &
                                ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
                                ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
                                ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior),';'                                      &
                                ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';'           &
                                ,hsedss(mstr,iior),';',htau(mstr,iior)
-            write(157,'(a)')adjustl(trim(langezeile))
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
+                  write(157,'(a)')adjustl(trim(langezeile))
+                  
+                  write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'          &
                                ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
                                ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
-            write(158,'(a)')adjustl(trim(langezeile))
+                  write(158,'(a)')adjustl(trim(langezeile))
+            end if ! output_km
+            end do !iji
          endif
          
          ! Umrechnung von Zeitschrittweite auf pro Stunde

@@ -74,11 +74,11 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
       ssalg_s = ssalg_s + SSeros_s
    endif
    
-   if ((kontroll).or.(ior==5)) then 
-      print*,ior,mstr,' erosion_kern SS,SSalg,SSeros,dsedH = ',ss_s,ssalg_s,SSeros_s,dsedh_s
-      print*, 'tau_s,ust,vmitt_s, tflie = ',tau_s,ust,vmitt_s, tflie
-      print*, 'rau_s,tausc_s,m_eros_s,n_eros_s = ',rau_s,tausc_s,m_eros_s,n_eros_s
-   endif
+!   if ((kontroll).or.(ior==5)) then 
+!      print*,ior,mstr,' erosion_kern SS,SSalg,SSeros,dsedH = ',ss_s,ssalg_s,SSeros_s,dsedh_s
+!      print*, 'tau_s,ust,vmitt_s, tflie = ',tau_s,ust,vmitt_s, tflie
+!      print*, 'rau_s,tausc_s,m_eros_s,n_eros_s = ',rau_s,tausc_s,m_eros_s,n_eros_s
+!   endif
    
 end subroutine erosion_kern
 

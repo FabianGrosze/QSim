@@ -35,20 +35,24 @@
 !! * ausgabe158_algae.csv (optional)
 !! @author Michael Schönung
 !! @date 20.06.2022
-subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
+subroutine init_result_files(cpfad, modell, cEreig, write_csv_files, output_strang, output_querprofil, anz_csv_output)
+
+   !use allodim
    implicit none
    
    ! --- dummy arguments ---
    character(len = 255), intent(in)   :: cpfad           !< path to directory for output
    character(len = *),   intent(in)   :: modell          !< modelname (Gerris)
    character(len = 255), intent(in)   :: cEreig          !< meta data (Gerris)
-   logical, intent(in)                :: write_csv_files !< switch to turn of .csv-outputs
-   
+   logical, intent(in)                     :: write_csv_files !< switch to turn of .csv-outputs
+   !integer, dimension(output_crossections) :: output_strang, output_querprofil
+   integer, dimension(700) :: output_strang, output_querprofil
+   integer                                 :: anz_csv_output
+
    ! --- local variables ---
    character(len = 275)    :: pfadstring
    character(len = 8)      :: versionstext
-   integer                 :: open_error
-  
+   integer                 :: open_error,io_error
    
    print *, ''
    print *, repeat('=', 78)
@@ -67,7 +71,6 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       print*,'unit = 45 open_error ERGEBM.txt ',cpfad,pfadstring
       stop 2
    end if
-   
    
    write(45,'(a,a)')'*V  QSim  ERGEBM  ', versionstext
    call ergebMFormat()
@@ -102,12 +105,41 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    write(255,'(a50)')modell
    write(255,'(a255)')cEreig
    
+   anz_csv_output=0
    if (write_csv_files) then 
+      pfadstring =  trim(adjustl(cpfad)) // 'ausgabe_querprofile.txt'
+      open(unit = 159, file = pfadstring, iostat = open_error)
+      if (open_error /= 0) then
+         print*,'keine ausgabe_querprofile'
+      else
+         io_error=0
+         do while(io_error==0)
+            read(159,*,iostat = io_error)output_strang(anz_csv_output+1),output_querprofil(anz_csv_output+1)
+            if (io_error == 0) then
+               anz_csv_output=anz_csv_output+1
+            endif
+            !if(anz_csv_output>=output_crossections)exit
+            if(anz_csv_output>=700)exit
+         end do
+      end if
+      print*, "output for ",anz_csv_output," cross-sections read from ausgabe_querprofile.txt"
+      close(159)
+
+      ! anz_csv_output=8
+      ! output_strang(1)=1; output_querprofil(1)=9  ! Elbe-Km  4
+      ! output_strang(2)=1; output_querprofil(2)=202  ! Elbe-Km 94,4 
+      ! output_strang(3)=1; output_querprofil(3)=364  ! Elbe-Km 172,5
+      ! output_strang(4)=1; output_querprofil(4)=450  ! Elbe-Km 214
+      ! output_strang(5)=1; output_querprofil(5)=663  ! Elbe-Km 318
+      ! output_strang(6)=2; output_querprofil(6)=810-663  ! Elbe-Km 389
+      ! output_strang(7)=2; output_querprofil(7)=979-663  ! Elbe-Km 474,5
+      ! output_strang(8)=2; output_querprofil(8)=1175-663  ! Elbe-Km 585,05
+     
       ! --- Ausgabe 156 ---
       print*, '> ausgabe156.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
-      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
+      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; ior; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
                        gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
       
       ! --- Ausgabe 157 Schwermetalle ---
