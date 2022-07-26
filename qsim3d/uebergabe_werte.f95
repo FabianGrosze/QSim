@@ -449,7 +449,7 @@ subroutine ini_ueber(nk)
          call qerror(fehler)
       end if
       print*,meinrang,'allocate (transfer_quantity(    number_trans_quant,number_trans_quant_points = ' &
-            ,number_trans_quant,number_trans_quant_points
+                                                                                                      ,number_trans_quant,number_trans_quant_points
       do i = 1,number_trans_quant_points ! alle knoten
          do j = 1,number_trans_quant ! initialisierung aller konzentrationen zunächt auf Null
             transfer_quantity(j+(i-1)*number_trans_quant) = 0.0 !!!####!0.0
@@ -499,8 +499,7 @@ subroutine ini_ueber(nk)
       do i = 1,number_trans_quant_points
          do j = 1,number_trans_quant_vert
             do k = 1,num_lev_trans
-               !!!####!0.0 ! initialisierung aller konzentrationen zunächt auf Null
-               trans_quant_vert(k+(j-1)*num_lev_trans+(i-1)*number_trans_quant_vert*num_lev_trans) = 0.0
+               trans_quant_vert(k+(j-1)*num_lev_trans+(i-1)*number_trans_quant_vert*num_lev_trans) = 0.0 !!!####!0.0 ! initialisierung aller konzentrationen zunächt auf Null
             end do ! alle k levels
          end do ! alle j quantities
          !do k=1,num_lev_trans

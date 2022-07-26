@@ -45,7 +45,7 @@ module aparam
    real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
                          bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
                          upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
-   integer            :: ifix
+   integer, protected :: ifix
    ! Rotatorien
    real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
@@ -87,13 +87,13 @@ module aparam
    
    
    ! Hardcoded
-   !real, parameter    :: Caki = 0.48   !< C-Anteil Kieselalgen [mgC/mgTG]
-   !real, parameter    :: Cabl = 0.48   !< C-Anteil Blaualgen [mgC/mgTG]
-   !real, parameter    :: Cagr = 0.48   !< C-Anteil Grünalgen [mgC/mgTG]
+   real, parameter    :: Caki = 0.48   !< C-Anteil Kieselalgen [mgC/mgTG]
+   real, parameter    :: Cabl = 0.48   !< C-Anteil Blaualgen [mgC/mgTG]
+   real, parameter    :: Cagr = 0.48   !< C-Anteil Grünalgen [mgC/mgTG]
    
-   !real, parameter    :: CZoo = 0.45   !< C-Anteil Rotatorien [mgC/mgTG]
-   !real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
-   !real, parameter    :: NZoo = 0.11   !< N-Anteil Rotatorien [mgN/mgTG]
+   real, parameter    :: CZoo = 0.45   !< C-Anteil Rotatorien [mgC/mgTG]
+   real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
+   real, parameter    :: NZoo = 0.11   !< N-Anteil Rotatorien [mgN/mgTG]
    
    
    public :: aparam_lesen, AParamParam

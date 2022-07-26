@@ -1170,8 +1170,6 @@ subroutine algae_huelle(i)
    !ToptK, ToptG, ToptB ; ! Optimal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
    !TmaxK, TmaxG, TmaxB ; ! Letal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
    !TkTemp_Ki  ! empirische Konstante KT(µ) für Temperaturabhängigkeit (Exponent), direkt aus QSimDatenfelder | APARAM.txt
-   ! TODO (schoenung, july 2022):
-   ! ifix comes from aparam and must only be defined there!
    ifix = 1 ! neu in runge-kutta ???
    sedAlg_MQ(1,1) = benthic_distribution_p(52+(i-1)*number_benth_distr) ! ?? wird aus sedflux kommen
    sedAlg_MQ(1,2) = sedAlg_MQ(1,1)

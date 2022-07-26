@@ -310,48 +310,48 @@ subroutine modellg()
    end if !Zonenanzahl
    allocate (zone(zonen_anzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate zone failed in modellg() zonen.f95')
-   zone(:)%zonen_nummer = 0                   ! eingelesen Nummer der Zone
-   zone(:)%ini_randnr = 0                     ! Randnummer mit dem initialisiert wird
-   zone(:)%nr_zone = 0                        ! ?
-   zone(:)%reib = 0.0                         !
-   zone(:)%sediflux%sedom = 0.0               ! Anteil des organischen Materials im Sediment
-   zone(:)%sediflux%bedgs = 0.0               ! Bedeckungsgrad der Sohle mit Sediment (0-1)
-   zone(:)%sediflux%sedvvert = 0.0            ! volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
-   zone(:)%sediflux%kornd = 0.0               ! Vorgabe Korndurchmesser d50
-   zone(:)%sediflux%burial = 0.0              ! Burial-Geschwindigkeit (Sedimentation)
-   zone(:)%seditemp%spewks = 0.0              ! Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
-   zone(:)%seditemp%wuebk = 0.0               ! Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
-   zone(:)%seditemp%psrefs = 0.0              ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
-   zone(:)%seditemp%extiks = 0.0              ! Extinktionskoeffizient für PARS
-   zone(:)%laich%lait = 1                     ! Tag des Beginns der Laichperiode
-   zone(:)%laich%laim = 4                     ! Monat des Beginns der Laichperiode
-   zone(:)%laich%laid = 7                     ! Dauer der Laichperiode in Tagen
-   zone(:)%schiff%vschiff = 0.0               !
-   zone(:)%schiff%uprop = 0.0                 !
-   zone(:)%schiff%schifffahrts_zone = 0       ! 1 ->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
+   zone(:)%zonen_nummer = 0 ! eingelesen Nummer der Zone
+   zone(:)%ini_randnr = 0 ! Randnummer mit dem initialisiert wird
+   zone(:)%nr_zone = 0 ! ?
+   zone(:)%reib = 0.0 !
+   zone(:)%sediflux%sedom = 0.0 ! Anteil des organischen Materials im Sediment
+   zone(:)%sediflux%bedgs = 0.0 ! Bedeckungsgrad der Sohle mit Sediment (0-1)
+   zone(:)%sediflux%sedvvert = 0.0 ! volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
+   zone(:)%sediflux%kornd = 0.0 ! Vorgabe Korndurchmesser d50
+   zone(:)%sediflux%burial = 0.0 ! Burial-Geschwindigkeit (Sedimentation)
+   zone(:)%seditemp%spewks = 0.0 ! Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
+   zone(:)%seditemp%wuebk = 0.0 ! Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
+   zone(:)%seditemp%psrefs = 0.0 ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
+   zone(:)%seditemp%extiks = 0.0 ! Extinktionskoeffizient für PARS
+   zone(:)%laich%lait = 1 ! Tag des Beginns der Laichperiode
+   zone(:)%laich%laim = 4 ! Monat des Beginns der Laichperiode
+   zone(:)%laich%laid = 7 ! Dauer der Laichperiode in Tagen
+   zone(:)%schiff%vschiff = 0.0 !
+   zone(:)%schiff%uprop = 0.0 !
+   zone(:)%schiff%schifffahrts_zone = 0 ! ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
    zone(:)%wettstat%wetterstations_nummer = 0 ! zugehörige Wetterstation
    zone(:)%wettstat%wetterstations_lage = 0.0 ! Höhe ü. NHN
-   zone(:)%dreissen%mboesch0 = 0.0            !
-   zone(:)%dreissen%msohle0 = 0.0             !
-   zone(:)%dreissen%gewicht0 = 0.0            !
-   zone(:)%dreissen%mboesch1 = 0.0            !
-   zone(:)%dreissen%msohle1 = 0.0             !
-   zone(:)%dreissen%gewicht1 = 0.0            !
-   zone(:)%dreissen%dreissena_aktiv = 0       !
-   zone(:)%albenthi%ggruen = 0.0              !
-   zone(:)%albenthi%gkiesel = 0.0             !
-   zone(:)%macrophyt%starttag = 0             !
-   zone(:)%macrophyt%startmonat = 0           !
-   zone(:)%macrophyt%maxtag = 0               !
-   zone(:)%macrophyt%maxmonat = 0             !
-   zone(:)%macrophyt%endtag = 0               !
-   zone(:)%macrophyt%endmonat = 0             !
-   zone(:)%macrodicht%pflmin = 0.0            !
-   zone(:)%macrodicht%pflmax = 0.0            !
-   zone(:)%erosi%tau_krit = 9999.9            !
-   zone(:)%erosi%M_eros = 0.0                 !
-   zone(:)%erosi%n_eros = 1.0                 !
-   zone(:)%erosi%sed_roh = 2650.0             !
+   zone(:)%dreissen%mboesch0 = 0.0 !
+   zone(:)%dreissen%msohle0 = 0.0 !
+   zone(:)%dreissen%gewicht0 = 0.0 !
+   zone(:)%dreissen%mboesch1 = 0.0 !
+   zone(:)%dreissen%msohle1 = 0.0 !
+   zone(:)%dreissen%gewicht1 = 0.0 !
+   zone(:)%dreissen%dreissena_aktiv = 0 !
+   zone(:)%albenthi%ggruen = 0.0 !
+   zone(:)%albenthi%gkiesel = 0.0 !
+   zone(:)%macrophyt%starttag = 0 !
+   zone(:)%macrophyt%startmonat = 0 !
+   zone(:)%macrophyt%maxtag = 0 !
+   zone(:)%macrophyt%maxmonat = 0 !
+   zone(:)%macrophyt%endtag = 0 !
+   zone(:)%macrophyt%endmonat = 0 !
+   zone(:)%macrodicht%pflmin = 0.0 !
+   zone(:)%macrodicht%pflmax = 0.0 !
+   zone(:)%erosi%tau_krit = 9999.9
+   zone(:)%erosi%M_eros = 0.0 !
+   zone(:)%erosi%n_eros = 1.0 !
+   zone(:)%erosi%sed_roh = 2650.0
    !     print*,'*** Lesen aus der Datei MODELLG.3D.txt ***'
    izoni = 0
    tfolgt = 1
@@ -422,7 +422,7 @@ subroutine modellg()
               zone(izoni)%schiff%vschiff, zone(izoni)%schiff%uprop
          if (string_read_error /= 0) call qerror('Lesefehler F-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: schifffahrt in Zone', izoni,' vschiff, uprop = '  &
-               ,zone(izoni)%schiff%vschiff,zone(izoni)%schiff%uprop
+                                                                                ,zone(izoni)%schiff%vschiff,zone(izoni)%schiff%uprop
       end if ! F-Zeile
       !! O - Verschattung durch Uferbewuchs Anteil der Vegetationstypen
       if ((ctext(1:1) == 'O') .or. (ctext(1:1) == 'o')) then
@@ -500,7 +500,7 @@ subroutine modellg()
          print*,'MODELLG.3D.txt: Dreissena-Bewuchs in zonen_nummer(izoni)', zone(izoni)%zonen_nummer, izoni    &
          ,'msohle0,gewicht0,msohle1,gewicht1',zone(izoni)%dreissen%msohle0, zone(izoni)%dreissen%gewicht0   &
          ,zone(izoni)%dreissen%msohle1, zone(izoni)%dreissen%gewicht1
-         if ((zone(izoni)%dreissen%msohle0+zone(izoni)%dreissen%msohle1) > 0.0) zone(izoni)%dreissen%dreissena_aktiv = 1 ! muscheln nur aktiv wenn vorbelegt
+         if ( (zone(izoni)%dreissen%msohle0+zone(izoni)%dreissen%msohle1) > 0.0) zone(izoni)%dreissen%dreissena_aktiv = 1 ! muscheln nur aktiv wenn vorbelegt
       end if ! D-Zeile
       !! B Benthische Algen
       !! subroutine ModellGParam(cpfad1,j1)\n
@@ -512,7 +512,7 @@ subroutine modellg()
               zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
          if (string_read_error /= 0) call qerror('Lesefehler B-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Benthische Algen in Zone', izoni,' albenthi%ggruen , albenthi%gkiesel = '  &
-               ,zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
+                                                                                                         ,zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
       end if ! B-Zeile
       !! M  Makrophyten
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QM" Text="Makrophyten" Help="Makrophyten-Wachstum" Scope="Strang">'
@@ -529,7 +529,7 @@ subroutine modellg()
               zone(izoni)%macrophyt%endtag,zone(izoni)%macrophyt%endmonat
          if (string_read_error /= 0) call qerror('Lesefehler M-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Makrophyten-Wachstum in Zone', izoni,' maxtag = '  &
-               ,zone(izoni)%macrophyt%maxtag
+                                                                                 ,zone(izoni)%macrophyt%maxtag
       end if ! M-Zeile
       !! P Dichte der Makrophyten
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QP" Text="Dichte der Makrophyten" Help="Makrophyten-Dichte" Scope="Abschnitt \n
@@ -540,7 +540,7 @@ subroutine modellg()
               zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
          if (string_read_error /= 0) call qerror('Lesefehler P-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Dichte der Makrophyten in Zone', izoni,' %macrodicht%pflmin , %macrodicht%pflmax = '  &
-               ,zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
+                                                                                                                    ,zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
       end if ! P-Zeile
       
       !! E Erosionsparameter
@@ -555,7 +555,7 @@ subroutine modellg()
               zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
          if (string_read_error /= 0) call qerror('Lesefehler E-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Erosionsparameter in Zone', izoni,' tau_krit, M_eros,  n_eros,  sed_roh = '  &
-               ,zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
+                                                                                                           ,zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
       end if ! e-Zeile
    end do ! while(zeile(ion))
    close (ion)
@@ -586,7 +586,7 @@ subroutine modellg()
       end do ! alle i Zonen
       if ( .not. vorhanden) then
          write(fehler,*)'2 Die von Knoten #',n ,' benötigte Zonennummer #',point_zone(n)  &
-               , 'ist nicht in MODELLG.3D.txt beschrieben'
+                                                                                         , 'ist nicht in MODELLG.3D.txt beschrieben'
          call qerror(fehler)
       end if ! nicht vorhanden
    end do ! alle n Knoten

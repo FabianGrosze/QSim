@@ -279,7 +279,7 @@ subroutine stofftransport_untrim()
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
       print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu > 1), volume fraction (cu > 1), deltat = ', &
-              cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+                                                                                                          cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! skip SSalg and SS if SS read from file
@@ -303,9 +303,9 @@ subroutine stofftransport_untrim()
                   print*,'wicht !! neighbours = ',(wicht((j-1)*5+1+k),k=1,4)
                   do k = 1,4 ! all 4 neighbour (elements) if existing
                      if ( intereck((j-1)*4+k) > 0) then
-                        print*,'planktonic_variable(',k,') = '                                     &
-                              , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)  &
-                              ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
+                        print*,'planktonic_variable(',k,') = '  &
+                                                             , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
+                                                             ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
                      endif
                   end do !all 4 k
                   write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name'  &
@@ -320,7 +320,7 @@ subroutine stofftransport_untrim()
       !call ausgeben_untrim( subtim )
       if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
          print*,'Nach transportschritt untrim am kontrollelement:'
-         print*,'Wassertiefe = ',rb_hydraul(2+(kontrollknoten-1)*number_rb_hydraul)                          &
+         print*,'Wassertiefe = ',rb_hydraul(2+(kontrollknoten-1)*number_rb_hydraul)          &
                                ,'Temp_wass = ',planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari)  &
                                ,'chla = '   ,planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
          print*,'wicht !! self =',wicht((kontrollknoten-1)*5+1)

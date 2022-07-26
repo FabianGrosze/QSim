@@ -585,7 +585,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
        ,' OCSB = ',planktonic_variable(18+nk)  &
        ,' O2BSB = ',planktonic_variable(43+nk)
    call orgc_start(                      &
-                   TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
+                   TOC_CSB,bsbZoo,GROT,            & ! globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable( 8+nk),      & ! aki | akis
                    planktonic_variable(10+nk),      & ! abl | abls
                    planktonic_variable( 9+nk),      & ! agr | agrs
@@ -620,7 +620,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
                     planktonic_variable(67+nk),      & ! GESN | gesNs,
                     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    nZoo, pZoo, GROT,                & ! globale Parameter direkt aus QSimDatenfelder
+                    nZoo, pZoo, GROT,               & ! globale Parameter direkt aus QSimDatenfelder
                     planktonic_variable( 6+nk),      & ! GELP | gelPs,
                     planktonic_variable(68+nk),      & ! GESP | gesPs,
                     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -1221,7 +1221,7 @@ subroutine ereigg_Randbedingungen_lesen()
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben. -SCHISM'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j)  &
-                            , ' Randbedingungen angegeben. -SCHISM'
+                                                                                                 , ' Randbedingungen angegeben. -SCHISM'
                call qerror(fehler)
             end if
          end do ! alle j Randnummern
@@ -1379,7 +1379,7 @@ subroutine rand_flux(zeitzaehler)
          ! end do! alle k Ausgabe-Variablen
          call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
          vox2 = 0.5*(u1*d1 + u2*d2) !! Volumentromermittlung stückweise zu Testzwecken
-         ! print*,"Rand #",n," Kante #",i," pox=",pox
+         !       print*,"Rand #",n," Kante #",i," pox=",pox
          !&            ," deltax=",deltax," la=",la," vox=",vox," vox2=",vox2  &
          !&            ," bottom #",nbot,"Tiefe1=",d1," u1, v1x, v1y=",u1/deltax, v1x, v1y &
          !&            ," top #",ntop," Tiefe2=",d2," u2, v2x, v2y=",u2/deltax, v2x, v2y
@@ -1391,10 +1391,10 @@ subroutine rand_flux(zeitzaehler)
          volst2 = volst2+vox2
          massen_flux = massen_flux + masx !!
       end do ! alle i Kanten
-      print*,"rand_flux: Rand #",n,' mit ',rabe(n)%randlinie%anzkanten ,' Kanten'                        &
-            ," pot_ener_flux(MW) = ",pot_ener_flux/1000000," kin_ener_flux(MW) = ",kin_ener_flux/1000000
-      !    &," vol_strom(Integral)=",vol_strom," mittlere Fließgeschwindigkeit=",vol_strom/flaeche  &
-      !    &," vol_strom(stückweise)=",volst2," Vm daraus=",volst2/flaeche
+      print*,"rand_flux: Rand #",n,' mit ',rabe(n)%randlinie%anzkanten ,' Kanten'&
+      ," pot_ener_flux(MW) = ",pot_ener_flux/1000000," kin_ener_flux(MW) = ",kin_ener_flux/1000000
+      !&         ," vol_strom(Integral)=",vol_strom," mittlere Fließgeschwindigkeit=",vol_strom/flaeche  &
+      !&         ," vol_strom(stückweise)=",volst2," Vm daraus=",volst2/flaeche
       ! Flux-Felder randflux_gang(Randzähler,Zeitpunkt,??) :
       randflux_gang(n,zeitzaehler,1) = lang!!
       randflux_gang(n,zeitzaehler,2) = flaeche !!
@@ -1490,9 +1490,9 @@ subroutine randlinie_zusammenstellen()
          end if ! Normalfall
          if (nexi >= 3) then ! unerwünschter Sonderfall
             ! anzel=anzel+2 ! unerwünschter Sonderfall
-            write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,                           &
-                            "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
-                           ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
+            write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
+                                                  "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
+                                                  ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
             print*,trim(fehler)
             !call qerror(fehler)
          end if ! unerwünscht
@@ -1506,7 +1506,7 @@ subroutine randlinie_zusammenstellen()
          !end if ! Randkante
       end do ! alle j Elemente
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzel  &
-            ," Kanten und ist ",lang," m lang"
+                                                                        ," Kanten und ist ",lang," m lang"
       if (anzel == rabe(n)%randlinie%anzkanten) then
          print*,"Rand mit Nummer = ",rabe(n)%nr_rb,"regulär"
       else
@@ -1515,7 +1515,7 @@ subroutine randlinie_zusammenstellen()
             rabe(n)%randlinie%anzkanten = anzel
          else
             write(*,*),"Am ",n,"-ten Rand mit Nummer = ",rabe(n)%nr_rb," passen Knotenanzahl = "  &
-                      ,rabe(n)%randlinie%anzkanten+1 ," und Kantenanzahl",anzel," nicht zusammen"
+                                                       ,rabe(n)%randlinie%anzkanten+1 ," und Kantenanzahl",anzel," nicht zusammen"
             !call qerror(fehler)
          endif
       endif
