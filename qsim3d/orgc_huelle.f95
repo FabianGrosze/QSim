@@ -81,7 +81,7 @@
 !! , \ref dblmor, \ref zexbl, \ref drfaeb, \ref csbki, \ref csbgr, \ref ischif, \ref echla &\n
 !! , \ref evkigr, \ref eantbl, \ref aki, \ref agr, \ref drfaek, \ref drfaeg
 !! , \ref drfaes, \ref ssdr, \ref orgcsd, \ref orgcsd0, \ref orgcsd_abb, *cd*, *cp*, *cm*, *bac*, *ecd* &\n
-!! , *ecp*, *ecm*, *ebac*, \ref toc_csb, \ref grote, \ref vcsb, \ref vkigr
+!! , *ecp*, *ecm*, *ebac*, \ref toc_csb, *grote*, \ref vcsb, \ref vkigr
 !! , \ref antbl, \ref hnfbac, \ref bsbhnf, \ref chnf, \ref zbac &\n
 !! , \ref bvhnf, \ref echnf, \ref fbsgr, \ref frfgr, \ref fbsgrs, \ref frfgrs
 !! , \ref bacmua, \ref dorgss, \ref ilbuhn, \ref iwied, \ref fkm, \ref bsbct, *qeinll* &\n
@@ -911,7 +911,7 @@
 !! zurück zu: \ref BSB , Quelle orgc_huelle.f95
 !----------------------------------------------------------------------------------------------------------- orgc_huelle
 !> SUBROUTINE orgc_huelle()
-!! Beschreibung: \ref BSB ; ruft orgc() auf; siehe auch: \ref hüllen ; Quelle: orgc_huelle.f95
+!! Beschreibung: \ref BSB ; ruft orgc() auf; siehe auch: \ref lnk_huellen ; Quelle: orgc_huelle.f95
 subroutine orgc_huelle(i)
    use modell
    use QSimDatenfelder

@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Berechnung des Ammoniums und des Nitrits und Nitrats
-!! @auhtor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 27.10.2011
 subroutine ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,flag,elen,ior,anze              &
                 ,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2     &

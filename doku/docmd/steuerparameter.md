@@ -46,4 +46,4 @@ QSim3D
       jtag = 0 
 
 
-zurück zu \ref lnk_Datentechnik ; Quelle: steuerparameter.md
+zurück zu \ref lnk_datenstruktur ; Quelle: steuerparameter.md

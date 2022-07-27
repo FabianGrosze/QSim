@@ -46,5 +46,5 @@ subroutine lax_wen(ior,nkzs,U,xws,hcdt,dH2D)
       endif
    enddo
    U(1:nkzs(ior)) = U_neu(1:nkzs(ior))
-   
+
 end subroutine lax_wen

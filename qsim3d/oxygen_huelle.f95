@@ -85,10 +85,10 @@
 !! , \ref cpfad, \ref ij, \ref itags, \ref monats             &\n
 !! , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, \ref ifehl, \ref ifhstr
 !! , \ref azstrs                          &\n
-!! , \ref zooind, \ref grote, \ref iphy, \ref kontroll, \ref iglob)\n
+!! , \ref zooind, *grote*, \ref iphy, \ref kontroll, \ref iglob)\n
 !!
-!! Die QSim3D Subroutine oxygen_huelle() ruft die QSim-Subroutine oxygen() auf,
-!! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+!! Die QSim3D Subroutine oxygen_huelle() ruft die QSim-Subroutine oxygen() auf, 
+!! \n(Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 !!
 !! <h2>Dokumentation und Veröffentlichungen</h2>
 !! <a href="./pdf/Becker_et_al_RRA_2009.pdf" target="_blank">
@@ -282,7 +282,7 @@
 !! \f]\n mit
 !! \f[
 !! b= \Delta t \cdot \frac{ ( k_l + k_w ) \cdot f_{temp} }{H}
-!! \f] siehe \ref lueftO2\n
+!! \f] siehe \ref lueftO2 \n
 !!<table >
 !!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th><th> Herkunft </th></tr>
 !!<tr><td> \f$ \widetilde{\Delta O_2} \f$ </td><td> v </td><td> \ref ZehrProdO2 </td><td> mgO2/l je Zeitschritt </td><td> ? </td><td> - </td></tr>
@@ -457,7 +457,7 @@
 !! \n\n
 !! zurück zu: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
 !> SUBROUTINE oxygen_huelle() ruft QSim-Subroutine oxygen() auf.\n
-!! (Zum Hüllroutinen-Konzept siehe: !\ref hüllen )
+!! (Zum Hüllroutinen-Konzept siehe: !\ref lnk_huellen )
 !! \n\n
 !! Beschreibung: \ref Sauerstoffgehalt ; Quelle: oxygen_huelle.f95
 !! \n\n

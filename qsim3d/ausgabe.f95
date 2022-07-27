@@ -63,7 +63,7 @@
 !! Im Verlauf der Berechnung werden diese dann im Modellverzeichnis (siehe \ref Datenmodell) im
 !! .vtk-Format abgelegt. Der Dateiname (z. B. ausgabe_734850.vtk) enthält den Zeitpunkt
 !! als ganzahligen Integer-Wert in Sekunden. Der Ursprung dieser Sekundenzählung ist in der
-!! Datei meta im traninfo-Verzeichnis (\ref Transportinformationen) festgelegt. Die Bildschirm-Ausgabe
+!! Datei meta im traninfo-Verzeichnis (\ref lnk_transport_numerik) festgelegt. Die Bildschirm-Ausgabe
 !! von QSim-3D gibt für jeden Zeitpunkt das Datum zusammen mit dem Sekundenzähler aus.
 !! \n
 !! Das .vtk-Format dient der Visualisierung mit

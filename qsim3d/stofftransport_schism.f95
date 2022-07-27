@@ -130,7 +130,7 @@
 !!      & , exchange_e2di_2t &     ! 2-tier ghost elem. exchange of type (nm) where nm>=nea2 \n
 !!      & , exchange_s3dw            ! 3D-whole-level ghost side exchange \n
 !! \n\n
-!! aus Datei stofftransport_schism.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
+!! aus Datei stofftransport_schism.f95; zurück zu \ref lnk_datenstruktur oder \ref lnk_transport_numerik
 subroutine stofftransport_schism()
    use netcdf
    use modell

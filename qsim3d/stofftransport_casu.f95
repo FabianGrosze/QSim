@@ -200,14 +200,14 @@ end subroutine stofftransport_casu
 !! \n\n
 !! Zum Lesen des Netzes aus dem Modellverzeichnis bedient sich netz_lesen() der Subroutinen points(), elements() und edges()
 !! \n\n
-!! aus Datei stofftransport_casu.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
+!! aus Datei stofftransport_casu.f95; zurück zu \ref lnk_datenstruktur oder \ref lnk_transport_numerik
 !> subroutine holen_trans(nt) , mit nt - Zeitschrittzähler,
 !! holt die Transportinformationen für einen Zeitschritt mittels der c++-Funktion trans_read() aus Datei trans_read.c.\n
 !! In den Dateien aus dem Verzeichnis transinfo, deren Name mit t beginnt und danach den Zeitpunkt als Zahl enthält,
 !! ist der Strombahnursprung, die Wasserspiegellage und der Geschwindigkeitsbetrag abgelegt.\n
 !! holen_trans() macht daraus die \ref hydraul_rb Geschwindigkeitsbetrag, Wassertiefe und Wasserspiegellage.\n
 !! holen_trans() wird nur aus stofftransport() heraus von Prozess 0 aufgerufen
-!! \n\n aus Datei stofftransport.f95; zurück:\ref Transportinformationen
+!! \n\n aus Datei stofftransport.f95; zurück:\ref lnk_transport_numerik
 subroutine holen_trans(nt)
    use modell
    implicit none

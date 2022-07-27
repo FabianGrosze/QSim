@@ -50,7 +50,7 @@
 !! \n\n
 !! Die vorgegebene Schwebstoffkonzentration wird  in die Variable
 !! \ref ss eingelesen und repräsentiert nur den ??? zusätzlichen ??? Schwebstoffanteil.
-!! Das \ref Licht_algen , das den \ref lnk_algendoc für die Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe abgeschwächt.
+!! Das \ref lnk_licht_algen_alt , das den \ref lnk_phytoplankton_alt für die Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe abgeschwächt.
 !! \n\n
 !! \section sali Salzkonzentrationen
 !! z.Z. noch nicht realisiert.

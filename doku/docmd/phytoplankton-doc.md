@@ -96,4 +96,4 @@ implementierten Prozesse
 \n\n
 
 Textquelle: phytoplankton-doc.md ; Codesources: albenth.f90, algaesbl.f90,
-algaesgr.f90 ; Vorläuferversion: \subpage lnk_algendoc
+algaesgr.f90 ; Vorläuferversion: \subpage lnk_phytoplankton_alt

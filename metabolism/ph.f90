@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Berechnung des pH-Wertes aus dem m-Wert und der Kohlensäuresumme
-!! @autor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 11.06.1993
 subroutine ph(mw,pw,ca,lf,tempw,tflie,susn,bsbct,dalgki,dalggr,dalgak,dalgag,po2p,po2r,rau,vmitt,tiefe            &
               ,flae,vabfl,flag,elen,ior,anze,vph,elfL,CaL,qeinlL,iorLa,iorLe,ieinLs,ssalg,stind,albewg            &

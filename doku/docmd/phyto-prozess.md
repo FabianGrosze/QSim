@@ -136,7 +136,7 @@ berechnet. Der Faktor 4.2 bewirkt die Umrechnung von \calms\ in \Wm, während
 der Faktor 5.846 für die Umrechnung von \Wm\ in \uEms\ ausgehend von einem 
 Wellenlängenbereich der PAR von 400\,nm bis 700\,nm verwendet wird. 
 color{red}{Hinweis: Die Herkunft des Faktors 5.846 ist unklar. 
-\citet{Thimijan1983} geben einen Wert von 4.57 an. Der exakte Umrechnungsfaktor 
+\ref Thimijan1983 geben einen Wert von 4.57 an. Der exakte Umrechnungsfaktor 
 von cal in J ist zudem 4.184.}
 
 Die Verdriftungsstrecke \dz\ wird in QSim mit dem Ansatz von 
@@ -337,7 +337,7 @@ end debugging -->
 
 ### Zellinterne Nährstoffspeicher für N und P {#lnk_phy_NutStore}
 QSim berechnet die zeitliche Änderung der zellinternen 
-Nährstoff:Biomasse-Verhältnisse der Algen nach \citet{Droop1973}:
+Nährstoff:Biomasse-Verhältnisse der Algen nach [Droop 1973](\ref lnk_ext_literatur) :
 
 <!-- debugging
 
@@ -509,8 +509,9 @@ debugging end -->
 # Sedimentation von lebenden Algen {#lnk_phy_Sedimentation}
 Introtext zur Sedimentation. color{red}{(Hinweis: Die gesamte Berechnung 
 ist sehr kryptisch und ihr Herkunft unbekannt. Die Beschreibungen der Variablen 
-sind so weit möglich aus dem Code in \mbtt{sedimentation.f90} zusammengereimt 
+sind so weit möglich aus dem Code in `sedimentation.f90` zusammengereimt 
 und teilweise kreativ benannt.)}\par
+<!-- .. was \mbtt{sedimentation.f90} -->
 <!-- debugging
 
 In QSim können Algen absinken und am Boden sedimentieren. Die Berechnung des 

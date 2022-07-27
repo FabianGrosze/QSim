@@ -18,7 +18,8 @@ SUBROUTINE silikat()\n
 
 <!-- #mf: Referenz jjj funktioniert noch nicht -->
 
-silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
+silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum 
+Hüllroutinen-Konzept siehe: \ref lnk_huellen
 
 \n\n
 

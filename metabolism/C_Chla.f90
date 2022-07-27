@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !>Berechnung der Chla-Bildung im Zeitschritt
-!! @auhtor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 12.11.2015
 subroutine c_chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, C_Bio,         &
                   CChl_Stern, xChla, xaC, xagrow, isyn, iaus)

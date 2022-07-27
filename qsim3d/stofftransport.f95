@@ -24,36 +24,38 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Stofftransport Stofftransport
+!> \page lnk_stofftransport Stofftransport
+!!
+!! Hier geht es zur dummy-page \subpage lnk_stoff_dummy
 !!
 !! <h2>Konzept: Konzentrations-Transport</h2>
 !! In QSim werden im Wasser gelöste Stoffe, planktisch lebende Organismen und deren Eigenschaften
 !! als Konzentrationen modelliert. D. h. es wird angenommen,
 !! dass selbige nur vernachlässigbare Bewegungen gegenüber dem umgebenden Wasser ausführen.
-!! QSim arbeite mit 72 tiefengemittelten und 11 tiefenaufgelösten Transportkonzentrationen
-!! deren Bedeutung in \ref planktische_variablen näher beschrieben wird.
+!! QSim arbeitet mit 72 tiefengemittelten und 11 tiefenaufgelösten Transportkonzentrationen,
+!! deren Bedeutung in \ref lnk_var_planktisch näher beschrieben wird.
 !! \n\n
-!! <h2>Advektions- Diffusons-Gleichung</h2>
-!! Die gesamte Änderung einer Konzentration wird aufgespalten in die Änderung infolge Stoffumsatz und diejenige infolge
+!! <h2>Advektions-Diffusons-Gleichung</h2>
+!! Die gesamte Änderung einer Konzentration wird aufgespalten in die Änderung infolge von Stoffumsatz und diejenige infolge von
 !! Transport durch das fließende Wasser. In diesem Zweig geht es jetzt nur noch um den Transportanteil:
 !! \f[
 !!   \underbrace {\frac{\partial c_m}{\partial t}}_{Aenderung infolge Transport} =
 !! - \underbrace {v_i \frac{\partial c_m}{\partial x_i} }_{Advektion}
 !! + \underbrace {\frac{\partial}{\partial x_i} D_{ij} \frac{\partial c_m}{\partial x_j}}_{Diffusion}
 !! \f]
-!! Die obige Gleichung (Transportgleichung) für die m-te Konzentration \f$ c_m \f$
+!! Die obige Gleichung (Transportgleichung) für die <i>m</i>-te Konzentration \f$ c_m \f$ 
 !! gilt allgemein für die Advektion durch ein 3-dimensionales Strömungsfeld \f$ v_i \f$.
-!! Mit t wird die Zeit bezeichnet und mit \f$ x_i \f$ ein Ort im 3-dimensionalen Raum.
-!! Der Index i zählt über alle drei Raumrichtungen; sein doppeltes Auftreten besagt, dass über ihn zu summieren ist.
+!! Mit <i>t</i> wird die Zeit bezeichnet und mit \f$ x_i \f$ ein Ort im 3-dimensionalen Raum. 
+!! Der Index <i>i</i> zählt über alle drei Raumrichtungen; sein doppeltes Auftreten besagt, dass über ihn zu summieren ist.
 !! Die Vermischung wird vom Diffusionstensors \f$ D_{ij} \f$ bewirkt, der genauso wie der Strömungsvektor von Ort und Zeit abhängig sein kann.
 !! \n\n
-!! <h2>räumliche Integration</h2>
+!! <h2>Räumliche Integration</h2>
 !! Die Integration der Transportgleichung in eine tiefen-, breiten- und querschnitts-gemittelte Formulierung
 !! wird in der speziell dazu erstellten <a href="./pdf/transport_dimensionsreduziert2016.pdf" target="_blank">Ausarbeitung</a> hergeleitet.
 !! \n\n
-!! <h2>antreibendes Strömungsfeld</h2>
-!! Das in der Transportgleichung verwendete Geschwindigkeitsfeld wird für QSim vorab mithilfe einer numerischen Strömungssimulation
-!! (CFD, Computational Fluid Dynamics) von einem sogenanntes HN(Hydro-Numerisches)-Modell berechnet, das in diesem Zusammenhang auch als
+!! <h2>Antreibendes Strömungsfeld</h2>
+!! Das in der Transportgleichung verwendete Geschwindigkeitsfeld wird für QSim vorab mithilfe einer numerischen Strömungssimulation 
+!! (CFD, Computational Fluid Dynamics) von einem sogenanntes HN(Hydro-Numerisches)-Modell berechnet, das in diesem Zusammenhang auch als 
 !! "hydraulischer Treiber" bezeichnet wird. Bei der Verbindung von Strömungssimulation und Gütemodell handelt es sich um eine \ref lnk_Kopplung .\n\n
 !! QSim-1D verwendet als hydraulischen Treiber Hydrax.\n\n
 !! QSim-3D kann die Ergebnisse verschiedener hydraulischer Treiber nutzen:\n
@@ -65,14 +67,14 @@
 !!    <li>SCHISM <a href="http://voss-wiki.bafg.de/instanzen/schismwiki/doku.php/start" target="_blank">Wiki</a> (BfG),
 !!        <a href="http://ccrm.vims.edu/schism/" target="_blank">Homepage</a> (VIMS) \ref Transport_SCHISM</li>\n\n
 !! </ul>
-!!
-!! <h2>numerischen Näherungslösungen</h2>
-!! Die näherungsweise Lösungen der Advektions- Diffusons-Gleichung (Transportgleichung) werden im Abschnitt \ref numerik vorgestellt.
-!!
-!! <h2>datentechnische Umsetzung</h2>
+!! 
+!! <h2>Numerischen Näherungslösungen</h2>
+!! Die näherungsweise Lösungen der Advektions-Diffusons-Gleichung (Transportgleichung) werden im Abschnitt \ref lnk_numerik vorgestellt.
+!! 
+!! <h2>Datentechnische Umsetzung</h2>
 !! siehe \subpage hydraul_rb
 !!  \n\n
-!! zurück: lnk_simulation;  Quelle: stofftransport.f95
+!! zurück: \ref index ;  Quelle: stofftransport.f95
 !> \page Netz Netz / Orts-Diskretisierung
 !! Sowohl in QSim1D als auch in QSim3D wird die horizontalen Diskretisierung, also des Netzes (3D) oder der Gewässer-Stränge (1D)
 !! vom Hydraulischen Treiber übernommen. Im 3D werden benutzt:
@@ -86,21 +88,11 @@
 !! der Genauigkeit und der Rechenzeit. Dazu erforderlich ist aber eine Interpolation der hydraulischen Ergebnisse
 !! auf das Güte-Netz. Die Implementierung dieser Interpolation ist nicht ganz unaufwändig und der dadurch erzielbare
 !! Vorteil nicht sicher einschätzbar. Bisher realisiert wurde in dieser Frage nur eine einfache Vergröberung von Deltares.\n
-!! siehe auch: \ref Stofftransport
+!! siehe auch: \ref lnk_stofftransport
 !! \n\n
 !! Zum Lesen des Netzes aus dem Modellverzeichnis bedient sich netz_lesen() der Subroutinen points(), elements() und edges()
 !! \n\n
 !! aus Datei stofftransport.f95 ; zurück zu \ref Modellerstellung
-!
-!> \page Transportinformationen Transportinformationen
-!!
-!! <ol>
-!! <li> \subpage Transport_casu  </li>
-!! <li> \subpage Transport_Untrim  </li>
-!! <li> \subpage Transport_SCHISM  </li>
-!! </ol>
-!! \n\n aus Datei stofftransport.f95; zurück zu \ref Modellerstellung oder \ref lnk_Datentechnik
-!
 !! Steinbruch Numerik
 !!
 !! Advektion Advektion
@@ -110,13 +102,13 @@
 !! {c}_{m,k}^{react}= Q_m(c_1(t) \ldots c_M(t), \underline {x}, t, \Delta t^{react})
 !! \f]
 !!  \n\n
-!! zurück: \ref Stofftransport ;  Quelle: stofftransport.f95
+!! zurück: \ref lnk_stofftransport ;  Quelle: stofftransport.f95
 !!
 !!  massenerhalt Massenerhaltung
 !! nicht konservatives ELM-Verfahren.\n
 !! Verfahren zur Abschätzung der Massenerhaltung: ... to be continued
 !!  \n\n
-!! zurück: \ref Stofftransport ;  Quelle: stofftransport.f95
+!! zurück: \ref lnk_stofftransport ;  Quelle: stofftransport.f95
 !! Diffusion Diffusion
 !! \f[
 !! \frac{\partial c_m}{\partial t} =
@@ -126,8 +118,8 @@
 !! - \underbrace {w_{s,3} \frac{\partial c_m}{\partial x_3} }_{Sinken}
 !! \f]
 !!  \n\n
-!! zurück: \ref Stofftransport  ;  Quelle: stofftransport.f95
-!!! <hr> \n <i>folgender Abschnitt z. Z. noch in Bearbeitung</i>
+!! zurück: \ref lnk_stofftransport  ;  Quelle: stofftransport.f95
+!!! <hr> \n <i>folgender Abschnitt z. Z. noch in Bearbeitung</i> 
 !! \n
 !! \section pde mathematische Beschreibung als partielle Differentialgleichung
 !! In QSIM werden im Wasser gelöste Stoffe und planktisch lebende Organismen, die näherungsweise passiv im Wasser treiben, als Konzentrationen modelliert\n\n
@@ -278,11 +270,11 @@
 !! mit der mittleren Strömungsgeschwindigkeit entlang einer Bahnlinie verdriftet (\ref advect) und
 !! durch die Turbulente Wirbelbewegung mit benachbarten "Wassertropfen" vermischt (\ref diff).
 !! \n\n
-!! Die komplett ausgeschriebene Transportgleichung inclusive der aus dem Stoffumsatz stammenden Quellen und Senken
-!! finden Sie im Abschnitt \ref numerik .
+!! Die komplett ausgeschriebene Transportgleichung inclusive der aus dem Stoffumsatz stammenden Quellen und Senken 
+!! finden Sie im Abschnitt \ref lnk_numerik .
 !! \n\n
-!! Der Fractional Step Algorithmus, der in T-QSim realisiert ist (siehe \ref numerik), geht dabei von der Annahme aus, dass
-!! die Konzentrationsänderungen, die während eines Zeitschritts infolge
+!! Der Fractional Step Algorithmus, der in QSim3D realisiert ist (siehe \ref lnk_numerik), geht dabei von der Annahme aus, dass 
+!! die Konzentrationsänderungen, die während eines Zeitschritts infolge 
 !! von stoffumsatz() stattfinden, mit hinreichender Genauigkeit vor dem Transportvorgang berechnet werden können.
 !! Damit diese Näherung zutrifft, muss der stoffumsatz() am Strombahnurspung
 !! annähernd genauso stattfinden wie entlang des Transportweges.
@@ -290,8 +282,8 @@
 !! Die Verwendung von unterschiedlichen Netzen für die Strömungsberechnung und die Gütesimulation
 !! ist zunächst nicht weiterverfolgt worden; würde sie angewendet, müsste eine Zwischeninterpolatin erfolgen
 !! z. B. mit dem Programm "Raster" von Herrn Wirth.
-!!  \n\n
-!! zurück: \ref numerik ;  Quelle: stofftransport.f95
+!!  \n\n 
+!! zurück: \ref lnk_numerik ;  Quelle: stofftransport.f95
 !----+-----+----
 !> Subroutine stofftransport() macht jetzt nur noch die Verzweigung zu den unterschiedlichen Hydraulischen Treibern und Transportalgorithmen
 subroutine stofftransport()

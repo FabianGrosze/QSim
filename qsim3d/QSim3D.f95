@@ -104,24 +104,7 @@ program QSim3D
    call exit(0)
 end program QSim3D
 !--------------------------------------------------------------------------------------------------------------
-!> \page lnk_Grundlagen Grundlegende Annahmen eines deterministischen Modells
-!! <ol>
-!!  <li> Es werden nur die für den Sauerstoffgehalt mengenmäßig bedeutendsten Stoffumsetzungsprozesse simuliert.
-!!       Diese laufen auf der Ebene der Gewässermikrobiologie ab.\n\n</li>
-!!  <li> Alle für die Güte relevanten Stoffe und Organismen werden als gleichmäßig im Wasser verteilte Variablen
-!!       (Konzentrationen) oder als gleichmäßig über die Sohle verteilte Belegungen simuliert. \n\n</li>
-!!  <li> Jede Veränderungen einer Variable ist eindeutig von anderen Variablen abhängig (determiniert);
-!!       und anhand mathematischer Gleichungen im Modell festgelegt. Z. B. hängt der Zuwachs an Algen
-!!       eindeutig von Licht, Temperatur, Nährstoffen und Fraßdruck ab. \n</li>
-!! </ol>
-!!
-!! \section QSim-1D Verbindung zwischen QSim-1D und QSim-3D
-!! Die beiden Programme der QSim-Familie unterscheiden sich in der räumlichen Auflösung des Wasserkörpers;
-!! die Detail erläutert der Abschnitt \subpage Dimension.
-!! Die datentechnische Realisierung finden Sie im Abschnitt \ref hüllen.
-!! Einen Einblick in die Entstehung der QSim-Familie gibt der Abschnitt \ref about_tiqusim.
-!!
-!> \page lnk_konzept Aufbau von QSim
+!> \page lnk_konzept Aufbau von QSim 
 !! \image html qsim_konzept.png "konzeptioneller Aufbau der Gütemodelle QSim-1D und QSim-3D"
 !! Das Ineinandergreifen der Komponenten der QSim-Gütemodelle ist in obigem Schaubild zusammengestellt.
 !! Beide beziehen die Informationen über den Strömungsvorgang aus einem als sog. "hydraulischen Treiber"
@@ -135,142 +118,6 @@ end program QSim3D
 !! in QSim-3D mindestens eine Dimension größer sind.
 !! \n\n
 !! Bedient werden beide QSim's mit Gerris (\ref Gerris).
-!!
-!> \page lnk_Kopplung Offline Kopplung von Strömungssimulation und Stoff-Transport
-!! Dabei kommunizieren die Strömungssimulation und das Gütemodell offline,
-!! d. h. mittels fest abgespeicherte Dateien.
-!! Der hydraulische Treiber ist eine eigenständige Software, welche die Strömung simuliert und seine Ergebnisse abspeichert.
-!! Das Gütemodell ist eine ebenfalls eigenständige Software, die nach dem hydraulischen Treiber
-!! gestartet wird und dessen Ergebnisse "offline" einließt.
-!! Voraussetzung für diese Informationsübertragung nur in die eine Richtung ist, dass die im Gütemodell betrachteten Wasserinhaltsstoffe
-!! keinen (oder nur vernachlässigbaren) Einfluss auf den Strömungsvorgang haben.
-!! \n\n
-!! Die offline-Kopplung hat sich in QSim bewährt.
-!! Viel Rechenzeit lässt sich dadurch sparen, dass in der Praxis viele Gütesimulationen auf der Basis
-!! einzelner hydraulischer Berechnungen durchgeführt werden.
-!! Müsste für jede Gütesimulationen eine eigene hydraulische Berechnung angefertigt werden, wäre eine online-Kopplung schneller.
-!! Ausserdem ergibt die offline-Kopplung eine klare Schnittstelle in der interdisziplinären Zusammenarbeit.
-!! \n\n
-!! QSim-3D verwendet die folgenden hydraulischen Treiber: \n
-!! <a href="http://www.wasserimunterricht.de/wyrwa/casu12.html"  target="_blank">casu</a>,\n UnTRIM und \n
-!! <a href="http://voss-wiki.bafg.de/instanzen/schismwiki/doku.php/start" target="_blank">SCHISM</a> (in Arbeit).
-!! \n\n
-!! Der Stofftransport-Baustein in QSim übernimmt das Berechnungsnetz vom hydraulischen Treiber;
-!! an dessen Struktur muss auch der Transportalgorithmus speziell angepasst werden.
-!! Da die verwendeten hydraulischen Treiber zur Simulation des Transports von Salz und suspendierten Sedimenten
-!! über eigene Löser der Advektions-Diffusions-Gleichung (Transportgleichung) verfügen,
-!! ergibt sich die Möglichkeit, durch Übergabe von verfahrensabhängigen Transportinformationen
-!! im Gütemodell einiges an Rechenaufwand einzusparen.
-!! Details werden im Abschnitt \ref Stofftransport näher ausgeführt.
-!! \n\n
-!! aus Datei: QSim3D.f95 ; zurück:\ref index
-!--------------------------------------------------------------------------------------------------------------
-!> \page lnk_simulation Simulations-Verfahren
-!!
-!! \section EinfNum Grundgleichung
-!! In QSim werden alle güte-relevanten Variablen incl. der planktisch lebenden Organismen
-!! als im Wasser gelöste Konzentrationen modelliert\n
-!! Die Veränderungen dieser Konzentrationen wird summarisch mit der untenstehenden partiellen Differential-Gleichung beschrieben:\n
-!! \f[
-!!   \underbrace {\frac{\partial c_m}{\partial t}}_{lokale Aenderung} =
-!!   \underbrace {Q_m ( c_1 \ldots c_m \ldots c_M, x_i, t )  }_{Stoffumsatz}
-!!   \underbrace {
-!! - \underbrace {v_i \frac{\partial c_m}{\partial x_i} }_{Advektion}
-!! + \underbrace {\frac{\partial}{\partial x_i} D_{ij} \frac{\partial c_m}{\partial x_j}}_{Diffusion}
-!!    }_{Stofftransport}
-!! \f]
-!! Dieser Grundgleichung beschreibt die zeitliche Änderung der m-ten Konzentration \f$ c_m \f$ an einem
-!! festen Punkt im Raum. Diese Konzentrationsbilanzen stellen den Verfahrenskern von QSim dar;
-!! datentechnisch werden diese Konzentrationen als \ref planktische_variablen gespeichert.
-!! Unter dem vorstehenden Link findet sich eine Auflistung, aus der hervorgeht um welche "Stoffe" es sich dabei handelt.
-!! \n
-!! Darüber hinaus bilanziert QSim auch \ref benthische_verteilungen
-!! bei denen allerdings der Stofftransport-Anteil der obigen Gleichung entfällt.
-!!
-!! \section aenderUrsachen Ursachen der Konzentrations-Änderungen
-!!        \subsection metabol Stoffumsatz
-!!            Der gesamte Stoffumsatz, also alle biologischen Stoffwechselvorgänge und chemischen Reaktionen
-!!            werden in der obigen Gleichung in einer Änderungsrate \f$ Q_m \f$ zusammengefasst.
-!!            Diese hängt von anderen (ebenfalls als Konzentrationen modellierten) Variablen
-!!            sowie von Ort (x) und Zeit (t) ab.
-!!            \n\n
-!!            Die voranstehende Gleichung kann auch als Massenbilanz des "Stoffes" m gelesen werden.
-!!            Dann ist \f$ Q_m \f$ je nach Vorzeichen ein Quelle oder Senke.
-!!            Der Index m zählt über alle 1 bis M (z.Zt. M=76) transportierten Konzentrationen. (\subpage planktische_variablen)
-!!            \n\n
-!!            Die Prozessbeschreibungen, die hier formal in der Änderungsrate \f$ Q_m \f$ zusammengefasst wurden, die aber den Kern des Gütemodells ausmachen,
-!!            werden in den einzelnen Modulbeschreibungen im Detail erläutert.
-!!        \n\n
-!!        \subsection transport Stofftransport
-!!            Die Verfrachtung (Advektion) und Vermischung (Diffusion) der Konzentrationen
-!!            infolge des Fließvorgangs des Wassers wird zusammenfassend als <b>\ref Stofftransport</b> benannt.
-!!            \n\n
-!!            Die Advektion bewirkt, dass das Strömungsfeld \f$ v_i \f$ eine Konzentration \f$ c_m \f$ von anderenorts
-!!            (\f$ x_i \f$) herantransportiert, wo diese andere Werte aufweist.
-!!            Der Index i zählt über alle drei Raumrichtungen; sein doppeltes Auftreten besagt, dass über ihn zu summieren ist.
-!!            \n\n
-!!            Die Diffusion wird hier mithilfe eines Diffusionstensors \f$ D_{ij} \f$ beschrieben. Diese bewirkt, dass sich
-!!            räumliche Konzentrationsunterschiede ausgleichen.
-!!            Die Indezes i und j zählen über alle drei Raumrichtungen;
-!!            ihr doppeltes Auftreten besagt, dass über beide zu summieren ist.
-!!            \n\n
-!!            Die numerische Näherung des Transportprozesses in der Kopplung mit einem ebenfalls simulierten Strömungsfeld,
-!!            beschreibt der Abschnitt \ref Stofftransport.
-!!
-!! \section fracStep Trennung der numerischen Lösung
-!! Die voranstehenden Grundgleichung wird für ihre numerische Lösung getrennt. In QSim (sowohl 1D als auch 3D) wird zuerst
-!! der Stoffumsatz berechnet und dann der Transport.
-!! Dies sei anhand eines Wassertropfens erläutert, der während eines Zeitschritts auf einem gewissen Weg
-!! im Wasserkörper fortbewegt wird:
-!! Während diesem Zeitintervall laufen in besagtem Wassertropfen biochemische Stoffumwandlungsvorgänge ab.
-!! Die Simulation in QSim läuft nun so ab, dass der Wasertropfen quasi am Ort festgehalten wird, an dem er sich zu Beginn des Zeitschritts befand.
-!! Dort wird zunächst der Stoffumsatz unter den an diesem Ort herrschenden Bedingungen simuliert.
-!! Danach wird der Tropfen vom Transport-Algorithmus an den Ort gesetzt, den er am Ende des Zeitschritts erreicht.
-!!
-!! \section numerik Algorithmische Umsetzung
-!! \n\n
-!! \image html NumericalAspects_WyrwaSchoel_final5.png
-!! Die numerische Lösung der o.g. partiellen Differentialgelichung für die Änderung einer Konzentration geschieht auf folgendem Wege:
-!! \n\n
-!! In einem Fractional-step-Verfahren werden die Stoffumsätze und der Stofftransport nacheinnander simuliert,
-!! ohne im gleichen Zeitschritt aufeinander rückwirken zu können.
-!! \n\n
-!! \image html NumericalAspects_WyrwaSchoel_final6.png
-!! dabei können die Einzelprozesse mit unterschiedliche Zeitschritt-weiten abgebildet werden, die allerdings ganzzahlige Vielfache voneinader sein müssen.
-!! \n\n
-!! Die Stoffumsätze (aufgelistet in: \ref lnk_ueberblick) werden numerisch als \ref Num_Umsatz modelliert.
-!! Die numerische Umsetzung der \ref Stofftransport - Modellierung wird im Vortrag
-!! <a href="http://bibliothek.bafg.de/dokumente/Online%20377.ppt" target="_blank">
-!! Numerical aspects in offline coupling of biochemical reaction modules with advection-diffusion simulations</a>
-!! näher erläutert.
-!!  \n\n
-!! Auf Details wurde im Vortrag
-!! <a href="http://bibliothek.bafg.de/dokumente/Online%20377.ppt" target="_blank">
-!! Numerical aspects in offline coupling of biochemical reaction modules with advection-diffusion simulations</a>
-!! eingegangen. Die Näherungsgüte dieses auch als "fractional step" bezeichneten Verfahrens diskutiert die Dokumentation
-!! <a href="./pdf/transportdoku_3.pdf" target="_blank"> ???? noch nicht geschrieben ??? </a>
-!! \n\n
-!! aus Datei QSim3D.f95 ; zurück zu \ref index
-!--------------------------------------------------------------------------------------------------------------
-!> \page Dimension 1, 2, 3 Dimensionen
-!! Die Bezeichnung 1D und 3D der beiden QSim's steht für die ein-dimensionale
-!! respektive drei-dimensionale Raumauflösung der Modelle.
-!! Dies ist deswegen erklärungsbedürftig, weil mit beiden Berechnungswerkzeugen unterschiedliche
-!! zwei-dimensionale Simulationen ausgeführt werden können. \n\n
-!! QSim-<b>1D</b> basiert auf einer querschnittsgemittelten Hydraulik (HYDRAX).
-!! Die horizontale Erstreckung eines Gewässers wird dadurch immer als Linie erfasst,
-!! welche im Modell als Abschnitte diskretisiert werden, die jeweils einem Querprofil zugeordnet sind.
-!! Ein Gewässernetz kann fernerhin noch in mehrere Stränge unterteilt sein, wobei jeder Strang viele Abschnitte enthalten kann.
-!! Im Gütemodell kann dann eine Tiefenauflösung
-!! der Variablen gewählt werden, um vor allem Temperaturschichtungen simulieren zu können. 2D bei QSim-1D meint daher
-!! <b>2D-breitengemittelt</b>.\n\n
-!! QSim-<b>3D</b> basiert auf hydraulischen Treibern, welche die horizontale Erstreckung der hier behandelten flachen Gewässer
-!! mit einer flächigen Auflösung/Diskretisierung anhand von Drei- und Vierecksnetzen erfassen.
-!! Wird die Wassertiefe mit nur einer Schicht modelliert, gelangt man zu <b>2D-tiefengemittelten</b> Simulationen.
-!! Erst durch die Hinzunahme der schon in QSim-1D angelegten Tiefenauflösung gelangt man zu wirklich drei-dimensionalen
-!! Raumauflösungen, die aber nur in geschichteten Wasserkörpern erforderlich sind.
-!! \n\n
-!! aus Datei: QSim3D.f95
 !--------------------------------------------------------------------------------------------------------------
 !>\page about_doc Über diese Dokumentation
 !! Das spezifische des Dokumentationsportals besteht darin, dass es mithilfe des Dokumentationsgenarators
@@ -347,6 +194,8 @@ end program QSim3D
 !! <a href="http://www.opentelemac.org/index.php/publications" target="_blank">Telemac</a> \n
 !! <a href="http://ccrm.vims.edu/schism/schism_pubs.html" target="_blank">SCHISM (ex SELFE)</a> \n
 !!
+!! \subpage lnk_ext_literatur
+!! 
 !! \section lnk_litfuss *
 !! <h3>Entschuldigung,</h3>
 !! unsere Bibliothekssoftware ist leider schon etwas älter.
@@ -439,7 +288,7 @@ end program QSim3D
 !! Wenn bei der \ref Gerris die Optionen richtig gesetzt wurden, läßt sich QSim3D durch Drücken auf den "Berechnen" Knopf starten:\n
 !! \image html GERRISstart.png
 !! \n\n
-!! aus Datei QSim3D.f95 ; zurück zu \ref lnk_technisch oder \ref index
+!! aus Datei QSim3D.f95 ; zurück zu \ref lnk_modellbedienung oder \ref index
 !--------------------------------------------------------------------------------------------------------------
 !> \page about_tiqusim Geschichte
 !! QSim-3D basiert auf <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html" target="_blank">QSim-1D</a>,

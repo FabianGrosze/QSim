@@ -142,8 +142,8 @@
 !! type(rb) , allocatable , dimension (:) :: rabe\n
 !! Zufluss-Randbedingungen aus <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a>\n
 !! werden von der subroutine ereigg_Randbedingungen_lesen() eingelesen.\n
-!! QSim3D ließt in die Struktur \ref rb ein.\n
-!! \n aus randbedingungen.f95 , zurück: \ref lnk_Datentechnik und \ref zuflussranddaten siehe auch \n\n
+!! QSim3D ließt in die Struktur \ref rb ein.\n 
+!! \n aus randbedingungen.f95 , zurück: \ref lnk_datenstruktur und \ref zuflussranddaten siehe auch \n\n
 !> Dient dem Anbringen der \ref zuflussranddaten \n
 !! in Datei randbedingungen.f95
 subroutine randbedingungen_setzen()
@@ -461,7 +461,7 @@ end subroutine tiefenprofil
 !! Diese Vorgehensweise hat ihren Ursprung in der Verfügbarkeit von Messdaten.\n
 !! Ergänzungen finden für die folgenden QSim-Bausteine statt:
 !! <ol>
-!!    <li>\subpage algenaufteilung \n</li>
+!!    <li>\subpage lnk_algenaufteilung_alt \n</li>
 !!    <li>\subpage orgc_aufteilung  \n</li>
 !!    <li>\subpage ncyc_aufteilung  \n</li>
 !!    <li>  subpage ph_aufteilung \n</li>

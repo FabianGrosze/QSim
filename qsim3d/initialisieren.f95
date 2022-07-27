@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 !> \page Anfangsbedingungen Anfangsbedingungen
-!! Die Setzung der Startwerte für \ref planktische_variablen wird zonenweise als \ref lokaleParameter vorgenommen.\n
+!! Die Setzung der Startwerte für \ref lnk_var_planktisch wird zonenweise als \ref lokaleParameter vorgenommen.\n
 !! Zur Initilisierung werden die Werte aus einer, der jeweiligen Zone zugeordneten Randbedingung verwendet.\n
 !! Diese Zuordnung geschieht mithilfe der I-Zeile in der Datei \ref qsimdateimodellg3.
 !! \n\n

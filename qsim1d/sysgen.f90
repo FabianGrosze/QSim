@@ -28,7 +28,7 @@
 !> Einteilung eines Fliessgewässers in Segmente. 
 !!
 !! Segmentlaenge variabel, Zeitschritt fest gleich 60 min
-!! @auhtor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 07.09.2015   
 subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                        &
                   ,ifehl,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &

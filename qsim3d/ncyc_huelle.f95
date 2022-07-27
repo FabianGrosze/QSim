@@ -101,7 +101,7 @@
 !! , \ref   albewg, \ref   alberg, \ref   albewk, \ref   alberk, \ref   resdr, \ref   aki, \ref   agr, \ref   exdrvk
 !! , \ref   exdrvg, \ref   vx02, \ref   ex02, \ref   eno2, \ref   ynmx2e, \ref   stks2e, \ref   anitri2e  & \n
 !! , \ref   abl, \ref   ablnh4, \ref   ablno3, \ref   exdrvb, \ref   bnmx2e, \ref   bnks2e
-!! , \ref   nl0, \ref   zooind, \ref   grote, \ref   nzoo, \ref   gesn, \ref   orgcsd  &\n
+!! , \ref   nl0, \ref   zooind, *grote*, \ref   nzoo, \ref   gesn, \ref   orgcsd  &\n
 !! , \ref  egesn, \ref   sedalk, \ref   sedalb, \ref   sedalg, \ref  ilbuhn, \ref  iwied, \ref  fkm
 !! , cd( \ref cd1, \ref   cd2), cp( \ref cp1, \ref   cp2), \ref   cm, \ref   bac
 !! , \ref   bsbct, \ref  nkzs, \ref   vnh4z, \ref   vno2z, \ref   vno3z, \ref  dh2d  & \n
@@ -116,7 +116,7 @@
 !! \n\n
 !! (Die nicht verlinkten Variablen haben in QSim3D keine Bedeutung oder werden in ncyc nicht verwendet)
 !! \n \n
-!! z.Z. in Bearbeitung: \subpage N_Isotope
+! ! z.Z. in Bearbeitung: \subpage N_Isotope
 !! \n\n
 !! <h2>Rand und Anfangsbedingungen</h2>
 !! Aufteilung im Zufluss mit naehr_start();
@@ -146,20 +146,20 @@
 !!</table>
 !!
 !! Die T-QSim Subroutine ncyc_huelle() dient dem Aufruf der QSim-subroutine ncyc(), die folgende Übergabeparameter benötigt:
-!! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+!! \n(Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 !!<table >
 !!<tr><th>     Variablen-Name QSim    </th><th> Daten-Feld T-QSim   </th><th> Beschreibung </th></tr>
-!!<tr><td> tempw(1) </td><td> \ref planktische_variablen 1 </td><td> aktuelle, lokale Wassertemperatur </td></tr>
+!!<tr><td> tempw(1) </td><td> \ref lnk_var_planktisch 1 </td><td> aktuelle, lokale Wassertemperatur </td></tr>
 !!<tr><td> vx0(1)  </td><td> planktische_variablen::planktonic_variable_p (15+nk)  </td><td> nitrosomonas </td></tr>
-!!<tr><td> vNH4(1) </td><td> \ref planktische_variablen 3 </td><td> ammonium </td></tr>
+!!<tr><td> vNH4(1) </td><td> \ref lnk_var_planktisch 3 </td><td> ammonium </td></tr>
 !!<tr><td> tflie </td><td> real(deltat)/86400 </td><td> Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim) </td></tr>
 !!<tr><td> rau(1)</td><td>benthische_verteilungen::benthic_distribution_p (5+(i-1)*number_benth_distr) </td><td> Strickler Reibungsbeiwert </td></tr>
 !!<tr><td> tiefe(1) </td><td> randbedingungen rb_hydraul_p (2+(i-1)*number_rb_hydraul) </td><td> Wassertiefe </td></tr>
 !!<tr><td> vmitt(1) </td><td> randbedingungen rb_hydraul_p (1+(i-1)*number_rb_hydraul) </td><td> Geschwindigkeitsbetrag | für die ABHAENGIGKEIT DER NITRIFIKATIONSLEISTUNG SESSILER NITRIFIKANTEN VON DER FLIESSGESCHWINDIGKEIT: </td></tr>
 !!<tr><td> rhyd(1) </td><td> tiefe(1) </td><td> hydraulischer Radius | sinnvollste Annahme im mehrdimensionalen </td></tr>
-!!<tr><td> vo2(1) </td><td> \ref planktische_variablen 2 </td><td> Sauerstoffgehalt tiefengemittelt </td></tr>
+!!<tr><td> vo2(1) </td><td> \ref lnk_var_planktisch 2 </td><td> Sauerstoffgehalt tiefengemittelt </td></tr>
 !!<tr><td> go2n(1) </td><td> uebergabe_werte::transfer_quantity_p (32+(i-1)*number_trans_quant) </td><td> FUER DIE STICKSTOFFOXYDATION VERBRAUCHTE SAUERSTOFFMENGE </td></tr>
-!!<tr><td> vno3(1) </td><td> \ref planktische_variablen 5 </td><td> Nitrat in mgN/l</td></tr>
+!!<tr><td> vno3(1) </td><td> \ref lnk_var_planktisch 5 </td><td> Nitrat in mgN/l</td></tr>
 !!<tr><td> bsbt(1) </td><td> uebergabe_werte::transfer_quantity_p (1+(i-1)*number_trans_quant) </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt (nur Rückgabe) </td></tr>
 !!<tr><td> flag(1)</td><td>0 </td><td> keine Einleitungen | ncyc so benutzen , dass nur der 1. Strang mit nur einem Knoten/Profil berechnet wird </td></tr>
 !!<tr><td> elen(1)</td><td>1 </td><td> Elementlänge (nicht verwendet) </td></tr>
