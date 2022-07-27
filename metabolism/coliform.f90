@@ -27,7 +27,7 @@
 
 !> Berechnung der Konzentration E. Coli, faecal coliformer und coliformer 
 !! Bakterien in Fliessgewässer
-!! @auhtor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 15.08.2017
 subroutine COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GRote,Chla,tempw,jiein,ecoli,    &
                     qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs,             &

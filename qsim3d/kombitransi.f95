@@ -40,7 +40,7 @@
 !! Konzentrationsverteilungen, die im Gütemodell simuliert werden, haben in einem Ästuar
 !! mit mehreren Monaten Wasseraufenthaltszeit ein viel längeres Gedächtnis.
 !! \n\n
-!! Quelle: kombitransi.f95 zurück zu \ref Transportinformationen
+!! Quelle: kombitransi.f95 zurück zu \ref lnk_transport_numerik
 program kombitransi
    implicit none
    integer :: dttrans, start, ende, transinfo_anzahl, sysa, i

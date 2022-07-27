@@ -27,21 +27,21 @@
 !> \page wetter_rb Wetter-Randbedingungen
 !!
 !! Die Wetter-Randbedingungen (meteorologischen Bedingungen) werden für die \ref lnk_wtemp
-!! und das Strahlungsklima, das die Algen (\ref Licht_algen ) erfahren, benötigt.
+!! und das Strahlungsklima, das die Algen (\ref lnk_licht_algen_alt ) erfahren, benötigt.
 !! \n
 !! <h2>Wetter-Parameter</h2>
 !! Diese Wetterdaten werden bei der eingabe() von Subroutine wetter_readallo0() aus der Datei
 !! <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a> gelesen.
 !!
 !!<table >
-!!<tr><th>Spalte WETTER.txt</th><th> 1D-Name </th><th> 3D-Stationswert       </th><th> Nr. \ref uebergabe_werte    </th><th> Beschreibung       </th><th> Einheit </th></tr>
+!!<tr><th>Spalte WETTER.txt</th><th> 1D-Name </th><th> 3D-Stationswert 		</th><th> Nr. \ref lnk_uebergabewerte 	</th><th> Beschreibung 		</th><th> Einheit </th></tr>
 !!<tr><td>1</td><td>\anchor glob glob   </td><td>             </td><td> -             </td><td>
 !!                                                                                                              Globalstrahlung von strahlg() berechnet </td><td> cal/(cm2*h) </td></tr>
 !!<tr><td>2</td><td> tlmax       </td><td> \anchor tlmax_T tlmax_T   </td><td> -            </td><td>
 !!                                                            Tagesmaximum der Lufttemperatur (bei der Verwendung von Tagesmittelwerten sonst Zeitwert) </td><td>  Grad Celsius  </td></tr>
 !!<tr><td>3</td><td> tlmin        </td><td> \anchor tlmin_T tlmin_T   </td><td> -            </td><td>
 !!                                                              Tagesminimum der Lufttemperatur (nur bei der Verwendung von Tagesmittelwerten verwendet)</td><td>  Grad Celsius  </td></tr>
-!!<tr><td>4</td><td>\anchor RO RO   </td><td> \anchor ro_T ro_T      </td><td> 63             </td><td> Luftfeuchte       </td><td> % </td></tr>
+!!<tr><td>4</td><td>\anchor RO RO	</td><td> \anchor ro_T ro_T		</td><td> 63 				</td><td> Luftfeuchte 		</td><td> % </td></tr>
 !!<tr><td>5</td><td>\anchor WGE WGE    </td><td> \anchor wge_T wge_T      </td><td> 65             </td><td> Windgeschwindigkeit    </td><td> m/s </td></tr>
 !!<tr><td>6</td><td>\ref cloud cloud </td><td> \anchor cloud_T cloud_T   </td><td> 66             </td><td> Bewölkungsdichte    </td><td> Achtel </td></tr>
 !!<tr><td>7</td><td>\ref typw typw    </td><td> \anchor typw_T typw_T      </td><td> 67             </td><td> Wolkentyp       </td><td>
@@ -50,7 +50,7 @@
 !!<tr><td>-</td><td>\anchor SCHWI SCHWI </td><td> \anchor schwi_T schwi_T   </td><td> 64             </td><td>
 !!                 Globalstrahlung an der Wasseroberflaeche unter Beruecksichtigung der Reflektion an der Wasseroberflaeche aus strahlg_wetter()   </td><td> cal/(cm2*h) </td></tr>
 !!</table>\n
-!! Der Eintrag der Wetter-Randbedingungen in die Felder der \ref uebergabe_werte wird von temperw_huelle() nur deswegen vorgenommen,
+!! Der Eintrag der Wetter-Randbedingungen in die Felder der \ref lnk_uebergabewerte wird von temperw_huelle() nur deswegen vorgenommen, 
 !! damit diese Werte an jeder Berechnungsstützstelle (Knoten oder Element) ausgegeben werden können. \n
 !!
 !! <h2>Zuordnung im Modell</h2>

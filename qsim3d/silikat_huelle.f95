@@ -57,7 +57,7 @@
 !! , \ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *sil*, \ref itags, \ref uhrz, \ref azstrs         &\n
 !! , \ref kontroll , \ref iglob )    \n
 !! \n
-!! silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
+!! silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
 !!
 !! <h2>Dokumentation</h2>
 !! Bisher existiert eine Dokumentation des Silikat-Moduls als Kapitel 12 der
@@ -126,9 +126,9 @@
 !!\n\n
 !!zurück: \ref lnk_silikat ; \ref zuflussranddaten ; Quelle: silikat_huelle.f95
 !! VORSICHT veraltet \n\n
-!! zurück: \ref lnk_silikat\n\n
+!! zurück: \ref lnk_silikat \n\n
 !! <h2>Aufruf</h2>
-!! silikat_huelle ist eine T-QSim Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim Subroutine:\n\n
+!! silikat_huelle ist eine T-QSim Hüllroutine (siehe dazu auch: \ref lnk_huellen) zum Aufruf der QSim Subroutine:\n\n
 !! \n
 !! <h2>Übergabe-Parameter:</h2>
 !!<table >

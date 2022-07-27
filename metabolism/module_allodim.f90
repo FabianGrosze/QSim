@@ -29,7 +29,7 @@
 !!
 !! Felddimensionierungs-Parameter
 !!
-!! from Datei qsim.f09 ; back zu \ref Main
+!! from Datei qsim.f09 ; back zu \ref index
 module allodim
    implicit none
    save

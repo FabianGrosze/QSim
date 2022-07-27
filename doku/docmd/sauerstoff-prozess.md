@@ -109,7 +109,7 @@ die Formel nach Wolf(1972) verwendet:
 
 Die Sauerstoffänderungsrate *k_{2,OB}* für den physikalischen Sauerstoffeintrag 
 bzw. -austrag über die Gewässeroberfläche wird über den Stricklerbeiwert *K_{St}*, 
-die Fließgeschwindigkeit *\nu* und die mittlere Wassertiefe *h* berechnet. Sie 
+die Fließgeschwindigkeit \f$\nu\f$ und die mittlere Wassertiefe *h* berechnet. Sie 
 hat die Dimension einer Geschwindigkeit. Wolf (1972) gibt zur Berechnung die 
 folgende empirische Formel an:
 \f[ 
@@ -247,7 +247,7 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 # Sauerstoffverbrauch durch Nitrifikation {#lnk_o2_nitrif} 
 *some text*
 
-# Sauerstoffverbrauch durch Zooplanktonplanktonrespiration (#lnk_o2_zoop)
+# Sauerstoffverbrauch durch Zooplanktonplanktonrespiration {#lnk_o2_zoop}
 *some text*
 <!-- Link Unterseite ehemals: Zooplanktonrespiration --> 
 
@@ -259,10 +259,10 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 -->
 
 
-# Sauerstoffverbrauch durch benthischen Filtrierer (Dreissena) (#lnk_o2_dreissena)
+# Sauerstoffverbrauch durch benthischen Filtrierer (Dreissena) {#lnk_o2_dreissena}
 *some text*
 
-# Sauerstoffverbrauch im Sediment (#lnk_o2_sediment)
+# Sauerstoffverbrauch im Sediment {#lnk_o2_sediment}
 *some text*
 
 <!-- oder Sauerstoffaustausch mit dem Sediment -->

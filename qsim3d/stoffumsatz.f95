@@ -164,7 +164,7 @@ end subroutine stoffumsatz
 !! \frac{\partial c_m}{\partial t} = Q ( c_1 \ldots c_m \ldots c_M, x_i, t )
 !! \f]\n
 !! mit: \n <ul>
-!!    <li> \f$ c_m \f$ = m-te Konzentration; Zwischenwert im Sinne des des fractional step algorithm, \n siehe: \ref fracStep \n\n</li>
+!!    <li> \f$ c_m \f$ = m-te Konzentration; Zwischenwert im Sinne des des fractional step algorithm, \n siehe: \ref lnk_fracStep \n\n</li>
 !!    <li> \f$ t \f$ = Zeit\n\n</li>
 !!    <li> \f$ Q_m \f$ = Quelle/Senke der Konzentration m (lokale Veränderungsrate, Stoffumsatz); \n\n</li>
 !! </ul>,\n
@@ -214,9 +214,10 @@ end subroutine stoffumsatz
 !! Eine konkrete Konzentration z. B. der Sauerstoffgehalt verändert sich durch Beiträge aus verschiedenen Stoffumsetzungsprozessen,
 !! die in den Modulen des Gewässergütemodells modelliert sind.\n\n
 !! Im Abschnitt \ref lnk_ueberblick sind alle von QSim modellierten Prozesse aufgeführt.\n\n
-!! Die Zuordnung, welche Konzentrationen von welchem Modul geändert wird, befindet sich in der Liste in: \ref planktische_variablen .
-!!
-!! \n\n aus Datei stoffumsatz.f95; zurück:\ref numerik
+!! Die Zuordnung, welche Konzentrationen von welchem Modul geändert wird, befindet sich in der Liste in: \ref lnk_var_planktisch .
+!! 
+!! \n\n aus Datei stoffumsatz.f95; zurück:\ref lnk_numerik
+
 !      ! Lasttest
 !      ilast=10000
 !      i1last=ilast/proz_anz

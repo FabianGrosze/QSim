@@ -63,17 +63,17 @@
 !!                   ,\ref q_nk,\ref q_pk,\ref q_ng,\ref q_pg,\ref q_nb                                  &\n
 !!                   ,\ref q_pb,\ref pl0,\ref nl0,\ref si,\ref hsised,\ref hjsi,\ref aki,\ref agr,\ref abl
 !!                   ,\ref chlaki,\ref chlagr,\ref chlabl,\ref hflun3,\ref ilang,\ref azstrs,\ref iwied,\ref ynmx1e,\ref stks1e     &\n
-!!                   ,\ref obsb,\ref ocsb,  \ref kontroll ,\ref jjj ) !!wy
+!!                   ,\ref obsb,\ref ocsb,  \ref kontroll , *jjj* ) !!wy  
 !!\n\n
 !! *Sedimenteigenschaften*
 !! </code><code>
 !!
-!!WRITE(1, '(A)') '<ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt">'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="BedGSed" Text="Bedeckungsgrad der Sohle mit Sediment (0-1)" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="kornd" Text="Korndurchmesser D50 Sediment (0-1), optional" Unit="m" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'\n
-!!WRITE(1, '(A)') '  <Parameter Ident="burial" Text="Burial-geschwindigkeit ins Sediment, optional" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." />'\n
+!!WRITE(1, '(A)') ' &lt;ParamSetDef Id="QZ" Text="Sediment-Kenngrößen" Help="Sediment-Kenngrößen in den Gewässer-Abschnitten" Scope="Abschnitt" &gt;'\n
+!!WRITE(1, '(A)') ' &lt;Parameter Ident="POMsed" Text="Anteil org. Materials" Unit="%" Format="F6.2" Null="-1" Help="Anteil des organischen Materials im Sediment" Min="" Max="" Default="-1" /&gt; '\n
+!!WRITE(1, '(A)') ' &lt;Parameter Ident="BedGSed" Text="Bedeckungsgrad der Sohle mit Sediment (0-1)" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." /&gt; '\n
+!!WRITE(1, '(A)') ' &lt;Parameter Ident="VVERTZ" Text="volumenbezogene Eindringgeschwindigkeit ins Sediment" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." /&gt; '\n
+!!WRITE(1, '(A)') ' &lt;Parameter Ident="kornd" Text="Korndurchmesser D50 Sediment (0-1), optional" Unit="m" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." /&gt; '\n
+!!WRITE(1, '(A)') ' &lt;Parameter Ident="burial" Text="Burial-geschwindigkeit ins Sediment, optional" Unit="mm/h" Format="F9.4" Null="-1" Help="" Min="" Max="" Default="-1." /&gt; '\n
 !!\n\n </code>
 !!
 !! MQ-Tiefe =2 m, MQ-Geschwindigkeit =1 m/s\n

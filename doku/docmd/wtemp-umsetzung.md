@@ -34,7 +34,7 @@ call temperw()\n
  
 ## IT-Realisierung ##
 Die QSim Subroutine temperw wird von der Hüllroutine temperw_huelle() aufgerufen. 
-Zum Hüllroutinen-Konzept siehe: \ref hüllen). 
+Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen). 
 
 Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
 
@@ -60,7 +60,7 @@ Die Wassertemperatur und die Sedimenttemperatur werden dann von der QSim-Subrout
 Dieser werden dafür die folgenden Variablen übergeben:
 \n
 
-(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+(Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 
 ## Rueckgabewerte/Resultate: ##
 Der Ergebnisrückgabe dienen die folgenden beiden Variablen (-Felder)
@@ -79,7 +79,7 @@ Die Hüllroutine temperw_huelle(i) wird in "\ref lnk_wtemp " beschrieben;
 dort findet sich auch eine ausfühliche schnittstellenbeschreibung zu temperw().
 
 \n\n
-Zum Hüllroutinen-Konzept siehe \ref hüllen
+Zum Hüllroutinen-Konzept siehe \ref lnk_huellen
 \n\n
 Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
 

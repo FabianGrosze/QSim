@@ -30,7 +30,7 @@ ausführlichere Informationen sind in den Unterkapitel der einzelnen Module verf
 
 Wie QSim die von der Strömung des Wassers hervorgerufenen advektiven
 und diffusiven Transportprozesse der o.g. Wasserinhaltstoffe simuliert,
-erläutert der Abschnitt [Stofftransport](#Stofftransport).
+erläutert der Abschnitt [Stofftransport](\ref lnk_stofftransport).
 Auch der Transport eines Tracers, welcher keinem Stoffumsatz unterliegt ist mit QSim möglich.
 
 Eine Einführung in die Gewässergütesimulation finden Sie auf der

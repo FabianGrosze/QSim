@@ -239,7 +239,7 @@
 !! dort findet sich auch eine ausfühliche schnittstellenbeschreibung zu temperw().
 !! Quelle: temperw_huelle.f95
 !! \n\n
-!! Zum Hüllroutinen-Konzept siehe \ref hüllen
+!! Zum Hüllroutinen-Konzept siehe \ref lnk_huellen
 !! \n\n
 !! Parallelisierung ist erfolgt; die Subroutine wird von allen Prozessoren für ihre jeweiligen Knoten aufgerufen.
 !!
@@ -270,7 +270,7 @@
 !! , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim                   &\n
 !! &, \ref kontroll, \ref iglob, *meinrang*)  \n
 !! \n
-!! temperw wird von der Hüllroutine temperw_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
+!! temperw wird von der Hüllroutine temperw_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
 !! <h3>Berechnungsablauf</h3>
 !! in jedem Zeitschritt müssen für jede Wetterstation die folgenden Subroutinen abgearbeitet werden:\n
 !! wettles_module()  ersetzt QSim-Subroutine wettles(), interpoliert die Wetterdaten für den aktuellen Zeitpunkt.\n
@@ -284,7 +284,7 @@
 !! (die von dem jeweiligen prozessor parallel bearbeitet werden) aufgerufen.
 !! Die Wassertemperatur und die Sedimenttemperatur werden dann von der QSim-Subroutine temperw() berechnet.
 !! Dieser werden dafür die folgenden Variablen übergeben:
-!! \n(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+!! \n(Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 !!
 !! aus Datei temperw_huelle.f95; zurück zu \ref Waermebilanz
 !! \n

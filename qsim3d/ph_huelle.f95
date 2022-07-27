@@ -63,8 +63,8 @@
 !! &, \ref mstr, \ref cpfad, \ref rhyd, \ref wlage, \ref hws, \ref itags, \ref monats, \ref uhrz                           &\n
 !! &, \ref azstrs, \ref iphy , \ref kontroll , \ref iglob )\n
 !! \n
-!! Die QSim3D Subroutine ph_huelle() dient dem Aufruf der QSimD-subroutine ph().
-!! (Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+!! Die QSim3D Subroutine ph_huelle() dient dem Aufruf der QSimD-subroutine ph(). 
+!! (Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 !!
 !! <h2>Rand und Anfangsbedingungen</h2>
 !! Ergänzung des P-Wertes im Zufluss mit pwert();

@@ -96,7 +96,7 @@ Das Formelzeichen \f$ (\Delta CO_2)_{lief}\f$ steht für die Summe dieser CO2 li
 * Bei der Atmung geben Konsumenten (\ref lnk_rotatorien) Kohlendioxid ab.
   Dazu wird der Biomasseverlust pro Zeitschritt, der in der Subroutine konsum() berechnet wurde,
   mittels der Variablen \ref dzres1 (Grundrespiration) \ref dzres2 (fraßabhängige Respiration) übergeben.
-  Die Multiplikation mit den Kohlenstoffgehalt \ref CRot ergibt dann die CO2 Zunahme im Wasser.
+  Die Multiplikation mit den Kohlenstoffgehalt *CRot* ergibt dann die CO2 Zunahme im Wasser.
 
 ### CO2-Verbrauch {#co2verb}
 

@@ -1,5 +1,5 @@
 Dokumentation {#mainpage}
-============
+=============
 
 <h1>QSim - Das Gewässergütemodell der BfG</h1>
 
@@ -30,9 +30,9 @@ folgende Liste angesprochen werden.
 - \subpage lnk_sediment <!--Sedimentflux-->
 - \subpage lnk_unrein
 - \subpage Aufenthaltszeit
-- \subpage Stofftransport
+- \subpage lnk_stofftransport
 - \subpage lnk_modellbedienung
-- \subpage lnk_modellstruktur
+- \subpage lnk_modelldetails
 - \subpage lnk_projekte
 - \subpage lnk_download
 - \subpage lnk_literatur

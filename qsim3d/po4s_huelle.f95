@@ -64,7 +64,7 @@
 !! &, \ref jiein, \ref sedalk, \ref sedalb, \ref sedalg                                       &\n
 !! &, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr, \ref aki, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0      &\n
 !! &, \ref abl, \ref dalgbl, \ref dalgab, \ref exdrvb, \ref gesp, \ref orgcsd                             &\n
-!! &, \ref zooind, \ref grote, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied                             &\n
+!! &, \ref zooind, *grote*, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied                             &\n
 !! &, *cd*, *cp*, \ref cm, \ref bac, \ref bsbctp, \ref qmx_pk, \ref q_pk, \ref up_pkz                           &\n
 !! &, \ref qmx_pg, \ref q_pg, \ref up_pgz, \ref qmx_pb, \ref q_pb, \ref up_pbz, *epl0*                       &\n
 !! &, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr, \ref agrbrz                                &\n
@@ -73,8 +73,13 @@
 !! &, \ref algdrk, \ref algdrg, \ref algdrb, \ref itags, \ref monats, \ref uhrz, \ref azstrs                    &\n
 !! &, \ref kontroll , \ref iglob )    \n
 !! \n
+<<<<<<< HEAD
+!! po4s() wird von der Hüllroutine po4s_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
+!! 
+=======
 !! po4s() wird von der Hüllroutine po4s_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
 !!
+>>>>>>> dev
 !! <h2>Rand und Anfangsbedingungen</h2>
 !! Aufteilung im Zufluss mit naehr_start(); Siehe dazu auch \ref randbedingungen_ergaenzen .
 !!
@@ -363,8 +368,13 @@ end subroutine aufteilung_po4s
 !! \n Gruß Jens
 !!     orgc.f90:      pl0(ior) = orgPn/(ocsbt/2.8) \n
 !! <h1>Schnittstellenbeschreibung</h1>
+<<<<<<< HEAD
+!! 
+!! po4s_huelle() ist eine QSim3d Hüllroutine (siehe dazu auch: \ref lnk_huellen) zum Aufruf der QSim Subroutine po4s()
+=======
 !!
 !! po4s_huelle() ist eine QSim3d Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim Subroutine po4s()
+>>>>>>> dev
 !! mittels der folgenden Übergabeparameter:
 !! \n
 !!<table >
@@ -473,7 +483,7 @@ end subroutine aufteilung_po4s
 !! zurück: \ref lnk_ueberblick, Quelle: po4s_module.f95
 !!
 !! <h2>Aufruf</h2>
-!! po4s_huelle ist eine QSim3D Hüllroutine (siehe dazu auch: \ref hüllen) zum Aufruf der QSim1D Subroutine:\n\n
+!! po4s_huelle ist eine QSim3D Hüllroutine (siehe dazu auch: \ref lnk_huellen) zum Aufruf der QSim1D Subroutine:\n\n
 !!
 !!       SUBROUTINE po4s(\ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak, *ep*, \ref qeinl, \ref vabfl, \ref anze, \ref tflie        &
 !!                     , \ref dzres1, \ref dzres2, \ref jiein, \ref sedalk, \ref sedalb, \ref sedalg, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr            &

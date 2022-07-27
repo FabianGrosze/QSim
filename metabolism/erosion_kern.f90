@@ -37,15 +37,15 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
    ! dummy arguments
    real, intent(in)    :: tflie     !< Zeitschritt [d]
    real, intent(in)    :: tiefe_s   !< Wassertiefe
-   real, intent(in)    :: rau_s     !< 
+   real, intent(in)    :: rau_s     !< <i>Dokumentation fehlt noch</i>
    real, intent(in)    :: vmitt_s   !< Fließgeschwindigkeit
-   real                :: SSeros_s  !< 
+   real                :: SSeros_s  !< <i>Dokumentation fehlt noch</i>
    real                :: ss_s      !< Schwebstoffe
-   real                :: ssalg_s
+   real                :: ssalg_s   !< <i>Dokumentation fehlt noch</i>
    real                :: dsedh_s   !< Sohlhöhenänderung im aktuellen Zeitschritt [mm]
-   real                :: tausc_s
-   real                :: m_eros_s
-   real                :: n_eros_s
+   real                :: tausc_s   !< <i>Dokumentation fehlt noch</i>
+   real                :: m_eros_s  !< <i>Dokumentation fehlt noch</i>
+   real                :: n_eros_s  !< <i>Dokumentation fehlt noch</i>
    real                :: sedroh_s  !< Rohdichte des Sediments [kg/m3]
    real                :: dRero_s   !< Erosionsrate je Zeitschritt [kg/m2]
    logical, intent(in) :: kontroll  !< debugging

@@ -33,7 +33,7 @@
 !! <ul>
 !! <li> \subpage Netz  </li>
 !! <li> \subpage Ablaufsteuerung </li>
-!! <li> \ref Transportinformationen </li>
+!! <li> \ref lnk_transport_numerik </li>
 !! <li> \subpage Anfangsbedingungen  </li>
 !! <li> \subpage zuflussranddaten </li>
 !! <li> \subpage globaleParameter  </li>
@@ -149,7 +149,7 @@
 !!<tr><td><a href="./exp/points" target="_blank">points</a> <br>      </td><td>ascii</td><td> neu, wird von casu (transinfo) ausgegeben. Nicht die converti-Version verwenden! </td><td> Infos zu den knoten: Lage (x+y), Höhe (z), Zonen_nummer(n), Randnummer, Zellfläche </td><td> points() </td></tr>
 !!<tr><td><a href="./exp/file.elements" target="_blank">file.elements</a>   </td><td>ascii</td><td> converti, casu-eingabe-Datei   </td><td> Vermaschung Netz, wird zur Ergebnis-Darstellung benötigt   </td><td> elements() </td></tr>
 !!<tr><td><a href="./exp/transinfometa" target="_blank">transinfo/meta</a>  </td><td>ascii</td><td>   neu, wird von casu ausgegeben   </td><td> Meta-Infos zu den Transportinformationen </td><td> transinfo_sichten() </td></tr>
-!!<tr><td>  transinfo/t*                     </td><td>binär</td><td> neu, wird von casu ausgegeben   </td><td> \ref Transportinformationen </td><td> holen_trans() </td></tr>
+!!<tr><td>  transinfo/t*                     </td><td>binär</td><td> neu, wird von casu ausgegeben   </td><td> \ref lnk_transport_numerik </td><td> holen_trans() </td></tr>
 !!<tr><td> Ausgabesteuerung </td></tr>
 !!<tr><td><a href="./exp/ganglinien_knoten.txt" target="_blank">ganglinien_knoten.txt</a></td><td>ascii</td><td> neu </td><td> Knotennummern, an denen Ganglinien ausgegeben werden sollen </td><td> ganglinien_lesen(), ganglinien_zeitschritt(), ganglinien_schliessen() </td></tr>
 !!<tr><td><a href="./exp/ausgabezeitpunkte.txt" target="_blank">ausgabezeitpunkte.txt</a></td><td>ascii</td><td> neu </td><td> Zeitpunkte, zu denen komplette Konzentrationsfelder ausgegeben werden sollen </td><td> ausgabezeitpunkte() </td></tr>

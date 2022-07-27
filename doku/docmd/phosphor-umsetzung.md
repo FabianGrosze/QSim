@@ -17,7 +17,7 @@ SUBROUTINE po4s()\n
 &, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr, \ref aki  &\n
 &, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0, \ref abl, \ref dalgbl       &\n
 &, \ref dalgab, \ref exdrvb, \ref gesp, \ref orgcsd, \ref zooind             &\n
-&, \ref grote, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied, *cd*, *cp*          &\n
+&, *grote*, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied, *cd*, *cp*          &\n
 &, \ref cm, \ref bac, \ref bsbctp, \ref qmx_pk, \ref q_pk, \ref up_pkz       &\n
 &, \ref qmx_pg, \ref q_pg, \ref up_pgz, \ref qmx_pb, \ref q_pb               &\n
 &, \ref up_pbz, *epl0*, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr    &\n
@@ -29,7 +29,8 @@ SUBROUTINE po4s()\n
 
 
 po4s() wird von der Hüllroutine po4s_huelle() aufgerufen. 
-Zum Hüllroutinen-Konzept siehe: \ref hüllen
+
+Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
 
 \n\n
 ### Rand und Anfangsbedingungen ###

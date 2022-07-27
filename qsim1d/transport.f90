@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Transport
-!! @autor Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 25.07.2019
 subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tempw,vo2,vnh4,vno3,vno2,vx0                  &
                      ,vx02,Si,mstr,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr  &

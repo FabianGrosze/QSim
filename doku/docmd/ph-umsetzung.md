@@ -33,7 +33,7 @@ call ph()
 &, \ref azstrs, \ref iphy , \ref kontroll , \ref iglob )
 
 Die QSim3D Subroutine ph_huelle() dient dem Aufruf der QSimD-subroutine ph(). 
-(Zum Hüllroutinen-Konzept siehe: \ref hüllen )
+(Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 
 
 ## IT-Realisierung ##

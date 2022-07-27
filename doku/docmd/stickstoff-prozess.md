@@ -122,8 +122,9 @@ Anschließend wird Nitrit durch Nitrobacter abgebaut (NO2N-> NO3N),
 
 Der Sedimentflux, die Aufnahme durch sessile Nitrosomonas und die NH4-Freisetzung 
 durch die Respiration benthischer Filtrierer sind ausgeschaltet.		 
-Die Ammoniumfreisetzung beim C-Abbau \f$ doN \f$ wird im Baustein <orgC> berechnet.
-<!-- #mf: beizeiten Link zu entsprechender Stelle orgC-Doku einfügen -->
+
+Die Ammoniumfreisetzung beim C-Abbau \f$ doN \f$ wird im Baustein \ref lnk_orgC berechnet.
+<!-- #mf: beizeiten Link zu entsprechender Stelle orgC-Doku einfügen (zu orgC statt lnk_orgC) -->
 
 \f$ r_{NH_4, nitrif} \f$: durch suspendierte Nitrifikanten oxidierte NH4-Menge [??] \n <!-- susn -->
 \f$ doN \f$: Ammoniumfreisetzung beim C-Abbau [\f$ mg N \cdot L^{-1} \cdot t^{-1} \f$] \n
