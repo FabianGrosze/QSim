@@ -9537,10 +9537,7 @@ program qsim
                         ,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
                         ,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
                         ,tracer(iior)
-         write(155,5207)gsPby(iior),glPby(iior),gsCady(iior),glCady(iior),gsCry(iior),glCry(iior),gsFey(iior),glFey(iior)     &
-                        ,gsCuy(iior),glCuy(iior),gsMny(iior),glMny(iior),gsNiy(iior),glNiy(iior),gsHgy(iior),glHgy(iior)      &
-                        ,gsUy(iior),glUy(iior),gsZny(iior),glZny(iior),gsAsy(iior),glAsy(iior)
-         
+                 
          ! Write results to csv-files for debugging
          if (write_csv_output) then 
             write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
@@ -9605,13 +9602,6 @@ program qsim
                         ,bsiy(iior),bchlay(iior),bzooiy(iior),bphy(iior),bmwy(iior)    &
                         ,bcay(iior),blfy(iior),bssaly(iior),btempy(iior),bo2y(iior)    &
                         ,bHNFy,bcoliy(iior),tau2y(iior),btracer(iior)
-         
-         write(155,5207)bgsPby(iior),bglPby(iior),bgsCady(iior),bglCady(iior)          &
-                        ,bgsCry(iior),bglCry(iior),bgsFey(iior),bglFey(iior)           &
-                        ,bgsCuy(iior),bglCuy(iior),bgsMny(iior),bglMny(iior)           &
-                        ,bgsNiy(iior),bglNiy(iior),bgsHgy(iior),bglHgy(iior)           &
-                        ,bgsUy(iior),bglUy(iior),bgsZny(iior),bglZny(iior)             &
-                        ,bgsAsy(iior),bglAsy(iior)
          
          5103 format(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I5)
          
@@ -11834,20 +11824,23 @@ program qsim
    endif
    write(199,'(120a)')cfehlr
    
-   990 close (45)
-   write(*,*)ifehl
-   close (155)
-   close (156)
-   close (157)
-   close (158)
-   close (255)
-   close (199)
-   !close (345)
-   if (iRHKW == 1)close (177)
+   990 continue
+   close (45)     ! ErgebM.txt
+   close (155)    ! ErgebT.txt
+   close (156)    !
+   close (157)    !
+   close (158)    !
+   close (199)    ! file1.err
+   close (255)    ! Ergeb2D.txt
+   
+   if (iRHKW == 1) close (177)   ! Red_HKW.txt
+   
    if (ifehl /= 0) then
-      stop 1
-   else
       write(*,*)ifehl
-      stop 0
+      stop 0 
+   else
+      write(*,*) 'Success.'
+      write(*,*) 'End of Simulation'
    endif
+   
 end program qsim

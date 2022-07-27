@@ -30,6 +30,7 @@ metabolism/libqsim.a
 
 
 # --- Visual Studio ---
+*.u2d
 /qsim1d/x64
 qsim1d/x64/*
 .vs
