@@ -164,7 +164,7 @@ schism: $(SC)
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 qsim:	
-	@cd ../metabolism; cp makefile3 Makefile; make metabol; cp *.mod ../qsim3d; cd ../qsim3d
+	@cd ../metabolism; cp makefile3 Makefile; make metabol; rm Makefile; cp *.mod ../qsim3d; cd ../qsim3d
 
 %.co: %.c
 	$(CC) -c  $(CCLAGS) $< -o $@
