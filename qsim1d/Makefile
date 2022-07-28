@@ -87,7 +87,7 @@ date:
 
 
 qsim:	
-	@cd ../metabolism; cp makefile1 Makefile; make metabol; cp *.mod ../qsim1d; cd ../qsim1d
+	@cd ../metabolism; cp makefile1 Makefile; make metabol; rm Makefile; cp *.mod ../qsim1d; cd ../qsim1d
 
 %.o: %.f90
 	$(FC) $(FFLAGS) $<
