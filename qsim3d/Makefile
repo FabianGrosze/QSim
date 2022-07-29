@@ -242,7 +242,7 @@ taz:
 	tar cvfz ../$(FN) ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
 	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
-	../metabolism/*.f90 ../metabolism/*.txt ../metabolism/Makefile* \
+	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*akefile* \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt
 	cp ../$(FN) .
