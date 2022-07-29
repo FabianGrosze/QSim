@@ -30,7 +30,7 @@ METABOL_LIB           = -L. -lqsim
 QSIM = module_allodim.o module_aparam.o albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
        coliform.o  coroph.o  dichte.o\
        dreissen.o  e_extnct_lesen.o  einleiter_misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
-       lin_spline.o  lin_sys.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o \
+       lin_spline.o  lin_sys.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph/ph.o ph/ph_kern.o pwert.o \
        po4s.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \
        Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o temperw.o \
        uptake.o anztag.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o version_string.o \
