@@ -313,8 +313,9 @@ logical function querschnitt_lesen()
       end do ! alle j Kanten in Querschnitt i
       print*,"Querschnitt #",i, "hat ",querschnitt(i)%schnittlinie%anzkanten," Kanten und ist ",lang," lang"
       do j = 1,querschnitt(i)%schnittlinie%anzkanten !! alle j Kanten
-         print*,j,' n,l,bt,tp = ',querschnitt(i)%schnittlinie%kante(j)%num,querschnitt(i)%schnittlinie%kante(j)%laengs  &
-                                ,querschnitt(i)%schnittlinie%kante(j)%bottom,querschnitt(i)%schnittlinie%kante(j)%top
+         print*,j,' n,l,bt,tp = ',                                                                    &
+               querschnitt(i)%schnittlinie%kante(j)%num,querschnitt(i)%schnittlinie%kante(j)%laengs   &
+               ,querschnitt(i)%schnittlinie%kante(j)%bottom,querschnitt(i)%schnittlinie%kante(j)%top
       end do ! alle j Kanten in Querschnitt i
    end do ! alle i Querschnitte
    querschnitt_lesen = .true.

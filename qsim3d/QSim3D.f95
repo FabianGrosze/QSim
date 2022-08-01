@@ -51,7 +51,7 @@ program QSim3D
    !! mirror inital values
    call ausgeben()
    call ganglinien_zeitschritt(1)
-   !==== Stat of time-loop, time (zeitpunkt) in seconds (integer) ============= ============= ============= ============= =============
+   !==== Stat of time-loop, time (zeitpunkt) in seconds (integer) =================================================================
    do izeit = 1,zeitschrittanzahl !------------------------------------------------- proceed in time
       call zeitschritt_halb(.true.) ! --- increment time and compute boundary-values in the middle of the timestep
       call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr);call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -79,7 +79,7 @@ program QSim3D
       call ganglinien_zeitschritt(izeit+1) !! store values for time series
       call mpi_barrier (mpi_komm_welt, ierr)
    end do
-   !==== End of time-loop   ============= ============= ============= ============= =============
+   !==== End of time-loop   =================================================================
    write(*,*)meinrang,' end of time-loop'
    !-------------------------------------------------
    !call mpi_barrier (mpi_komm_welt, ierr)

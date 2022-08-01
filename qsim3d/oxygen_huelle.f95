@@ -696,15 +696,15 @@ subroutine oxygen_huelle(i)
       endif
    end do
    !qsim13.40 15okt18
-   call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,rhyd,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4                    &
-               ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                        &
-               ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein                       &
-               ,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg,opblmi,opblma,ablnh4                  &
-               ,ablno3,dalgbl,dalgab,albewk,alberk,abeowk,abeork,ro2dr,wge,IDWe,fkm,uhrz                      &
-               ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                                   &
-               ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z                    &
-               ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats                       &
-               ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROT,iphy                    &
+   call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,rhyd,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4   &
+               ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr             &
+               ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein            &
+               ,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg,opblmi,opblma,ablnh4       &
+               ,ablno3,dalgbl,dalgab,albewk,alberk,abeowk,abeork,ro2dr,wge,IDWe,fkm,uhrz           &
+               ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                        &
+               ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z         &
+               ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats            &
+               ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROT,iphy         &
                ,kontroll ,iglob )
    
    ! qsim13.301_28mae18
@@ -787,11 +787,9 @@ subroutine ini_oxygen()
    !! 100% Sauerstoffsättigung:
    do i = 1,number_plankt_point
       nk = (i-1)*number_plankt_vari
-      planktonic_variable(2+nk) = &
-                                  sauerstoffsaettigung(planktonic_variable(1+nk)) !! vO2_saett(T)
+      planktonic_variable(2+nk) = sauerstoffsaettigung(planktonic_variable(1+nk)) !! vO2_saett(T)
       do j = 1,num_lev
-         plankt_vari_vert(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(2+nk) ! Sauerstoffgehalt tiefenaufgelöst
+         plankt_vari_vert(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(2+nk) ! Sauerstoffgehalt tiefenaufgelöst
       end do ! alle j tiefenlevels
    end do
    print*,'Anfangsbedingung: 100% Sauerstoffsättigung vO2(1) = ',planktonic_variable(2+(1-1)*number_plankt_vari)

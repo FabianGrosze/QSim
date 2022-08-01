@@ -97,7 +97,7 @@ subroutine holen_trans_untrim(nt)
          u(n) = u(n)+ (ed_vel_x(elementedges(n,k))**2 + ed_vel_y(elementedges(n,k))**2)**0.5
          if (u(n) > huge(u(n))) then
             print*,"ed_vel_x,y,elementedges,n,k = ",  &
-                                                  ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
+                  ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
             call qerror("holen_trans_untrim u infinity")
          endif
       end do ! alle k Kanten im Element
@@ -279,7 +279,7 @@ subroutine stofftransport_untrim()
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
       print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu > 1), volume fraction (cu > 1), deltat = ', &
-                                                                                                          cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+              cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! skip SSalg and SS if SS read from file
@@ -303,13 +303,12 @@ subroutine stofftransport_untrim()
                   print*,'wicht !! neighbours = ',(wicht((j-1)*5+1+k),k=1,4)
                   do k = 1,4 ! all 4 neighbour (elements) if existing
                      if ( intereck((j-1)*4+k) > 0) then
-                        print*,'planktonic_variable(',k,') = '  &
-                                                             , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
-                                                             ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
+                        print*,'planktonic_variable(',k,') = '                                      &
+                              , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
+                              ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
                      endif
                   end do !all 4 k
-                  write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name'  &
-                  ,planktonic_variable_name(n)
+                  write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name', planktonic_variable_name(n)
                   call qerror(fehler)
                else
                   planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
@@ -321,8 +320,8 @@ subroutine stofftransport_untrim()
       if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
          print*,'Nach transportschritt untrim am kontrollelement:'
          print*,'Wassertiefe = ',rb_hydraul(2+(kontrollknoten-1)*number_rb_hydraul)          &
-                               ,'Temp_wass = ',planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari)  &
-                               ,'chla = '   ,planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
+               ,'Temp_wass = ',planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari)  &
+               ,'chla = '   ,planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
          print*,'wicht !! self =',wicht((kontrollknoten-1)*5+1)
          print*,'intereck((j-1)*4+k) = ',( intereck((kontrollknoten-1)*4+k),k = 1,4 )
          print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
@@ -841,8 +840,8 @@ subroutine nc_sichten()
          delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
          if ((delt /= dttrans) .or. (delt < 1.0)) then
             print*,n,' = n dttrans = ',dttrans," transinfos_zeit (n) und (n-1) = "  &
-                         ,transinfo_zeit(transinfo_zuord(n)),transinfo_zeit(transinfo_zuord(n-1))  &
-                         ,"transinfo_zuord(n)und(n-1) = ",transinfo_zuord(n),transinfo_zuord(n-1)
+                  ,transinfo_zeit(transinfo_zuord(n)),transinfo_zeit(transinfo_zuord(n-1))  &
+                  ,"transinfo_zuord(n)und(n-1) = ",transinfo_zuord(n),transinfo_zuord(n-1)
             print*,'transinfo_zuord(n),transinfo_zuord(n-1) = ',transinfo_zuord(n),transinfo_zuord(n-1)
             do nnn = 1,15,1
                print*,nnn,' = n transinfo_zeit = ',transinfo_zeit(transinfo_zuord(nnn)),transinfo_zuord(nnn)
@@ -1010,8 +1009,7 @@ subroutine print_attributes( nvar, nAtts)
             end do
             iret = nf_get_att_text(ncid, nvar, aname, attstring)
             call check_err(iret)
-            write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = " &
-                                                                                    , len(trim(attstring)), trim(adjustl(attstring))
+            write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = ",len(trim(attstring)),trim(adjustl(attstring))
          case(nf90_short)
             iret = nf_get_att_int(ncid, nvar, aname, ival)
             call check_err(iret)

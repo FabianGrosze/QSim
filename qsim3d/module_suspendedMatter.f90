@@ -152,8 +152,8 @@ contains
          end select
          ! write SPM min/max to log file
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
-                                                 'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),        &
-                                                 ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
+               'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),        &
+               ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
       end if
       
       ! synchronize all parallel processes

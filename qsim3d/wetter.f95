@@ -532,13 +532,13 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          end do ! alle wetterstationen
          if ( .not. existing_station) then
             write(fehler,*)'Die von Zone ',i ,' mit der Zonen-Kennnummer = ',zone(i)%zonen_nummer,  &
-                                                                           ' benötigte Wetterstation mit der Kennung '&
-                                                                           ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
+                  ' benötigte Wetterstation mit der Kennung '&
+                  ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
             call qerror(fehler)
          else ! existing_station
             print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "  &
-                                                               , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
-                                                               , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
+                  , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
+                  , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
          end if ! nicht vorhanden
       end do ! alle Zonen
       !

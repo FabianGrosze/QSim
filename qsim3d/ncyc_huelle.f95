@@ -710,17 +710,17 @@ subroutine ncyc_huelle(i)
    if (kontroll)print*,'ncyc vorher: Ammonium,Nitrit,Nitrat,nitrosomonas,nitrobacter = '  &
        ,vNH4(1),vno2(1),vno3(1),vx0(1),vx02(1)
    if (kontroll)print*,'ncyc vorher: hJNO3,hJNH4,hJN2 = ',hJNO3(1,1),hJNH4(1,1),hJN2(1,1)
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,flag,elen,ior,anze                 &
-             ,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2         &
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2,go2n,vno3,dC_DenW,flag,elen,ior,anze              &
+             ,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2     &
              ,agrno3,akino3,jiein,ischif,YNMAX1,STKS1,ANITR1,BNMX1,BNKS1,vph,vno2,ij                         &
-             ,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,vx02,ex02,eno2,YNMAX2,STKS2,ANITR2      &
-             ,abl,ablnh4,ablno3,exdrvb,BNMX2,BNKS2,nl0,zooind,GROT,nzoo,gesN,orgCsd                           &
-             ,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm,CD,CP,CM,BAC,bsbct,nkzs,vnh4z,vno2z,vno3z,dH2D         &
-             ,hJNO3,hJNH4,hJN2,susO2N,hFluN3,akksN,agksN,abksN,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB      &
-             ,Q_NB,up_NBz,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z,abno3z,vo2z,abltbr             &
-             ,akitbr,agrtbr,agrbrz,akibrz,ablbrz,mstr,uhrz,itags,monats,enl0,algakz,algagz,algabz                &
-             ,up_N2z,iorLa,iorLe,ieinLs,flae,qeinlL,eNH4L,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb          &
+             ,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,vx02,ex02,eno2,YNMAX2,STKS2,ANITR2     &
+             ,abl,ablnh4,ablno3,exdrvb,BNMX2,BNKS2,nl0,zooind,GROT,nzoo,gesN,orgCsd                          &
+             ,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm,CD,CP,CM,BAC,bsbct,nkzs,vnh4z,vno2z,vno3z,dH2D     &
+             ,hJNO3,hJNH4,hJN2,susO2N,hFluN3,akksN,agksN,abksN,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB  &
+             ,Q_NB,up_NBz,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z,abno3z,vo2z,abltbr         &
+             ,akitbr,agrtbr,agrbrz,akibrz,ablbrz,mstr,uhrz,itags,monats,enl0,algakz,algagz,algabz            &
+             ,up_N2z,iorLa,iorLe,ieinLs,flae,qeinlL,eNH4L,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb      &
              ,ifehl,ifhstr, azStrs,    kontroll ,iglob )
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Datenrückgabe:
    if ( isnan(vno2z(1,1)) )print*,'ncyc nachher: isnan(vno2z)  node#',iglob

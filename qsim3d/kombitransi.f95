@@ -114,7 +114,7 @@ program kombitransi
       do i = sammel_ende,ende,dttrans !! brauchbare zeitpunkte kopieren
          !trans_write.c:   sprintf(text,"%s/transinfo/t%09d",dirname,itime);
          write(systemaufruf,'(3A,I9.9,x,2A)',iostat = errcode)  &
-                                                      'cp ',trim(modellverzeichnis),'transinfo/t',i,trim(sammelverzeichnis),'transinfo/'
+               'cp ',trim(modellverzeichnis),'transinfo/t',i,trim(sammelverzeichnis),'transinfo/'
          if (errcode /= 0)call qerror('kombitransi writing system call cp failed')
          call system(systemaufruf,sysa)
          if (sysa /= 0) then

@@ -43,24 +43,24 @@ subroutine erosion_huelle(i)
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
    if (tiefes <= min_tief)tiefes = min_tief ! minimale Wassertiefe erhalten
    raus = strickler( zone(point_zone(iglob))%reib , tiefes )
-   !      SUBROUTINE erosion_kern(tflie,TIEFEs,RAUs,VMITTs        &
-   !                           ,SSeross,sss,ssalgs,dsedHs       &
-   !                       ,tauscs,M_eross,n_eross,sedrohs  &
-   !                           ,kontroll,jjj)
-   call erosion_kern( &
-                     tflie                    &
-                     ,TIEFEs                  &
-                     ,RAUs                    &
-                     ,rb_hydraul_p(1+(i-1)*number_rb_hydraul)                  &
-                     ,transfer_quantity_p(12+ntra)                 &
-                     ,planktonic_variable_p(53+npla)                     &
-                     ,planktonic_variable_p(52+npla)                  &
-                     ,transfer_quantity_p(68+ntra)         &
-                     ,zone(point_zone(iglob))%erosi%tau_krit                   &
-                     ,zone(point_zone(iglob))%erosi%M_eros                 &
-                     ,zone(point_zone(iglob))%erosi%n_eros                 &
-                     ,zone(point_zone(iglob))%erosi%sed_roh                 &
-                     ,kontroll                &
+   
+   ! SUBROUTINE erosion_kern(tflie,TIEFEs,RAUs,VMITTs        &
+   !                        ,SSeross,sss,ssalgs,dsedHs       &
+   !                        ,tauscs,M_eross,n_eross,sedrohs  &
+   !                        ,kontroll,jjj)
+   call erosion_kern(tflie                                        &
+                     ,TIEFEs                                      &
+                     ,RAUs                                        &
+                     ,rb_hydraul_p(1+(i-1)*number_rb_hydraul)     &
+                     ,transfer_quantity_p(12+ntra)                &
+                     ,planktonic_variable_p(53+npla)              &
+                     ,planktonic_variable_p(52+npla)              &
+                     ,transfer_quantity_p(68+ntra)                &
+                     ,zone(point_zone(iglob))%erosi%tau_krit      &
+                     ,zone(point_zone(iglob))%erosi%M_eros        &
+                     ,zone(point_zone(iglob))%erosi%n_eros        &
+                     ,zone(point_zone(iglob))%erosi%sed_roh       &
+                     ,kontroll                                    &
                      ,iglob )
    return
 end subroutine erosion_huelle

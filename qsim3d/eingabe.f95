@@ -654,7 +654,7 @@ subroutine ereigg_modell()
    end if ! zeitschrittweite deltat ist falsch
    if (abs(real(deltat)-(dt_min*60)) > 0.01) then
       write(fehler,*)'ereigg_modell: angegebene zeitschrittweite = ',dt_min,' minuten d.h.',(dt_min*60)  &
-                                                                   ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
+                    ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
       call qerror(fehler)
    end if ! Zeitschritt als ganze sekunden
    zeitschrittanzahl = (endzeitpunkt-startzeitpunkt)/(deltat)

@@ -735,16 +735,14 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   planktonic_variable(11+nk)*planktonic_variable(19+nk)     & ! aki = (chla*VKIGR)/(1000*akbcm*Caki)
    !     &   /(1000.*planktonic_variable(24+nk)*Caki)
    do l = 1,num_lev ! akiz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                planktonic_variable(8+nk)
+      plankt_vari_vert(l+(8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(8+nk)
    end do ! alle l levels
    !      agrs(mstr,mRB) = (chlas(mstr,mRB)*(1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))/1000.)*(agbcms(mstr,mRB)/Cagr)
    planktonic_variable(9+nk) = ( planktonic_variable(13+nk)*planktonic_variable(25+nk) ) / (1000.0*Cagr)
    !     &   planktonic_variable(11+nk)*(1.-planktonic_variable(19+nk)-planktonic_variable(20+nk)) &
    !     &   /(1000.*planktonic_variable(25+nk)*Cagr) ! agr = (chla*(1-VKIGR-ANTBL))/(1000*agbcm*Cagr)
    do l = 1,num_lev ! ablz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                planktonic_variable(9+nk)
+      plankt_vari_vert(l+(9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(9+nk)
    end do ! alle l levels
    
    !      abls(mstr,mRB) = (chlas(mstr,mRB)*antbls(mstr,mRB)/1000.)*(abbcms(mstr,mRB)/Cabl)
@@ -752,8 +750,7 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   planktonic_variable(11+nk)*planktonic_variable(20+nk) &
    !     &   /(1000.*planktonic_variable(26+nk)*Cabl)  ! abl = (chla*ANTBL)/(1000*abbcm*Cabl)
    do l = 1,num_lev ! agrz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                 planktonic_variable(10+nk)
+      plankt_vari_vert(l+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(10+nk)
    end do ! alle l levels
    !....zelluläre Nährstoffgehalte in den Algen
    !      Sum_N = vnh4s(mstr,mRB)+vNO3s(mstr,mRB)

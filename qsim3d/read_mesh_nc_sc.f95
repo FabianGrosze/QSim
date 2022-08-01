@@ -380,7 +380,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
                if (i > np_sc(irank) .or. i <= 0) then
                   print*,',nm2(1....4,',m,')) = ',nm2(1,m),nm2(2,m),nm2(3,m),nm2(4,m)
                   print*,',i,np(irank),irank,nm2(mm,m),mm,m,j,cornernumber(j) = ',  &
-                                                                                i,np_sc(irank),irank,nm2(mm,m),mm,m,j,cornernumber(j)
+                         i,np_sc(irank),irank,nm2(mm,m),mm,m,j,cornernumber(j)
                   call qerror('cornernumber error in read_mesh_nc_sc')
                endif
                elementnodes(j,mm) = iplg_sc(irank,i)

@@ -274,14 +274,14 @@ subroutine tagesmittelwert()
       tagesanteil = real(deltat)/real(86400)
       do n = 1,knotenanzahl2D  !!!!!!!!!!!  mittelwerte aufsummieren
          transfer_quantity_p(68+(n-1)*number_trans_quant) = transfer_quantity_p(68+(n-1)*number_trans_quant)  &
-                                                            + (planktonic_variable_p(1+(n-1)*number_plankt_vari)  * tagesanteil) ! Wasser-Temperatur Rückgabewert
+                                                          + (planktonic_variable_p(1+(n-1)*number_plankt_vari)  * tagesanteil) ! Wasser-Temperatur Rückgabewert
          transfer_quantity_p(69+(n-1)*number_trans_quant) = transfer_quantity_p(69+(n-1)*number_trans_quant)  &
-                                                            + (benthic_distribution_p(1+(n-1)*number_benth_distr) * tagesanteil) ! Temperatur des Sediments - Rückgabewert
+                                                          + (benthic_distribution_p(1+(n-1)*number_benth_distr) * tagesanteil) ! Temperatur des Sediments - Rückgabewert
          if (rb_hydraul(2+(n-1)*number_rb_hydraul) > 0.02) then ! tief(n)
             transfer_quantity_p(70+(n-1)*number_trans_quant) = transfer_quantity_p(70+(n-1)*number_trans_quant)  &
-                                                               + (rb_hydraul(2+(n-1)*number_rb_hydraul) * tagesanteil) ! TagesSumme Tiefe wenn bedeckt
+                                                             + (rb_hydraul(2+(n-1)*number_rb_hydraul) * tagesanteil) ! TagesSumme Tiefe wenn bedeckt
             transfer_quantity_p(71+(n-1)*number_trans_quant) = transfer_quantity_p(71+(n-1)*number_trans_quant)  &
-                                                               + (tagesanteil) ! Bedeckungsdauer (Tageanteil)
+                                                             + (tagesanteil) ! Bedeckungsdauer (Tageanteil)
          endif
       end do ! alle Knoten
    endif ! heute mittelwertberechnung
@@ -990,12 +990,10 @@ subroutine mesh_output(ion)
       write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente, summ_ne
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
-            write(ion,'(4(I8,2x))') &
-                                cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
+            write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
          end if
          if (cornernumber(n) == 4) then
-            write(ion,'(5(I8,2x))') &
-                                cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
+            write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
          end if
       end do ! alle Elemente
       write(ion,'(A)')' '

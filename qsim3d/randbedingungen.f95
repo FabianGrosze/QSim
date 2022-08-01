@@ -420,27 +420,18 @@ subroutine tiefenprofil(jjj)
    ! konstante Verteilung in der Vertikalen
    do i = 1,14 ! tiefenprofile der ersten 14 konzentrationen
       do l = 1,num_lev
-         plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                     planktonic_variable(i+nk)
+         plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(i+nk)
       end do ! alle l levels
    end do ! alle ersten 14 konzentrationen
    do l = 1,num_lev
-      plankt_vari_vert(l+(16-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(67+nk)                                                     !  hgesNz = GESN
-      plankt_vari_vert(l+(15-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(68+nk)                                                     !  hgesPz = GESP
-      plankt_vari_vert(l+(17-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(30+nk)                                                     !  hQ_NKz = Q_NK
-      plankt_vari_vert(l+(18-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(33+nk)                                                     !  hQ_NGz = Q_NG
-      plankt_vari_vert(l+(19-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(35+nk)                                                     !  hQ_NBz = Q_NB
-      plankt_vari_vert(l+(20-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(24+nk)                                                     !  hCChlkz = akbcm
-      plankt_vari_vert(l+(21-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(25+nk)                                                     !  hCChlgz = agbcm
-      plankt_vari_vert(l+(22-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable(26+nk)                                                     !  hCChlbz = abbcm
+      plankt_vari_vert(l+(16-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(67+nk) !  hgesNz = GESN
+      plankt_vari_vert(l+(15-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(68+nk) !  hgesPz = GESP
+      plankt_vari_vert(l+(17-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(30+nk) !  hQ_NKz = Q_NK
+      plankt_vari_vert(l+(18-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(33+nk) !  hQ_NGz = Q_NG
+      plankt_vari_vert(l+(19-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(35+nk) !  hQ_NBz = Q_NB
+      plankt_vari_vert(l+(20-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(24+nk) !  hCChlkz = akbcm
+      plankt_vari_vert(l+(21-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(25+nk) !  hCChlgz = agbcm
+      plankt_vari_vert(l+(22-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(26+nk) !  hCChlbz = abbcm
    end do ! alle l levels
    return
 end subroutine tiefenprofil
@@ -560,23 +551,23 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    kontroll = .false.
    if (j == kontrollknoten)kontroll = .true.
    !     ini_algae in initialisieren() initialisieren.f95
-   call algae_start(                     &
-                    planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB),    &
-                    planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB),    &
-                    planktonic_variable(20+nk),      & ! ANTBL antbls(mstr,mRB),    &
+   call algae_start(                                 &
+                    planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
+                    planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB)
+                    planktonic_variable(20+nk),      & ! ANTBL antbls(mstr,mRB)
                     planktonic_variable( 1+nk),      & ! tempws Tempw temperw()
-                    planktonic_variable(24+nk),      & ! akbcm akbcms(mstr,mRB),    &
-                    planktonic_variable(26+nk),      & ! abbcm abbcms(mstr,mRB),    &
-                    planktonic_variable(25+nk),      & ! agbcm agbcms(mstr,mRB),                &
-                    planktonic_variable( 8+nk),      & ! aki akis(mstr,mRB),    &
-                    planktonic_variable(10+nk),      & ! abl abls(mstr,mRB),    &
-                    planktonic_variable( 9+nk),      & ! agr agrs(mstr,mRB),                      &
+                    planktonic_variable(24+nk),      & ! akbcm akbcms(mstr,mRB)
+                    planktonic_variable(26+nk),      & ! abbcm abbcms(mstr,mRB)
+                    planktonic_variable(25+nk),      & ! agbcm agbcms(mstr,mRB)
+                    planktonic_variable( 8+nk),      & ! aki akis(mstr,mRB)
+                    planktonic_variable(10+nk),      & ! abl abls(mstr,mRB)
+                    planktonic_variable( 9+nk),      & ! agr agrs(mstr,mRB)
                     a1Ki,a1Bl,a1Gr,                  & ! globale Parameter direkt aus QSimDatenfelder
                     Caki,Cabl,Cagr,                  & ! Kohlenstoffgehalte der Biomassen direkt aus QSimDatenfelder
                     akchl,abchl,agchl,               & ! APARAM.txt globale Parameter direkt aus QSimDatenfelder
-                    planktonic_variable(12+nk),      & ! chlaki chlaks(mstr,mRB),    &
-                    planktonic_variable(14+nk),      & ! chlabl chlabs(mstr,mRB),    &
-                    planktonic_variable(13+nk))        ! chlagr chlags(mstr,mRB)                 &
+                    planktonic_variable(12+nk),      & ! chlaki chlaks(mstr,mRB)
+                    planktonic_variable(14+nk),      & ! chlabl chlabs(mstr,mRB)
+                    planktonic_variable(13+nk))        ! chlagr chlags(mstr,mRB)
    ! qsim.f90:!...Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
    !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
@@ -584,8 +575,8 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
        ,' OBSB = ',planktonic_variable(17+nk)  &
        ,' OCSB = ',planktonic_variable(18+nk)  &
        ,' O2BSB = ',planktonic_variable(43+nk)
-   call orgc_start(                      &
-                   TOC_CSB,bsbZoo,GROT,            & ! globale Parameter direkt aus QSimDatenfelder
+   call orgc_start(                                 &
+                   TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable( 8+nk),      & ! aki | akis
                    planktonic_variable(10+nk),      & ! abl | abls
                    planktonic_variable( 9+nk),      & ! agr | agrs
@@ -611,7 +602,8 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
        ,' OBSB = ',planktonic_variable(17+nk)  &
        ,' OCSB = ',planktonic_variable(18+nk)  &
        ,' O2BSB = ',planktonic_variable(43+nk)
-   call naehr_start(                     &
+   
+   call naehr_start(                                 &
                     planktonic_variable( 8+nk),      & ! aki | akis
                     planktonic_variable(10+nk),      & ! abl | abls
                     planktonic_variable( 9+nk),      & ! agr | agrs
@@ -620,7 +612,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
                     planktonic_variable(67+nk),      & ! GESN | gesNs,
                     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    nZoo, pZoo, GROT,               & ! globale Parameter direkt aus QSimDatenfelder
+                    nZoo, pZoo, GROT,                & ! globale Parameter direkt aus QSimDatenfelder
                     planktonic_variable( 6+nk),      & ! GELP | gelPs,
                     planktonic_variable(68+nk),      & ! GESP | gesPs,
                     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -640,22 +632,22 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE | ssalgs,
                     0,0,0,0,                         & ! itags,monats,mstr,mRB für Kontrollausgaben in 1D benötigt
                     einmalig,kontroll,j)
-   if (kontroll)print*,'randbedingungen_ergaenzen: nach algae_aufteilung'     &
-       ,' chla = ',planktonic_variable(11+nk)    &
-       ,' vkigr = ',planktonic_variable(19+nk)   &
-       ,' antbl = ',planktonic_variable(20+nk)   &
-       ,' chlaki = ',planktonic_variable(12+nk)  &
-       ,' aki = ',planktonic_variable(8+nk)      &
-       ,' akbcm = ',planktonic_variable(24+nk), ' Caki = ',Caki
-   !     Berechnung des p-Wertes am Start (ohne Algen)
-   call pwert(                           &
+   if (kontroll) print*,'randbedingungen_ergaenzen: nach algae_aufteilung'     &
+                       ,' chla = ',planktonic_variable(11+nk)    &
+                       ,' vkigr = ',planktonic_variable(19+nk)   &
+                       ,' antbl = ',planktonic_variable(20+nk)   &
+                       ,' chlaki = ',planktonic_variable(12+nk)  &
+                       ,' aki = ',planktonic_variable(8+nk)      &
+                       ,' akbcm = ',planktonic_variable(24+nk), ' Caki = ',Caki
+   ! Berechnung des p-Wertes am Start (ohne Algen)
+   call pwert(                                 &
               planktonic_variable(62+nk),      & ! MW | mws
               planktonic_variable(66+nk),      & ! VPH | vphs
               planktonic_variable(65+nk),      & ! LF | lfs
               planktonic_variable( 1+nk),      & ! Tempw | tempws
-              planktonic_variable(63+nk))! ,      & ! pw | pws
-   !     &     0,0)                               !  mRB,mstr
-   !      subroutine pwert(mws,vphs,lfs,tempws,pws) !!wy azStrs nicht mehr benötigt
+              planktonic_variable(63+nk))        ! pw | pws
+   !    &     0,0)                               !  mRB,mstr
+   ! subroutine pwert(mws,vphs,lfs,tempws,pws) !!wy azStrs nicht mehr benötigt
    !
    return
 end subroutine randbedingungen_ergaenzen
@@ -669,8 +661,8 @@ subroutine randbedingungen_parallel()
    implicit none
    integer :: as, ini
    
-   !      print*,meinrang,' randbedingungen_parallel() ,part, number_rb_hydraul,number_rb_wetter='  &
-   !           ,part, number_rb_hydraul,number_rb_wetter
+   ! print*,meinrang,' randbedingungen_parallel() ,part, number_rb_hydraul,number_rb_wetter='  &
+   !       ,part, number_rb_hydraul,number_rb_wetter
    allocate (rb_hydraul_p(part*number_rb_hydraul), stat = as )
    if (as /= 0) then
       write(fehler,*)' Rueckgabewert allocate  von rb_hydraul_p(part   :', as
@@ -1221,7 +1213,7 @@ subroutine ereigg_Randbedingungen_lesen()
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben. -SCHISM'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j)  &
-                                                                                                 , ' Randbedingungen angegeben. -SCHISM'
+                   , ' Randbedingungen angegeben. -SCHISM'
                call qerror(fehler)
             end if
          end do ! alle j Randnummern
@@ -1491,8 +1483,8 @@ subroutine randlinie_zusammenstellen()
          if (nexi >= 3) then ! unerwünschter Sonderfall
             ! anzel=anzel+2 ! unerwünschter Sonderfall
             write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
-                                                  "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
-                                                  ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
+                            "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
+                           ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
             print*,trim(fehler)
             !call qerror(fehler)
          end if ! unerwünscht
@@ -1506,7 +1498,7 @@ subroutine randlinie_zusammenstellen()
          !end if ! Randkante
       end do ! alle j Elemente
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzel  &
-                                                                        ," Kanten und ist ",lang," m lang"
+            ," Kanten und ist ",lang," m lang"
       if (anzel == rabe(n)%randlinie%anzkanten) then
          print*,"Rand mit Nummer = ",rabe(n)%nr_rb,"regulär"
       else
@@ -1515,7 +1507,7 @@ subroutine randlinie_zusammenstellen()
             rabe(n)%randlinie%anzkanten = anzel
          else
             write(*,*),"Am ",n,"-ten Rand mit Nummer = ",rabe(n)%nr_rb," passen Knotenanzahl = "  &
-                                                       ,rabe(n)%randlinie%anzkanten+1 ," und Kantenanzahl",anzel," nicht zusammen"
+                      ,rabe(n)%randlinie%anzkanten+1 ," und Kantenanzahl",anzel," nicht zusammen"
             !call qerror(fehler)
          endif
       endif

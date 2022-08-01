@@ -460,33 +460,33 @@ subroutine temperw_huelle(i)
       call qerror('iform_VerdR unzulässiger Wert in temperw_huelle')
    endif
    do j = 1,num_lev ! Wassertemperatur tiefenaufgelöst von oben nach unten
-      call temperw_kern(                          &
-                        j                          &
-                        ,num_lev  &
-                        ,transfer_quantity_p(67+(i-1)*number_trans_quant)                           &
-                        ,transfer_quantity_p(64+(i-1)*number_trans_quant)                           &
-                        ,transfer_quantity_p(54+(i-1)*number_trans_quant)                            &
-                        ,rb_hydraul_p(3+(i-1)*number_rb_hydraul)                            &
-                        ,transfer_quantity_p(62+(i-1)*number_trans_quant)                           &
-                        ,transfer_quantity_p(63+(i-1)*number_trans_quant)                           &
-                        ,transfer_quantity_p(65+(i-1)*number_trans_quant)                           &
-                        ,transfer_quantity_p(66+(i-1)*number_trans_quant)                           &
-                        ,zone(point_zone(iglob))%wettstat%wetterstations_lage                            &
-                        ,dH2D                          &
-                        ,xdtemp_mit                                          &
-                        ,tflie                          &
-                        ,zone(point_zone(iglob))%seditemp%wuebk                             &
-                        ,zone(point_zone(iglob))%seditemp%spewks                            &
-                        ,zone(point_zone(iglob))%seditemp%psrefs                            &
+      call temperw_kern(                                                      &
+                        j                                                     &
+                        ,num_lev                                              &
+                        ,transfer_quantity_p(67+(i-1)*number_trans_quant)     &
+                        ,transfer_quantity_p(64+(i-1)*number_trans_quant)     &
+                        ,transfer_quantity_p(54+(i-1)*number_trans_quant)     &
+                        ,rb_hydraul_p(3+(i-1)*number_rb_hydraul)              &
+                        ,transfer_quantity_p(62+(i-1)*number_trans_quant)     &
+                        ,transfer_quantity_p(63+(i-1)*number_trans_quant)     &
+                        ,transfer_quantity_p(65+(i-1)*number_trans_quant)     &
+                        ,transfer_quantity_p(66+(i-1)*number_trans_quant)     &
+                        ,zone(point_zone(iglob))%wettstat%wetterstations_lage &
+                        ,dH2D                                                 &
+                        ,xdtemp_mit                                           &
+                        ,tflie                                                &
+                        ,zone(point_zone(iglob))%seditemp%wuebk               &
+                        ,zone(point_zone(iglob))%seditemp%spewks              &
+                        ,zone(point_zone(iglob))%seditemp%psrefs              &
                         ,plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)       &
-                        ,tempmt                          &
+                        ,tempmt                                               &
                         ,planktonic_variable_p(1+nk)                          &
-                        ,btiefe                           &
-                        ,benthic_distribution_p(1+(i-1)*number_benth_distr)                           &
-                        ,xdtemp_nkz                          &
-                        ,dtempS_mit                          &
-                        ,iform_VerdR                         &
-                        ,kontroll, iglob )
+                        ,btiefe                                               &
+                        ,benthic_distribution_p(1+(i-1)*number_benth_distr)   &
+                        ,xdtemp_nkz                                           &
+                        ,dtempS_mit                                           &
+                        ,iform_VerdR                                          &
+                        ,kontroll, iglob)
       !   subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                           &
       !                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz1,tempmt,xtempw,btiefe,xTsed,xdtemp_nkz,dtempS_mit,iform_VerdR            &
       !                    ,kontroll ,jjj )

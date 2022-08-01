@@ -301,8 +301,7 @@ subroutine ini_silikat()
       nk = ((i-1)*number_plankt_vari)
       planktonic_variable( 7+nk) = 10 ! si
       do j = 1,num_lev
-         plankt_vari_vert(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
-                                                                                   planktonic_variable( 7+nk) ! siz(j,1) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
+         plankt_vari_vert(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable( 7+nk) ! siz(j,1) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
       end do
       planktonic_variable(32+nk) = 0.004 ! Q_SK
       planktonic_variable(69+nk) = 0.0 ! Skmor

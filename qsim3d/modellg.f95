@@ -422,7 +422,7 @@ subroutine modellg()
               zone(izoni)%schiff%vschiff, zone(izoni)%schiff%uprop
          if (string_read_error /= 0) call qerror('Lesefehler F-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: schifffahrt in Zone', izoni,' vschiff, uprop = '  &
-                                                                                ,zone(izoni)%schiff%vschiff,zone(izoni)%schiff%uprop
+               ,zone(izoni)%schiff%vschiff,zone(izoni)%schiff%uprop
       end if ! F-Zeile
       !! O - Verschattung durch Uferbewuchs Anteil der Vegetationstypen
       if ((ctext(1:1) == 'O') .or. (ctext(1:1) == 'o')) then
@@ -512,7 +512,7 @@ subroutine modellg()
               zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
          if (string_read_error /= 0) call qerror('Lesefehler B-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Benthische Algen in Zone', izoni,' albenthi%ggruen , albenthi%gkiesel = '  &
-                                                                                                         ,zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
+               ,zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
       end if ! B-Zeile
       !! M  Makrophyten
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QM" Text="Makrophyten" Help="Makrophyten-Wachstum" Scope="Strang">'
@@ -540,7 +540,7 @@ subroutine modellg()
               zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
          if (string_read_error /= 0) call qerror('Lesefehler P-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Dichte der Makrophyten in Zone', izoni,' %macrodicht%pflmin , %macrodicht%pflmax = '  &
-                                                                                                                    ,zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
+               ,zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
       end if ! P-Zeile
       
       !! E Erosionsparameter
@@ -555,7 +555,7 @@ subroutine modellg()
               zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
          if (string_read_error /= 0) call qerror('Lesefehler E-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Erosionsparameter in Zone', izoni,' tau_krit, M_eros,  n_eros,  sed_roh = '  &
-                                                                                                           ,zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
+               ,zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
       end if ! e-Zeile
    end do ! while(zeile(ion))
    close (ion)
@@ -586,7 +586,7 @@ subroutine modellg()
       end do ! alle i Zonen
       if ( .not. vorhanden) then
          write(fehler,*)'2 Die von Knoten #',n ,' benötigte Zonennummer #',point_zone(n)  &
-                                                                                         , 'ist nicht in MODELLG.3D.txt beschrieben'
+               , 'ist nicht in MODELLG.3D.txt beschrieben'
          call qerror(fehler)
       end if ! nicht vorhanden
    end do ! alle n Knoten

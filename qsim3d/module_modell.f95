@@ -24,7 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!--------------------------------------------------------------------------------------------------------------- modell
+
 !> Das module ::modell
 !! speichert die Information zum
 !! <ul>
@@ -311,13 +311,13 @@ module modell
       type (sedimenttemperatur) :: seditemp   ! S Kenngrössen für Temperatur/Sedimenttemperatur
       type (laichperiode) :: laich            ! L Laichperiode
       type (schiffsverkehr) :: schiff         ! F Schiffsverkehr
-      type (dreissena) :: dreissen         ! D Dreissena
-      type (maphy) :: macrophyt         ! M Makrophyten
-      type (madi) :: macrodicht         ! P Dichte der Makrophyten
-      !type () ::          ! C Corophium
-      type (benth_al) ::  albenthi        ! B Benthische Algen
-      type (wetterstation) :: wettstat         ! T Wetterstation
-      !type () ::          ! O Anteil der Vegetationstypen
+      type (dreissena) :: dreissen            ! D Dreissena
+      type (maphy) :: macrophyt               ! M Makrophyten
+      type (madi) :: macrodicht               ! P Dichte der Makrophyten
+      !type () ::                             ! C Corophium
+      type (benth_al) ::  albenthi            ! B Benthische Algen
+      type (wetterstation) :: wettstat        ! T Wetterstation
+      !type () ::                             ! O Anteil der Vegetationstypen
       type (Erosion) :: erosi                 ! E Erosions-Parameter
    end type ddr
    type(ddr) , allocatable , dimension (:) :: zone
@@ -959,7 +959,7 @@ contains
       tage = int(zeitpunkt/86400)
       if ((tage >= 7*1461) .or. (tage < 0)) then
          write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
-                                                                                                                  ,zeitpunkt,tage,referenzjahr
+              ,zeitpunkt,tage,referenzjahr
          call qerror(fehler)
       end if
       uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
@@ -1058,7 +1058,7 @@ contains
       monatstage = 31
       if (tag > monatstage) then ! Jahr rum
          write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
-                                                                                                             zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
+               zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
          call qerror(fehler)
       end if
       111    continue
@@ -1142,7 +1142,8 @@ contains
                !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
                !else
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/file.elements > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode) &
+               'stat ',trim(modellverzeichnis),'transinfo/file.elements > /dev/null 2 > /dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then

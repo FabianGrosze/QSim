@@ -102,10 +102,10 @@ subroutine hnf_huelle(i)
    uhrz = 0  ! (nicht verwendet)
    !kontroll - ob kontrollausgabe, iglob -globale Knoten/Elementnummer der Berechnungsstützstelle
    !----------------------------------------------------------------------------------
-   call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                     &
-            ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
-            ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks       &
-            ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz           &
+   call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                              &
+            ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                &
+            ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks   &
+            ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz     &
             ,kontroll ,iglob )
    !----------------------------------------------------------------------------------
    if (kontroll)print*,'hnf_huelle: CHNF,BVHNF = ',CHNF(1),BVHNF(1)
