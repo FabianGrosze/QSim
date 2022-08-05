@@ -1,8 +1,8 @@
-Schwebstoffe/Schadstoffe/Hygiene {#lnk_unrein}
+Schwebstoffe/Schadstoffe/Hygiene {#lnk_weitere_stoffe}
 ================================
 
-- \subpage schwebstoff_salz und \subpage lnk_schweb
-- \subpage coliform
+- \subpage lnk_schwebstoff_salz und \subpage lnk_schweb
+- \subpage lnk_coliform
 - \subpage lnk_schadstoffe und \subpage lnk_schwermetalle
 
 aus Datei verunreinigung.md

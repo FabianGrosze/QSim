@@ -33,7 +33,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: phosphor-doc.md ; Codesource: ncyc.f90 ; 
-Vorläuferversion: \subpage Phosphor
-<!-- #mf: auch hier die Vorläuferversion evtl. löschen, weil Text übernommen 
-(und erweitert) wurde, aber nicht wesentlich verändert -->
+Textquelle: phosphor-doc.md ; Codesource: ncyc.f90 

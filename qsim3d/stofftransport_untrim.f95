@@ -24,10 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Transport_Untrim Transportinformationen von Untrim (Zellrandflüsse)
-!! dargestellt im Vortrag Wyrwa QSimworkshop 2017.
-!! \n\n aus Datei stofftransport_untrim.f95; zurück zu \ref lnk_datenstruktur oder \ref lnk_transport_numerik
-!----+-----+----
+
 subroutine holen_trans_untrim(nt)
    use netcdf
    use modell

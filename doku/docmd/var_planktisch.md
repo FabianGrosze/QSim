@@ -33,7 +33,7 @@ den Feldern modell::planktonic_variable_name und modell::plankt_vari_vert_name
 mitgeführt. Die Namen werden in ini_planktkon0() gesetzt.
 
 
-# Tiefengemittelte Konzentrationen {#tiefengemittelte_planktische_variable} 
+# Tiefengemittelte Konzentrationen {#lnk_tiefengemittelte_plankt_var} 
 
 Die QSim-3D Nummer bezieht sich auf die Datenfelder modell::planktonic_variable 
 und  modell::planktonic_variable_p
@@ -96,8 +96,8 @@ Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
 | 52 | \anchor ssalg ssalg	| GESAMTSCHWEBSTOFFE ss+Algen+Rotatorien	| mg/l	   |
 | 53 | \anchor ss ss		| mineralischer Schwebstoffgehalt	 		| mg/l	   |
 | 54 | \anchor fssgr fssgr	| zu schweb()  								|		   |
-| 55 | \anchor fbsgr fbsgr	| Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von zehrungsfähigem, organischem Material ???? siehe: \ref Sediorgc | - |
-| 56 | \anchor frfgr frfgr	| Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von refraktärem, organischem Material ???? siehe: \ref Sediorgc | - |
+| 55 | \anchor fbsgr fbsgr	| Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von zehrungsfähigem, organischem Material ???? siehe: \ref lnk_Sediorgc | - |
+| 56 | \anchor frfgr frfgr	| Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von refraktärem, organischem Material ???? siehe: \ref lnk_Sediorgc | - |
 | 57 | \anchor nl0 nl0 | N/C Verhältnis von Stickstoff zu Kohlenstoff in organischem Material | mg N / mg C	|
 | 58 | \anchor pl0 pl0 | P/C Verhältnis von Phosphor zu Kohlenstoff in organischem Material	| mg P / mg C	|
 | 59 | \anchor stind stind	| ph() ???? Minutenzähler; Versuch einer Altersvariablen ? |		|

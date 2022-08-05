@@ -9,7 +9,7 @@ Diese sind:
 - \subpage lnk_rotatorien
 - \subpage lnk_corophium
 - \subpage lnk_dreissena
-- Das Module der heterotrophen Nanoflagellaten \subpage hnf ist zur Zeit
+- Das Module der heterotrophen Nanoflagellaten \subpage lnk_hnf ist zur Zeit
 abgeschaltet
 
 

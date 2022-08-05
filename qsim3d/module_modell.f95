@@ -28,16 +28,16 @@
 !> Das module ::modell
 !! speichert die Information zum
 !! <ul>
-!!    <li>Modellverzeichnis</li>
-!!    <li>Netz</li>
-!!    <li>Zeit</li>
-!!    <li>Vermaschung</li>
+!!    <li> Modellverzeichnis </li>
+!!    <li> Netz </li>
+!!    <li> Zeit </li>
+!!    <li> Vermaschung </li>
 !! </ul>
-!! und wird mehr und mehr zum zentralen common-block \n
-!! es inkludiert bereits die Definitionen der
+!! und wird mehr und mehr zum zentralen common-block. \n
+!! Es inkludiert bereits die Definitionen der
 !! <ul>
-!!    <li>\ref lnk_var_planktisch</li>
-!!    <li>\ref Ergebnisse</li>
+!!    <li> \ref lnk_var_planktisch </li>
+!!    <li> \ref lnk_ergebnisausgabe </li>
 !! </ul>
 !! \n\n
 !! aus Datei module_modell.f95
@@ -297,7 +297,7 @@ module modell
    !!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/mÂ³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
    type :: Erosion
       !>    \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/mÂ², von MODELLG.3D Zeile E gelesen
-      !>    \anchor M_eros zone()%erosi%M_eros ErodibilitÃ¤tskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
+      !>    \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
       !>    \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss , von MODELLG.3D Zeile E gelesen
       !>    \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/mÂ³ , von MODELLG.3D Zeile E gelesen
       real ::tau_krit, M_eros, n_eros, sed_roh
@@ -421,7 +421,7 @@ module modell
    !>    lokales (parallel alle Prozesse) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. \n
    !!    bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::planktonic_variable das zu den Knoten gehört,
    !!    die vom jeweiligen Prozess bearbeitet werden. \n
-   !!    Details in: \ref lnk_var_planktisch siehe auch \ref Parallelisierung
+   !!    Details in: \ref lnk_var_planktisch siehe auch \ref lnk_parallelisierung
    real , allocatable , dimension (:) :: planktonic_variable_p
    !>    Number of vertically distributed planctonic, i.e. transported variables | depth-profiles
    integer, parameter :: number_plankt_vari_vert = 22
@@ -466,7 +466,7 @@ module modell
    !!    die beim Stoffumsatz für den Informationsaustasch zwischen den einzelnen Modulen benötigt werden.  \n
    !!    Bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::transfer_quantity das zu den Knoten gehört,
    !!    die vom jeweiligen Prozess bearbeitet werden. \n
-   !!    Details in: \ref lnk_uebergabewerte siehe auch \ref Parallelisierung
+   !!    Details in: \ref lnk_uebergabewerte siehe auch \ref lnk_parallelisierung
    real , allocatable , dimension (:) :: transfer_quantity_p
    !>    vertically distributed transfer quantities (depthprofiles)
    !>    number of vertically distributed transfer quantities
@@ -534,50 +534,15 @@ module modell
       type (rb_streckenzug) :: randlinie
    end type rb
    type(rb) , allocatable , dimension (:) :: rabe
-   !> \page hydraul_rb Datenfelder offline Hydraulik-Randbedingungen
-   !! Die hydraulischen Randbedingungen werden als \ref lnk_transport_numerik offline von holen_trans() eingelesen/berechnet.\n
-   !! Die QSim-3D Nummern beziehen sich auf das Datenfeld rb_hydraul resp. rb_hydraul_p\n
-   !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
-   !!<table rb_hydraul>
-   !!<tr><th> Nr. QSim-3D </th><th> Name QSim-1D    </th><th> Beschreibung                   </th><th> Dimension   </th><th> Wertebereich</th></tr>
-   !!<tr><td> 1 </td><td> \anchor vmitt  vmitt    </td><td> Geschwindigkeitsbetrag            </td><td> m/s      </td><td> 0,0 ... 3,0 </td></tr>
-   !!<tr><td> 2 </td><td> \anchor tiefe  tiefe    </td><td> Wassertiefe                  </td><td> m      </td><td> 0,0 ...  </td></tr>
-   !!<tr><td> 3 </td><td> \anchor wsp wsp     </td><td> Wasserspiegellage               </td><td> m ü NHN   </td><td> </td></tr>
-   !!</table rb_hydraule>\n
-   !! \n aus module_modell.f95 , zurück: \ref lnk_transport_numerik
+
    integer, parameter :: number_rb_hydraul = 3
-   !> siehe: \ref hydraul_rb
+   !> siehe: \ref lnk_hydraul_rb
    real , allocatable , dimension (:) :: rb_hydraul
-   !> siehe: \ref hydraul_rb
+   !> siehe: \ref lnk_hydraul_rb
    real , allocatable , dimension (:) :: rb_hydraul_p
-   !> \page extnct_rb Extinktionskoeffizienten
-   !! Die Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, Humin und susp. Schwebstoff \n
-   !! und das Spektrum des eingestrahlten Sonnenlichts\n
-   !! werden in der Datei <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a> angegeben;\n
-   !! von der Subroutine extnct_lesen() aus dem Modellverzeichnis gelesen
-   !! und mithilfe des eindimensionalen Datenfeld: rb_extnct_p(n + (i-1)*anz_extnct_koeff ) gespeichert (i-Knotennummer, anz_extnct_koeff=8)
-   !! und auf alle parallelen Prozesse kopiert (MPI_Bcast).
-   !! \n
-   !! <h2> Licht-Extinktions-Koeffizienten </h2>
-   !! Die QSim-3D Nummer bezieht sich auf die Datenfelder modell::rb_extnct_p\n
-   !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
-   !!<table rb_extnct>
-   !!<tr><th> Nr. </th><th> Name      </th><th> Beschreibung </th><th> Dimension   </th></tr>
-   !!<tr><td> 1 </td><td> \anchor eta eta   </td><td> Wellenlänge (in nm in Luft)</td><td> </td></tr>
-   !!<tr><td> 2 </td><td> \anchor aw aw   </td><td> Extinktions-Spektrum Wasser   </td><td> ?? </td></tr>
-   !!<tr><td> 3 </td><td> \anchor ack ack   </td><td> Extinktions-Spektrum Kieselalgen   </td><td> </td></tr>
-   !!<tr><td> 4 </td><td> \anchor acg acg   </td><td> Extinktions-Spektrum Gruenalgen   </td><td> </td></tr>
-   !!<tr><td> 5 </td><td> \anchor acb acb   </td><td> Extinktions-Spektrum Blaualgen   </td><td> </td></tr>
-   !!<tr><td> 6 </td><td> \anchor ah ah   </td><td> Extinktions-Spektrum Humin-Stoffe   </td><td> </td></tr>
-   !!<tr><td> 7 </td><td> \anchor as as   </td><td> Extinktions-Spektrum susp. Schwebstoff   </td><td> </td></tr>
-   !!<tr><td> 8 </td><td> \anchor al al   </td><td> Sonnenlicht-Spektrum   </td><td> </td></tr>
-   !!<tr><td> 9 </td><td> \anchor extk_lamda extk_lamda   </td><td> Rückgabeparameter Gesamtextinktion </td><td> </td></tr>
-   !!</table>\n
-   !! im folgenden ist die aktuelle Vorgabe graphisch dargestellt:\n
-   !! \image html absorbtionsspectrum.png "Absorpions-Spektren" siehe: \ref lnk_licht_algen_alt \n
-   !! \n\n aus module_modell.f95 , zurück: \ref zuflussranddaten
+
    integer, parameter :: anz_extnct_koeff = 8
-   !>  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
+   !>  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref lnk_extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
    integer :: rb_extnct_ilamda
    real , allocatable , dimension (:) :: rb_extnct_p
    !-------------------------------------------------------------------------------schwebstoff_salz_datenfelder
@@ -647,7 +612,7 @@ contains
    !! und dem Modellordner, dessen Name in der Umgebungsvariablen TQM gespeichert ist, zusammen.
    !! (export TQM=... | z. B. in .bashrc)
    !! \n\n nur auf rang 0 !!\n\n
-   !! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+   !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modeverz()
       implicit none
 
@@ -747,7 +712,7 @@ contains
    !! Die <a href="./exp/MODELLA.txt" target="_blank">MODELLA.txt</a> Dateien für QSim-1D sind weiterverwendbar, aber \n
    !! es werden in QSim-3D nur noch die Geologischen Breiten- und Längenkoordinaten daraus gelesen.
    !! \n\n
-   !! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+   !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modella()
       implicit none
       character (len = 500) :: dateiname, text

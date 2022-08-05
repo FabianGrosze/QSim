@@ -46,6 +46,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: kohlenstoff-doc.md ; Codesource: orgC.f90 ; Vorläuferversion: \subpage BSB
-<!-- #mf: auch hier die Vorläuferversion evtl. löschen, weil Text übernommen 
-(und erweitert) wurde, aber nicht wesentlich verändert -->
+Textquelle: kohlenstoff-doc.md ; Codesource: orgC.f90 

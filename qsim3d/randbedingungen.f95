@@ -28,124 +28,7 @@
 ! randbedingungen_setzen() ; randwert_planctonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ;
 ! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; ereigg_Randbedingungen_lesen() ;
 ! extnct_lesen() ;  alloc_hydraul_BC()
-!
-!-------------------------------------------------------------------------------Randbedingungs-Datenfelder
-!> \page zuflussranddaten Randbedingungen
-!! Dies sind die Konzentrationen im zufließend Wasser an den Rändern, sie
-!! werden aus der Datei <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> gelesen\n
-!! und entsprechend den Randnummern zu den am Rand liegenden Knoten/Elementen zugeordnet.\n
-!! Knoten mit der Randnummer 0 liegen im inneren des Gebiets.\n
-!! Datentechnische Detail in: ereigg_Randbedingungen_lesen()
-!! \n\n
-!! Nur die üblicherweise aus Messungen verfügbaren Variablen sind angebbar, ( randbedingungen_setzen() )\n
-!! Bei denjenigen \ref tiefengemittelte_planktische_variable , die dadurch keine Werte erhalten,
-!! werden diese plausibel ergänzt; siehe: \subpage randbedingungen_ergaenzen . \n
-!! \n
-!! Im Programmablauf geschieht die Randbedingungs-Zuordnung vor Stoffumsatz und Stofftransport,
-!! damit der Transport die am Rand gesetzten Konzentrationen (besonders an den Einströmstellen)
-!! ins Gebiet einträgt.\n
-!! \n
-!! Aus der <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a>
-!! Datei werden die folgenden Variablen (werts) gelesen und den in nachfolgender Tabelle
-!! genannten \ref tiefengemittelte_planktische_variable zugeordnet.\n
-!! \n
-!! Für den aktuellen Zeitschrit wird der Wert zwischen gültigen Randwerten interpoliert.\n
-!! \n
-!! Gültig sind nur positive Werte. Negative Werte werden als ungültig betrachtet.\n
-!! Wird an einem Rand kein gültiger Randwert gefunden, bricht die Simulation ab, ausser:\n
-!! bei \ref hnf und \ref coliform.
-!! Diese werden bei ausschließlich ungültigen Randwerten als an dem Rand nicht vorhanden (Null) betrachtet.\n
-!! \n
-!!<table >
-!!<tr><th> werts(Nr.)</th><th>plankt-var. Nr.</th><th>QSim-Variablen-Name</th><th> Beschreibung </th><th> Einheit </th><th> wird gesetzt in Subrout. </th> </tr>
-!!<tr><td>  1 </td><td>  - </td><td> QEINL   </td><td> Einleiter-Abfluss / in QSim3D unberücksichtigt      </td><td> m³/s    </td><td>   </td></tr>
-!!<tr><td>  2 </td><td> 46 </td><td> \ref vbsb   </td><td> C-BSB5         </td><td> mg/l    </td><td>   </td></tr>
-!!<tr><td>  3 </td><td> 47 </td><td> \ref vcsb   </td><td> C-CSB            </td><td> mg/l    </td><td>   </td></tr>
-!!<tr><td>  4 </td><td>  3 </td><td> \ref vnh4   </td><td> NH4-N Gehalt         </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td>  5 </td><td>  4 </td><td> \ref vno2   </td><td> Nitrit-Stickstoffgehalt   </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td>  6 </td><td>  5 </td><td> \ref vno3   </td><td> Nitrat-Stickstoffgehalt   </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td>  7 </td><td> 67 </td><td> \ref gesn   </td><td> Gesamt-Stickstoff      </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td>  8 </td><td>  6 </td><td> \ref vx0   </td><td> suspendierte Nitrosomonasbiomasse      </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td>  9 </td><td>  7 </td><td> \ref vx02   </td><td> suspendierte Nitrobacterbiomasse      </td><td> mg/l    </td><td> ncyc()  </td></tr>
-!!<tr><td> 10 </td><td>  9 </td><td> \ref gelp   </td><td> gelöster Phosphorgehalt   </td><td> mg/l    </td><td> po4s()   </td></tr>
-!!<tr><td> 11 </td><td> 68 </td><td> \ref gesp   </td><td> Gesamt-Phosphor      </td><td> mg/l    </td><td> po4s()   </td></tr>
-!!<tr><td> 12 </td><td>  8 </td><td> \ref si      </td><td> gelöster Siliziumgehalt   </td><td> mg/l    </td><td> silikat()   </td></tr>
-!!<tr><td> 13 </td><td> 12 </td><td> \ref chla   </td><td> Chlorophyll-a-Gehalt      </td><td> µg/l    </td><td>   </td></tr>
-!!<tr><td> 14 </td><td> 19 </td><td> \ref vkigr   </td><td> Anteil der Kieselalgen am Gesamt-Chlorophyll-a</td><td> 0-1    </td><td>   </td></tr>
-!!<tr><td> 15 </td><td> 20 </td><td> \ref antbl   </td><td> Anteil der Blaualgen am Gesamt-Chlorophyll-a   </td><td> 0-1    </td><td>   </td></tr>
-!!<tr><td> 16 </td><td> 50 </td><td> \ref zooind   </td><td> Rotatoriendichte      </td><td> Ind/l </td><td>   </td></tr>
-!!<tr><td> 17 </td><td> 66 </td><td> \ref vph   </td><td> pH-Wert         </td><td> -    </td><td>   </td></tr>
-!!<tr><td> 18 </td><td> 62 </td><td> \ref mw      </td><td> m-Wert         </td><td> mmol/l</td><td>   </td></tr>
-!!<tr><td> 19 </td><td> 64 </td><td> \ref ca      </td><td> Calciumkonzentration      </td><td> mg/l    </td><td>   </td></tr>
-!!<tr><td> 20 </td><td> 65 </td><td> \ref lf      </td><td> Leitfähigkeit         </td><td> µS/cm </td><td>   </td></tr>
-!!<tr><td> 21 </td><td> 53 </td><td> \ref ss      </td><td> Schwebstoffgehalt      </td><td> mg/l    </td><td>   </td></tr>
-!!<tr><td> 22 </td><td>  1 </td><td> \ref tempw   </td><td> Wassertemperatur      </td><td> °C    </td><td>   </td></tr>
-!!<tr><td> 23 </td><td>  2 </td><td> \ref vo2   </td><td> Sauerstoffgehalt      </td><td> mg/l    </td><td>   </td></tr>
-!!<tr><td> 24 </td><td> 48 </td><td> \ref chnf   </td><td> Heterotrophe Nanoflagelaten   </td><td> Ind/ml </td><td>   </td></tr>
-!!<tr><td> 25 </td><td> 49 </td><td> \ref bvhnf   </td><td> Biovolumen der HNF      </td><td> µm3    </td><td>   </td></tr>
-!!<tr><td> 26 </td><td> 61 </td><td> \ref coli   </td><td> Fäkalcoliforme Bakterien   </td><td> Ind/100 ml    </td><td>   </td></tr>
-!!<tr><td> 27 </td><td>  - </td><td> EWAERM   </td><td> Menge der eingeleiteten Wärme (Kraftwerk) / in QSim3D unberücksichtigt   </td><td> Mcal/s</td><td>   </td></tr>
-!!<tr><td> 28 </td><td> 71 </td><td> TRACER   </td><td> Tracer-Menge (nur im Tracer-Prozessbaustein berücksichtigt)    </td><td> g    </td><td> -  </td></tr>
-!!</table>
-!! <code>\verbatim aus funkstar.f90:
-!! if(ipp==1)abfls(mstr,RBNR) = ywert
-!! if(ipp==2)vbsbs(mstr,RBNR) = ywert
-!! if(ipp==3)vcsbs(mstr,RBNR) = ywert
-!! if(ipp==4)vnh4s(mstr,RBNR) = ywert
-!! if(ipp==5)vno2s(mstr,RBNR) = ywert
-!! if(ipp==6)vno3s(mstr,RBNR) = ywert
-!! if(ipp==7)gesNs(mstr,RBNR) = ywert
-!! if(ipp==8)vx0s(mstr,RBNR) = ywert
-!! if(ipp==9)vx02s(mstr,RBNR) = ywert
-!! if(ipp==10)gelps(mstr,RBNR) = ywert
-!! if(ipp==11)gesPs(mstr,RBNR) = ywert
-!! if(ipp==12)sis(mstr,RBNR) = ywert
-!! if(ipp==13)chlas(mstr,RBNR) = ywert
-!! if(ipp==14)vkigrs(mstr,RBNR) = ywert
-!! if(ipp==15)antbls(mstr,RBNR) = ywert
-!! if(ipp==16)zooins(mstr,RBNR) = ywert
-!! if(ipp==17)vphs(mstr,RBNR) = ywert
-!! if(ipp==18)mws(mstr,RBNR) = ywert
-!! if(ipp==19)cas(mstr,RBNR) = ywert
-!! if(ipp==20)lfs(mstr,RBNR) = ywert
-!! if(ipp==21)ssalgs(mstr,RBNR) = ywert
-!! if(ipp==22)tempws(mstr,RBNR) = ywert
-!! if(ipp==23)vo2s(mstr,RBNR) = ywert
-!! if(ipp==24)CHNFs(mstr,RBNR) = ywert
-!! if(ipp==25)BVHNFs(mstr,RBNR) = ywert
-!! if(ipp==26)colis(mstr,RBNR) = ywert
-!! if(ipp==27)waers(mstr,RBNR) = ywert
-!! 28 und 29 Tracer und kons. Substanz in tempws
-!! if(ipp==30)gsPbs(mstr,RBNR) = ywert
-!! if(ipp==31)glPbs(mstr,RBNR) = ywert
-!! if(ipp==32)gsCads(mstr,RBNR) = ywert
-!! if(ipp==33)glCads(mstr,RBNR) = ywert
-!! if(ipp==34)gsCrs(mstr,RBNR) = ywert
-!! if(ipp==35)glCrs(mstr,RBNR) = ywert
-!! if(ipp==36)gsFes(mstr,RBNR) = ywert
-!! if(ipp==37)glFes(mstr,RBNR) = ywert
-!! if(ipp==38)gsCus(mstr,RBNR) = ywert
-!! if(ipp==39)glCus(mstr,RBNR) = ywert
-!! if(ipp==40)gsMns(mstr,RBNR) = ywert
-!! if(ipp==41)glMns(mstr,RBNR) = ywert
-!! if(ipp==42)gsNis(mstr,RBNR) = ywert
-!! if(ipp==43)glNis(mstr,RBNR) = ywert
-!! if(ipp==44)gsHgs(mstr,RBNR) = ywert
-!! if(ipp==45)glHgs(mstr,RBNR) = ywert
-!! if(ipp==46)gsUs(mstr,RBNR) = ywert
-!! if(ipp==47)glUs(mstr,RBNR) = ywert
-!! if(ipp==48)gsZns(mstr,RBNR) = ywert
-!! if(ipp==49)glZns(mstr,RBNR) = ywert
-!! if(ipp==50)gsAss(mstr,RBNR) = ywert
-!! if(ipp==51)glAss(mstr,RBNR) = ywert
-!!  \endverbatim</code>\n\n
-!! type(rb) , allocatable , dimension (:) :: rabe\n
-!! Zufluss-Randbedingungen aus <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a>\n
-!! werden von der subroutine ereigg_Randbedingungen_lesen() eingelesen.\n
-!! QSim3D ließt in die Struktur \ref rb ein.\n 
-!! \n aus randbedingungen.f95 , zurück: \ref lnk_datenstruktur und \ref zuflussranddaten siehe auch \n\n
-!> Dient dem Anbringen der \ref zuflussranddaten \n
-!! in Datei randbedingungen.f95
+
 subroutine randbedingungen_setzen()
    use modell
    use QSimDatenfelder
@@ -406,7 +289,7 @@ subroutine randwert_planctonic(jjj,zaehl,logi)
 end subroutine randwert_planctonic
 !----+-----+----
 !> bisher plankt_vari_vert konstant über die Tiefe d.h. 2D tiefengemittelt
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 subroutine tiefenprofil(jjj)
    use modell
    implicit none
@@ -436,108 +319,7 @@ subroutine tiefenprofil(jjj)
    return
 end subroutine tiefenprofil
 !----+-----+----
-!
-!> \page randbedingungen_ergaenzen Randbedingungen ergänzen
-!! \n\n
-!! wird nicht nur am Zuflussrand, sondern auch bei der initialisierung mit einer Randbedingung aufgerufen,
-!! so dass alle Transportkonzentrationen belegt werden
-!! \n\n
-!! Jetzt:\n
-!! algae_start() , orgc_start() , naehr_start() , pwert() \n
-!! in ../metabol/zuflussrand.f90 \n
-!! \n\n
-!! Ehedem: \n
-!! Randbedingungen werden nur für die 27 in ereigg_Randbedingungen_lesen() beschriebenen
-!! Konzentrationen vorgegeben. Alle übrigen werden auf der Basis plausibler Abschätzungen erschlossen.\n
-!! Diese Vorgehensweise hat ihren Ursprung in der Verfügbarkeit von Messdaten.\n
-!! Ergänzungen finden für die folgenden QSim-Bausteine statt:
-!! <ol>
-!!    <li>\subpage lnk_algenaufteilung_alt \n</li>
-!!    <li>\subpage orgc_aufteilung  \n</li>
-!!    <li>\subpage ncyc_aufteilung  \n</li>
-!!    <li>  subpage ph_aufteilung \n</li>
-!!    <li>\subpage po4s_aufteilung  \n</li>
-!!    <li>\subpage si_aufteilung    \n</li>
-!! </ol>\n\n
-!! \n\n
-! #mf \subpage ph_aufteilung broken link, subpage ph_aufteilung does not exist
-!! in randbedingungen.f95\n
-!! ereigg_Randbedingungen_lesen() \n
-!! RB_werte_aktualisieren()\n
-!! wert_randbedingung()\n\n
-!! \n\n qsim.f90:
-!!....Berechnung von nL0 und pL0 (N und P Gehalt der Abwasserbuertigen   \n
-!!    org Substanz)
-!! \n\n
-!! läuft nur auf prozessor 0
-!! noch fehlende ergänzungen für: <code>\verbatim
-!!                   planktonic_variable(51+nk)= 0.0 ! abrzo1 ### wohl unbenutzt ###
-!! schweb.f90:      SSALG(ior) = SSt+agr(ior)+aki(ior)+abl(ior)+(ZOOind(ior)*GROT/1000.)
-!!                   planktonic_variable(52+nk)= 0.0 ! ssalg GESAMTSCHWEBSTOFFE provisorisch zusammenaddiert in randbedingungen_ergaenzen
-!!                   planktonic_variable(54+nk)= 0.0 ! fssgr schweb.f90
-!!                   planktonic_variable(55+nk)= 0.0 ! fbsgr orgc.f90
-!!                   planktonic_variable(56+nk)= 0.0 ! frfgr orgc.f90
-!!                   planktonic_variable(57+nk)= 0.0 ! nl0 Verhältnis von Stickstoff zu Kohlenstoff in organischem Material | qsim.f90: nl0s(mstr,mRB) = 0.04
-!!                   planktonic_variable(58+nk)= 0.0 ! pl0 Verhältnis von Phosphor zu Kohlenstoff in organischem Material | qsim.f90: pl0s(mstr,mRB) = 0.005 wenn nicht berechenbar
-!!                   planktonic_variable(59+nk)= 0.0 ! stind, Zeitsumme ph(), Funktion unklar ###
-!!                   planktonic_variable(60+nk)= 0.0 ! dlarvn, dreissen.f90
-!!                   planktonic_variable(69+nk)= 0.0 ! SKmor, Silizium in schwebenden, abgestorbenen Kieselalgen, algaeski<->silikat
-!!                   planktonic_variable(70+nk)= 0.0 ! DOSCF, coliform()
-!!                   planktonic_variable(72+nk)= 0.0 ! Salz (neu QSim-3D)
-!!  \endverbatim</code>
-!! \n\n zurück: \ref zuflussranddaten ; Quelle: randbedingungen.f95
-!!
-!! <h2> Transportkonzentrationen für welche die R.B. nicht vorgegeben sondern erschlossen werden</h2>
-!!<table >
-!!<tr><th> Nr.</th><th>QSim-Name</th><th> Wie            </th><th> Subroutine      </th></tr>
-!!
-!!<tr><td> 13 </td><td> chlaki   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 14 </td><td> chlagr   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 15 </td><td> chlabl   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 16 </td><td> aki   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 17 </td><td> agr   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 18 </td><td> abl   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 21 </td><td> svhemk   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 22 </td><td> svhemg   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 23 </td><td> svhemb   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 24 </td><td> akbcm   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 25 </td><td> agbcm   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 26 </td><td> abbcm   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 27 </td><td> akiiv   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 28 </td><td> agriv   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 29 </td><td> abliv   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 30 </td><td> Q_NK   </td><td> =Qmx_NK      </td><td> ncyc()     </td></tr>
-!!<tr><td> 31 </td><td> Q_PK   </td><td> =Qmx_PK      </td><td> po4s()    </td></tr>
-!!<tr><td> 32 </td><td> Q_SK   </td><td> =Qmx_SK      </td><td> silikat()     </td></tr>
-!!<tr><td> 33 </td><td> Q_NG   </td><td> =Qmx_NG      </td><td> ncyc()     </td></tr>
-!!<tr><td> 34 </td><td> Q_PG   </td><td> =Qmx_PG      </td><td> po4s()    </td></tr>
-!!<tr><td> 35 </td><td> Q_NB   </td><td> =Qmx_NB      </td><td> ncyc()     </td></tr>
-!!<tr><td> 36 </td><td> Q_PB   </td><td> =Qmx_PB      </td><td> po4s()    </td></tr>
-!!<tr><td> 37 </td><td> CD(1   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 38 </td><td> CD(2   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 39 </td><td> CP(1   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 40 </td><td> CP(2   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 41 </td><td> CM   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 42 </td><td> BAC   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 43 </td><td> O2BSB   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 44 </td><td> BL01   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 45 </td><td> BL02   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 46 </td><td> vbsb   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 47 </td><td> vcsb   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 51 </td><td> abrzo1   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 52 </td><td> ssalg   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 54 </td><td> fssgr   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 55 </td><td> fbsgr   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 56 </td><td> frfgr   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 57 </td><td> nl0   </td><td> nl0(ior) = orgNn/(ocsbt/2.8) </td><td> orgc </td></tr>
-!!<tr><td> 58 </td><td> pl0   </td><td> pl0s(mstr,mRB) = orgP/(ocsbs(mstr,mRB)/2.8) pl0(ior) = orgPn/(ocsbt/2.8)</td><td> qsim + orgc </td></tr>
-!!<tr><td> 59 </td><td> stind   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 60 </td><td> dlarvn   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 63 </td><td> pw   </td><td>         </td><td>  </td></tr>
-!!<tr><td> 69 </td><td> SKmor   </td><td> ?? unklar ??      </td><td> nicht in silikat(), qsim() ??? </td></tr>
-!!<tr><td> 70 </td><td> DOSCF   </td><td>         </td><td>  </td></tr>
-!!</table>
-!! \n\n aus randbedingungen.f95 , zurück: \ref Modellerstellung oder \ref zuflussranddaten
+
 subroutine randbedingungen_ergaenzen(j,einmalig)
    use modell
    use QSimDatenfelder
@@ -654,7 +436,7 @@ end subroutine randbedingungen_ergaenzen
 !----+-----+----
 !> <h1>Legt die Randbedingungs-Datenfelder an </h1>
 !! .... to be done PARALLEL\n
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 !!
 subroutine randbedingungen_parallel()
    use modell
@@ -721,7 +503,7 @@ end subroutine randbedingungen_parallel
 !----+-----+----
 !> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
 !! .... to be done PARALLEL\n
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 !!
 subroutine scatter_BC()
    use modell
@@ -740,7 +522,7 @@ end subroutine scatter_BC
 !! lineare Interpolation zwischen den gültigen Randwerten:\n
 !! davor und danach konstant \n
 !! analog zu QSim-1D/funkstar.f90
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 !!
 subroutine RB_werte_aktualisieren(t)
    use modell
@@ -822,7 +604,7 @@ subroutine RB_werte_aktualisieren(t)
 end subroutine RB_werte_aktualisieren
 !----+-----+----
 !> <h1>Randwert gueltig?</h1>
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 logical function randwert_gueltig(wert,n)
    use modell
    implicit none
@@ -855,7 +637,7 @@ logical function randwert_gueltig(wert,n)
    return
 end function randwert_gueltig
 !----+-----+----
-!> ereigg_Randbedingungen_lesen() wird beschrieben in: \ref zuflussranddaten
+!> ereigg_Randbedingungen_lesen() wird beschrieben in: \ref lnk_randbedingungen
 !! \n\n aus randbedingungen.f95
 subroutine ereigg_Randbedingungen_lesen()
    use modell
@@ -1254,8 +1036,8 @@ end subroutine ereigg_Randbedingungen_lesen
 !
 !> <h1>Datei e_extnct.dat Lesen</h1>
 !! aus <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
-!! siehe \ref extnct_rb aus \ref Datenmodell
-!! \n\n Quelle: randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! siehe \ref lnk_extnct_rb aus \ref lnk_datenmodell
+!! \n\n Quelle: randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 !!
 subroutine extnct_lesen()
    use modell
@@ -1297,7 +1079,7 @@ end subroutine extnct_lesen
 !
 !> <h1>Felder allocieren für die hydraulischen Randbedingungen</h1>
 !!
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 subroutine alloc_hydraul_BC(nk)
    use modell
    implicit none
@@ -1317,7 +1099,7 @@ end subroutine alloc_hydraul_BC
 !
 !> <h1>Volumenstrom und Tracerflüsse entlang aller ianz_rb Ränder ermitteln</h1>
 !! ruft subroutine flux() aus schnitt.f95 auf
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 !!
 subroutine rand_flux(zeitzaehler)
    use modell
@@ -1407,7 +1189,7 @@ end subroutine rand_flux
 !> <h1>Randknoten zu einer Randlinie zusammenstellen</h1>
 !! , damit Durchfluss-Integrationen von rand_flux() ausgeführt werden können. \n
 !! läuft nur auf Prozess 0
-!! \n\n aus randbedingungen.f95 , zurück: \ref zuflussranddaten
+!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 subroutine randlinie_zusammenstellen()
    use modell
    implicit none

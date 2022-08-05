@@ -4,7 +4,8 @@ pH-Wert {#lnk_ph}
 
 ![] (pHscala_mini.png)
 
-<small>Quelle: https://commons.wikimedia.org/wiki/File:PHscala.png Creative Commons Attribution-Share Alike 4.0 International license </small>
+<small>Quelle: https://commons.wikimedia.org/wiki/File:PHscala.png Creative 
+Commons Attribution-Share Alike 4.0 International license </small>
 
 Das pH-Modul bilanziert in erster Linie den inorganischen Kohlenstoff (CO2).
 
@@ -22,7 +23,8 @@ beschrieben:
 - \subpage lnk_ph_umsetzung : Details zum Code und der numerischen Umsetzung
 
 \n\n
-Textquelle: ph-doc.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90; Vorgängerversion: \subpage PH-Wert ; zurück: \ref lnk_ueberblick
+Textquelle: ph-doc.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90; 
+zurück: \ref lnk_ueberblick
 
 
 

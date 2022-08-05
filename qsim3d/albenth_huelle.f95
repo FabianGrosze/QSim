@@ -24,57 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page albenth benthische Algen
-!!
-!! \image html 20160317_162418_klein.jpg ""  <a href="20160317_162418.jpg">Bild groß</a> \n
-!! Herkunft: https://prd-wret.s3-us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/thumbnails/image/20160317_162418.jpg\n
-!! public domain gemäß: https://www.usgs.gov/media/images/close-view-periphyton-rocks-along-shore-lake-tahoe\n
-!! heruntergeladen am 12. Nov. 2019\n
-!!
-!! <h2>Herkunft</h2>
-!!
-!! UNTERPROGRAMM ZUR BERECHNUNG DES DES EINFLUSSES BENTHISCHER ALGEN \n
-!! AUTOR :VOLKER KIRCHESCH \n
-!! STAND :20.02.1996 \n
-!! \n
-!! Kx        - Beruecksichtigt, dass mit zunehmender Schichtdicke \n
-!!             die unteren Schichten weniger Licht bekommen\n
-!! saetbk    - Saettigungslichtstärke für Kieselalgen\n
-!! saetbg    - Saettigungslichtstärke für Grünalgen\n
-!! (Werte wurden dem Modell AQUATOX entnommen, Dim.: mueE/(m2*s)) \n
-!! roPeri    - Dichte des Periphytons in g/m3 (s. Uhlmann)\n
-!! zPeri     - Dicke des Periphytonrasens [m]  \n
-!!
-!! <h2>Teilprozesse</h2>
-!! <ul>
-!! <li>Licht-, Nährstoff- und Temperaturabhängiges Wachstum</li>
-!! <li>Limitation des Wachstums durch die Fliessgeschwindigkeit</li>
-!! <li>Abnahme der Biomasse infolge von Respiration</li>
-!! <li>?? Abspülung benthischer Algen ?? Implementierung unklar ?? </li>
-!! </ul>
-!!
-!! <h2>Dokumentation und Veröffentlichungen</h2>
-!!
-!! <a href="./pdf/BenthischeAlgenAnnette2011.pdf" target="_blank">Dokumentationsentwurf</a> Annette Becker 2011\n
-!!
-!! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
-!!      SUBROUTINE albenth(\ref schwi, \ref tflie, \ref tempw, \ref tiefe, \ref vmitt, \ref vno3, \ref vnh4
-!!                         , \ref gelp, \ref albewg, \ref alberg, \ref elen, \ref flae, \ref ior, \ref anze         &\n
-!!                         , \ref aggmax, \ref agksn, \ref agksp, \ref si, \ref akksn, \ref akksp, \ref akkssi
-!!                         , \ref akgmax, \ref albewk, \ref alberk, \ref abegm2, \ref abekm2          &\n
-!!                         , \ref vabfl, \ref cmatgr, \ref cmatki, \ref akchl, \ref agchl, \ref extk, \ref ilang, \ref mstr  & \n
-!!                         , \ref kontroll , \ref iglob )
-!!
-!! \n
-!! Zonenweise Vorbelegung der Biomasse der benthischen Algen in <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>: \n
-!! subroutine ModellGParam(cpfad1,j1) \n
-!! Id=QB Text=Benth.Algen Help=Benth.Algen-Vorkommen in den Gewässer-Abschnitten \n
-!! Ident="GGruen" Text="Gewicht Grünalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Grünalgen \n
-!! Ident="GKiesel" Text="Gewicht Kieselalgen" Unit="g/m²" Format="F7.1" Null="-1" Help="Trockengewicht der benthischen Kieselalgen \n
-!! \n
-!! Quelle albenth_huelle.f95; zurück zu: \ref lnk_ueberblick
-!> SUBROUTINE albenth_huelle() wird beschrieben in: \ref albenth \n
-!! Quelle albenth_huelle.f95
+
 subroutine albenth_huelle(i)
    use modell
    use QSimDatenfelder

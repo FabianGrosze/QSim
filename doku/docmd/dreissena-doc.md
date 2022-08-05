@@ -48,6 +48,6 @@ Literaturstudie erstellt im Auftrag der BfG, 71 Seiten.
 
 <hr>
 Textquelle: dreissena-doc.md ; Codesource: dreissen.f90 ; 
-zurück: \ref lnk_konsumenten; Vorläuferversion \subpage Dreissena
+zurück: \ref lnk_konsumenten
 
 

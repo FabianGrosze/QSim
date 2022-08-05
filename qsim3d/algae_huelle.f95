@@ -25,6 +25,9 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
+!> SUBROUTINE algae_huelle() \n
+!! zurück: \ref index oder \ref lnk_phytoplankton ; 
+!! Code: algae_huelle.f95
 subroutine algae_huelle(i)
    use modell
    use QSimDatenfelder
@@ -698,7 +701,7 @@ end subroutine algae_huelle
 
 
 !> SUBROUTINE algae_aufteilung()
-!!\n zurück: \ref lnk_algenaufteilung_alt ; Code: algae_huelle.f95
+!!\n zurück: \ref lnk_algenaufteilung_zufluss ; Code: algae_huelle.f95
 subroutine algae_aufteilung(i)!! ### ERSETZT
    use modell
    use QSimDatenfelder

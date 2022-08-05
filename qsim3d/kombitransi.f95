@@ -24,23 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page kombitransi Zusammenfügen von Teilzeiträumen
-!! Das Programm >>kombi<<
-!! dient der Kombination von Transinfo-Verzeichnissen
-!! \n\n
-!! Wenn ein längerer Zeitabschnitt (z.B. ein Jahresgang)
-!! für die hydraulische Simulation in Teile (Zeitabschnitte) zerlegt wurde,
-!! um ihn auf mehreren Prozessoren parallel rechnen zu können,
-!! ist es nach Abschluss aller Teil-Rechenläufe erforderlich, die
-!! Transportinformationen für die Gütesimulation mit QSim-3D in ein Verzeichnis zusammenzuführen,
-!! so dass ein durchgängiger Jahresgang entsteht.
-!! \n\n
-!! Dies ist möglich, weil das Erinnerungsvermögen von Impuls und Wasserstand, die vom hydraulischen Treiber simuliert werden,
-!! in einem Ästuar kaum läger zurückreicht als einen Tag.
-!! Konzentrationsverteilungen, die im Gütemodell simuliert werden, haben in einem Ästuar
-!! mit mehreren Monaten Wasseraufenthaltszeit ein viel längeres Gedächtnis.
-!! \n\n
-!! Quelle: kombitransi.f95 zurück zu \ref lnk_transport_numerik
+
 program kombitransi
    implicit none
    integer :: dttrans, start, ende, transinfo_anzahl, sysa, i

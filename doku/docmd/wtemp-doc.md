@@ -31,4 +31,4 @@ beschrieben:
 
 
 Textquelle: wtemp-doc.md ; Codesources: TEMPERW.f90, temperw_huelle.f95 ;
-Vorläufer: \subpage Waermebilanz;  zurück: \ref lnk_waerme
+zurück: \ref lnk_waerme

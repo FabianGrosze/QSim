@@ -29,7 +29,7 @@
 !! checks for time steps\n
 !! checks for necessary variables
 !! \n\n
-!! aus Datei screen_schism_nc.f95; zurück zu \ref Transport_SCHISM
+!! aus Datei screen_schism_nc.f95; zurück zu \ref lnk_transport_schism
 subroutine screen_schism_nc()
    !subroutine nc_sc_sichten()
    use netcdf

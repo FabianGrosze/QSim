@@ -31,7 +31,7 @@
 !!    (dahv)=iof_hydro(16) in param.nml \n
 !!    hvel_side=iof_hydro(26) in param.nml \n
 !! \n\n
-!! aus Datei read_mesh_nc_sc.f95; zurück zu \ref Transport_SCHISM
+!! aus Datei read_mesh_nc_sc.f95; zurück zu \ref lnk_transport_schism
 subroutine read_mesh_nc_sc() !meinrang.eq.0
    use netcdf
    use modell

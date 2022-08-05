@@ -55,7 +55,7 @@ Die QSim-1D Namen werden in QSim3d im module_QSimDatenfelder.f95 vereinbart.
 |35	| \anchor hjno3 hjno3	| Nitrat-Freisetzung aus dem Sediment 			|  gN/(m²*d) 	|
 |36	| \anchor hjnh4 hjnh4	| Ammonium-Freisetzung aus dem Sediment 		|  gN/(m²*d)	|
 |37 | \anchor hflun3 hflun3	| Ausgabe NitratFlux Wasser/Sediment 			|  in mgN/(l*h)	|
-|38 | \anchor algdrk algdrk	| \ref lnk_algen_konsum_benth_alt (Muscheln) Fraßrate Dreissena	|  in mg/l	 	|
+|38 | \anchor algdrk algdrk	| \ref lnk_dreissena (Muscheln) Fraßrate Dreissena	|  in mg/l	 	|
 |39 | \anchor algcok algcok	| Kiesel-Algen Konsum durch Corophium ? 	| 	|
 |40 | \anchor algdrg algdrg	| grün-Algen-Konsum-bentisch (Muscheln)		|  in mg/l 	|
 |41	| \anchor algdrb algdrb	| blau-Algen-Konsum-bentisch (Muscheln)		|  in mg/l 	|
