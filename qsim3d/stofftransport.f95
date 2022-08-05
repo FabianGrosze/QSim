@@ -164,8 +164,7 @@ subroutine ph2hplus()
    implicit none
    real*8 mue,ph,lf,hplus,hk,lgh
    integer i
-   real(8) :: mue, ph, lf, hplus, hk
-   integer :: i
+   
    
    do i = 1,part ! all i elements/nodes on this process
       iglob = i + meinrang * part

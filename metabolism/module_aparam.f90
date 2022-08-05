@@ -45,7 +45,7 @@ module aparam
    real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
                          bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
                          upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
-   integer, protected :: ifix
+   integer            :: ifix
    ! Rotatorien
    real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable

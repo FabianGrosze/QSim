@@ -200,7 +200,6 @@ subroutine orgc_huelle(i)
    Q_PB(2) = Q_PB(1)
    Q_PG(1) = planktonic_variable_p(34+(i-1)*number_plankt_vari) ! Phosphornteil der Algenbiomasse gruen
    Q_PG(2) = Q_PG(1)
-   pZoo = transfer_value_p(3) !! Phosphoranteil in der Rotatorienbiomasse mgP/mgBiom.
    nl0(1) = planktonic_variable_p(57+(i-1)*number_plankt_vari) ! Verhältnis von Stickstoff zu Kohlenstoff in organischem Material
    nl0(2) = nl0(1)
    Q_NK(1) = planktonic_variable_p(30+(i-1)*number_plankt_vari) ! Stickstoffanteil der Algenbiomasse kiesel
@@ -209,7 +208,6 @@ subroutine orgc_huelle(i)
    Q_NB(2) = Q_NB(1)
    Q_NG(1) = planktonic_variable_p(33+(i-1)*number_plankt_vari) ! Stickstoffanteil der Algenbiomasse gruen
    Q_NG(2) = Q_NG(1)
-   nZoo = transfer_value_p(2) ! Stickstoffanteil in der Rotatorienbiomasse mgN/mgBiom.
    bsbctP(1) = transfer_quantity_p(2+(i-1)*number_trans_quant) ! Phosphorfreisetzung beim Abbau org. Kohlenstoffverbidungen
    bsbctP(2) = bsbctP(1)
    doN(1) = transfer_quantity_p(3+(i-1)*number_trans_quant) ! mineralisierter N-Gehalt in der Wassersäule ; Ammoniumfreisetzung beim Abbau org. Kohlenstoffverbidungen

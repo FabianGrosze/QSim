@@ -31,7 +31,7 @@
 module mod_suspendedMatter
    use netcdf
    use modell
-   use QSimDatenfelder, only: Grote
+   use aparam, only: GRot
    
    implicit none
    
@@ -172,7 +172,7 @@ contains
          if (iGlob > number_plankt_point) exit
          j = (i - 1) * number_plankt_vari
          ! sum up zooplankton (from zooind) and phytoplankton biomasses (aki, agr and abl)
-         livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * Grote
+         livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * GRot
          do k = 1,nPhyto
             livingMatter = livingMatter + planktonic_variable_p(iPhyto(k) + j)
          end do

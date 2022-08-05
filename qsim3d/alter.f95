@@ -251,14 +251,12 @@ subroutine alter_zeitschritt(izeit_gang)
          else ! tracer 0
             entropy = 0.0
          end if ! tracer > 0
-         ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang)  &
-                                                       - entropy
+         ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang) - entropy
       endif ! Knoten nass
       if (j == kontrollknoten) then ! Ausgabe kontrollknoten
          if (tief >= min_tief ) then
-            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = '  &
-                   ,c,tief,knoten_flaeche(j)  &
-                   
+            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = ',  &
+                   c,tief,knoten_flaeche(j),  &
                    point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
          endif ! Knoten nass
       end if ! kontrollknoten

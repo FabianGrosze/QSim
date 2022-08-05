@@ -37,11 +37,10 @@
 !! Diese dient der Berechnung des \ref lnk_ph
 !! \n\n
 !! Quelle: ph_huelle.f95
-!
->>>>>>> qsim3d/ph_huelle.f95
 subroutine ph_huelle(i)
    use modell
    use QSimDatenfelder
+   use aparam, only : caki, cabl, cagr
    implicit none
    integer :: i
    real tiefes,raus,flaes

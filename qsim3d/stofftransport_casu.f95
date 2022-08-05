@@ -491,11 +491,11 @@ subroutine transinfo_sichten()
    zeitpunkt = transinfo_zeit(transinfo_zuord(1))
    call zeitsekunde()
    write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                                                                                                trim(transinfo_datei(transinfo_zuord(1)))
+                       trim(transinfo_datei(transinfo_zuord(1)))
    zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    call zeitsekunde()
    write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                                                                                                trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
+                       trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
    !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
    print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
    return
