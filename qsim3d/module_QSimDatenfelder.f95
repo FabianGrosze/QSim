@@ -362,7 +362,7 @@ module QSimDatenfelder
    real, dimension(1000)          :: zHNF, HNFza, algzok, algzog, algzob
    real, dimension(50,1000)       :: algzkz, algzgz, algzbz
    ! algae...
-   !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref extnct_rb
+   !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref lnk_extnct_rb
    character(255) cpfad
    real LNQ,ir(1000)
    !> \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref lnk_huellen.
@@ -499,8 +499,9 @@ module QSimDatenfelder
    real, dimension(100)        :: etempL, ewaerm
    real, dimension(50,1000)    :: dtemp
    !>  \anchor wlage Lage der zugeordneten Wetter-Stationin m ue NN
-   real, dimension(azStrs,1000)    :: Wlage !  anchor Wlage Lage der Wetter-Stationin m ue NN
-   !>  \anchor hws Höhenlage des Wasserspiegels in m ü.NHN. Wird aus \ref wsp der \ref hydraul_rb zugewiesen.
+   real, dimension(azStrs,1000)    :: Wlage !  
+   !> \anchor hws Höhenlage des Wasserspiegels in m ü.NHN. Wird aus \ref wsp 
+   !! der \ref lnk_hydraul_rb zugewiesen.
    real, dimension(azStrs,1000)    :: hWS
    real, dimension(azStrs,1000)    :: htempw
    real, dimension(azStrs,50,1000) :: htempz

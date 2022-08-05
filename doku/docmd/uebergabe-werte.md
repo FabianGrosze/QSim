@@ -26,9 +26,9 @@ Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.
 |  4 | \anchor bacmua bacmua | Ausgabe:Summe Aufnahme+Respirations Rate heterotrophe Bakterien | 1/d | orgc -> Ausgabe |
 |  5 | 			| 			| 				|  |
 |  6 | \anchor abszo abszo   | Absterberate Zooplankton | Ind. je Liter und Zeitschritt | konsum -> orgc |
-|  7 | \anchor dkimor dkimor | Abnahme infolge \ref lnk_algen_mort_alt, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> orgc |
-|  8 | \anchor dgrmor dgrmor | Abnahme infolge \ref lnk_algen_mort_alt, Grünalgen	| mgBio/l je Zeitschritt | algaesgr -> orgc |
-|  9 | \anchor dblmor dblmor | Abnahme infolge \ref lnk_algen_mort_alt, Blaualgen | mgBio/l je Zeitschritt | algaesbl -> orgc |
+|  7 | \anchor dkimor dkimor | Abnahme infolge \ref lnk_phy_Mortalitaet, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> orgc |
+|  8 | \anchor dgrmor dgrmor | Abnahme infolge \ref lnk_phy_Mortalitaet, Grünalgen	| mgBio/l je Zeitschritt | algaesgr -> orgc |
+|  9 | \anchor dblmor dblmor | Abnahme infolge \ref lnk_phy_Mortalitaet, Blaualgen | mgBio/l je Zeitschritt | algaesbl -> orgc |
 | 10 | \anchor bsbhnf bsbhnf | Absterben und Exkretion Heterotropher Nanoflagelaten	| mgC/l je Zeitschritt | hnf -> orgc |
 | 11 | \anchor hnfbac hnfbac | Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen, die in jedem Zeitschritt infolge Wegfraß durch heterotrophe Nanoflagelaten verloren geht | mgC/l je Zeitschritt |  hnf -> orgc |
 | 12 | 			| 	 		|  				| 	|
@@ -39,12 +39,12 @@ Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.
 | 17 | \anchor zexgr zexgr	 | Ausscheidungen der Rotatorien infolge Konsums von Grünalgen 	 | mgBio/l je Zeitschritt | konsum -> orgc |
 | 18 | \anchor zexbl zexbl	 | Ausscheidungen der Rotatorien infolge Konsums von Blaualgen 	 | mgBio/l je Zeitschritt | konsum -> orgc |
 | 19 | \anchor dorgss dorgss | Abnahme! von suspendierten Sedimenten infolge Abbau von C-Verbindungen| mg SS /l je Zeitschritt  	| orgc -> schweb 	|
-| 20 | \anchor dalgki dalgki | Zunahme infolge \ref lnk_algen_wachstum_alt, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> oxygen	|
-| 21 | \anchor dalggr dalggr | Zunahme infolge \ref lnk_algen_wachstum_alt, Grün-Algen 			  | mgBio/l je Zeitschritt | algaesgr -> oxygen	|
-| 22 | \anchor dalgbl dalgbl | Zunahme infolge \ref lnk_algen_wachstum_alt, Blau-Algen 			  | mgBio/l je Zeitschritt | algaesbl -> oxygen	|
-| 23 | \anchor dalgak dalgak | Abnahme infolge \ref lnk_algen_respir_alt, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> oxygen |
-| 24 | \anchor dalgag dalgag | Abnahme infolge \ref lnk_algen_respir_alt, Grün-Algen 			 | mgBio/l je Zeitschritt | algaesgr -> oxygen |
-| 25 | \anchor dalgab dalgab | Abnahme infolge \ref lnk_algen_respir_alt, Blau-Algen 			 | mgBio/l je Zeitschritt | algaesbl -> oxygen |
+| 20 | \anchor dalgki dalgki | Zunahme infolge \ref lnk_phy_wachstum, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> oxygen	|
+| 21 | \anchor dalggr dalggr | Zunahme infolge \ref lnk_phy_wachstum, Grün-Algen 			  | mgBio/l je Zeitschritt | algaesgr -> oxygen	|
+| 22 | \anchor dalgbl dalgbl | Zunahme infolge \ref lnk_phy_wachstum, Blau-Algen 			  | mgBio/l je Zeitschritt | algaesbl -> oxygen	|
+| 23 | \anchor dalgak dalgak | Abnahme infolge \ref lnk_phy_Respiration, Kiesel-Algen-Biomasse | mgBio/l je Zeitschritt | algaeski -> oxygen |
+| 24 | \anchor dalgag dalgag | Abnahme infolge \ref lnk_phy_Respiration, Grün-Algen 			 | mgBio/l je Zeitschritt | algaesgr -> oxygen |
+| 25 | \anchor dalgab dalgab | Abnahme infolge \ref lnk_phy_Respiration, Blau-Algen 			 | mgBio/l je Zeitschritt | algaesbl -> oxygen |
 | 26 | \anchor vco2 vco2	 | Kohlendioxyd | mg/l | algaeski -> ph |
 | 27 | \anchor dzres1 dzres1 | Grund-Respiration des Zoo-Planktons	| mgBio/(l*d) | konsum -> ph,ncyc,po4s|
 | 28 | \anchor dzres2 dzres2 | Fraßabhängige Respirationsrate des Zoo-Planktons | mgBio/(l*d) | konsum -> ph,ncyc,po4s|
@@ -178,7 +178,7 @@ WIRD AUFGELÖST ####
 |  9 | \anchor saettb Saettb | ??? 						 | | algesbl -> Rückgabewert ?? |
 | 10 | \anchor it_h it_h	 | Anzahl der Zeitschritte während der Hellphase (unbenutzt) |-| strahlg -> algaeski |
 
-<b> \ref globaleParameter von APARAM.txt </b>
+<b> \ref lnk_globale_parameter von APARAM.txt </b>
 
 <hr>
 ** Im Programmcode werden die Sauerstoffänderungsraten nach meinem Dafürhalten 

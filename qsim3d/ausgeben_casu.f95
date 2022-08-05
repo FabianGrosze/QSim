@@ -24,11 +24,12 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
+
 !> Ausgabe in Dateien, die von Paraview dargestellt werden können ??\n
-!! zunächst Visualisierung der Ergebnisse mit Paraview\n
-!! (casu: Ausgabe der Datei output.vtk mittels Aufruf des Programms >out08 [modell], paraview starten mit >para)
-!! \n\n
-!! aus: ausgeben_casu.f95 ; zurück: \ref Ergebnisse
+!! zunächst Visualisierung der Ergebnisse mit Paraview \n
+!! (casu: Ausgabe der Datei output.vtk mittels Aufruf des Programms 
+!! >out08 [modell], paraview starten mit >para) \n\n
+!! aus: ausgeben_casu.f95 ; zurück: \ref lnk_ergebnisausgabe
 subroutine ausgeben_casu()
    use modell
    implicit none
@@ -199,13 +200,6 @@ subroutine ausgeben_casu()
    !   wati=rb_hydraul(2+(n-1)*number_rb_hydraul)
    !   write(ion,'(f27.6)') strickler(sandrauh,wati)
    !end do ! alle Knoten
-   !> \page numdiff numerische Diffusion
-   !! Abschätzung maximale numerische Diffusion Bezogen auf die Elder Diffusivität\n
-   !! \f[
-   !! \frac{\nu_{numerisch}}{\nu_{Elder}} \leq \frac{(0.25 ... 0.5) \cdot (\Delta x)^2 / \Delta t}{5.93 \cdot u_{\tau} \cdot h}
-   !! \f]
-   !! \n\n
-   !! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
    write(ion,'(A)')'SCALARS numDiff.rel float 1'
    !write(ion,'(A)')'SCALARS nue_elder float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'

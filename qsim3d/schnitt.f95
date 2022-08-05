@@ -28,7 +28,7 @@
 !> Volumenstrom und Tracerfluss (nach Backbord) entlang aller Querschnitte ermitteln
 !!
 !! wird von ganglinien_zeitschritt() aufgerufen
-!! \n\n aus schnitt.f95 , zurück: \ref Ergebnisse
+!! \n\n aus schnitt.f95 , zurück: \ref lnk_ergebnisausgabe
 !!
 subroutine querschnitt_flux_casu(zeitzaehler)
    use modell
@@ -176,7 +176,7 @@ end subroutine flux_casu
 !
 !> <h1>Schnitte für die Flussberechnung lesen und prüfen</h1>
 !! wird von ganglinien_lesen() aufgerufen.
-!! \n\n aus schnitt.f95 , zurück: \ref Ergebnisse
+!! \n\n aus schnitt.f95 , zurück: \ref lnk_ergebnisausgabe
 !!
 logical function querschnitt_lesen()
    use modell

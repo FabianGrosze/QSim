@@ -12,7 +12,7 @@ Im Einzelnen gehört dazu:
 - \subpage lnk_modellstruktur
 - \subpage lnk_simulationsverfahren
 - \subpage lnk_datenstruktur
-- \subpage Parallelisierung 
-- \ref zuflussranddaten
+- \subpage lnk_parallelisierung 
+- \ref lnk_randbedingungen
 
 aus Datei: modelldetails-doc.md

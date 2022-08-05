@@ -1,6 +1,10 @@
 Benthische Algen {#lnk_albenth}
 ================
 
+\warning Momentan ist das Modul ausgeschaltet, das heißt, benthische Algen 
+werden nicht simuliert. Es handelt sich um eine alte Dokumentation.
+
+
 In OSim kann der Einfluss von benthischen Algen auf die Gewässergüte unter 
 Berücksichtigung der Lichtintensität, der Extinktion + Wassertiefe*, der 
 Nährstoff- und Temperaturbedingungen abgebildet werden. Es werden dabei zwei 
@@ -25,4 +29,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: albenth-doc.md ; Codesources: albenth.f90; Vorläuferversion: \subpage albenth
+Textquelle: albenth-doc.md ; Codesources: albenth.f90

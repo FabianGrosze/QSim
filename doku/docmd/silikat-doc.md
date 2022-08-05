@@ -24,4 +24,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: silikat-doc.md ; Codesource: silikat.f90 ; Vorläuferversion: \subpage Silizium
+Textquelle: silikat-doc.md ; Codesource: silikat.f90

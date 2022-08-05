@@ -24,24 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Aufenthaltszeit Aufenthaltszeit
-!! Alterung des Wasser zur Aufenthaltsbestimmung
-!! \n
-!! Altersberechnung nach Shen & Wang 2007 doi:10.1016/j.ecss.2007.05.017
-!! \n
-!! \n      !   planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
-!! \n      !   planktonic_variable_name(73)= "         age_decay"
-!! \n      !   planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007 [in Tagen]
-!! \n      !   planktonic_variable_name(75)= "        age_growth"
-!! \n
-!! Aufenthaltszeit [Tagen] = age_arith / Tracer
-!! \n
-!! Wenn die Datei
-!! <a href="./exp/alter.txt" target="_blank">alter.txt</a>
-!! im Modellverzeichnis vorhanden ist, wird ausschließlich eine Aufenthaltszeitermittlung durchgeführt.
-!! Der restliche Stoffumsatz ist dann ausgeschaltet.
-!!
-!!\n\n zurück: \ref lnk_ueberblick; Code: alter.f95
+
 subroutine alter(i)
    !!    läuft parallel
    use modell

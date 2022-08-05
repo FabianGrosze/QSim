@@ -24,69 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page mphyt Makrophythen (Wasserpflanzen)
-!!
-!!<table><tr><td>
-!! \image html ElodeaNuttallii_Aspect_klein.jpg "" <a href="ElodeaNuttallii_Aspect.jpg">Bild groß</a> \n
-!! Bild-Autor: Christian Fischer  \n
-!! Herkunft: <a href="https://commons.wikimedia.org/wiki/File:ElodeaNuttallii_Flowering.jpg">ElodeaNuttallii</a>  (12. Nov. 2019) \n
-!! licensed under the
-!! <a href="https://en.wikipedia.org/wiki/en:Creative_Commons">Creative Commons</a>
-!! <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en">Attribution-Share Alike 3.0 Unported</a> license.
-!!</td><td>
-!! \image html Illustration_Myriophyllum_spicatum_mini.jpg ""  <a href="Illustration_Myriophyllum_spicatum0.jpg">Bild groß</a> \n
-!! aus: Prof. Dr. Otto Wilhelm Thomé Flora von Deutschland, Österreich und der Schweiz 1885, Gera, Germany
-!! Herkunft: <a href="https://de.wikipedia.org/wiki/Datei:Illustration_Myriophyllum_spicatum0.jpg">Illustration_Myriophyllum_spicatum</a>  (12. Nov. 2019)
-!!!</td><td>
-!! \image html Nymphaea_alba_mini.jpg ""   \n
-!! public domain, Herkunft: <a href="https://en.wikipedia.org/wiki/File:Nymphaea_alba.jpg">Nymphaea_alba</a> (12. Nov. 2019)
-!!</td></tr></table>
-!!
-!! <h2>Herkunft</h2>
-!!
-!! Berechnung des Makrophytenentwicklung im Jahresgang
-!!
-!! <h2>Teilprozesse</h2>
-!!                          !
-!!     Berechnung der maximalen Wachstumsrate   \n
-!!     Berechnung des Aufwuchses auf den Makrophyten         \n
-!!     Berechnung der Sauerstoffproduktion und -Respiration durch Makrophyten   \n
-!!     pmaxpfl   -       max. Bruttoproduktion der Wasserpflanzen       \n
-!!                       [mgO2/(gTG*h)]                               \n
-!!     Umrechnung des Pflanzentrockengewichtes von g/m2 in g/l       \n
-!!     Temperaturabhaengigkeit der Pflanzenphotosynthese             \n
-!!     po2p(ior) = po2p(ior)*(exp(-((tempw(ior)-18.)**2)/13.7**2))  \n
-!!
-!! <h2>Dokumentation und Veröffentlichungen</h2>
-!!
-!! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
-!!      subroutine mphyt( \ref tiefe, \ref tempw, \ref anze, \ref po2p, \ref po2r, \ref pfldalg, \ref tflie         &\n
-!!     &, \ref itags, \ref monats, \ref itstart, \ref mstart, \ref itmax, \ref mmax, \ref itend, \ref mend, \ref schwi          &\n
-!!     &, \ref pflmin, \ref pflmax, \ref pfl, \ref sa, \ref su, \ref ilang, \ref extk, \ref mstr, \ref ifehl, \ref ifhstr             & \n
-!!     &, \ref kontroll , \ref iglob ) \n
-!! \n
-!! Steuerung des Moduls mittels Zeilen in
-!! <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>\n
-!! siehe auch ModellGParam() \n
-!! <table>
-!! <tr><td> M-Zeile </td><td> Makrophyten </td><td> Makrophyten-Wachstum </td></th>
-!! <tr><td> StartTag </td><td> Start-Tag </td><td> Tag des Wachstumsbeginns der Makrophyten </td></tr>
-!! <tr><td> StartMonat </td><td> Start-Monat </td><td> Monat des Wachstumsbeginns der Makrophyten </td></tr>
-!! <tr><td> MaxTag </td><td> Max.-Tag </td><td> Tag, an dem die Makrophytenbiomasse ihr Maximum hat </td></tr>
-!! <tr><td> MaxMonat </td><td> Max.-Monat </td><td> Monat, in dem die Makrophytenbiomasse ihr Maximum hat </td></tr>
-!! <tr><td> EndTag </td><td> Ende-Tag </td><td> Tag, an dem die Makrophytenbiomasse ihr Minimum erreicht hat. Hier endet das Makrophytenwachstum </td></tr>
-!! <tr><td> EndMonat </td><td> Ende-Monat </td><td> Monat, in dem die Makrophytenbiomasse ihr Minimum erreicht hat </td></tr>
-!! </table>
-!! \n
-!! <table>
-!! <tr><td> P-Zeile </td><td> Dichte der Makrophyten </td><td>- </td><td> Makrophyten-Dichte </td></th>
-!! <tr><td> PflMin </td><td> min. Dichte (Winter) </td><td> g/m² </td><td> Minimale Dichte der Makrophyten im Winter </td></tr>
-!! <tr><td> PflMax </td><td> max. Dichte (Sommer) </td><td> g/m² </td><td> Maximale Dichte der Makrophyten im Sommer </td></tr>
-!! </table>
-!!\n
-!! Quelle mphyt_huelle.f95; zurück zu: \ref lnk_ueberblick
-!> SUBROUTINE mphyt_huelle() wird beschrieben in: \ref mphyt \n
-!! Quelle mphyt_huelle.f95
+
 subroutine mphyt_huelle(i)
    use modell
    use QSimDatenfelder

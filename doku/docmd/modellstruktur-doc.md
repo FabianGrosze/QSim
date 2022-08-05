@@ -5,10 +5,10 @@ Modellstruktur {#lnk_modellstruktur}
 
 # Verbindung zwischen QSim-1D und QSim-3D {#lnk_verbindung_1d_3d}
 Die beiden Programme der QSim-Familie unterscheiden sich in der räumlichen 
-Auflösung des Wasserkörpers (vgl. Abb. im Abschnitt \ref lnk_konzept).
+Auflösung des Wasserkörpers (vgl. Abb. im Abschnitt \ref lnk_qsim_aufbau).
 Dementsprechend werden für QSim auch die Namen QSim1D und QSim3D verwendet.
 
-Im Abschnitt [Aufbau von QSim](\ref lnk_konzept) wurde die unterschiedliche 
+Im Abschnitt [Aufbau von QSim](\ref lnk_qsim_aufbau) wurde die unterschiedliche 
 räumliche Auflösung der hydrodynamischen Treiber von QSim erwähnt. 
 
 <!-- #mf: the following should be a level lower, which doesn't work -->

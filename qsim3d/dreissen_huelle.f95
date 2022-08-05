@@ -24,72 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Dreissena Dreissena polymorpha (Muscheln)
-!!
-!! \image html Dreissena_polymorpha3.jpg
-!! \image latex Dreissena_polymorpha3.jpg
-!! von: https://commons.wikimedia.org/wiki/File:Dreissena_polymorpha3.jpg?uselang=de (Okt. 2019)
-!!
-!! <h2>Herkunft</h2>
-!! EIN PROGRAMM zu Berechnung der Entwicklung von Dreissena polymorph\n
-!! und deren Einfluss auf das Phytoplankton  \n
-!! AUTOR : VOLKER KIRCHESCH    \n
-!! STAND : 15.01.1996    \n
-!!
-!! <h2>Teilprozesse</h2>
-!! *Liste möglicherweise unvollständig* \n
-!! <ul>
-!! <li> Reproduktion Larvenbildung </li>
-!! <li> Schwebstoffaufnahme durch Dreissena </li>
-!! <li> Respiration </li>
-!! <li> Exkretion </li>
-!! <li> filtrierbaren Futterkonzentration </li>
-!! <li> Filtrierrate Aufnahmerate Assimilation</li>
-!! <li> Einfluss von Corophium auf die Ingest.- und Filtrierrate </li>
-!! <li>    rres  - Grundrespirationsrate 1/d                                 </li>
-!! <li>    qres  - aktive Respirationsrate (abhaengig von der Assimilation) 1</li>
-!! <li>    dmorg - natuerliche Mortalitaetsrate                              </li>
-!! <li>    dmorma- maximale Mortalitaetsrate bei Sauerstoffschwund           </li>
-!! <li> ???????????? </li>
-!! </ul>
-!!
-!! <h2>Dokumentation und Veröffentlichungen</h2>
-!! <a href="./pdf/QSimDoku_dreissen.pdf" target="_blank"> Dokumentationsfragment </a>\n
-!! <a href="./pdf/2002Schoel_etal_river_Rhine_QSIM_model_algae_dreissena_food-web.pdf" target="_blank"> Veröffentlichung 2002Schoel_etal</a>\n
-!!
-!! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
-!! SUBROUTINE dreissen( \ref zdrei, \ref zdreis, \ref tempw, \ref flae, \ref elen, \ref anze              &\n
-!! &, \ref ior, \ref volfdr, \ref akbcm, \ref agbcm, \ref aki, \ref agr, \ref algdrk, \ref algdrg         &\n
-!! &, \ref tflie, \ref ro2dr, \ref lboem, \ref bsohlm, \ref ss, \ref vo2, \ref ssdr, \ref drfaek          &\n
-!! &, \ref drfaeg, \ref drfaes, \ref gewdr, \ref dlarvn, \ref itags, \ref monats, \ref jahrs              &\n
-!! &, \ref lait1, \ref laim1, \ref laid1, \ref ilang                                                      &\n
-!! &, \ref resdr, \ref exdrvg, \ref exdrvk, \ref ssalg, \ref drpfec                                       &\n
-!! &, \ref abl, \ref exdrvb, \ref abbcm, \ref algdrb, \ref drfaeb                                         &\n
-!! &, \ref idras, \ref drmas, \ref drakr, \ref drbar, \ref drmor, *ffood*, \ref coroi, \ref corois     &\n
-!! &, \ref chnf, \ref drhnf, *hnfdra*, \ref dlmax, \ref dlmaxs, \ref gwdmax                            &\n
-!! &, \ref sgwmue, \ref fkm, \ref foptde, \ref mstr, *azStr*                                &\n
-!! &, \ref kontroll , \ref iglob )
-!! \n\n
-!! \anchor bsohlm bsohlm Sohlbreite hier = 500.0 gesetzt\n
-!! \anchor lboem  lboem Böschungslänge  im 3D nicht verwendbar hier=0.0 \n
-!! \anchor volfdr volfdr unbenutzt\n
-!! \n
-!! aus der L-Zeile von <a href="./exp/ModellG.3D.txt" target="_blank">ModellG.3D.txt</a>:\n
-!! \anchor lait1 lait1 =  \ref lait (point_zone(iglob)) ! Dreissena Laichperiode: Tag des Beginns der Laichperiode\n
-!! \anchor laim1 laim1 =  \ref laim (point_zone(iglob)) ! Dreissena Laichperiode: Monat des Beginns der Laichperiode\n
-!! \anchor laid1 laid1 =  \ref laid (point_zone(iglob)) ! Dreissena Laichperiode: Dauer der Laichperiode in Tagen\n
-!! \n
-!! Raten Kontrollausgabe (nur in dreissen_huelle() definiert):\n
-!! \anchor drpfec drpfec Pseudofacesanteil durch Dreissena\n
-!! \anchor idras idras Ingestionsrate Dreissena (0. +1. Koh.) \n
-!! \anchor drmas drmas Wachstumsrate Dreissena (0. +1. Koh.)\n
-!! \anchor drakr drakr aktive Respirationrate Dreissena (0. +1. Koh.)\n
-!! \anchor drbar drbar Grundrespirationrate Dreissena  (0. +1. Koh.)\n
-!! \anchor drmor drmor Mortalitätsrate Dreissena (0. +1. Koh.)\n
-!! \n
-!! Quelle dreissen_huelle.f95; zurück zu: \ref lnk_ueberblick
-!> SUBROUTINE dreissen_huelle() wird beschrieben in: \ref Dreissena \n
-!! Quelle dreissen_huelle.f95
+
 subroutine dreissen_huelle(i)
    use modell
    use QSimDatenfelder

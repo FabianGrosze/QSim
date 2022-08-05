@@ -24,92 +24,42 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page wetter_rb Wetter-Randbedingungen
-!!
-!! Die Wetter-Randbedingungen (meteorologischen Bedingungen) werden für die \ref lnk_wtemp
-!! und das Strahlungsklima, das die Algen (\ref lnk_licht_algen_alt ) erfahren, benötigt.
-!! \n
-!! <h2>Wetter-Parameter</h2>
-!! Diese Wetterdaten werden bei der eingabe() von Subroutine wetter_readallo0() aus der Datei
-!! <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a> gelesen.
-!!
-!!<table >
-!!<tr><th>Spalte WETTER.txt</th><th> 1D-Name </th><th> 3D-Stationswert 		</th><th> Nr. \ref lnk_uebergabewerte 	</th><th> Beschreibung 		</th><th> Einheit </th></tr>
-!!<tr><td>1</td><td>\anchor glob glob   </td><td>             </td><td> -             </td><td>
-!!                                                                                                              Globalstrahlung von strahlg() berechnet </td><td> cal/(cm2*h) </td></tr>
-!!<tr><td>2</td><td> tlmax       </td><td> \anchor tlmax_T tlmax_T   </td><td> -            </td><td>
-!!                                                            Tagesmaximum der Lufttemperatur (bei der Verwendung von Tagesmittelwerten sonst Zeitwert) </td><td>  Grad Celsius  </td></tr>
-!!<tr><td>3</td><td> tlmin        </td><td> \anchor tlmin_T tlmin_T   </td><td> -            </td><td>
-!!                                                              Tagesminimum der Lufttemperatur (nur bei der Verwendung von Tagesmittelwerten verwendet)</td><td>  Grad Celsius  </td></tr>
-!!<tr><td>4</td><td>\anchor RO RO	</td><td> \anchor ro_T ro_T		</td><td> 63 				</td><td> Luftfeuchte 		</td><td> % </td></tr>
-!!<tr><td>5</td><td>\anchor WGE WGE    </td><td> \anchor wge_T wge_T      </td><td> 65             </td><td> Windgeschwindigkeit    </td><td> m/s </td></tr>
-!!<tr><td>6</td><td>\ref cloud cloud </td><td> \anchor cloud_T cloud_T   </td><td> 66             </td><td> Bewölkungsdichte    </td><td> Achtel </td></tr>
-!!<tr><td>7</td><td>\ref typw typw    </td><td> \anchor typw_T typw_T      </td><td> 67             </td><td> Wolkentyp       </td><td>
-!!                                   siehe <a href="./pdf/QSimDoku_5Strahlung.pdf" target="_blank">Dokumentation Strahlung</a> </td></tr>
-!!<tr><td>-</td><td>\ref templ templ </td><td> \anchor tlmed_T tlmed_T    </td><td> 62             </td><td> aktuelle Lufttemperatur aus temperl_wetter()    </td><td> Grad Celsius </td></tr>
-!!<tr><td>-</td><td>\anchor SCHWI SCHWI </td><td> \anchor schwi_T schwi_T   </td><td> 64             </td><td>
-!!                 Globalstrahlung an der Wasseroberflaeche unter Beruecksichtigung der Reflektion an der Wasseroberflaeche aus strahlg_wetter()   </td><td> cal/(cm2*h) </td></tr>
-!!</table>\n
-!! Der Eintrag der Wetter-Randbedingungen in die Felder der \ref lnk_uebergabewerte wird von temperw_huelle() nur deswegen vorgenommen, 
-!! damit diese Werte an jeder Berechnungsstützstelle (Knoten oder Element) ausgegeben werden können. \n
-!!
-!! <h2>Zuordnung im Modell</h2>
-!! Die Zuordnung der 3D-Stationswerte zu den Berechnungsstützstellen geschieht über das Feld
-!! \ref wetterstations_nummer, das basierend auf den Angaben in den T-Zeilen von <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>,
-!! zu jedem Zonen-zähler einen Wetterstations-Zähler bereitstellt.
-!! Und jede Berechnungsstützstelle weiß (\ref knoten_zone oder \ref element_zone \ref point_zone) in welcher Zone sie liegt.
-!!
-!! <h2>Aufbereitung der Randvorgaben für den jeweiligen Zeitschritt</h2>
-!! Die aktuellen Wetterdaten für Waermebilanz im jeweiligen Zeitschritt werden in randbedingungen_setzen() ermittelt. Dabei werden die folgenden Subroutinen verwendet:\n
-!! call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt ### Änderungen in 13.3 nicht geprüft ###\n
-!! call temperl_wetter()  ! ersetzt Temperl(), berechnet die aktuelle Lufttemperatur und legt sie in \ref tlmed_T ab. ### Änderungen in 13.3 nicht geprüft ###\n
-!! call strahlg_wetter()  ! dient dem Aufruf von strahlg();
-!!                          berechnet aus der Globalstrahlung \ref glob  den Strahlungsanteil \ref SCHWI, der im Gewässer ankommt. ### Änderungen in 13.3 nicht geprüft ###
-!!
-!! <h2>Wärmeeinleitungen</h2>
-!! Im 1-dimensionalen QSim besteht die Möglichkeit Wärmeeinleitungen z.B. durch Kraftwerke direkt in der Temperaturberechnung
-!! zu berücksichtigen. Im mehrdimensionalen QSim3D muss dies über Randbedingungen vorgegeben werden. D. h. einen Ausströmrand
-!! an dem der Volumenstrom entnommen wird und einem Einströmrand, an dem das erwärmte Wasser ins Gewässer (Modellgebiet) zurückfließt.
-!!
-!! <h2>geänderte Feldindizierung QSim1D - QSim3D</h2>
-!! In QSim1D werden die Wetterdaten unter der Stations-Kennnummer abgespeichert. In QSim3D unter dem Stationszähler.\n
-!! Dadurch können auch hohe Kenn-Nummern verwendet werden, ohne unnötig Speicherplatz zu verschwenden.\n
-!! Um die QSim-Routinen benutzen zu können ist das Feld iWSta erhalten geblieben; es speichert in QSim3D aber den Zähler.
-!! Für die Kennnummer aus WETTER.txt ist ein neues Feld "Wetterstationskennung" eingeführt worden.
-!! \n\n
-!! zurück: \ref zuflussranddaten, \ref lnk_wtemp oder \ref Modellerstellung ; Quelle: wetter.f95
+
 ! QSIM.f90:
 !~~~~~~~~~~~~~~ Weg der Ufervegetationsparameter von Eingabe MODELLG bis TEMPERW
-!1190      open(unit=103, DEFAULTFILE=cpfad, file='MODELLG.txt')
+!1190      open(unit=103, DEFAULTFILE=cpfad, file='MODELLG.txt') 
 !1309      if(ckenn.eq.'O')then ... read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
 !         &,iV=1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
 !         &,(VTYPA(mstr,mV,iV),iV=7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
-!         &,(VTYPA(mstr,mV,iV),iV=13,14)
-!1542      EDUFLH(mstr,mSta) = EDUFAL(mstr,mV)
-!3932      EDUFBL(jR) = EDUFLH(mstr,ior)
+!         &,(VTYPA(mstr,mV,iV),iV=13,14)                                     
+!1542      EDUFLH(mstr,mSta) = EDUFAL(mstr,mV) 
+!3932      EDUFBL(jR) = EDUFLH(mstr,ior) 
 !4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
 !         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)
-!
+!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)  
+!                        
 !~~~~~~~~~~~~~~ Alle an der Wärmebilanz beteiligten Subroutinen ??
-!1074  740 open(unit=86, DEFAULTFILE=cpfad, file='WETTER.txt')
+!1074  740 open(unit=86, DEFAULTFILE=cpfad, file='WETTER.txt') 
 !1759      9999 CONTINUE ! Beginn eines neuen Zeitschritts
-!2527      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj)
+!2527      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj) 
 !2546      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
 !         &,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
-!         &,imet,iWSta,iwetts)
-!3689      do 8888 azStr = 1,azStrs.... !Strangschleife
+!         &,imet,iWSta,iwetts)                                               
+!3689      do 8888 azStr = 1,azStrs.... !Strangschleife                                   
 !4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
 !         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)
-!4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet)
+!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)                          
+!4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
 !5803      call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
 !         &,vmitt,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl            &
 !         &,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs               &
 !         &,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL                &
 !         &,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed              &
-!         &,Wlage,hWS,iRHKW)
+!         &,Wlage,hWS,iRHKW)                                                 
+
+
 !---------------------------------------------------------------------------------------------------------------
+
 !> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen\n
 !! \n\n
 subroutine wetter_parallel()  ! called from all processes randbedingungen_parallel()

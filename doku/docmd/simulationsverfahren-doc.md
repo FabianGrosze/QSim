@@ -102,7 +102,7 @@ Dabei können die Einzelprozesse mit unterschiedliche Zeitschrittweiten
 abgebildet werden, die allerdings ganzzahlige Vielfache voneinader sein müssen.
 
 Die Stoffumsätze (aufgelistet in: \ref lnk_ueberblick) werden numerisch als 
-\ref Num_Umsatz modelliert.
+\subpage lnk_wachstum_zerfall modelliert.
 Die numerische Umsetzung der \ref lnk_stofftransport - Modellierung wird im 
 Vortrag
 <a href="http://bibliothek.bafg.de/dokumente/Online%20377.ppt" target="_blank">
@@ -122,8 +122,8 @@ Eine Einführung in den Transport ist [hier](\ref lnk_stofftransport) zu finden.
 Die folgenden drei Unterkapitel gehen auf informationstechnische Details 
 der mehrdimensionalen hydraulischen Treiber ein:
 
-1. \subpage Transport_casu 
-2. \subpage Transport_Untrim
-3. \subpage Transport_SCHISM
+1. \subpage lnk_transport_casu 
+2. \subpage lnk_transport_untrim
+3. \subpage lnk_transport_schism
 
 aus Datei: simulationsverfahren-doc.md ; zurück zu \ref lnk_modelldetails

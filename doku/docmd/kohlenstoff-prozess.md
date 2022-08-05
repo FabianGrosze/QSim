@@ -1,16 +1,18 @@
 Organischer Kohlenstoff  - Prozesse {#lnk_orgC_prozesse}
 ===================== 
-Der Baustein orgc() dient dazu, die Fraktionen des organischen Kohlenstoffs zu bilanzieren,
-deren Abbau den biochemischen Sauerstoffbedarf (BSB) hervorruft\n
+Der Baustein orgc() dient dazu, die Fraktionen des organischen Kohlenstoffs zu 
+bilanzieren, deren Abbau den biochemischen Sauerstoffbedarf (BSB) hervorruft.
 
 Das "c" in orgc kommt aus dem Lateinischen (carbo = „Holzkohle“) und wird 
 als Elementsymbol für Kohlenstoff verwendet.
 
 # Teilprozesse
-Folgende Teilprozesse wirken sich in QSim auf den Kohlenstoffgehalt des Wassers aus: 
+Folgende Teilprozesse wirken sich in QSim auf den Kohlenstoffgehalt des Wassers 
+aus: 
 
 
-1. [Hydrolyse partikulärer C-Verbindungen](\ref lnk_hyp) in gelöste organische C-Verbindungen
+1. [Hydrolyse partikulärer C-Verbindungen](\ref lnk_hyp) in gelöste organische 
+    C-Verbindungen
 2. [Hydrolyse gelöster organischer C-Verbindungen](\ref lnk_hyd) in monomolekulare
     organische    C-Verbindungen]
 3. [Stoffwechsel der heterotrophen Bakterien](\ref lnk_BACm)
@@ -23,8 +25,8 @@ Folgende Teilprozesse wirken sich in QSim auf den Kohlenstoffgehalt des Wassers 
 
 Der gesamte orgc - Baustein basiert auf einer tiefengemittelten Betrachtungsweise.
 
-Die Umwandlung von organischen C-Verbindungen wirkt sich auf viele weitere Prozesse im
-Gewässer aus:
+Die Umwandlung von organischen C-Verbindungen wirkt sich auf viele weitere 
+Prozesse im Gewässer aus:
 
 * [Sauerstoff-Verbrauch](\ref lnk_o2zehr)
 * [Ammonium-Freisetzung](\ref lnk_nh4freis)
@@ -67,13 +69,15 @@ mit Text unten abgleichen -->
 
 # Hydrolyse partikulärer C-Verbindungen in gelöste organische C-Verbindungen {#lnk_hyp} 
  
-Bei der Hydrolyse (Umwandlung, Zerfall) von partikulären organischen C-Verbindungen in
-gelöste organische C-Verbindungen wird eine temperaturabhängige Hydrolyserate angesetzt.\n
+Bei der Hydrolyse (Umwandlung, Zerfall) von partikulären organischen 
+C-Verbindungen in gelöste organische C-Verbindungen wird eine 
+temperaturabhängige Hydrolyserate angesetzt.\n
 In Q-Sim werden 2 Fraktionen unterschieden, 1. leicht und 2. schwer abbaubare
 C-Verbindungen.
-Dabei wird angenommen, dass sich schwer abbaubare partikuläre C-Verbindungen nur und 
-schwer abbaubare gelöste C-Verbindungen umwandeln; analog wandeln sich leichtabbaubare 
-partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste C-Verbindungen um:
+Dabei wird angenommen, dass sich schwer abbaubare partikuläre C-Verbindungen 
+nur und schwer abbaubare gelöste C-Verbindungen umwandeln; analog wandeln sich 
+leichtabbaubare partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste 
+C-Verbindungen um:
 
 \f[ 
  \frac{\partial CD_i}{\partial t}_{hyp} = hy_{P,i} * f_T * CP_i
@@ -84,8 +88,8 @@ partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste C-Verbindungen
 \f$ f_T \f$:  Beschreibung [\f$ Einheit \f$] \n
 \f$ CP_i \f$:  Beschreibung [\f$ Einheit \f$] \n
 
-Im gleichen Maße wie die Konzentrationen der gelösten C-Verbindungen zunehmen, müssen 
-natürlich die der partikulären organischen C-Verbindungen abnehmen:
+Im gleichen Maße wie die Konzentrationen der gelösten C-Verbindungen zunehmen, 
+müssen natürlich die der partikulären organischen C-Verbindungen abnehmen:
 \f[ 
  \frac{\partial CP_i}{\partial t}_{hyp} = -\frac{\partial CD_i}{\partial t}_{hyp}
 \f]
@@ -108,12 +112,13 @@ ergibt:
 \image html ftemp.svg 
 <!-- \image latex ftemp.eps -->
 
-Die Hydrolyseraten (bei Optimumstemperatur) für die partikuläre organische C-Verbindungen 
-werden bei leicht und schwer abbaubaren C-Verbindungen unterschiedlich bestimmt: \n
+Die Hydrolyseraten (bei Optimumstemperatur) für die partikuläre organische 
+C-Verbindungen werden bei leicht und schwer abbaubaren C-Verbindungen 
+unterschiedlich bestimmt: \n
 Bei den 1. leicht abbaubaren C-Verbindungen wird eine Konstante angesetzt, die 
 vorgegeben werden muss (APARAM.txt); \n
-bei den 2. schwer abbaubare C-Verbindungen wird eine Abhängigkeit vom Verhältnis des 
-biologischen zum chemischen Sauerstoffbedarf berücksichtigt.
+bei den 2. schwer abbaubare C-Verbindungen wird eine Abhängigkeit vom 
+Verhältnis des biologischen zum chemischen Sauerstoffbedarf berücksichtigt.
 
 \f{eqnarray*}{
  hy_{P,1}=& hy_{P,e}  \\
@@ -137,11 +142,11 @@ in Bezug auf: \f$ CD_i \f$
 
 <!-- #mf: hier weiter aufräumen: -->
 
-1. leicht und 2. schwer abbaubare gelöste C-Verbindungen werden in monomolekulare 
-organische C-Verbindungen umgewandelt.
-Diese Hydrolyse wird befördert von extrazellulären Enzymen, die von heterotrophen 
-Bakterien ins Wasser abgegeben werden, um monomolekulare organische C-Verbindungen 
-zu erhalten, von denen selbige sich ernähren.
+1. leicht und 2. schwer abbaubare gelöste C-Verbindungen werden in 
+monomolekulare organische C-Verbindungen umgewandelt.
+Diese Hydrolyse wird befördert von extrazellulären Enzymen, die von 
+heterotrophen Bakterien ins Wasser abgegeben werden, um monomolekulare 
+organische C-Verbindungen zu erhalten, von denen selbige sich ernähren.
 
 \f[ 
  \frac{\partial CM}{\partial t}_{hyd} = (hy_{D,1} + hy_{D,2}) * f_T * HBAC
@@ -231,7 +236,7 @@ Bakterien wie folgt:
 Die in obiger Formel auftretende maximale Aufnahmerate und die Halbsättigungskonstante
 sind Parameter, die vorgegeben werden (APARAM.txt upBACe 18|4, KsMe 18|3)\n
 Die Gesamtmasse der monomolekularen organischen C-Verbindungen \f$ CM \f$ , 
-die von der \ref  hyd im aktuellen Zeitschritt gebildet werden, sind für die 
+die von der \ref lnk_hyd im aktuellen Zeitschritt gebildet werden, sind für die 
 Bakterien schon im aktuellen Zeitschritt verfügbar.
 \n
 
@@ -447,7 +452,7 @@ w_* = (log(1./((1+(1./(1+ased*exp(-bsed*alog10((0.14 \cdot {u_*}^2 + 0.0054 \cdo
                                                                    \n     
      frfgrt = hc2/hc1 \n 
 \n
-zurück zu: \ref BSB     , Quelle: orgc_huelle.f95                                                                 
+zurück zu: \ref lnk_orgC     , Quelle: orgc_huelle.f95                                                                 
 
 # Schwebstoffaufnahme der Dreissena Muscheln {#lnk_Cschwebdreiss} 
 Dieser Teilprozess ist momentan ausgeschaltet, weil in
@@ -469,7 +474,7 @@ Vom refraktären Kohlenstoff wird angenommen, dass nur 10% partikulär vorliegen
 \f]
 
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
  
 # Verlust der Bakterien durch HNF-Grazing {#lnk_bacHNFgraz}
 Heterotrophe Nanoflagelaten konsumieren (fressen, engl.: to graze) Bakterien.
@@ -480,7 +485,7 @@ wird in der Subroutine HNF() ermittelt. \n
 \f]
 Klipping bei:\f$ HBA(t+\Delta t) > 0.00001 \f$
 
-zurück zu: \ref BSB
+zurück zu: \ref lnk_orgC
 
 # Ausscheidungen von Zooplanktern und Dreissena-Muscheln {#lnk_facesC} 
 Verbunden mit der Nahrungsaufnahme exkretieren Zooplankter (Rotatorien) und Dreissena-Muscheln
@@ -502,7 +507,7 @@ Untenstehend sei hier exemplarisch für alle Kohlenstofffraktionen nur die Forme
  &]& \\
 \f}
 
-zurück zu: \ref BSB  , Quelle: orgc_huelle.f95                                                                    
+zurück zu: \ref lnk_orgC  , Quelle: orgc_huelle.f95                                                                    
 
 # Sauerstoff-Verbrauch {#lnk_o2zehr} 
 <h1> aktuell stattfindender Sauerstoff-Verbrauch </h1>
@@ -561,7 +566,7 @@ Die Neuberechnung erfasst den Zustand nach erfolgtem Stoffumsatz. D. h. \f$ CD_1
 
 \n\n
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
  
 # Ammonium-Freisetzung {#lnk_nh4freis} 
 <h2> Freisetzung von Ammonium </h2>
@@ -600,7 +605,7 @@ durch den Kohlenstoffanteil im CSB.   (2.8 mgC/mgO2)
 
 mit:
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Phosphat Freisetzung {#lnk_pfreis} 
 <h2> Freisetzung von ortho-Phospshat </h2>
@@ -638,7 +643,7 @@ durch den Kohlenstoffanteil im CSB.   (2.8 mgC/mgO2)
 
 
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Änderung des ph-Werts durch Bildung von Kohlensäure {#lnk_kohlensauer} 
 Das beim Abbau von C-Verbindungen entstehende Kohlendioxyd (CO2) verändert den \ref lnk_ph.
@@ -647,7 +652,7 @@ Zusammenhang mit dem \ref lnk_o2zehr berechnet wurde. \n
 <table>
 <tr><td> \f$ \Delta O_2 \f$  </td><td> \ref bsbt </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
 </table>\n\n
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Schwebstoffgehalt {#lnk_schwebkohl} 
 Zur Schwebstoffmasse tragen die partikulär vorliegenden C-Verbindungen bei, dies sind 
@@ -671,18 +676,18 @@ Wie obige Formel zeigt, sind in der Größe \f$ \Delta SS_{org} \f$, die an schw
  die sedimentierten Partikel mit enthalten !  \n\n
 
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Sedimentation {#lnk_sedkohl} 
 Die Gesamtmasse des sedimentierten Kohlenstoffs wird aufsummiert und nachfolgenden Modulen zur Verfügung gestellt:
-\ref Stickstoff , \ref Phosphor , SedFlux().\n
+\ref lnk_stickstoff , \ref lnk_phosphor , SedFlux().\n
 
 \f[ 
    orgC_{sed} = sedCP_1 + sedCP_2 + sedBAC + sedC_{ref} 
 \f]
 
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 <!--  ----------------------------Bilanzen----------------------- -->
 # Konzentration von partikulären organischen C-Verbindungen {#lnk_bilaCP} 
@@ -711,7 +716,7 @@ welches nicht massenerhaltend ist.\n
 
 mit:
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Konzentrationen von gelöstenen organischen C-Verbindungen {#lnk_bilaCD} 
 Die Konzentrationen von gelöstenen organischen C-Verbindungen ändert sich aufgrund der folgenden Teilprozesse: 
@@ -731,7 +736,7 @@ plus der Summe der Veränderungen:
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # Konzentration von monomolekularen organischen Kohlenstoff {#lnk_bilaCM} 
 Die Konzentration von monomolekularen organischem Kohlenstoff
@@ -750,7 +755,7 @@ plus der Summe der Veränderungen:
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref BSB
+zurück zu: \ref lnk_orgC
 
 # Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen  {#lnk_bilaBAC} 
 Die Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
@@ -769,7 +774,7 @@ Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotisc
 welches auch nicht massenerhaltend ist.\n
 Abgesehen von Massenverlusten durch Respiration, HNF-Grazing und Sedimentation sind Bakterien unsterblich.
 
-zurück zu: \ref BSB , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
 
 # refraktäre (nicht abbaubare) C-Verbindungen  {#lnk_bilaCref} 
 Die Konzentration der refraktären (nicht abbaubaren) C-Verbindungen
@@ -802,7 +807,7 @@ plus der Summe der Veränderungen:
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref BSB , Quelle orgc_huelle.f95 
+zurück zu: \ref lnk_orgC , Quelle orgc_huelle.f95 
  
  
 # QSim-Veröffentlichungen, die den Kohlenstoff-Baustein beschreiben und/oder anwenden: 

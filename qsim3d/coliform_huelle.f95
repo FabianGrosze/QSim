@@ -24,52 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page coliform coliforme Bakterien/Keime (Hygiene)
-!!
-!! \image html badestelle_rhein.png "Krankheitskeime im Wasser können für badenden Menschen gefährlich sein."
-!!
-!! <h2>Herkunft</h2>
-!! Programm zur Berechnung der Konzentration E. Coli, faecal coliformer und coliformer
-!! Bakterien in Fliessgewässer  \n
-!! AUTOR:VOLKER KIRCHESCH \n
-!! STAND:15.08.2017   \n
-!!
-!! <h2>Teilprozesse</h2>
-!! Fäkalcoliforme Bakterien vermehren sich im Gewässer nicht, sondern sterben rasch ab.\n\n
-!! Berücksichtigt wird dabei:\n
-!! * Grundverlustrate (temperaturabhängig)\n
-!! * Licht-Dosis abhängige Verlustrate\n\n
-!! Nicht gesondert berücksichtigt ist bisher:\n
-!! * Grazing / Sedimentation
-!!
-!! <h2>Dokumentation und Veröffentlichungen</h2>
-!! Kapitel <a href="./pdf/QSimDoku_coliform.pdf" target="_blank">19. Hygiene (Fäkalcoliforme Bakterien)</a> Ausschnitt aus:\n
-!! "QSim - Das Gewässergütemodell der Bundesanstalt für Gewässerkunde" (QSimDoku_Kap7bis8bearbeiten.docx)\n
-!! Änderungsstand 20. Juni 2018
-!! \n\n
-!! <a href="./pdf/18_Becker_ReWaM_intern_BfG_FLUSSHYGIENE_Koblenz26_10_2018_AB_IH.pdf" target="_blank">Modellierung hygienischer Belastungen in Fließgewässern</a>\n
-!! <a href="./pdf/19_Fischer_SAME16-Potsdam_Hygienemodellierung-Berlin.pdf" target="_blank">To swim or not to swim</a>\n
-!! <a href="./pdf/18_Fischer_FLUSSHYGIENE_Abschluss_final_Mri.pdf" target="_blank">Simulation von Maßnahmen zur langfristigen Verbesserung der hygienischen Wasserqualität</a>\n
-!!
-!! <h2>Schnittstellenbeschreibung / IT-Realisierung</h2>
-!! SUBROUTINE COLIFORM (\ref tiefe,\ref rau,\ref vmitt,\ref vabfl,\ref elen,\ref flae,\ref flag,\ref tflie
-!! ,\ref schwi,\ref ss,\ref zooind,*grote*,\ref chla,\ref tempw,\ref jiein,*ecoli*     &\n
-!! ,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
-!! ,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
-!! ,*ratecd*, *etacd*, *rateci*, *xnuec*, *ratecg*, *ratecs*,\ref ifehl & \n
-!! ,\ref kontroll ,\ref iglob )
-!! \n\n
-!! \ref globaleParameter :\n
-!!  RateCde Grundmortalitätsrate coliformer Bakterien bei 20°C\n
-!!  etaCde  Temperaturkoeffizient \n
-!!  RateCIe Inaktivierungskoeffizient im Licht"  \n
-!!  xnueCe  dimensionsloser Parameter zur Beschreibung der Inaktiv. im Licht \n
-!!  RateCGe Coliforme Verlustrate durch Grazing \n
-!!  RateCSe Coliforme Verlustrate durch Sedimentation \n
-!! \n
-!! Quelle coliform_huelle.f95; zurück zu: \ref lnk_ueberblick
-!> SUBROUTINE coliform_huelle() wird beschrieben in: \ref coliform \n
-!! Quelle coliform_huelle.f95
+
 subroutine coliform_huelle(i)
    use modell
    use QSimDatenfelder

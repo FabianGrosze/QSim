@@ -3,10 +3,11 @@ Wärmehaushalt {#lnk_waerme}
 
 ![](Waermehaushalts.png "")
 
-Die Wärmebilanz eines Gewässers bestimmt die Temperaturverteilung im Wasserkörper.
+Die Wärmebilanz eines Gewässers bestimmt die Temperaturverteilung im 
+Wasserkörper.
 
-Zur Berechnung der Wärmebilanz, sind im Modell die folgenden lokalen Wärmeeinträge 
-und -austräge (Wärmeflüsse) implementiert:
+Zur Berechnung der Wärmebilanz, sind im Modell die folgenden lokalen 
+Wärmeeinträge und -austräge (Wärmeflüsse) implementiert:
 
 - Globalstrahlung <br> 
 (*Sonneneinstrahlung, Licht*)
@@ -31,11 +32,11 @@ oder punktuelle Einleitungen*)
 
 Wärmeentstehung im Wasserkörper etwa durch biologische Prozesse 
 (Respiration) oder Reibungswärme ist sehr gering und wird vernachlässigt.
-D.h. die Wärmebilanz ist von anderen als oben aufgelisteten Stoffumsetzungsprozessen in guter 
-Näherung unabhängig. 
+D.h. die Wärmebilanz ist von anderen als oben aufgelisteten 
+Stoffumsetzungsprozessen in guter Näherung unabhängig. 
 
 Ein- und Austrag von Wärme ins Wasser erfolgt demnach nur infolge der 
-\ref wetter_rb und der [Zuflussranddaten](\ref zuflussranddaten).
+\ref lnk_wetter_rb und der [Zuflussranddaten](\ref lnk_randbedingungen).
 <!-- #mf: prüfen, ob Link zu zuflussranddaten (Zufluss-RBs) korrekt ist -->
 
 Die folgenden beiden Unterkapitel beschreiben die Berechnung
@@ -43,5 +44,5 @@ Die folgenden beiden Unterkapitel beschreiben die Berechnung
 - der \subpage lnk_wtemp
 
 
-Textquelle: waerme-doc.md ; codesources: TEMPERW.f90, temperw_huelle.f95  ; zurück: \ref lnk_ueberblick
-<!-- #mf: ich würde die Vorläufer-Versionen rausnehmen oder wenn sie unbedingt drin bleiben sollen, in einen "Archiv-Reiter" verschieben, sonst wird es immer unübersichtlicher und am Ende steht doch nicht groß was anderes drin -->
+Textquelle: waerme-doc.md ; codesources: temperw.f90, temperw_huelle.f95  ; 
+zurück: \ref lnk_ueberblick

@@ -1,6 +1,10 @@
 Makrophyten {#lnk_makrophyt}
 ================
 
+\warning Momentan ist das Modul ausgeschaltet, das heißt, Makrophyten werden 
+nicht simuliert. Es handelt sich um eine alte Dokumentation.
+
+
 Das Wachstum der Makrophyten wird in QSim 13.4 stark vereinfacht abgebildet. 
 Für die Makrophyten als Ganzes (keine Unterscheidung von Wuchsformen) wird ein 
 schematischer Jahresgang des Biomasseverlaufs angenommen. Dabei werden der 
@@ -34,4 +38,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: makrophyt-doc.md ; Codesources: mphyt.f90; Vorläuferversion: \subpage mphyt
+Textquelle: makrophyt-doc.md ; Codesources: mphyt.f90;

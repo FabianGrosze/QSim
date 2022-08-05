@@ -32,7 +32,7 @@ Siehe dazu: \subpage lnk_huellen
 3. \subpage lnk_uebergabewerte hält Daten, die dem Datenaustausch zwischen den 
     verschiedenen Stoffumsetzungsmodulen dienen und für die kein Transport 
 	berechnet werden muss. Es handelt sich um 0D, 2D und 3D Variablen.\n
-    Dieses Modul hält auch die \ref globaleParameter .\n
+    Dieses Modul hält auch die \ref lnk_globale_parameter .\n
     Nach dem Einlesen/Initialisierung müssen die Werte auf die parallelen 
 	Prozesse verteilt werden (scatter_uebergabe()).
     Eingesammelt werden müssen diese Variablenfelder nur zum Zweck der Ausgabe 
@@ -41,10 +41,10 @@ Siehe dazu: \subpage lnk_huellen
 4. Randdaten, d.h Vorgaben, die sich im Verlauf der Simulationszeitschritte 
     infolge externer Setzungen verändern, sind in die folgenden Datenstrukturen 
 	aufgeteilt:
-    \ref zuflussranddaten, \n
-    \ref hydraul_rb , deren Änderung vom Hydraulischen Treiber vorab berechnet 
+    \ref lnk_randbedingungen, \n
+    \ref lnk_hydraul_rb , deren Änderung vom Hydraulischen Treiber vorab berechnet 
 	wurde und \n
-    \ref wetter_rb \n
+    \ref lnk_wetter_rb \n
     Ihre Werte müssen vor jedem Stoffumsetzungs-Zeitschritt verteilt werden 
 	(scatter_RB()). Ein Widereinsammeln ist nicht erforderlich. \n
 
@@ -57,7 +57,7 @@ Siehe dazu: \subpage lnk_huellen
 6. \subpage lnk_steuerparameter werden Programmintern zur Ablaufsteuerung und 
     zur Verfahrensauswahl benutzt. \n
 
-7. Die Modellparameter von QSim sind [hier](\ref globaleParameter) 
+7. Die Modellparameter von QSim sind [hier](\ref lnk_globale_parameter) 
     zusammengefasst. \n
 
 

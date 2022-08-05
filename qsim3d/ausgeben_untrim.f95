@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 !> Ausgabe der Ergebnisse auf untrim-Basis
 !! \n\n
-!! aus: ausgeben_untrim.f95 ; zurück: \ref Ergebnisse
+!! aus: ausgeben_untrim.f95 ; zurück: \ref lnk_ergebnisausgabe
 subroutine ausgeben_untrim(itime)
    use modell
    implicit none

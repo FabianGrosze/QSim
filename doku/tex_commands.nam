@@ -1,6 +1,4 @@
-\newcommand{\E}{\mathrm{E}}
-\newcommand{\ccSum}[3]{\sum_{#1}^{#2}{#3}}
-\newcommand{\RESP}{RESP_{A,i}}
+
 \newcommand{\degC}{\text{$^\circ$C}}
 \newcommand{\degCinv}{\text{$^\circ$C$^{-1}$}}
 \newcommand{\degCqinv}{\text{$^\circ$C$^{-2}$}}
@@ -27,7 +25,9 @@
 \newcommand{\gCmqsmgChluE}{\text{g\,C\,m$^2$\,s\,(mg\,Chl-a\,µE)$^{-1}$}}
 \newcommand{\mquE}{\text{m$^2$\,µE$^{-1}$}}
 \newcommand{\sinv}{\text{s$^{-1}$}}
+
 \newcommand{\OO}{\text{O$_2$}}
+
 \newcommand{\CBio}[1]{\text{$\text{C:Bio}_{A,#1}$}}
 \newcommand{\Chl}{\text{Chl-a$_i$}}
 \newcommand{\aChl}[1]{\text{$a_{\text{Chl-a},#1}$}}
@@ -52,14 +52,17 @@
 \newcommand{\eps}[1]{\text{$\epsilon_\text{#1}$}}
 \newcommand{\epsm}[1]{\text{$\overline{\epsilon_\text{#1}}$}}
 \newcommand{\epsc}{\text{$\epsilon_{\text{Chl-a},i}$}}
+
 \newcommand{\fLH}{\text{$f_{LH,i}$}}
 \newcommand{\thetaD}{\text{$\theta_{\text{D1},i}$}}
 \newcommand{\sPSII}[1]{\text{$\sigma_{PSII,#1}$}}
 \newcommand{\kPSII}{\text{$\kappa_{PSII}$}}
+
 \newcommand{\fTmu}{\text{$f_{T,i}^\mu$}}
 \newcommand{\Tref}{\text{$T_{ref}$}}
 \newcommand{\Topt}[1]{\text{$T_{opt,#1}$}}
 \newcommand{\kTmu}[1]{\text{$k_{T,#1}^\mu$}}
+
 \newcommand{\fN}{\text{$f_{N\ddot{a}hr,i}$}}
 \newcommand{\fNX}[1]{\text{$f_{\text{#1},i}$}}
 \newcommand{\Qmax}[1]{\text{$Q_{#1,i}^{max}$}}
@@ -68,16 +71,19 @@
 \newcommand{\khs}[2]{\text{$k_{\text{#1},#2}$}}
 \newcommand{\UP}{\text{$\text{UP}_{X,i}$}}
 \newcommand{\UPmax}{\text{$\text{UP}_{X,i}^{max}$}}
-\newcommand{\RESPold}{\text{$\text{RESP}_{A,i}$}}
+
+\newcommand{\RESP}{\text{$\text{RESP}_{A,i}$}}
 \newcommand{\resp}{\text{$r_{A,i}^{resp}$}}
 \newcommand{\respg}[1]{\text{$\gamma_{A,#1}$}}
 \newcommand{\respd}[1]{\text{$r_{A,#1}^{resp,d}$}}
 \newcommand{\kTresp}[1]{\text{$k_{T,#1}^{resp}$}}
+
 \newcommand{\MOR}{\text{$\text{MOR}_{A,i}$}}
 \newcommand{\mor}{\text{$r_{A,i}^{mor}$}}
 \newcommand{\morX}[1]{\text{$r_{A,i}^{mor,#1}$}}
 \newcommand{\fmor}{\text{$f_{A,i}^{mor}$}}
 \newcommand{\fmorX}[1]{\text{$f_{A,i}^{mor,#1}$}}
+
 \newcommand{\SED}{\text{$\text{SED}_{A,i}$}}
 \newcommand{\Xsed}[1]{\text{$#1_{A,i}^{sed}$}}
 \newcommand{\fsed}[1]{\text{$f_{A,#1}^{sed}$}}
@@ -85,5 +91,5 @@
 \newcommand{\wEff}{\text{$w_{A,i}^{eff}$}}
 \newcommand{\w}[1]{\text{$w_{A,#1}$}}
 \newcommand{\V}[1]{\text{$V_{A,#1}$}}
-\newcommand{\mbtt}[1]{\mbox{\texttt{#1}}}
 
+\newcommand{\mbtt}[1]{\mbox{\texttt{#1}}}

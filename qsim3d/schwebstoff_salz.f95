@@ -24,46 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page schwebstoff_salz Einlesen von Verteilungen (Schwebstoff, Salz)
-!! Einige Eigenschaften des Wassers wie der Salzgehalt, die Konzentration an suspendierten Sedimenten
-!! und auch die Temperatur verändern dessen Dichte so nennenswert, dass sie sich auf die Strömung auswirken können
-!! und werden dann auch bereits in der hydraulischen Simulation berücksichtigt.
-!! \n\n
-!! Es macht bei der Gewässergütesimulation mit QSim3d, die sich ja ohnehin auf die von einem hydraulischen Treiber
-!! offline abgelegten Transportinformationen stützt, Sinn, auch dessen Schwebstoff- oder Salz-Gehalt zu übernehmen,
-!! falls der dort berechnet wurde. Für Temperaturen ist solch eine Übernahme z. Z. noch nicht geplant.
-!! \n\n
-!! \section trueb Schwebstoffkonzentrationen
-!! Bisher realisiert ist die Übernahme von Schwebstoffkonzentrationen:
-!! Subroutine schwebstoff_salz_sichten() stellt fest ob ein Unterverzeichnis ./trueb im aktuellen Modellverzeichnis existiert.
-!! Ist keines vorhanden, werden auch keine Schwebstoffverteilungen eingelesen.
-!! \n\n
-!! Im Unterverzeichnis trueb wird nach mit d beginnenden Dateien gesucht (z.B. ./trueb/d86400 ).
-!! Die Zahl hinter dem Buchstaben d im Dateinamen wird als Zeit in ganzen Sekunden nach Berechnungsbeginn interpretiert.
-!! Die Subroutine schwebstoff_salz() interpoliert dann die Schwebstoffverteilung für den aktuellen Rechenzeitpunkt (stoffumsatz-Zeitschritte).
-!! \n\n
-!! Die Schwebstoffdateien müssen im Elcirc .gr3 Format vorliegen.
-!! Dieses Format dient auch zur Definition der Berechnungsnetze von SCHISM.
-!! Dort wo in den Netzdateien die Knotenhöhe stehen, muss nun die Schwebstoffkonzentration in ??? mg/l ??? angegeben werden.
-!! Dadurch ist es möglich, die Zuordnung von Schwebstoffverteilungen mit den selben Werkzeugen (z.B. Netzgenerator Janet)
-!! vorzunehmen, mit denen auch die Höhenzuordnungen des Berechnungsnetzes erstellt wurden.
-!! \n\n
-!! Die vorgegebene Schwebstoffkonzentration wird  in die Variable
-!! \ref ss eingelesen und repräsentiert nur den ??? zusätzlichen ??? Schwebstoffanteil.
-!! Das \ref lnk_licht_algen_alt , das den \ref lnk_phytoplankton_alt für die Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe abgeschwächt.
-!! \n\n
-!! \section sali Salzkonzentrationen
-!! z.Z. noch nicht realisiert.
-!! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref lnk_ueberblick
-!----+-----+----
-!> die SUBROUTINE schwebstoff_salz() belegt die \ref tiefengemittelte_planktische_variable 53 planktonic_variable(53 ,
-!! QSim1D-Name "ss", in der die tiefengemittelte Schwebstoffverteilung in ??? gespeichert wird.
-!! Abhängig vom rechenzeit-Punkt werden die Verteilungen mit der subroutine verteilung_holen_gr3() aus den
-!! d-Dateien im Unterverszeichnis trueb geholt. Zwischen den in trueb vorhandenen Zeitpunkten wird interpoliert.
-!! vor dem ersten und nach dem letzten wird die erste, resp. letzte Verteilung genommen.
-!! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref schwebstoff_salz oder \ref lnk_ueberblick
+
 subroutine schwebstoff_salz()
    use modell
    implicit none
@@ -137,7 +98,7 @@ end subroutine schwebstoff_salz
 !!          planktonic_variable_name(65)= "                lf"\n
 !!         planktonic_variable_name(72)= "              salz"\n
 !!
-!! aus Datei initialisieren.f95 ; zurück: \ref Anfangsbedingungen \n\n
+!! aus Datei initialisieren.f95 ; zurück: \ref lnk_anfangsbedingungen \n\n
 subroutine ini_schwebstoff_salz()
    use modell
    implicit none
@@ -155,7 +116,7 @@ end subroutine ini_schwebstoff_salz
 !> verteilung_holen_gr3 ließt aus unterverzeichnis trueb die angegebene Datei im gr3 (Elcirc) Format.
 !! und gibt die dort angegebene Geländehöhe als verteilung zurück.
 !! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref schwebstoff_salz
+!! Quelle schwebstoff_salz.f95 zurück zu \ref lnk_schwebstoff_salz
 subroutine  verteilung_holen_gr3(datei,verteilung,anz)
    use modell
    real verteilung(*), dumm_x, dumm_y
@@ -205,7 +166,7 @@ end subroutine verteilung_holen_gr3
 !! Dateien gesucht, die mit einem d beginnen. Die Zeichen hintem d im Dateinamen werden alz Zeitpunkt
 !! in sekunden interpretiert. (analog wie in transinfo)
 !! \n\n
-!! Quelle schwebstoff_salz.f95 zurück zu \ref schwebstoff_salz
+!! Quelle schwebstoff_salz.f95 zurück zu \ref lnk_schwebstoff_salz
 subroutine schwebstoff_salz_sichten()
    use modell
    implicit none

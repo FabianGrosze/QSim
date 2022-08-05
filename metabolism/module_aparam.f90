@@ -102,7 +102,7 @@ contains
    
    !> <h1>SUBROUTINE aparam_lesen()</h1>
    !! Einlesen der Konstanten   \n \n
-   !! Beschreibung siehe: \ref globaleParameter \n
+   !! Beschreibung siehe: \ref lnk_globale_parameter \n
    !! Quelle: module_aparam.f90
 subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
    
@@ -332,7 +332,7 @@ end subroutine aparam_lesen
 
 !> Writes file `AParamParam.xml`
 !!
-!! aus Datei module_aparam.f95 ; zurück zu \ref Modellerstellung
+!! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine AParamParam(cpfad1)
    character (len = 255)       :: cpfad1
    character (len = 275)       :: pfadstring

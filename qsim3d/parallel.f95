@@ -24,43 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-! \page Datentechnik Informationstechnische Umsetzung und Parallelisierung
-! \page numerik Numerik und Datentechnik
-!> \page Parallelisierung Parallelisierung
-!!!
-!! \section Parallel_Umsatz Parallelisierung der Stoffumsetzungsvorgänge
-!! Die Parallelisierung von QSim3D nutzt den Umstand, dass die mathematischen Formulierungen, 
-!! welche die bio-chemischen Stoffumsetzungsvorgänge modellieren, keine Raumgradienten enthalten. 
-!! Z.B. ist das Algenwachstum nur vom lokalen Licht-, Nährstoffangebot, Temperatur etc. abhängig.
-!! Die Verhältnisse im Nachbarwassertropfen "interessieren" die Alge im hiesigen Wassertropfen nicht.\n\n
-!! Somit ist es möglich, die Berechnungsstützstellen (Knoten) einfach fortlaufend anhand ihrer Nummer auf die parallelen Prozesse
-!! zu verteilen. Umständliche Gebietszerlegungen, wie sie bei der Parallelisierung von Approximationsverfahren zur Lösung
-!! partieller Differentialgleichungen (die Raumgradienten enthalten) erforderlich sind, werden nicht benötigt.\n\n
-!!
-!! \section Parallel_Transport Parallelisierung der Transportvorgänge
-!! QSim3D nutzt die Stofftransport-Lösung des vorgeschalteten hydraulischen Treibers indem es die Transportinformation
-!! anhand einer Matrix einließt. Diese wird dann auf alle Vektoren multipliziert, 
-!! welche die Diskretisierungen des Feldes jeweils einer Gütevariablen enthalten. 
-!! Diese Matrix-Vektor-Multiplikation könnte evt. mit PETSc parallelisiert werden.\n\n
-!! Das o.g. Verfahren ist auf explizite Zeitdiskretisierungen beschränkt.
-!! Implizite Diskretisierungen würden das Lösen von linearen Gleichungssystemen erfordern, was bei der Vielzahl
-!! an transportierten Variablen-Feldern in einem Gütemodell sehr aufwändig wäre.
-!!
-!! \section Parallel_IO Ein- und Ausgabe
-!! Die Datenein- und -ausgabe erfolgt in QSim3D zentral. Nur der Prozess 0 
-!! beschäftigt sich mit Lesen und Schreiben.
-!! Alle anderen parallelen Prozesse bekommen Daten nur via MPI (Message-Passing-Interface).\n\n
-!! Die Subroutinen eingabe() und initialisieren() werden daher auch nur von Prozess 0 aufgerufen.
-!! Die Verteilung der Variablenfelder auf die multiplen Prozesse erfogt wie im 
-!! Abschnitt \ref lnk_datenstruktur erläutert.
-!! \n
-!! Variablendefinition der für die Parallelisierung benötigten Datenfelder in module_modell.f95\n
-!! \n aus Datei parallel.f95; zurück: \ref index
-!----+-----+----
-!> parallel_ini()\n
-!! startet mpi
-!! \n\n
-!! aus Datei parallel.f95; zurück: \ref lnk_datenstruktur
+
 subroutine parallel_ini()
    use modell
    use QSimDatenfelder

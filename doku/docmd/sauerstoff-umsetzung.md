@@ -54,8 +54,8 @@ biochemischen Zehrungs- und Produktionsprozesse berechnet.
 In einer zweiten Stufe wird dann ausgehend von dem Zwischenwert die Belüftung 
 über die Gewässeroberfläche ermittelt.
 
-### Zeitliche Diskretisierung der Sauerstoffänderung ###
-<!-- ehem. Link zur page: diskretO2 -->
+### Zeitliche Diskretisierung der Sauerstoffänderung {#lnk_diskret_o2}
+
 Weil die Belüftungsrate vom Sauerstoffgehalt selbst abhängig ist, wird hier eine 
 semi-implizite Diskretisierung zur Berechnung des Sauerstoffgehaltes am Ende des
 aktuellen Zeitschritts  \f$ {O_2}(t + \Delta t)\f$ verwendet:

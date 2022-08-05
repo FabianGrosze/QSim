@@ -51,4 +51,4 @@ implementierten Prozesse
 \n\n 
 
 Textquelle: sauerstoff-doc.md; Codesource: oxygen.f90; 
-zurück: \ref lnk_ueberblick; Vorläuferversion: \subpage Sauerstoffgehalt
+zurück: \ref index

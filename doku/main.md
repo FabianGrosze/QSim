@@ -1,5 +1,4 @@
-Dokumentation {#mainpage}
-=============
+\mainpage 
 
 <h1>QSim - Das Gewässergütemodell der BfG</h1>
 
@@ -27,9 +26,9 @@ folgende Liste angesprochen werden.
 - \subpage lnk_konsumenten
 - \subpage lnk_sauerstoff
 - \subpage lnk_ph
-- \subpage lnk_sediment <!--Sedimentflux-->
-- \subpage lnk_unrein
-- \subpage Aufenthaltszeit
+- \subpage lnk_sediment
+- \subpage lnk_weitere_stoffe
+- \subpage lnk_aufenthaltszeit
 - \subpage lnk_stofftransport
 - \subpage lnk_modellbedienung
 - \subpage lnk_modelldetails
@@ -37,6 +36,13 @@ folgende Liste angesprochen werden.
 - \subpage lnk_download
 - \subpage lnk_literatur
 - \subpage lnk_kontakt
+
+Diese sollten später wieder weg:
 - \subpage lnk_todo
+- \subpage lnk_broken
+
 
 Textquelle: main.md
+
+
+<!-- aus Datei readme.md -->
