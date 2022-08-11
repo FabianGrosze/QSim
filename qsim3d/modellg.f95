@@ -28,14 +28,16 @@
 subroutine modellg()
    use modell
    implicit none
-   character(300) dateiname, text
-   integer :: open_error, string_read_error, nzon, ion, izoni, alloc_status, n, i, ini
-   integer :: tfolgt, rfolgt, ifolgt, knozoanz
-   logical :: vorhanden, readable
-   real :: anfangsKm, endKm, zonflae
-   write(dateiname,'(2A)')trim(modellverzeichnis),'MODELLG.3D.txt'
+   
+   character(300) :: dateiname, text
+   integer        :: open_error, string_read_error, nzon, ion, izoni, alloc_status, n, i, ini
+   integer        :: tfolgt, rfolgt, ifolgt, knozoanz
+   logical        :: vorhanden, readable
+   real           :: anfangsKm, endKm, zonflae
+   
+   write(dateiname,'(2A)') trim(modellverzeichnis),'MODELLG.3D.txt'
    ion = 103
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
+   open (unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
    if (open_error /= 0) then
       write(fehler,*)'open_error MODELLG.3D.txt'
       call qerror(fehler)
@@ -47,13 +49,16 @@ subroutine modellg()
       write(fehler,*)'keine Versionskennzeichnung im Kopf von MODELLG.3D.txt'
       call qerror(fehler)
    end if
+   
    if (zeile(ion)) then
       print*,'MODELLG.3D.txt Modellname:',ctext(1:50)
    else
       write(fehler,*)'keine Modellname im Kopf von MODELLG.3D.txt'
       call qerror(fehler)
    end if
-   if (zeile(ion)) then !Zonenanzahl
+   
+   ! Zonenanzahl
+   if (zeile(ion)) then 
       read(ctext, *, iostat = string_read_error ) zonen_anzahl
       if (string_read_error /= 0) then
          write(fehler,*)'string_read_error subroutine modellg nzon'
@@ -66,49 +71,50 @@ subroutine modellg()
    end if !Zonenanzahl
    allocate (zone(zonen_anzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate zone failed in modellg() zonen.f95')
-   zone(:)%zonen_nummer = 0 ! eingelesen Nummer der Zone
-   zone(:)%ini_randnr = 0 ! Randnummer mit dem initialisiert wird
-   zone(:)%nr_zone = 0 ! ?
-   zone(:)%reib = 0.0 !
-   zone(:)%sediflux%sedom = 0.0 ! Anteil des organischen Materials im Sediment
-   zone(:)%sediflux%bedgs = 0.0 ! Bedeckungsgrad der Sohle mit Sediment (0-1)
-   zone(:)%sediflux%sedvvert = 0.0 ! volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
-   zone(:)%sediflux%kornd = 0.0 ! Vorgabe Korndurchmesser d50
-   zone(:)%sediflux%burial = 0.0 ! Burial-Geschwindigkeit (Sedimentation)
-   zone(:)%seditemp%spewks = 0.0 ! Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
-   zone(:)%seditemp%wuebk = 0.0 ! Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
-   zone(:)%seditemp%psrefs = 0.0 ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
-   zone(:)%seditemp%extiks = 0.0 ! Extinktionskoeffizient für PARS
-   zone(:)%laich%lait = 1 ! Tag des Beginns der Laichperiode
-   zone(:)%laich%laim = 4 ! Monat des Beginns der Laichperiode
-   zone(:)%laich%laid = 7 ! Dauer der Laichperiode in Tagen
-   zone(:)%schiff%vschiff = 0.0 !
-   zone(:)%schiff%uprop = 0.0 !
-   zone(:)%schiff%schifffahrts_zone = 0 ! ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
-   zone(:)%wettstat%wetterstations_nummer = 0 ! zugehörige Wetterstation
-   zone(:)%wettstat%wetterstations_lage = 0.0 ! Höhe ü. NHN
-   zone(:)%dreissen%mboesch0 = 0.0 !
-   zone(:)%dreissen%msohle0 = 0.0 !
-   zone(:)%dreissen%gewicht0 = 0.0 !
-   zone(:)%dreissen%mboesch1 = 0.0 !
-   zone(:)%dreissen%msohle1 = 0.0 !
-   zone(:)%dreissen%gewicht1 = 0.0 !
-   zone(:)%dreissen%dreissena_aktiv = 0 !
-   zone(:)%albenthi%ggruen = 0.0 !
-   zone(:)%albenthi%gkiesel = 0.0 !
-   zone(:)%macrophyt%starttag = 0 !
-   zone(:)%macrophyt%startmonat = 0 !
-   zone(:)%macrophyt%maxtag = 0 !
-   zone(:)%macrophyt%maxmonat = 0 !
-   zone(:)%macrophyt%endtag = 0 !
-   zone(:)%macrophyt%endmonat = 0 !
-   zone(:)%macrodicht%pflmin = 0.0 !
-   zone(:)%macrodicht%pflmax = 0.0 !
-   zone(:)%erosi%tau_krit = 9999.9
-   zone(:)%erosi%M_eros = 0.0 !
-   zone(:)%erosi%n_eros = 1.0 !
-   zone(:)%erosi%sed_roh = 2650.0
-   !     print*,'*** Lesen aus der Datei MODELLG.3D.txt ***'
+   
+   zone(:)%zonen_nummer = 0                     ! eingelesen Nummer der Zone
+   zone(:)%ini_randnr = 0                       ! Randnummer mit dem initialisiert wird
+   zone(:)%nr_zone = 0                          ! ?
+   zone(:)%reib = 0.0                           !
+   zone(:)%sediflux%sedom = 0.0                 ! Anteil des organischen Materials im Sediment
+   zone(:)%sediflux%bedgs = 0.0                 ! Bedeckungsgrad der Sohle mit Sediment (0-1)
+   zone(:)%sediflux%sedvvert = 0.0              ! volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
+   zone(:)%sediflux%kornd = 0.0                 ! Vorgabe Korndurchmesser d50
+   zone(:)%sediflux%burial = 0.0                ! Burial-Geschwindigkeit (Sedimentation)
+   zone(:)%seditemp%spewks = 0.0                ! Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
+   zone(:)%seditemp%wuebk = 0.0                 ! Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
+   zone(:)%seditemp%psrefs = 0.0                ! Reflektionsanteil der Strahlung an der Sedimentoberfläche
+   zone(:)%seditemp%extiks = 0.0                ! Extinktionskoeffizient für PARS
+   zone(:)%laich%lait = 1                       ! Tag des Beginns der Laichperiode
+   zone(:)%laich%laim = 4                       ! Monat des Beginns der Laichperiode
+   zone(:)%laich%laid = 7                       ! Dauer der Laichperiode in Tagen
+   zone(:)%schiff%vschiff = 0.0                 !
+   zone(:)%schiff%uprop = 0.0                   !
+   zone(:)%schiff%schifffahrts_zone       = 0   ! ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
+   zone(:)%wettstat%wetterstations_nummer = 0   ! zugehörige Wetterstation
+   zone(:)%wettstat%wetterstations_lage   = 0.0 ! Höhe ü. NHN
+   zone(:)%dreissen%mboesch0 = 0.0              !
+   zone(:)%dreissen%msohle0 = 0.0               !
+   zone(:)%dreissen%gewicht0 = 0.0              !
+   zone(:)%dreissen%mboesch1 = 0.0              !
+   zone(:)%dreissen%msohle1 = 0.0               !
+   zone(:)%dreissen%gewicht1 = 0.0              !
+   zone(:)%dreissen%dreissena_aktiv = 0         !
+   zone(:)%albenthi%ggruen = 0.0                !
+   zone(:)%albenthi%gkiesel = 0.0               !
+   zone(:)%macrophyt%starttag = 0               !
+   zone(:)%macrophyt%startmonat = 0             !
+   zone(:)%macrophyt%maxtag = 0                 !
+   zone(:)%macrophyt%maxmonat = 0               !
+   zone(:)%macrophyt%endtag = 0                 !
+   zone(:)%macrophyt%endmonat = 0               !
+   zone(:)%macrodicht%pflmin = 0.0              !
+   zone(:)%macrodicht%pflmax = 0.0              !
+   zone(:)%erosi%tau_krit = 9999.9              !
+   zone(:)%erosi%M_eros = 0.0                   !
+   zone(:)%erosi%n_eros = 1.0                   !
+   zone(:)%erosi%sed_roh = 2650.0               !
+   ! print*,'*** Lesen aus der Datei MODELLG.3D.txt ***'
    izoni = 0
    tfolgt = 1
    rfolgt = 1
@@ -134,10 +140,10 @@ subroutine modellg()
             print*,'Block-Anfangs-Zeile aus MODELLG.3D.txt:',  &
             'zonen_nummer(',izoni,'), = ',zone(izoni)%zonen_nummer,' zonen_name = ',trim(zone(izoni)%zonen_name)
          end if !
-         if (tfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau eine Wetterstation !')
-         if (rfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau einen rauheitswert !')
+         if (tfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau eine Wetterstation.')
+         if (rfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau einen Rauheitswert.')
          if (ifolgt /= 1)  &
-             call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau eine Randnr. zur Initialisierung !')
+             call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau eine Randnummer zur Initialisierung.')
          !print*,'Zuordnung Zonen-Wetterstationen aus MODELLG.3D.txt wird noch nirgendwo gespeichert modellg.f95'
          tfolgt = 0
          rfolgt = 0
@@ -336,18 +342,18 @@ subroutine modellg()
       vorhanden = .false.
       do i = 1,zonen_anzahl
          if ( point_zone(n) == zone(i)%zonen_nummer ) then
-            if ( .not. vorhanden)point_zone(n) = i
+            if (.not. vorhanden) point_zone(n) = i
             vorhanden = .true. ! zone vorhanden + zugeordnet
          end if !zonen_nummer vorhanden
       end do ! alle i Zonen
-      if ( .not. vorhanden) then
-         write(fehler,*)'2 Die von Knoten #',n ,' benötigte Zonennummer #',point_zone(n)  &
-               , 'ist nicht in MODELLG.3D.txt beschrieben'
+      if (.not. vorhanden) then
+         write(fehler,'(a,i0,a,i0,a)'), '2 Die von Knoten #', n,' benötigte Zonennummer #', point_zone(n), &
+                                        ' ist nicht in MODELLG.3D.txt beschrieben.'
          call qerror(fehler)
       end if ! nicht vorhanden
    end do ! alle n Knoten
-   print*,'MODELLG.3D.txt: an allen Knoten wurde die Zonennummer'  &
-   ,' in den Zonenzähler korrekt umgewandelt (point_zone()).'
+   print*,'MODELLG.3D.txt: An allen Knoten wurde die Zonennummer in den Zonenzähler korrekt umgewandelt (point_zone()).'
+   
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          do i = 1,zonen_anzahl
@@ -360,9 +366,10 @@ subroutine modellg()
                endif ! knoten in zone
             end do ! alle n Knoten
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
-            ,'heißt: ',trim(zone(i)%zonen_name)  &
-            ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
+                  ,'heißt: ',trim(zone(i)%zonen_name)  &
+                  ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
          end do ! alle i Zonen
+      
       case(2) ! Untrim² netCDF
          do i = 1,zonen_anzahl
             knozoanz = 0
@@ -370,9 +377,10 @@ subroutine modellg()
                if (element_zone(n) == i) knozoanz = knozoanz+1
             end do ! alle n Elemente
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
-            ,'heißt: ',trim(zone(i)%zonen_name)  &
-            ,' und enthält ',knozoanz,' Elemente.'
+                  ,'heißt: ',trim(zone(i)%zonen_name)  &
+                  ,' und enthält ',knozoanz,' Elemente.'
          end do ! alle i Zonen
+      
       case(3) ! SCHISM netCDF
          do i = 1,zonen_anzahl
             knozoanz = 0
@@ -384,13 +392,16 @@ subroutine modellg()
                endif ! knoten in zone
             end do ! alle n Knoten
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
-            ,'heißt: ',trim(zone(i)%zonen_name)  &
-            ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
+                  ,'heißt: ',trim(zone(i)%zonen_name)  &
+                  ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
          end do ! alle i Zonen
          !!!### call sc_read_rough()
-         case default
+      
+      case default
          call qerror('modellg Hydraulischer Antrieb unbekannt')
+   
    end select
+   
    return
 end subroutine modellg
 !----+-----+----

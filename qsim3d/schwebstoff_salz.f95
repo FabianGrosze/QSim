@@ -126,7 +126,7 @@ subroutine  verteilung_holen_gr3(datei,verteilung,anz)
    print*,'verteilung_holen_gr3: aus ',trim(datei)
    write(dateipfad,'(3A)',iostat = errcode)trim(modellverzeichnis),'trueb/',trim(datei)
    if (errcode /= 0)call qerror('verteilung_holen_gr3 writing system call failed')
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateipfad),' > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateipfad),' >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('verteilung_holen_gr3 writing system call failed')
    call system(systemaufruf,sysa)
    if (sysa /= 0) then
@@ -173,7 +173,7 @@ subroutine schwebstoff_salz_sichten()
    character (len = longname) :: systemaufruf, dateiname, irgendeinstring
    integer sysa, nz, ion, n, is, i, zwischenwert, errcode
    if (meinrang /= 0)call qerror('schwebstoff_salz_sichten() darf nur auf prozess 0')
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'trueb > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'trueb >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
    call system(systemaufruf,sysa)
    if (sysa /= 0) then

@@ -192,14 +192,14 @@ subroutine fortschritt(n,f)
             else
                print*,'keine Beenden-Email verschickt'
             endif
-            write(systemaufruf,'(3A)',iostat = errcode) 'stat ',trim(adjustl(codesource)),'/*source*.taz > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode) 'stat ',trim(adjustl(codesource)),'/*source*.taz >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf stat codesource')
             call system(trim(systemaufruf),system_error)
             if (system_error /= 0) then
                print*,'keine source-code Sicherung (*source*.taz) verfügbar in ',trim(adjustl(codesource))
             else
                write(systemaufruf,'(5A)',iostat = errcode)'cp ',trim(adjustl(codesource)),'/*source*.taz '  &
-                                                  ,adjustl(trim(modellverzeichnis)),' > /dev/null 2 > /dev/null'
+                                                  ,adjustl(trim(modellverzeichnis)),' >/dev/null 2>/dev/null'
                if (errcode /= 0)call qerror('fortschritt systemaufruf cp  codesource')
                call system(trim(systemaufruf),system_error)
                if (system_error == 0) then
@@ -212,7 +212,7 @@ subroutine fortschritt(n,f)
                end if
             end if ! system_error.ne.0
             ! Ereignis sichern:
-            write(systemaufruf,'(3A)',iostat = errcode)'qusave ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'qusave ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt: systemaufruf qusave modellverzeichnis fehlgeschlagen')
             call system(trim(systemaufruf),system_error) !qusave löscht Quellcode-Sicherung im Modellverzeichnis
             if (system_error == 0) then
@@ -221,7 +221,7 @@ subroutine fortschritt(n,f)
                print*,"### Archivierung der Eingabedaten schlug fehl."
             end if
             ! vtk-Dateien (d.h. Variablenfelder zu den Ausgabezeitpunkten) archivieren:
-            write(systemaufruf,'(3A)',iostat = errcode)'quzip ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'quzip ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf ')
             call system(trim(systemaufruf),system_error)
             if (system_error == 0) then

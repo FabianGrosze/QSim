@@ -295,7 +295,7 @@ subroutine ganglinien_schliessen()
          call qerror(fehler)
       end if !
       write(systemaufruf,'(5A)',iostat = errcode)'mv -f ',trim(modellverzeichnis),'ganglinien '  &
-                                         ,trim(modellverzeichnis),'ganglinien_bisher > /dev/null 2 > /dev/null'
+                                         ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
       call system(systemaufruf,sys_error)
       if (sys_error /= 0) then

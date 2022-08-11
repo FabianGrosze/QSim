@@ -641,7 +641,7 @@ contains
          kontrollknoten = -1
          print*,'no control node, no extra output ', kontrollknoten
       end if ! kontrollknoten
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       !print*,'sysa',sysa
@@ -674,7 +674,7 @@ contains
       antriebsart = 0
       print*,'antriebsart: find hydraulic driver'
       !! falls casu-transinfo Directory vorhanden, das nehmen
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -685,7 +685,7 @@ contains
          return
       end if ! io_error.ne.0
       !! falls Antribsdatei transport.nc vorhanden, Untrim²-Resultate im NetCDF-Format verwenden
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -696,7 +696,7 @@ contains
          return
       end if ! io_error.ne.0
       !!
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -1046,42 +1046,42 @@ contains
       integer io_error,sysa, ia, ion, errcode
       logical zeile_vorhanden
       modell_vollstaendig = .true.
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1091,14 +1091,14 @@ contains
       !
       select case (hydro_trieb)
          case(1) ! casu-transinfo
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'in Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1108,7 +1108,7 @@ contains
                !else
             end if
             write(systemaufruf,'(3A)',iostat = errcode) &
-               'stat ',trim(modellverzeichnis),'transinfo/file.elements > /dev/null 2 > /dev/null'
+               'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1116,14 +1116,14 @@ contains
                print*,'in Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
             end if
          case(2) ! Untrim² netCDF
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'in Ihrem Modellverzeichnis fehlt die Datei transport.nc'
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1136,14 +1136,14 @@ contains
             call qerror('Hydraulischer Antrieb unbekannt')
       end select
       !
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1151,7 +1151,7 @@ contains
          print*,'in Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
       end if
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis)  &
-                                         ,'ausgabekonzentrationen.txt > /dev/null 2 > /dev/null'
+                                         ,'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1174,7 +1174,7 @@ contains
          end do ! alle Zeilen
          if ( .not. send_email)print*,'nix brauchbares aus Datei email.txt gelesen'
       end if ! Datei lässt sich öffnen
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then

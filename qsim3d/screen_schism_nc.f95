@@ -63,7 +63,7 @@ subroutine screen_schism_nc()
    do while (weiter)
       write(chari,*),i
       write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-      systemaufruf = 'stat '//trim(adjustl(dateiname))//' > /dev/null 2 > /dev/null'
+      systemaufruf = 'stat '//trim(adjustl(dateiname))//' >/dev/null 2>/dev/null'
       call system(trim(systemaufruf),istat)
       if (istat == 0) then
          n_stacks = i

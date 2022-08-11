@@ -111,12 +111,10 @@ subroutine tagesmittelwert()
             write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente, summ_ne
             do n = 1,n_elemente ! alle Elemente
                if (cornernumber(n) == 3) then
-                  write(ion,'(4(I8,2x))') &
-                                      cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+                  write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
                end if
                if (cornernumber(n) == 4) then
-                  write(ion,'(5(I8,2x))') &
-                                      cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+                  write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
                end if
             end do ! alle Elemente
             write(ion,'(A)')' '
@@ -639,18 +637,17 @@ subroutine aus_grd()
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
-            write(ion,'(5(I8,2x))') &
-                                n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+            write(ion,'(5(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
          end if
          if (cornernumber(n) == 4) then
-            write(ion,'(6(I8,2x))') &
-                                n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+            write(ion,'(6(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
          end if
       end do ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 25-35 cm (46) ausgegeben auf: uedau25.grd'
-      !!!!!!!!!
+      
+      
       write(dateiname,'(2A)')trim(modellverzeichnis),'uedau35.grd'
       ion = 107
       open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )

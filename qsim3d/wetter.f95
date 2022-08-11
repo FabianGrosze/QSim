@@ -76,7 +76,7 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
-                                                                                             , meinrang, alloc_status
+                        , meinrang, alloc_status
          call qerror(fehler)
       end if
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
@@ -189,8 +189,8 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
    implicit none
    character(300) dateiname, text
    character(300) systemaufruf
-   !      integer iWETTs, IMET, iWSta(20), mwetts(20), itagw(20,10000), monatw(20,10000), jahrw(20,10000)
-   !      real wertw(7,10000), uhrzw(20,10000)
+   ! integer iWETTs, IMET, iWSta(20), mwetts(20), itagw(20,10000), monatw(20,10000), jahrw(20,10000)
+   ! real wertw(7,10000), uhrzw(20,10000)
    integer :: alloc_status , dealloc_status, flag, open_error, io_error ,i,j
    integer :: ifehl_T, ifhStr_T, ixw_T, mwett_T, iWETT_T
    real hcTmx2_T, dummreal
@@ -303,7 +303,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          write(fehler,*)' Rueckgabewert   von   allocate wertw :', alloc_status
          call qerror(fehler)
       end if
-      !                                                          dlt=2.0 ! 87 delta
+      !dlt=2.0 ! 87 delta
       !write(dateiname,'(2A)')trim(modellverzeichnis),'WETTER.delta_2.0.txt' ! 87 delta
       !write(systemaufruf,'(2A)')'rm -rf ',trim(dateiname)
       !call system(systemaufruf,sysa)
@@ -368,7 +368,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
                !               if(wertw(iwett,3,mwett).gt.hcTmx2)hcTmx2 = wertw(iwett,3,mwett)
                uhrzw_T(iwett_T,mwett_T) = 12.0
             123       continue
-            !           Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
+            ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
             if (hcTmx2_T == (-1.)) then
                ifehl_T = 4
                ifhStr_T = IWETT_T
@@ -377,7 +377,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
                call qerror(fehler)
             endif
          else
-            !           Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) )
+            ! Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) )
             do 124 mWett_T = 1,mWetts_T(iwett_T) !! Wetterdaten an der jeweiligen Station für die jeweilige Stunde lesen ...
                !read(86,2023,iostat=io_error )itagw(iwett,mwett),monatw(iwett,mwett) &
                read(86,*,iostat = io_error )itagw_T(iwett_T,mwett_T),monatw_T(iwett_T,mwett_T) &
@@ -402,14 +402,14 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
             jahr = jahrw_T(iwett_T,mwett_T)
             call sekundenzeit(2)
             zeitpunktw(iwett_T,mwett_T) = zeitpunkt
-            !            call zeitsekunde(tag, monat, jahr, uhrzeit_stunde, zeitpunktw(iwett_T,mwett_T),tagdesjahres)
-            !            print*, 'hin:',itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T), jahrw_T(iwett_T,mwett_T) &
-            !     &            , 'sec:', zeitpunktw(iwett_T,mwett_T)
-            !     &            , 'zurück:',tagdesjahres,tag, monat, jahr
+            ! call zeitsekunde(tag, monat, jahr, uhrzeit_stunde, zeitpunktw(iwett_T,mwett_T),tagdesjahres)
+            ! print*, 'hin:',itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T), jahrw_T(iwett_T,mwett_T) &
+            ! &            , 'sec:', zeitpunktw(iwett_T,mwett_T)
+            ! &            , 'zurück:',tagdesjahres,tag, monat, jahr
             call zeitsekunde() !! damit auch die Uhrzeit stimmt
-            !            print *,"wetter_readallo0: zeitpunktw",jahr, monat, tag, stunde, minute, sekunde, zeitpunktw(iwett_T,mwett_T) &
-            !                     , wertw_T(iwett_T,2,mwett_T), wertw_T(iwett_T,3,mwett_T)
-            !   229      FORMAT ("wetter_readallo0: ",I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2,"    ",F7.2)
+            ! print *,"wetter_readallo0: zeitpunktw",jahr, monat, tag, stunde, minute, sekunde, zeitpunktw(iwett_T,mwett_T) &
+            !       , wertw_T(iwett_T,2,mwett_T), wertw_T(iwett_T,3,mwett_T)
+            ! 229 FORMAT ("wetter_readallo0: ",I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2,"    ",F7.2)
          end do !mWett_T
          do mWett_T = 2,mWetts_T(iwett_T) !! Zeitfolge prüfen:
             if (zeitpunktw(iwett_T,mwett_T) <= zeitpunktw(iwett_T,mwett_T-1)) then
@@ -421,7 +421,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
             end if
          end do
          print*,'Wetterstation(', iWSta_T(iwett_T), ') #', Wetterstationskennung_T(iwett_T),' , ', mWetts_T(iwett_T),' Werte' &
-         ,' Sekundenzeitpunkte von bis',zeitpunktw(iwett_T,1),zeitpunktw(iwett_T,mWetts_T(iwett_T))
+               ,' Sekundenzeitpunkte von bis',zeitpunktw(iwett_T,1),zeitpunktw(iwett_T,mWetts_T(iwett_T))
       227 continue !! end do alle Wetterstationen
       close (86) !! WETTER.txt schließen
       close (87) !! WETTER.delta.txt schließen
