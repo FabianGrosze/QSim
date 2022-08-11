@@ -255,9 +255,9 @@ subroutine alter_zeitschritt(izeit_gang)
       endif ! Knoten nass
       if (j == kontrollknoten) then ! Ausgabe kontrollknoten
          if (tief >= min_tief ) then
-            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = ',  &
-                   c,tief,knoten_flaeche(j),  &
-                   point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
+            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = '  &
+                   ,c,tief,knoten_flaeche(j)  &
+                   ,point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
          endif ! Knoten nass
       end if ! kontrollknoten
    end do ! alle j Knoten

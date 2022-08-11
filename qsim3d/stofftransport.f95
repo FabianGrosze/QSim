@@ -165,7 +165,6 @@ subroutine ph2hplus()
    real*8 mue,ph,lf,hplus,hk,lgh
    integer i
    
-   
    do i = 1,part ! all i elements/nodes on this process
       iglob = i + meinrang * part
       lf = planktonic_variable_p(65 + (i-1) * number_plankt_vari)

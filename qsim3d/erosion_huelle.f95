@@ -43,7 +43,7 @@ subroutine erosion_huelle(i)
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
    if (tiefes <= min_tief)tiefes = min_tief ! minimale Wassertiefe erhalten
    raus = strickler( zone(point_zone(iglob))%reib , tiefes )
-   
+
    ! SUBROUTINE erosion_kern(tflie,TIEFEs,RAUs,VMITTs        &
    !                        ,SSeross,sss,ssalgs,dsedHs       &
    !                        ,tauscs,M_eross,n_eross,sedrohs  &

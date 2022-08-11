@@ -22,11 +22,9 @@
 
 #====================================================================
 # Makefile für Gewässergütemodell QSim1D
-# wyrwa seit 17dez19
-
 #====================================================================
 
-VERSION = 14.10.07
+VERSION = 14.09.04
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
@@ -37,28 +35,28 @@ VERSION = 14.10.07
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d_schwer$(VERSION)
+PV= qsim1d_$(VERSION)
 
 #====================================================================
 
 #compiler:
-FC              = gfortran
-# FC              = mpif90
+FC  = gfortran
+# FC = mpif90
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
 
-#compiler-flags:
-CFLAGS2             = -O -g -fbounds-check ## develop ## 
-#CFLAGS2             = -O3 ## run fast ## 
-FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
-CCLAGS       = $(CFLAGS2)
+# compiler-flags:
+CFLAGS2  = -O -g -fbounds-check # develop 
+#CFLAGS2 = -O3 					# run fast
+FFLAGS   = $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+CCLAGS   = $(CFLAGS2)
 
 #loader-flags:
 LDFLAGS = -lc -lstdc++ -g -fbounds-check ## develop ## 
 #LDFLAGS = -lc -lstdc++ ## run fast ## 
 
 #Stoffumsatz als library
-QSIM_LIB           = -L../metabolism -lqsim
+QSIM_LIB   = -L../metabolism -lqsim
 
 #check: Bereitstellungsverzeichnis für executable und Archiv
 ifeq ($(MY_BIN),)
@@ -73,7 +71,7 @@ endif
 
 usual: date qsim qsim1d
 
-all:   usual save
+all: usual save
 
 HIER=`pwd -P`
 JETZT=`date +"%-d%m%Y"`
@@ -87,7 +85,7 @@ date:
 
 
 qsim:	
-	@cd ../metabolism; cp makefile1 Makefile; make metabol; rm Makefile; cp *.mod ../qsim1d; cd ../qsim1d
+	@cd ../metabolism; cp makefile1 Makefile; make metabol; rm Makefile; cp *.mod ../qsim1d; rm Makefile; cd ../qsim1d
 
 %.o: %.f90
 	$(FC) $(FFLAGS) $<

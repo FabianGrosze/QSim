@@ -644,12 +644,10 @@ contains
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
       call system(systemaufruf,sysa)
-      !print*,'sysa',sysa
+      
       if (sysa /= 0) then
+         print*, 'Modellverzeichnis = ', trim(modellverzeichnis)
          call qerror('Das Verzeichnis, welches das Modell enthalten sollte, existiert nicht.')
-         !print*,'Umgebungsvariabel $TQM (Pfad des Modellordners)  >',trim(pfad)
-         !print*,'export $TQM=... | in .bashrc ???'
-         !print*,'Modell (Unter-Verzeichnis)  >',trim(aufrufargument)
       else
          print*,'QSim3D Modell: > ', trim(modellverzeichnis)!!wird nacher in eingabe ausgegeben...
       end if ! io_error.ne.0

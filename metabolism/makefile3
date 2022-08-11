@@ -8,29 +8,29 @@
 #====================================================================
 
 # Library-name:
-PV= metabol_qsim
+PV = metabol_qsim
 
 # compiler
-#FC1              = gfortran
-FC              = mpif90
+FC = mpif90
 
 # aus einem *.f ein *.o compilieren implizt mit dem Kommando:
 # $(FC) -c $(FFLAGS)
-CFLAGS2         = -O -g -fbounds-check ## develop ## 
-#CFLAGS2             = -O3 ## run fast ## 
+CFLAGS2  = -O -g -fbounds-check ## develop ## 
+#CFLAGS2 = -O3 ## run fast ## 
 
-#FFLAGS          =  -c -g -ffree-line-length-none
-#FFLAGS          =  $(CFLAGS2) -c -ffixed-line-length-none -finit-local-zero
-FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+#FFLAGS  =  -c -g -ffree-line-length-none
+#FFLAGS  =  $(CFLAGS2) -c -ffixed-line-length-none -finit-local-zero
+FFLAGS   =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
-METABOL_LIB           = -L. -lqsim
+METABOL_LIB = -L. -lqsim
 
 #-------------------------------------------------
 
-QSIM = module_allodim.o module_aparam.o albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
+QSIM = module_allodim.o module_aparam.o ph/module_ph.o \
+       albenth.o  algaesbl.o  algaesgr.o  algaeski.o  cbsb5.o  C_Chla.o \
        coliform.o  coroph.o  dichte.o\
        dreissen.o  e_extnct_lesen.o  einleiter_misch.o  funkstar.o  hnf.o  konsum.o  lichthemmung.o \
-       lin_spline.o  lin_sys.o  mphyt.o  ncyc.o  orgc.o  oxygen.o ph.o ph_kern.o pwert.o \
+       lin_spline.o  lin_sys.o  mphyt.o  ncyc.o  orgc.o  oxygen.o \
        po4s.o  runge_kutta.o  sasu.o  schiff.o   Sed_DiffK.o  SedFlux.o \
        Sedimentation.o  sediment.o  sed_pom.o  silikat.o  strahlg.o  tage.o  temperl.o temperw_kern.o temperw.o \
        uptake.o anztag.o zuflussrand.o  belueftung_K2.o dreissen.o wettles.o version_string.o \
@@ -48,7 +48,7 @@ clean:
 	@echo "cleaning ..."
 	rm -f *.o *.taz *~ *.mod *.a
 
-FN=$(PV)_linux_source_`date +%d%b%y`
+FN = $(PV)_linux_source_`date +%d%b%y`
 
 save: taz store
 
@@ -60,9 +60,4 @@ store:
 	cp $(FN).taz $(MY_ARC)
 	@echo "saved $(FN).taz to $(MY_ARC)"
 	if test -d "$$sicherung"; then cp $(FN).taz $(sicherung); echo "additionally saved $(FN).taz to $(sicherung)"; fi;
-
-git:
-	git add *.f90 *.txt Makefile
-	git commit -m "`date +%d%m%y`"
-	git push -u origin master
 

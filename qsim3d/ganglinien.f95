@@ -397,7 +397,7 @@ subroutine ganglinien_schliessen()
          if (errcode /= 0)call qerror('ganglinien_schliessen writing filename ganglinien/r*.txt failed')
          open ( unit = 12345+n , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
          write(12345+n,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
-                                                                                   ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
+                         ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
          do j = 1,zeitschrittanzahl+1
             zeitpunkt = r_gang(1,j)
             call zeitsekunde()

@@ -281,7 +281,6 @@ module QSimDatenfelder
    real, dimension(1000)               :: drfaek, drfaeg, drfaeb, zexki, zexgr, zexbl
    real, dimension(1000)               :: dorgSS, dalgki, dalggr, dalgbl, dalgak, dalgag, dalgab
    real, dimension(1000)               :: vco2, dzres1, dzres2, susn
-   
    !                                       benthische Verteilungen
    real, dimension(1000)               :: tsed    ! Temperatur des Sediments
    !>  \ref sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
@@ -415,7 +414,6 @@ module QSimDatenfelder
    !> \anchor isim_end von strahlg ermitteltes Simulationsende=1, von Algenroutinen für Ausgabe verwendet (unbenutzt in 3D)
    integer            :: isim_end
    real, dimension(1,50,1000)            :: hCChlkz, hCChlbz, hCChlgz
-   
    !> \anchor a1Ki \anchor a2Ki \anchor a3Ki
    !! ; in ini_algae() gesetzt
    real  a1Ki, a2Ki, a3Ki

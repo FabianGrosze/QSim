@@ -36,7 +36,7 @@
 # PV='qsim3d14.07Cu'
 # PV='qsim3d14.07.01'
 # PV='qsim3d_schnitt14.14'
-PV='qsim3d_14.09.03'
+PV='qsim3d_14.09.04'
 
 # NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
 
@@ -188,7 +188,7 @@ Q3 = version.co trans_read.co \
      planktische_variablen.o module_suspendedMatter.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
-     oxygen_huelle.o orgc_huelle.o ph_huelle.o \
+     oxygen_huelle.o orgc_huelle.o ph_wrapper_3d.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
 	 eingabe.o initialisieren.o randbedingungen.o \
@@ -229,6 +229,7 @@ clean:
 	@echo "cleaning ..."
 	rm -f *.o *.co $(PV) version.h code_source.h *~ *.mod libschism.a
 	rm -f ../metabolism/*.o ../metabolism/*.mod ../metabolism/*.a
+	rm -f ../metabolism/ph/*.o
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 # systemaufruf='cp '//trim(adjustl(codesource))//'/*source*.taz'

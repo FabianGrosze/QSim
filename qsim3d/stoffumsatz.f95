@@ -40,9 +40,10 @@ subroutine stoffumsatz()
       iglob = (i+meinrang*part)
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
-         if (iglob == kontrollknoten)print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
+         if (iglob == kontrollknoten) print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
-            if ( .not. nur_temp) then ! wenn nur_temp keine anderen Stoffumsätze
+            
+            if (.not. nur_temp) then ! wenn nur_temp keine anderen Stoffumsätze
                !------------------------------------------------------------------------ Wasseralter
                if (nur_alter) then
                   call alter(i)
@@ -116,8 +117,9 @@ subroutine stoffumsatz()
                   endif
                end do
                if (fehler_nan)call qerror("nach ncyc_huelle: isnan(transfer_quantity_p")
+               
                !------------------------------------------------------------------------ PH-Wert (falls gewünscht
-               if (ipH == 1) call ph_huelle(i)
+               if (ipH == 1) call ph_wrapper_3d(i)
             endif ! .not. nur_temp
          end if ! Knoten nass ... Temperw auch an trockenen Knoten !!!
          !------------------------------------------------------------------------ Wasser(+Sediment)-Temperatur

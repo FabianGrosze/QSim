@@ -95,6 +95,8 @@ module aparam
    real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
    real, parameter    :: NZoo = 0.11   !< N-Anteil Rotatorien [mgN/mgTG]
    
+   real, parameter    :: CRot = 0.45   !< C-Anteil Rotatorien
+   real, parameter    :: CDr  = 0.38   !< C-Anteil Dreissena
    
    public :: aparam_lesen, AParamParam
    
