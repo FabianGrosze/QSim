@@ -324,6 +324,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    use modell
    use QSimDatenfelder
    use aparam
+   use module_ph, only: pwert
    implicit none
    integer :: j,nk
    real :: CPges,CDges,Cref,TOC
@@ -357,6 +358,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
        ,' OBSB = ',planktonic_variable(17+nk)  &
        ,' OCSB = ',planktonic_variable(18+nk)  &
        ,' O2BSB = ',planktonic_variable(43+nk)
+
    call orgc_start(                                 &
                    TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable( 8+nk),      & ! aki | akis
@@ -380,7 +382,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                    planktonic_variable(42+nk),      & ! BAC   | BACs
                    planktonic_variable(48+nk),      & ! CHNF  | CHNFs,
                    CPges,CDges,Cref,TOC )             ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
-   if (kontroll)print*,'nach orgc_start'     &
+   if (kontroll)print*,'nach orgc_start'       &
        ,' OBSB = ',planktonic_variable(17+nk)  &
        ,' OCSB = ',planktonic_variable(18+nk)  &
        ,' O2BSB = ',planktonic_variable(43+nk)
@@ -394,7 +396,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
                     planktonic_variable(67+nk),      & ! GESN | gesNs,
                     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    nZoo, pZoo, GROT,                & ! globale Parameter direkt aus QSimDatenfelder
+                    nZoo, pZoo, GROT,                & ! globale Parameter aus module aparam
                     planktonic_variable( 6+nk),      & ! GELP | gelPs,
                     planktonic_variable(68+nk),      & ! GESP | gesPs,
                     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -414,23 +416,22 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE | ssalgs,
                     0,0,0,0,                         & ! itags,monats,mstr,mRB für Kontrollausgaben in 1D benötigt
                     einmalig,kontroll,j)
-   if (kontroll) print*,'randbedingungen_ergaenzen: nach algae_aufteilung'     &
-                       ,' chla = ',planktonic_variable(11+nk)    &
-                       ,' vkigr = ',planktonic_variable(19+nk)   &
-                       ,' antbl = ',planktonic_variable(20+nk)   &
-                       ,' chlaki = ',planktonic_variable(12+nk)  &
-                       ,' aki = ',planktonic_variable(8+nk)      &
-                       ,' akbcm = ',planktonic_variable(24+nk), ' Caki = ',Caki
+   
+   if (kontroll) print*,'randbedingungen_ergaenzen: nach algae_aufteilung',    &
+                        ' chla = ',  planktonic_variable(11+nk),    &
+                        ' vkigr = ', planktonic_variable(19+nk),    &
+                        ' antbl = ', planktonic_variable(20+nk),    &
+                        ' chlaki = ',planktonic_variable(12+nk),    &
+                        ' aki = ',   planktonic_variable(8+nk),     &
+                        ' akbcm = ', planktonic_variable(24+nk),    &
+                        ' Caki = ',  Caki
+   
    ! Berechnung des p-Wertes am Start (ohne Algen)
-   call pwert(                                 &
-              planktonic_variable(62+nk),      & ! MW | mws
-              planktonic_variable(66+nk),      & ! VPH | vphs
-              planktonic_variable(65+nk),      & ! LF | lfs
-              planktonic_variable( 1+nk),      & ! Tempw | tempws
-              planktonic_variable(63+nk))        ! pw | pws
-   !    &     0,0)                               !  mRB,mstr
-   ! subroutine pwert(mws,vphs,lfs,tempws,pws) !!wy azStrs nicht mehr benötigt
-   !
+   call pwert(planktonic_variable(62+nk),      & ! mw
+              planktonic_variable(66+nk),      & ! vph
+              planktonic_variable(65+nk),      & ! lf
+              planktonic_variable( 1+nk),      & ! tempw 
+              planktonic_variable(63+nk))        ! pw 
    return
 end subroutine randbedingungen_ergaenzen
 !----+-----+----
@@ -1267,6 +1268,7 @@ subroutine randlinie_zusammenstellen()
             write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
                             "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
                            ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
+
             print*,trim(fehler)
             !call qerror(fehler)
          end if ! unerwünscht

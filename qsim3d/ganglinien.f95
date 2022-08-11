@@ -295,7 +295,7 @@ subroutine ganglinien_schliessen()
          call qerror(fehler)
       end if !
       write(systemaufruf,'(5A)',iostat = errcode)'mv -f ',trim(modellverzeichnis),'ganglinien '  &
-                                         ,trim(modellverzeichnis),'ganglinien_bisher > /dev/null 2 > /dev/null'
+                                         ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
       call system(systemaufruf,sys_error)
       if (sys_error /= 0) then
@@ -397,7 +397,7 @@ subroutine ganglinien_schliessen()
          if (errcode /= 0)call qerror('ganglinien_schliessen writing filename ganglinien/r*.txt failed')
          open ( unit = 12345+n , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
          write(12345+n,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
-                                                                                   ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
+                         ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
          do j = 1,zeitschrittanzahl+1
             zeitpunkt = r_gang(1,j)
             call zeitsekunde()

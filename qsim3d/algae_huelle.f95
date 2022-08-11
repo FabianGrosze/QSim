@@ -37,7 +37,7 @@ subroutine algae_huelle(i)
    integer :: i,j,k,nk,i2,string_write_error
    integer :: ieros_flag
    logical :: error
-   
+     
    !if(i==1)print*,'algae_huelle läuft an'
    iglob = (i+meinrang*part)
    do k = 1,number_trans_quant

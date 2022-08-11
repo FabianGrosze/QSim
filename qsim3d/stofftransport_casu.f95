@@ -491,7 +491,7 @@ subroutine transinfo_sichten()
    zeitpunkt = transinfo_zeit(transinfo_zuord(1))
    call zeitsekunde()
    write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                       trim(transinfo_datei(transinfo_zuord(1)))
+                trim(transinfo_datei(transinfo_zuord(1)))
    zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    call zeitsekunde()
    write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
@@ -716,7 +716,7 @@ logical function elements()
    element_vorhanden = .false.
    write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'transinfo/file.elements'
    if (errcode /= 0)call qerror('elements writing filename elemente_ failed')
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateiname),' > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateiname),' >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('elements writing filename elemente_ failed')
    call system(systemaufruf,system_error)
    !print*,'systemaufruf :',trim(systemaufruf),' system_error=',system_error

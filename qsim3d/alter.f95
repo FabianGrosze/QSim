@@ -42,10 +42,10 @@ subroutine alter(i)
    kontroll = iglob == kontrollknoten
    nk = (i-1)*number_plankt_vari
    depth = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen
-   !   planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
-   !   planktonic_variable_name(73)= "         age_decay"
-   !   planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007
-   !   planktonic_variable_name(75)= "        age_growth"
+   ! planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
+   ! planktonic_variable_name(73)= "         age_decay"
+   ! planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007
+   ! planktonic_variable_name(75)= "        age_growth"
    ! decaying tracer
    planktonic_variable_p(73+nk) = planktonic_variable_p(73+nk)*(1.0 - rate*tflie)
    !!  planktonic_variable_p(73+nk) = 0.0
@@ -89,7 +89,7 @@ subroutine alter_lesen()
    alter_nummer = -1
    write(dateiname,'(2A)')trim(modellverzeichnis),'alter.txt'
    open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0)call qerror('alter.txt lässt sich nicht öffnen ???')
+   if (open_error /= 0)call qerror('alter.txt lässt sich nicht öffnen ?')
    do while ( zeile(ion) .and. (wie_altern == 0) )
       if ( .not. leerzeile()) then
          !i=i+1
@@ -255,9 +255,9 @@ subroutine alter_zeitschritt(izeit_gang)
       endif ! Knoten nass
       if (j == kontrollknoten) then ! Ausgabe kontrollknoten
          if (tief >= min_tief ) then
-            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = ',  &
-                   c,tief,knoten_flaeche(j),  &
-                   point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
+            print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = '  &
+                   ,c,tief,knoten_flaeche(j)  &
+                   ,point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
          endif ! Knoten nass
       end if ! kontrollknoten
    end do ! alle j Knoten

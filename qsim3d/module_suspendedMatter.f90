@@ -133,7 +133,7 @@ contains
       integer             :: i, j, k         ! indices
       integer             :: iTime           ! ID of time record to be read from file
       real                :: livingMatter    ! combined phyto- and zooplankton biomass (mg L-1)
-      character(len = 200)  :: errorMessage    ! self-explanatory
+      character(len = 200):: errorMessage    ! self-explanatory
       
       ! get SPM concentrations from file and distribute them over all processes
       if (meinrang == 0) then

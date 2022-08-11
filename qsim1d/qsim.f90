@@ -28,7 +28,7 @@ program qsim
    use allodim
    use aparam
    use mod_model_settings
-   
+   use module_ph
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -6611,149 +6611,63 @@ program qsim
          enddo
       endif
       
-      call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbct,dalgki,dalggr,dalgak,dalgag,po2p,po2r,rau,vmitt,tiefe,flae,vabfl        &
-              ,flag,elen,ior,anze,vph,elfL,caL,qeinlL,iorLa,iorLe,ieinLs,ssalg,stind,albewg,alberg,albewk,alberk,wge      &
-              ,abl,dalgbl,dalgab,IDWe,iwied,fkm,ij,resdr,dzres1,dzres2,aki,agr,ilbuhn,eph,emw,elf,eca,vco2,qeinl          &
-              ,jiein,mstr,cpfad,rhyd,WLage,hWS,itags,monats,uhrz,azStrs,iphy                                              &
-              ,Caki, Cagr, Cabl             &
-              ,.false.,0)
-      if (nbuhn(mstr) == 0)goto 113
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwtief(ior) = tiefe(ior)
-            zwvm(ior) = vmitt(ior)
-            zwmw(ior) = mw(ior)
-            zwpw(ior) = pw(ior)
-            zwca(ior) = ca(ior)
-            zwlf(ior) = lf(ior)
-            zwph(ior) = vph(ior)
-            zwsusn(ior) = susn(ior)
-            zwbetn(ior) = bettn(ior)
-            zwbsbt(ior) = bsbct(ior)
-            zwdalk(ior) = dalgki(ior)
-            zwdalg(ior) = dalggr(ior)
-            zwdalb(ior) = dalgbl(ior)
-            zwdaak(ior) = dalgak(ior)
-            zwdaag(ior) = dalgag(ior)
-            zwdaab(ior) = dalgab(ior)
-            zwpo2p(ior) = po2p(ior)
-            zwpo2r(ior) = po2r(ior)
-            zwssa(ior) = ssalg(ior)
-            zwstin(ior) = stind(ior)
-            zwrdr(ior) = resdr(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            mw(ior) = bmw(mstr,ior)
-            pw(ior) = bpw(mstr,ior)
-            ca(ior) = bca(mstr,ior)
-            lf(ior) = blf(mstr,ior)
-            vph(ior) = bph(mstr,ior)
-            susn(ior) = bsusn(mstr,ior)
-            bettn(ior) = bbettn(mstr,ior)
-            bsbct(ior) = bbsbct(mstr,ior)
-            dalgki(ior) = bdaki(mstr,ior)
-            dalggr(ior) = bdagr(mstr,ior)
-            dalgbl(ior) = bdabl(mstr,ior)
-            dalgak(ior) = bdaak(mstr,ior)
-            dalgag(ior) = bdaag(mstr,ior)
-            dalgab(ior) = bdaab(mstr,ior)
-            po2p(ior) = bpo2p(mstr,ior)
-            po2r(ior) = bpo2r(mstr,ior)
-            stind(ior) = bstind(mstr,ior)
-            ssalg(ior) = bssalg(mstr,ior)
-            albewg(ior) = babewg(mstr,ior)
-            albewk(ior) = babewk(mstr,ior)
-            alberg(ior) = baberg(mstr,ior)
-            alberk(ior) = baberk(mstr,ior)
-            resdr(ior) = bresdr(mstr,ior)
-            dzres1(ior) = bzres1(mstr,ior)
-            dzres2(ior) = bzres2(mstr,ior)
-            resdr(ior) = bresdr(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1515
-      endif
+      ! inflow from point and diffuse sources
+      call ph_inflow_1d(vph, lf, ca, mw, pw, elfL, caL, eph, elf, eca, emw,   &
+                        tempw, mstr, ieinLs, qeinlL, qeinl, vabfl, iorLe,     &
+                        iorLa, jiein, flae, anze, flag, tflie,                &
+                        kontroll, jjj)
+   
+      ! metabolism in main river
+      do ior = 1, anze+1
+         call ph(mw(ior), pw(ior), ca(ior), lf(ior), tempw(ior), vph(ior), vco2(ior),           &
+                 tflie, rau(ior), vmitt(ior), tiefe(ior), rhyd(ior), flae(ior),                 &
+                 wge(IDWe(mstr, ior)), WLage(mstr, ior), hWS(mstr, ior), iphy,                  &
+                 bsbct(ior), resdr(ior), dzres1(ior), dzres2(ior),                              &
+                 dalgki(ior), dalggr(ior), dalgbl(ior), dalgak(ior), dalgag(ior), dalgab(ior),  &
+                 alberg(ior), alberk(ior), albewg(ior), albewk(ior),                            &
+                 susn(ior), po2p(ior), po2r(ior), ssalg(ior), stind(ior),                       &
+                 kontroll ,jjj)
+      enddo
       
-      if (ilbuhn == 1) then
+      ! --- groyne-field ---
+      if (nbuhn(mstr) > 0)then
          do ior = 1,anze+1
-            bmw(mstr,ior) = mw(ior)
-            bpw(mstr,ior) = pw(ior)
-            bca(mstr,ior) = ca(ior)
-            blf(mstr,ior) = lf(ior)
-            bph(mstr,ior) = vph(ior)
-            bstind(mstr,ior) = stind(ior)
+            ! metabolism
+            call ph(bmw(mstr,ior),bpw(mstr,ior),bca(mstr,ior),blf(mstr,ior),btempw(mstr,ior),bph(mstr,ior),vco2s,    &
+                    tflie,raus,vbm(mstr,ior),bh(mstr,ior),rhyds,flaes,                                               &
+                    wges,WLages,hWSs,iphy,                                                                           &
+                    bbsbct(mstr,ior),bresdr(mstr,ior),bzres1(mstr,ior),bzres2(mstr,ior),                             &
+                    bdaki(mstr,ior),bdagr(mstr,ior),bdabl(mstr,ior),bdaak(mstr,ior),bdaag(mstr,ior),bdaab(mstr,ior), &
+                    baberg(mstr,ior),baberk(mstr,ior),babewg(mstr,ior),babewk(mstr,ior),                             &
+                    bsusn(mstr,ior),bpo2p(mstr,ior),bpo2r(mstr,ior),bssalg(mstr,ior),bstind(mstr,ior),               &
+                    kontroll, jjj)
+             
+            ! mixing between main river and groyne-field 
+            diff1  = bmw(mstr,ior) - mw(ior)
+            diff2  = bpw(mstr,ior) - pw(ior)
+            diff3  = bca(mstr,ior) - ca(ior)
+            diff4  = blf(mstr,ior) - lf(ior)
+            diff5  = bph(mstr,ior) - vph(ior)
+            diff6  = bstind(mstr,ior) - stind(ior)
             
-            tempw(ior) = zwtemp(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            mw(ior) = zwmw(ior)
-            pw(ior) = zwpw(ior)
-            ca(ior) = zwca(ior)
-            lf(ior) = zwlf(ior)
-            vph(ior) = zwph(ior)
-            susn(ior) = zwsusn(ior)
-            bettn(ior) = zwbetn(ior)
-            bsbct(ior) = zwbsbt(ior)
-            dalgki(ior) = zwdalk(ior)
-            dalggr(ior) = zwdalg(ior)
-            dalgbl(ior) = zwdalb(ior)
-            dalgak(ior) = zwdaak(ior)
-            dalgag(ior) = zwdaag(ior)
-            dalgab(ior) = zwdaab(ior)
-            po2p(ior) = zwpo2p(ior)
-            po2r(ior) = zwpo2r(ior)
-            ssalg(ior) = zwssa(ior)
-            stind(ior) = zwstin(ior)
-            resdr(ior) = zwrdr(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            
-            diff1 = bmw(mstr,ior)-mw(ior)
-            diff2 = bpw(mstr,ior)-pw(ior)
-            diff3 = bca(mstr,ior)-ca(ior)
-            diff4 = blf(mstr,ior)-lf(ior)
-            diff5 = bph(mstr,ior)-vph(ior)
-            diff6 = bstind(mstr,ior)-stind(ior)
-            bdiff1 = mw(ior)-bmw(mstr,ior)
-            bdiff2 = pw(ior)-bpw(mstr,ior)
-            bdiff3 = ca(ior)-bca(mstr,ior)
-            bdiff4 = lf(ior)-blf(mstr,ior)
-            bdiff5 = vph(ior)-bph(mstr,ior)
-            bdiff6 = stind(ior)-bstind(mstr,ior)
             if (bleb(mstr,ior) > 0.0) then
-               mw(ior) = mw(ior)+diff1*(1.-exp(-hctau1(ior)))
-               pw(ior) = pw(ior)+diff2*(1.-exp(-hctau1(ior)))
-               ca(ior) = ca(ior)+diff3*(1.-exp(-hctau1(ior)))
-               lf(ior) = lf(ior)+diff4*(1.-exp(-hctau1(ior)))
-               vph(ior) = vph(ior)+diff5*(1.-exp(-hctau1(ior)))
-               stind(ior) = stind(ior)+diff6*(1.-exp(-hctau1(ior)))
+               mw(ior)    = mw(ior)    + diff1 * (1.-exp(-hctau1(ior)))
+               pw(ior)    = pw(ior)    + diff2 * (1.-exp(-hctau1(ior)))
+               ca(ior)    = ca(ior)    + diff3 * (1.-exp(-hctau1(ior)))
+               lf(ior)    = lf(ior)    + diff4 * (1.-exp(-hctau1(ior)))
+               vph(ior)   = vph(ior)   + diff5 * (1.-exp(-hctau1(ior)))
+               stind(ior) = stind(ior) + diff6 * (1.-exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bmw(mstr,ior) = bmw(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bpw(mstr,ior) = bpw(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bca(mstr,ior) = bca(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-               blf(mstr,ior) = blf(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-               bph(mstr,ior) = bph(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-               bstind(mstr,ior) = bstind(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior)))
+               bmw(mstr,ior)    = bmw(mstr,ior)    - diff1 * (1.-exp(-hctau2(ior)))
+               bpw(mstr,ior)    = bpw(mstr,ior)    - diff2 * (1.-exp(-hctau2(ior)))
+               bca(mstr,ior)    = bca(mstr,ior)    - diff3 * (1.-exp(-hctau2(ior)))
+               blf(mstr,ior)    = blf(mstr,ior)    - diff4 * (1.-exp(-hctau2(ior)))
+               bph(mstr,ior)    = bph(mstr,ior)    - diff5 * (1.-exp(-hctau2(ior)))
+               bstind(mstr,ior) = bstind(mstr,ior) - diff6 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         
-         ilbuhn = 0
       endif
       
       ! -----------------------------------------------------------------------
