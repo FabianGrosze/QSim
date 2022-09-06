@@ -184,6 +184,7 @@ qsim3d: $(Q3)
 
 exe:
 	cp -f $(PV) $(MY_BIN)/$(PV)
+	cp -f ./scripte/* $(MY_BIN)
 
 KT = version.co trans_read.co \
      kombitransi.o
