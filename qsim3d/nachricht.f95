@@ -216,7 +216,7 @@ subroutine fortschritt(n,f)
             if (errcode /= 0)call qerror('fortschritt: systemaufruf qusave modellverzeichnis fehlgeschlagen')
             call system(trim(systemaufruf),system_error) !qusave löscht Quellcode-Sicherung im Modellverzeichnis
             if (system_error == 0) then
-               print*,"Eingabedaten + Quellcode in qsim3d_modell_ < Modellname > _ < Datum > .taz archiviert."
+               print*,'Eingabedaten in qsim3d_modell_<Modell>_<Datum>.taz archiviert.'
             else
                print*,"### Archivierung der Eingabedaten schlug fehl."
             end if
