@@ -21,10 +21,11 @@
 #!---------------------------------------------------------------------------------------
 
 #====================================================================
-# Makefile für Gewässergütemodell QSim1D
+# Makefile for QSim1D
+# wyrwa seit 17dez19
 #====================================================================
 
-VERSION = 14.09.04
+VERSION = 14.10.07
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
@@ -35,28 +36,26 @@ VERSION = 14.09.04
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d_$(VERSION)
+PV= qsim1d_schwer$(VERSION)
 
 #====================================================================
 
 #compiler:
-FC  = gfortran
-# FC = mpif90
-# aus einem *.f ein *.o compilieren implizt mit dem Kommando:
-# $(FC) -c $(FFLAGS)
+FC              = gfortran
 
-# compiler-flags:
-CFLAGS2  = -O -g -fbounds-check # develop 
-#CFLAGS2 = -O3 					# run fast
-FFLAGS   = $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
-CCLAGS   = $(CFLAGS2)
+Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
+Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
+qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
+van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o lax_wen.o \
+lin_interpolation.o write_gerris_definitions.o
 
-#loader-flags:
-LDFLAGS = -lc -lstdc++ -g -fbounds-check ## develop ## 
-#LDFLAGS = -lc -lstdc++ ## run fast ## 
+-include ../metabolism/metabol.mk
 
-#Stoffumsatz als library
-QSIM_LIB   = -L../metabolism -lqsim
+#compiler-flags:
+CFLAGS2             = -O -g -fbounds-check ## develop ## 
+#CFLAGS2             = -O3 ## run fast ## 
+FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+CCLAGS       = $(CFLAGS2)
 
 #check: Bereitstellungsverzeichnis für executable und Archiv
 ifeq ($(MY_BIN),)
@@ -69,7 +68,7 @@ endif
 
 #--------------------------------------------------------------------
 
-usual: date qsim qsim1d
+usual: date check metabo qsim1d
 
 all: usual save
 
@@ -83,26 +82,27 @@ date:
 #	rm -f version.co nachricht.o
 #	@echo 'write(codesource,*) "'$(HIER)'" ' >code_source.h
 
+check:
+	if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) available"; else exit 1 ; fi;
+	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) available"; else exit 1 ; fi;
+	if test -d ../metabolism; then echo "Directory ../metabolism available"; else echo "../metabolism missing" ; fi;
 
-qsim:	
-	@cd ../metabolism; cp makefile1 Makefile; make metabol; rm Makefile; cp *.mod ../qsim1d; rm Makefile; cd ../qsim1d
+metabo: $(META)
+	ar ruv libmetabol.a $(META)
+	ranlib libmetabol.a
+	@echo "libmetabol.a done"
 
 %.o: %.f90
-	$(FC) $(FFLAGS) $<
-
-Q1= AdvDiff.o ALBEDO.o aparamles.o AParamParam.o ctracer.o E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
-Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
-qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o lax_wen.o
+	$(FC) $(FFLAGS) -c -o $@  $<
 
 qsim1d:	$(Q1)
-	$(FC) $(Q1) $(QSIM_LIB) -o $(PV)
+	$(FC) $(Q1) -L. -lmetabol -o $(PV)
 	cp -pf ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod
-	rm -f ../metabolism/*.o ../metabolism/*.a ../metabolism/*.mod
+	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.a ../metabolism/*.mod
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 
