@@ -205,12 +205,12 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
-	tar cvfz ../$(FN) ../qsim3d/README \
+	tar cvfz ../$(FN)  ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
 	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
 	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*.mk \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
-	../license.txt
+	../license.txt ../readme.md
 	cp ../$(FN) .
 
 store:
