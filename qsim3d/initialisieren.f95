@@ -24,12 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Anfangsbedingungen Anfangsbedingungen
-!! Die Setzung der Startwerte für \ref planktische_variablen wird zonenweise als \ref lokaleParameter vorgenommen.\n
-!! Zur Initilisierung werden die Werte aus einer, der jeweiligen Zone zugeordneten Randbedingung verwendet.\n
-!! Diese Zuordnung geschieht mithilfe der I-Zeile in der Datei \ref qsimdateimodellg3.
-!! \n\n
-!! aus Datei initialisieren.f95 ; zurück: \ref Modellerstellung oder \ref Datenmodell.
+
 subroutine initialisieren()
    use modell
    use QSimDatenfelder
@@ -74,8 +69,8 @@ subroutine initialisieren()
             ,' wird initialisiert mit Rand ',zone(i)%ini_randnr,' mit Nr.',rabe(zone(i)%ini_randnr)%nr_rb
          else
             write(fehler,*)' 99 Zone ',i,' mit Nr. ',zone(i)%zonen_nummer  &
-                 ,' möchte initialisieren mit Rand ', zone(i)%ini_randnr  &
-                 ," nini = ",nini,' Diese Vorgabe (Randnummer) ist unmöglich ### Abbruch'
+                  ,' möchte initialisieren mit Rand ', zone(i)%ini_randnr  &
+                  ," nini = ",nini,' Diese Vorgabe (Randnummer) ist unmöglich ### Abbruch'
             call qerror(fehler)
          endif
       end do ! alle i zonen

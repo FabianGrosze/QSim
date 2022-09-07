@@ -33,12 +33,12 @@
 !! die Verweise innerhalb der Dokumentation anders nicht funktionieren. Beil Lesen ist daher leider etwas Umdenken erforderlich, weil bestimmte
 !! Groß- und Klein-Schreibungen bei QSim1D-Variablen üblich sind.
 !!\n\n
-!! zurück zu: \ref hüllen
+!! zurück zu: \ref lnk_huellen
 module QSimDatenfelder
    implicit none
    save
    
-   !> \anchor azstrs Stranganzahl Felddimensionierungs-Parameter
+   !> \ref azstrs Stranganzahl Felddimensionierungs-Parameter
    integer , parameter :: azStrs = 1
    !> \anchor ialloc2 Querprofile im Strang Felddimensionierungs-Parameter
    integer , parameter :: ialloc2 = 1000  !!!##### do not change !!!!
@@ -61,40 +61,40 @@ module QSimDatenfelder
    !> \anchor uhren Uhrzeit_stunden Berechnungs-Ende
    real :: uhren
    !                                       Modell- und Steuer-Parameter:
-   !> \anchor anze Anzahl der Profile im Strang. In QSim3d immer 1. Siehe dazu auch \ref hüllen.
+   !> \anchor anze Anzahl der Profile im Strang. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
    integer                             :: anze
-   !> \anchor mstr Strangnummer. In QSim3d immer 1. Siehe dazu auch \ref hüllen.
+   !> \anchor mstr Strangnummer. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
    integer                             :: mstr
-   !> \anchor ior Profilnummernzähler. Läuft in QSim3D immer von 1 bis 2. Siehe dazu auch \ref hüllen.
+   !> \anchor ior Profilnummernzähler. Läuft in QSim3D immer von 1 bis 2. Siehe dazu auch \ref lnk_huellen.
    integer                             :: ior
-   !> \anchor ilbuhn =0 keine Buhnen in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor ilbuhn =0 keine Buhnen in QSim3D. Siehe dazu auch \ref lnk_huellen.
    integer                             :: ilbuhn
    !> \anchor uhrz aus \ref uhrzeit_stunde berechnet von module::modell zeitsekunde()
    real                                :: uhrz
    !> \anchor iwied  ### iwied = 0 : allererster Zeitschritt, danach iwied = 1 ###  in 3D immer 1
    integer                             :: iwied
-   !> \anchor flag  flag(1+2)=0 d.h. keine Einleitungen in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor flag  flag(1+2)=0 d.h. keine Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(1000)            :: flag
-   !> \anchor jiein =0 keine Punkt-Einleitungen in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor jiein =0 keine Punkt-Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(1000)            :: jiein
-   !> \anchor ischif  = 0 Keine Schiffahrt. Noch unbenutzt in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor ischif  = 0 Keine Schiffahrt. Noch unbenutzt in QSim3D. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(1000)            :: ischif
-   !> \anchor nkzs Anzahl Tiefenschichten (tiefenaufgelöste Variante von QSim1D). In QSim3d momentan immer 1. Siehe dazu auch \ref hüllen.
+   !> \anchor nkzs Anzahl Tiefenschichten (tiefenaufgelöste Variante von QSim1D). In QSim3d momentan immer 1. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(1000)            :: nkzs
    !>  \anchor tflie Zeitschrittlänge in Tagen in QSim3D berechnet aus dem Zeitschritt in Sekunden \ref deltat \n
    !!  tflie = real(deltat)/86400
    real                                :: TFLIE
-   !> \anchor dh2d dH2D = 0.25 ! Dicke Tiefenschicht ??? Siehe dazu auch \ref hüllen.
+   !> \anchor dh2d dH2D = 0.25 ! Dicke Tiefenschicht ??? Siehe dazu auch \ref lnk_huellen.
    real                                :: dh2d
-   !> \anchor fkm =0.0 Flusskilometer unbenutzt. Siehe dazu auch \ref hüllen.
+   !> \anchor fkm =0.0 Flusskilometer unbenutzt. Siehe dazu auch \ref lnk_huellen.
    real, dimension(1000)               :: fkm
    !> \anchor flae Querschnittsfläche des Gewässerkörpers\n
    !! daraus wird die Breite berechnet, die in der Belüftungsformel verwendet wird.  \n
    !! hat keine Entsprechung im Mehrdimensionalen, daher sinnvoller Wert fürs Ästuar, so dass Breite konstant 500 m beträgt ;\n
-   !! Siehe dazu auch \ref hüllen.
+   !! Siehe dazu auch \ref lnk_huellen.
    real, dimension(1000)               :: flae
    !                                       hydraulische Parameter:
-   !>  *TIEFE*: Wassertiefe
+   !>  \ref tiefe : Wassertiefe
    real, dimension(1000)               :: tiefe
    !> \ref vmitt Fließgeschwindigkeit (Querschnittsgemittelt in QSim-1D)
    real, dimension(1000)               :: vmitt
@@ -103,7 +103,7 @@ module QSimDatenfelder
    !                                       planktische Konzentrationen, die es auch als Tiefenprofil gibt:
    !> \ref tempw  Wassertemperatur
    real, dimension(1000)               :: tempw
-   !> \anchor vo2  Sauerstoffgehalt aus \ref planktische_variablen
+   !> \ref vo2  Sauerstoffgehalt aus \ref lnk_var_planktisch
    real, dimension(1000)               :: vo2
    !> \ref vnh4 Ammonium
    real, dimension(1000)               :: vnh4
@@ -115,11 +115,11 @@ module QSimDatenfelder
    real, dimension(1000)               :: gelP
    !> \ref si Silizium
    real, dimension(1000)               :: Si
-   !> \ref aki Kieselalgen
+   !> \ref aki Biomasse der Kieselalgen, \f$A_{ki}\f$ [mg L\f$^{-1}\f$]
    real, dimension(1000)               :: aki
-   !> \ref agr Gruenalgen
+   !> \ref agr Biomasse der Gruenalgen, \f$A_{gr}\f$ [mg L\f$^{-1}\f$]
    real, dimension(1000)               :: agr
-   !> \ref abl Blaualgen
+   !> \ref abl Biomasse der Blaualgen, \f$A_{bl}\f$ [mg L\f$^{-1}\f$]
    real, dimension(1000)               :: abl
    !> \ref chla Chlorophyll-a
    real, dimension(1000)               :: chla
@@ -197,9 +197,9 @@ module QSimDatenfelder
    real, dimension(1000)               :: Q_NB
    !>  \ref q_pb Phosphor in Blaualgen
    real, dimension(1000)               :: Q_PB
-   !> CD=\ref cd1+\ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
+   !> CD = \ref cd1 + \ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
    real, dimension(2,1000)             :: CD
-   !> CP=\ref cp1+\ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
+   !> CP = \ref cp1 + \ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
    real, dimension(2,1000)             :: CP
    !>  \ref cm monomolekularen organischen C-Verbindungen
    real, dimension(1000)               :: CM
@@ -281,13 +281,9 @@ module QSimDatenfelder
    real, dimension(1000)               :: drfaek, drfaeg, drfaeb, zexki, zexgr, zexbl
    real, dimension(1000)               :: dorgSS, dalgki, dalggr, dalgbl, dalgak, dalgag, dalgab
    real, dimension(1000)               :: vco2, dzres1, dzres2, susn
-   !>  \ref nzoo nzoo Stickstoffanteil in der Rotatorienbiomasse  mgN/mgBiom.
-   !real                                :: nzoo  >>> module aparam
-   !>  \ref pZoo pZoo Phosphoranteil in der Rotatorienbiomasse  mgP/mgBiom.
-   !real                                :: pZoo  >>> module aparam
    !                                       benthische Verteilungen
    real, dimension(1000)               :: tsed    ! Temperatur des Sediments
-   !>  \anchor sised sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
+   !>  \ref sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
    real, dimension(1000)               :: sised   ! Menge an Silikat an der Gewässersohle infolge sedimentierter Algen (aufsummiert für den Simulationszeitraum) in algaeski()
    real, dimension(1000)               :: pfl     ! Pflanzentrockengewicht in g/m2
    real, dimension(1000)               :: ssdr    ! Schwebstoffaufnahme durch Dreissena
@@ -309,11 +305,11 @@ module QSimDatenfelder
    real, dimension(1000)               :: cmatgr  ! Abspülung benthischer gruen-Algen
    !!--------------------------------------------------------------------------------------------
    !    integer                             :: ieros, iph !!jetzt in module::modell
-   !>  \anchor ieinls =0  keine Linienquellen. Siehe dazu auch \ref hüllen.
+   !>  \anchor ieinls =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(50)              :: ieinLs
-   !>  \anchor iorla =0  keine Linienquellen. Siehe dazu auch \ref hüllen.
+   !>  \anchor iorla =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(100)             :: iorLa
-   !>  \anchor iorle =0  keine Linienquellen. Siehe dazu auch \ref hüllen.
+   !>  \anchor iorle =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(100)             :: iorLe
    !>  \anchor akrema =  0.0    unbenutzt
    real                                :: akrema
@@ -325,7 +321,7 @@ module QSimDatenfelder
    real, dimension(50)                 :: senh4, seno2, seno3, vnh4zt, vno2zt, vno3zt, nwgrz, nwkiz, nwblz
    real, dimension(50)                 :: nresgz, nreskz, nresbz, hcvNH4z, hcvNO2z, hcvNO3z
    real, dimension(100)                :: enh4
-   !>  \anchor qeinl  0.0      ! kein Volumenstrom Punkteinl. Siehe dazu auch \ref hüllen.
+   !>  \anchor qeinl  0.0      ! kein Volumenstrom Punkteinl. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                :: qeinl
    !>  \anchor ex0
    real, dimension(100)                :: ex0
@@ -339,18 +335,18 @@ module QSimDatenfelder
    real, dimension(100)                :: egesN
    !>  \anchor enl0
    real, dimension(100)                :: enl0
-   !>  \anchor qeinlL =0.0  für Linienquelle; nicht verwendet. Siehe dazu auch \ref hüllen.
+   !>  \anchor qeinlL =0.0  für Linienquelle; nicht verwendet. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                :: qeinlL
    !   Linienquellen werden im 3D nicht verwendet
    real, dimension(100)                    ::  bsbL, csbL, x0L, x02L, o2L
-   !>  \anchor chlal =0.0  für Linienquelle; nicht verwendet. Siehe dazu auch \ref hüllen.
+   !>  \anchor chlal =0.0  für Linienquelle; nicht verwendet. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                :: chlaL
    real, dimension(100)                :: eNH4L, eNO2L, eNO3L, gesNL
    real, dimension(1000)               :: go2n, agrnh4, akinh4
    real, dimension(1000)               :: sgo2n, abltbr, akitbr, agrtbr
-   !> \anchor vabfl Durchfluss in QSim3D unbenutzt.  Siehe dazu auch \ref hüllen.
+   !> \anchor vabfl Durchfluss in QSim3D unbenutzt.  Siehe dazu auch \ref lnk_huellen.
    real, dimension(1000)               :: vabfl
-   !> \anchor elen  elen(1)=1  Elementlänge (nicht verwendet) Siehe dazu auch \ref hüllen.
+   !> \anchor elen  elen(1)=1  Elementlänge (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
    real, dimension(1000)               :: elen
    real, dimension(1000)               :: sedx0, bettn, susno, agrno3, akino3
    real, dimension(1000)               :: resdr, ablno3, albewg, alberg, albewk, alberk,abegm2,abekm2
@@ -365,17 +361,17 @@ module QSimDatenfelder
    real, dimension(1000)          :: zHNF, HNFza, algzok, algzog, algzob
    real, dimension(50,1000)       :: algzkz, algzgz, algzbz
    ! algae...
-   !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref extnct_rb
+   !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref lnk_extnct_rb
    character(255) cpfad
    real LNQ,ir(1000)
-   !> \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real echla(100)
-   !> \anchor ess = 0.0 Einleitung Schwebstoff  (nicht verwendet) Siehe dazu auch \ref hüllen.
+   !> \anchor ess = 0.0 Einleitung Schwebstoff  (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
    real ess(100)
    real ma
-   !> \anchor eantbl  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor eantbl  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real eantbl(100)
-   !> \anchor evkigr = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !> \anchor evkigr = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real evkigr(100)
    real akit_1(1000), ihemm
    real tpki(1000),tpgr(1000),tpbl(1000)
@@ -411,16 +407,13 @@ module QSimDatenfelder
    !> \anchor pbiobl ! unbenutzt
    real pbiobl
    real saettk, saettg, saettb
-   !> \anchor it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
+   !> \ref it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
    integer, dimension(azStrs,ialloc2)            :: it_h
    !> \anchor ij Nummer des zeitschrittes während eines Tages (unbenutzt in 3D)
    integer            :: ij
    !> \anchor isim_end von strahlg ermitteltes Simulationsende=1, von Algenroutinen für Ausgabe verwendet (unbenutzt in 3D)
    integer            :: isim_end
    real, dimension(1,50,1000)            :: hCChlkz, hCChlbz, hCChlgz
-   !> \anchor caki \anchor cagr \anchor cabl \anchor czoo Kohlenstoffgehalt der Biomassen
-   !!Kiese-,Grün- und Balualgen, Zooplankton ; mgC/mgBio; in ini_algae() konstant gesetzt.
-   ! real  Caki, Cagr, Cabl, CZoo >>> module aparam
    !> \anchor a1Ki \anchor a2Ki \anchor a3Ki
    !! ; in ini_algae() gesetzt
    real  a1Ki, a2Ki, a3Ki
@@ -433,15 +426,15 @@ module QSimDatenfelder
    real, dimension(1000)                 :: sedAlk0, sedalg0, sedalb0       ! sedAlk0 wird nur an k_eps() übergeben.
    real, dimension(1,50,1000)            :: hQ_NKz, hQ_NBz, hQ_NGz
    ! orgc, hnf:
-   !>    \anchor ecsb  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !>    \anchor ecsb  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                 :: ecsb
-   !>    \anchor ebsb = 0.0      ! keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !>    \anchor ebsb = 0.0      ! keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                 :: ebsb
-   !>    \anchor ezind =0.0  keine Einleitung Rotatorien in QSim3D. Siehe dazu auch \ref hüllen.
+   !>    \anchor ezind =0.0  keine Einleitung Rotatorien in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                 :: ezind
-   !>    \anchor echnf eCHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref hüllen.
+   !>    \anchor echnf eCHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                 :: eCHNF
-   !>    \anchor ebvhnf eBVHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref hüllen.
+   !>    \anchor ebvhnf eBVHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real, dimension(100)                 :: ebvhnf
    !>    \anchor hnfmua  hnf-Kontrollausgabe
    !>    \anchor hnfrea  hnf-Kontrollausgabe
@@ -453,12 +446,12 @@ module QSimDatenfelder
    real, dimension(1000)                :: sdbsb
    !>  \anchor bsbcnb bsbCNB
    real, dimension(1000)                :: bsbCNB
-   !>  \anchor drfaes drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
+   !>  \ref drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
    real, dimension(1000)                :: drfaes
    !     bisher implizit:
-   !>  \anchor frfgrs  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !>  \anchor frfgrs  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real    :: frfgrs
-   !>  \anchor fbsgrs = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref hüllen.
+   !>  \anchor fbsgrs = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real    :: fbsgrs
    ! ph:
    real, dimension(100)       :: eph,emw,elf,eca
@@ -504,8 +497,9 @@ module QSimDatenfelder
    real, dimension(100)        :: etempL, ewaerm
    real, dimension(50,1000)    :: dtemp
    !>  \anchor wlage Lage der zugeordneten Wetter-Stationin m ue NN
-   real, dimension(azStrs,1000)    :: Wlage !  anchor Wlage Lage der Wetter-Stationin m ue NN
-   !>  \anchor hws Höhenlage des Wasserspiegels in m ü.NHN. Wird aus \ref wsp der \ref hydraul_rb zugewiesen.
+   real, dimension(azStrs,1000)    :: Wlage !  
+   !> \anchor hws Höhenlage des Wasserspiegels in m ü.NHN. Wird aus \ref wsp 
+   !! der \ref lnk_hydraul_rb zugewiesen.
    real, dimension(azStrs,1000)    :: hWS
    real, dimension(azStrs,1000)    :: htempw
    real, dimension(azStrs,50,1000) :: htempz
@@ -561,7 +555,7 @@ module QSimDatenfelder
    real, dimension(azStrs,1000)   :: hSised
    !> \anchor hcd hCD siehe \ref cd1 und \ref cd2
    real, dimension(azStrs,2,1000) :: hCD
-   !> \anchor sedalg_mq sedalg_mq
+   !> \ref sedalg_mq
    real, dimension(1,1000)         :: sedalg_mq
    !> \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
    real, dimension(1,1000)         :: sedss_mq

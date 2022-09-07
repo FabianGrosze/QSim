@@ -74,6 +74,7 @@ contains
       
       integer              :: i
       character(len=1)     :: sep 
+	  character(2)         :: bckslsh = '\\'
       
       ! read program arguments
       call GETARG(1, cpfad)
@@ -85,7 +86,7 @@ contains
       if (linux) then 
          sep = '/'
       else
-         sep = '\'
+         sep = bckslsh(1:1)
       endif
       
       ! cPfad

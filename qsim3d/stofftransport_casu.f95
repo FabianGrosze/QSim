@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 !> Subroutine stofftransport_casu()
-!! Beschreibung in \ref Transport_casu
+!! Beschreibung in \ref lnk_transport_casu
 subroutine stofftransport_casu()
    use modell
    implicit none
@@ -125,7 +125,7 @@ subroutine stofftransport_casu()
                   print*,'tief,l = 1,3',(rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul),l = 1,3)
                   if (ieck(4) > 0)print*,'tief(ieck(4) = ',rb_hydraul(2+(ieck(4)-1)*number_rb_hydraul) ! nur bei vierecken 4.Knoten
                   print*,'(planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3) = ',  &
-                        (planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3)
+                         (planktonic_variable(n+(ieck(l)-1)*number_plankt_vari),l = 1,3)
                   if (ieck(4) > 0)print*,'planktonic_variable(n+(ieck(4) = '  &
                                         ,planktonic_variable(n+(ieck(4)-1)*number_plankt_vari) ! nur bei vierecken 4.Knoten
                   print*,'planktonic_variable_name',n, planktonic_variable_name(n)
@@ -170,45 +170,19 @@ subroutine stofftransport_casu()
    return
 end subroutine stofftransport_casu
 !----+-----+----
-!
-!> \page Transport_casu Transportinformationen von casu (Strombahnursprünge)
-!! Die Transportinformationen werden von holen_trans() in die \subpage hydraul_rb eingelesen.\n
-!! Transportinformationen für den Stofftransport bestehen aus den
-!! Ecknummern der vier(drei) Knoten des Elements aus dem die Strombahn kommt und je
-!! 4(3) Wichtungsfaktoren, die angegeben, welcher Anteil vom dazugehörenden Knoten kommt.
-!! Die Summe der Wichtungsfaktoren muss immer genau 1.0 sein.\n
-!! Dies entspricht der Angabe des Strombahnursprungs (in einem Elementlokalen Koordinatensystem)
-!! und konstruiert auf diese Weise eine Euler-Lagrange Methode (ELM) für die Advektion.\n
-!! \f[
-!! C^{n+1}_k = {\sum_{i=1}^{3(4)}} C_{Nr(i)}^n \cdot  w(i)
-!! \f]
-!! Bisher ist nur Advektion realisiert worden, die Diffusion steht bisher noch aus.
-!! Es ist geplant, dies im Zusammenhang mit der Messung und Kalibrierung der realen Diffusivitäten
-!! und der Ermittlung der numerischen Diffusivität durchzuführen.\n
-!! mit <table >
-!!<tr><th> Formelzeichen </th><th> Variablen-Name </th><th> Beschreibung </th><th> Dimension </th><th> Wertebereich </th></tr>
-!!<tr><td> \f$ C \f$  </td><td> planktonic_variable \ref tiefengemittelte_planktische_variable </td><td> als Konzentration modellierte planktische Variable </td><td>  </td><td>  </td></tr>
-!!<tr><td> \f$ i \f$  </td><td> - </td><td> Zähler über alle Ecken des Elements </td><td> - </td><td> 1-3(4) </td></tr>
-!!<tr><td> \f$ n \f$  </td><td> - </td><td> Zeitschritt-Zähler </td><td> - </td><td> - </td></tr>
-!!<tr><td> \f$ k \f$  </td><td> - </td><td> Konzentrations-Nummer </td><td> - </td><td> - </td></tr>
-!!<tr><td> \f$ Nr(i) \f$  </td><td> ieck() </td><td> globle Knotennummer der Elementecke </td><td> - </td><td> </td></tr>
-!!<tr><td> \f$ w(i) \f$  </td><td> wicht() </td><td> Wichtungsfaktor (d.h. elementlokale Koordinaten des Strombahnursprungs im Ursprungselement) </td><td> - </td><td> 0-1 </td></tr>
-!!</table>\n
-!! \n\n
-!! Es wurde die Möglichkeit geschaffen, durch \subpage kombitransi die hydraulischen Voraussetzungen für die Gütesimulation abschnittsweise zu simulieren.
-!! D. h.: Der Hydraulische Treiber rechnet das Jahr z. B. monatsweise in 12 parallelen Rechenläufen (mit wenigen Tagen Überlappung),
-!! deren Ergebnisse dann im nachhinein zu einem kontinuerlichen Datensatz der Transportinformationen kombiniert werde.
-!! \n\n
-!! Zum Lesen des Netzes aus dem Modellverzeichnis bedient sich netz_lesen() der Subroutinen points(), elements() und edges()
-!! \n\n
-!! aus Datei stofftransport_casu.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
-!> subroutine holen_trans(nt) , mit nt - Zeitschrittzähler,
-!! holt die Transportinformationen für einen Zeitschritt mittels der c++-Funktion trans_read() aus Datei trans_read.c.\n
-!! In den Dateien aus dem Verzeichnis transinfo, deren Name mit t beginnt und danach den Zeitpunkt als Zahl enthält,
-!! ist der Strombahnursprung, die Wasserspiegellage und der Geschwindigkeitsbetrag abgelegt.\n
-!! holen_trans() macht daraus die \ref hydraul_rb Geschwindigkeitsbetrag, Wassertiefe und Wasserspiegellage.\n
+
+!> Die subroutine holen_trans(nt) , mit nt - Zeitschrittzähler,
+!! holt die Transportinformationen für einen Zeitschritt mittels der 
+!! c++-Funktion trans_read() aus Datei trans_read.c.\n
+!! In den Dateien aus dem Verzeichnis transinfo, deren Name mit t beginnt und 
+!! danach den Zeitpunkt als Zahl enthält, ist der Strombahnursprung, 
+!! die Wasserspiegellage und der Geschwindigkeitsbetrag abgelegt.\n
+!! holen_trans() macht daraus die \ref lnk_hydraul_rb Geschwindigkeitsbetrag, 
+!! Wassertiefe und Wasserspiegellage.\n
 !! holen_trans() wird nur aus stofftransport() heraus von Prozess 0 aufgerufen
-!! \n\n aus Datei stofftransport.f95; zurück:\ref Transportinformationen
+!! \n\n 
+!! aus Datei stofftransport_casu.f95; zurück:\ref lnk_transport_numerik
+
 subroutine holen_trans(nt)
    use modell
    implicit none
@@ -475,14 +449,14 @@ subroutine transinfo_sichten()
                                                            ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
                time_offset = zeitpunkt !! Offset vom Referenzjahr zum transinfo/meta Zeitursprung
                write(time_offset_string,'(I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr")')  &
-                    tag,monat,jahr,stunde,minute,sekunde
+                     tag,monat,jahr,stunde,minute,sekunde
             end if ! io_error.ne.0
          end if ! not vorhanden
       end if ! not #
    end do ! Zeile in /transinfo/meta'
    if ( .not. offsetvorhanden) then
       write(fehler,*)'Fehler in der Datei ', trim(dateiname), ' beim Lesen der Verschiebung', &
-            ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
+                     ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
       call qerror(fehler)
    end if ! offset nicht vorhanden
    ! write(*,'(A,2x,F15.2,2x,I9)')'time-offset=',real(time_offset),time_offset
@@ -518,11 +492,11 @@ subroutine transinfo_sichten()
    zeitpunkt = transinfo_zeit(transinfo_zuord(1))
    call zeitsekunde()
    write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-        trim(transinfo_datei(transinfo_zuord(1)))
+                trim(transinfo_datei(transinfo_zuord(1)))
    zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    call zeitsekunde()
    write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-        trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
+                       trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
    !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
    print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
    return
@@ -530,104 +504,13 @@ subroutine transinfo_sichten()
    228 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit ",A,2x,A)
 end subroutine transinfo_sichten
 !----+-----+----
-!
-!
-!! in der Subroutine transport.f90 (QSim v12.40) werden 70 Größen transportiert. Sprunglabel 911 goto ktrans \n
-!! Die folgende Liste enthält nun die Angaben, von welcher Subroutine/Modul die jeweiligen planktischen Konzentrationen geändert werden.
-!! <table >
-!! <tr><th> Sprunglabel </th><th> Variablenname </th><th> Beschreibung    </th><th> Subroutine    </th></tr>
-!!
-!! <tr><td> 600 </td><td> tempw    </td><td> Temperatur          </td><td> temperw_huelle()    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 602 </td><td> vo2       </td><td> Sauerstoffgehalt       </td><td> oxygen    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 604 </td><td> vNH4       </td><td> Ammonium          </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td> 606 </td><td> vNO2       </td><td> Nitrit          </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td> 608 </td><td> vNO3       </td><td> Nitrat          </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td> 610 </td><td> vx0       </td><td> Nitrosomonas        </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td> 612 </td><td> vx02       </td><td> Nitrobacter         </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td> 532 </td><td> gesN       </td><td> GesamtStickstoff       </td><td> ncyc_huelle()       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 534 </td><td> gesP       </td><td> GesamtPhosphat??       </td><td> po4s       </td></tr>
-!! <tr><td> 616 </td><td> gelP       </td><td> ortho-Phosphat       </td><td> po4s       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 614 </td><td> Si       </td><td> Silikat          </td><td> silikat    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 618 </td><td> obsb       </td><td> biochemischer Sauerstoffbed.    </td><td> orgC       </td></tr>
-!! <tr><td> 672 </td><td> CD(1       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 674 </td><td> CD(2       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 676 </td><td> CP(1       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 678 </td><td> CP(2       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 680 </td><td> CM       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 682 </td><td> BAC       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 684 </td><td> O2BSB    </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 686 </td><td> BL01       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 688 </td><td> BL02       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 690 </td><td> vbsb       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 692 </td><td> vcsb       </td><td> ??             </td><td> orgC       </td></tr>
-!! <tr><td> 508 </td><td> fbsgr    </td><td> ??             </td><td> orgC          </td></tr>
-!! <tr><td> 510 </td><td> frfgr    </td><td> ??             </td><td> orgC          </td></tr>
-!! <tr><td> 512 </td><td> nl0       </td><td> Verhältnis von Stickstoff zu Kohlenstoff in organischem Material   </td><td> orgC          </td></tr>
-!! <tr><td> 514 </td><td> pl0       </td><td> Phosphor?             </td><td> orgC          </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 622 </td><td> chla       </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 624 </td><td> chlaki    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 626 </td><td> chlagr    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 648 </td><td> agbcm    </td><td> Biomasse/Kohlenstoff gruen-Algen   </td><td> algaesgr    </td></tr>
-!! <tr><td> 628 </td><td> chlabl    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 632 </td><td> agr       </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 636 </td><td> vkigr    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 638 </td><td> antbl    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 642 </td><td> svhemg    </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td> 664 </td><td> Q_NG       </td><td> Stickstoffanteil der Gruen-Algen    </td><td> algaesgr    </td></tr>
-!! <tr><td> 666 </td><td> Q_PG       </td><td> ??                </td><td> algaesgr    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 658 </td><td> Q_NK       </td><td> Stickstoffanteil der Kiesel-Algen    </td><td> algaeski    </td></tr>
-!! <tr><td> 630 </td><td> aki       </td><td> ??                </td><td> algaeski    </td></tr>
-!! <tr><td> 640 </td><td> svhemk    </td><td> ??                </td><td> algaeski    </td></tr>
-!! <tr><td> 646 </td><td> akbcm    </td><td> Biomasse/Kohlenstoff kiesel-Algen   </td><td> algaeski    </td></tr>
-!! <tr><td> 536 </td><td> SKmor    </td><td> ??                </td><td> algaeski    </td></tr>
-!! <tr><td> 660 </td><td> Q_PK       </td><td> Phosporanteil Kieselalgen       </td><td> algaeski    </td></tr>
-!! <tr><td> 662 </td><td> Q_SK       </td><td> Siliziumanteil Kieselalgen      </td><td> algaeski    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 634 </td><td> abl       </td><td> ??                </td><td> algaesbl    </td></tr>
-!! <tr><td> 644 </td><td> svhemb    </td><td> ??                </td><td> algaesbl    </td></tr>
-!! <tr><td> 650 </td><td> abbcm    </td><td> Biomasse/Kohlenstoff blau-Algen   </td><td> algaesbl    </td></tr>
-!! <tr><td> 668 </td><td> Q_NB       </td><td> Stickstoffanteil der Blau-Algen    </td><td> algaesbl    </td></tr>
-!! <tr><td> 670 </td><td> Q_PB       </td><td> ??                </td><td> algaesbl    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 652 </td><td> akiiv    </td><td> wohl unbenutzt       </td><td> ????       </td></tr>
-!! <tr><td> 654 </td><td> agriv    </td><td> wohl unbenutzt       </td><td> ????       </td></tr>
-!! <tr><td> 656 </td><td> abliv    </td><td> wohl unbenutzt       </td><td> ????       </td></tr>
-!! <tr><td> 500 </td><td> abrzo1    </td><td> wohl unbenutzt       </td><td> ????       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 694 </td><td> CHNF       </td><td> ??             </td><td> HNF       </td></tr>
-!! <tr><td> 696 </td><td> BVHNF    </td><td> ??             </td><td> HNF       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 504 </td><td> ss       </td><td> ORG. UND ANORG. SCHWEBSTOFFE    </td><td> algaeski + SCHWEB    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 502 </td><td> ssalg    </td><td> GESAMTSCHWEBSTOFFE       </td><td> SCHWEB       </td></tr>
-!! <tr><td> 506 </td><td> fssgr    </td><td> ??             </td><td> SCHWEB       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 698 </td><td> zooind    </td><td> Anzahl der Rotatorien      </td><td> konsum    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 518 </td><td> dlarvn    </td><td> ??             </td><td> dreissen       </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 516 </td><td> stind    </td><td> ??             </td><td> ph          </td></tr>
-!! <tr><td> 522 </td><td> mw       </td><td> ??             </td><td> ph       </td></tr>
-!! <tr><td> 524 </td><td> pw       </td><td> ??             </td><td> ph       </td></tr>
-!! <tr><td> 526 </td><td> ca       </td><td> ??             </td><td> ph       </td></tr>
-!! <tr><td> 528 </td><td> lf       </td><td> Leitfähigkeit         </td><td> ph       </td></tr>
-!! <tr><td> 530 </td><td> vh       </td><td> ??             </td><td> ph(vph)    </td></tr>
-!! <tr><td></td></tr>
-!! <tr><td> 537 </td><td> DOSCF    </td><td> ??             </td><td> COLIFORM    </td></tr>
-!! <tr><td> 520 </td><td> coli       </td><td> ??             </td><td> COLIFORM    </td></tr>
-!!</table>
 !> Die suboutine netz_lesen() ließt:\n
-!! Das casu Netz wird mittels der Subroutinen points(), elements() und edges() von den Dateien point, file.elements und edges gelesen. \n
+!! Das casu Netz wird mittels der Subroutinen points(), elements() und edges() 
+!! von den Dateien point, file.elements und edges gelesen. \n
 !! Das Netz von SCHISM wird mit netz_gr3() aus einer ELCIRC .gr3 Datei gelesen.
 !! \n\n
-!! aus Datei module_modell.f95 ; zurück zu \ref Netz
+!! aus Datei stofftransport_casu.f95 ; zurück zu \ref lnk_diskretisierung
+
 subroutine netz_lesen()
    use modell
    implicit none
@@ -649,7 +532,8 @@ subroutine netz_lesen()
    endif ! points
 end subroutine netz_lesen
 !----+-----+----
-!> Die suboutine netz_gr3() ließt das Netz aus der GR3-Datei: ## noch nicht implementiert ##
+!> Die suboutine netz_gr3() ließt das Netz aus der GR3-Datei: 
+!! ## noch nicht implementiert ##
 logical function netz_gr3()
    implicit none
    call qerror('netz_gr3 noch nicht implementiert')
@@ -658,19 +542,22 @@ logical function netz_gr3()
 end function netz_gr3
 !----+-----+----
 !> Die suboutine points() ließt die Datei points:
-!! diese enthält die horizontalen Knotenorte, die Knotenhöhen und die Zonen-Nummern der Knoten.\n
+!! diese enthält die horizontalen Knotenorte, die Knotenhöhen und die 
+!! Zonen-Nummern der Knoten.\n
 !! <a href="./exp/points" target="_blank">Beispiel</a> \n
-!! Die Datei points wird von <a href="http://www.wasserimunterricht.de/wyrwa/casu12.html"  target="_blank">casu</a>
+!! Die Datei points wird von 
+!! <a href="http://www.wasserimunterricht.de/wyrwa/casu12.html"  target="_blank">casu</a>
 !! in das transinfo Verzeichnis ausgegeben. \n
-!! generiert wird points auch von casu:out dir t.
+!! Generiert wird points auch von casu:out dir t.
 !! \n\n
 !! Dateiaufbau:\n
-!! In der ersten Zeile steht die Anzahl der Knoten; in den Folgezeilen je ein Knoten.
-!! die ersten drei Zahlen in einer Knotenzeile sind die beiden horizontalen Koordinaten und die Sohlhöhe (x,y,z) \n
-!! danach Folgen Zonennummer und Randnummer;
-!! als letztes ist die horizontale Fläche der Finite-Volumen Zelle aufgeführt, die von dem Knoten repräsentiert wird.
-!! \n\n
-!! aus Datei module_modell.f95 ; zurück zu \ref Netz
+!! In der ersten Zeile steht die Anzahl der Knoten; in den Folgezeilen je ein 
+!! Knoten. Die ersten drei Zahlen in einer Knotenzeile sind die beiden 
+!! horizontalen Koordinaten und die Sohlhöhe (x,y,z). \n
+!! Danach folgen Zonennummer und Randnummer; als letztes ist die horizontale 
+!! Fläche der Finite-Volumen Zelle aufgeführt, die von dem Knoten repräsentiert 
+!! wird. \n\n
+!! aus Datei stofftransport_case.f95 ; zurück zu \ref lnk_diskretisierung
 logical function points()
    use modell
    implicit none
@@ -810,14 +697,16 @@ logical function points()
    return
 end function points
 !----+-----+----
-!> Die suboutine elements() ließt Vermaschung von der Datei
+!> Die subroutine elements() ließt Vermaschung von der Datei
 !! <a href="./exp/file.elements" target="_blank">file.elements</a>.\n
 !! In der ersten Zeile steht die Anzahl der Elemente,
-!! in den folgezeilen steht je ein Element . der erste Integer in der Zeile ist 3 oder 4 und gibt an, ob es
-!! sich um ein Drei- oder Vieleck handelt. Danach folgen 3 oder 4 Knotennummern\n
+!! in den folgezeilen steht je ein Element . der erste Integer in der Zeile ist 
+!! 3 oder 4 und gibt an, ob es sich um ein Drei- oder Vieleck handelt. 
+!! Danach folgen 3 oder 4 Knotennummern \n
 !! ## ACHTUNG ## Knotennummerierung beginnt bei Null
 !! \n\n
-!! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+!! aus Datei stofftransport_casu.f95 ; zurück zu \ref lnk_modellerstellung
+
 logical function elements()
    use modell
    implicit none
@@ -828,7 +717,7 @@ logical function elements()
    element_vorhanden = .false.
    write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'transinfo/file.elements'
    if (errcode /= 0)call qerror('elements writing filename elemente_ failed')
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateiname),' > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(dateiname),' >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('elements writing filename elemente_ failed')
    call system(systemaufruf,system_error)
    !print*,'systemaufruf :',trim(systemaufruf),' system_error=',system_error
@@ -906,7 +795,7 @@ end function elements
 !! 4517  12  0  3763  11.8354  -0.48355  3.87221  2.05119  1.82102  -5.05151e-13  0.498503 0.866888  -1  -1  -1  5\n
 !! ...\n
 !! \n\n
-!! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+!! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
 logical function edges()
    use modell
    character (len = 300) :: dateiname

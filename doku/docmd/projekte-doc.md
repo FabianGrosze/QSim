@@ -18,7 +18,7 @@ Seite gelistet und verlinkt wird, schicken Sie bitte eine E-Mail an
 es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
 ## Laufende Projekte ##
-* DAS-Basisdienst \n
+* __DAS-Basisdienst__ \n
   Die *DAS* ist die Deutsche Anpassungsstrategie and den Klimawandel. 
   Der <a href="das-basisdienst.de/>DAS-Basisdienst „Klima und Wasser“ </a> ist 
   ein operationeller Dienst zur Umsetzung der DAS. Dieser 
@@ -31,7 +31,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   (schima@bafg.de)
   \n\n
 
-* Expertennetzwerk 2.0 \n
+* __Expertennetzwerk 2.0__ \n
   Das Expertennetzwerk beschäftigt sich mit Zukunftsfragen im Bereich Verkehr
   und digitaler Infrastruktur. Es ist ein behörden- und 
   verkehrsträgerübergreifendes Forschungsprogramm des BMDV. Mit QSim werden die 
@@ -43,7 +43,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Ansprechpartnerin: Marieke Frassl (frassl@bafg.de), ...
   \n\n
 
-* Fluxam - Dynamik der Wasser- und Stoffströme in Flüssen – Re-Analyse und 
+* __Fluxam__ - Dynamik der Wasser- und Stoffströme in Flüssen – Re-Analyse und 
   Vorhersage \n
   Ziel des Projektes ist die detaillierte Aufklärung und Abbildung von 
   Herkunft und Dynamik der Wassermassen und des fluviatilen Stofftransports 
@@ -58,10 +58,10 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Remobilisierung im Einzugsgebiet. Modellgestützt wird auch eine Vorhersage 
   von Stoffkonzentrationen angestrebt.
   Ansprechpartnerin: Daniel Schwandt (schwandt@bafg.de), Rike Völpel, 
-  Gerd Hübner, Marieke Frassl, Stefanie Hesse,...
+  Gerd Hübner, Tanja Bergfeld-Wiedemann, Stefanie Hesse, Annika Linkhorst, ...
   \n\n
   
-* Modellierung von Gewässergüte und Nahrungsnetzen in Ästuaren \n
+* Modellierung von __Gewässergüte und Nahrungsnetzen in Ästuaren__ \n
   Die ökologische Modellierung ist ein wertvolles Instrument zur Analyse von 
   Gewässerzuständen und Managementmaßnahmen. Durch die vorgesehene Kopplung 
   von Modellen zur Gewässergüte und zum Nahrungsnetz in Ästuaren wird ein 
@@ -83,7 +83,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
   \n\n
   
-* MUG - Einzugsgebietsweite Integration von Wasser- und Stoffflussmodellen
+* __MUG__ - Einzugsgebietsweite Integration von Wasser- und Stoffflussmodellen
   der BfG \n
   Das Projekt „Einzugsgebietsweite Integration von Wasser- und 
   Stoffflussmodellen der BfG (MUG)“ hat als Ziel, die in der BfG vorhandenen 

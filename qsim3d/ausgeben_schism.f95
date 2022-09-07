@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 !> Ausgabe der Ergebnisse auf schism-Basis
 !! \n\n
-!! aus: ausgeben_schism.f95 ; zurück: \ref Ergebnisse
+!! aus: ausgeben_schism.f95 ; zurück: \ref lnk_ergebnisausgabe
 subroutine ausgeben_schism(itime)
    use modell
    use schism_glbl, only:su2,sv2,tr_el,eta2  &

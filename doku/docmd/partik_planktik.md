@@ -1,8 +1,8 @@
-partikuläre planktische Konzentrationen {#lnk_partik_planktik}
+Partikuläre planktische Konzentrationen {#lnk_partik_planktik}
 ============
 
 ## Bilanzvariablen, die partikulär vorliegen aber als im Wasser gleichverteilte Konzentrationen gerechent werden ##
-Teil von \ref planktische_variablen
+Teil von \ref lnk_var_planktisch
 
 | Formelzeichen/ \n Variablen-Name | Lichtattenuation | sedimentation() | Aufwirbelung | Bilanzroutine | 
 | ------ | --------| -------| --------| ------- | 

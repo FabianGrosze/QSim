@@ -29,7 +29,7 @@
 !! checks for time steps\n
 !! checks for necessary variables
 !! \n\n
-!! aus Datei screen_schism_nc.f95; zurück zu \ref Transport_SCHISM
+!! aus Datei screen_schism_nc.f95; zurück zu \ref lnk_transport_schism
 subroutine screen_schism_nc()
    !subroutine nc_sc_sichten()
    use netcdf
@@ -63,7 +63,7 @@ subroutine screen_schism_nc()
    do while (weiter)
       write(chari,*),i
       write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-      systemaufruf = 'stat '//trim(adjustl(dateiname))//' > /dev/null 2 > /dev/null'
+      systemaufruf = 'stat '//trim(adjustl(dateiname))//' >/dev/null 2>/dev/null'
       call system(trim(systemaufruf),istat)
       if (istat == 0) then
          n_stacks = i

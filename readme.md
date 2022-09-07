@@ -1,3 +1,10 @@
+## 14.09.04
+Refactoring of Code: module for pH
+
+## 14.09.03
+bug fixing:
+* remove output of heavy metals in ErgebT.txt to avoid issues with Gerris.
+
 ## 14.09.02
 bug fixing:
 * correct format for output files

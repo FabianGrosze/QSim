@@ -24,42 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-! \page Datentechnik Informationstechnische Umsetzung und Parallelisierung
-! \page numerik Numerik und Datentechnik
-!> \page Parallelisierung Parallelisierung
-!!!
-!! \section Parallel_Umsatz Parallelisierung der Stoffumsetzungsvorgänge
-!! Die Parallelisierung von T-QSim nutzt den Umstand, dass die mathematischen Formulierungen,
-!! welche die bio-chemischen Stoffumsetzungsvorgänge modellieren, keine Raumgradienten enthalten.
-!! Z.B. ist das Algenwachstum nur vom lokalen Licht-, Nährstoffangebot, Temperatur etc. abhängig.
-!! Die Verhältnisse im Nachbarwassertropfen "interessieren" die Alge im hiesigen Wassertropfen nicht.\n\n
-!! Somit ist es möglich, die Berechnungsstützstellen (Knoten) einfach fortlaufend anhand ihrer Nummer auf die parallelen Prozesse
-!! zu verteilen. Umständliche Gebietszerlegungen, wie sie bei der Parallelisierung von Approximationsverfahren zur Lösung
-!! partieller Differentialgleichungen (die Raumgradienten enthalten) erforderlich sind, werden nicht benötigt.\n\n
-!!
-!! \section Parallel_Transport Parallelisierung der Transportvorgänge
-!! T-QSim nutzt die Stofftransport-Lösung des vorgeschalteten hydraulischen Treibers indem es die Transportinformation
-!! anhand einer Matrix einließt. Diese wird dann auf alle Vektoren multipliziert,
-!! welche die Diskretisierungen des Felder jeweils einer Gütevariablen enthalten.
-!! Diese Matrix-Vektor-Multiplikation könnte evt. mit PETSc parallelisiert werden.\n\n
-!! Das o.g. Verfahren ist auf explizite Zeitdiskretisierungen beschränkt.
-!! Implizite Diskretisierungen würden das Lösen von linearen Gleichungssystemen erfordern, was bei der Vielzahl
-!! an transportierten Variablen-Feldern in einem Gütemodell sehr aufwändig wäre.
-!!
-!! \section Parallel_IO Ein- und Ausgabe
-!! Die Datenein- und -ausgabe erfolgt in T-QSim zentral. Nur der Prozess 0 beschäftigt sich mit Lesen/Schreiben
-!! Alle anderen parallelen Prozesse bekommen Daten nur via MPI (Message-Passing-Interface).\n\n
-!! Die Subroutinen eingabe() un initialisieren() werden daher auch nur von Prozess 0 aufgerufen.
-!! Die Verteilung der Variablenfelder auf die multiplen Prozesse erfogt wie im
-!! Abschnitt \ref Datenstruktur erläutert.
-!! \n
-!! Variablendefinition der für die Parallelisierung benötigten Datenfelder in module_modell.f95\n
-!! \n aus Datei parallel.f95; zurück: \ref index
-!----+-----+----
-!> parallel_ini()\n
-!! startet mpi
-!! \n\n
-!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
+
 subroutine parallel_ini()
    use modell
    use QSimDatenfelder
@@ -81,7 +46,7 @@ end subroutine parallel_ini
 !! ruft die subroutinen auf, die auf allen Processoren >0
 !! die jeweiligen Felder allokieren und füllen.
 !! \n\n
-!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
+!! aus Datei parallel.f95; zurück: \ref lnk_datenstruktur
 subroutine parallel_vorbereiten()
    use modell
    use QSimDatenfelder
@@ -129,7 +94,7 @@ subroutine parallel_vorbereiten()
       print*,'meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal = '  &
             , meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal
       print*,'nach randbedingungen_parallel(): tempw,chla = ',                    &
-            planktonic_variable_p( 1+(kontroll_lokal-1)*number_plankt_vari),      &
+            planktonic_variable_p( 1+(kontroll_lokal-1)*number_plankt_vari),  &
             planktonic_variable_p(11+(kontroll_lokal-1)*number_plankt_vari)
    else ! keine kontrollausgabe
       print*,'meinrang,part,number_plankt_vari = ',meinrang,part,number_plankt_vari
@@ -144,7 +109,7 @@ end subroutine parallel_vorbereiten
 !> zentrale Modellwerte an alle Prozesse verteilen.\n
 !! und part berechnen. d.i. die Anzahl der Knoten, die jeder Prozess erhält.
 !! \n\n
-!! aus Datei parallel.f95; zurück: \ref lnk_Datentechnik
+!! aus Datei parallel.f95; zurück: \ref lnk_datenstruktur
 subroutine modell_parallel()
    use modell
    use QSimDatenfelder

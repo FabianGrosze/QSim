@@ -5,33 +5,31 @@ Sauerstoff - Prozesse {#lnk_sauerstoff_prozesse}
 Folgende Prozesse führen in QSim zu einer Veränderung im 
 Sauerstoffgehalt:
 
-<!-- von folgender Liste die Links püfen, ob sie noch irgendwo anders im Code
-auftauchen und ggf. mit neuem ersetzten, danach Kommentare löschen -->
-* die Sauerstoffproduktion durch die [Photosyntheseleistungen von 
-  Kiesel-, Grün- und Blaualgen](\ref lnk_o2_alge_prod) und 
-  [Makrophyten] (\ref lnk_o2_makrophyt)
-  <!-- Link ehemals: prodO2alg und mphyt() und albenth() -->
-* der Sauerstoffverbrauch durch die [Respiration von Kiesel-, Grün- und 
-  Blaualgen] (\ref lnk_o2_alge_resp) und [Makrophyten](\ref lnk_o2_makrophyt)
-  <!-- Link ehemals: Respirationalgen -->
-* der Sauerstoffverbrauch durch mikrobielle [Oxidation organischer 
-  Kohlenstoffverbindungen] (\ref lnk_o2_corg)
-  <!-- Link ehemals: BSB -->
-* der [Sauerstoffverbrauch durch die Nitrifikation] (\ref lnk_o2_nitrif) in 
+- die Sauerstoffproduktion durch die 
+  [Photosyntheseleistungen von Kiesel-, Grün- und Blaualgen](\ref lnk_o2_prod_phyto) 
+  und [Makrophyten](\ref lnk_o2_makrophyt) \n
+  
+- der Sauerstoffverbrauch durch die 
+  [Respiration von Kiesel-, Grün- und Blaualgen](\ref lnk_o2_resp_phyto) und 
+  [Makrophyten](\ref lnk_o2_makrophyt)
+  
+- der Sauerstoffverbrauch durch mikrobielle 
+  [Oxidation organischer Kohlenstoffverbindungen](\ref lnk_o2_corg)
+  
+- der [Sauerstoffverbrauch durch die Nitrifikation](\ref lnk_o2_nitrif) in 
   der Wassersäule 
-  <!-- Link ehemals: Stickstoff -->
-* der Sauerstoffverbrauch durch die [Respiration des Zooplanktonplanktons 
-  (Rotatorien)](\ref lnk_o2_zoop) und [der benthischen Filtrierer (Dreissena)]
-  (\ref lnk_o2_dreissena)  
-  <!-- Link ehemals: konsum(), dreissen() -->
-* der [Sauerstoffverbrauch im Sediment] (\ref lnk_o2_sediment)
-  <!-- Link ehemals: SedFluxO2 -->
+  
+- der Sauerstoffverbrauch durch die 
+  [Respiration des Zooplanktonplanktons (Rotatorien)](\ref lnk_o2_resp_zoop) und 
+  [der benthischen Filtrierer (Dreissena)](\ref lnk_o2_dreissena)  
+  
+- der [Sauerstoffverbrauch im Sediment](\ref lnk_o2_sediment)
 
 
 # Bilanzgleichung 
 
-Die vollständige Bilanzgleichung für die Änderung des Sauerstoffgehaltes *O_2* 
-lautet:
+Die vollständige Bilanzgleichung für die Änderung des Sauerstoffgehaltes 
+\f$O_2\f$ lautet:
 
 \f[ 
 	\frac{dO_2}{dt} = k_{2,OB} \cdot (O_{2,Saett} - O_2) - BSB - 
@@ -39,6 +37,7 @@ lautet:
 	\sum_{j = 1}^{3}\Delta O_{Ab,j}	- Delta O_{rot} - \Delta O_{drs} + 
 	\frac{JO_2}{h}
 \f]
+
 <!-- \Delta O_{Sed} bzw. JO_2 ist momentan ausgeschaltet -->
 
 <!--       if(nkzs(ior).eq.1)goto 190 \n
@@ -49,7 +48,7 @@ lautet:
      &-rO2HNF(ior)                                                      \n
  \n\n -->
 
-\f$ *O_2* \f$:    Sauerstoffgehalt im Wasser [\f$ g O_2 m^-3 \f$] \n
+\f$ O_2 \f$:    Sauerstoffgehalt im Wasser [\f$ g O_2 m^-3 \f$] \n
 \f$ k_{2,OB} \f$: Sauerstoffänderungsrate für den physikalischen 
                   Sauerstoffeintrag bzw. -austrag über die Gewässeroberfläche
 				  [d^{-1}] \n
@@ -71,7 +70,8 @@ lautet:
 \f$ JO_2 \f$:     Sauerstofffluss in das Sediment [\f$ g m^{-2} d^{-1} \f$] \n
 \f$ h \f$:        mittlere Wassertiefe [m] \n
 
-# Austausch über die Gewässeroberfläche
+
+# Austausch über die Gewässeroberfläche {#lnk_o2_oberflaechenaustausch}
 Gewässer können an der Gewässeroberfläche Sauerstoff an die Luft abgeben, oder 
 aus ihr aufnehmen.
 
@@ -90,7 +90,7 @@ Die Sauerstoffsättigungskonzentration \f$ O_{2,Saett} \f$ ist temperaturabhäng
 und wird wie folgt abgeschätzt:
 
 \f[
-   \f$ O_{2,Saett} \f$ = 14,603 - 0,40215 \cdot T + 0,007687 \cdot T^2 - 
+   O_{2,Saett} = 14,603 - 0,40215 \cdot T + 0,007687 \cdot T^2 - 
    0,0000693 \cdot T^3
 \f]
 <!-- #mf: Gleichung stimmt, siehe oxygen.f90, Z.112 f) -->
@@ -109,7 +109,7 @@ die Formel nach Wolf(1972) verwendet:
 
 Die Sauerstoffänderungsrate *k_{2,OB}* für den physikalischen Sauerstoffeintrag 
 bzw. -austrag über die Gewässeroberfläche wird über den Stricklerbeiwert *K_{St}*, 
-die Fließgeschwindigkeit *\nu* und die mittlere Wassertiefe *h* berechnet. Sie 
+die Fließgeschwindigkeit \f$\nu\f$ und die mittlere Wassertiefe *h* berechnet. Sie 
 hat die Dimension einer Geschwindigkeit. Wolf (1972) gibt zur Berechnung die 
 folgende empirische Formel an:
 \f[ 
@@ -117,7 +117,7 @@ folgende empirische Formel an:
 \f]
 
 <!-- Code: bbeiw = ((3.+40./rau(ior))*abs(vmitt(ior))/tiefe(ior)**2)+0.5/tiefe(ior) -->
-                                           
+  
 mit 
 \f$ k_{2,OB} \f$: Sauerstoffänderungsrate für den physikalischen 
                   Sauerstoffeintrag bzw. -austrag über die Gewässeroberfläche
@@ -126,31 +126,35 @@ mit
 \f$ \nu \f$: Fließgeschwindigkeit [\f$ m s^{-1} \f$] \n
 \f$ h \f$: mittlere Wassertiefe [\f$ m \f$] \n
 
+
 ## Alternative 
 Als Alternative kann die Belüftungsformel von MELCHING und FLORES (1999) 
 angewählt werden 
 
-(iphy = 2)              \n  
-    81 FN = 1./RAU(ior) \n
+     (iphy = 2)              \n  
+       81 FN = 1./RAU(ior) \n
        G = 9.81 \n
        UST = ((FN*G**0.5)/tiefe(ior)**0.166667)*abs(VMITT(ior)) \n
        Slope = UST**2/(g*Tiefe(ior)) \n
        Breite = flae(ior)/tiefe(ior) \n
-       bbeiw = (142.*(abs(vmitt(ior))*Slope)**0.333)/((tiefe(ior)**0.66)*(Breite**0.243))             \n                
+       bbeiw = (142.*(abs(vmitt(ior))*Slope)**0.333)/((tiefe(ior)**0.66)*(Breite**0.243))            
+
 \f[ 
    k_l = ...
 \f]
 \f$ k_l \f$: Belüftungsgeschwindigkeit Wasserbewegung  [m/d]
 
-\n
-........BELUEFTUNGSBEIWERT NACH HAJEK,NEUMANN,BISCHOFSBERGER IN     \n   
-   73 BBEIw = (3+40./RAU(ior))*(abs(VMITT(ior))**0.7+0.5*tiefe(ior)**0.7)/tiefe(ior)**1.7   \n                              
- \n
+
+........BELUEFTUNGSBEIWERT NACH HAJEK,NEUMANN,BISCHOFSBERGER IN    
+ 
+      73 BBEIw = (3+40./RAU(ior))*(abs(VMITT(ior))**0.7+0.5*tiefe(ior)**0.7)/tiefe(ior)**1.7   \n                              
+
 
 ## Windeinfluss
 
 Der Windeinfluss auf die Belüftung wird berücksichtigt, wenn er mittels 
 (iphyw != 0) angewählt wurde: \n
+
 <!-- #mf: was ist mit iphy ? (iphyw gilt nur für 3D, oder? -->
 
 Die gemessene Windgeschwindigkeit in der Höhe der Messung wird in eine 
@@ -174,7 +178,7 @@ Windgeschwindigkeit 10 m über der Wasseroberfläche umgerechnet:
 Im Falle der Nichtberücksichtigung des Windes wird \f$ k_w = 0 \f$ gesetzt.
 
 
-# Sauerstoffproduktion durch die Photosyntheseleistungen von Algen {#lnk_o2_alge_prod}
+# Sauerstoffproduktion durch die Photosyntheseleistungen von Algen {#lnk_o2_prod_phyto}
 
 Die Sauerstoffproduktion durch die Photosyntheseleistungen von Algen 
 berücksichtigt den photosynthetischen Quotienten opkima (etc) und den 
@@ -204,7 +208,7 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 
 
 
-# Sauerstoffverbrauch durch die Respiration von Algen  {#lnk_o2_alge_resp}
+# Sauerstoffverbrauch durch die Respiration von Algen  {#lnk_o2_resp_phyto}
 
 <!-- im Dokuport war bisher ein Codeschnipsel eingefügt:
 !> \page Respirationalgen Respiration der Gruen-, Kiesel-, und Blaualgen
@@ -237,8 +241,9 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 -->
 
 
-# Produktion und Respiration durch Makrophyten {#lnk_o2_makrophyt} 
-*some text*
+# Produktion und Respiration durch Makrophyten {#lnk_o2_makrophyt}
+
+Hier steht etwas Text. tralalala
 
 
 # Sauerstoffverbrauch durch mikrobielle Oxidation organischer Kohlenstoffverbindungen {#lnk_o2_corg} 
@@ -247,7 +252,8 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 # Sauerstoffverbrauch durch Nitrifikation {#lnk_o2_nitrif} 
 *some text*
 
-# Sauerstoffverbrauch durch Zooplanktonplanktonrespiration (#lnk_o2_zoop)
+ 
+# Sauerstoffverbrauch durch Zooplanktonplanktonrespiration {#lnk_o2_resp_zoop}
 *some text*
 <!-- Link Unterseite ehemals: Zooplanktonrespiration --> 
 
@@ -258,11 +264,10 @@ Verhältnis von agrno3(ior)/agrnh4(ior)
 !!      zooro2(ior) = vo2leb \n
 -->
 
-
-# Sauerstoffverbrauch durch benthischen Filtrierer (Dreissena) (#lnk_o2_dreissena)
+# Sauerstoffverbrauch durch benthischen Filtrierer (Dreissena) {#lnk_o2_dreissena}
 *some text*
 
-# Sauerstoffverbrauch im Sediment (#lnk_o2_sediment)
+# Sauerstoffverbrauch im Sediment {#lnk_o2_sediment}
 *some text*
 
 <!-- oder Sauerstoffaustausch mit dem Sediment -->
@@ -309,21 +314,26 @@ und der Reynoldszahl *Re*:
   Re = \frac{Q}{B_{Wehr}} \cdot 1,143 \cdot 10^6
 \f]
 
-*H_{Wehr}*: Fallhöhe [m] (Differenz zwischen dem Wasserspiegel im Ober- und 
-            Unterwasser) \n
-*B_{Wehr}*: Wehrbreite [m] \n
-*Q*:        Abfluss [m^{-3} s^{-1}] \n
+\f$ H_{Wehr} \f$: Fallhöhe [m] (Differenz zwischen dem Wasserspiegel im Ober- 
+                  und Unterwasser) \n
+\f$ B_{Wehr} \f$: Wehrbreite [m] \n
+\f$ Q \f$:        Abfluss [m^{-3} s^{-1}] \n
 
 Die temperaturabhängigen Größen sowie die Beschreibung der Temperaturabhängigkeit
 sind in folgender Tabelle zusammengefasst:
 
 Tabelle XX: Temperaturabhängige Größen und Beschreibung der Temperaturabhängigkeit 
 im Sauerstoffbaustein
+
 <!-- #mf: die Tabelle macht für mich keinen Sinn, weil die Größen oben anders
 berechnet werden; in Code und Kurzdoku recherchieren -->
-| Größen (G)            |  |
+
+| Größen (G) |     |
+| ---------- | --- |
 | \f$ k_{2,OB} \f$      | \f$ f(T) = 1,024^{(T - 20)}   \f$ |
-| \f$ \alpha_{Wehr} \f$ | \f$ f(T) = {1 + 0,046 \cdot T)/1,69 \f$ |
+| \f$ \alpha_{Wehr} \f$ | \f$ f(T) = (1 + 0,046 \cdot T)/1,69 \f$ |
+
+
 
 # QSim-Veröffentlichungen, zum Sauerstoff-Baustein:
 * [Becker et al. 2009. Modelling the effects of thermal stratification on the 
@@ -334,7 +344,6 @@ berechnet werden; in Code und Kurzdoku recherchieren -->
   regulated rivers Moselle and Saar: modelling the influence of benthic
   filter feeders on phytoplankton</a>\n 
 
-!! \n\n
 
 Textquelle: sauerstoff-prozess.md; Codesource: oxygen.f90; 
 zurück: \ref lnk_sauerstoff

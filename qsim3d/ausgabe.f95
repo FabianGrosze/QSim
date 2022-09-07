@@ -24,100 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Ergebnisse Ergebnisse ausgeben, darstellen und auswerten
-!!
-!! Z. Z. arbeitet QSim-3D noch 2D-tiefengemittelt  (wyrwa mai 2018).
-!!
-!! \section ausgabekonzept Ausgabe-Konzept
-!! Da bei der Simulation mit mehrdimensionalen Modellen sehr große Datenmengen als Ergebnisse anfallen,\n
-!! wird in QSim-3D das Konzept verfolgt,\n
-!! bereits vor dem Programmstart festzulegen, was ausgegeben werden soll:
-!! \n
-!! \section ausgabekonzentrationen Ausgabe-Variablen
-!! Die Datei <a href="./exp/ausgabekonzentrationen.txt" target="_blank">ausgabekonzentrationen.txt</a>
-!! dient dazu, anzugeben, welche Variablen ausgegeben werden sollen.
-!! Für jede Variable gibt es in dieser Datei eine Spalte. Steht in der ersten Zeile ein "x" findet eine Ausgabe statt.\n
-!! Von QSim-3D wird die Datei
-!! <a href="./exp/ausgabekonzentrationen_beispiel.txt" target="_blank">ausgabekonzentrationen_beispiel.txt</a>
-!! ausgegeben, damit der Nutzer weiß welche Variablen als mögliche Ausgabe verfügbar sind.
-!! Nach "Ankreuzen" in der ersten Spalte kann diese Datei als Eingabe verwendet werden.\n
-!! Diese Variablen-Auswahl wirkt sich sowohl auf die Ausgabe von \ref ganglinienausgabe als auch
-!! auf die Ausgabe von \ref mehrdimausgabe aus
-!! \n
-!! \section ganglinienausgabe Ganglinien an einzelnen Knoten
-!! Mit der Datei <a href="./exp/ganglinien_knoten.txt" target="_blank">ganglinien_knoten.txt</a>
-!! wird angegeben, an welchen Knoten eine Ganglinie ausgegeben werden soll.
-!!\n
-!! <i> Dabei bitte beachten, dass Knotennummern in casu, Paravies und Janet ab 0 zählen\n
-!! in QSim-3D aber ab 1 </i>
-!! \n
-!! So entsteht am Ende des Berechnungslaufs im Modellverzeichnis ein Unterverzeichnis "ganglinien".\n
-!! Dort ist für jeden gewählten Knoten eine mit "g" beginnende Datei abgelegt
-!! <a href="./exp/g38503.txt" target="_blank">Beispiel g38503.txt</a>,\n
-!!! welche mit <a href="http://voss-mod02/wiki/doku.php?id=gnuplot" target="_blank"> gnuplot</a>
-!! visualisiert werden kann.
-!! \n
-!! \section mehrdimausgabe mehrdimensionale Felder zu einzelnen Zeitpunkten
-!! Mittels der Datei <a href="./exp/ausgabezeitpunkte.txt" target="_blank">ausgabezeitpunkte.txt</a>
-!! wird angegeben, zu welchen Zeitpunkten mehrdimensionale Felder ausgegeben werden sollen.\n
-!! Im Verlauf der Berechnung werden diese dann im Modellverzeichnis (siehe \ref Datenmodell) im
-!! .vtk-Format abgelegt. Der Dateiname (z. B. ausgabe_734850.vtk) enthält den Zeitpunkt
-!! als ganzahligen Integer-Wert in Sekunden. Der Ursprung dieser Sekundenzählung ist in der
-!! Datei meta im traninfo-Verzeichnis (\ref Transportinformationen) festgelegt. Die Bildschirm-Ausgabe
-!! von QSim-3D gibt für jeden Zeitpunkt das Datum zusammen mit dem Sekundenzähler aus.
-!! \n
-!! Das .vtk-Format dient der Visualisierung mit
-!! <a href="http://www.visitusers.org/index.php?title=Main_Page" target="_blank">VisIt</a> oder
-!! <a href="http://voss-mod02/wiki/doku.php?id=paraview" target="_blank">paraview</a>.\n
-!! netCDF-Formate sind für unstrukturierte Netze noch nicht praktikabel.
-!! \n
-!! \section Schnitte
-!!
-!! \subsection laengsschnitt (Linienausgabe)
-!! Das Programm "laengsschnitt" ermöglicht es, auf der Basis der \ref ganglinienausgabe von QSim-3D Ergebnissen, einen
-!! Schnitt entlang einer horizonzalen Linie zusammenzusetzen; zumeist handelt es sich dabei um Längsschnitte
-!! entlang der Flußachse. Voraussetzung ist es, dass alle Punkte der Linie zur Ganglinienausgabe angewählt wurden.
-!! Diese Punkte werden nicht daraufhin überprüft, ob sie im Netz zusammenhängend (jeweils nur von einer Elementkante verbunden)
-!! sind.\n
-!! Dazu ließt das externe Programm "laengsschnitt" die Datei <a href="./exp/kilonummer" target="_blank">kilonummer</a>,
-!! in der je einer Abstandskoordinate (Flußkilometrierung) eine Punktnummer zugeordnet ist.\n
-!! Zu allen Punktnummern in kilonummer müssen im Unterverzeichnis "ganglinien" Dateien mit Ganglinien-Ergebnissen vorliegen.
-!! Aus den dort vorgefundenen Zeitpunkten kann der Benutzer dann einen wählen, der in die Datei
-!! <a href="./exp/schnittig" target="_blank">schnittig</a> ausgegeben wird.\n
-!! <a href="./taz/laengsschnitt_source.taz">laengsschnitt Programm-Quelle</a>\n
-!!
-!! \subsection Querschnitte (Flux-Ermittlung)
-!! Zur Durchflussermittlung können Querschnitte spezifiziert werden:\n
-!! Wenn die Datei <a href="./exp/quer.txt" target="_blank">schnitt.txt </a> im Modellverzeichnis vorhanden ist, werden
-!! Querschnitte ausgewertet.
-!! \n\n
-!! Dazu werden die auf schnitt.txt angegebenen Punktfolgen auf Zusammenhang
-!! (Aufeinande folgende Knoten sind durch jeweils eine Elementkante verbunden)
-!! von der Subroutine querschnitt_lesen() geprüft.
-!! Dabei wird auch geprüft, ob der Querschnitt am Rand anfängt und endet.
-!! \n\n
-!! Die Fluss-Ermittlung bewerkstelligt die Subroutine querschnitt_flux() durch Aufruf von flux().
-!! Es wird der Volumenstrom des Wassers und der Massenfluss aller \ref ausgabekonzentrationen ermittelt.
-!! Die Ausgabe der Flux-Ermittlung wird im Unterverzeichnis "ganglinen" abgelegt. Die Dateien beginnen mit dem Buchstaben "q"
-!! und sind in der Reihenfolge nummeriert, in der Die Querschnitte in "schnitt.txt" enthalten sind.
-!! Diese Ausgabe wird von der Subroutine ganglinien_schliessen() mit erledigt.
-!!
-!! \subsection Randflüsse
-!! Um Volumen- und Massenströme über einzelne Ränder ermitteln zu können, müssen zunächst die Knoten eines Randes in eine
-!! zusammenhängende Folge (aufeinande folgende Knoten sind durch jeweils eine Elementkante verbunden) gebracht werden.
-!! Dies übernimmt die Subroutine rand_zusammenhang().
-!! Die Fluss-Ermittlung bewerkstelligt die Subroutine rand_flux().
-!! Die Ausgabe der Rand-Flux-Ermittlung wird im Unterverzeichnis "ganglinen" abgelegt.
-!! Die Dateien beginnen mit dem Buchstaben "r", gefolgt von der Randnummer.
-!! Diese Ausgabe wird von der Subroutine ganglinien_schliessen() mit erledigt.
-!!
-!! \section sonstiges
-!! - Es wurde eine Abschätzung für die \subpage numdiff implementiert.
-!! \n\n
-!! zurück: \ref lnk_modellstruktur; Quelle: ausgabe.f95 ; siehe auch: \ref Datenmodell
-!> macht nur Verzweigung nach hydraulischem treiber wegen deren unterschiedlichen Datenstrukturen
-!! \n\n
-!! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
+
 subroutine ausgeben()
    use modell
    implicit none
@@ -204,12 +111,10 @@ subroutine tagesmittelwert()
             write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente, summ_ne
             do n = 1,n_elemente ! alle Elemente
                if (cornernumber(n) == 3) then
-                  write(ion,'(4(I8,2x))') &
-                                      cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+                  write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
                end if
                if (cornernumber(n) == 4) then
-                  write(ion,'(5(I8,2x))') &
-                                      cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+                  write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
                end if
             end do ! alle Elemente
             write(ion,'(A)')' '
@@ -274,14 +179,14 @@ subroutine tagesmittelwert()
       tagesanteil = real(deltat)/real(86400)
       do n = 1,knotenanzahl2D  !!!!!!!!!!!  mittelwerte aufsummieren
          transfer_quantity_p(68+(n-1)*number_trans_quant) = transfer_quantity_p(68+(n-1)*number_trans_quant)  &
-                                                            + (planktonic_variable_p(1+(n-1)*number_plankt_vari)  * tagesanteil) ! Wasser-Temperatur Rückgabewert
+                                                          + (planktonic_variable_p(1+(n-1)*number_plankt_vari)  * tagesanteil) ! Wasser-Temperatur Rückgabewert
          transfer_quantity_p(69+(n-1)*number_trans_quant) = transfer_quantity_p(69+(n-1)*number_trans_quant)  &
-                                                            + (benthic_distribution_p(1+(n-1)*number_benth_distr) * tagesanteil) ! Temperatur des Sediments - Rückgabewert
+                                                          + (benthic_distribution_p(1+(n-1)*number_benth_distr) * tagesanteil) ! Temperatur des Sediments - Rückgabewert
          if (rb_hydraul(2+(n-1)*number_rb_hydraul) > 0.02) then ! tief(n)
             transfer_quantity_p(70+(n-1)*number_trans_quant) = transfer_quantity_p(70+(n-1)*number_trans_quant)  &
-                                                               + (rb_hydraul(2+(n-1)*number_rb_hydraul) * tagesanteil) ! TagesSumme Tiefe wenn bedeckt
+                                                             + (rb_hydraul(2+(n-1)*number_rb_hydraul) * tagesanteil) ! TagesSumme Tiefe wenn bedeckt
             transfer_quantity_p(71+(n-1)*number_trans_quant) = transfer_quantity_p(71+(n-1)*number_trans_quant)  &
-                                                               + (tagesanteil) ! Bedeckungsdauer (Tageanteil)
+                                                             + (tagesanteil) ! Bedeckungsdauer (Tageanteil)
          endif
       end do ! alle Knoten
    endif ! heute mittelwertberechnung
@@ -296,7 +201,7 @@ end subroutine tagesmittelwert
 !! die Datei ausgabekonzentrationen_beispiel.txt \n
 !! Die angekreuzten, gewählten Variablen werden sowohl bei den Ganglinien als auch bei den ausgabezeitpunkten verwendet.
 !!\n\n
-!! aus Datei ausgabe.f95 ; zurück zu \ref Modellerstellung
+!! aus Datei ausgabe.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine ausgabekonzentrationen()
    use modell
    implicit none
@@ -732,18 +637,17 @@ subroutine aus_grd()
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
-            write(ion,'(5(I8,2x))') &
-                                n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
+            write(ion,'(5(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
          end if
          if (cornernumber(n) == 4) then
-            write(ion,'(6(I8,2x))') &
-                                n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
+            write(ion,'(6(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
          end if
       end do ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 25-35 cm (46) ausgegeben auf: uedau25.grd'
-      !!!!!!!!!
+      
+      
       write(dateiname,'(2A)')trim(modellverzeichnis),'uedau35.grd'
       ion = 107
       open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
@@ -781,7 +685,7 @@ end subroutine aus_grd
 !----+-----+----
 !> Kontrollausgabe des Netzes\n
 !! \n\n
-!! aus: ausgabe.f95 ; zurück: \ref Ergebnisse
+!! aus: ausgabe.f95 ; zurück: \ref lnk_ergebnisausgabe
 subroutine show_mesh()
    use modell
    implicit none
@@ -990,12 +894,10 @@ subroutine mesh_output(ion)
       write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente, summ_ne
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
-            write(ion,'(4(I8,2x))') &
-                                cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
+            write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
          end if
          if (cornernumber(n) == 4) then
-            write(ion,'(5(I8,2x))') &
-                                cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
+            write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
          end if
       end do ! alle Elemente
       write(ion,'(A)')' '

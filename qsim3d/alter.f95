@@ -24,24 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Aufenthaltszeit Aufenthaltszeit
-!! Alterung des Wasser zur Aufenthaltsbestimmung
-!! \n
-!! Altersberechnung nach Shen & Wang 2007 doi:10.1016/j.ecss.2007.05.017
-!! \n
-!! \n      !   planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
-!! \n      !   planktonic_variable_name(73)= "         age_decay"
-!! \n      !   planktonic_variable_name(74)= "         age_arith"  - alfa bei Shen&Wang 2007 [in Tagen]
-!! \n      !   planktonic_variable_name(75)= "        age_growth"
-!! \n
-!! Aufenthaltszeit [Tagen] = age_arith / Tracer
-!! \n
-!! Wenn die Datei
-!! <a href="./exp/alter.txt" target="_blank">alter.txt</a>
-!! im Modellverzeichnis vorhanden ist, wird ausschließlich eine Aufenthaltszeitermittlung durchgeführt.
-!! Der restliche Stoffumsatz ist dann ausgeschaltet.
-!!
-!!\n\n zurück: \ref lnk_ueberblick; Code: alter.f95
+
 subroutine alter(i)
    !!    läuft parallel
    use modell
@@ -106,7 +89,7 @@ subroutine alter_lesen()
    alter_nummer = -1
    write(dateiname,'(2A)')trim(modellverzeichnis),'alter.txt'
    open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0)call qerror('alter.txt lässt sich nicht öffnen ???')
+   if (open_error /= 0)call qerror('alter.txt lässt sich nicht öffnen ?')
    do while ( zeile(ion) .and. (wie_altern == 0) )
       if ( .not. leerzeile()) then
          !i=i+1
@@ -268,14 +251,13 @@ subroutine alter_zeitschritt(izeit_gang)
          else ! tracer 0
             entropy = 0.0
          end if ! tracer > 0
-         ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang)  &
-                                                       - entropy
+         ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang) - entropy
       endif ! Knoten nass
       if (j == kontrollknoten) then ! Ausgabe kontrollknoten
          if (tief >= min_tief ) then
             print*,'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = '  &
                   ,c,tief,knoten_flaeche(j)                                                                    &
-                  ,point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
+                   ,point_zone(j),zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
          endif ! Knoten nass
       end if ! kontrollknoten
    end do ! alle j Knoten
@@ -304,12 +286,12 @@ subroutine alter_ausgabe()
       zeitpunkt = r_gang(1,j)
       call zeitsekunde()
       write(zeitig,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-           jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
+            jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
       write(beschriftung1,'(A)')trim(zeitig)
       ! Ganglinienausgabe zonenintegrale auf tracer.txt
       do i = 1,zonen_anzahl
          write(beschriftung1,'(A,"       ",F16.0," ",F16.0," ",F18.2)')trim(beschriftung1)  &
-              ,tr_integral_zone(i,j),vol_integral_zone(i,j),ent_integral_zone(i,j)
+               ,tr_integral_zone(i,j),vol_integral_zone(i,j),ent_integral_zone(i,j)
       end do ! alle i zonen
       write(444444,'(A)')trim(beschriftung1)
    end do ! alle j Zeitpunkte

@@ -27,7 +27,7 @@
 !> <h1> SUBROUTINE get_schism_step </h1>
 !! reads next timestep from result netcdf-file.
 !! \n\n
-!! aus Datei get_schism_step.f95 ; zurück: \ref Transport_SCHISM .
+!! aus Datei get_schism_step.f95 ; zurück: \ref lnk_transport_schism .
 subroutine get_schism_step(nt)
    use netcdf
    use modell

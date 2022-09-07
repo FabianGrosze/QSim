@@ -1,6 +1,10 @@
 Chelicorophium {#lnk_corophium}
 ==========
 
+\warning Momentan ist das Modul ausgeschaltet, das heißt, Corophium wird 
+nicht simuliert. Es handelt sich um eine alte Dokumentation.
+
+
 In QSim wird der Wegfraß des Phytoplanktons durch benthische Filtrierer in den 
 Bausteinen Dreissena und Chelicorophium umgesetzt. Beide Arten, die Zebramuschel 
 Dreissena polymorpha und der Schlickkrebs Chelicorophium curvispinum, sind 
@@ -49,6 +53,6 @@ Veröffentlichungen:
 
 <hr>
 Textquelle: corophium-doc.md ; Codesource: coroph.f90 ; 
-zurück: \ref lnk_konsumenten; Vorläuferversion: \subpage coroph
+zurück: \ref lnk_konsumenten
 
 

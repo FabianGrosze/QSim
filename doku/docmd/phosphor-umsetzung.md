@@ -17,7 +17,7 @@ SUBROUTINE po4s()\n
 &, \ref albewg, \ref alberg, \ref albewk, \ref alberk, \ref resdr, \ref aki  &\n
 &, \ref agr, \ref exdrvk, \ref exdrvg, \ref pl0, \ref abl, \ref dalgbl       &\n
 &, \ref dalgab, \ref exdrvb, \ref gesp, \ref orgcsd, \ref zooind             &\n
-&, \ref grote, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied, *cd*, *cp*          &\n
+&, *grote*, *pzoo*, *egesp*, \ref ilbuhn, \ref iwied, *cd*, *cp*          &\n
 &, \ref cm, \ref bac, \ref bsbctp, \ref qmx_pk, \ref q_pk, \ref up_pkz       &\n
 &, \ref qmx_pg, \ref q_pg, \ref up_pgz, \ref qmx_pb, \ref q_pb               &\n
 &, \ref up_pbz, *epl0*, \ref gelpz, \ref agrtbr, \ref akitbr, \ref abltbr    &\n
@@ -29,12 +29,22 @@ SUBROUTINE po4s()\n
 
 
 po4s() wird von der Hüllroutine po4s_huelle() aufgerufen. 
-Zum Hüllroutinen-Konzept siehe: \ref hüllen
+
+Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
 
 \n\n
 ### Rand und Anfangsbedingungen ###
-Aufteilung im Zufluss mit naehr_start(); Siehe dazu auch \ref randbedingungen_ergaenzen . 
+Aufteilung im Zufluss mit naehr_start(); Siehe dazu auch 
+\ref lnk_randbedingungen_ergaenzen . 
+
+## Phosphor-Aufteilung Zufluss {#lnk_po4s_aufteilung}
+Phophor-Gehalte im Zufluss werden auf den Maximalwert gesetzt in 
+randwert_planctonic():\n
+     planktonic_variable(31+nk)= transfer_parameter_p(32) ! *Q_PK*=*Qmx_PK* \n
+     planktonic_variable(34+nk)= transfer_parameter_p(11) ! *Q_PG*=*Qmx_PG* \n
+     planktonic_variable(36+nk)= transfer_parameter_p(55) ! *Q_PB*=*Qmx_PB* \n
 
 \n\n
 
-Textquelle: phosphor-umsetzung.md; Code: ncyc.f90; zurück \ref lnk_phosphor
+Textquelle: phosphor-umsetzung.md; Code: ncyc.f90 und po4s_huelle.f95; 
+zurück \ref lnk_phosphor oder \ref lnk_randbedingungen_ergaenzen

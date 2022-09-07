@@ -24,125 +24,20 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page lnk_Datentechnik Informationstechnische Umsetzung
-!!
-!! \section Datenstruktur Datenstruktur
-!! In Qsim3D wurden Variablenfelder gemäß ihrer Funktion in den untenstehenden Gruppen zusammengeasst.
-!! In QSim1D existiert diese Gruppierung noch nicht.
-!! Die Namen der Variablenfelder aus QSim1D wurden in QSim3D übernommen. Siehe dazu: \subpage hüllen
-!!
-!! <ol>
-!! <li>\subpage planktische_variablen, die im fließenden Wasser transportiert werden.
-!!     Diese Datenfelder werden nach jedem parallelen Stoffumsetzungs-Schritt zusammengesammelt
-!!     (MPI_gather in gather_planktkon()),
-!!     um dann transportiert (stofftransport()) zu werden.
-!!     Nach dem gemeinsamen Transport (Advektions-Diffusions-Simulation)
-!!     werden die Datenfelder wieder auf die parallelen Prozesse verteilt
-!!     (MPI_scatter in scatter_planktkon()).
-!!     \n \subpage lnk_partik_planktik
-!! \n\n</li>
-!! <li>\subpage benthische_verteilungen, beschreibt Eigenschaften der Gewässersohle
-!!     Diese Variablen sind ortsfest und 2-dimensional.
-!!     Die Initialisierungswerte werden vor dem ersten Zeitschritt verteilt (scatter_benth()).
-!!     Eingesammelt werden müssen diese Variablenfelder nur zum Zweck der Ausgabe (gather_benth()).
-!! \n\n</li>
-!! <li>\subpage uebergabe_werte hält Daten, die dem Datenaustausch zwischen den verschiedenen
-!!     Stoffumsetzungsmodulen dienen
-!!     und für die kein Transport berechnet werden muss.
-!!     Es handelt sich um 0D, 2D und 3D Variablen.\n
-!!     Dieses Modul hält auch die \ref globaleParameter .\n
-!!     nach dem Einlesen/Initialisierung müssen die Werte auf die parallelen Prozesse verteilt werden (scatter_uebergabe()).
-!!     Eingesammelt werden müssen diese Variablenfelder nur zum Zweck der Ausgabe (gather_uebergabe()).
-!! \n\n</li>
-!! <li>Randdaten, d.h Vorgaben, die sich im Verlauf der Simulationszeitschritte infolge externer Setzungen verändern,
-!!     sind in die folgenden Datenstrukturen aufgeteilt:
-!!     \ref zuflussranddaten, \n
-!!     \ref hydraul_rb , deren Änderung vom Hydraulischen Treiber vorab berechnet wurde und\n
-!!     \ref wetter_rb \n
-!!     Ihre Werte müssen vor jedem Stoffumsetzungs-Zeitschritt verteilt werden (scatter_RB()).
-!!     Ein Widereinsammeln ist nicht erforderlich.
-!! \n\n</li>
-!! <li> Je nach hydraulischem Treiber werden unterschiedliche Datenfelder für die Übernahme verwendet.\n\n
-!!      - \subpage Transportinformationen \n
-!!      - Zellrandflüsse aus Untrim\n
-!!      - Anbindung von SCHISM steht noch aus.
-!! \n\n</li>
-!! <li> \subpage lnk_steuerparameter werden Programmintern zur Ablaufsteuerung und zur Verfahrensauswahl benutzt.
-!! \n\n</li>
-!! </ol>
-!!
-!! \subpage Parallelisierung \n
-!!
-!! \section lnk_benennung Benennung der Variablen und Parameter im QSimCode
-!!
-!! Der Bennenung von Variablen und Parametern im QSim-Code unterliegt eine
-!! gewisse Struktur, die in der folgenden Tabelle zusammengefasst ist.
-!! Achtung: Die Tabelle ist unvollständig und im Aufbau. Zum Teil wird von der
-!! Struktur abgewichen.
-!!<table variable_naming>
-!!<tr><th> Zusatz </th><th> Platz </th><th> Beispiel </th><th> Bedeutung </th></tr>
-!!<tr><td> a </th><th> vorangestellt </th><th> apfl </th><th> ?? </td></tr>
-!!<tr><td> b </td><td> vorangestellt </td><td> bgesN </td><td> Buhnenfeld </td></tr>
-!!<tr><td> e </td><td> vorangestellt </td><td> egesN </td><td> Einleiter (?) </td></tr>
-!!<tr><td> e und h </td><td> vor- und nachgestellt </td><td> egesNh </td><td> ?? </td></tr>
-!!<tr><td> h </td><td> vorangestellt </td><td> hgesN </td><td> geht über alle Stränge (?) </td></tr>
-!!<tr><td> L </td><td> nachgestellt </td><td> gesnL </td><td> Linieneinleiter (?) </td></tr>
-!!<tr><td> LH </td><td> nachgestellt </td><td> gesnLH  </td><td> Linieneinleiter (?) </td></tr>
-!!<tr><td> max </td><td> nachgestellt </td><td> pflmax </td><td> Maximum über ?? </td></tr>
-!!<tr><td> min </td><td> nachgestellt </td><td> pflmin </td><td> Minimum über ?? </td></tr>
-!!<tr><td> mis </td><td> nachgestellt </td><td> pflmis </td><td> ?? </td></tr>
-!!<tr><td> mxs </td><td> nachgestellt </td><td> pflmxs </td><td> ?? </td></tr>
-!!<tr><td> s </td><td> vorangestellt </td><td> svx0 </td><td> ?? </td></tr>
-!!<tr><td> s </td><td> nachgestellt </td><td> gesns </td><td> Variable lokal in Subroutine </td></tr>
-!!<tr><td> sum </td><td> vorangestellt </td><td> sumpfl </td><td> Summe über ?? </td></tr>
-!!<tr><td> t </td><td> nachgestellt </td><td> vo2t </td><td> jeweilige Größe am jeweiligen Profil (am Ende der jeweiligen Knotenschleife) </td></tr>
-!!<tr><td> y </td><td> nachgestellt  </td><td> vx0y </td><td> für Mittelung (?) </td></tr>
-!!<tr><td> z </td><td> nachgestellt </td><td> hgesnz </td><td> tiefenaufgelöst </td></tr>
-!!<tr><td> zt </td><td> nachgestellt </td><td> gesnzt </td><td> ?? </td></tr>
-!!<tr><td> zw </td><td> vorangestellt </td><td> zwgesN </td><td> Zwischengröße </td></tr>
-!!<tr><td> z_z </td><td> nachgestellt </td><td> hgesnz_z </td><td> dreifach indiziert (?)  </td></tr>
-!!</table variable_naming>
-!!
-!! \n\n aus Datei: module_modell.f95 ; zurück:\ref index
-!--------------------------------------------------------------------------------------------------------------
-!> \page hüllen Verbindung von QSim-3D mit QSim-1D
-!! \n\n
-!! Die Idee von QSim-3D ist es, dieselbe Gewässergüte-Simulation wie QSim-1D durchzuführen,\n\n
-!! Nur die räumliche Auflösung des Wasserkörpers erfolgt 2D-tiefengemittelt oder voll 3-dimensional in QSim-3D
-!! statt 1D oder 2D-breitengemittelt wie in QSim-1D.\n
-!! Die Simulation der im Gewässer lokal ablaufenden Prozesse (lokaler stoffumsatz()) bleibt identisch.
-!! \n\n
-!! Der aktuell verwendete QSim1D-source-code wird im Abschnitt \ref lnk_download bereitgestellt.
-!! \n\n
-!! Um mit denselben Subroutinen arbeiten zu können, die auch das Programm QSim verwendet, wurden hier Hüllroutinen geschaffen,
-!! deren einzige Aufgabe darin besteht, die in QSim-3D geänderte Datenstruktur an die QSim-Subroutinen zu übergeben.\n
-!! Die wichtigste Umstellung ist dabei, dass die Hüllroutinen punktweise aufrufbar sind, während die QSim-Subroutinen
-!! strangweise arbeiten. Beim Aufruf durch die Hüllroutine wird die QSim-Subroutine in den Glauben versetzt,
-!! einen Strang zu bearbeiten, der nur aus einem Profil besteht.
-!! \n\n
-!! Ausserdem werden die Programmdateien der Hüllroutinen zur Dokumentation der QSim-Subroutinen genutzt.
-!! \n\n
-!! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
-!! \n\n
-!! Die Tiefenverteilung von QSim1D (welche dort als 2D bezeichnet wird) ist dort nicht komplett für ale Konzentrationen formuliert.
-!! Eine Übernahme ins mehrdimensionale ist nicht geplant.
-!! QSim3D arbeitet z. Zt. (Mai 2018) noch durchgängig tiefenintegriert.
-!! \n\n
-!! aus Datei  module_modell.f95 ; zurück zu \ref lnk_Datentechnik
-!--------------------------------------------------------------------------------------------------------------- modell
+
 !> Das module ::modell
 !! speichert die Information zum
 !! <ul>
-!!    <li>Modellverzeichnis</li>
-!!    <li>Netz</li>
-!!    <li>Zeit</li>
-!!    <li>Vermaschung</li>
+!!    <li> Modellverzeichnis </li>
+!!    <li> Netz </li>
+!!    <li> Zeit </li>
+!!    <li> Vermaschung </li>
 !! </ul>
-!! und wird mehr und mehr zum zentralen common-block \n
-!! es inkludiert bereits die Definitionen der
+!! und wird mehr und mehr zum zentralen common-block. \n
+!! Es inkludiert bereits die Definitionen der
 !! <ul>
-!!    <li>\ref planktische_variablen</li>
-!!    <li>\ref Ergebnisse</li>
+!!    <li> \ref lnk_var_planktisch </li>
+!!    <li> \ref lnk_ergebnisausgabe </li>
 !! </ul>
 !! \n\n
 !! aus Datei module_modell.f95
@@ -206,7 +101,7 @@ module modell
    !> \anchor iphy Berechnungsoption für Oberflächenbelüftung in oxygen.f90:\n
    !!     iphy = 1       ! neue Formel von mir mit Wind\n
    !!     iphy = 2       ! neue Formel von mir ohne Wind\n
-   !!     iphy = 3       ! Formel von Wolf ##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'\n
+   !!     iphy = 3       ! Formel von Wolf *Formelfehler* k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'\n
    !!     iphy = 4       ! Formel von Melching\n
    integer :: iphy
    !> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010
@@ -402,7 +297,7 @@ module modell
    !!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/mÂ³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
    type :: Erosion
       !>    \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/mÂ², von MODELLG.3D Zeile E gelesen
-      !>    \anchor M_eros zone()%erosi%M_eros ErodibilitÃ¤tskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
+      !>    \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
       !>    \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss , von MODELLG.3D Zeile E gelesen
       !>    \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/mÂ³ , von MODELLG.3D Zeile E gelesen
       real ::tau_krit, M_eros, n_eros, sed_roh
@@ -521,12 +416,12 @@ module modell
    !>    Kennzeichnung, ob diese Variable ausgegeben werden soll. Siehe dazu ausgabekonzentrationen()
    logical ::  output_plankt(number_plankt_vari)
    !>    globales (Prozess 0) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. \n
-   !!    Details in: \ref planktische_variablen
+   !!    Details in: \ref lnk_var_planktisch
    real , allocatable , dimension (:) :: planktonic_variable
    !>    lokales (parallel alle Prozesse) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. \n
    !!    bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::planktonic_variable das zu den Knoten gehört,
    !!    die vom jeweiligen Prozess bearbeitet werden. \n
-   !!    Details in: \ref planktische_variablen siehe auch \ref Parallelisierung
+   !!    Details in: \ref lnk_var_planktisch siehe auch \ref lnk_parallelisierung
    real , allocatable , dimension (:) :: planktonic_variable_p
    !>    Number of vertically distributed planctonic, i.e. transported variables | depth-profiles
    integer, parameter :: number_plankt_vari_vert = 22
@@ -565,13 +460,13 @@ module modell
    logical  ::  output_trans_quant(number_trans_quant)
    !>    globales (Prozess 0) Datenfeld für alle tiefengemittelten Variablen, die beim Stoffumsatz für den Informationsaustasch zwischen den einzelnen Modulen
    !!    benötigt werden. \n
-   !!    Details in: \ref uebergabe_werte
+   !!    Details in: \ref lnk_uebergabewerte
    real , allocatable , dimension (:) :: transfer_quantity
    !>    Lokales (parallel auf allen Prozessoren) Datenfeld für alle tiefengemittelten Variablen,
    !!    die beim Stoffumsatz für den Informationsaustasch zwischen den einzelnen Modulen benötigt werden.  \n
    !!    Bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::transfer_quantity das zu den Knoten gehört,
    !!    die vom jeweiligen Prozess bearbeitet werden. \n
-   !!    Details in: \ref uebergabe_werte siehe auch \ref Parallelisierung
+   !!    Details in: \ref lnk_uebergabewerte siehe auch \ref lnk_parallelisierung
    real , allocatable , dimension (:) :: transfer_quantity_p
    !>    vertically distributed transfer quantities (depthprofiles)
    !>    number of vertically distributed transfer quantities
@@ -604,7 +499,7 @@ module modell
    character(18) ::  benth_distr_name(number_benth_distr) ! NameBenthischeVerteilung
    !>    output-flag
    logical :: output_benth_distr(number_benth_distr)
-   !>    globales (Prozess 0) Datenfeld für alle \ref benthische_verteilungen
+   !>    globales (Prozess 0) Datenfeld für alle \ref lnk_var_benthisch
    real , allocatable , dimension (:) :: benthic_distribution
    real , allocatable , dimension (:) :: benthic_distribution_p ! benthische_verteilung
    !>    uedau überstaudauer-flag
@@ -639,50 +534,15 @@ module modell
       type (rb_streckenzug) :: randlinie
    end type rb
    type(rb) , allocatable , dimension (:) :: rabe
-   !> \page hydraul_rb Datenfelder offline Hydraulik-Randbedingungen
-   !! Die hydraulischen Randbedingungen werden als \ref Transportinformationen offline von holen_trans() eingelesen/berechnet.\n
-   !! Die QSim-3D Nummern beziehen sich auf das Datenfeld rb_hydraul resp. rb_hydraul_p\n
-   !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
-   !!<table rb_hydraul>
-   !!<tr><th> Nr. QSim-3D </th><th> Name QSim-1D    </th><th> Beschreibung                   </th><th> Dimension   </th><th> Wertebereich</th></tr>
-   !!<tr><td> 1 </td><td> \anchor vmitt  vmitt    </td><td> Geschwindigkeitsbetrag            </td><td> m/s      </td><td> 0,0 ... 3,0 </td></tr>
-   !!<tr><td> 2 </td><td> \anchor tiefe  tiefe    </td><td> Wassertiefe                  </td><td> m      </td><td> 0,0 ...  </td></tr>
-   !!<tr><td> 3 </td><td> \anchor wsp wsp     </td><td> Wasserspiegellage               </td><td> m ü NHN   </td><td> </td></tr>
-   !!</table rb_hydraule>\n
-   !! \n aus module_modell.f95 , zurück: \ref Transportinformationen
+
    integer, parameter :: number_rb_hydraul = 3
-   !> siehe: \ref hydraul_rb
+   !> siehe: \ref lnk_hydraul_rb
    real , allocatable , dimension (:) :: rb_hydraul
-   !> siehe: \ref hydraul_rb
+   !> siehe: \ref lnk_hydraul_rb
    real , allocatable , dimension (:) :: rb_hydraul_p
-   !> \page extnct_rb Extinktionskoeffizienten
-   !! Die Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, Humin und susp. Schwebstoff \n
-   !! und das Spektrum des eingestrahlten Sonnenlichts\n
-   !! werden in der Datei <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a> angegeben;\n
-   !! von der Subroutine extnct_lesen() aus dem Modellverzeichnis gelesen
-   !! und mithilfe des eindimensionalen Datenfeld: rb_extnct_p(n + (i-1)*anz_extnct_koeff ) gespeichert (i-Knotennummer, anz_extnct_koeff=8)
-   !! und auf alle parallelen Prozesse kopiert (MPI_Bcast).
-   !! \n
-   !! <h2> Licht-Extinktions-Koeffizienten </h2>
-   !! Die QSim-3D Nummer bezieht sich auf die Datenfelder modell::rb_extnct_p\n
-   !! Die QSim-1D Namen werden in QSim3D im module_QSimDatenfelder.f95 vereinbart.\n
-   !!<table rb_extnct>
-   !!<tr><th> Nr. </th><th> Name      </th><th> Beschreibung </th><th> Dimension   </th></tr>
-   !!<tr><td> 1 </td><td> \anchor eta eta   </td><td> Wellenlänge (in nm in Luft)</td><td> </td></tr>
-   !!<tr><td> 2 </td><td> \anchor aw aw   </td><td> Extinktions-Spektrum Wasser   </td><td> ?? </td></tr>
-   !!<tr><td> 3 </td><td> \anchor ack ack   </td><td> Extinktions-Spektrum Kieselalgen   </td><td> </td></tr>
-   !!<tr><td> 4 </td><td> \anchor acg acg   </td><td> Extinktions-Spektrum Gruenalgen   </td><td> </td></tr>
-   !!<tr><td> 5 </td><td> \anchor acb acb   </td><td> Extinktions-Spektrum Blaualgen   </td><td> </td></tr>
-   !!<tr><td> 6 </td><td> \anchor ah ah   </td><td> Extinktions-Spektrum Humin-Stoffe   </td><td> </td></tr>
-   !!<tr><td> 7 </td><td> \anchor as as   </td><td> Extinktions-Spektrum susp. Schwebstoff   </td><td> </td></tr>
-   !!<tr><td> 8 </td><td> \anchor al al   </td><td> Sonnenlicht-Spektrum   </td><td> </td></tr>
-   !!<tr><td> 9 </td><td> \anchor extk_lamda extk_lamda   </td><td> Rückgabeparameter Gesamtextinktion </td><td> </td></tr>
-   !!</table>\n
-   !! im folgenden ist die aktuelle Vorgabe graphisch dargestellt:\n
-   !! \image html absorbtionsspectrum.png "Absorpions-Spektren" siehe: \ref Licht_algen \n
-   !! \n\n aus module_modell.f95 , zurück: \ref zuflussranddaten
+
    integer, parameter :: anz_extnct_koeff = 8
-   !>  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
+   !>  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref lnk_extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
    integer :: rb_extnct_ilamda
    real , allocatable , dimension (:) :: rb_extnct_p
    !-------------------------------------------------------------------------------schwebstoff_salz_datenfelder
@@ -752,9 +612,10 @@ contains
    !! und dem Modellordner, dessen Name in der Umgebungsvariablen TQM gespeichert ist, zusammen.
    !! (export TQM=... | z. B. in .bashrc)
    !! \n\n nur auf rang 0 !!\n\n
-   !! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+   !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modeverz()
       implicit none
+
       character (len = longname) :: aufrufargument, systemaufruf, cmd
       integer io_error,sysa, icount, i, stat, length, errcode
       !integer antriebsart
@@ -780,16 +641,13 @@ contains
          kontrollknoten = -1
          print*,'no control node, no extra output ', kontrollknoten
       end if ! kontrollknoten
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2> /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
       call system(trim(systemaufruf),sysa)
-      !print*,'sysa',sysa
+      
       if (sysa /= 0) then
-         print*,trim(systemaufruf)
+         print*, 'Modellverzeichnis = ', trim(modellverzeichnis)
          call qerror('Das Verzeichnis, welches das Modell enthalten sollte, existiert nicht.')
-         !print*,'Umgebungsvariabel $TQM (Pfad des Modellordners)  >',trim(pfad)
-         !print*,'export $TQM=... | in .bashrc ???'
-         !print*,'Modell (Unter-Verzeichnis)  >',trim(aufrufargument)
       else
          print*,'QSim3D Modell: > ', trim(modellverzeichnis)!!wird nacher in eingabe ausgegeben...
       end if ! io_error.ne.0
@@ -814,7 +672,7 @@ contains
       antriebsart = 0
       print*,'antriebsart: find hydraulic driver'
       !! falls casu-transinfo Directory vorhanden, das nehmen
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -825,7 +683,7 @@ contains
          return
       end if ! io_error.ne.0
       !! falls Antribsdatei transport.nc vorhanden, Untrim²-Resultate im NetCDF-Format verwenden
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -836,7 +694,7 @@ contains
          return
       end if ! io_error.ne.0
       !!
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
@@ -852,7 +710,7 @@ contains
    !! Die <a href="./exp/MODELLA.txt" target="_blank">MODELLA.txt</a> Dateien für QSim-1D sind weiterverwendbar, aber \n
    !! es werden in QSim-3D nur noch die Geologischen Breiten- und Längenkoordinaten daraus gelesen.
    !! \n\n
-   !! aus Datei module_modell.f95 ; zurück zu \ref Modellerstellung
+   !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modella()
       implicit none
       character (len = 500) :: dateiname, text
@@ -1064,7 +922,7 @@ contains
       tage = int(zeitpunkt/86400)
       if ((tage >= 7*1461) .or. (tage < 0)) then
          write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
-                        ,zeitpunkt,tage,referenzjahr
+              ,zeitpunkt,tage,referenzjahr
          call qerror(fehler)
       end if
       uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
@@ -1163,7 +1021,7 @@ contains
       monatstage = 31
       if (tag > monatstage) then ! Jahr rum
          write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
-                        zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
+               zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
          call qerror(fehler)
       end if
       111    continue
@@ -1186,42 +1044,42 @@ contains
       integer io_error,sysa, ia, ion, errcode
       logical zeile_vorhanden
       modell_vollstaendig = .true.
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1231,14 +1089,14 @@ contains
       !
       select case (hydro_trieb)
          case(1) ! casu-transinfo
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'in Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1247,8 +1105,8 @@ contains
                !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
                !else
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis) &
-                                                       ,'transinfo/file.elements > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode) &
+               'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1256,14 +1114,14 @@ contains
                print*,'in Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
             end if
          case(2) ! Untrim² netCDF
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'in Ihrem Modellverzeichnis fehlt die Datei transport.nc'
             end if
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt > /dev/null 2 > /dev/null'
+            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
@@ -1276,14 +1134,14 @@ contains
             call qerror('Hydraulischer Antrieb unbekannt')
       end select
       !
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1291,7 +1149,7 @@ contains
          print*,'in Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
       end if
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis)  &
-                                         ,'ausgabekonzentrationen.txt > /dev/null 2 > /dev/null'
+                                         ,'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -1314,7 +1172,7 @@ contains
          end do ! alle Zeilen
          if ( .not. send_email)print*,'nix brauchbares aus Datei email.txt gelesen'
       end if ! Datei lässt sich öffnen
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then

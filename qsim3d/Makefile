@@ -19,13 +19,11 @@
 #!
 #!---------------------------------------------------------------------------------------
 #====================================================================
-# Makefile für mehrdimensionales Gewässergütemodell QSim3D
+# Makefile for QSim3D
 # wyrwa seit 01aug11
-
-# 02aug18:
-# Softlink  QSim -> /home/Wyrwa/QSim1D/src/qsim1d auf 1D-Stoffumsatz (metabolism) benötigt
-
 #====================================================================
+
+SHELL=/usr/bin/bash
 
 # PV=qsim3d_sc21
 # PV=qsim3d_14.06entw
@@ -37,67 +35,68 @@
 # PV='qsim3d14.07.01'
 # PV='qsim3d_schnitt14.14'
 # PV='qsim3d_schwer14.09.00'
-PV='qsim3d_schwer11'
+# PV='qsim3d_schwer11new'
+PV='qsim3d_dev06sep22'
 
-# NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.5.0
+NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
+NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
 
-#compiler:
+MPI=produktiv/mvapich2-2.3-mlnx
+MPII=/opt/$(MPI)
+MPI_BIN=$(MPII)/bin
+MPI_MOD=module add $(MPI)
+# modulecmd bash add produktiv/mvapich2-2.3-mlnx  ????
+
+#compiler: 
+#/opt/produktiv/mvapich2-2.3-mlnx/bin/mpif90
 CC              = mpic++
+MCC             = $(MPI_BIN)/$(CC)
 FC              = mpif90
-#CC              = g++
+MFC             = $(MPI_BIN)/$(FC)
 #FC              = gfortran
 
-ifeq ($(MPI_HOME),)
-  $(error Die Umgebungsvariable MPI_HOME (Bibliotheken für Parallelisierung) fehlt.)
-endif
-MPI_INSTALL=$(MPI_HOME)  #  Variable wird auf dem hpc von module gesetzt
-MPI_INSTALL_DIR	    = $(MPI_INSTALL) # /home/sdietrich/bin auf voss-devel
-#MPI_INSTALL_DIR	    = /mreferate/wyrwa/casulli/mpich2/install
-#MPI_INSTALL_DIR	    = /mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1
-MPICH2_INCLUDE=-I$(MPI_HOME)/include  #  Variable wird auf dem hpc von module gesetzt
-#MPICH2_INCLUDE      = -I$(MPI_INSTALL)/include
-#MPICH2_INCLUDE      = -I${MPI_INSTALL_DIR}/src/include
-#MPICH2_INCLUDE      = -I${MPI_INSTALL_DIR}/bin/include -I${MPI_INSTALL_DIR}/include 
-MPICH2_LIB	   = -L$(MPI_HOME)/lib -lmpich -lmpichf90 -lmpl -lpthread
-#MPICH2_LIB	   = -L$(MPI_INSTALL)/lib -lmpich -lmpichf90 -lmpl -lpthread
-#MPICH2_LIB	   = -L${MPI_INSTALL_DIR}/lib -lmpich -lmpichf90 -lmpl -lpthread
-##LDFLAGS            = $(LDFLAGS2) $(GEN_LIBS) $(LIB_LINUX) $(PETSC_LIB) $(MPICH2_LIB) $(GFORTRAN_LIBS) $(INTEL_LIBS) $(AZTEC_LIBS)
+Q3 = version.co trans_read.co \
+     module_modell.o module_QSimDatenfelder.o nachricht.o\
+     benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
+     zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
+     planktische_variablen.o module_suspendedMatter.o parallel.o \
+     temperw_huelle.o alter.o\
+     po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
+     oxygen_huelle.o orgc_huelle.o ph_wrapper_3d.o \
+     algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
+     ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
+     eingabe.o initialisieren.o randbedingungen.o \
+     schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
+     stofftransport_casu.o \
+     stofftransport_untrim.o stofftransport.o\
+     sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
+     stoffumsatz.o \
+     QSim3D.o
 
-# netcdf  # NETCDF_HOME und NETCDFF_HOME werden in ./modules/qsim3d_modules gesetzt
-# NETCDF_CFLAGS="-I/opt/produktiv/netcdf-c-4.6.1/include -I/opt/produktiv/netcdf-fortran-4.5.0/include"
-# NETCDF_LIBS="-L/opt/produktiv/netcdf-fortran-4.5.0/lib -lnetcdff -L/opt/produktiv/netcdf-c-4.6.1/lib -lnetcdf"
+-include ../metabolism/metabol.mk
 
-# CDFLIBS = -L/usr/lib64 -lnetcdf -L$(NETCDF_HOME)/lib -lnetcdff
-# CDFLIBS = -lnetcdf -L/opt/produktiv/netcdf-4.5.0 -lnetcdff -L$(NETCDF_HOME)/lib
-# CDFLIBS = -lnetcdf -L$(NETCDF_HOME)/lib -lnetcdff
-# CDFLIBS = -L/home/Wyrwa/weichwaren/netcdf/local/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff
-# CDFLIBS = -L$(NETCDF_HOME)/lib -lnetcdf -L/opt/produktiv/netcdf-c-4.6.1/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff ############################# cln51_slurm
-CDFLIBS = -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff  ############################# preprocess
-
-# CDFINC = -I/usr/include -I$(NETCDF_HOME)/include # modules for netcdf 
-# CDFINC = -I/usr/include -I/include # modules for netcdf 
-# CDFINC = -I/opt/produktiv/netcdf-c-4.6.1/include -I$(NETCDFF_HOME)/include # modules for netcdf 
-CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
+#ifeq ($(MPI_HOME),)
+#  $(error Die Umgebungsvariable MPI_HOME (Bibliotheken für Parallelisierung) fehlt.)
+#endif
+#MPI_INSTALL=$(MPI_HOME)                #  Variable wird auf dem hpc von module gesetzt
+#MPI_INSTALL_DIR	    = $(MPI_INSTALL) 
+#MPICH2_INCLUDE=-I$(MPI_HOME)/include
+#MPICH2_LIB	   = -L$(MPI_HOME)/lib -lmpich -lmpichf90 -lmpl -lpthread
+#CDFLIBS = -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff
+#CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
 CFLAGS2             = -O -g -fbounds-check ## develop ## 
-## production ## CFLAGS2             = -O
-# GEN_CFLAGS          = -I../lib -I/usr/include
-CCLAGS       = $(CFLAGS2) $(MPICH2_INCLUDE)
-# FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) -finit-local-zero ## develop ##
-FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFINC) -finit-local-zero -J../metabolism  ## develop ##
-# -J Modules include
-## production ## FFLAGS       = $(CFLAGS2) -ffixed-line-length-none $(MPICH2_INCLUDE) $(CDFMOD)
+#CFLAGS2             = -O3 ## run fast ## 
+FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
 #loader-flags:
-LDFLAGS = $(MPICH2_LIB) $(CDFLIBS) -lc -lstdc++ -g -fbounds-check ## develop ## 
+LDFLAGS = -lc -lstdc++ -g -fbounds-check -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  ## develop ## 
 ## production ## LDFLAGS = -lc -lstdc++  $(MPICH2_LIB)  $(CDFLIBS)
 
 HIER=`pwd -P`
 JETZT=`date +"%-d%m%Y"`
 
-METABO = ../metabolism
-QSIM3D = ../qsim3d
 SCHISM_HYDRO = ../../Hydro
 SCHISM_CORE  = ../../Core
 QSIM_LIB           = -L../metabolism -lqsim
@@ -114,22 +113,18 @@ endif
 
 #--------------------------------------------------------------------
 
-#usual: modu check date qsim qsim3d
-usual: check date qsim qsim3d
+#usual: check date qsim qsim3d
+usual: date metabo qsim3d
 #usual: check date qsim qsim3d
 
-modu:
-	/usr/bin/modulecmd bash purge
-	/usr/bin/modulecmd bash add ./module/qsim3d_modules
-	/usr/bin/modulecmd bash list
-
 check:
-	if test -d "$$MPI_HOME"; then echo "Directory MPI_HOME=$(MPI_HOME) vorhanden"; else exit 1 ; fi;
 	if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) vorhanden"; else exit 1 ; fi;
 	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) vorhanden"; else exit 1 ; fi;
-	if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) vorhanden"; else exit 1 ; fi;
-	if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) vorhanden"; else exit 1 ; fi;
-	if test -d $(METABO); then echo "Directory ../metabolism $(METABO) vorhanden"; else echo "$(METABO)" ; fi;
+	if test -d ../metabolism; then echo "Directory ../metabolism ../metabolism vorhanden"; else echo "../metabolism" ; fi;
+
+	#if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) vorhanden"; else exit 1 ; fi;
+	#if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) vorhanden"; else exit 1 ; fi;
+	#if test -d "$$MPI_HOME"; then echo "Directory MPI_HOME=$(MPI_HOME) vorhanden"; else exit 1 ; fi;
 	#if test -d $(SCHISM_HYDRO); then echo "Directory $(SCHISM_HYDRO) vorhanden"; else exit 1 ; fi;
 	#if test -d $(SCHISM_CORE); then echo "Directory $(SCHISM_CORE) vorhanden"; else exit 1 ; fi;
 	#@echo $(HIER) $(JETZT) $(METABO)
@@ -144,18 +139,13 @@ date:
 	rm -f version.co nachricht.o
 	@echo 'write(codesource,*) "'$(HIER)'" ' >code_source.h
 
-#	@echo 'print*,"code_source.h sagt:","'$(HIER)'"'>code_source.h
-#	@echo 'sprintf(code_source,"'$(HIER)'");'>code_source.h
-
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \
     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
-#     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
-
 %.o: %.F90
-	$(FC) $(FFLAGS) -c -o $@  $<
+	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
 
 schism: $(SC)
 	ar ruv libschism.a $(SC)
@@ -163,11 +153,8 @@ schism: $(SC)
 	@echo "libschism.a done"
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
-qsim:	
-	@cd ../metabolism; cp makefile3 Makefile; make metabol; rm Makefile; cp *.mod ../qsim3d; cd ../qsim3d
-
 %.co: %.c
-	$(CC) -c  $(CCLAGS) $< -o $@
+	$(MCC) -c  $(CCLAGS) $< -o $@
 
 # preprocessing for language change in doxygen
 #%.F95: %.f95
@@ -176,63 +163,42 @@ qsim:
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
 %.o: %.f90
-	$(FC) $(FFLAGS) -c -o $@  $<
+	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
 
 %.o: %.f95
-	$(FC) $(FFLAGS) -c -o $@  $<
+	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
-
-Q3 = version.co trans_read.co \
-     module_modell.o module_QSimDatenfelder.o nachricht.o\
-     benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
-     zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
-     planktische_variablen.o module_suspendedMatter.o parallel.o \
-     temperw_huelle.o alter.o\
-     po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
-     oxygen_huelle.o orgc_huelle.o ph_huelle.o \
-     algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
-     ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
-	 eingabe.o initialisieren.o randbedingungen.o \
-	 schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
-     stofftransport_casu.o \
-	 stofftransport_untrim.o stofftransport.o\
-     sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
-     stoffumsatz.o \
-     QSim3D.o
 
 #  screen_schism_nc.o stofftransport_schism.o 
 #	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
 
+metabo: $(META)
+	ar ruv libmetabol.a $(META)
+	ranlib libmetabol.a
+	@echo "libmetabol.a done"
 
 qsim3d:	$(Q3)
-	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) -o $(PV)
+	$(MFC) $(Q3) -L$(MPII)/lib -lmpich -lmpichf90 -lmpl -lpthread -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff $(LDFLAGS) -L. -lmetabol -o $(PV)
 
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
 	cp -f $(PV) $(MY_BIN)/$(PV)
-
-#	cp -f ./scripte/* $(MY_BIN)
-#	cp -f ./module/qsim3d_modules $(MY_BIN)
-#	@echo "QSim-3D executable  - $(PV) -  wurde erzeugt und in $(MY_BIN) bereitgestellt + scripte + modules"
-#	@echo "--"
+	cp -f ./scripte/* $(MY_BIN)
 
 KT = version.co trans_read.co \
      kombitransi.o
 
 kombit: $(KT)
-	$(FC) $(KT) $(LDFLAGS) -o kombi
+	$(FC) $(KT) -L$(MPI_HOME)/lib -lmpich -lmpichf90 -lmpl -lpthread $(CDFLIBS) $(LDFLAGS) -o kombi
 	cp -f kombi $(MY_BIN)
-
-#clean:	modu
 
 clean:	
 	@echo "cleaning ..."
-	rm -f *.o *.co $(PV) version.h code_source.h *~ *.mod libschism.a
-	rm -f ../metabolism/*.o ../metabolism/*.mod ../metabolism/*.a
+	rm -f *.o *.co *.mod *.a $(PV) version.h code_source.h *~
+	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.mod ../metabolism/*.a
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
-# systemaufruf='cp '//trim(adjustl(codesource))//'/*source*.taz'
 FN=$(PV)_source_`date +%d%b%y`.taz 
 
 save: taz store
@@ -242,9 +208,9 @@ taz:
 	tar cvfz ../$(FN) ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
 	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
-	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*akefile* \
+	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*.mk \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
-	../license.txt
+	../license.txt ../readme.md
 	cp ../$(FN) .
 
 store:

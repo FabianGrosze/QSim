@@ -17,7 +17,10 @@ doku/pdf/
 doku/taz/
 doku/*.zip
 doku/doxygen.exe
+doku/doxygen_1.9.4.exe
 backup-dokufiles/*
+doku/confi_stripped
+doku/libclang.dll
 
 
 # --- QSim 3D ---
@@ -30,6 +33,7 @@ metabolism/libqsim.a
 
 
 # --- Visual Studio ---
+*.u2d
 /qsim1d/x64
 qsim1d/x64/*
 .vs

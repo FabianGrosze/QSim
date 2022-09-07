@@ -24,37 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page lokaleParameter lokale Modell-Eigenschaften
-!!
-!! Lokale Modelleigenschaften werden in QSim3D jeweils einer Zone zugeordnet.\n
-!! Die zonenweise Verteilungen werden mithilfe der Datei \ref qsimdateimodellg3 vorgegeben.\n
-!! Beispiel: <a href="./exp/MODELLG.3D.txt" target="_blank">MODELLG.3D.txt</a>
-!! \n\n
-!! Die Unterteilung des Modellgebiets in Zonen wird von GERRIS durchgeführt und in der Datei
-!! Beispiel: <a href="./exp/ELEMENTE.txt" target="_blank">ELEMENTE.txt</a> abgelegt (UNTRIM-Antrieb).
-!! Nach der Elementnummer enthält jede Datenzeile die Koordinaten des Elementzentrums, die Zonennummer und die Randnummer (0=kein Rand).
-!! \n\n
-!! In QSim1D erfolgt die Zuordnung zu Strängen oder Strangabschnitten.\n
-!! Dazu wird die Datei MODELLG.txt verwendet.\n
-!!
-!! \n\n zurück: \ref Modellerstellung \ref Datenmodell ; Quelle: zonen.f95
-!> Die Datei zonen.f95 dient dazu ... ??? die Informationen zu einer Zone
-!! (räumlich abgegrenzter bereich mit gleichen Eigenschaften) zu speichern.
-!! Jeder 2D-Knoten (3D-Vertikale) des HN-Modells bringt eine Zonennummer mit,
-!! über die die Zuordnung der Eigenschaften erfolgt.
-!!
-!       module zonen
-!       implicit none
-!       save
-!       integer :: zonen_anzahl
-!       integer , allocatable , dimension (:) :: wetterstations_nummer, zonen_nummer, schifffahrts_zone, ini_randnr
-!       real , allocatable , dimension (:)  :: wetterstations_lage, reib_ks
-!       PUBLIC :: modellg, zonen_parallel
-!       CONTAINS
-!
-!----+-----+----
-!> verteilt Zoneninformationen auf die Prozesse \n
-!! aus zonen.f95
+
 subroutine zonen_parallel()
    use modell
    implicit none

@@ -45,7 +45,7 @@ module aparam
    real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
                          bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
                          upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
-   integer, protected :: ifix
+   integer            :: ifix
    ! Rotatorien
    real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
@@ -95,6 +95,8 @@ module aparam
    real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
    real, parameter    :: NZoo = 0.11   !< N-Anteil Rotatorien [mgN/mgTG]
    
+   real, parameter    :: CRot = 0.45   !< C-Anteil Rotatorien
+   real, parameter    :: CDr  = 0.38   !< C-Anteil Dreissena
    
    public :: aparam_lesen, AParamParam
    
@@ -102,7 +104,7 @@ contains
    
    !> <h1>SUBROUTINE aparam_lesen()</h1>
    !! Einlesen der Konstanten   \n \n
-   !! Beschreibung siehe: \ref globaleParameter \n
+   !! Beschreibung siehe: \ref lnk_globale_parameter \n
    !! Quelle: module_aparam.f90
 subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
    
@@ -332,7 +334,7 @@ end subroutine aparam_lesen
 
 !> Writes file `AParamParam.xml`
 !!
-!! aus Datei module_aparam.f95 ; zurück zu \ref Modellerstellung
+!! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine AParamParam(cpfad1)
    character (len = 255)       :: cpfad1
    character (len = 275)       :: pfadstring

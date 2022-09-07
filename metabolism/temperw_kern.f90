@@ -173,6 +173,7 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
       TEMPW1 = xtempwz1
       TEMPW2 = xtempwz1
       tempmv = xtempw
+
       ! ##### Windkorrektur ######
       !.... zWmess Höhe der Windmessung, wLage = Lage der Wetterstation
       !.... zW2 Wind in 2 m Höhe über der Wasseroberfläche

@@ -155,7 +155,7 @@ subroutine ganglinien_lesen()
          do i = 1,anz_gangl
             if ((knot_gangl(i) < 1) .or. (knot_gangl(i) > n_elemente)) then
                write(fehler,*)'ganglinien_lesen,Untrim ### Element-Nummer falsch ###: knot_gangl(',i,') = ' &
-                              ,knot_gangl(i),'nicht zwischen 1 und ',n_elemente
+                     ,knot_gangl(i),'nicht zwischen 1 und ',n_elemente
                call qerror(fehler)
             else
                print*,'ganglinien nr. ',i,' am Element ',knot_gangl(i),' Ort: ',element_x(knot_gangl(i)), element_y(knot_gangl(i))
@@ -244,7 +244,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                n = n+1
                if (n > n_ue) call qerror('3 ganglinien_zeitschritt (n > n_ue) ')
                ue_gang(i,izeit_gang,n) =  &
-               trans_quant_vert_p(gangl_level+(k-1)*num_lev_trans+(nk-1)*num_lev_trans*number_trans_quant_vert)
+                  trans_quant_vert_p(gangl_level+(k-1)*num_lev_trans+(nk-1)*num_lev_trans*number_trans_quant_vert)
             endif ! exchange output conc.
          end do
          ! Integrations
@@ -295,7 +295,7 @@ subroutine ganglinien_schliessen()
          call qerror(fehler)
       end if !
       write(systemaufruf,'(5A)',iostat = errcode)'mv -f ',trim(modellverzeichnis),'ganglinien '  &
-                                         ,trim(modellverzeichnis),'ganglinien_bisher > /dev/null 2 > /dev/null'
+                                         ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
       call system(systemaufruf,sys_error)
       if (sys_error /= 0) then
@@ -402,7 +402,7 @@ subroutine ganglinien_schliessen()
             zeitpunkt = r_gang(1,j)
             call zeitsekunde()
             write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-                 jahr  ,monat ,  tag  ,   stunde , minute , sekunde
+                  jahr  ,monat ,  tag  ,   stunde , minute , sekunde
             do i = 1, 6
                write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), randflux_gang(n,j,i)   ! r_gang(i,j)
             end do ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
@@ -431,7 +431,7 @@ subroutine ganglinien_schliessen()
                zeitpunkt = q_gangl(j)
                call zeitsekunde()
                write(r_zeile,'(I4.4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
-                     jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
+                  jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
                do i = 1,n_pl+2
                   write(r_zeile,'(A,6X,E16.10)')trim(r_zeile),schnittflux_gang(n,j,i)
                end do ! all i fluxes
@@ -471,17 +471,17 @@ subroutine ganglinien_schliessen()
             select case (time_style)
                case(0) !  Gerris
                   write(beschriftung,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)') &
-                       jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt   !r_gang(i,j)
+                     jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt   !r_gang(i,j)
                case(1) ! Ausgabeformat Stil wsa_cux
                   write(beschriftung,'(I2.2,".",I2.2,".",I4.4," ",I2.2,":",I2.2,":",I2.2)') &
-                        tag  ,monat ,Jahr   ,stunde,minute,sekunde
+                     tag  ,monat ,Jahr   ,stunde,minute,sekunde
                case(2) !  sekunden a la SCHISM
                   write(beschriftung,*) zeitpunkt
                   case default
                   call qerror("time_style falsch in ganglinien_schliessen()")
             end select
             !            write(beschriftung,'(I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-            !     &                           monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
+            !  monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
             write(beschriftung,'(A, 2("       ",F7.2))')trim(beschriftung), t_gang(i,j), u_gang(i,j)
             do k = 1,n_pl
                write(beschriftung,2578)trim(beschriftung),pl_gang(i,j,k)

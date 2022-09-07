@@ -24,23 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page kombitransi Zusammenfügen von Teilzeiträumen
-!! Das Programm >>kombi<<
-!! dient der Kombination von Transinfo-Verzeichnissen
-!! \n\n
-!! Wenn ein längerer Zeitabschnitt (z.B. ein Jahresgang)
-!! für die hydraulische Simulation in Teile (Zeitabschnitte) zerlegt wurde,
-!! um ihn auf mehreren Prozessoren parallel rechnen zu können,
-!! ist es nach Abschluss aller Teil-Rechenläufe erforderlich, die
-!! Transportinformationen für die Gütesimulation mit QSim-3D in ein Verzeichnis zusammenzuführen,
-!! so dass ein durchgängiger Jahresgang entsteht.
-!! \n\n
-!! Dies ist möglich, weil das Erinnerungsvermögen von Impuls und Wasserstand, die vom hydraulischen Treiber simuliert werden,
-!! in einem Ästuar kaum läger zurückreicht als einen Tag.
-!! Konzentrationsverteilungen, die im Gütemodell simuliert werden, haben in einem Ästuar
-!! mit mehreren Monaten Wasseraufenthaltszeit ein viel längeres Gedächtnis.
-!! \n\n
-!! Quelle: kombitransi.f95 zurück zu \ref Transportinformationen
+
 program kombitransi
    implicit none
    integer :: dttrans, start, ende, transinfo_anzahl, sysa, i
@@ -56,7 +40,7 @@ program kombitransi
    !print*,trim(sammelverzeichnis)
    !call get_command_argument(1, aufrufargument)
    !write(sammelverzeichnis,'(A)')trim(aufrufargument)
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(sammelverzeichnis),' > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(sammelverzeichnis),' >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('kombitransi writing system call stat failed')
    call system(systemaufruf,sysa)
    if (sysa /= 0) then
@@ -77,7 +61,7 @@ program kombitransi
       print*,'Bitte das nächste Verzeichnis zum Kombinieren der Transportinformationen eingeben:'
       print*,"(Die Angabe eines nicht vorhandenen Namens führt zum Abbruch des Kombinationsvorgangs)"
       read(*,"(A)")modellverzeichnis
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('kombitransi writing system call stat2 failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
@@ -114,7 +98,7 @@ program kombitransi
       do i = sammel_ende,ende,dttrans !! brauchbare zeitpunkte kopieren
          !trans_write.c:   sprintf(text,"%s/transinfo/t%09d",dirname,itime);
          write(systemaufruf,'(3A,I9.9,x,2A)',iostat = errcode)  &
-                                                      'cp ',trim(modellverzeichnis),'transinfo/t',i,trim(sammelverzeichnis),'transinfo/'
+               'cp ',trim(modellverzeichnis),'transinfo/t',i,trim(sammelverzeichnis),'transinfo/'
          if (errcode /= 0)call qerror('kombitransi writing system call cp failed')
          call system(systemaufruf,sysa)
          if (sysa /= 0) then
@@ -144,7 +128,7 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
    character(250) , allocatable , dimension (:) :: transinfo_datei
    integer , allocatable , dimension (:) :: transinfo_zeit
    integer , allocatable , dimension (:) :: transinfo_zuord
-   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' > /dev/null 2 > /dev/null'
+   write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
    if (errcode /= 0)call qerror('transinfo_sichten writing system call stat failed')
    call system(systemaufruf,sysa)
    !print*,'sysa',sysa

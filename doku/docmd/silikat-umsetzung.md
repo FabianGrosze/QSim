@@ -18,8 +18,18 @@ SUBROUTINE silikat()\n
 
 <!-- #mf: Referenz jjj funktioniert noch nicht -->
 
-silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum Hüllroutinen-Konzept siehe: \ref hüllen
+silikat() wird von der Hüllroutine silikat_huelle() aufgerufen. Zum 
+Hüllroutinen-Konzept siehe: \ref lnk_huellen
+
+## Ergänzungen Silikat {#lnk_si_aufteilung}
+
+An den Zufluss-Rändern wird der Siliziumanteil in den Kieselalgen,\n
+QSqm-Variable Q_SK, gespeichert in  planktonic_variable(32 \n
+gleich dem maximalen Siliziumanteil der Kiesel-Algenbiomasse, \n
+QSqm-Variable Qmx_SK, gespeichert in QSimDatenfelder aus APARAM.txt (siehe dazu eingabe())\n
+in RB_werte_aktualisieren() gesetzt.
 
 \n\n
 
-Textquelle: silikat-umsetzung.md; Code: silikat.f90; zurück \ref lnk_silikat
+Textquelle: silikat-umsetzung.md; Code: silikat.f90 und silikat_huelle.f95 ; 
+zurück \ref lnk_silikat oder  \ref lnk_randbedingungen

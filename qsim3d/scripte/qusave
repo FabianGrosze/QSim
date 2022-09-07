@@ -92,19 +92,19 @@ CONT="$CONT alter.txt"
 CONT="$CONT trafo"
 CONT="$CONT ls_transinfo"
 CONT="$CONT transinfo_meta"
-CONT="$CONT qsim3d_source_*.taz"
+#CONT="$CONT qsim3d_source_*.taz"
 CONT="$CONT *.qsub"
 CONT="$CONT *.sbatch"
 # echo "CONT = $CONT"
 
 tar cvfz $FD $CONT
 
-if [ $? -ne 0 ]
-then
-   # die with unsuccessful shell script termination exit status # 3
-   echo "tar model archive not successfull".
-   exit 3 
-fi
+#if [ $? -ne 0 ]
+#then
+#   # die with unsuccessful shell script termination exit status # 3
+#   echo "tar model archive not successfull".
+#   exit 3 
+#fi
 # command
 # if [ "$?"-ne 0]; then echo "command failed"; exit 1; fi
 
@@ -117,7 +117,7 @@ echo "QSim-3D Model $DIR was saved to $FD and stored in $DIR."
 
 rm ls_transinfo start ende lauf
 rm transinfo_meta
-rm qsim3d_source_*.taz
+#rm qsim3d_source_*.taz
 
 #cd $P
 echo "qusave regular exit"

@@ -60,6 +60,4 @@ implementierten Prozesse
 
 \n\n
 
-Textquelle: stickstoff-doc.md ; Codesource: ncyc.f90 ; Vorläuferversion: \subpage Stickstoff
-<!-- #mf: auch hier die Vorläuferversion evtl. löschen, weil Text übernommen 
-(und erweitert) wurde, aber nicht wesentlich verändert -->
+Textquelle: stickstoff-doc.md ; Codesource: ncyc.f90

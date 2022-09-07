@@ -48,14 +48,14 @@ subroutine erosion_huelle(i)
    !                        tau_s, SSeros_s, ss_s, ssalg_s,        &
    !                        dsedh_s, tausc_s, m_eros_s, n_eros_s,  &
    !                        sedroh_s, kontroll, ior, mstr)
-   call erosion_kern( &
-                     tflie                                               &
+   call erosion_kern(tflie                                        &
                      ,TIEFEs                                             &
                      ,RAUs                                               &
                      ,rb_hydraul_p(1+(i-1)*number_rb_hydraul)            &
                      ,&
                       benthic_distribution_p(45+(i-1)*number_benth_distr)&
                      ,transfer_quantity_p(12+ntra)                       &
+                     ,transfer_quantity_p(12+ntra)                &
                      ,planktonic_variable_p(53+npla)                     & 
                      ,planktonic_variable_p(52+npla)                     &
                      ,&

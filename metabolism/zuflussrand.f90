@@ -24,7 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> ini_algae() wird beschrieben in: \ref lnk_algendoc
+!> ini_algae() wird beschrieben in: \ref lnk_phytoplankton
 !!
 !! Quelle zuflussrand.f90
 subroutine ini_algae(akchl,abchl,agchl,Cagr,Caki,Cabl,CZoo,a1Ki,a2Ki,a3Ki,a1Bl,a2Bl,a3Bl,a1Gr,a2Gr,a3Gr)
@@ -68,7 +68,7 @@ subroutine ini_algae(akchl,abchl,agchl,Cagr,Caki,Cabl,CZoo,a1Ki,a2Ki,a3Ki,a1Bl,a
 end subroutine ini_algae
 
 
-!> algae_start() wird beschrieben in: \ref lnk_algendoc
+!> algae_start() wird beschrieben in: \ref lnk_phytoplankton
 !! 
 !! Quelle zuflussrand.f90\n
 !! Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses \n
@@ -109,7 +109,7 @@ subroutine algae_start(chlas ,vkigrs ,antbls, tempws,                   &
 end subroutine algae_start
 
 
-!> orgc_start() wird beschrieben in: \ref BSB
+!> orgc_start() wird beschrieben in: \ref lnk_orgC
 !!
 !! Quelle zuflussrand.f90
 !! Berechnung der "BSB-Komponenten" am oberen Rand
@@ -188,8 +188,7 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
       hc_CPg = ssalgs-akis-agrs-abls-(zooins*GRote/1000.)
       hc_CPg = hc_CPg * 0.45 * 0.4
       TOC = max((BTOCs+0.01),ocsbs/TOC_CSB)
-      Cref = TOC - BTOCs
-      
+      Cref = TOC - BTOCs      
       fak_aCref = CPges/(CDges+CPges)  ! Anteil ref. am hc_CPg ?????
       
       !##################################################

@@ -33,7 +33,7 @@ SUBROUTINE oxygen()\n
  , \ref cpfad, \ref ij, \ref itags, \ref monats             &\n
  , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, \ref ifehl, \ref ifhstr
  , \ref azstrs                          &\n 
- , \ref zooind, \ref grote, \ref iphy, \ref kontroll, *jjj*)\n
+ , \ref zooind, *grote*, \ref iphy, \ref kontroll, *jjj*)\n
 
 <!-- #mf: sind nicht in Aufruf in oxygen.f90 (aber waren hier):
  \ref vnh4, \ref vno3, \ref bsbbet, \ref iglob -->
@@ -43,7 +43,7 @@ SUBROUTINE oxygen()\n
  
 ## IT-Realisierung ##
 Die QSim3D Subroutine oxygen_huelle() ruft die QSim-Subroutine oxygen() auf. \n
-Zum Hüllroutinen-Konzept siehe: \ref hüllen
+Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen
 
 ### Berechnungsablauf ###
 *zweistufiges Berechnungsverfahren*
@@ -54,8 +54,8 @@ biochemischen Zehrungs- und Produktionsprozesse berechnet.
 In einer zweiten Stufe wird dann ausgehend von dem Zwischenwert die Belüftung 
 über die Gewässeroberfläche ermittelt.
 
-### Zeitliche Diskretisierung der Sauerstoffänderung ###
-<!-- ehem. Link zur page: diskretO2 -->
+### Zeitliche Diskretisierung der Sauerstoffänderung {#lnk_diskret_o2}
+
 Weil die Belüftungsrate vom Sauerstoffgehalt selbst abhängig ist, wird hier eine 
 semi-implizite Diskretisierung zur Berechnung des Sauerstoffgehaltes am Ende des
 aktuellen Zeitschritts  \f$ {O_2}(t + \Delta t)\f$ verwendet:

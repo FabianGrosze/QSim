@@ -84,16 +84,18 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
          ! Berechnung nach Melching (1999)
          ! K2=142*(v*S)^0.333*H^-0.66*B^-0.243
          bbeis = 142.*(abs(vmitts)*Slope)**0.333*tiefes**(-0.66)*Breite**(-0.243)
-         case default
-         print*,'Belueftung_K2: Belüftungsformel iphy = ',iphys,' nicht vorhanden.'
+      
+      case default
+         print*,'Belueftung_K2: Belueftungsformel iphy = ',iphys,' nicht vorhanden.'
          stop 234
    end select
    
    if (isnan(bbeis)) then
-      print*,'Belueftung_K2 isnan(bbei iphys = ',iphys
+      print '(a,i0)', "Error: Belueftung_K2 caused nan for bbeis with iphys = ", iphys
       stop 234
    endif
-   if (bbeis > 20.)bbeis = 20.
+   
+   if (bbeis > 20.) bbeis = 20.
    
    ! Temperaturabhängigkeit
    bbeis = bbeis*(1.024**(tempws-20.))

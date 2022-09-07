@@ -24,10 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> \page Transport_Untrim Transportinformationen von Untrim (Zellrandflüsse)
-!! dargestellt im Vortrag Wyrwa QSimworkshop 2017.
-!! \n\n aus Datei stofftransport_untrim.f95; zurück zu \ref lnk_Datentechnik oder \ref Transportinformationen
-!----+-----+----
+
 subroutine holen_trans_untrim(nt)
    use netcdf
    use modell
@@ -279,7 +276,8 @@ subroutine stofftransport_untrim()
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
       print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu > 1), volume fraction (cu > 1), deltat = ', &
-            cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+              cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! skip SSalg and SS if SS read from file
@@ -308,8 +306,7 @@ subroutine stofftransport_untrim()
                                                              ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
                      endif
                   end do !all 4 k
-                  write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name'  &
-                  ,planktonic_variable_name(n)
+                  write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name', planktonic_variable_name(n)
                   call qerror(fehler)
                else
                   planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
@@ -1010,8 +1007,7 @@ subroutine print_attributes( nvar, nAtts)
             end do
             iret = nf_get_att_text(ncid, nvar, aname, attstring)
             call check_err(iret)
-            write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = " &
-                                                                                    , len(trim(attstring)), trim(adjustl(attstring))
+            write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = ",len(trim(attstring)),trim(adjustl(attstring))
          case(nf90_short)
             iret = nf_get_att_int(ncid, nvar, aname, ival)
             call check_err(iret)

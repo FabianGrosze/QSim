@@ -8,7 +8,7 @@ Sauerstoff - Formelzeichen/Variablennamen {#lnk_sauerstoff_vars}
 | \f$ \Delta O_{A,j} \f$ | dalgo | - | mg O_2/L je Zeitschritt | Sauerstoffproduktion der Gruen-, Kiesel-, und Blaualgen  | b (?) |
 | \f$ O_2 \f$            | vo2   | - | mg O_2/L                |  Sauerstoffgehalt                                        | e, b |
 | \f$ \Delta O_2 \f$     | v     | - | mg O_2/L je Zeitschritt | lokale Änderung des Sauerstoffgehalts pro Zeitschritt    | b     |
-| \f$ \Delta_{saett} \f$ | Defiz | - | mg O_2/L                | Sauerstoffdefizit (Untersättigung) siehe \ref lueftO2    |       |
+| \f$ \Delta_{saett} \f$ | Defiz | - | mg O_2/L                | Sauerstoffdefizit (Untersättigung) siehe \ref lnk_o2_oberflaechenaustausch    |       |
 |           |   |       |   |     |       |
 
 
@@ -69,17 +69,17 @@ zurück: \ref lnk_sauerstoff
 !! <tr><td>  o2ein1(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (19+(i-1)*number_benth_distr) </td><td> Sauerstoffeintrag aus der Luft ? , Ausgabe in mgO2/(l*h)  </td></tr>
 !! <tr><td>   jiein(1) </td><td> 0        </td><td> keine Punkt-Einleitungen </td></tr>
 !! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td> opgrmi  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder </td><td> Min. O2-Prod. Grünalgen </td></tr>
-!! <tr><td>  opgrma  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Grünalgen </td></tr>
-!! <tr><td>  opkimi  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder  </td><td> Min. O2-Prod. Kieselalgen </td></tr>
-!! <tr><td>  opkima  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Kieselalgen </td></tr>
+!! <tr><td> opgrmi  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder </td><td> Min. O2-Prod. Grünalgen </td></tr>
+!! <tr><td>  opgrma  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Grünalgen </td></tr>
+!! <tr><td>  opkimi  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder  </td><td> Min. O2-Prod. Kieselalgen </td></tr>
+!! <tr><td>  opkima  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Kieselalgen </td></tr>
 !! <tr><td>  albewg(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (13+(i-1)*number_benth_distr) </td><td> Wachstum benthischer gruen-Algen </td></tr>
 !! <tr><td>  alberg(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (11+(i-1)*number_benth_distr) </td><td> Respiration benthischer gruen-Algen </td></tr>
 !! <tr><td>  abeowg(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (20+(i-1)*number_benth_distr) </td><td> Sauerstoffproduktion benthischer Grünalge </td></tr>
 !! <tr><td>  abeorg(1)  </td><td>  benthische_verteilungen::benthic_distribution_p (21+(i-1)*number_benth_distr) </td><td> Sauerstoffverbrauch benthischer Grünalgen </td></tr>
 !! <tr><td>   </td><td>  </td><td>  </td></tr>
-!! <tr><td> opblmi  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder  </td><td> Min. O2-Prod. Blaualgen </td></tr>
-!! <tr><td>  opblma  </td><td> ! \ref globaleParameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Blaualgen </td></tr>
+!! <tr><td> opblmi  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder  </td><td> Min. O2-Prod. Blaualgen </td></tr>
+!! <tr><td>  opblma  </td><td> ! \ref lnk_globale_parameter direkt aus QSimDatenfelder  </td><td> Max. O2-Prod. Blaualgen </td></tr>
 !! <tr><td>  ablnh4(1)  </td><td>  uebergabe_werte::transfer_quantity_p (35+(i-1)*number_trans_quant) </td><td> Ammoniumaufnahme der blau-Algen, tiefengem. </td></tr>
 !! <tr><td>  ablno3(1)  </td><td>  uebergabe_werte::transfer_quantity_p (38+(i-1)*number_trans_quant) </td><td> Nitrataufnahme der blau-Algen, tiefengem. </td></tr>
 !! <tr><td>  dalgbl(1)  </td><td>  uebergabe_werte::transfer_quantity_p (22+(i-1)*number_trans_quant) </td><td> Zuwachs Blau-Algen </td></tr>

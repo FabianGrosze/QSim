@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Berechnung der Einleitungen bei Tracerberechnungen
-!! @authoer Volker Kirchesch
+!! @author Volker Kirchesch
 !! @date 02.07.2012
 subroutine CTracer(TEMPW,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs,itags,uhrz,mstr)
    

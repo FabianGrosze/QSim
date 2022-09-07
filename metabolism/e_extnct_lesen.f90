@@ -27,10 +27,12 @@
 
 !> <h2> subroutine e_extnct_lesen </h2>
 !! ließt die \n
-!! Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, Humin, susp. Schwebstoff,Sonnenlicht\n
+!! Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, 
+!! Humin, susp. Schwebstoff,Sonnenlicht\n
 !! aus <a href="../../exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
 !! \n\n
-!! Quelle: e_extnct_lesen.f90 , zu: Stoffumsatz ; algae_huelle(), \ref Randbedingungen , \ref extnct_rb
+!! Quelle: e_extnct_lesen.f90 , zu: Stoffumsatz ; algae_huelle(), 
+!! \ref lnk_randbedingungen , \ref lnk_extnct_rb
 
 subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
    !!write(cpfad,'(A)')trim(modellverzeichnis)
