@@ -36,7 +36,8 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schnitt14.14'
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-PV='qsim3d_dev06sep22'
+# PV='qsim3d_dev06sep22'
+PV='qsim3d_schwer17'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0

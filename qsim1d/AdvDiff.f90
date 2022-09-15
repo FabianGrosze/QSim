@@ -1025,17 +1025,19 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
    enddo
    do i = 1,nx+1        ! ultimate-Limiter
       if (isgn(i,nkz) == 1) then
-         S2 = U(i-1)
-         Crr1 = Crr(i-1)
          if (i == 1 .or. flag(i) == 4) then
             S2 = U(i)
             Crr1 = Crr(i)
+         else
+            S2 = U(i-1)
+            Crr1 = Crr(i-1)
          endif
          S3 = U(i)
          Crr2 = Crr(i)
-         S4 = U(i+1)
          if (i == nx+1 .or. flag(i+1) == 4) then
             S4 = U(i)
+         else
+            S4 = U(i+1)
          endif
       else           ! vr ist kleiner 0.0
          
@@ -1087,7 +1089,8 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
       endif
       
       hconr = Crm*F_plus(i)
-      hconl = Crm*F_plus(i-1)
+      hconl = hconr
+      if (i>1)hconl = Crm*F_plus(i-1)
       if (isgn(i,nkz) == -1) then
          hconr = -hconr
          hconl = -hconl

@@ -29,9 +29,10 @@ subroutine write_gerris_definitions(cpfad1)
 
    implicit none
    
-   character(255), intent(in) :: cpfad1
+   character(255) :: cpfad1
    
    print*,' Writing definitions:'
+   !write(cpfad1,*)'.'
    
    print *, '  > AParamParam.xml'
    call AParamParam(cpfad1)

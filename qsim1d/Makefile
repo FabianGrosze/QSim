@@ -25,7 +25,8 @@
 # wyrwa seit 17dez19
 #====================================================================
 
-VERSION = 14.10.07
+#VERSION = 14.10.07
+VERSION = 17
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
@@ -36,7 +37,8 @@ VERSION = 14.10.07
 # PV= qsim1d_final_v
 # PV= qsim1d_14.06
 # PV= qsim1d14.10.01
-PV= qsim1d_schwer$(VERSION)
+# PV= qsim1d_schwer$(VERSION)
+PV= qsim1d_schwermetall$(VERSION)
 
 #====================================================================
 
@@ -47,7 +49,7 @@ Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o E_extnctPar
 Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
 qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
 van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o lax_wen.o \
-lin_interpolation.o write_gerris_definitions.o
+lin_interpolation.o write_gerris_definitions.o init_result_files.o ph_inflow_1d.o
 
 -include ../metabolism/metabol.mk
 
@@ -110,7 +112,8 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/makefile*
+	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* \
+	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*.mk
 
 store:
 	cp $(FN) $(MY_ARC)

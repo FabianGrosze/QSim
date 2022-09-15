@@ -347,6 +347,7 @@ program qsim
    ! writing parameter definition for GUI GERRIS
    ! ==========================================================================
    if (cpfad == '/F') then
+   !if (cpfad == 'def') then
       call write_gerris_definitions(cpfad1)
       stop
    endif
@@ -1199,8 +1200,7 @@ program qsim
    1045 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f5.2,2x,f9.4)
    1047 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f7.2,2x,f5.2,2x,f5.2)
    
-   VTYPH(j,jj,jjj) = 0.0
-   
+   VTYPH(:,:,:) = 0.0
    
    ! Erosions-Abschnitte
    do azStr = 1,azStrs ! alle Stränge
