@@ -698,10 +698,10 @@ contains
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
       call system(trim(systemaufruf),system_error)
       if (system_error /= 0) then
-         print*,"antriebsart: SCHISM netDCF not available; directory outputs_schism not accessible"
+         print*,"antriebsart: SCHISM netCDF not available; directory outputs_schism not accessible"
       else
          antriebsart = 3
-         print*,'antriebsart SCHISM netDCF'
+         print*,'antriebsart SCHISM netCDF'
          return
       end if ! io_error.ne.0
    end function antriebsart
