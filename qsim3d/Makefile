@@ -36,7 +36,10 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schnitt14.14'
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-PV='qsim3d_dev06sep22'
+# PV='qsim3d_dev06sep22'
+# PV='qsim3d_schwer17'
+PV='qsim3d_schiqu22_01'
+
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -57,6 +60,7 @@ MFC             = $(MPI_BIN)/$(FC)
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
+     read_mesh_nc_sc.o \
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o module_suspendedMatter.o parallel.o \
@@ -114,7 +118,8 @@ endif
 #--------------------------------------------------------------------
 
 #usual: check date qsim qsim3d
-usual: date metabo qsim3d
+#usual: date metabo qsim3d
+usual: date metabo schism qsim3d
 #usual: check date qsim qsim3d
 
 check:
@@ -177,8 +182,11 @@ metabo: $(META)
 	ranlib libmetabol.a
 	@echo "libmetabol.a done"
 
-qsim3d: $(Q3)
-	$(MFC) $(Q3) -L$(MPII)/lib -lmpich -lmpichf90 -lmpl -lpthread -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff $(LDFLAGS) -L. -lmetabol -o $(PV)
+qsim3d:	$(Q3)
+	$(MFC) $(Q3) -L$(MPII)/lib -lmpich -lmpichf90 -lmpl -lpthread \
+   -L. -lschism\
+   -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff \
+   $(LDFLAGS) -L. -lmetabol -o $(PV)
 
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
@@ -210,7 +218,8 @@ taz:
 	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
 	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*.mk \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
-	../license.txt ../readme.md
+	../license.txt ../readme.md \
+	$(SCHISM_HYDRO)/*0  $(SCHISM_CORE)/*0
 	cp ../$(FN) .
 
 store:

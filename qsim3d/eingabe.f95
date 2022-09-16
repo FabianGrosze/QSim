@@ -62,10 +62,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(3) ! SCHISM netCDF
-         !!!### call read_mesh_nc_sc()
+         call read_mesh_nc_sc()
          n_cal = n_elemente !!??
-         n_cal = knotenanzahl2D
-         if (meinrang == 0)print*,'got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?????????########'
+         !n_cal = knotenanzahl2D
+         if (meinrang == 0)print*,'got SCHISM mesh n_cal=', n_cal
          case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
