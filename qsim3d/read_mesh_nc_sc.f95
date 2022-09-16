@@ -38,7 +38,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global,&
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,    &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode, &
-                          snx, sny, distj
+                          snx, sny, distj,ntracers
    use schism_msgp, only: nproc, myrank
    implicit none
    include 'netcdf.inc'
@@ -62,16 +62,37 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    
    namelist /CORE/   IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,NSPOOL,IHFSKIP,MSC2,MDC2,DT,RNDAY
    
-   if (meinrang == 0) then !! nur prozessor 0
-      print*,'read_mesh_nc_sc starts'
+      print*,meinrang,' read_mesh_nc_sc starts ',proz_anz
       
-      ! read param.out.nml
-      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
-      open(15,file = dateiname,delim = 'apostrophe',status = 'old')
-      read(15,nml = CORE)
-      deltat = int(dt)
-      print*,"read_mesh_nc_sc: param.out.nml DT,RNDAY = ",DT,deltat,RNDAY
-      close(15)
+      if (meinrang == 0) then !! nur prozessor 0
+         ! read param.out.nml
+         write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
+         open(15,file = dateiname,delim = 'apostrophe',status = 'old')
+         read(15,nml = CORE)
+         deltat = int(dt)
+         print*,"read_mesh_nc_sc: param.out.nml DT,RNDAY = ",DT,deltat,RNDAY
+         close(15)
+      endif ! process0 only
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+!     read local to global files
+      write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/local_to_global_000000"
+      i=len_trim(dateiname)
+      write(dateiname(i-5:i),'(i6.6)') meinrang
+      open(10,file=trim(dateiname),status='old')
+!     header info 
+      read(10,*)ns_global,ne_global,np_global,nvrt,nproc,ntracers ! ,ntrs(:) ??? !global info
+      close(10)
+      print*,"read_mesh_nc_sc: local_to_global ns_global,ne_global,np_global= ",ns_global,ne_global,np_global
+      if(proz_anz .ne. nproc )then
+         print*,trim(dateiname)
+         print*,meinrang,' proz_anz .ne. nproc ',proz_anz,nproc
+         call qerror('incompatible process number SCHISM - QSim')
+      endif
+      
+      return !! preliminary end
+      
+   if (meinrang == 0) then !! nur prozessor 0
       !--- zone.gr3
       open(14,file = 'zone.gr3',status = 'old',iostat = istat)
       if (istat /= 0) call qerror('read_mesh_nc_sc: zone.gr3 open failure')

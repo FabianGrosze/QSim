@@ -66,7 +66,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          n_cal = n_elemente !!??
          !n_cal = knotenanzahl2D
          if (meinrang == 0)print*,'got SCHISM mesh n_cal=', n_cal
-         case default
+         call qerror('coding of reading SCHISM netCDF not yet complete')
+      case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
    ! partitioning of variable arrays
