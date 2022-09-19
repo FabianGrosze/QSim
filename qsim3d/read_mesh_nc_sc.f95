@@ -35,34 +35,37 @@
 subroutine read_mesh_nc_sc() !meinrang.eq.0
    use netcdf
    use modell
-   use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global,&
-                          ne_global, np_global, ielg, iplg, islg, RNDAY, dt,    &
-                          rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode, &
-                          snx, sny, distj,ntracers
+   use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global, &
+                          ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
+                          rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
+                          snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
+                          start_year,start_month,start_day,start_hour,utc_start, &
+                          nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
+                          ssign,kbs
    use schism_msgp, only: nproc, myrank
    implicit none
    include 'netcdf.inc'
    
    integer                           :: IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,IHFSKIP,MSC2,MDC2
-   integer                           :: i,j,k,n,m,mm,ne,np,ns, neta_global,nr
+   integer                           :: i,j,k,n,m,mm, neta_global,nr
    integer                           :: lfdb, istat
    character (len = longname)        :: dateiname,systemaufruf
-   integer                           :: start_year,start_month,start_day
-   real*8                            :: start_hour,utc_start !, dt
    character(len = 72)               :: fgb,fgb2,fdb  ! Processor specific global output file name
    character(len = 400)              :: textline
    integer                           :: ne_l, np_l, ns_l ! numbers on each process
    integer                           :: irank
-   integer                           :: nrec, nspool, kz, ics, nmax, nmin, tn, bn
+   integer                           :: nmax, nmin, tn, bn
    real                              :: dtout, h0, h_s, h_c, theta_b, theta_f
    real,allocatable,dimension (:)    :: ztot, sigma
    integer,allocatable,dimension(:,:):: nm2
    integer,allocatable,dimension(:)  :: kbp00_global , i34_global
-   real                              :: xmax, xmin, ymax, ymin, zmax, zmin, rzone, distmax, distmin
+   real                              :: xmax, xmin, ymax, ymin, zmax, zmin, rzone, distmax, distmin, sum_area
+   real dummy
+   integer nummy
    
    namelist /CORE/   IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,NSPOOL,IHFSKIP,MSC2,MDC2,DT,RNDAY
    
-      print*,meinrang,' read_mesh_nc_sc starts ',proz_anz
+      !print*,meinrang,' read_mesh_nc_sc starts ',proz_anz
       
       if (meinrang == 0) then !! nur prozessor 0
          ! read param.out.nml
@@ -82,14 +85,82 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       open(10,file=trim(dateiname),status='old')
 !     header info 
       read(10,*)ns_global,ne_global,np_global,nvrt,nproc,ntracers ! ,ntrs(:) ??? !global info
-      close(10)
-      print*,"read_mesh_nc_sc: local_to_global ns_global,ne_global,np_global= ",ns_global,ne_global,np_global
+      read(10,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10,*)'Header:'
+      n_elemente     = ne_global
+      knotenanzahl2D = np_global
+      kantenanzahl   = ns_global
+      !print*,"read_mesh_nc_sc: local_to_global ns_global,ne_global,np_global= "  &
+      !                       ,ns_global,ne_global,np_global
       if(proz_anz .ne. nproc )then
          print*,trim(dateiname)
          print*,meinrang,' proz_anz .ne. nproc ',proz_anz,nproc
          call qerror('incompatible process number SCHISM - QSim')
       endif
-      
+      read(10,*)ne,nea
+      if(allocated(ielg)) deallocate(ielg); allocate(ielg(nea));
+      do i=1,ne
+        read(10,*)j,ielg(j)
+      enddo
+      read(10,*)np,npa
+      if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa));
+      do i=1,np
+        read(10,*)j,iplg(j)
+      enddo
+      read(10,*)ns,nsa
+      if(allocated(islg)) deallocate(islg); allocate(islg(nsa));
+      do i=1,ns
+        read(10,*)j,islg(j)
+      enddo
+      read(10,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10,*)'Header:'
+      read(10,*)start_year,start_month,start_day,start_hour,utc_start
+      read(10,*)nrec,dummy,nspool,nvrt,kz, &
+     &         h0,h_s,h_c,theta_b,theta_f,ics
+      if(allocated(ztot)) deallocate(ztot); allocate(ztot(nvrt))
+      if(allocated(sigma)) deallocate(sigma); allocate(sigma(nvrt))
+      do k=1,kz-1
+         read(10,*)ztot(k)
+      enddo !k
+      do k=1,nvrt-kz+1
+         read(10,*)sigma(k)
+      enddo !k
+      read(10,*)i,j
+      if((i.ne.np).or.(j.ne.ne))call qerror('(i.ne.np).or.(j.ne.ne)')
+      if(ics==1) then
+         allocate(xnd(npa),ynd(npa),dp00(npa),kbp00(npa))
+         xmin=1.0e9 ; xmax=-1.0*xmin
+         ymin=1.0e9 ; ymax=-1.0*ymin
+         do m=1,np
+            read(10,*)xnd(m),ynd(m),dp00(m),kbp00(m)
+            if(xmin.gt.xnd(m))xmin=xnd(m);if(xmax.lt.xnd(m))xmax=xnd(m)
+            if(ymin.gt.ynd(m))ymin=ynd(m);if(ymax.lt.ynd(m))ymax=ynd(m)
+         enddo !m
+      else !lat/lon
+         allocate(xlon(npa),ylat(npa),dp00(npa),kbp00(npa))
+         do m=1,np
+            read(10,*)xlon(m),ylat(m),dp00(m),kbp00(m)
+            xlon(m)=xlon(m)/180.d0*pi ; ylat(m)=ylat(m)/180.d0*pi
+         enddo !m
+      endif !ics
+
+      allocate(i34(nea),elnode(4,nea))
+      allocate(kbe(nea),area(nea),ic3(4,nea),elside(4,nea),ssign(4,nea))
+      sum_area=0.0
+      do m=1,ne
+         read(10,*)i34(m),(elnode(mm,m),mm=1,i34(m))
+         read(10,*)kbe(m),area(m),ic3(1,m),ic3(2,m),ic3(3,m),ic3(4,m)
+         sum_area=sum_area+area(m)
+         read(10,*)elside(1,m),elside(2,m),elside(3,m),elside(4,m),ssign(1,m),ssign(2,m),ssign(3,m),ssign(4,m)
+      enddo !m
+
+      allocate(isidenode(2,nsa),isdel(2,nsa))
+      allocate(distj(nsa),delj(nsa),snx(nsa),sny(nsa),isbs(nsa),kbs(nsa))
+      do i=1,ns
+         read(10,*)j,isidenode(1:2,j)
+         read(10,*)distj(i),delj(i),snx(i),sny(i),isbs(i),kbs(i),isdel(1,i),isdel(2,i)
+      enddo !i
+
+      close(10)
+      print*,meinrang,' area=',sum_area,' bottom left=',xmin,ymin,' top right=',xmax,ymax,' nodes,elements=',np,ne
       return !! preliminary end
       
    if (meinrang == 0) then !! nur prozessor 0

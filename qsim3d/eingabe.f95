@@ -65,8 +65,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call read_mesh_nc_sc()
          n_cal = n_elemente !!??
          !n_cal = knotenanzahl2D
-         if (meinrang == 0)print*,'got SCHISM mesh n_cal=', n_cal
-         call qerror('coding of reading SCHISM netCDF not yet complete')
+         if(meinrang==0)print*,'got local_to_global',n_elemente,knotenanzahl2D,kantenanzahl
+         call qerror('eingabe.f95 coding of read_mesh_nc_sc() not yet complete')
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
