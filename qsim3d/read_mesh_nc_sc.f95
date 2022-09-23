@@ -41,14 +41,14 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
                           snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
                           start_year,start_month,start_day,start_hour,utc_start, &
                           nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
-                          ssign,kbs
-   use schism_msgp, only: nproc, myrank
+                          ssign,kbs,iegl2
+   !use schism_msgp, only: nproc, myrank
    implicit none
    include 'netcdf.inc'
    
    integer                           :: IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,IHFSKIP,MSC2,MDC2
    integer                           :: i,j,k,n,m,mm, neta_global,nr
-   integer                           :: lfdb, istat
+   integer                           :: lfdb, istat, nproc
    character (len = longname)        :: dateiname,systemaufruf
    character(len = 72)               :: fgb,fgb2,fdb  ! Processor specific global output file name
    character(len = 400)              :: textline
@@ -59,14 +59,16 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    real,allocatable,dimension (:)    :: ztot, sigma
    integer,allocatable,dimension(:,:):: nm2
    integer,allocatable,dimension(:)  :: kbp00_global , i34_global
-   real                              :: xmax, xmin, ymax, ymin, zmax, zmin, rzone, distmax, distmin, sum_area
+   real                              :: xmax, xmin, ymax, ymin, zmax, zmin, xmaxi, xmini, ymaxi, ymini, zmaxi, zmini
+   real                              :: rzone, distmax, distmin, sum_area, totalarea
    real dummy
-   integer nummy
+   integer nummy, rank_min,rank_max,id_min,id_max
    
    namelist /CORE/   IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,NSPOOL,IHFSKIP,MSC2,MDC2,DT,RNDAY
    
       !print*,meinrang,' read_mesh_nc_sc starts ',proz_anz
       
+!#### read param.nml #############################################################################!
       if (meinrang == 0) then !! nur prozessor 0
          ! read param.out.nml
          write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
@@ -78,7 +80,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       endif ! process0 only
       call mpi_barrier (mpi_komm_welt, ierr)
 
-!     read local to global files
+!#### read local_to_global_0000 files ############################################################!
       write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/local_to_global_000000"
       i=len_trim(dateiname)
       write(dateiname(i-5:i),'(i6.6)') meinrang
@@ -89,8 +91,8 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       n_elemente     = ne_global
       knotenanzahl2D = np_global
       kantenanzahl   = ns_global
-      !print*,"read_mesh_nc_sc: local_to_global ns_global,ne_global,np_global= "  &
-      !                       ,ns_global,ne_global,np_global
+      if (meinrang == 0)print*,"read_mesh_nc_sc: local_to_global ns_global,ne_global,np_global= "  &
+                             ,ns_global,ne_global,np_global
       if(proz_anz .ne. nproc )then
          print*,trim(dateiname)
          print*,meinrang,' proz_anz .ne. nproc ',proz_anz,nproc
@@ -99,17 +101,18 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       read(10,*)ne,nea
       if(allocated(ielg)) deallocate(ielg); allocate(ielg(nea));
       do i=1,ne
-        read(10,*)j,ielg(j)
+         read(10,*)j,ielg(j)
       enddo
       read(10,*)np,npa
+      print*,meinrang,'local_to_global:',np,npa
       if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa));
       do i=1,np
-        read(10,*)j,iplg(j)
+         read(10,*)j,iplg(j)
       enddo
       read(10,*)ns,nsa
       if(allocated(islg)) deallocate(islg); allocate(islg(nsa));
       do i=1,ns
-        read(10,*)j,islg(j)
+         read(10,*)j,islg(j)
       enddo
       read(10,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10,*)'Header:'
       read(10,*)start_year,start_month,start_day,start_hour,utc_start
@@ -141,7 +144,6 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
             xlon(m)=xlon(m)/180.d0*pi ; ylat(m)=ylat(m)/180.d0*pi
          enddo !m
       endif !ics
-
       allocate(i34(nea),elnode(4,nea))
       allocate(kbe(nea),area(nea),ic3(4,nea),elside(4,nea),ssign(4,nea))
       sum_area=0.0
@@ -151,55 +153,110 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
          sum_area=sum_area+area(m)
          read(10,*)elside(1,m),elside(2,m),elside(3,m),elside(4,m),ssign(1,m),ssign(2,m),ssign(3,m),ssign(4,m)
       enddo !m
-
+      sum_area=sum_area/1000000 ! km²
       allocate(isidenode(2,nsa),isdel(2,nsa))
       allocate(distj(nsa),delj(nsa),snx(nsa),sny(nsa),isbs(nsa),kbs(nsa))
       do i=1,ns
          read(10,*)j,isidenode(1:2,j)
          read(10,*)distj(i),delj(i),snx(i),sny(i),isbs(i),kbs(i),isdel(1,i),isdel(2,i)
       enddo !i
-
       close(10)
-      print*,meinrang,' area=',sum_area,' bottom left=',xmin,ymin,' top right=',xmax,ymax,' nodes,elements=',np,ne
-      return !! preliminary end
+      print*,meinrang,' area [km²]=',sum_area,' bottom left=',xmin,ymin,' top right=',xmax,ymax,' nodes,elements=',np,ne
+      call mpi_reduce(xmax,xmaxi,1,MPI_DOUBLE_PRECISION,mpi_max,0,mpi_komm_welt,ierr)
+      call mpi_reduce(ymax,ymaxi,1,MPI_DOUBLE_PRECISION,mpi_max,0,mpi_komm_welt,ierr)
+      call mpi_reduce(xmin,xmini,1,MPI_DOUBLE_PRECISION,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(ymin,ymini,1,MPI_DOUBLE_PRECISION,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(sum_area,totalarea,1,MPI_FLOAT,mpi_sum,0,mpi_komm_welt,ierr)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if (meinrang==0)print*,'area[km²]=',totalarea,' bottom left=',xmini,ymini,' top right=',xmaxi,ymaxi
+
+ !#### read global_to_local.prop #################################################################!
+      if(allocated(iegl2)) deallocate(iegl2); allocate(iegl2(2,ne_global))
+      allocate(ipgl_rank(np_global)) ; allocate(ipgl_id(np_global))
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(meinrang==0) then
+         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/global_to_local.prop"
+         open(32,file=trim(dateiname),status='unknown')
+         do i=1,ne_global
+            read(32,*)j,nummy,iegl2(1,i),iegl2(2,i)
+            !read(32,'(i8,1x,i6,1x,i6,1x,i6)')j,nummy,iegl2(1,i),iegl2(2,i)
+            !write(32,'(i8,1x,i6,1x,i6,1x,i6)')ie,iegrpv(ie),iegl2(1,ie),iegl2(2,ie)
+         enddo !i
+         do i=1,np_global
+            read(32,*)j, ipgl_rank(i), ipgl_id(i)
+            !read(32,'(i8,1x,i6,1x,i6)')j, ipgl_rank(i), ipgl_id(i)
+         enddo !i
+         close(32)
+      endif ! meinrang==0
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call MPI_Bcast(ipgl_rank,np_global,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(ipgl_id,np_global,MPI_INT,0,mpi_komm_welt,ierr)
+      rank_min=777777 ; rank_max=-777777 ; id_min=777777 ; id_max=-777777 ;j=0
+      do i=1,np_global
+         if(rank_min.gt.ipgl_rank(i))rank_min=ipgl_rank(i)
+         if(rank_max.lt.ipgl_rank(i))rank_max=ipgl_rank(i)
+         if(ipgl_rank(i).eq.meinrang)then
+            j=j+1
+            if(id_min.gt.ipgl_id(i))id_min=ipgl_id(i)
+            if(id_max.lt.ipgl_id(i))id_max=ipgl_id(i)
+         endif
+      enddo !i
+      !print*,meinrang,' global_to_local.prop ranks=',rank_min,rank_max,' id=',j,id_min,id_max,np,npa
+      call mpi_reduce(j,k,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      call mpi_reduce(np,m,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      call mpi_reduce(npa,n,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'mpi_sum=',k,m,n,'np_global',np_global
+
+      j=0
+      do i=1,np
+         if(ipgl_id(iplg(i)).ne.i) j=j+1
+      enddo
+      !print*,meinrang,' global-local node-number missmatch ',j,' of ',np
+
+!#### read manning.gr3 ###########################################################################!
       
-   if (meinrang == 0) then !! nur prozessor 0
-      !--- zone.gr3
-      open(14,file = 'zone.gr3',status = 'old',iostat = istat)
-      if (istat /= 0) call qerror('read_mesh_nc_sc: zone.gr3 open failure')
-      read(14,*); read(14,*) ne,np
-      print*,'read_mesh_nc_sc: zone.gr3: ne,np = ',ne,np
-      n_elemente = ne
-      knotenanzahl2D = np
-      allocate (knoten_x(knotenanzahl2D),knoten_y(knotenanzahl2D),knoten_z(knotenanzahl2D),   &
+      if (meinrang == 0) then !! nur prozessor 0
+         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/manning.gr3"
+         open(14,file = trim(dateiname),status = 'old',iostat = istat)
+         !open(14,file = 'zone.gr3',status = 'old',iostat = istat)
+         if (istat /= 0) call qerror('read_mesh_nc_sc: manning.gr3 open failure')
+         read(14,*); read(14,*) n,k
+         if(n.ne.n_elemente)call qerror('manning.gr3 element number missmatch')
+         if(k.ne.knotenanzahl2D)call qerror('manning.gr3 node number missmatch')
+         print*,'read_mesh_nc_sc: manning.gr3: n_elemente,knotenanzahl2D = ',n,k
+         allocate (knoten_x(knotenanzahl2D),knoten_y(knotenanzahl2D),knoten_z(knotenanzahl2D),   &
                knoten_zone(knotenanzahl2D),knoten_rang(knotenanzahl2D),    &
                knoten_rand(knotenanzahl2D),knoten_flaeche(knotenanzahl2D), stat = istat )
-      do i = 1,np
-         read(14,*)n,knoten_x(i),knoten_y(i),rzone
-         if (n /= i) call qerror('reading zone.gr3 nodes: something gone wrong')
-         knoten_zone(i) = int(rzone)
-         if ((knoten_zone(i) < 0) .or. (knoten_zone(i) > 300)) then
-            write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ oder größer als 300 sein; ist aber = ',knoten_zone(i)
-            call qerror(fehler)
-         end if
-      enddo
+         do i = 1,knotenanzahl2D
+            read(14,*)n,knoten_x(i),knoten_y(i),knoten_z(i)
+            if (n /= i) call qerror('reading zone.gr3 nodes: something gone wrong')
+            !if ((knoten_zone(i) < 0) .or. (knoten_zone(i) > 300)) then
+            !   write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ oder größer als 300 sein; ist aber = ',knoten_zone(i)
+            !   call qerror(fehler)
+            !end if
+         enddo
       
-      xmax = -999999999999.9 ; xmin = 999999999999.9
-      ymax = -999999999999.9 ; ymin = 999999999999.9
-      nmax = -99999999       ; nmin = 99999999
-      do i = 1,np
-         if (xmax <= knoten_x(i))xmax = knoten_x(i)
-         if (xmin >= knoten_x(i))xmin = knoten_x(i)
-         if (ymax <= knoten_y(i))ymax = knoten_y(i)
-         if (ymin >= knoten_y(i))ymin = knoten_y(i)
-         if (nmax <= knoten_zone(i))nmax = knoten_zone(i)
-         if (nmin >= knoten_zone(i))nmin = knoten_zone(i)
-      end do ! alle i Knoten
-      print*,'zone.gr3:'
-      print*,'x-koordinate max+min', xmax, xmin
-      print*,'y-koordinate max+min', ymax, ymin
-      print*,'Zone max+min', nmax, nmin
-      !Read local_to_global_0000 for global info
+         xmax = -999999999999.9 ; xmin = 999999999999.9
+         ymax = -999999999999.9 ; ymin = 999999999999.9
+         zmax = -99999999       ; zmin = 99999999
+         do i = 1,np
+            if (xmax <= knoten_x(i))xmax = knoten_x(i)
+            if (xmin >= knoten_x(i))xmin = knoten_x(i)
+            if (ymax <= knoten_y(i))ymax = knoten_y(i)
+            if (ymin >= knoten_y(i))ymin = knoten_y(i)
+            if (zmax <= knoten_z(i))zmax = knoten_z(i)
+            if (zmin >= knoten_z(i))zmin = knoten_z(i)
+         end do ! alle i Knoten
+         print*,'manning.gr3 bottom left=',xmin,ymin,' top right=',xmax,ymax,' Mannings n ',zmax, zmin
+
+      end if !! prozess 0 only
+      
+      call mpi_barrier (mpi_komm_welt, ierr)
+      return !! preliminary end
+
+      
+      if (meinrang == 0) then !! nur prozessor 0
+         !Read local_to_global_0000 for global info
       write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
       open(10, file = dateiname, status = 'old', iostat = istat)
       if (istat /= 0) then
@@ -265,6 +322,9 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    call MPI_Bcast(nproc,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(nvrt,1,MPI_INT,0,mpi_komm_welt,ierr)
    call mpi_barrier (mpi_komm_welt, ierr)
+   
+      return !! preliminary end
+   
    ! print*,meinrang,"read_mesh_nc_sc: dt,deltat,RNDAY=",dt,deltat,RNDAY
    !!!! read first part: local_to_global_meinrang !!!!
    !print*,meinrang,'-',adjustl(trim(modellverzeichnis)),'outputs_schism','/','local_to_global_0000'
@@ -556,3 +616,4 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    if (meinrang == 0) print*,'read_mesh_nc_sc finished'
    return
 end subroutine read_mesh_nc_sc
+      

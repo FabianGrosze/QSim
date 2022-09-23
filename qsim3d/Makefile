@@ -60,7 +60,7 @@ MFC             = $(MPI_BIN)/$(FC)
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
-     read_mesh_nc_sc.o \
+     read_mesh_nc_sc.o ausgeben_schism.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o module_suspendedMatter.o parallel.o \

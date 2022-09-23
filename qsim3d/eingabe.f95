@@ -65,7 +65,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call read_mesh_nc_sc()
          n_cal = n_elemente !!??
          !n_cal = knotenanzahl2D
-         if(meinrang==0)print*,'got local_to_global',n_elemente,knotenanzahl2D,kantenanzahl
+         print*,meinrang,' got SCHISM mesh ',n_elemente,knotenanzahl2D,kantenanzahl
+         call mpi_barrier (mpi_komm_welt, ierr)
+         if (meinrang == 0) call ausgeben_schism(0.0)
+         call mpi_barrier (mpi_komm_welt, ierr)
          call qerror('eingabe.f95 coding of read_mesh_nc_sc() not yet complete')
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')

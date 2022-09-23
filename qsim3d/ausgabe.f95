@@ -39,7 +39,7 @@ subroutine ausgeben()
          case(2) ! Untrim² netCDF
             call ausgeben_untrim(rechenzeit)
          case(3) ! SCHISM
-            !!!### call ausgeben_schism(rechenzeit)
+            call ausgeben_schism(rechenzeit)
             case default
             print*,'hydro_trieb = ',hydro_trieb
             call qerror('ausgeben: Hydraulischer Antrieb unbekannt')

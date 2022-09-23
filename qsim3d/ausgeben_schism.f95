@@ -45,6 +45,10 @@ subroutine ausgeben_schism(itime)
    write(zahl,*)itime
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
+
+      return !! preliminary end
+   
+   
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'node',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename node_ failed')
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)

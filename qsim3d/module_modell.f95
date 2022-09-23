@@ -121,6 +121,8 @@ module modell
    integer , allocatable , dimension (:) :: knoten_rand
    !> \anchor knoten_zone Zonen-zähler an den Knoten bei Antrieb mit casu-Hydraulik aus points
    integer , allocatable , dimension (:) :: knoten_zone, knoten_rang
+   !> connecting global node number with rank and local node number of decomposed parts of domain (SCHISM)
+   integer , allocatable , dimension (:) :: ipgl_rank, ipgl_id
    real , allocatable , dimension (:) :: knoten_flaeche, knoten_volumen
    integer min_rand, max_rand, min_zone, max_zone
    real :: modell_geob, modell_geol, modell_flaeche
