@@ -15,20 +15,22 @@ I_{\Delta t} = I_{max} \cdot 0,5 \cdot \left(1 + cos\left(2 \cdot \pi \cdot
 mit:
 \f[ I_{max} = 2 \cdot \frac{I_{Glob}}{4,2 \cdot t_{hell}} \f]
 
-\f[time = -0,5 + \frac{Uhrz - SA}{t_{hell}}\f]
+\f[time = -0,5 + \frac{t_{Uhr} - SA}{t_{hell}}\f]
 
 \f[t_{hell} = SU - SA \f]
 
 
 \f$I_{\Delta t}\f$: Globalstrahlung während des Berechnungszeitschritts 
-\f$\Delta t\f$ [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$\Delta t\f$ [cal cm<sup>-2</sup> h<sup>-1</sup>]
+<!-- nochmal prüfen ob cal oder Joule -->
 
-\f$I_{max}\f$: maximale Globalstrahlung am Tag [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$I_{max}\f$: maximale Globalstrahlung am Tag [cal cm<sup>-2</sup> h<sup>-1</sup>]
+<!-- nochmal prüfen ob cal oder Joule -->
 
 \f$I_{Glob}\f$: Tagessumme der Globalstrahlung [\f$ J cm^{-2} \f$] oder 
     Globalstrahlungsintensität [\f$ J cm^{-2} h^{-1} \f$] 
 
-\f$ Uhrz \f$: Zeit [h]
+\f$ t_{Uhr} \f$: Zeit [h]
 <!-- nachprüfen -->
 
 \f$ SA, SU \f$: Sonnenaufgang, Sonnenuntergang (wird aus der geographischen Breite 
@@ -63,6 +65,7 @@ In mphyt.f90 steht noch OBFLI = 8.2051*(schwi(ior)*4.2)
 In algaesbl.f90 (ki & gr) steht OBFLI = 5.846*(schwi(ior)*4.2) -->
 
 *PAR*: photosynthetisch aktive Strahlung [\f$ \mu E \cdot m^{-2} \cdot s^{-1} \f$]
+
 \f$ I_{\Delta t} \f$: Globalstrahlung während des Berechnungszeitschritts \f$ \Delta t 
   [J \cdot cm^{-2} \cdot h^{-1}] \f$
   
@@ -84,9 +87,12 @@ Wärmestromdichte haben positive Werte:
 \f[ q_S = q_{S, G} + q_{S, A} - q_{S, W} \f]
 
 \f$ q_S \f$: Wärmestromdichte aus Strahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2} ]\f$
+
 \f$ q_{S, G} \f$: Wärmestromdichte aus Globalstrahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ q_{S, A} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung 
    \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ q_{S, W} \f$: Wärmestromdichte aus Ausstrahlung der Wasseroberfläche 
    \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
 
@@ -130,7 +136,7 @@ Muss hinter 273,16 noch die Einheit °C? -->
 
 
 \f$ q_{S,A,0} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung bei wolkenlosem Himmel 
- [\f$ kJ h-1 m-2\f$]
+ [\f$ kJ h^{-1} m^{-2}\f$]
  
 \f$ \sigma \f$: Stefan-Boltzmann-Konstante; 
 \f$ \sigma = 2,0411 * 10^{-7} [kJ m^{-2} K^{-4}] = 5,6698 * 10^{-8} [W h m^{-2} K^{-4}] \f$
@@ -148,7 +154,9 @@ Bewölkung wird über den Koeffizienten \f$ kB,A \f$ berücksichtigt:
 
 
 \f$ q_{S, A} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ k_{B,A} \f$:	Koeffizient zur Berücksichtigung der Bewölkung [-]
+
 \f$ q_{S,A,0} \f$:	Wärmestromdichte aus atmosphärischer Gegenstrahlung bei wolkenlosem Himmel \f$ [kJ/(h*m²) ] \f$
 
 Der Bewölkungskoeffizient \f$ k_{B,A} \f$ berechnet sich in Abhängigkeit vom 
@@ -156,10 +164,12 @@ Bedeckungsgrad \f$ \alpha_B \f$ und Wolkentyp \f$ f_{Typ} \f$ (siehe Tabelle XX)
 <!-- Link zur Tabelle unten einbauen --> 
 In QSim wird ein \f$ f_{Typ} \f$ von 0,08 (Cirrostratus) als Standard verwendet.
 
-\f[ k_{B,A} = 1 + f_{Typ} \frac{\alpha_B}{8}^2,6 \f]
+\f[ k_{B,A} = 1 + f_{Typ} \frac{\alpha_B}{8}^{2,6} \f]
 
 \f$ k_{B,A} \f$:	Koeffizient zur Berücksichtigung der Bewölkung
-\f$ f_{Typ} \f$:	Wolkentyp. Der Faktor bestimmt sich je nach Wolkentyp entsprechend Tabelle 2.  
+
+\f$ f_{Typ} \f$:	Wolkentyp. Der Faktor bestimmt sich je nach Wolkentyp entsprechend Tabelle XX.  
+
 \f$ \alpha_B \f$:	Gemessener Bedeckungsgrad in Achteln zwischen 0 (wolkenlos) und 8 (bedeckt)
 
 

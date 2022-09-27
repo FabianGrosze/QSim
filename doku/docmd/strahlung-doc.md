@@ -5,15 +5,15 @@ Licht, oder besser die Strahlung, ist ein zentraler Faktor für den Wärmehausha
 eines Gewässers. Die Globalstrahlung spielt aber auch für die Primärproduzenten 
 und damit die Produktivität eines Gewässers eine zentrale Rolle.
 
-Die Strahlung wird daher im BfG-Gewässergütemodell zur Simulation folgender 
+Die Strahlung wird im BfG-Gewässergütemodell zur Simulation folgender 
 Prozesse benötigt:
 
 - Wärmehaushalt des Fließgewässers <br>
- (Wellenlänge 290 - 4000 nm);
+ *(Wellenlänge 290 - 4000 nm)*;
 - Wachstum der Algen und Makrophyten durch Photosynthese <br>
- (Wellenlänge 400 – 700 nm);
+ *(Wellenlänge 400 – 700 nm)*;
 - Photolytisches Absterben der fäkalcoliformen Bakterien <br>
- (Wellenlänge 290 - 380 nm). 
+ *(Wellenlänge 290 - 380 nm)*. 
 
 Die einzelnen Strahlungskomponenten werden in QSim aus der Globalstrahlung 
 und der Wolkenbedeckung berechnet. 
