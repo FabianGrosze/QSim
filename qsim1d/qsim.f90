@@ -824,7 +824,7 @@ program qsim
          izufluss(mstr) = izufluss(mstr) + 1
          
          ! Bestimmung der Wirklänge der diffusen Einleitung
-         if (mstrLe(mstr,mRB) > 0) then
+         if (mstrLe(mstr,mRB) >= 0) then
             ieinL = ieinL+1
             WirkLL(mstr,ieinL) = abs(RBkm(mstr,mRB)-RBkmLe(mstr,mRB))*1000.
          endif

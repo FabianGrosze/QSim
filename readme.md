@@ -1,3 +1,8 @@
+## 14.09.06
+
+Bugfix:
+* correct if-condition in reading from `ModellA.txt` in QSim 1D.
+
 ## 14.09.05
 
 Bugfix:
