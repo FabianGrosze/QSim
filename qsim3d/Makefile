@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_01'
+PV='qsim3d_schiqu22_03'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -60,7 +60,7 @@ MFC             = $(MPI_BIN)/$(FC)
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
-     read_mesh_nc_sc.o ausgeben_schism.o\
+     read_mesh_schism.o ausgeben_schism.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
      zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
      planktische_variablen.o module_suspendedMatter.o parallel.o \

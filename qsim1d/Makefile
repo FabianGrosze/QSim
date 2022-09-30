@@ -25,7 +25,7 @@
 # wyrwa seit 17dez19
 #====================================================================
 
-VERSION = 14.10.07
+VERSION = 18
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
@@ -47,7 +47,7 @@ Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o E_extnctPar
 Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
 qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
 van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o lax_wen.o \
-lin_interpolation.o write_gerris_definitions.o
+lin_interpolation.o write_gerris_definitions.o init_result_files.o ph_inflow_1d.o
 
 -include ../metabolism/metabol.mk
 
@@ -101,7 +101,7 @@ qsim1d:	$(Q1)
 
 clean:
 	@echo "cleaning ..."
-	rm -f *.o $(PV) *.taz *~ *.mod
+	rm -f *.o $(PV) *.taz *~ *.mod *.a
 	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.a ../metabolism/*.mod
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
@@ -110,7 +110,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/makefile*
+	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/*.mk
 
 store:
 	cp $(FN) $(MY_ARC)

@@ -709,6 +709,10 @@ subroutine show_mesh()
       call mesh_output(ion)
       print*,'show_mesh:mesh_node.vtk done'
       close (ion)
+      if(hydro_trieb.eq. 3)then
+         print*,'show_mesh: SCHISM still reduced implementation '
+         return
+      endif
       !-------------------------------------------------------------------------------------------- edges=sides
       if (hydro_trieb == 3) then ! schism
          write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'mesh_midedge.vtk'

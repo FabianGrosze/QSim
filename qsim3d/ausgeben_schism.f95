@@ -41,11 +41,13 @@ subroutine ausgeben_schism(itime)
    real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy, vx, vy, vz
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
    real , allocatable , dimension (:) :: output
+   
    if (meinrang /= 0)call qerror('ausgeben_schism() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
    write(zahl,*)itime
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
 
+      call qerror('ausgeben_schism not ready for use yet')
       return !! preliminary end
    
    

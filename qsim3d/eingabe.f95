@@ -62,14 +62,13 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(3) ! SCHISM netCDF
-         call read_mesh_nc_sc()
+         call read_mesh_schism()
          n_cal = n_elemente !!??
          !n_cal = knotenanzahl2D
          print*,meinrang,' got SCHISM mesh ',n_elemente,knotenanzahl2D,kantenanzahl
          call mpi_barrier (mpi_komm_welt, ierr)
-         if (meinrang == 0) call ausgeben_schism(0.0)
+         if (meinrang == 0) call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
          call mpi_barrier (mpi_komm_welt, ierr)
-         call qerror('eingabe.f95 coding of read_mesh_nc_sc() not yet complete')
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
@@ -93,7 +92,12 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       end if
    end if ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    call show_mesh()
+   call mpi_barrier (mpi_komm_welt, ierr)
+   
+   if(hydro_trieb==3)call qerror('eingabe.f95 getting SCHISM not yet complete')
+   
    call ini_zeit() ! initialise time preliminary to reference-year
    call mpi_barrier (mpi_komm_welt, ierr)
    select case (hydro_trieb)
@@ -105,9 +109,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         !!call screen_schism_nc()
-         case default
-         call qerror('Hydraulischer Antrieb unbekannt; sichten')
+         !!call screen_schism()
+         call qerror('eingabe.f95 screen_schism() not yet active')
+      case default
+         call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select
    
    !#FG: reading model settings here to ensure iEros is known (required for SS from file)

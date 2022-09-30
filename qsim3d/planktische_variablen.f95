@@ -194,11 +194,12 @@ subroutine ini_planktkon0(nk)
                point_zone(ini) = element_zone(ini)
             end do
          case(3) ! SCHISM netCDF (doch noch von zone.gr3)
+            ! ??? if(.not. zonierung_schism())call verteilung_schism() ???
             do ini = 1,number_plankt_point
-               point_zone(ini) = knoten_zone(ini)
+               point_zone(ini) = element_zone(ini)
             end do
-            !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
-            case default
+            call qerror('ini_planktkon0: SCHISM zone not yet worked out')
+         case default
             call qerror('ini_planktkon0: unknown hydraulic driver')
       end select
       
