@@ -1,3 +1,13 @@
+## 14.09.06
+
+Bugfix:
+* correct if-condition in reading from `ModellA.txt` in QSim 1D.
+
+## 14.09.05
+
+Bugfix:
+* correct arguments in call ph for groyne-fields
+
 ## 14.09.04
 Refactoring of Code: module for pH
 

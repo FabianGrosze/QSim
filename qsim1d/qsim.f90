@@ -824,7 +824,7 @@ program qsim
          izufluss(mstr) = izufluss(mstr) + 1
          
          ! Bestimmung der Wirklänge der diffusen Einleitung
-         if (mstrLe(mstr,mRB) > 0) then
+         if (mstrLe(mstr,mRB) >= 0) then
             ieinL = ieinL+1
             WirkLL(mstr,ieinL) = abs(RBkm(mstr,mRB)-RBkmLe(mstr,mRB))*1000.
          endif
@@ -6634,8 +6634,8 @@ program qsim
          do ior = 1,anze+1
             ! metabolism
             call ph(bmw(mstr,ior),bpw(mstr,ior),bca(mstr,ior),blf(mstr,ior),btempw(mstr,ior),bph(mstr,ior),vco2s,    &
-                    tflie,raus,vbm(mstr,ior),bh(mstr,ior),rhyds,flaes,                                               &
-                    wges,WLages,hWSs,iphy,                                                                           &
+                    tflie,rau(ior),vbm(mstr,ior),bh(mstr,ior),rhyd(ior),flae(ior),                                   &
+                    wge(IDWe(mstr,ior)), WLage(mstr,ior), hWS(mstr,ior), iphy,                                       &
                     bbsbct(mstr,ior),bresdr(mstr,ior),bzres1(mstr,ior),bzres2(mstr,ior),                             &
                     bdaki(mstr,ior),bdagr(mstr,ior),bdabl(mstr,ior),bdaak(mstr,ior),bdaag(mstr,ior),bdaab(mstr,ior), &
                     baberg(mstr,ior),baberk(mstr,ior),babewg(mstr,ior),babewk(mstr,ior),                             &
