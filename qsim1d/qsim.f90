@@ -5090,10 +5090,12 @@ program qsim
          enddo
       enddo
       
-      1440 call coroph(coro,coros,tempw,flae,elen,anze,ior                                   &
-                       ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
-                       ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs, &
-                       .false., 0) !!wy ,kontroll, iglob 3D
+      1440 continue
+      !#! call coroph(coro,coros,tempw,flae,elen,anze,ior                                   &
+      !#!             ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
+      !#!             ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs  &
+      !#!             ,.false., 0) !!wy ,kontroll, iglob 3D
+                  
       if (nbuhn(mstr) == 0)goto 1441
       if (ilbuhn == 0) then
          do ior = 1,anze+1
@@ -5952,21 +5954,20 @@ program qsim
       ! benthische Algen
       ! -----------------------------------------------------------------------
       1513 continue
-      call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
-                   ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
-                   ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
-                   ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
-                   ,.false.,0)
+      !#! call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
+      !#!              ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
+      !#!              ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
+      !#!              ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
+      !#!              ,.false.,0)
       
       ! -----------------------------------------------------------------------
       ! Makrophythen
       ! -----------------------------------------------------------------------
-      call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-                 ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-                 ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
-                 ,.false.,0)
-      if (ifehl > 0)goto 989
-      
+      !#! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
+      !#!            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
+      !#!            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
+      !#!            ,.false.,0)
+      !#! if (ifehl > 0)goto 989
       
       if (nbuhn(mstr) > 0) then
          do ior = 1,anze+1

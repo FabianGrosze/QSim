@@ -198,7 +198,7 @@ subroutine ini_planktkon0(nk)
             do ini = 1,number_plankt_point
                point_zone(ini) = element_zone(ini)
             end do
-            call qerror('ini_planktkon0: SCHISM zone not yet worked out')
+            !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
          case default
             call qerror('ini_planktkon0: unknown hydraulic driver')
       end select

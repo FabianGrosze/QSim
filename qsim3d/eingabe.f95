@@ -41,6 +41,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    real :: muhrzeit_stunde
    integer , allocatable , dimension (:) :: randzaehl
    logical , allocatable , dimension (:) :: randda
+   logical read_elemente_gerris, read_zone_gr3
+
    !print*,'eingabe() startet'
    only = .false.
    select case (hydro_trieb)
@@ -55,7 +57,9 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       case(2) ! Untrim² netCDF
          if (meinrang == 0) then ! prozess 0 only
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
-            call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
+            if(.not. read_elemente_gerris()) then  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
+               call qerror('ELEMENTE.txt missing but needed')
+            endif
             n_cal = n_elemente
             print*,'Untrim netCDF read mesh'
          end if ! only prozessor 0
@@ -67,7 +71,15 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          !n_cal = knotenanzahl2D
          print*,meinrang,' got SCHISM mesh ',n_elemente,knotenanzahl2D,kantenanzahl
          call mpi_barrier (mpi_komm_welt, ierr)
-         if (meinrang == 0) call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
+         if (meinrang == 0)then
+            if(.not. read_elemente_gerris()) then  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
+               if(.not. read_zone_gr3()) call qerror('neither ELEMENTE.txt nor zone.gr3 available')
+            endif ! ELEMENTE.txt
+         endif ! meinrang 0
+         call MPI_Bcast(cornernumber,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(elementnodes,n_elemente*4,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')

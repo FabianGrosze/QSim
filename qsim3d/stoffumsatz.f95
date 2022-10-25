@@ -51,7 +51,7 @@ subroutine stoffumsatz()
                   cycle ! bei nur_alter nix anderes
                endif
                !------------------------------------------------------------------------ Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
-               !call sedflux_huelle(i)
+               !#! call sedflux_huelle(i)
                !------------------------------------------------------------------------ Konsumenten / Rotatorien
                call konsum_huelle(i)
                do k = 1,number_trans_quant
@@ -62,12 +62,12 @@ subroutine stoffumsatz()
                   endif
                end do
                !------------------------------------------------------------------------ Corophium, auch ein Konsument ## in Überarbeitung
-               !call coroph_huelle(i)
+               !#! call coroph_huelle(i)
                !------------------------------------------------------------------------ Muscheln (dreissena), auch Konsumenten
                call dreissen_huelle(i)
                !if(iglob.eq.kontrollknoten) print*,'stoffumsatz: deissena gerade mal weggeschaltet 28okt19'
-               !------------------------------------------------------------------------ heterotrophe Nanoflagellaten
-               !call hnf_huelle(i)
+               !------------------------------------------------------------------------ heterotrophe Nanoflagellaten ## unklar ## in Überarbeitung
+               !#! call hnf_huelle(i)
                !----------------------------------------------------------------------------------------------------------- Algen-Baustein
                do k = 1,number_plankt_vari
                   if (isnan(planktonic_variable_p(k+nk))) then
@@ -92,10 +92,10 @@ subroutine stoffumsatz()
                      if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
                   endif
                end do
-               !------------------------------------------------------------------------ benthische Algen
-               call albenth_huelle(i)
-               !------------------------------------------------------------------------ Makrophythen
-               call mphyt_huelle(i)
+               !------------------------------------------------------------------------ benthische Algen ## unklar ## in Überarbeitung
+               !#! call albenth_huelle(i)
+               !------------------------------------------------------------------------ Makrophythen ## unklar ## in Überarbeitung
+               !#! call mphyt_huelle(i)
                !------------------------------------------------------------------------ organischer Kohlenstoff BSB
                if (iglob == kontrollknoten) print*,'stoffumsatz: bac(1) vor orgc_huelle = '  &
                    , planktonic_variable_p(42+(i-1)*number_plankt_vari)
