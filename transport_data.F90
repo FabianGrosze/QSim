@@ -113,6 +113,15 @@
       use schism_msgp, only : nproc,myrank,comm,ierr,rtype                            &
                               parallel_abort,exchange_e2di_2t,exchange_e3d_2t_tr,     &
                               exchange_s3dw,exchange_s3d_tr3,exchange_s3d_tr2
+                              
+! zusätzlich in schism_glbl:
+ztot,sigma
+  real(rkind),save,allocatable :: ztot(:) ! Z coord. of Z levels (local frame)
+  real(rkind),save,allocatable :: sigma(:) ! sigma coordinates
+                              
+                              
+                              
+                              
 #else
       use schism_glbl
       use schism_msgp

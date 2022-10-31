@@ -168,7 +168,7 @@ subroutine screen_schism()
       end if
       call check_err( nf_close(ncid) )
    end do !all i stacks
-   if (transinfo_anzahl < 1)call qerror('No transport info')
+   if (transinfo_anzahl < 1)call qerror('screen_schism: No transport info')
    !print*,meinrang,' screen_schism Zeit  von:',zeit_min,' bis: ',zeit_max,' zeit_delta=',zeit_delta
    call MPI_Allreduce(zeit_delta, dttrans, 1, MPI_FLOAT, MPI_SUM, mpi_komm_welt, iret)
    call check_err(iret)

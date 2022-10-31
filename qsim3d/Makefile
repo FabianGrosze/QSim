@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_05'
+PV='qsim3d_schiqu22_08'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -60,7 +60,7 @@ MFC             = $(MPI_BIN)/$(FC)
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o \
-     read_mesh_schism.o ausgeben_schism.o read_zone_gr3.o mesh_output.o\
+     read_mesh_schism.o screen_schism.o ausgeben_schism.o read_zone_gr3.o mesh_output.o\
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o \
      zonen.o modellg.o wetter.o ganglinien.o schnitt.o \
      planktische_variablen.o module_suspendedMatter.o parallel.o \
@@ -68,7 +68,7 @@ Q3 = version.co trans_read.co \
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
      oxygen_huelle.o orgc_huelle.o ph_wrapper_3d.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
-     ausgeben_casu.o ausgeben_untrim.o ausgabe.o show_mesh.o\
+     ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
      eingabe.o initialisieren.o randbedingungen.o \
      schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
      stofftransport_casu.o \

@@ -180,6 +180,7 @@ module modell
    integer , allocatable , dimension (:) :: element_rand ! aus Mesh2_face_bc, netCDF
    !> \anchor element_zone Element zonen, null gesetzt, wird bei Antrieb mit untrim-Hydraulik aus netCDF-Dateien verwendet
    integer , allocatable , dimension (:) :: element_zone
+   integer , allocatable , dimension (:) :: element_rang
    integer , allocatable , dimension (:,:) :: elementnodes, elementedges
    real , allocatable , dimension (:) :: element_x, element_y
    !> Vermaschung Kanten

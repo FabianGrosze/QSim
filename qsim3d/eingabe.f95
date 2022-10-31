@@ -76,11 +76,12 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
                if(.not. read_zone_gr3()) call qerror('neither ELEMENTE.txt nor zone.gr3 available')
             endif ! ELEMENTE.txt
          endif ! meinrang 0
-         call MPI_Bcast(cornernumber,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
-         call MPI_Bcast(elementnodes,n_elemente*4,MPI_INT,0,mpi_komm_welt,ierr)
-         call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
-         call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
+         !call MPI_Bcast(cornernumber,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
+         !call MPI_Bcast(elementnodes,n_elemente*4,MPI_INT,0,mpi_komm_welt,ierr)
+         !call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
+         !call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
+         print*,meinrang,' got schism mesh'
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
@@ -105,10 +106,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    end if ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    
-   call show_mesh()
+   call mesh_output(0)
    call mpi_barrier (mpi_komm_welt, ierr)
    
-   if(hydro_trieb==3)call qerror('eingabe.f95 getting SCHISM not yet complete')
+   !if(hydro_trieb==3)call qerror('eingabe.f95 getting SCHISM not yet complete')
    
    call ini_zeit() ! initialise time preliminary to reference-year
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -121,16 +122,16 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         !!call screen_schism()
-         call qerror('eingabe.f95 screen_schism() not yet active')
+         call screen_schism()
+         call qerror('eingabe.f95 screen_schism() not yet complete')
       case default
          call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select
    
-   !#FG: reading model settings here to ensure iEros is known (required for SS from file)
-   if (meinrang == 0) call ereigg_modell() ! read time-stepping information at first
+   !!#FG: reading model settings here to ensure iEros is known (required for SS from file)
+   !if (meinrang == 0) call ereigg_modell() ! read time-stepping information at first
    call mpi_barrier (mpi_komm_welt, ierr)
-   call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
+   !call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
    call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
