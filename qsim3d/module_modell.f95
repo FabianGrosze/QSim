@@ -123,7 +123,7 @@ module modell
    integer , allocatable , dimension (:) :: knoten_zone, knoten_rang
    !> connecting global node number with rank and local node number of decomposed parts of domain (SCHISM)
    integer , allocatable , dimension (:) :: ipgl_rank, ipgl_id
-   real , allocatable , dimension (:) :: knoten_flaeche, knoten_volumen
+   real , allocatable , dimension (:) :: knoten_flaeche, knoten_volumen, knoten_manni
    integer min_rand, max_rand, min_zone, max_zone
    real :: modell_geob, modell_geol, modell_flaeche
    real :: mittelflaech, mittelvolumen

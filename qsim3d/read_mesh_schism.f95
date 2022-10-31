@@ -61,13 +61,14 @@ subroutine read_mesh_schism() !meinrang.eq.0
    integer                           :: irank
    integer                           :: nmax, nmin, tn, bn
    real                              :: dtout
-   real,allocatable,dimension (:)    :: manni
+   !real,allocatable,dimension (:)    :: manni
    integer,allocatable,dimension(:,:):: nm2
    integer,allocatable,dimension(:)  :: kbp00_global , i34_global, rrr
    real                              :: xmax, xmin, ymax, ymin, zmax, zmin, xmaxi, xmini, ymaxi, ymini, zmaxi, zmini
    real                              :: rzone, distmax, distmin, sum_area, totalarea, dx,dy
-   real    dummy
+   real    dummy,xummy,yummy
    integer nummy, rank_min,rank_max,id_min,id_max, kkk,nnn, lfdb
+   integer  :: eck(4)
    
    character(len=2),save :: mid,stab
    real(rkind),save :: alphaw,btrack_nudge,coricoef,dfh0,dfv0,dramp,dramp_ss,drampbc,drampwafo,drampwind,  &
@@ -467,24 +468,18 @@ subroutine read_mesh_schism() !meinrang.eq.0
       !print*,'edge length distmax+distmin', distmax, distmin
    end if !! prozess 0 only
 
-!#### read manning.gr3 ###########################################################################!
+!#### read hgrid.gr3 ###########################################################################!
       if (meinrang == 0) then !! nur prozessor 0
-         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/manning.gr3"
+         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/hgrid.gr3"
          open(14,file = trim(dateiname),status = 'old',iostat = istat)
          !open(14,file = 'zone.gr3',status = 'old',iostat = istat)
-         if (istat /= 0) call qerror('read_mesh_schism: manning.gr3 open failure')
-         if(allocated(manni)) deallocate(manni); allocate(manni(knotenanzahl2D))
+         if (istat /= 0) call qerror('read_mesh_schism: hgrid.gr3 open failure')
          read(14,*); read(14,*) n,k
-         if(n.ne.n_elemente)call qerror('manning.gr3 element number missmatch')
-         if(k.ne.knotenanzahl2D)call qerror('manning.gr3 node number missmatch')
-         print*,'read_mesh_schism: manning.gr3: n_elemente,knotenanzahl2D = ',n,k
+         if(n.ne.n_elemente)call qerror('hgrid.gr3 element number missmatch')
+         if(k.ne.knotenanzahl2D)call qerror('hgrid.gr3 node number missmatch')
          do i = 1,knotenanzahl2D
-            read(14,*)n,knoten_x(i),knoten_y(i),manni(i)
-            if (n /= i) call qerror('reading zone.gr3 nodes: something gone wrong')
-            !if ((knoten_zone(i) < 0) .or. (knoten_zone(i) > 300)) then
-            !   write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ oder größer als 300 sein; ist aber = ',knoten_zone(i)
-            !   call qerror(fehler)
-            !end if
+            read(14,*)n,knoten_x(i),knoten_y(i),knoten_z(i)
+            if (n /= i) call qerror('reading hgrid.gr3 nodes: something gone wrong')
          enddo
          xmax = -999999999999.9 ; xmin = 999999999999.9
          ymax = -999999999999.9 ; ymin = 999999999999.9
@@ -494,10 +489,27 @@ subroutine read_mesh_schism() !meinrang.eq.0
             if (xmin >= knoten_x(i))xmin = knoten_x(i)
             if (ymax <= knoten_y(i))ymax = knoten_y(i)
             if (ymin >= knoten_y(i))ymin = knoten_y(i)
-            if (zmax <= manni(i))zmax = manni(i)
-            if (zmin >= manni(i))zmin = manni(i)
+            if (zmax <= knoten_z(i))zmax = knoten_z(i)
+            if (zmin >= knoten_z(i))zmin = knoten_z(i)
          end do ! alle i Knoten
-         print*,'manning.gr3 bottom left=',xmin,ymin,' top right=',xmax,ymax,' Mannings n ',zmax, zmin
+         print*,'hgrid.gr3 bottom left=',xmin,ymin,' top right=',xmax,ymax,' z max/min ',zmax, zmin
+         
+         ! re-checking connectivity table
+         do i = 1,n_elemente
+            read(14,*,iostat = istat)n,j,(eck(mm),mm=1,j)
+            if (istat /= 0) call qerror('read_mesh_schism: hgrid.gr3 element reading failure')
+            if (n /= i) call qerror('reading hgrid.gr3 elements: something gone wrong')
+            if(j.ne.cornernumber(i)) call qerror('cornernumber mismatch')
+            do mm=1,j
+               if(elementnodes(i,mm).ne.eck(mm))call qerror('read_mesh_schism: hgrid.gr3 elementnodes mismatch')
+            enddo !mm
+         enddo
+         
+         ! get boundaries
+         
+         
+         
+         close(14)
       end if !! prozess 0 only
 
       ! check node locations
@@ -527,6 +539,30 @@ subroutine read_mesh_schism() !meinrang.eq.0
             element_x(i)=element_x(i)/(real(cornernumber(i)))
             element_y(i)=element_y(i)/(real(cornernumber(i)))
          enddo ! all i elements
+      end if !! prozess 0 only
+
+!#### read manning.gr3 ###########################################################################!
+      if (meinrang == 0) then !! nur prozessor 0
+         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/manning.gr3"
+         open(14,file = trim(dateiname),status = 'old',iostat = istat)
+         !open(14,file = 'zone.gr3',status = 'old',iostat = istat)
+         if (istat /= 0) call qerror('read_mesh_schism: manning.gr3 open failure')
+         if(allocated(knoten_manni)) deallocate(knoten_manni); allocate(knoten_manni(knotenanzahl2D))
+         read(14,*); read(14,*) n,k
+         if(n.ne.n_elemente)call qerror('manning.gr3 element number missmatch')
+         if(k.ne.knotenanzahl2D)call qerror('manning.gr3 node number missmatch')
+         !print*,'read_mesh_schism: manning.gr3: n_elemente,knotenanzahl2D = ',n,k
+         do i = 1,knotenanzahl2D
+            read(14,*)n,xummy,yummy,knoten_manni(i)
+            if (n /= i) call qerror('reading manning.gr3 nodes: something gone wrong')
+         enddo
+         zmax = -99999999       ; zmin = 99999999
+         do i = 1,knotenanzahl2D
+            if (zmax <= knoten_manni(i))zmax = knoten_manni(i)
+            if (zmin >= knoten_manni(i))zmin = knoten_manni(i)
+         end do ! alle i Knoten
+         print*,'manning.gr3 Mannings n max/min=',zmax, zmin
+         close(14)
       end if !! prozess 0 only
       
       call mpi_barrier (mpi_komm_welt, ierr)
