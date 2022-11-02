@@ -279,11 +279,12 @@ subroutine read_mesh_schism() !meinrang.eq.0
                   knoten_rand(knotenanzahl2D),knoten_flaeche(knotenanzahl2D), stat = istat )
          knoten_z(:)=-777777.7
          knoten_rang(:)=0
+         knoten_rand(:)=0
          allocate (element_x(n_elemente), element_y(n_elemente), stat = istat )
          if (istat /= 0) call qerror('allocate (element_x failed')
          allocate (element_rand(n_elemente), stat = istat )
          if (istat /= 0) call qerror('allocate (element_rand failed')
-         element_rand(:)=-1
+         element_rand(:)=0
          allocate (element_rang(n_elemente), stat = istat )
          if (istat /= 0) call qerror('allocate (element_rang failed')
          element_rang(:)=0
@@ -489,6 +490,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
             if (xmin >= knoten_x(i))xmin = knoten_x(i)
             if (ymax <= knoten_y(i))ymax = knoten_y(i)
             if (ymin >= knoten_y(i))ymin = knoten_y(i)
+            knoten_z(n) = knoten_z(n)*(-1.0) ! bathymety elevation upwards in QSim
             if (zmax <= knoten_z(i))zmax = knoten_z(i)
             if (zmin >= knoten_z(i))zmin = knoten_z(i)
          end do ! alle i Knoten
@@ -506,8 +508,38 @@ subroutine read_mesh_schism() !meinrang.eq.0
          enddo
          
          ! get boundaries
-         
-         
+         read(14,*,iostat = istat)nnn
+         print*,'Number of open boundaries=',nnn
+         read(14,*,iostat = istat)n
+         print*,'Total number of open boundary nodes=',n
+         do i = 1,nnn
+            read(14,*,iostat = istat)kkk
+            print*,'Number of nodes for open boundary ',i,'=',kkk
+            do j = 1,kkk
+               read(14,*)k
+               knoten_rand(k)=i
+            enddo ! all kkk nodes
+         enddo ! all nn open boundaries
+         read(14,*,iostat = istat)m
+         print*,'Number of land boundaries=',m
+         read(14,*,iostat = istat)n
+         print*,'Total number of land boundary nodes=',n
+         do i = 1,m
+            read(14,*,iostat = istat)kkk
+            print*,'Number of nodes for land boundary ',i,i+nnn,'=',kkk
+            do j = 1,kkk
+               read(14,*)k
+               knoten_rand(k)=i+nnn
+            enddo ! all kkk nodes
+         enddo ! all nn open boundaries
+         do i = 1,n_elemente
+            do mm=1,cornernumber(i)
+               j=knoten_rand(elementnodes(i,mm))
+               ! larger open boundary number gets the element
+               if( (element_rand(i) < j).and. (j<=nnn) )  &
+                    element_rand(i) = j
+            enddo !mm
+         enddo
          
          close(14)
       end if !! prozess 0 only
