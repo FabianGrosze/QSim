@@ -583,7 +583,7 @@ subroutine wettles_wetter()
             end if ! Wert vorher
          end do ! alle j zeitintervalle vorwärts
          do j = mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
-            if ( (zeitpunktw(i,j) >= zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
+            if ( (zeitpunktw(i,j) > zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
                if ( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then !gültiger wert
                   found2 = .true.
                   w2 = wertw_T(i,ipw,j)
