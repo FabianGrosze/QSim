@@ -234,10 +234,7 @@ subroutine ereigg_modell()
    !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' deltat=',deltat
    !end if !SCHISM
    print*,"hydro_trieb = ",hydro_trieb      !case(2) ! Untrim² netCDF
-   if ((hydro_trieb == 2) .and. (deltat /= 1200)) then
-      !call qerror('Untrim-Läufe bisher nur mit Zeitschrittweite 20 min. möglich')
-      print*,"Untrim Lauf hydro_trieb = ",hydro_trieb," deltat = ",deltat, "sollte jetzt (okt20) eigentlich gehen"
-   endif
+   
    print*,'transinfo_zeit,Anfang+Ende = ',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
       print*,"startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1) = "
