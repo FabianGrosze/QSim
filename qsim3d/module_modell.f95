@@ -1182,6 +1182,24 @@ contains
          print*,'##### Datei alter.txt vorhanden, nur Aufenthaltszeit-Simulation, ggf incl. Temp. #####'
          nur_alter = .true.
       end if
+      
+      print*,'script qusave:'
+      write(systemaufruf,'(3A)',iostat = errcode)'which qusave'
+      if (errcode /= 0)call qerror('modell_vollstaendig writing which qusave failed')
+      call system(systemaufruf,sysa)
+      if (sysa /= 0) then
+         modell_vollstaendig = .false.
+         print*,'script qusave, called by QSim not available'
+      end if
+      print*,'script quzip:'
+      write(systemaufruf,'(3A)',iostat = errcode)'which quzip'
+      if (errcode /= 0)call qerror('modell_vollstaendig writing which quzip failed')
+      call system(systemaufruf,sysa)
+      if (sysa /= 0) then
+         modell_vollstaendig = .false.
+         print*,'script quzip, called by QSim not available'
+      end if
+      
    end function modell_vollstaendig
    !----+-----+----
    !> Reibungsbeiwert \f$ \lambda \f$ aus Wassertiefe/Sohlabstand und Rauheitshöhe gemäß dem Colebrook-White Gesetz berechnen (nach DVWK 220).\n
