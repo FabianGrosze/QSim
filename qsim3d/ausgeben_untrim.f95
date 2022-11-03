@@ -129,15 +129,22 @@ subroutine ausgeben_untrim(itime)
    do n = 1,number_plankt_point
       write(ion,'(6x,f27.6)') real( element_zone(n) )
    end do
+   write(ion,'(A)')'SCALARS point_zone float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(6x,f27.6)') real( point_zone(n) )
+   end do
    write(ion,'(A)')'SCALARS rau float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
-      write(ion,'(6x,f27.6)') zone(element_zone(n))%reib
+      !write(ion,'(6x,f27.6)') zone(element_zone(n))%reib
+      write(ion,'(6x,f27.6)') zone(point_zone(n))%reib
    end do
    write(ion,'(A)')'SCALARS strickler float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
-      write(ion,'(6x,f27.6)') strickler( zone(element_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
+      !write(ion,'(6x,f27.6)') strickler( zone(element_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
+      write(ion,'(6x,f27.6)') strickler( zone(point_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
    end do
    write(ion,'(A)')'SCALARS inflow float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
