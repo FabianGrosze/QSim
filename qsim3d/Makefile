@@ -25,18 +25,9 @@
 
 SHELL=/usr/bin/bash
 
-# PV=qsim3d_sc21
-# PV=qsim3d_14.06entw
-# PV=qsim3d_14.07
-# PV=qsim_14.06git05
-# PV='qsim14.06doku'
-# PV='qsim3d14.07doku'
-# PV='qsim3d14.07Cu'
-# PV='qsim3d14.07.01'
-# PV='qsim3d_schnitt14.14'
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-PV='qsim3d_dev06sep22'
+PV='qsim3d_14.09.07_dev'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -45,15 +36,15 @@ MPI=produktiv/mvapich2-2.3-mlnx
 MPII=/opt/$(MPI)
 MPI_BIN=$(MPII)/bin
 MPI_MOD=module add $(MPI)
-# modulecmd bash add produktiv/mvapich2-2.3-mlnx  ????
+# modulecmd bash add produktiv/mvapich2-2.3-mlnx ?
 
 #compiler: 
 #/opt/produktiv/mvapich2-2.3-mlnx/bin/mpif90
-CC              = mpic++
-MCC             = $(MPI_BIN)/$(CC)
-FC              = mpif90
-MFC             = $(MPI_BIN)/$(FC)
-#FC              = gfortran
+CC    = mpic++
+MCC   = $(MPI_BIN)/$(CC)
+FC    = mpif90
+MFC   = $(MPI_BIN)/$(FC)
+#FC   = gfortran
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
@@ -86,27 +77,28 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fbounds-check ## develop ## 
-#CFLAGS2             = -O3 ## run fast ## 
-FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+CFLAGS2   = -O -g -fbounds-check # develop
+#CFLAGS2  = -O3 # run fast
+FFLAGS    =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
-#loader-flags:
+# loader-flags:
 LDFLAGS = -lc -lstdc++ -g -fbounds-check -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  ## develop ## 
-## production ## LDFLAGS = -lc -lstdc++  $(MPICH2_LIB)  $(CDFLIBS)
+# production ## LDFLAGS = -lc -lstdc++  $(MPICH2_LIB)  $(CDFLIBS)
 
 HIER=`pwd -P`
 JETZT=`date +"%-d%m%Y"`
 
 SCHISM_HYDRO = ../../Hydro
 SCHISM_CORE  = ../../Core
-QSIM_LIB           = -L../metabolism -lqsim
-SCHISM_LIB           = -L. -lschism
+QSIM_LIB     = -L../metabolism -lqsim
+SCHISM_LIB   = -L. -lschism
 
-LANGUAGE = GERMAN # ESPANOL
+LANGUAGE = GERMAN
 
 ifeq ($(MY_BIN),)
   $(error Die Umgebungsvariable MY_BIN (Verzeichnis für ausführbares Programm) fehlt.)
 endif
+
 ifeq ($(MY_ARC),)
   $(error Die Umgebungsvariable MY_ARC (Archiv-Verzeichnis) fehlt.)
 endif
@@ -118,9 +110,9 @@ usual: date metabo qsim3d
 #usual: check date qsim qsim3d
 
 check:
-	if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) vorhanden"; else exit 1 ; fi;
-	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) vorhanden"; else exit 1 ; fi;
-	if test -d ../metabolism; then echo "Directory ../metabolism ../metabolism vorhanden"; else echo "../metabolism" ; fi;
+	@if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) vorhanden"; else exit 1 ; fi;
+	@if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) vorhanden"; else exit 1 ; fi;
+	@if test -d ../metabolism; then echo "Directory ../metabolism ../metabolism vorhanden"; else echo "../metabolism" ; fi;
 
 	#if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) vorhanden"; else exit 1 ; fi;
 	#if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) vorhanden"; else exit 1 ; fi;

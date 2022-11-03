@@ -1,22 +1,23 @@
+## 14.09.07
+Bugfix: correct mechanism for interpolation in `subroutine wettles_wetter`
+
+
 ## 14.09.06
 
-Bugfix:
-* correct if-condition in reading from `ModellA.txt` in QSim 1D.
+* Bugfix: correct if-condition in reading from `ModellA.txt` in QSim 1D.
 
 ## 14.09.05
 
-Bugfix:
-* correct arguments in call ph for groyne-fields
+* Bugfix: correct arguments in call ph for groyne-fields
 
 ## 14.09.04
 Refactoring of Code: module for pH
 
 ## 14.09.03
-bug fixing:
-* remove output of heavy metals in ErgebT.txt to avoid issues with Gerris.
+* Bugfix: remove output of heavy metals in ErgebT.txt to avoid issues with Gerris.
 
 ## 14.09.02
-bug fixing:
+Bugfix:
 * correct format for output files
 * correct dimensions of `tausc` in alagae
 
@@ -36,11 +37,9 @@ added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qim
 
 ## 14.10
 
-adding additional heavy metal concentrations.
-
-restructured modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
-
-enable input of erosion parameters
+* adding additional heavy metal concentrations.
+* restructured modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
+* enable input of erosion parameters
 
 ## 14.07.01
 compiled at 16.mae.2022 
@@ -73,7 +72,7 @@ Neuerstellung des Dokumentationsportals mittels "make" im doku Verzeichnis wiede
 ## tag 14.02
 Neu in 14.02 (20aug20):
  
-- Mehr als 40000 Zeitpunkte in einer Randbedingungs-Zeitreihe möglich.
-- Initialisierung nicht belegter Sedimentflüsse bei abgeschaltetem Sedflux-Modul.
-- Initialisierung Schwermetallkonzentrationen bei Rechnungen ohne Schwermetalle.
-- Fehler durch nicht initialisierten Strang wird abgefangen.
+* Mehr als 40000 Zeitpunkte in einer Randbedingungs-Zeitreihe möglich.
+* Initialisierung nicht belegter Sedimentflüsse bei abgeschaltetem Sedflux-Modul.
+* Initialisierung Schwermetallkonzentrationen bei Rechnungen ohne Schwermetalle.
+* Fehler durch nicht initialisierten Strang wird abgefangen.
