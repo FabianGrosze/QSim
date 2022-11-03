@@ -1,29 +1,31 @@
+# --------------------------------------------------------------------------- #
+#  QSim - Programm zur Simulation der Wasserqualität                          #
+#                                                                             #
+#  Copyright (C) 2022                                                         #
+#  Bundesanstalt für Gewässerkunde                                            #
+#  Koblenz (Deutschland)                                                      #
+#  http://www.bafg.de                                                         #
+#                                                                             #
+#  Dieses Programm ist freie Software. Sie können es unter den Bedingungen    #
+#  der GNU General Public License, Version 3, wie von der Free Software       #
+#  Foundation veröffentlicht, weitergeben und/oder modifizieren.              #
+#                                                                             #
+#  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     #
+#  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  #
+#  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        #
+#  bestimmten Zweck.                                                          #
+#                                                                             #
+#  Details finden Sie in der GNU General Public License.                      #
+#  Sie sollten ein Exemplar der GNU General Public License zusammen mit       #
+#  diesem Programm erhalten haben.                                            #
+#  Falls nicht, siehe http://www.gnu.org/licenses/.                           #
+#                                                                             #
+#  Programmiert von                                                           #
+#  1979 bis 2018   Volker Kirchesch                                           #
+#  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  #
+# --------------------------------------------------------------------------- #
 
-#!---------------------------------------------------------------------------------------
-#!
-#!   QSim - Programm zur Simulation der Wasserqualität
-#!
-#!   Copyright (C) 2020 Bundesanstalt für Gewässerkunde, Koblenz, Deutschland, http://www.bafg.de
-#!
-#!   Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
-#!   GNU General Public License, Version 3,
-#!   wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren. 
-#!   Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein wird, 
-#!   aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. 
-#!   Details finden Sie in der GNU General Public License.
-#!   Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm erhalten haben. 
-#!   Falls nicht, siehe http://www.gnu.org/licenses/.  
-#!   
-#!	Programmiert von:
-#!	1979 bis 2018 Volker Kirchesch
-#!	seit 2011 Jens Wyrwa, Wyrwa@bafg.de
-#!
-#!---------------------------------------------------------------------------------------
-
-#====================================================================
 # Makefile for QSim1D
-# wyrwa seit 17dez19
-#====================================================================
 
 VERSION = 14.10.07
 
@@ -43,11 +45,15 @@ PV= qsim1d_schwer$(VERSION)
 #compiler:
 FC              = gfortran
 
-Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
-Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  \
-qsim.o randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o z_gitter_einl.o Masse_neu_QSim.o lax_wen.o \
-lin_interpolation.o write_gerris_definitions.o
+Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
+    E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
+    Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o  \
+    ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  qsim.o  \
+    randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o s  \
+    ys_z_gitter.o transport.o transportz.o trimat_z.o  \
+    van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o  \
+    z_gitter_einl.o Masse_neu_QSim.o lax_wen.o lin_interpolation.o  \
+    write_gerris_definitions.o
 
 -include ../metabolism/metabol.mk
 
@@ -56,15 +62,6 @@ CFLAGS2             = -O -g -fbounds-check ## develop ##
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 CCLAGS       = $(CFLAGS2)
-
-#check: Bereitstellungsverzeichnis für executable und Archiv
-ifeq ($(MY_BIN),)
-  $(error Die Umgebungsvariable MY_BIN (Verzeichnis für ausführbares Programm) fehlt.)
-endif
-ifeq ($(MY_ARC),)
-  $(error Die Umgebungsvariable MY_ARC (Archiv-Verzeichnis) fehlt.)
-endif
-
 
 #--------------------------------------------------------------------
 

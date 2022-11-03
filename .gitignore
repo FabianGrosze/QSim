@@ -3,6 +3,7 @@
 *.zip
 *.aps
 *.o
+*.a
 *.mod
 *.csv
 *.png
