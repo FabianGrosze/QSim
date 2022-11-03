@@ -509,11 +509,9 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
    end if !! nur prozessor 0
    return
 end subroutine wetter_readallo0
-!----+-----+----
-!> update_weather \n
-!! Wetterdaten für Waermebilanz in diesem Zeitschritt\n
-!! runs at all processes parallel;
-!! \n\n
+
+!> Wetterdaten für Waermebilanz in diesem Zeitschritt  
+!! runs at all processes parallel
 subroutine update_weather()
    use modell
    implicit none
@@ -543,27 +541,35 @@ subroutine update_weather()
    end do ! all i nodes at this processor
    return
 end subroutine update_weather
-!----+-----+----
+
+
+
 !> Dient der Ermittlung der momentanen Wetterwerte an allen Stationen.
-!! ersetzt die QSim Subroutine Wettles()\n\n
-!! wird von allen Prozessen aufgerufen\n\n
+!! Ersetzt die QSim1D Subroutine Wettles()  
+!! wird von allen Prozessen aufgerufen  
 !! all processes do all weather-stations
-!! \n\n
 subroutine wettles_wetter()
    use modell
    implicit none
-   integer i, j, ipw ,z1,z2
-   real b,ywert,w1,w2
-   logical found1,found2,wert_gueltig
-   !print*,'i : glob_T | tlmax_T | tlmin_T | ro_T | wge_T | cloud_T | typw_T'
-   do i = 1,IWETTs_T   !! Schleife über alle Wetterstationen
-      do ipw = 1,7   !! Schleife über alle 7 Wetterwerte
-         if ( (zeitpunkt < (zeitpunktw(i,1)-43200)) .or. (zeitpunkt > (zeitpunktw(i,mwetts_T(i))+43200)) ) then
-            print*,'zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor'
+   integer     :: i, j, ipw, z1, z2
+   real        :: b, ywert, w1, w2
+   logical     :: found1, found2, wert_gueltig
+   
+   if (meinrang == 0) print*,'wettles_wetter:'
+   
+   ! Schleife über alle Wetterstationen
+   do i = 1, iwetts_t
+      ! Schleife über alle 7 Wetterwerte
+      do ipw = 1,7
+         
+         if (zeitpunkt < (zeitpunktw(i,1)-43200) .or. zeitpunkt > (zeitpunktw(i,mwetts_T(i))+43200)) then
+            print*,'Zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor.'
             print*,'zeitpunkt = ', zeitpunkt
             write(fehler,*)'zeitpunktw(i,1) = ',zeitpunktw(i,1),' zeitpunktw(i,mwetts_T(i)) = ',zeitpunktw(i,mwetts_T(i))
             call qerror(fehler)
          end if
+         
+         
          ywert = 0.0
          found1 = .false.
          found2 = .false.
@@ -571,57 +577,89 @@ subroutine wettles_wetter()
          w2 = 0.0
          z1 = 0
          z2 = 0
+         
+         ! find closest valid datapoint before current time
          do j = 1,mwetts_T(i),1 ! alle j zeitintervalle vorwärts
-            if ( (zeitpunktw(i,j) <= zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
-               if ( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then !gültiger wert
+            if (zeitpunktw(i,j) <= zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+               if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then
                   found1 = .true.
                   w1 = wertw_T(i,ipw,j)
                   z1 = zeitpunktw(i,j)
                else
-                  if ( .not. found1) w1 = wertw_T(i,ipw,j) ! ungültige Werte merken bis gültiger gefunden
-               end if !gültiger wert
-            end if ! Wert vorher
-         end do ! alle j zeitintervalle vorwärts
+                  ! ungültige Werte merken bis gültiger gefunden
+                  if (.not. found1) w1 = wertw_T(i,ipw,j)
+               end if 
+            end if
+         end do
+         
+         ! find closest valid datapoint after curent time
          do j = mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
-            if ( (zeitpunktw(i,j) >= zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
-               if ( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then !gültiger wert
+            if (zeitpunktw(i,j) > zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+               if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t)) then
                   found2 = .true.
                   w2 = wertw_T(i,ipw,j)
                   z2 = zeitpunktw(i,j)
                else
-                  if ( .not. found2) w2 = wertw_T(i,ipw,j) ! ungültige Werte merken bis gültiger gefunden
-               end if !gültiger wert
-            end if ! Wert nachher
-         end do ! alle j zeitintervalle rückwärts
+                  ! ungültige Werte merken bis gültiger gefunden
+                  if (.not. found2) w2 = wertw_T(i,ipw,j)
+               end if
+            end if
+         end do
+         
+         
+         ! Interpolation
          if (found1 .and. found2) then
             b = real(zeitpunkt-z1)/real(z2-z1)
-            ywert = (1.0-b)*w1 + b*w2
-            !if(ipw.eq.2)print*,'wettles_wetter: tlmax=',ywert,zeitpunkt,w1,z1,w2,z2
-         end if
-         if (found1 .and. ( .not. found2)) ywert = w1
-         if (( .not. found1) .and. found2) ywert = w2
-         if (( .not. found1) .and. ( .not. found2)) then
+            ywert = (1.0 - b) * w1 + b * w2
+         
+         else if (found1 .and. .not.found2) then
             ywert = w1
-            if (ipw == 7) then ! wolkentyp darf negativ = ungültig
+         
+         else if (.not.found1 .and. found2) then
+            ywert = w2
+         
+         else if (.not.found1 .and. .not.found2) then
+            ! if no valid values are found before and after and error is thrown.
+            ! ipw == 7 (Wolkentyp) is an exception. For some station no such data
+            ! is available, so it is accepted for timeseries to have no values at all.
+            if (ipw == 7) then
                ywert = w1
             else
                write(fehler,*)'wettles_wetter: no valid data at weather station ',i,' for value ',ipw,"  ",w1
                call qerror(fehler)
-            end if! wolkentyp
-         end if ! nix gefunden
-         if (ipw == 1)glob_T(i) = ywert
-         if (ipw == 2)tlmax_T(i) = ywert
-         if (ipw == 3)tlmin_T(i) = ywert
-         if (ipw == 4)ro_T(i) = ywert
-         if (ipw == 5)wge_T(i) = ywert
-         if (ipw == 6)cloud_T(i) = ywert
-         if (ipw == 7)typw_T(i) = ywert
-      end do ! Schleife über alle 7 Wetterwerte
-      if (meinrang == 0)print*,'wettles_wetter: Wetterstation,zeitpunkt = ',i,zeitpunkt,' Werte = '  &
-          ,glob_T(i),tlmax_T(i),tlmin_T(i),ro_T(i),wge_T(i),cloud_T(i),typw_T(i)
-   end do ! i Schleife über alle Wetterstationen
+            end if
+         end if
+         
+         ! set interpolated values to their variable
+         select case(ipw)
+            case(1); glob_T(i) = ywert
+            case(2); tlmax_T(i) = ywert
+            case(3); tlmin_T(i) = ywert
+            case(4); ro_T(i) = ywert
+            case(5); wge_T(i) = ywert
+            case(6); cloud_T(i) = ywert
+            case(7); typw_T(i) = ywert
+            case default
+               write(fehler,*)'wettles_wetter: wrong number in variable ipw', ipw
+               call qerror(fehler)
+         end select
+      end do
+      
+      
+      if (meinrang == 0) then
+         print "('weatherstation ',i0, ', time ',i0)", i, zeitpunkt
+         print*,'  glob_T  = ', glob_T(i)
+         print*,'  tlmax_T = ', tlmax_T(i)
+         print*,'  tlmin_t = ', tlmin_T(i)
+         print*,'  ro_T    = ', ro_T(i)
+         print*,'  wge_T   = ', wge_T(i)
+         print*,'  cloud_T = ', cloud_T(i)
+         print*,'  typw_T  = ', typw_T(i)
+      endif 
+   end do 
 end subroutine wettles_wetter
-!----+-----+----
+
+
 logical function wert_gueltig(ipw,wert,imet)
    implicit none
    character (300) :: fehler
