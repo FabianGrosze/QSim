@@ -137,11 +137,13 @@ subroutine ausgeben_untrim(itime)
    write(ion,'(A)')'SCALARS rau float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
+      !write(ion,'(6x,f27.6)') zone(element_zone(n))%reib
       write(ion,'(6x,f27.6)') zone(point_zone(n))%reib
    end do
    write(ion,'(A)')'SCALARS strickler float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
+      !write(ion,'(6x,f27.6)') strickler( zone(element_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
       write(ion,'(6x,f27.6)') strickler( zone(point_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
    end do
    write(ion,'(A)')'SCALARS inflow float 1'
@@ -164,6 +166,7 @@ subroutine ausgeben_untrim(itime)
          write(ion,'(6x,f27.6)') aus
       end do ! alle Knoten
    end if !nur_alter
+   
    ! planktische, transportierte Konzentrationen entsprechend ausgabeflag
    do j = 1,number_plankt_vari ! alle tiefengemittelten
       if (output_plankt(j)) then ! zur ausgabe vorgesehen
@@ -178,7 +181,49 @@ subroutine ausgeben_untrim(itime)
          !   print*,'ausgeben_untrim: no output for ',ADJUSTL(trim(planktonic_variable_name(j)))
       end if ! zur ausgabe vorgesehen
    end do ! alle planktonic_variable
-   close (ion)
+   do j = 1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
+      if (output_plankt_vert(j)) then ! zur ausgabe vorgesehen
+         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n = 1,number_plankt_point ! alle Knoten
+            aus = plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
+            write(ion,'(f27.6)') aus
+         end do ! alle Knoten
+      end if ! zur ausgabe vorgesehen
+   end do ! done all plankt_vari_vert
+   ! Übergabe_Konzentrationen entsprechend ausgabeflag
+   do j = 1,number_trans_quant ! alle tiefengemittelten
+      if (output_trans_quant(j)) then ! zur ausgabe vorgesehen
+         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_name(j))),' float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n = 1,number_plankt_point
+            write(ion,'(f27.6)') transfer_quantity(j+(n-1)*number_trans_quant)
+         end do ! alle Knoten
+      end if ! zur ausgabe vorgesehen
+   end do ! alle transkon
+   do j = 1,number_trans_quant_vert ! alle tiefenaufgelösten z.Z. nur level 1
+      if (output_trans_quant_vert(j)) then ! zur ausgabe vorgesehen
+         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_vert_name(j))),' float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n = 1,number_plankt_point
+            aus = trans_quant_vert(1+(j-1)*num_lev_trans+(n-1)*num_lev_trans*number_trans_quant_vert)
+            write(ion,'(f27.6)') aus
+         end do ! alle Knoten
+      end if ! zur ausgabe vorgesehen
+   end do ! done all vertically distributed transfer quantities
+   ! benthic distributions according to output flag
+   if(number_benthic_points .ne. number_plankt_point)call qerror('number_benthic_points .ne. number_plankt_point') 
+   do j = 1,number_benth_distr ! all benthic distributions
+      if (output_benth_distr(j)) then ! flagged?
+         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(benth_distr_name(j))),' float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n = 1,number_plankt_point ! all nodes number_benthic_points
+            write(ion,'(f27.6)') benthic_distribution(j+(n-1)*number_benth_distr)
+         end do ! all nodes
+      end if ! flagged
+   end do ! all benthic distributions
+   close (ion) ! close vtk
+   
    print*,'elemente_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_untrim writing filename kanten_ failed')
