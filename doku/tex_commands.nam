@@ -2,29 +2,40 @@
 \newcommand{\degC}{\text{$^\circ$C}}
 \newcommand{\degCinv}{\text{$^\circ$C$^{-1}$}}
 \newcommand{\degCqinv}{\text{$^\circ$C$^{-2}$}}
-\newcommand{\mgL}{\text{mg\,L$^{-1}$}}
-\newcommand{\mgXL}[1]{\text{mg\,#1\,L$^{-1}$}}
-\newcommand{\mgLd}{\text{mg\,(L\,d)$^{-1}$}}
-\newcommand{\mgCLd}{\text{mg\,C\,(L\,d)$^{-1}$}}
-\newcommand{\gXg}[1]{\text{g\,#1\,g$^{-1}$}}
-\newcommand{\gXgd}[1]{\text{g\,#1\,(g\,d)$^{-1}$}}
-\newcommand{\gCmgChl}{\text{g\,C\,(mg\,Chl-a)$^{-1}$}}
-\newcommand{\ugChlL}{\text{µg\,Chl-a\,L$^{-1}$}}
-\newcommand{\ugChlLd}{\text{µg\,Chl-a\,(L\,d)$^{-1}$}}
-\newcommand{\mgChlgCd}{\text{mg\,Chl-a\,(g\,C\,d)$^{-1}$}}
+\newcommand{\mgL}{\text{mg$\,$L$^{-1}$}}
+\newcommand{\ugL}{\text{$\mu$g$\,$L$^{-1}$}}
+\newcommand{\mgXL}[1]{\text{mg$\,$#1$\,$L$^{-1}$}}
+\newcommand{\mgLd}{\text{mg $\,$L$^{-1}\,$d$^{-1}$}}
+\newcommand{\mgCLd}{\text{mg$\,$C$\,$(L$\,$d)$^{-1}$}}
+\newcommand{\gXg}[1]{\text{g$\,$#1$\,$g$^{-1}$}}
+\newcommand{\gXgd}[1]{\text{g$\,$#1$\,$(g$\,$d)$^{-1}$}}
+\newcommand{\gCmgChl}{\text{g$\,$C$\,$(mg$\,$Chl-a)$^{-1}$}}
+\newcommand{\mgCL}{\text{mg$\,$C$\,$L$^{-1}$}}
+\newcommand{\ugCL}{\text{$\mu$g$\,$C$\,$L$^{-1}$}}
+\newcommand{\ugChlL}{\text{µg$\,$Chl-a$\,$L$^{-1}$}}
+\newcommand{\ugChlLd}{\text{µg$\,$Chl-a$\,$(L$\,$d)$^{-1}$}}
+\newcommand{\mgChlgCd}{\text{mg$\,$Chl-a$\,$(g$\,$C$\,$d)$^{-1}$}}
 \newcommand{\dinv}{\text{d$^{-1}$}}
-\newcommand{\uEms}{\text{µE\,m$^{-2}$\,s$^{-1}$}}
-\newcommand{\calms}{\text{cal\,m$^{-2}$\,s$^{-1}$}}
-\newcommand{\Wm}{\text{W\,m$^{-2}$}}
-\newcommand{\mqs}{\text{m$^2$\,s$^{-1}$}}
+\newcommand{\uEms}{\text{$\mu$E$\,$m$^{-2}\,$s$^{-1}$}}
+\newcommand{\uEmh}{\text{$\mu$E$\,$m$^{-2}\,$h$^{-1}$}}
+\newcommand{\calms}{\text{cal$\:$m$^{-2}\,$s$^{-1}$}}
+\newcommand{\Wm}{\text{W$\,$m$^{-2}$}}
+\newcommand{\mqs}{\text{m$^2\,$s$^{-1}$}}
+\newcommand{\mqqs}{\text{m$^3\,$s$^{-1}$}}
 \newcommand{\umc}{\text{µm$^3$}}
-\newcommand{\ms}{\text{m\,s$^{-1}$}}
+\newcommand{\ms}{\text{m$\,$s$^{-1}$}}
 \newcommand{\minv}{\text{m$^{-1}$}}
-\newcommand{\Lmmg}{\text{L\,(m\,mg)$^{-1}$}}
-\newcommand{\LmugChl}{\text{L\,(m\,µg\,Chl-a)$^{-1}$}}
-\newcommand{\gCmqsmgChluE}{\text{g\,C\,m$^2$\,s\,(mg\,Chl-a\,µE)$^{-1}$}}
-\newcommand{\mquE}{\text{m$^2$\,µE$^{-1}$}}
+\newcommand{\Lmmg}{\text{L$\,$(m$\,$mg)$^{-1}$}}
+\newcommand{\LmugChl}{\text{L$\,$(m$\,$µg$\,$Chl-a)$^{-1}$}}
+\newcommand{\gCmqsmgChluE}{\text{g$\,$C$\,$m$^2$$\,$s$\,$(mg$\,$Chl-a$\,$µE)$^{-1}$}}
+\newcommand{\mquE}{\text{m$^2$$\,$µE$^{-1}$}}
 \newcommand{\sinv}{\text{s$^{-1}$}}
+\newcommand{\mgkg}{\text{mg$\,$kg$^{-1}$}}
+\newcommand{\Lg}{\text{L$\,$g$^{-1}$}}
+\newcommand{\kgmqsinv}{\text{kg$\,$m$^{-2}\,$s$^{-1}$}}
+\newcommand{\kgminvsq}{\text{kg$\,$m$^{-1}\,$s$^{-2}$}}
+\newcommand{\gCmq}{\text{gC$\,$m$^{-3}$}}
+\newcommand{\gCmqd}{\text{gC$\,$m$^{-3}\,$d${-1}$}}
 
 \newcommand{\OO}{\text{O$_2$}}
 
@@ -75,7 +86,7 @@
 \newcommand{\RESP}{\text{$\text{RESP}_{A,i}$}}
 \newcommand{\resp}{\text{$r_{A,i}^{resp}$}}
 \newcommand{\respg}[1]{\text{$\gamma_{A,#1}$}}
-\newcommand{\respd}[1]{\text{$r_{A,#1}^{resp,d}$}}
+\newcommand{\respd}[1]{\text{$r^{resp,d}_{A,#1}$}}
 \newcommand{\kTresp}[1]{\text{$k_{T,#1}^{resp}$}}
 
 \newcommand{\MOR}{\text{$\text{MOR}_{A,i}$}}
@@ -91,5 +102,3 @@
 \newcommand{\wEff}{\text{$w_{A,i}^{eff}$}}
 \newcommand{\w}[1]{\text{$w_{A,#1}$}}
 \newcommand{\V}[1]{\text{$V_{A,#1}$}}
-
-\newcommand{\mbtt}[1]{\mbox{\texttt{#1}}}

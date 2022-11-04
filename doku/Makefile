@@ -5,12 +5,9 @@
 #====================================================================
 
 CONFIG=./confi
-#CONFIG=./confi_stripped
 CONFIG_OFF=./confi_offline
-# INSTALL=/home/Frassl/public_html/dokuport
 # INSTALL=/home/Wyrwa/public_html/dokuport
 # INSTALL=/home/Wyrwa/public_html/dokuport_frassl
-# ADDITIONAL=/srv/cifs-mounts/u2/U/U2/QSim/Dokumentation_u_Handbuecher/QSim-3D
 ADDITIONAL=/srv/cifs-mounts/u2/Projekte/QSim/Dokumentation_und_Handbuecher/QSim/QSim-Dokuportal/Dokuportal_ergaenzendes_Material
 INSTALL=~/public_html/dokuportal
 

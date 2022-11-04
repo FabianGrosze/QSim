@@ -39,9 +39,6 @@ Die QSim3D Subroutine ph_huelle() dient dem Aufruf der QSimD-subroutine ph().
 (Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 
 
-## IT-Realisierung ##
-
-...
 
 Textquelle: ph-umsetzung.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90 
 ph_huelle.f95 ; 

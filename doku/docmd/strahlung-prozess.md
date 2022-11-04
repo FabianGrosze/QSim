@@ -1,43 +1,45 @@
 Strahlung - Prozesse {#lnk_strahlung_prozesse} 
 =====================
 
-Die Strahlung wird als Messdaten von repräsentativen Wetterstationen 
+Die einzelnen Strahlungskomponenten werden in QSim aus der Globalstrahlung 
+berechnet. Diese wird aus Messdaten von repräsentativen Wetterstationen 
 des Modellgebiets bezogen. Die Eingabe der Globalstrahlung kann in Form 
-einer Tagesstrahlungssumme oder aber als Zeitreihe in Stundenwerten erfolgen. 
+einer Tagesstrahlungssumme oder als Zeitreihe in Stundenwerten erfolgen. 
 Liegt eine Tagesstrahlungssumme vor, so wird aus dieser im Modell für jeden
 Berechnungszeitschritt (i. d. R. eine Stunde) ein Strahlungswert ermittelt:
 
-\f[
-I_{\Delta t} = I_{max} \cdot 0,5 \cdot \left(1 + cos\left(2 \cdot \pi \cdot
-\frac{time}{t_{hell}} \right) \right)
-\f]
+\f{equation}{ I_{\Delta t} = I_{max} \cdot 0,5 \cdot 
+  \left(1 + cos\left(2 \cdot \pi \cdot \frac{time}{t_{hell}} \right) \right)
+\f}
 
 mit:
-\f[ I_{max} = 2 \cdot \frac{I_{Glob}}{4,2 \cdot t_{hell}} \f]
+\f{equation}{ I_{max} = 2 \cdot \frac{I_{Glob}}{4,2 \cdot t_{hell}} \f}
 
-\f[time = -0,5 + \frac{Uhrz - SA}{t_{hell}}\f]
+\f{equation}{time = -0,5 + \frac{t_{Uhr} - SA}{t_{hell}}\f}
 
-\f[t_{hell} = SU - SA \f]
+\f{equation}{t_{hell} = SU - SA \f}
 
 
 \f$I_{\Delta t}\f$: Globalstrahlung während des Berechnungszeitschritts 
-\f$\Delta t\f$ [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$\Delta t\f$ [cal cm<sup>-2</sup> h<sup>-1</sup>]
+<!-- nochmal prüfen ob cal oder Joule -->
 
-\f$I_{max}\f$: maximale Globalstrahlung am Tag [J cm<sup>-2</sup> h<sup>-1</sup>]
+\f$I_{max}\f$: maximale Globalstrahlung am Tag [cal cm<sup>-2</sup> h<sup>-1</sup>]
+<!-- nochmal prüfen ob cal oder Joule -->
 
 \f$I_{Glob}\f$: Tagessumme der Globalstrahlung [\f$ J cm^{-2} \f$] oder 
     Globalstrahlungsintensität [\f$ J cm^{-2} h^{-1} \f$] 
 
-\f$ Uhrz \f$: Zeit [h]
+\f$ t_{Uhr} \f$: Zeit [h]
 <!-- nachprüfen -->
 
 \f$ SA, SU \f$: Sonnenaufgang, Sonnenuntergang (wird aus der geographischen Breite 
   und geographischen Länge im Modell berechnet)
 
-\f$\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}\f$
+<!-- \f$\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}\f$ -->
 <!-- #mf: nicht klar wo die Zeile her kommt -> nachverfolgen -->
 
-*Durch den Faktor 4,2 wird die Strahlung \f$I_{Glob}\f$ von Joule in cal umgerechnet.*
+_Durch den Faktor 4,2 wird die Strahlung_ \f$I_{Glob}\f$ _von Joule in cal umgerechnet._
 
 Die Dämpfung des Lichtklimas durch die an das Gewässer angrenzende Vegetation kann im 
 Modell differenziert nach Vegetationstypen, abhängig vom jahreszeitlichen
@@ -55,7 +57,7 @@ kann dies auch wellenlängenabhängig erfolgen.
 Die photosynthetisch aktive Strahlung (Photosynthetically Active Radiation PAR, 
 Wellenlängenbereich 400-700 nm) errechnet sich aus der Globalstrahlung zu:
 
-\f[ PAR = 8,2051 \cdot I_{\Delta t} \f]
+\f{equation}{ PAR = 8,2051 \cdot I_{\Delta t} \f}
 <!-- #mf: prüfen, ob Delta richtig kompiliert ist -->
 <!-- #mf: Code überprüfen, scheint nicht konsistent zu sein: 
 in albenth.f)=: OBFLI =  5.846 * (schwi(ior)*4.2) (der Wert 8.2051 ist auskommentiert)
@@ -63,13 +65,14 @@ In mphyt.f90 steht noch OBFLI = 8.2051*(schwi(ior)*4.2)
 In algaesbl.f90 (ki & gr) steht OBFLI = 5.846*(schwi(ior)*4.2) -->
 
 *PAR*: photosynthetisch aktive Strahlung [\f$ \mu E \cdot m^{-2} \cdot s^{-1} \f$]
-\f$ I_{\Delta t} \f$: Globalstrahlung während des Berechnungszeitschritts \f$ \Delta t 
-  [J \cdot cm^{-2} \cdot h^{-1}] \f$
+
+\f$ I_{\Delta t} \f$: Globalstrahlung während des Berechnungszeitschritts 
+  \f$ \Delta t \; [J \cdot cm^{-2} \cdot h^{-1}] \f$
   
 Für die Berechnung der UV-Strahlung (Wellenlängenbereich 290-380 nm) wird im Modell von 
 einem festen Anteil zwischen UV- und Globalstrahlung ausgegangen:
 
-\f[ I_{UV} = 0,032 \cdot I_{\Delta t} \f]
+\f{equation}{ I_{UV} = 0,032 \cdot I_{\Delta t} \f}
  
 \f$ I_{UV} \f$: UV-Strahlung [\f$ J cm^{-2} h^{-1} \f$] 
 <!-- #mf: WLn = Schwi(ior)*(1.-0.032)*(1.-APARS)+G  ! 0.032: Anteil UVA/UVB  -->
@@ -81,12 +84,15 @@ sowie aus der Ausstrahlung der Wasseroberfläche unterteilt. Alle Anteile der
 Wärmestromdichte haben positive Werte: 
 <!-- #tbw: den Wärmehaushalt-Absatz/Abschnitt in Kapitel zu Wassertemp. schieben? -->
 
-\f[ q_S = q_{S, G} + q_{S, A} - q_{S, W} \f]
+\f{equation}{ q_S = q_{S, G} + q_{S, A} - q_{S, W} \f}
 
 \f$ q_S \f$: Wärmestromdichte aus Strahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2} ]\f$
+
 \f$ q_{S, G} \f$: Wärmestromdichte aus Globalstrahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ q_{S, A} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung 
    \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ q_{S, W} \f$: Wärmestromdichte aus Ausstrahlung der Wasseroberfläche 
    \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
 
@@ -124,13 +130,13 @@ Temperatur der Umgebung vorliegen, wird in QSim die atmosphärische Gegenstrahlu
 empirischer Betrachtungen ermittelt, von denen nach einer Untersuchung von Kasten (1989) 
 die Formel von Swinbank für den wolkenlosen Himmel die besten Ergebnisse liefert:
 
-\f[ q_{S,A,0} = 9,3 \cdot 10^{-6} \cdot \sigma \cdot (T_{L,tr} + 273,16)^6 \f]
+\f{equation}{ q_{S,A,0} = 9,3 \cdot 10^{-6} \cdot \sigma \cdot (T_{L,tr} + 273,16)^6 \f}
 <!-- #tbw: Die Einheiten von °C bzw. K passen nicht. Muss die Klammer nur E04 sein und nicht E06?
 Muss hinter 273,16 noch die Einheit °C? -->
 
 
 \f$ q_{S,A,0} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung bei wolkenlosem Himmel 
- [\f$ kJ h-1 m-2\f$]
+ [\f$ kJ h^{-1} m^{-2}\f$]
  
 \f$ \sigma \f$: Stefan-Boltzmann-Konstante; 
 \f$ \sigma = 2,0411 * 10^{-7} [kJ m^{-2} K^{-4}] = 5,6698 * 10^{-8} [W h m^{-2} K^{-4}] \f$
@@ -144,11 +150,13 @@ vom Bedeckungsgrad und der Höhe der Wolkenunterkante über der Erdoberfläche. 
 Wolkenunterkante kann mit dem Wolkentyp in Beziehung gesetzt werden. Der Einfluss der 
 Bewölkung wird über den Koeffizienten \f$ kB,A \f$ berücksichtigt:
 
-\f[ q_{S,A} = k_{B,A} * q_{S,A,0} \f]
+\f{equation}{ q_{S,A} = k_{B,A} * q_{S,A,0} \f}
 
 
 \f$ q_{S, A} \f$: Wärmestromdichte aus atmosphärischer Gegenstrahlung \f$ [kJ \cdot h^{-1} \cdot m^{-2})] \f$
+
 \f$ k_{B,A} \f$:	Koeffizient zur Berücksichtigung der Bewölkung [-]
+
 \f$ q_{S,A,0} \f$:	Wärmestromdichte aus atmosphärischer Gegenstrahlung bei wolkenlosem Himmel \f$ [kJ/(h*m²) ] \f$
 
 Der Bewölkungskoeffizient \f$ k_{B,A} \f$ berechnet sich in Abhängigkeit vom 
@@ -156,10 +164,12 @@ Bedeckungsgrad \f$ \alpha_B \f$ und Wolkentyp \f$ f_{Typ} \f$ (siehe Tabelle XX)
 <!-- Link zur Tabelle unten einbauen --> 
 In QSim wird ein \f$ f_{Typ} \f$ von 0,08 (Cirrostratus) als Standard verwendet.
 
-\f[ k_{B,A} = 1 + f_{Typ} \frac{\alpha_B}{8}^2,6 \f]
+\f{equation}{ k_{B,A} = 1 + f_{Typ} \left(\frac{\alpha_B}{8}\right)^{2,6} \f}
 
 \f$ k_{B,A} \f$:	Koeffizient zur Berücksichtigung der Bewölkung
-\f$ f_{Typ} \f$:	Wolkentyp. Der Faktor bestimmt sich je nach Wolkentyp entsprechend Tabelle 2.  
+
+\f$ f_{Typ} \f$:	Wolkentyp. Der Faktor bestimmt sich je nach Wolkentyp entsprechend Tabelle XX.  
+
 \f$ \alpha_B \f$:	Gemessener Bedeckungsgrad in Achteln zwischen 0 (wolkenlos) und 8 (bedeckt)
 
 
@@ -167,7 +177,7 @@ Tabelle XX: Faktor zur Berechnung des Bewölkungseinflusses auf die atmosphäris
 Gegenstrahlung 
 <!-- #tbw: Zitat? -->
 | Nr. | Wolkentyp	 | 	fTyp | 	Nr. | Wolkentyp	    | fTyp |
-----------------------------------------------------------
+| --- | ------------ | ----- | ---- | ------------- | ---- |
 | 1	  | Cirrus       | 	0,04 | 	6	| Nimbosstratus | 0,25 |
 | 2	  | Cirrocumulus | 	0,06 | 	7   | Stratocumulus | 0,25 |
 | 3	  | Cirrostratus | 	0,08 | 	8   | Stratus	    | 0,25 |
@@ -183,15 +193,14 @@ Wassers wird durch das Stefan-Boltzmann-Gesetz für einen grauen Körper erfasst
 von der absoluten Temperatur der Wasseroberfläche und dem effektiven langwelligen 
 Emissionsgrad \f$ \epsilon_W \f$ ab:
 
-\f[ q_{S,W} = \epsilon_{W} \cdot \sigma \cdot (T_W + 273,16)^4 \f]
-<!-- #mf: wenn kompiliert: überprüfen ob epsilon richtig -->
+\f{equation}{ q_{S,W} = \varepsilon_{W} \cdot \sigma \cdot (T_W + 273,16)^4 \f}
 <!-- #tbw: Muss hinter 273,16 wieder die Einheit °C? Muss es nicht 1- \epsilon_W heißen, 
 um die Ausstrahlung zu berechnen? -->
 
 \f$ q_{S,W} \f$: Wärmestromdichte aus Ausstrahlung der Wasseroberfläche 
    \f$ [kJ \cdot h^{-1} \cdot m^{-2}] \f$
 
-\f$ \epsilon_W	\f$:  effektiver langwelliger Emissionsgrad = 0,97 [-]
+\f$ \varepsilon_W	\f$:  effektiver langwelliger Emissionsgrad = 0,97 [-]
 
 \f$ \sigma \f$: Stefan-Boltzmann-Konstante; 
 \f$ \sigma = 2,0411 * 10^{-7} [kJ m^{-2} K^{-4}] = 5,6698 * 10^{-8} [W h m^{-2} K^{-4}] \f$
@@ -200,13 +209,14 @@ Stefan-Boltzmann-Konstante? Dann müssten es 2,0413 * 10E-7 kJ/(m²*K4) sein. --
 
 \f$T_W \f$: Wassertemperatur [°C]
 
+\n\n
 
 Textquelle: strahlung-prozess.md; Codesources: strahlg.f90, sasu.f95; zurück: \ref lnk_strahlung
 
 
+\n\n
 
-
-## Berechnung der Strahlungsabsorption im vertikal aufgelösten Modell ##
+## Berechnung der Strahlungsabsorption im vertikal aufgelösten Modell
 
 Wird QSim nicht in der eindimensionalen Version, sondern mehrdimensional gerechnet,
 so kann für einzelne Wassertiefen abgeschätzt werden, wieviel
@@ -228,14 +238,14 @@ unterschieden:
 
 Der Wellenlängenbereich <=700 nm (UV-und photosynthetisch aktive Strahlung):
 
-\f[ GS_{PARS, k} = GS * (f_{UV} + f_{PARS})	\f]
+\f{equation}{ GS_{PARS, k} = GS * (f_{UV} + f_{PARS})	\f}
 
 
 und die Wellenlängenbereiche >700 <= 910 nm und >910 nm. Diese beiden
 Wellenlängenbereiche gelten auch für die langwellige Gegenstrahlung.
 
-\f[ SL1_k = GS * fL_1 + G * fL_1/(fL_1 + fL_2) \f]
-\f[ SL2_k = GS * fL_2 + G * fL_2/(fL_1 + fL_2) \f]
+\f{equation}{ SL1_k = GS * fL_1 + G * fL_1/(fL_1 + fL_2) \f}
+\f{equation}{ SL2_k = GS * fL_2 + G * fL_2/(fL_1 + fL_2) \f}
 
 
 \f$ GS: \f$		Globalstrahlung an der Gewässeroberfläche [kJ*m-2*h-1]   \n
@@ -249,9 +259,9 @@ Globalstrahlung [-]  \n
  
 Die Strahlungsintensität in der Tiefe z errechnet sich für die drei Wellenlängenbereiche 
 zu: 
-\f[ GS_{PARS, k+1} = GS_{PARS,k} * exp⁡(-extk * z) \f]  \n
-\f[ SL1_{k+1} = SL1_k * exp⁡(-extkL_1 * z)     \f]       \n
-\f[ GS_{PARS, k+1} = GS_{PARS,k} * exp⁡(-extkL_2 * z)  für j = 1, n-1	\f]
+\f{equation}{ GS_{PARS, k+1} = GS_{PARS,k} * exp⁡(-extk * z) \f}  \n
+\f{equation}{ SL1_{k+1} = SL1_k * exp⁡(-extkL_1 * z)     \f}       \n
+\f{equation}{ GS_{PARS, k+1} = GS_{PARS,k} * exp⁡(-extkL_2 * z)  für j = 1, n-1	\f}
 
 
 \f$ GS_{PARS,k}, SL1_k, SL2_k: \f$	Strahlung der drei Wellenlängenbereiche am Anfang der jeweiligen vertikalen Schicht [kJ*m-2*h-1]
@@ -271,12 +281,12 @@ Die Wärmestromdichte q_{s,j} [\f$kJ m^{-2} h^{-1}\f$] durch die einfallende Str
 errechnet sich somit für alle Schichten aus:
 
 Für j = 1, n-1: \n
-\f[ q_{s,j} = (GS_{PARS,k} - GS_{PARS,k+1}) + (SL1_k - SL1_{k+1}) + 
-(SL2_k - SL2_{k+1}) \f]
+\f{equation}{ q_{s,j} = (GS_{PARS,k} - GS_{PARS,k+1}) + (SL1_k - SL1_{k+1}) + 
+(SL2_k - SL2_{k+1}) \f}
 
-\f[ GS_{PARS,k} = GS_{PARS,k+1} \f]
-\f[ SL1_k = SL1_{k+1} \f]
-\f[ SL2_k = SL2_{k+1} \f]
+\f{equation}{ GS_{PARS,k} = GS_{PARS,k+1} \f}
+\f{equation}{ SL1_k = SL1_{k+1} \f}
+\f{equation}{ SL2_k = SL2_{k+1} \f}
 
 <!-- #mf: Tabelle beziffern/ref erstellen -->
 Tab.XX: Aufteilung der Strahlung und entsprechende Extinktionskoeffizienten
@@ -297,11 +307,11 @@ Tab.XX: Aufteilung der Strahlung und entsprechende Extinktionskoeffizienten
 Für die drei Wellenlängenbereiche errechnet sich die von der Gewässersohle 
 reflektierte Strahlung aus:
 
-\f[ GSr_{PARS} = GS * PSREFS *(f_{UV} + f_{PARS}) * exp⁡(-extk * H) \f]
-\f[ SL1r = (GS * fL_1 * PSREFS + G * PSREFS * fL_1/(fL_1 + fL_2 ))
-                 * exp⁡(-extkL_1 * H) \f]
-\f[ SL2r = (GS * fL_2 * PSREFS + G * PSREFS * fL_2/(fL_1 + fL_2 ))
-                 *exp⁡(-extkL_2 * H) \f]
+\f{equation}{ GSr_{PARS} = GS * PSREFS *(f_{UV} + f_{PARS}) * exp⁡(-extk * H) \f}
+\f{equation}{ SL1r = (GS * fL_1 * PSREFS + G * PSREFS * fL_1/(fL_1 + fL_2 ))
+                 * exp⁡(-extkL_1 * H) \f}
+\f{equation}{ SL2r = (GS * fL_2 * PSREFS + G * PSREFS * fL_2/(fL_1 + fL_2 ))
+                 *exp⁡(-extkL_2 * H) \f}
 
 \f$ GSr_{PARS} \f$:	reflektierte Strahlungsmenge der Wellenlängen <=700 nm an der
 Gewässersohle [kJ*m-2*h-1]   \n
@@ -314,9 +324,9 @@ Gewässersohle [kJ*m-2*h-1]   \n
 
 Die Strahlungsmenge die von der reflektierten Strahlung die Gewässeroberfläche wieder erreicht ergibt sich aus: 
 
-\f[ GSr_(PARS,k) = GSr_{PARS} * exp⁡(-extk * H) \f]
-\f[ SL1r_k = SL1r * exp⁡(-extkL_1 * H) \f]
-\f[ SL2r_k = SL2r * exp⁡(-extkL_2 * H) \f]	
+\f{equation}{ GSr_(PARS,k) = GSr_{PARS} * exp⁡(-extk * H) \f}
+\f{equation}{ SL1r_k = SL1r * exp⁡(-extkL_1 * H) \f}
+\f{equation}{ SL2r_k = SL2r * exp⁡(-extkL_2 * H) \f}	
 
 Die Wärmstromdichte \f$q_{US,j} \f$ [\f$kJ m^{-2} h^{-1}\f$] aus der reflektierten 
 Strahlung errechnet sich für die einzelnen Schichten aus:
@@ -325,16 +335,16 @@ Für j = 1, n-1:
 
 k = 1
 
-\f[  q_{US,j} = (GSr_{PARS,k+1} - GSr_{PARS,k}) + (SL1r_{k+1} - SL1r_k)
-             + (SL2r_{k+1} - SL2r_k) \f]
+\f{equation}{  q_{US,j} = (GSr_{PARS,k+1} - GSr_{PARS,k}) + (SL1r_{k+1} - SL1r_k)
+             + (SL2r_{k+1} - SL2r_k) \f}
 mit: 
-\f[ GSr_{PARS,k+1} = GSr_{PARS,k} * exp⁡(xtk * z) \f]
-\f[ SL1r_{k+1} = SL1r_k * exp⁡(-extkL_1 * z) \f]
-\f[ SL2r_{k+1} = SL2r_k * exp⁡(-extkL_2 * z) \f]
+\f{equation}{ GSr_{PARS,k+1} = GSr_{PARS,k} * exp⁡(xtk * z) \f}
+\f{equation}{ SL1r_{k+1} = SL1r_k * exp⁡(-extkL_1 * z) \f}
+\f{equation}{ SL2r_{k+1} = SL2r_k * exp⁡(-extkL_2 * z) \f}
 
-\f[ GSr_{PARS,k} = GSr_{PARS, k+1} \f]
-\f[ SL1r_k = SL1r_{k+1} \f]
-\f[ SL2r_k = SL2r_{k+1} \f]
+\f{equation}{ GSr_{PARS,k} = GSr_{PARS, k+1} \f}
+\f{equation}{ SL1r_k = SL1r_{k+1} \f}
+\f{equation}{ SL2r_k = SL2r_{k+1} \f}
 
 
 
@@ -347,13 +357,6 @@ mit:
 \f$ Extk, extkL_1, extkL_2:	\f$ Lichtextinktionskoeffizient für Licht der drei 
 Wellenlängenbereiche [m-1] 
 
-
-Zitierte Literatur 
-------------------
-
-* Kasten. 1989
-
-* Swinbank. 
 
 Textquelle: strahlung-prozess.md; Codesources: strahlg.f90, sasu.f95; zurück: \ref lnk_strahlung
 

@@ -4,14 +4,14 @@ Modellstruktur {#lnk_modellstruktur}
 <!-- Inhalt soll sein 1D/3D relevante Dinge -->
 
 # Verbindung zwischen QSim-1D und QSim-3D {#lnk_verbindung_1d_3d}
+
 Die beiden Programme der QSim-Familie unterscheiden sich in der räumlichen 
 Auflösung des Wasserkörpers (vgl. Abb. im Abschnitt \ref lnk_qsim_aufbau).
 Dementsprechend werden für QSim auch die Namen QSim1D und QSim3D verwendet.
 
 Im Abschnitt [Aufbau von QSim](\ref lnk_qsim_aufbau) wurde die unterschiedliche 
 räumliche Auflösung der hydrodynamischen Treiber von QSim erwähnt. 
-
-<!-- #mf: the following should be a level lower, which doesn't work -->
+\n\n
 
 ## 1, 2, 3 Dimensionen {#lnk_dimensionen}
 Die Bezeichnung 1D und 3D der beiden QSim's steht für die ein-dimensionale 
@@ -31,6 +31,9 @@ Diese "2D"-Option wird vor allem gewählt, um Temperaturschichtungen simulieren 
 können. 2D bei QSim-1D meint daher <b>2D-breitengemittelt</b>.
 <!-- #mf: Link zur Hydraxdoku einfügen, bzw. besser zur Dokuportal-Seite auf der 
 sie verlinkt ist, damit Link nicht an mehreren Stellen bearbeitet werden muss --> 
+
+In QSim1D ist es möglich Buhnen zu simulieren. Dies geschieht über die 
+\subpage lnk_stillwasserzonen.
 
 
 QSim-<b>3D</b> basiert auf hydraulischen Treibern, welche die horizontale 
@@ -112,7 +115,7 @@ und suspendierten Sedimenten über eigene Löser der
 Advektions-Diffusions-Gleichung (Transportgleichung) verfügen,
 ergibt sich die Möglichkeit, durch Übergabe von verfahrensabhängigen 
 Transportinformationen im Gütemodell einiges an Rechenaufwand einzusparen.
-Details werden im Abschnitt \ref lnk_stofftransport näher ausgeführt. 
+Details werden im Abschnitt \ref lnk_stofftransport_3d näher ausgeführt. 
 
 
 aus Datei: modellstruktur-doc.md ; zurück zu \ref lnk_modelldetails

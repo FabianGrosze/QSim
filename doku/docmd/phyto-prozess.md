@@ -11,8 +11,8 @@ sind:
 * [Sedimentation](\ref lnk_phy_Sedimentation)
 * Grazing durch
   - [Rotatorien](\ref lnk_phy_Rotatorien)
-  - [*Dreissena spp.*](\ref lnk_phy_Dreissena)
-  - [*Corophium*](\ref lnk_phy_Corophium)
+  - _[Dreissena spp.](\ref lnk_phy_Dreissena)_
+  - _[Corophium](\ref lnk_phy_Corophium)_
   - [Heterotrophe Nanoflagellaten](\ref lnk_phy_HNF)
 
   
@@ -25,23 +25,24 @@ folgende Differentialgleichung beschrieben:
  \frac{dA_i}{dt} = \left( \mu_{A,i} - r_{A,i}^{resp} - r_{A,i}^{mor} \right) 
  \cdot A_i - {SED}_{A,i} - {GRA}_{A,i}^{ROT} - 
  {GRA}_{A,i}^{DR} - {GRA}_{A,i}^{COR} - 
- {GRA}_{A,i}^{HNF} + {ADV} + {MIX}. 
+ {GRA}_{A,i}^{HNF} + {ADV} + {MIX} 
   \label{eq:dAdt}
 \f}
 
 Die einzelnen Terme beschreiben dabei die folgenden Prozesse, welche in den 
 entsprechenden Unterkapiteln dieser Dokumentation genauer beschrieben werden; 
 ausgenommen Advektion (ADV) und Vermischung (MIX):
-\f$ P_{A,i} \f$:     Wachstum [\f$ d^-1 \f$], abhängig von \n
-  - Licht (s. Kapitel \ref lnk_phy_licht)
-  - Nährstoffen (s. Kapitel \ref lnk_phy_Naehrstoffe)
-  - Temperatur (s. Kapitel \ref lnk_phy_Temperatur)
+
+  - \f$ P_{A,i} \f$:     Wachstum [\f$ d^-1 \f$], abhängig von: \n
+    * Licht (s. Kapitel \ref lnk_phy_licht)
+    * Nährstoffen (s. Kapitel \ref lnk_phy_Naehrstoffe)
+    * Temperatur (s. Kapitel \ref lnk_phy_Temperatur)
   - Respiration (\f$r_{A,i}^{resp} \cdot A_i\f$; s. Kapitel \ref lnk_phy_Respiration)
   - Mortalität (\f$r_{A,i}^{resp} \cdot A_i\f$; s. Kapitel \ref lnk_phy_Mortalitaet)
   - Sedimentation (SED\f$_{A,i}\f$; s. Kapitel \ref lnk_phy_Sedimentation)
   - Grazing durch
 	* Rotatorien (GRA\f$_{A,i}^{ROT}\f$; s. Kapitel \ref lnk_phy_Rotatorien)
-	* *Dreissena spp.* (GRA\f$_{A,i}^{DR}\f$; s. Kapitel \ref lnk_phy_Dreissena)
+	* _Dreissena spp._ (GRA\f$_{A,i}^{DR}\f$; s. Kapitel \ref lnk_phy_Dreissena)
 	* *Corophium* (GRA\f$_{A,i}^{COR}\f$; s. Kapitel \ref lnk_phy_Corophium)
 	* Heterotrophe Nanoflagellaten (GRA\f$_{A,i}^{HNF}\f$; s. Kapitel \ref lnk_phy_HNF)
 
@@ -63,9 +64,9 @@ Verfügbarkeit von Nährstoffen sowie die Umgebungstemperatur beeinflusst wird:
 \f}
 <!--  \label{Eq:Growth} -->
 
-\f$ BPP_{A,i} \f$:  Brutto-Primärproduktion [\f$ mg L^{-1} d^{-1} \f$] \n
-\f$ \mu_{A,i} \f$:  Brutto-Wachstumsrate [d\f$^{-1}\f$] \n
-\f$ P_{A,i}   \f$:  lichtabhängige Brutto-Photosyntheserate (ohne Lichthemmung) [d\f$^{-1}\f$] \n 
+\f$ BPP_{A,i} \f$:  Brutto-Primärproduktion [\f$ \mgLd \f$] \n
+\f$ \mu_{A,i} \f$:  Brutto-Wachstumsrate [\f$\dinv\f$] \n
+\f$ P_{A,i}   \f$:  lichtabhängige Brutto-Photosyntheserate (ohne Lichthemmung) [\f$\dinv\f$] \n 
 \f$ f_{LH,i}  \f$:  Lichthemmungsfakor [-] (s. \ref lnk_phy_Lichthemmung) \n 
 \f$ f_{N\ddot{a}hr,i}\f$: Nährstofflimitierungsfaktor [-] (s. \ref lnk_phy_NutLim) \n 
 \f$ f_{T,i}^\mu \f$: Temperaturabhängiger Wachstumsfaktor [-] (s. \ref lnk_phy_Temperatur) \n
@@ -89,26 +90,29 @@ mit der maximalen lichtanhängigen Photosyntheserate \f$P_{A,i}^{max}\f$
 \f$T_{opt, i}\f$ (in °C):
 
 \f{equation}{
- P_{A,i}^{max} = \frac{\mu _{A,i}^{max}{i} \cdot e^{\kTmu{i} \cdot 
- \left( \Tref - \Topt{i} \right)^2} + \respd{i}(\Topt{i}) }{1 - \respg{i}}.  {[\dinv]} 
+ P_{A,i}^{max} = \frac{\mu_{A,i}^{max}{i} \cdot e^{\kTmu{i} \cdot 
+ \left( \Tref - \Topt{i} \right)^2} + \respd{i}(\Topt{i}) }{1 - \respg{i}}.   
  \label{Eq:Pcpmax}
 \f}
 
+\f$ P_{A,i}^{max} \f$: maximale Photosyntheserate [\f$ \dinv \f$] \n
+... \n
+
 Hier beschreiben \f$\mu_{A,i}^{max}{i}\f$ die maximale Brutto-Wachstumsrate 
-(in d\f$^{-1}\f$) bei der Referenztemperatur \f$\Tref = 20\f$°C \f$\kTmu{i}\f$ 
-den Temperaturkoeffizienten des Wachstums (nach {James2010}; 
+(in \f$\dinv\f$) bei der Referenztemperatur \f$ \Tref = 20\f$ °C, \f$\kTmu{i}\f$ 
+den Temperaturkoeffizienten des Wachstums (nach James, 2010 \cite James2010; 
 s. Kapitel \ref lnk_phy_Temperatur), \f$\respd{i}\f$
-die Respirationsrate dunkeladaptierter Algen (in d\f$^{-1}\f$; s. 
+die Respirationsrate dunkeladaptierter Algen (in \f$\dinv\f$; s. 
 Kapitel \ref lnk_phy_Respiration) und \f$\respg{i}\f$ die Respirationskosten des 
 Wachstums (dimensionslos; s. Kapitel \ref lnk_phy_Respiration). Die maximale 
 Wachstumsrate \f$\mu_{A,i}^{max}{i}\f$ ist ein Eingabeparamter in QSim, dessen 
 Standardwerte wie folgt sind:
 
-* \f$ \mu_{A,ki}^{max} = 1.6 \f$ für Kieselalgen
-* \f$ \mu_{A,gr}^{max} = 1.2 \f$ für Grünalgen
-* \f$ \mu_{A,bl}^{max} = 1.2 \f$ für Blaualgen
+* \f$ \mu_{A,ki}^{max} = 1.6 \: \f$ für Kieselalgen
+* \f$ \mu_{A,gr}^{max} = 1.2 \: \f$ für Grünalgen
+* \f$ \mu_{A,bl}^{max} = 1.2 \: \f$ für Blaualgen
 
-In Glg. \f$\eqref{eq:pcp}\f$ beschreibt \f$ \Izm \f$ die mittlere Lichtintensität 
+In Gleichung \f$\eqref{eq:pcp}\f$ beschreibt \f$ \Izm \f$ die mittlere Lichtintensität 
 (in \f$\uEms\f$), die das Phytoplankton infolge von vertikaler Durchmischung 
 erfährt. Die Berechnungen der Sättigungsintensität \f$\Ik{i}\f$ sowie des 
 aktuellen C:Chl-a-Verhältnisses \f$ \CChl \f$ und dessen dunkeladaptierter Algen 
@@ -124,7 +128,7 @@ innerhalb der Wassersäule:
   \label{Eq:Iz}
 \f}
 
-Die Tiefe $z$ (in m) entspricht hier dem oberen Ende der Verdriftungstrecke 
+Die Tiefe _z_ (in m) entspricht hier dem oberen Ende der Verdriftungstrecke 
 \f$\dz\f$ (in m). Die an der Gewässeroberfläche verfügbare photosynthetisch aktive 
 Strahlung \f$I_0\f$ (PAR; in \f$\uEms\f$) wird in QSim aus der einfallenden 
 Netto-Globalstrahlung \f$S_0\f$ (in \f$\calms\f$) wie folgt berechnet:
@@ -135,15 +139,15 @@ Netto-Globalstrahlung \f$S_0\f$ (in \f$\calms\f$) wie folgt berechnet:
 Die Netto-Globalstrahlung \f$S_0\f$ entspricht dabei dem nicht reflektierten Anteil 
 der kurzwelligen Gesamteinstrahlung, welcher vom Einfallswinkel und somit von 
 Tages- und Jahreszeit abhängt. \f$S_0\f$ wird in QSim in strahlg.f90 
-berechnet. Der Faktor 4.2 bewirkt die Umrechnung von \f$calms\f$ in \f$Wm\f$, während 
-der Faktor 5.846 für die Umrechnung von \f$Wm\f$ in \f$uEms\f$ ausgehend von einem 
+berechnet. Der Faktor 4.2 bewirkt die Umrechnung von \f$\calms\f$ in \f$Wm\f$, während 
+der Faktor 5.846 für die Umrechnung von \f$\Wm\f$ in \f$\uEms\f$ ausgehend von einem 
 Wellenlängenbereich der PAR von 400 nm bis 700 nm verwendet wird.
 
 \note Die Herkunft des Faktors 5.846 ist unklar. 
 Thimijan, 1983 \cite Thimijan1983 geben einen Wert von 4.57 an. Der exakte Umrechnungsfaktor 
 von cal in J ist zudem 4.184.
 
-Die Verdriftungsstrecke \f$dz\f$ wird in QSim mit dem Ansatz von 
+Die Verdriftungsstrecke \f$\dz\f$ wird in QSim mit dem Ansatz von 
 Falkowski, 1981 \cite Falkowski1981 berechnet: 
 <!-- was \citet {Falkowski1981} berechnet -->
 
@@ -151,16 +155,16 @@ Falkowski, 1981 \cite Falkowski1981 berechnet:
   \dz = \sqrt{2 \cdot \tau_R \cdot \Dzm},     {[m]}
 \f}
 
-mit der Relaxationszeit der Algen \f$ \tau_R \f$, welche in QSim als 100 s 
-angenommen wird. \f$ Dzm \f$ beschreibt die tiefengemittelte turbulente Diffusivität 
-(in \f$ \mqs \f$), welche für ein vertikal durchmischtes Gewässer abgeschätzt werden 
+mit der Relaxationszeit der Algen \f$\tau_R\f$, welche in QSim als 100 s 
+angenommen wird. \f$\Dzm\f$ beschreibt die tiefengemittelte turbulente Diffusivität 
+(in \f$\mqs\f$), welche für ein vertikal durchmischtes Gewässer abgeschätzt werden 
 kann Vieiral, 1993 \cite Vieira1993:
 <!-- war: \citep{Vieira1993} -->
 \f{equation}{
-  \Dzm = \frac{1}{6} \cdot \ust \cdot \kappa \cdot H.     {[\mqs]}
+  \Dzm = \frac{1}{6} \cdot \ust \cdot \kappa \cdot H     {[\mqs]}
 \f}
 
-Hier beschreiben \f$ ust \f$ die Schubspannungsgeschwindigkeit (in \f$ ms \f$),
+Hier beschreiben \f$\ust\f$ die Schubspannungsgeschwindigkeit (in \f$\ms\f$),
 \f$ \kappa = 0.4 \f$ die dimensionlose von-Kármán-Konstante und 
 *H* die Wassertiefe (in m). 
 
@@ -173,7 +177,7 @@ Glg. \f$\eqref{Eq:Iz}\f$ berechnet sich in QSim als:
 \f}
 
 mit dem mittleren Extinktionskoeffizienten für Schwebstoff \f$\epsm{SS}\f$ 
-(in \f$\Lmmg\f$), den Schwebstoff- und Zooplanktonkonzentrationen SS bzw. ZOO 
+(in \f$\,\Lmmg\f$), den Schwebstoff- und Zooplanktonkonzentrationen SS bzw. ZOO 
 (in mg L\f$^{-1}\f$), dem mittleren Extinktionskoeffizienten für Chlorophyll-a 
 \f$\epsm{Chl-a}\f$ (in \f$\LmugChl\f$), der Chlorophyll-a-Konzentration Chl-a 
 (in \f$\ugChlL\f$), sowie den mittleren Extinktionskoeffizienten von Wasser 
@@ -201,7 +205,7 @@ welche anschließend ebenfalls über den Wellenlängenbereich von 400 nm bis
 Extinktionskoeffizienten der Huminstoffe bei \f$\lambda_0 = 440\f$ nm 
 (in \f$\minv\f$), 
 welcher ein Eingabeparameter ist (Standardwert: 0.75). Der Koeffizient 
-\f$k_\lambda = 0.016 n\minv\f$ ist in QSim hart codiert. 
+\f$k_\lambda = 0.016 \: n\minv\f$ ist in QSim hart codiert. 
 \note Die Herkunft dieser Berechnung ist unklar. Weiterhin verwendet QSim 
 faktisch den Wellenlängenbereich von 395 bis 705 nm, da es 31 Werte in 
 10-nm-Schritten beginnend bei 400 und endend bei 700 einliest.
@@ -217,7 +221,7 @@ dies über die Veränderung der Chlorophyll-a-Synthese relativ zur C-Aufnahme
 durch Photosynthese. Die Chlorophyll-a-Synthese ist in QSim wie folgt 
 beschrieben:
 \f{equation}{
-  \frac{d\Chl}{dt} = \rChlC \cdot {C:Bio}_{A,i} \cdot \mu_{A,i} \cdot A_i     {[\ugChlLd]} \label{Eq:dChla_dt},
+  \frac{d\Chl}{dt} = \rChlC \cdot \CBio{i} \cdot \mu_{A,i} \cdot A_i     {[\ugChlLd]} \label{Eq:dChla_dt},
 \f}
 
 mit dem aktuellen Verhältnis von Chlorophyll-a- zu C-Synthese \f$\rChlC\f$ (in 
@@ -234,7 +238,7 @@ wie folgt berechnet wird:
   \alphaCChl = \frac{P_{A,i}^{max} \cdot f_{T,i}^\mu \cdot \CChld(T)}{\Ik(T)},     
   {[\gCmqsmgChluE]}
 \f}
-mit der Sättigungsintensität \f$\Ik(T)\f$ (in \f$ \uEms \f$) bei Temperatur 
+mit der Sättigungsintensität \f$ \Ik(T) \f$ (in \f$ \uEms \f$) bei Temperatur 
 \f$ T \f$, welche über eine empirische Gleichung berechnet wird:
 \f{equation}{
   \Ik(T) =  \ak{i} \cdot \Ik(\Tref) \cdot e^{\bk{i} \cdot T},     
@@ -242,7 +246,7 @@ mit der Sättigungsintensität \f$\Ik(T)\f$ (in \f$ \uEms \f$) bei Temperatur
 \f}
 mit der Sättigungsintensität \f$\Ik(\Tref)\f$ bei \f$\Tref = 20\f$ °C, welche ein 
 Eingabeparameter ist (in \f$\uEms\f$), sowie den Koeffizienten \f$\ak{i}\f$ 
-(dimensionslos) und \f$\bk{i}\f$ (in \f$ circ$C$^{-1} \f$), welche in QSim die 
+(dimensionslos) und \f$\bk{i}\f$ (in \f$ \degCinv \f$), welche in QSim die 
 folgenden Werte annehmen:
 
 * \f$\ak{ki} = 0.837, \bk{ki} = 0.0089\f$ für Kieselalgen
@@ -251,8 +255,8 @@ folgenden Werte annehmen:
 
 \note Die Koeffizienten in Glg. \f$\eqref{Eq:I_k}\f$ sind in QSim 
 in den jeweiligen Algenroutinen hart codiert und teilweise durch 
-\mbtt{if}-Konstruktion mit \mbtt{real}-Vergleichen gesetzt. Es wird davon 
-ausgegangen, dass diese \mbtt{real}-Vergleich nie greifen und somit die im Code 
+`if`-Konstruktion mit `real`-Vergleichen gesetzt. Es wird davon 
+ausgegangen, dass diese `real`-Vergleich nie greifen und somit die im Code 
 gesetzten Standardwerte verwendet werden. Die Herkunft der verwendeten Werte 
 ist unklar.
 
@@ -288,7 +292,7 @@ von Glg. \f$\eqref{Eq:C_neu}\f$ durch Glg. \f$\eqref{Eq:Chla_neu}\f$ ergibt sich
 
 ### Einfluss von Lichthemmung  {#lnk_phy_Lichthemmung}
 
-Intro-Text zu Lichthemmung\n
+_Intro-Text zu Lichthemmung_ \n
 
 Die Lichthemmung (oder Photoinhibition) des Algenwachstums wird in QSim über 
 die relative Konzentration des D1-Proteins, \f$f_{LH,i} = \theta_{{D1},i}\f$, 
@@ -311,7 +315,7 @@ beschreibt die Absorptionsfläche der
 Algen (in \f$\mquE\f$) in Abhängigkeit vom aktuellen C:Chl-a-Verhältnis:
 \f{equation}{
   \sigma_{PSII,i} = \sigma_{PSII,0} \cdot \left( \frac{\CChld()}{\CChl} 
-  \right)^\kappa_{PSII}.     {[\mquE]}
+  \right)^{\kappa_{PSII}}.     {[\mquE]}
 \f}
 Hier bezeichnet \f$\sigma_{PSII,0} = 1.5\f$ \f$\mquE\f$ die Absorptionsfläche 
 dunkeladaptierter Algen und \f$\kappa_{PSII}\f$ ist ein empirischer Exponent, 
@@ -331,7 +335,7 @@ implementiert, s. lichthemmung.f90 .
 
 ## Nährstoffabhängigkeit des Wachstums {#lnk_phy_Naehrstoffe}
 
-Text zu Nährstoffabhängigkeit\n
+_Text zu Nährstoffabhängigkeit_ \n
 
 
 ### Nährstofflimitierung {#lnk_phy_NutLim}
@@ -353,7 +357,7 @@ Nährstoff:Biomasse-Verhältnisse der Algen (\f$\Qmax{X}\f$):
   f_{X,i} =
  \begin{cases}
   % case 1: Qmax > 1.25 * Qmin
-  \frac{\Q - \Qmin}{\Qmax{X} - \Qmin}   &   {wenn}   \Qmax{X} > 1.25 \cdot \Qmin,\\
+  \frac{\Q - \Qmin}{\Qmax{X} - \Qmin} &  {wenn} \;\Qmax{X} > 1.25 \cdot \Qmin,\\
   % case 2: otherwise
   \frac{X}{\khs{$X$}{i} + X}   &   {sonst.}
  \end{cases}     
@@ -391,7 +395,7 @@ Glg. \f$\eqref{Eq:f_nut}\f$) in QSim abhängig von den gesetzten Werten für
   \UP =
 \begin{cases}
 % case 1: Qmax > 1.25*Qmin
-\UPmax \cdot \frac{1 - \frac{\Q}{\Qmax{X}}}{1 - \frac{\Q}{\Qmax{X}} + 0.01} \cdot \frac{X}{\khs{$X$}{i} + X}   &   {wenn}   \Qmax{X} > 1.25 \cdot \Qmin,\\
+\UPmax \cdot \frac{1 - \frac{\Q}{\Qmax{X}}}{1 - \frac{\Q}{\Qmax{X}} + 0.01} \cdot \frac{X}{\khs{$X$}{i} + X}   &   {wenn}   \;\Qmax{X} > 1.25 \cdot \Qmin,\\
 % case 2: otherwise
 \Qmax{X} \cdot \left( \mu_{A,i} - \resp \right)\cdot \frac{A_i}{A_i^*}   &   {sonst.}
 \end{cases}     {[\gXgd{$X$}]} \label{Eq:up_nut}
@@ -411,11 +415,11 @@ Berechnungszeitschritts aufgrund des Netto-Wachstums.
 \note Diese Berechnung rechnet in QSim 
 fälschlicherweise zweimal den Biomasseverlust aufgrund der Respiration ein.
 
-Die Rate \f$ \UPmax \f$ berechnet sich unter Berücksichtigung der 
+Die Rate \f$\UPmax\f$ berechnet sich unter Berücksichtigung der 
 Temperaturabhängigkeit nach James, 2010 \cite James2010 als:
 \f{equation}{
   \UPmax = \Qmax{X} \cdot f_{T,i}^\mu \cdot \mu_{A,i}^{max} \cdot 
-  e^{\kTmu{i} \cdot\left( \Tref - \Topt{i} \right)^2}.     {[\gXgd{X}]}
+  e^{\kTmu{i} \cdot\left( \Tref - \Topt{i} \right)^2}     {[\gXgd{X}]}
 \f}
 Die Berechnung des Temperaturfaktors \f$f_{T,i}^\mu\f$ auf Basis der Parameter 
 \f$\kTmu{i}\f$ und \f$\Topt{i}\f$ (beides Eingabeparameter) sind in Kapitel 
@@ -426,7 +430,7 @@ Veränderung des Silizium:Biomasse-Verhältnisses in Abhängigkeit von der
 Umgebungskonzentration des Silikats (in {mg L\f$^{-1}\f$ Si) 
 analog zum zweiten Fall in Glg. \f$\eqref{Eq:up_nut}\f$ berechnet wird:
 \f{equation}{
-  {UP}_{{Si},i} = \Qmax{{Si}} \cdot \frac{{Si}}{\khs{Si}{i} + {Si}} \cdot \left( \mu_{A,i} - \resp \right)\cdot \frac{A_i}{A_i^*}      {[\gXgd{{Si}}]} \label{Eq:up_Si}
+  {UP}_{{Si},i} = \Qmax{{Si}} \cdot \frac{{Si}}{\khs{Si}{i} + {Si}} \cdot \left( \mu_{A,i} - \resp \right)\cdot \frac{A_i}{A_i^*}      {[\gXgd{Si}]} \label{Eq:up_Si}
 \f} 
 
 
@@ -438,7 +442,7 @@ Die Temperaturabhängigkeit des Wachstums wird in QSim über einen Faktor
 \f{equation}{
   f_{T,i}^\mu = e^{-\kTmu{i} \cdot\left( T - \Topt{i} \right)^2}.     {[dimensionslos]} \label{Eq:fT_growth}
 \f}
-Der Koeffizient \f$\kTmu{i}\f$ (in \f$^\circ$C$^{-2}\f$) und die optimale Temperatur 
+Der Koeffizient \f$\kTmu{i}\f$ (in °C\f$^{-2}\f$) und die optimale Temperatur 
 \f$\Topt{i}\f$ (in °C) sind Eingabeparameter in QSim, deren Standardwerte durch den 
 Fit von Glg. \f$\eqref{Eq:fT_growth}\f$ an verschiedene Datensätze ermittelt wurden. 
 Diese Standardwerte sind wie folgt:
@@ -466,7 +470,7 @@ mit der Gesamtrespirationsrate \f$\resp\f$ (in d\f$^{-1}\f$) und der Algenbiomas
 sich aus der Grundrespirationsrate dunkeladaptierter Algen (\f$ \respd() \f$) und 
 der wachstumsbedingten Respiration (\f$\respg{i} \cdot \mu_{A,i}\f$):
 \f{equation}{
- \resp = \respd(T) + \respg{i} \cdot \mu_{A,i}. \label{Eq:r_resp}     {[d$^{-1}$]}
+ \resp = \respd(T) + \respg{i} \cdot \mu_{A,i}. \label{Eq:r_resp}     {[\dinv]}
 \f}
 \note Diese Gleichung passt nicht zu der Berechnung des 
 Wachstums, wenn man die Gleichungen ineinander einsetzt.
@@ -480,7 +484,7 @@ Hier repräsentiert \f$\respd(\Tref)\f$ die Grundrespirationsrate dunkeladaptier
 Algen bei \f$\Tref = 20\f$ °C, welche in QSim ein Eingabeparameter (in 
 d\f$^{-1}\f$) ist. Der Koeffizient der Temperaturabhängigkeit, \f$\kTresp{}\f$, nimmt 
 in QSim für die verschiedenen Algenklassen die folgenden Werte an (in \f$ 
-circ$C$^{-1} \f$):
+\degCinv \f$):
 
 * \f$\kTresp{ki} = 0.070\f$ für Kieselalgen
 * \f$\kTresp{gr} = 0.058\f$ für Grünalgen
@@ -548,6 +552,8 @@ und weiter abnimmt (s. Glg. \f$\eqref{Eq:f_morn}\f$).
 <!-- Kapitel 6 -->
 
 # Sedimentation von lebenden Algen {#lnk_phy_Sedimentation}
+<!-- hier könnte auf die Sedimentations-Unterseite verlinkt werden 
+(lnk_sedimentation), die aber gerade noch nicht überprüft ist -->
 
 Introtext zur Sedimentation. 
 \note Die gesamte Berechnung ist sehr kryptisch und ihr Herkunft unbekannt. 
@@ -595,9 +601,9 @@ Zellvolumnes \f$\V{i}\f$ der Algenklasse *i* (in \f$\umc\f$) berechnet wird:
 Die mittleren Zellvolumina sind in QSim wie folgt 
 \note (im jeweiligen Baustein hart codiert):
 
-* \f$\V{ki} = 1400 \umc\f$ für Kieselalgen
-* \f$\V{gr} =  300 \umc\f$ für Grünalgen
-* \f$\V{bl} = 1000 \umc\f$ für Blaualgen
+* \f$\V{ki} = 1400 \:\umc\f$ für Kieselalgen
+* \f$\V{gr} =  300 \:\umc\f$ für Grünalgen
+* \f$\V{bl} = 1000 \:\umc\f$ für Blaualgen
 
 Der Koeffizient \f$\qsed\f$ in Glg. \f$\eqref{eq:w_eff}\f$ wird wie folgt 
 berechnet:
@@ -625,13 +631,13 @@ von der Schubspannungsgeschwindigkeit \f$\ust\f$:
 
 ## Rotatorien {#lnk_phy_Rotatorien}
 
-*... Text zu Grazing durch Rotatorien*
+*Text zu Grazing durch Rotatorien... *
 
-## it{Dreissena spp.} {#lnk_phy_Dreissena}
+## *Dreissena spp.* {#lnk_phy_Dreissena}
 
-*... Text zu Grazing durch *Dreissena spp.* *
+*Text zu Grazing durch *Dreissena spp.* ... *
 
-## it{Corophium} {#lnk_phy_Corophium}
+## *Corophium* {#lnk_phy_Corophium}
 
 *... Text zu Grazing durch *Corophium* *
 

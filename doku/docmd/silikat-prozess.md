@@ -4,14 +4,14 @@ Silikat - Prozesse {#lnk_silikat_prozesse}
 ## Teilprozesse ##
 Folgende Teilprozesse wirken sich in QSim auf den Silikatgehalt des Wassers aus: 
 
-* Rücklösung aus dem Sediment
 * Verbrauch durch Wachstum planktischer Kieselalgen 
 * Verbrauch durch Wachstum bentischer Kieselalgen
+<!-- * Rücklösung aus dem Sediment -->
 
 Momentan sind im Modell die Nährstofffluxe am Sediment ausgeschaltet, ebenso 
 der Baustein benthischer Kieselalgen. Somit berechnet sich die Änderung an 
-Silikat im Gewässer momentan allein aus den Si-Zuflüssen und der Aufnahme durch 
-planktische Kieselalgen.
+Silikat im Gewässer momentan allein aus den Si-Zuflüssen und der Si-Aufnahme 
+durch planktische Kieselalgen.
 
 Vereinfacht lässt sich die Änderung des Silikats wie folgt beschreiben:
 
@@ -25,12 +25,12 @@ Der Verlust von Silikat findet hauptsächlich durch die Aufnahme durch Primärpr
 statt.
 
 \f[ Si_{up} = - u_{Si} \cdot (\mu_{diat} - A_{resp, diat}) \f]
-<!-- akisi(nkz) = -up_Siz(nkz,ior)*(akibrz(nkz,ior)-algakz(nkz,ior))-albewk(ior)*Qmx_SK  -->
+<!-- akisi = -up_Si_s * (akibr_S - algak_s) - albewk_s * Qmx_SK -->
 
 \f$ Si_{up} \f$:     Verlustrate von Si: Aufnahme durch Primärproduzenten [\f$mg Si \cdot L^{-1} \cdot t^{-1}\f$] \n
-\f$ u_{Si} \f$:      Si-Aufnahmerate der Kieselalgen [\f$ mgSi \cdot mgBio^{-1} \f$] \n
-\f$ \mu_{diat} \f$:  Brutto-Zuwachs Kiesel-Algen-Biomasse [\f$ mgBio \cdot L^{-1} \cdot t^{-1}\f$] \n
-\f$ A_{resp, diat} \f$:    Respirierte Algenbiomasse der Kieselalgen [\f$ mgBio \cdot L^{-1} \cdot t^{-1} \f$] \n
+\f$ u_{Si} \f$:      Si-Aufnahmerate der Kieselalgen [\f$ mg Si \cdot mg Bio^{-1} \f$] \n
+\f$ \mu_{diat} \f$:  Brutto-Zuwachs Kiesel-Algen-Biomasse [\f$ mg Bio \cdot L^{-1} \cdot t^{-1}\f$] \n
+\f$ A_{resp, diat} \f$:    Respirierte Algenbiomasse der Kieselalgen [\f$ mg Bio \cdot L^{-1} \cdot t^{-1} \f$] \n
 
 ## QSim-Veröffentlichungen, die den Silikat-Baustein beschreiben und/oder anwenden: 
 ...

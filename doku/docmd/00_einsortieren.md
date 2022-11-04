@@ -15,7 +15,7 @@ Verfahren zur Abschätzung der Massenerhaltung: ... *to be continued*
 
 
 Textquelle: diskretisierung.md ; Codesources: stofftransport.f95 ;  
-zurück: \ref lnk_stofftransport
+zurück: \ref lnk_stofftransport_3d
 
 
 <!--- nächster Schnipsel -->
@@ -30,7 +30,7 @@ zurück: \ref lnk_stofftransport
 - \underbrace {w_{s,3} \frac{\partial c_m}{\partial x_3} }_{Sinken}
 \f]
  
-zurück: \ref lnk_stofftransport  ;  Quelle: stofftransport.f95
+zurück: \ref lnk_stofftransport_3d  ;  Quelle: stofftransport.f95
 
 
 <!--- nächster Schnipsel -->
@@ -474,7 +474,31 @@ Die folgende Liste enthält nun die Angaben, von welcher Subroutine/Modul die je
 
 <!-- nächster Schnipsel -->
 
--- aus xx.f95 --
+-- aus stoffumsatz.f95 --
+
+!! Der Stoffumsatz wird im mehrdimensionalen QSim3D auf identische Weise wie im 1-dimensionalen QSim modelliert. 
+!! Um dies sicherzustellen werden programmtechnisch dieselben Quellcode-Dateien einkompiliert, 
+!! aus denen auch die Software QSim erzeugt wird (QSim-Subroutinen). 
+!! Im Detail ist dies im Abschnitt \ref lnk_huellen beschrieben.\n
+!! Der aktuell verwendete QSim1D-source-code wird im Abschnitt \ref lnk_download bereitgestellt.
+!! \n\n
+!! Die lokal ablaufenden biologischen und chemischen Stoffumsetzungs-Prozesse werden 
+!! numerisch als \ref lnk_wachstum_zerfall diskretisiert.
+!! \n\n
+!! Wird QSim zur Ermittlung der \ref lnk_aufenthaltszeit eingesetzt, ist der Stoffumsatz komplett ausgeschaltet.
+
+!!
+!!\n\n zurück: \ref lnk_ueberblick; Code: stoffumsatz.f95
+!! \n
+!! <hr>
+!! <a name="1">1)</a>
+!!     Obwohl es sich eigentlich um einen physikalischen Vorgang handelt, wird die Wärmebilanz hier trotzdem mit aufgeführt. 
+!!     Zum einen, weil auch die Temperatur wie eine Konzentration behandelt wird, 
+!!     die durch Wärmeaustausch mit der Umgebung anwachsen oder abnehmen kann.
+!!     Zum anderen, weil auch dafür die bewährte QSim-Subroutine temperw() verwendet wird.
+!! <hr>
+
+
 
 
 

@@ -5,7 +5,9 @@ Strahlung - Formelzeichen/Variablennamen {#lnk_strahlung_vars}
 
 | Formelzeichen/ \n Variablen-Name   | Bedeutung	| Einheit | Wert | Variablenname \n Quellcode | Referenz | Herkunft    | 
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-| \f$ dummy \f$    | dummy_name  		| dummy_einheit  			| - | dummy_var_name	| | x |
+| \f$ t_{Uhr} \f$ | Uhrzeit | *h (?)*  			| - | uhrz	| - | x |
+| \f$ ... \f$    | dummy_name  		| dummy_einheit  			| - | dummy_var_name	| | x |
+
 
 
 Herkunft:

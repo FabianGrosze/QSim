@@ -1,6 +1,12 @@
 Phosphor {#lnk_phosphor}
 =======================
 
+Die Anwendung von Düngemitteln, Einträge über Kläranlagen, Luftverschmutzungen 
+sowie die Degradation entwässerter Feuchtgebiete führen zu überhöhten 
+Phosphor-Emissionen in die Gewässer. Ein Teil dieses Phosphors wird im 
+Gewässer umgesetzt und/oder zurückgehalten (Retention). Unterschiedliche Prozesse 
+können zur Nährstoffretention in Fluss und Aue beitragen. 
+
 Der Pflanzennährstoff Phosphor kommt im Gewässer als anorganischer oder 
 organisch gebundener partikulärer oder gelöster Phosphor vor. 
 
