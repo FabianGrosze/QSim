@@ -13,6 +13,7 @@ sowie monomere und refraktäre Kohlenstoff-Verbindungen (BILLEN 1991). Die
 refraktären Kohlenstoffverbindungen stellen dabei lediglich eine Kohlenstoffsenke 
 dar. Zur Vervollständigung der Gesamtbilanz des POC wird die lebende Biomasse mit 
 einbezogen, die in den Modulen Algen und Rotatorien berechnet wird.
+<!-- #mf: Referenz für Billen fehlt -->
 
 Bei der Berechnung der Konzentrationsänderungen der einzelnen Fraktionen mit 
 Ausnahme der monomeren Fraktion werden nach festgelegten Anteilen die abgestorbene 

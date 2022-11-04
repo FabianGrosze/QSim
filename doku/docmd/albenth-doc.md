@@ -5,8 +5,8 @@ Benthische Algen {#lnk_albenth}
 werden nicht simuliert. Es handelt sich um eine alte Dokumentation.
 
 
-In OSim kann der Einfluss von benthischen Algen auf die Gewässergüte unter 
-Berücksichtigung der Lichtintensität, der Extinktion + Wassertiefe*, der 
+In QSim kann der Einfluss von benthischen Algen auf die Gewässergüte unter 
+Berücksichtigung der Lichtintensität, der Extinktion + Wassertiefe, der 
 Nährstoff- und Temperaturbedingungen abgebildet werden. Es werden dabei zwei 
 Gruppen, benthische Kiesel- und Grünalgen, unterschieden. Das Modul der 
 benthischen Algen kann für einzelne Gewässer-Abschnitte unabhängig aktiv oder 

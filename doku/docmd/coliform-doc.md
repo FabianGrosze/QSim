@@ -1,51 +1,44 @@
 Coliforme Bakterien/Keime (Hygiene) {#lnk_coliform}
 ===================================
 
-\image html badestelle_rhein.png "Krankheitskeime im Wasser können für badenden 
-Menschen gefährlich sein."
+\warning Der Hygiene-Baustein ist zurzeit ausgeschaltet. Coliforme Bakterien 
+können daher nicht gerechnet werden. Der Text stammt aus einer früheren
+Version der Dokumentation und ist nicht mit dem Code gegengecheckt.
 
-## Herkunft
-Programm zur Berechnung der Konzentration E. Coli, faecal coliformer und 
-coliformer Bakterien in Fliessgewässer \n
-AUTOR:VOLKER KIRCHESCH \n
-STAND:15.08.2017   \n
+Fäkalcoliforme Bakterien (i. d. R. Escherichia coli) vermehren sich nicht im 
+Gewässer, sondern sterben in der Umwelt rasch ab und zeigen somit eine relativ 
+frische Verunreinigung mit Fäkalien an. Gesamtcoliforme Bakterien hingegen 
+überleben länger und können sich in organisch reichhaltigen Materialien 
+vermehren oder sind sogar ausschließlich in der Umwelt beheimatet. Entsprechend 
+zeigt diese Gruppe eine mögliche Einschwemmung älterer Fäkalien (Klärschlamm, 
+Jauche, Gülle) und deutet damit auch auf allgemeine Eutrophierungstendenzen hin. 
+Von QSim wird lediglich die Entwicklung fäkalcoliformer Bakterien im 
+Untersuchungsgebiet betrachtet.
 
-## Teilprozesse
-Fäkalcoliforme Bakterien vermehren sich im Gewässer nicht, sondern sterben 
-rasch ab.\n\n
-Berücksichtigt wird dabei:\n
-* Grundverlustrate (temperaturabhängig)\n
-* Licht-Dosis abhängige Verlustrate\n\n
-Nicht gesondert berücksichtigt ist bisher:\n
-* Grazing / Sedimentation
+Als besonders schwierig hat sich die Quantifizierung der Eintragspfade der 
+fäkalcoliformen Bakterien (Coli-Bakterien) in das jeweilige Gewässer erwiesen. 
+Die gewässerinternen Umsatzprozesse der Coli-Bakterien sind im Wesentlichen 
+bestimmt durch die stark dezimierende Wirkung des Sonnenlichts (UV-Strahlung), 
+ein Wachstum findet nicht statt. 
 
-## Dokumentation und Veröffentlichungen
-<a href="./pdf/18_Becker_ReWaM_intern_BfG_FLUSSHYGIENE_Koblenz26_10_2018_AB_IH.pdf" target="_blank">Modellierung hygienischer Belastungen in Fließgewässern</a>
+Es wurde in QSim ein erster Ansatz zur Beschreibung der Mortalitätsrate von 
+Coli-Bakterien in Abhängigkeit von der UV-Strahlung implementiert, der aber 
+noch überarbeitet werden muss.
 
-<a href="./pdf/19_Fischer_SAME16-Potsdam_Hygienemodellierung-Berlin.pdf" 
-target="_blank">To swim or not to swim</a>
 
-<a href="./pdf/18_Fischer_FLUSSHYGIENE_Abschluss_final_Mri.pdf" target="_blank">
-Simulation von Maßnahmen zur langfristigen Verbesserung der hygienischen 
-Wasserqualität</a>
+\image html badestelle_rhein.png "Krankheitskeime im Wasser können für badenden Menschen gefährlich sein."
 
-## Schnittstellenbeschreibung / IT-Realisierung
-SUBROUTINE COLIFORM (\ref tiefe,\ref rau,\ref vmitt,\ref vabfl,\ref elen,
-\ref flae,\ref flag,\ref tflie
-,\ref schwi,\ref ss,\ref zooind,*grote*,\ref chla,\ref tempw,\ref jiein,*ecoli*  &\n
-,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
-,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
-,*ratecd*, *etacd*, *rateci*, *xnuec*, *ratecg*, *ratecs*,\ref ifehl & \n
-,\ref kontroll ,\ref iglob )
 
-\ref globaleParameter :\n
- RateCde Grundmortalitätsrate coliformer Bakterien bei 20°C\n
- etaCde  Temperaturkoeffizient \n
- RateCIe Inaktivierungskoeffizient im Licht"  \n
- xnueCe  dimensionsloser Parameter zur Beschreibung der Inaktiv. im Licht \n
- RateCGe Coliforme Verlustrate durch Grazing \n
- RateCSe Coliforme Verlustrate durch Sedimentation \n
+ Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
 
-Textquelle: coliform-doc.md ; Codesources: coliform_huelle.f95 ;  
+- \subpage lnk_coliform_prozesse : Erläuterung der im Schwermetall-Baustein 
+implementierten Prozesse 
+
+- \subpage lnk_coliform_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+
+- \subpage lnk_coliform_umsetzung : Details zum Code und der numerischen Umsetzung 
+
+
+Textquelle: coliform-doc.md ; Codesources: coliform_huelle.f95 und coliform.f90 ;  
 zurück: \ref lnk_weitere_stoffe
  

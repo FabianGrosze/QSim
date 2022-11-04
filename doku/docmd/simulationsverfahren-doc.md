@@ -52,7 +52,7 @@ werden in den einzelnen Modulbeschreibungen im Detail erläutert.
  
 Die Verfrachtung (Advektion) und Vermischung (Diffusion) der Konzentrationen
 infolge des Fließvorgangs des Wassers wird zusammenfassend als 
-<b>\ref lnk_stofftransport </b> benannt.
+<b>\ref lnk_stofftransport_3d </b> benannt.
 
 Die Advektion bewirkt, dass das Strömungsfeld \f$ v_i \f$ eine Konzentration 
 \f$ c_m \f$ von anderenorts (\f$x_i \f$) herantransportiert, wo diese andere 
@@ -69,7 +69,7 @@ ihr doppeltes Auftreten besagt, dass über beide zu summieren ist.
 
 Die numerische Näherung des Transportprozesses in der Kopplung mit einem 
 ebenfalls simulierten Strömungsfeld beschreibt der Abschnitt 
-\ref lnk_stofftransport.
+\ref lnk_stofftransport_3d.
 
 
 # Trennung der numerischen Lösung {#lnk_fracStep}
@@ -103,7 +103,7 @@ abgebildet werden, die allerdings ganzzahlige Vielfache voneinader sein müssen.
 
 Die Stoffumsätze (aufgelistet in: \ref lnk_ueberblick) werden numerisch als 
 \subpage lnk_wachstum_zerfall modelliert.
-Die numerische Umsetzung der \ref lnk_stofftransport - Modellierung wird im 
+Die numerische Umsetzung der \ref lnk_stofftransport_3d - Modellierung wird im 
 Vortrag
 <a href="http://bibliothek.bafg.de/dokumente/Online%20377.ppt" target="_blank">
 Numerical aspects in offline coupling of biochemical reaction modules with advection-diffusion simulations</a>
@@ -116,8 +116,8 @@ diskutiert die Dokumentation
 -->
 
 # Transport {#lnk_transport_numerik}
-Eine Einführung in den Transport ist [hier](\ref lnk_stofftransport) zu finden.
-<!-- #mf: klappt der Link zu lnk_stofftransport? (ref eingefügt) -->
+Eine Einführung in den Transport ist [hier](\ref lnk_stofftransport_3d) zu finden.
+<!-- #mf: klappt der Link zu lnk_stofftransport_3d? (ref eingefügt) -->
 
 Die folgenden drei Unterkapitel gehen auf informationstechnische Details 
 der mehrdimensionalen hydraulischen Treiber ein:

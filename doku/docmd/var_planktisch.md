@@ -8,7 +8,7 @@ Wasser ausführen; z.B. Temperatur, Sauerstoff-Kohlenstoffverhältnis oder Anzah
 der Rotatorien.
  
 Die planktischen Variablen werden transportiert (advektiert und diffundiert). 
-Siehe dazu \ref lnk_stofftransport.
+Siehe dazu \ref lnk_stofftransport_3d.
 Dadurch werden sie auch in den nächsten Zeitschritt mitgenommen 
 (Im Gegensatz zu: \ref lnk_uebergabewerte ).
 
@@ -183,4 +183,4 @@ partikulär vor, werden aber als im Wasser gleichverteilte Konzentrationen
 gerechent.
 
 aus var_planktisch.md; zurück zu \ref lnk_datenstruktur oder 
-\ref lnk_stofftransport
+\ref lnk_stofftransport_3d

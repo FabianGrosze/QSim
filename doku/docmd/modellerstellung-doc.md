@@ -26,7 +26,7 @@ In diesem befindet sich ein Satz von Dateien (deren Vollständigkeit beim Progra
 
 Im Abschnitt \subpage lnk_datenmodell finden sie eine detaillierte Beschreibung der einzelnen Dateien.
 
-# Modellerstellung mit der Benutzeroberfläche Gerris {#lnk_gerris} 
+# Modellerstellung mit der Benutzeroberfläche Gerris {#lnk_gerris_modellerstellung} 
 
 Die Bedienung von QSim-1D mittels Gerris kann im
 <a href="./pdf/BfG_1778.pdf" target="_blank">BfG-Bericht 1778</a> nachgelesen werden.

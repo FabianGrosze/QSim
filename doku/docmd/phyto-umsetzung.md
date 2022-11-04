@@ -15,7 +15,7 @@ Phytoplankton - Umsetzung {#lnk_phyto_umsetzung}
 In QSim müssen die Biomassen der Algenklassen, ihre Chlorophyll-a:Kohlenstoff- 
 sowie ihre zellinternen Nährstoff:Biomasse-Verhältnisse zu Beginn einer 
 Simulation für die Durchführung einer Simulation vorbelegt werden. Dies erfolgt 
-in der Subroutine \f$\mbtt{algae\_start}\f$ (s. zuflussrand.f90) über die 
+in der Subroutine algae_start() (s. zuflussrand.f90) über die 
 bereitgestellten Gewässergüterandwerte und einen Teil der gesetzten 
 Eingabeparameter.
 
@@ -23,7 +23,7 @@ Die Algenbiomasse zu Beginn einer QSim-Simulation wird in QSim wie folgt
 berechnet:
 \f{equation}{
  A_i = \frac{1}{\CBio{i}} \cdot \text{Chl-a} \cdot \aChl{i} \cdot 
- \CChld{i}(T),\quad \quad \text{[\mgL]}
+ \CChld{i}(T),\quad \quad \text{[\f$\mgL\f$]}
 \f}
 
 mit dem Kohlenstoff:Biomasse-Verhältnis \f$\CBio{i} = 0.48\f$ \f$\gXg{C}\f$ für 
@@ -35,7 +35,7 @@ Klasse *i* (in \f$\gCmgChl\f$) bei Temperatur *T* (in \f$\degC\f$):
 
 \f{equation}{
  \CChld{i}(T) = \CChld{i}(T_{ref}) \cdot e^{\aCChl{i} \cdot \left( T - T_{ref} 
- \right)}, \quad \quad \text{[\gCmgChl]} 
+ \right)}, \quad \quad \text{[\f$\gCmgChl\f$]} 
  \label{Eq:CChla_d}
 \f}
 
@@ -52,7 +52,7 @@ Standardwerte für \f$\aCChl{i}\f$ sind wie folgt:
 passen nicht zu Daten von Fanesi, 2015 \cite Fanesi2015.
 
 Zu Beginn der Simulation wird somit auch angenommen, dass alle Algen 
-dunkeladaptiert sind (s. Glg. \eqref{Eq:CChla_d}). Die zellinternen
+dunkeladaptiert sind (s. Glg. \f$\eqref{Eq:CChla_d}\f$). Die zellinternen
 Nährstoff:Biomasse-Verhältnisse werden auf die vom Anwender als Eingabeparameter 
 gesetzten maximalen Quotas \f$\Qmax{X}\f$ (in \f$\mgXL{$X$}\f$; mit *X* = N, P 
 oder Si) gesetzt, d.h. die Nährstoffspeicher der Algen sind vollständig gefüllt.

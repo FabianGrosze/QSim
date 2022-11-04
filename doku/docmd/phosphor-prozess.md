@@ -20,10 +20,11 @@ Folgende Teilprozesse wirken sich auf den Phosphatgehalt aus:
 Zurzeit ausgeschaltet sind der Phosphat-Fluss aus dem Sediment und die 
 Ausscheidung der Dreissena.
 
+# Bilanzgleichungen
 
 Die Bilanzgleichung für den Gesamt-Phosphorgehalt, \f$ P_{ges} \f$, lautet:
 
-\f[ \frac{dP_{ges}}{dt} = - C_{org, sed} \cdot Y_{C:P} - A_{sed, i} \cdot Q_{P,A_i}\f] 
+\f{equation}{ \frac{dP_{ges}}{dt} = - C_{org, sed} \cdot Y_{C:P} - A_{sed, i} \cdot Q_{P,A_i}\f} 
 <!-- 
             gesPt = gesP(ior)                                               &
                     - orgCsd(mstr,ior) * pl0(ior)                           &
@@ -43,9 +44,10 @@ Die Bilanzgleichung für den Gesamt-Phosphorgehalt, \f$ P_{ges} \f$, lautet:
 \f$ Y_{C:P} \f$:  P/C Verhältnis von Phosphor zu Kohlenstoff in organischem Material [ \f$ mg P \cdot mg C^{-1} \f$ ] \n
 \f$ A_{sed, i} \f$: Sedimentierte Menge der Algengruppe *i*  [\f$ mgBio \cdot L^{-1} \cdot t^{-1}\f$] \n
 \f$ Q_{P,A_i} \f$:  Phosphoranteil der Algenbiomasse der Algengruppe *i*  [\f$ mgP \cdot mgBio^{-1} \f$] \n
+\n\n
 
 Die Bilanzgleichung des gelöstem reaktivem Phosphats, \f$ SRP \f$, lautet:
-\f[ \frac{SRP}{dt} = r_{P, bac} + a_{Alg} + a_{Rot} \f]
+\f{equation}{ \frac{SRP}{dt} = r_{P, bac} + a_{Alg} + a_{Rot} \f}
 
 <!-- 
         gelPt = gelP(ior)                           &
@@ -60,12 +62,13 @@ Die Bilanzgleichung des gelöstem reaktivem Phosphats, \f$ SRP \f$, lautet:
 \f$ r_{P, bac} \f$: Phosphat-P-Freisetzung beim Abbau org. Kohlenstoffverbidungen  [ \f$ mg P \cdot L^{-1} \cdot t^{-1} \f$ ] \n
 \f$ a_{Alg} \f$: Netto-Ausscheidung durch Algen  [ \f$ mg P \cdot L^{-1} \cdot t^{-1} \f$ ] \n
 \f$ a_{Rot} \f$: Ausscheidung der Rotatorien   [  \f$ mg P \cdot L^{-1} \cdot t^{-1} \f$ ] \n
+\n\n
 
 ### Netto-P-Ausscheidungen der Algen ###
 Die planktischen Algen nehmen für ihr Wachstum Phosphat auf, ein Teil davon 
 wird durch Respiration wieder freigesetzt.
 
-\f[ a_{Alg} = u_{P, i} \cdot (\mu_{A_i} - A_{resp, A_i}) \f]
+\f{equation}{ a_{Alg} = u_{P, i} \cdot (\mu_{A_i} - A_{resp, A_i}) \f}
 <!--
             agrP(nkz) = -up_PGz(nkz,ior) * (agrbrz(nkz,ior) - algagz(nkz,ior)) &
                         - (albewg(ior)-alberg(ior)) * Qmx_PG
@@ -76,14 +79,14 @@ wird durch Respiration wieder freigesetzt.
 \f$ u_{P, i} \f$:  P-Aufnahme der Algengruppe *i* [\f$ mg P \cdot mg Bio^{-1} \f$] \n
 \f$ \mu_{A_i} \f$: Brutto-Zuwachs der Algenbiomasse der Algengruppe *i* [\f$ mg Bio \cdot L^{-1} \cdot t^{-1} \f$ ] \n
 \f$ A_{resp, A_i} \f$: Respirierte Algenbiomasse der Algengruppe *i* [\f$ mg Bio \cdot L^{-1} \cdot t^{-1} \f$ ] \n
-
+\n\n
 
 ### P-Ausscheidungen Zooplankton ###
 Die P-Ausscheidung des Zooplanktons setzt sich aus der Grundrespiration 
 \f$ r_{z, grund} \f$ und der aktiven Respiration \f$ r_{z, A_i} \f$
 der jeweiligen Algenmenge zusammen.
 
-\f[ a_{Rot} = r_{z, grund} \cdot 0,01 + r_{z, A_i} \cdot \theta_{A_i} \cdot Q_{P,A_i} \f]
+\f{equation}{ a_{Rot} = r_{z, grund} \cdot 0,01 + r_{z, A_i} \cdot \theta_{A_i} \cdot Q_{P,A_i} \f}
 
 <!--
         gelpzo = dzres1(ior) * 0.01                &

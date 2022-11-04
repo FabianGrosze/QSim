@@ -9,12 +9,15 @@ Die Strahlung wird im BfG-Gewässergütemodell zur Simulation folgender
 Prozesse benötigt:
 
 - Wärmehaushalt des Fließgewässers <br>
- *(Wellenlänge 290 - 4000 nm)*;
+ _(Wellenlänge 290 - 4000 nm)_;
 - Wachstum der Algen und Makrophyten durch Photosynthese <br>
- *(Wellenlänge 400 – 700 nm)*;
+ _(Wellenlänge 400 – 700 nm)_;
 - Photolytisches Absterben der fäkalcoliformen Bakterien <br>
- *(Wellenlänge 290 - 380 nm)*. 
+ _(Wellenlänge 290 - 380 nm)_. 
 
+<!-- #todo: Wellenlängenangaben erscheinen noch nicht kursiv auf kompilierter
+Website --> 
+ 
 Die einzelnen Strahlungskomponenten werden in QSim aus der Globalstrahlung 
 und der Wolkenbedeckung berechnet. 
 Die Globalstrahlung und die Wolkenbedeckung basieren auf Messdaten und werden als 

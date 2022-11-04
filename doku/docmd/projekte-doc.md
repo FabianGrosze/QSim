@@ -19,23 +19,7 @@ Seite gelistet und verlinkt wird, schicken Sie bitte eine E-Mail an
 es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
 ## Laufende Projekte ##
-* __DAS-Basisdienst__ (seit 2021) \n
-  Die *DAS* ist die Deutsche Anpassungsstrategie and den Klimawandel. 
-  Der <a href="das-basisdienst.de/">DAS-Basisdienst „Klima und Wasser“ </a> ist 
-  ein operationeller Dienst zur Umsetzung der DAS. Dieser 
-  behördenübergreifende Dienst liefert Grundlagendaten zur Beschreibung des 
-  Klimas und der Gewässer, welche über Anpassungsbedarf an den Klimawandel 
-  informieren und die Grundlage für mögliche Anpassungsmaßnahmen bilden. Mit 
-  Hilfe von QSim werden Indikatoren zur Gewässergüte für die Zukunft 
-  prognostiziert. Die Daten werden auf dem 
-  <a href="ws-klimaportal.bafg.de/"> WS-Klimaportal </a> 
-  der BfG zur Verfügung gestellt.
-  Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de); Benjamin Schima 
-  (schima[at]bafg.de)
-  
-  \n
-
-* __Expertennetzwerk 2.0__ (2020 - 2025) \n
+* __BMDV Expertennetzwerk 2.0__ (2020 - 2025) \n
   Das Expertennetzwerk beschäftigt sich mit Zukunftsfragen im Bereich Verkehr
   und digitaler Infrastruktur. Es ist ein behörden- und 
   verkehrsträgerübergreifendes Forschungsprogramm des BMDV. Mit QSim werden die 
@@ -45,6 +29,23 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   <a href="https://www.bmvi-expertennetzwerk.de/DE/Home/home_node.html"> 
   BMDV Expertennetzwerk </a>   
   Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de), NA
+  
+  \n
+
+* __DAS-Basisdienst__ (seit 2021) \n
+  Die *DAS* ist die Deutsche Anpassungsstrategie an den Klimawandel. 
+  Der <a href="https://www.das-basisdienst.de/DAS-Basisdienst/DE/home/home_node.html"> 
+  DAS-Basisdienst „Klima und Wasser“ </a> ist 
+  ein operationeller Dienst zur Umsetzung der DAS. Dieser 
+  behördenübergreifende Dienst liefert Grundlagendaten zur Beschreibung des 
+  Klimas und der Gewässer, welche über Anpassungsbedarf an den Klimawandel 
+  informieren und die Grundlage für mögliche Anpassungsmaßnahmen bilden. Mit 
+  Hilfe von QSim werden Indikatoren zur Gewässergüte für die Zukunft 
+  prognostiziert. Die Daten werden auf dem 
+  <a href="https://ws-klimaportal.bafg.de"> WS-Klimaportal </a> 
+  der BfG zur Verfügung gestellt.
+  Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de); Benjamin Schima 
+  (schima[at]bafg.de)
   
   \n
 
@@ -63,7 +64,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Remobilisierung im Einzugsgebiet. Modellgestützt wird auch eine Vorhersage 
   von Stoffkonzentrationen angestrebt.
   Ansprechpartnerin: Daniel Schwandt (schwandt[at]bafg.de), Rike Völpel, 
-  Gerd Hübner, Tanja Bergfeld-Wiedemann, Stefanie Hesse, Annika Linkhorst, ...
+  Gerd Hübner, Tanja Bergfeld-Wiedemann, Mayra Ishikawa, Annika Linkhorst
   
   \n
   
@@ -77,7 +78,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   es, ein Instrument zu schaffen, mit dem der Fortpflanzungserfolg der 
   Fischart Finte in Abhängigkeit von Gewässergüte und Nahrungsangebot 
   ermittelt wird und das der Unterstützung von Managementmaßnahmen dient.
-  <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021_11_15_schoenung.html?nn=169148"> 
+  <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021/2021_11_15_schoenung.html?nn=169148">  
   Vortrag: Verwendung von simulierten Gewässergütedaten in der  
   Habitatmodellierung </a>
   Ansprechpartner: Michael Schönung (schoenung[at]bafg.de)
@@ -100,7 +101,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   der BfG und Modellanwender eine sinnvolle Abfolge von Schritten zu einer 
   Modellintegration entwickelt sowie der Bedarf an neuen Modellsystemen 
   ermittelt.
-  <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021_11_15_schima.html?nn=169148"> 
+  <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021/2021_11_15_schima.html?nn=169148"> 
   Vortrag: Integrationspotenzial in der Modelllandschaft der BfG am Beispiel 
   der Schwebstoffmodellierung </a>
   Ansprechpartnerin: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)

@@ -87,9 +87,9 @@ module aparam
    
    
    ! Hardcoded
-   real, parameter    :: Caki = 0.48   !< C-Anteil Kieselalgen [mgC/mgTG]
-   real, parameter    :: Cabl = 0.48   !< C-Anteil Blaualgen [mgC/mgTG]
-   real, parameter    :: Cagr = 0.48   !< C-Anteil Grünalgen [mgC/mgTG]
+   real, parameter    :: Caki = 0.48   !< \anchor Caki C-Anteil Kieselalgen [mgC/mgTG]
+   real, parameter    :: Cabl = 0.48   !< \anchor Cabl C-Anteil Blaualgen [mgC/mgTG]
+   real, parameter    :: Cagr = 0.48   !< \anchor Cagr C-Anteil Grünalgen [mgC/mgTG]
    
    real, parameter    :: CZoo = 0.45   !< C-Anteil Rotatorien [mgC/mgTG]
    real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
