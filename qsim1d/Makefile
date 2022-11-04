@@ -27,7 +27,7 @@
 
 # Makefile for QSim1D
 
-VERSION = 14.10.07
+VERSION = 14.10.08
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux
@@ -58,10 +58,10 @@ Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
 -include ../metabolism/metabol.mk
 
 #compiler-flags:
-CFLAGS2             = -O -g -fbounds-check ## develop ## 
-#CFLAGS2             = -O3 ## run fast ## 
-FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
-CCLAGS       = $(CFLAGS2)
+CFLAGS2 = -O -g -fbounds-check ## develop ## 
+#CFLAGS2 = -O3 ## run fast ## 
+FFLAGS = $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+CCLAGS = $(CFLAGS2)
 
 #--------------------------------------------------------------------
 

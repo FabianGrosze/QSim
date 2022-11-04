@@ -1,5 +1,10 @@
+## 14.09.08
+
+* Bugfix: vtk-output now includes all variables
+* Bugfix: correct zone-numbering in qsim3d
+
 ## 14.09.07
-Bugfix: correct mechanism for interpolation in `subroutine wettles_wetter`
+* Bugfix: correct mechanism for interpolation in `subroutine wettles_wetter`
 
 
 ## 14.09.06
@@ -11,7 +16,7 @@ Bugfix: correct mechanism for interpolation in `subroutine wettles_wetter`
 * Bugfix: correct arguments in call ph for groyne-fields
 
 ## 14.09.04
-Refactoring of Code: module for pH
+* Refactoring of Code: module for pH
 
 ## 14.09.03
 * Bugfix: remove output of heavy metals in ErgebT.txt to avoid issues with Gerris.
@@ -69,7 +74,7 @@ ist es nötig, diese vorab mittels "make save" in ein .taz Archiv einzubinden, d
 Neuerstellung des Dokumentationsportals mittels "make" im doku Verzeichnis wieder ins Dokumentationsportal hochgeladen wird.
 
  
-## tag 14.02
+## 14.02
 Neu in 14.02 (20aug20):
  
 * Mehr als 40000 Zeitpunkte in einer Randbedingungs-Zeitreihe möglich.
