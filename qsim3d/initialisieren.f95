@@ -149,13 +149,18 @@ subroutine initialisieren()
       !call ini_silikat()
       !     Sauerstoff:
       !call ini_oxygen()
-      !     Strömungsfeld anlegen für ersten Schritt Stoffumsatz
+      
+      ! Strömungsfeld anlegen für ersten Schritt Stoffumsatz
       select case (hydro_trieb)
          case(1) ! casu-transinfo
             call holen_trans(na_transinfo)
          case(2) ! untrim
             call holen_trans_untrim(na_transinfo)
             print*,'initialisieren(): holen_trans_untrim fetching step = ',na_transinfo
+            
+            ! Courrant-Zahl
+            cu(:) = 0.0
+            
          case(3) ! SCHISM
             nt = na_transinfo
             ! don't call get_schism_step(nt) here only on rank 0

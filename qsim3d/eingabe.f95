@@ -110,7 +110,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    if (meinrang == 0) call ereigg_modell() ! read time-stepping information at first
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
+   call allo_trans() ! Felder für Transportinformationen und Strömungsfeld allocieren
+   
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
