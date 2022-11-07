@@ -122,8 +122,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       case(2) ! Untrim² netCDF
          call nc_sichten()
       case(3) ! SCHISM netCDF
-         call screen_schism()
-         call qerror('eingabe.f95 screen_schism() not yet complete')
+         !call screen_schism()
+         !call qerror('eingabe.f95 screen_schism() not yet complete')
       case default
          call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select
@@ -135,6 +135,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
+               call qerror('eingabe.f95 schism not yet complete')
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development

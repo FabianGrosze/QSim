@@ -338,21 +338,6 @@ subroutine modellg()
          call qerror(fehler)
       endif
    end do ! alle i Zonen
-   do n = 1,number_plankt_point
-      vorhanden = .false.
-      do i = 1,zonen_anzahl
-         if ( point_zone(n) == zone(i)%zonen_nummer ) then
-            if (.not. vorhanden) point_zone(n) = i
-            vorhanden = .true. ! zone vorhanden + zugeordnet
-         end if !zonen_nummer vorhanden
-      end do ! alle i Zonen
-      if (.not. vorhanden) then
-         write(fehler,'(a,i0,a,i0,a)'), '2 Die von Knoten #', n,' benötigte Zonennummer #', point_zone(n), &
-                                        ' ist nicht in MODELLG.3D.txt beschrieben.'
-         call qerror(fehler)
-      end if ! nicht vorhanden
-   end do ! alle n Knoten
-   print*,'MODELLG.3D.txt: An allen Knoten wurde die Zonennummer in den Zonenzähler korrekt umgewandelt (point_zone()).'
    
    select case (hydro_trieb)
       case(1) ! casu-transinfo
@@ -370,38 +355,39 @@ subroutine modellg()
                   ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
          end do ! alle i Zonen
       
-      case(2) ! Untrim² netCDF
+      case(2,3) ! Untrim² + SCHISM
          do i = 1,zonen_anzahl
             knozoanz = 0
             do n = 1,n_elemente
-               if (element_zone(n) == i) knozoanz = knozoanz+1
+               if (element_zone(n) == zone(i)%zonen_nummer)then
+                  knozoanz = knozoanz+1
+                  point_zone(n) = i
+               endif
             end do ! alle n Elemente
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
                   ,'heißt: ',trim(zone(i)%zonen_name)  &
                   ,' und enthält ',knozoanz,' Elemente.'
          end do ! alle i Zonen
       
-      case(3) ! SCHISM netCDF
-         do i = 1,zonen_anzahl
-            knozoanz = 0
-            zonflae = 0.0
-            do n = 1,knotenanzahl2D
-               if (knoten_zone(n) == i) then
-                  knozoanz = knozoanz+1
-                  zonflae = zonflae+knoten_flaeche(n)
-               endif ! knoten in zone
-            end do ! alle n Knoten
-            print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
-                  ,'heißt: ',trim(zone(i)%zonen_name)  &
-                  ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
-         end do ! alle i Zonen
-         !!!### call sc_read_rough()
-      
       case default
          call qerror('modellg Hydraulischer Antrieb unbekannt')
-   
    end select
    
+      do n = 1,number_plankt_point
+         vorhanden = .false.
+         do i = 1,zonen_anzahl
+            if ( point_zone(n) == i ) then
+               vorhanden = .true. ! zone vorhanden + zugeordnet
+            end if !zonen_nummer vorhanden
+         end do ! alle i Zonen
+         if (.not. vorhanden) then
+            write(fehler,'(a,i0,a,i0,a)'), 'Der von Berechnungs-Punkt #', n,' benötigte Zonen-Zähler #', point_zone(n), &
+                                          ' ist nicht in MODELLG.3D.txt beschrieben.'
+            call qerror(fehler)
+         end if ! nicht vorhanden
+      end do ! all n simulation-points
+      print*,'MODELLG.3D.txt: Zone nummer was correctly transformed to zone counter at all simulation points (point_zone()).'
+
    return
 end subroutine modellg
 !----+-----+----

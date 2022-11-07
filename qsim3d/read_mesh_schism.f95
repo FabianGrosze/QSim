@@ -217,6 +217,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       allocate(distj(nsa),delj(nsa),snx(nsa),sny(nsa),isbs(nsa),kbs(nsa))
       do i=1,ns
          read(10+meinrang,*)j,isidenode(1:2,j)
+         if(j/=i)call qerror('read_mesh_schism: local_to_global, isidenode j/=i')
          read(10+meinrang,*)distj(i),delj(i),snx(i),sny(i),isbs(i),kbs(i),isdel(1,i),isdel(2,i)
       enddo !i
       close(10+meinrang) ! local_to_global_....
@@ -329,13 +330,13 @@ subroutine read_mesh_schism() !meinrang.eq.0
          read(10,*)ne_l
          do k = 1,ne_l
             read(10,*)j,ielg_sc(irank,k)
-            element_rang(ielg_sc(irank,k)) = irank ! element_rang(ielg_sc(irank,k))+1  !
+            element_rang(ielg_sc(irank,k)) = irank-1 ! element_rang(ielg_sc(irank,k))+1  !
          enddo !k
          read(10,*)np_l
          !print*,'irank,np_l=',irank,np_l,trim(adjustl(dateiname))
          do k = 1,np_l
             read(10,*)j,iplg_sc(irank,k)
-            knoten_rang(iplg_sc(irank,k)) = irank ! knoten_rang(iplg_sc(irank,k))+1 ! 
+            knoten_rang(iplg_sc(irank,k)) = irank-1 ! knoten_rang(iplg_sc(irank,k))+1 ! 
          enddo !k
          read(10,*)ns_l
          do k = 1,ns_l
@@ -512,6 +513,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
          print*,'Number of open boundaries=',nnn
          read(14,*,iostat = istat)n
          print*,'Total number of open boundary nodes=',n
+         knoten_rand(:)=0
          do i = 1,nnn
             read(14,*,iostat = istat)kkk
             print*,'Number of nodes for open boundary ',i,'=',kkk
@@ -528,18 +530,32 @@ subroutine read_mesh_schism() !meinrang.eq.0
             read(14,*,iostat = istat)kkk
             print*,'Number of nodes for land boundary ',i,i+nnn,'=',kkk
             do j = 1,kkk
-               read(14,*)k
-               knoten_rand(k)=i+nnn
+               read(14,*,iostat = istat)k
+               if (istat /= 0) call qerror('read_mesh_schism: hgrid.gr3  nodes for land boundary reading failure')
+               !knoten_rand(k)=i+nnn
             enddo ! all kkk nodes
          enddo ! all nn open boundaries
+         
+         ! Elements only open boundaries!!
+         element_rand(:)=0
          do i = 1,n_elemente
+            k=0;j=0
             do mm=1,cornernumber(i)
-               j=knoten_rand(elementnodes(i,mm))
-               ! larger open boundary number gets the element
-               if( (element_rand(i) < j).and. (j<=nnn) )  &
-                    element_rand(i) = j
+               if(knoten_rand(elementnodes(i,mm)).gt.0)then
+                  k=k+1
+                  j=j+knoten_rand(elementnodes(i,mm))
+               endif
             enddo !mm
-         enddo
+            if(k.eq.2)then ! boundary-element must have two nodes on boundary
+               do mm=1,cornernumber(i)
+                  if(knoten_rand(elementnodes(i,mm)).gt.0)then
+                     element_rand(i) = knoten_rand(elementnodes(i,mm))
+                  endif
+               enddo
+               ! boundary-elements must have boundary-nodes on same boundary
+               if (element_rand(i).ne.(j/2))element_rand(i)=0
+            endif !k==2
+         enddo ! all i elements
          
          close(14)
       end if !! prozess 0 only
@@ -558,7 +574,40 @@ subroutine read_mesh_schism() !meinrang.eq.0
             print*,meinrang,'ii=',i,iplg(i),'xx,yy=',knoten_x(iplg(i)),xnd(i),knoten_y(iplg(i)),ynd(i)
       enddo
       
-      ! elment center approximation
+      !check boundaries
+      !Hydro/grid_subs.F90:  ! isbs >0 if on open bnd (points to global segment #); =-1 if land bnd; =0 if internal
+      if(.not.allocated(knoten_rand)) allocate (knoten_rand(knotenanzahl2D))
+      call MPI_Bcast(knoten_rand,knotenanzahl2D,MPI_FLOAT,0,mpi_komm_welt,ierr)
+      do i=1,ns
+         if(isbs(i).gt.0)then
+            if(knoten_rand(iplg(isidenode(1,i))).ne.isbs(i))call qerror('read_mesh_schism boundary number mismatch1')
+            if(knoten_rand(iplg(isidenode(2,i))).ne.isbs(i))call qerror('read_mesh_schism boundary number mismatch2')
+         endif ! open boundary side/edge
+      enddo ! all i sides/edges
+      if(meinrang==0)then
+         do i=1,knotenanzahl2D
+            if(knoten_rand(i).gt.0)print*,i,'knoten_rand(i)',knoten_rand(i)
+         enddo
+      endif!meinrang==0
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      ! apply element boundary marker
+      do i=1,ne
+         isbe(i)=0
+         do j=1,i34(i)
+            ! isbe(ie)=1 if any node of element ie lies on bnd; isbe(ie)=0 otherwise
+            if(knoten_rand(iplg(elnode(j,i))) gt.0)isbe(i)=1
+         enddo
+         if(isbe(i).ne.0)print*,meinrang,' Element=',i,ielg(i),' isbe=',isbe(i)
+      enddo ! all i elements
+      if(meinrang==0)then
+         do i = 1,n_elemente
+         if(element_rand(i).ne.0)print*,'0 Element=',i,' element_rand=',element_rand(i)
+         enddo
+      endif!meinrang==0
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+      ! element center approximation
       call mpi_barrier (mpi_komm_welt, ierr)
       if (meinrang == 0) then !! nur prozessor 0
          element_x(:)=0.0
