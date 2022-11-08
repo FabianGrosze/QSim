@@ -38,6 +38,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global, &
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
+                          itrtype,irange_tr,isbnd,isbe,trth,trobc,               &
                           snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
                           start_year,start_month,start_day,start_hour,utc_start, &
                           nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
@@ -536,7 +537,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
             enddo ! all kkk nodes
          enddo ! all nn open boundaries
          
-         ! Elements only open boundaries!!
+         ! Elements only open boundaries!! ### ausrangiert ###
          element_rand(:)=0
          do i = 1,n_elemente
             k=0;j=0
@@ -557,6 +558,14 @@ subroutine read_mesh_schism() !meinrang.eq.0
             endif !k==2
          enddo ! all i elements
          
+         ! wie schism, Randelement braucht nur einen Knoten auf dem Rand
+         element_rand(:)=0
+         do i = 1,n_elemente
+            do mm=1,cornernumber(i)
+               if(knoten_rand(elementnodes(i,mm)).gt.0) element_rand(i) = knoten_rand(elementnodes(i,mm))
+            enddo
+         enddo ! all i elements
+
          close(14)
       end if !! prozess 0 only
 
@@ -584,28 +593,39 @@ subroutine read_mesh_schism() !meinrang.eq.0
             if(knoten_rand(iplg(isidenode(2,i))).ne.isbs(i))call qerror('read_mesh_schism boundary number mismatch2')
          endif ! open boundary side/edge
       enddo ! all i sides/edges
-      if(meinrang==0)then
-         do i=1,knotenanzahl2D
-            if(knoten_rand(i).gt.0)print*,i,'knoten_rand(i)',knoten_rand(i)
-         enddo
+      !if(meinrang==0)then
+      !   do i=1,knotenanzahl2D
+      !      if(knoten_rand(i).gt.0)print*,i,'knoten_rand(i)',knoten_rand(i)
+      !   enddo
       endif!meinrang==0
       call mpi_barrier (mpi_komm_welt, ierr)
       
       ! apply element boundary marker
+      allocate(isbe(ne),stat=istat)
+      if(istat/=0) call qerror('read_mesh_schism: failed in alloc. isbe')
       do i=1,ne
          isbe(i)=0
          do j=1,i34(i)
             ! isbe(ie)=1 if any node of element ie lies on bnd; isbe(ie)=0 otherwise
-            if(knoten_rand(iplg(elnode(j,i))) gt.0)isbe(i)=1
+            if(knoten_rand(iplg(elnode(j,i))) .gt. 0) isbe(i)=1
          enddo
-         if(isbe(i).ne.0)print*,meinrang,' Element=',i,ielg(i),' isbe=',isbe(i)
+         !if(isbe(i).ne.0)print*,meinrang,' Element=',i,ielg(i),' isbe=',isbe(i)
       enddo ! all i elements
-      if(meinrang==0)then
-         do i = 1,n_elemente
-         if(element_rand(i).ne.0)print*,'0 Element=',i,' element_rand=',element_rand(i)
-         enddo
-      endif!meinrang==0
+      !if(meinrang==0)then
+      !   do i = 1,n_elemente
+      !      if(element_rand(i).ne.0)print*,'0 Element=',i,' element_rand=',element_rand(i)
+      !   enddo
+      !endif!meinrang==0
       call mpi_barrier (mpi_komm_welt, ierr)
+      ! isbnd(:,:) ! local node to _global_ open bndry segment flags
+      if(allocated(isbnd)) deallocate(isbnd); allocate(isbnd(-2:2,npa),stat=istat);
+      if(istat/=0) call parallel_abort('read_mesh_schism: isbnd allocation failure')
+      isbnd=0
+#grid_subs.f90 2230 ...
+      do i=1,np
+         isbnd(1:2,i)=knoten_rand(iplg(i))
+      enddo
+      
 
       ! element center approximation
       call mpi_barrier (mpi_komm_welt, ierr)

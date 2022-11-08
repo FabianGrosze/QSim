@@ -65,6 +65,9 @@
                               !boundaries
                               itrtype,irange_tr,                     &
                               isbnd,isbe,trth,trobc,                 &
+        write(16,*)'# of tracers in each module:',ntrs(:)
+        write(16,*)'Total # of tracers=',ntracers
+        write(16,*)'Index ranges of each module:',irange_tr(:,:)
                               ! integer,parameter :: natrm=12 !# of _available_ tracer models at the moment (including T,S)
                               natrm,                                 &
                               ! call aquire_hgrid(.true.)    -------------------

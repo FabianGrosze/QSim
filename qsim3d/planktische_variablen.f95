@@ -78,6 +78,7 @@ end subroutine planktkon_parallel
 subroutine scatter_planktkon()
    use modell
    implicit none
+   print*,'scatter_planktkon'
    !print*,'scatter_planktkon part,number_plankt_vari,meinrang=',part, number_plankt_vari, meinrang
    call MPI_Scatter(planktonic_variable, part*number_plankt_vari, MPI_FLOAT,  &
                     planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierr)

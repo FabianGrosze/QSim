@@ -91,12 +91,12 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fbounds-check ## develop ## 
+CFLAGS2         = -O -g -fcheck=all -Wuninitialized ## -fbounds-check ## develop ## 
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
 #loader-flags:
-LDFLAGS = -lc -lstdc++ -g -fbounds-check -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  ## develop ## 
+LDFLAGS = -lc -lstdc++ -g -fcheck=all  -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  ## develop ## -fbounds-check
 ## production ## LDFLAGS = -lc -lstdc++  $(MPICH2_LIB)  $(CDFLIBS)
 
 HIER=`pwd -P`
