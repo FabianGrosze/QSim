@@ -60,112 +60,144 @@
 
 !---------------------------------------------------------------------------------------------------------------
 
-!> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen\n
-!! \n\n
+!> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen.
 subroutine wetter_parallel()  ! called from all processes randbedingungen_parallel()
    use modell
    implicit none
+
    integer :: alloc_status
+
+
    call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (meinrang == 0)print*,'meinrang, IWETTs_T, IMET_T, mwettmax_T'
    print*, meinrang, IWETTs_T, IMET_T, mwettmax_T
    call mpi_barrier (mpi_komm_welt, ierr)
+
+
    if (meinrang /= 0) then ! alle Prozesse ausser 0
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
+         write(fehler,*)' allocate failed in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
                         , meinrang, alloc_status
          call qerror(fehler)
       end if
+      
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel iWSta :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel iWSta :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (mwetts_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel mwetts :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel mwetts :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (itagw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel itagw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel itagw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel monatw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel monatw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel jahrw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel jahrw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel uhrzw_T:', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel uhrzw_T:', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel zeitpunktw:', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel zeitpunktw:', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel wertw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel wertw :', alloc_status
          call qerror(fehler)
       end if
-      !     allokieren der Felder für die Momentan-Werte
+      
+      
+      ! allocate and initialize arrays for time-values
       allocate (glob_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel glob_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel glob_T :', alloc_status
          call qerror(fehler)
       end if
+      glob_t(:) = 0.0
+      
       allocate (tlmax_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmax_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmax_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmax_t(:) = 0.0
+      
       allocate (tlmin_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmin_t(:) = 0.0
+      
       allocate (tlmed_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmed_t(:) = 0.0
+      
       allocate (ro_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel ro_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel ro_T :', alloc_status
          call qerror(fehler)
       end if
+      ro_t(:) = 0.0
+      
       allocate (wge_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel wge_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel wge_T :', alloc_status
          call qerror(fehler)
       end if
+      wge_t(:) = 0.0
+      
       allocate (cloud_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel cloud_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel cloud_T :', alloc_status
          call qerror(fehler)
       end if
+      cloud_t(:) = 0.0
+      
       allocate (typw_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel typw_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel typw_T :', alloc_status
          call qerror(fehler)
       end if
+      typw_t(:) = 0.0
+      
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel strahlung :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel strahlung :', alloc_status
          call qerror(fehler)
       end if
-   end if !! alle Prozesse ausser 0
+      schwi_t(:) = 0.0
+   end if
+   
    call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
@@ -175,10 +207,11 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierr)
+   
    return
 end subroutine wetter_parallel
-!----+-----+----
+
+
 !> Dient der eingabe() von  Wetterdaten aus <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>.\n
 !! In QSim-3D können die selben Dateien verwendet werden wie in QSim-1D.\n
 !! Die Wetterdaten sind die wesentlichen Randbedingungen für die Berechnung der Wärmebilanz mittels temperw_huelle(),

@@ -344,7 +344,7 @@ module modell
    !> Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
    real , allocatable , dimension (:) :: glob_T,  tlmax_T,  tlmin_T, tlmed_T
    real , allocatable , dimension (:) :: ro_T,  wge_T,  cloud_T,  typw_T
-   !> lokale Strahlung ?:
+   !> Globalstrahlung
    real , allocatable , dimension (:) :: schwi_T
    ! Veraltet:
    !      integer, parameter :: number_rb_wetter=6
