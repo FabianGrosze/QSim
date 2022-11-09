@@ -725,128 +725,98 @@ subroutine temperl_wetter()
    end do ! alle Wetterstationen i
 end subroutine temperl_wetter
 !----+-----+----
-!
-!> Diese Hüllroutine dient dazu, die QSim-Subroutine strahlg() punktweise aufzurufen.\n\n
-!! all processes do all weather-stations\n
-!! \n
-!!      SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj           &\n
-!!     &,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP            &\n
-!!    &,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)            \n
-!!                                                             \n
-!!     EIN PROGRAMM ZUR BERECHNUNG DER MITTL. GLOBALSTRAHLUNG \n
-!!     FUER DEN BERECHNUNGSSCHRITT IN CAL/(CM2*H) AUS DER TAGES- \n
-!!     SUMME                                                     \n
-!!                                                                \n
-!!     AUTOR : VOLKER KIRCHESCH                                    \n
-!!                                                                 \n
-!!     STAND: 06.11.1987                                           \n
-!!                                                                 \n
-!!     Parameter:                                                  \n
-!!                                                                   \n
-!!     SCHWI  - Globalstrahlung an der Wasseroberflaeche unter Berueck-  \n
-!!              sichtigung der Reflektion an der Wasseroberflaeche     \n
-!!              [cal/(cm2*h)]                                        \n
-!!                                                                   \n
-!!     SH     - Sonnenhoehe im Bogenmass                             \n
-!!     SHGR   - Sonnenhoehe im Gradmass                               \n
-!!                                                                    \n
-!!     CLOUD  - Bewoelkungsgrad                                      \n
+
+
+!> Diese Hüllroutine dient dazu, die QSim-Subroutine strahlg() punktweise aufzurufen.  
+!! all processes do all weather-stations  
 !!
-!! Umstellung von Profilweise auf Wetterstationsweise (Zuordnung über Zonen)
-!!
+!! Umstellung von profilweise auf wetterstationsweise (Zuordnung über Zonen)
 subroutine strahlg_wetter()
    use modell
-   use QSimDatenfelder
+   use qsimdatenfelder
    implicit none
-   integer NRV(8)
-   real maxi,lt
-   real ar(4),br(4),Breite(1000)
-   real EVALT(14),EKRBRT(14),EDUFER(14),EVDICH(14)
-   real ESLEN(14),ESLENS(14),VTYP(1000,14),VALTBL(1000)
-   real EDUFBL(1000),VALTBR(1000),EDUFBR(1000)
-   real SHtest(50)
-   ! vorher implizit definiert:
-   real dk, sa, su, schwia, zg, zlk, geol, geob
-   ! hier neu:
-   logical printi
-   integer i, tdj, azStr
-   !
-   !integer k1, k2, k3, k4
-   !if(kontrollknoten.gt.0)then
-   !   k1=knoten_zone(kontrollknoten)
-   !   k2=zonen_nummer(k1)
-   !   k3=wetterstations_nummer(k1)
-   !   k4=Wetterstationskennung_T(k3)
-   !   print*,'konstat=',kontrollknoten, k1, k2, k3, k4
-   !end if
-   do i = 1,IWETTs_T   !! loop all weather stations
-      glob(1) = glob_T(i)     ! Eingangsdaten
-      !print*,'glob=',glob(1)
+   
+   integer, dimension(8)      :: NRV
+   real                       :: maxi,lt
+   real, dimension(4)         :: ar, br
+   real, dimension(1000)      :: breite
+   real, dimension(14)        :: EVALT, EKRBRT, EDUFER, EVDICH, ESLEN, ESLENS
+   real, dimension(1000,14)   :: VTYP
+   real, dimension(1000)      :: VALTBL, EDUFBL, VALTBR, EDUFBR
+   real, dimension(50)        :: SHtest
+   real                       :: dk, sa, su, schwia, zg, zlk, geol, geob
+   logical                    :: printi
+   integer                    :: i, tdj, azStr
+   
+   ! loop all weather stations
+   do i = 1,IWETTs_T
+      ! Eingangsdaten
+      glob(1) = glob_T(i)     
       uhrz = uhrzeit_stunde
-      !call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
-      !print*,'vor sasu tagdesjahres=',tagdesjahres,' meinrang=', meinrang
-      tdj = tagdesjahres !! wird von sasu verändert (wozu ist unklar)
-      !    print*,'strahlg_wetter0 station',Wetterstationskennung_T(i),' tag, monat, tagdesjahres=',tag, monat, tagdesjahres &
-      !&         ,' glob(1)glob_T(i)=',glob(1),glob_T(i)
-      !    print*,'SASU vorher tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl=' &
-      !&                      ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+      ! call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
+      
+      ! wird von sasu verändert (wozu ist unklar)
+      tdj = tagdesjahres 
+      
       geol = modell_geol
       geob = modell_geob
-      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl)
-      !        if(kontrollknoten.gt.0)      &
-      !        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
-      !     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
-      if (ifehl /= 0)call qerror("SASU fehlgeschlagen")
+      call sasu(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj, ifehl)
+      if (ifehl /= 0) call qerror("error in sasu()")
       if (sa > su) then
          print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
          ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
          call qerror("strahlg_wetter: computing daylight hours went wrong")
       endif
-      !if(meinrang.ge.(proz_anz-3)) then
-      !   print*,'strahlg_wetter,sasu: meinrang,Wetterstationen, tag, monat, geob, geol, sa, su, zg, zlk, dk, tagdesjahres'
-      !   print*,meinrang,i,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tagdesjahres
-      !end if
-      schwi(1) = 0.0     ! Rückgabewert initialisiert
-      tflie = real(deltat)/3600.0 ! Zeitschrittweite von integer-Sekunden in real-Stunden umrechnen
-      dk = 0.0     !
-      cloud(1) = cloud_T(i)   ! Bewölkung
-      schwia = 0.0     !
-      mstr = 1     ! nur ein Strang
-      IDWe(1,1) = 1     ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
-      IDWe(1,2) = 1     ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
-      VTYP = 0     !
-      VALTBL(1) = 0     ! Keinerlei Uferbewuchs
-      EDUFBL(1) = 0     !
-      VALTBR(1) = 0     !
-      EDUFBR(1) = 0     !
-      breite(1) = 100.0     !
-      anze = 1    ! nur an einem Punkt/Profil
-      ifehl = 1     !
-      ifhStr = 1     !
-      
-      ij = 1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
-      azStr = 1 ! Laufindex über alle Stränge =1 in 3D
-      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   &
-                   ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
-                   ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
       
-      ! Rueckgabe
-      !print*,'meinrang,uhrzeit_stunde,glob,schwi,i,tagdesjahres'
-      !print*, meinrang,uhrzeit_stunde,glob(1),schwi(1),i,tagdesjahres
+      
+      ! --- calculate global radiation at weather station ---
+      ! strahlg(...) is a subroutine written for QSim1D.
+      ! To use it in QSim3D the following variables are adapted to this subroutine
+      
+      ! transform timestep from seconds (integer) to hours (real)
+      tflie = real(deltat)/3600.0 
+      
+      ! nur ein Strang
+      mstr = 1
+      anze = 1
+      azStr = 1 
+      IDWe(1,1) = 1  ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
+      IDWe(1,2) = 1  ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
+      
+      ! cloudiness
+      cloud(1) = cloud_T(i)
+      
+      ! Kein Uferbewuchs
+      VTYP = 0
+      VALTBL(1) = 0
+      EDUFBL(1) = 0
+      VALTBR(1) = 0
+      EDUFBR(1) = 0
+      
+      breite(1) = 100.0
+      dk = 0.0
+      
+      ! Zeitschritt-Nummer während eines Tages (unbenutzt in 3D)
+      ij = 1 
+      
+      call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
+                   cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
+                   EDUFBL, VALTBR, EDUFBR, breite, anze, ifehl, ifhStr, it_h,  &
+                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr,    &
+                   azStrs)
+      if (ifehl /= 0) call qerror("Error in strahlg()")   
+      
       schwi_T(i) = schwi(1)    ! global radiation at weather station
+      
       !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)
       if (isNaN(schwi_T(i))) then
          write(fehler,*)'strahlg_wetter station',Wetterstationskennung_T(i),' IMET_T = ',IMET_T,' isNaN(schwi_T(i))'
          call qerror(fehler)
       endif
       transfer_value_p(10) = it_h(1,1) ! Anzahl der Zeitschritte während der Hellphase (unbenutzt in 3D)
-      ! isim_end = 1 Ausgabeparameter -> Algenroutinen
-   end do ! i all weather stationen
+      
+   end do
    return
 end subroutine strahlg_wetter
-!      SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj           &
-!     &,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP            &
-!     &,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)
-!----+-----+----
-!      end module wetter
+
