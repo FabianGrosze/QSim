@@ -588,7 +588,10 @@ subroutine wettles_wetter()
    real        :: b, ywert, w1, w2
    logical     :: found1, found2, wert_gueltig
    
-   if (meinrang == 0) print*,'wettles_wetter:'
+   if (meinrang == 0) then 
+      print '(a,i0,a)',   "* wettles_wetter(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
+      print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","typw_T"
+   endif
    
    ! Schleife über alle Wetterstationen
    do i = 1, iwetts_t
@@ -678,18 +681,13 @@ subroutine wettles_wetter()
          end select
       end do
       
-      
       if (meinrang == 0) then
-         print "('weatherstation ',i0, ', time ',i0)", i, zeitpunkt
-         print*,'  glob_T  = ', glob_T(i)
-         print*,'  tlmax_T = ', tlmax_T(i)
-         print*,'  tlmin_t = ', tlmin_T(i)
-         print*,'  ro_T    = ', ro_T(i)
-         print*,'  wge_T   = ', wge_T(i)
-         print*,'  cloud_T = ', cloud_T(i)
-         print*,'  typw_T  = ', typw_T(i)
-      endif 
+         print "(i9,1x,*(f9.2,1x))", i, glob_T(i), tlmax_T(i), tlmin_T(i), ro_T(i), wge_T(i), cloud_T(i), typw_T(i)
+      endif
+      
    end do 
+   
+   if (meinrang == 0) print*, ""
 end subroutine wettles_wetter
 
 
