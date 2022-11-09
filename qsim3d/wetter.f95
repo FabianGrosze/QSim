@@ -823,19 +823,13 @@ subroutine strahlg_wetter()
       anze = 1    ! nur an einem Punkt/Profil
       ifehl = 1     !
       ifhStr = 1     !
-      if (kontrollknoten > 0)      &
-          !print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
+      
       ij = 1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
       azStr = 1 ! Laufindex über alle Stränge =1 in 3D
       call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   &
                    ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
                    ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
-      if (kontrollknoten > 0)      &
-          !print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
-      !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &
-      !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr
-      !                     ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
       ! Rueckgabe
       !print*,'meinrang,uhrzeit_stunde,glob,schwi,i,tagdesjahres'
