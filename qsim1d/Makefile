@@ -27,7 +27,7 @@
 
 # Makefile for QSim1D
 
-VERSION = 14.10.08
+VERSION = 14.09.09_dev
 
 # PV= qsim1d_voll
 # PV= qsim1d_ohnesedflux

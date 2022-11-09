@@ -1,3 +1,6 @@
+## 14.09.09
+
+* Bugfix (QSim3D): Correct error in initializing variable schwi
 ## 14.09.08
 
 * Bugfix: vtk-output now includes all variables
