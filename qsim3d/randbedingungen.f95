@@ -669,39 +669,38 @@ subroutine ereigg_Randbedingungen_lesen()
    ianz_rb = 0
    min_nr = 9999
    max_rand_nr = -9999
-   ! 343 read(ion,*, iostat = read_error,end=341)nr,idumm,idumm,anzi
-   343 continue
-   if ( .not. zeile(ion)) goto 341
-   read(ctext, *, iostat = read_error) nr,idumm,idumm,anzi
-   if (read_error /= 0) then
-      print*,trim(ctext)
-      write(fehler,*)' 343 ereigg_Randbedingungen_lesen() read_error /= 0 ianz_rb = ', ianz_rb
-      call qerror(fehler)
-   endif
-   !print*,'RB; nr,anzi=',nr,anzi
-   if (min_nr > nr) min_nr = nr
-   if (max_rand_nr < nr) max_rand_nr = nr
-   ianz_rb = ianz_rb+1
-   if (anzi > anzmax)anzmax = anzi
-   if (anzi == 0)goto 343
-   do n = 1,anzi  ! Datenzeilen im Ersten Durchgang überlesen.
-      if ( .not. zeile(ion)) then
-         write(fehler,*)'read_error in EREIGG.txt; Randbedingung # ',ianz_rb,' Zeile ',n
+   do while(zeile(ion))
+      read(ctext, *, iostat = read_error) nr,idumm,idumm,anzi
+      if (read_error /= 0) then
+         print*,trim(ctext)
+         write(fehler,*)' 343 ereigg_Randbedingungen_lesen() read_error /= 0 ianz_rb = ', ianz_rb
          call qerror(fehler)
-      end if ! open_error.ne.0
-   end do
-   !imstr(ianzRB) = mstr
-   !iRBNR(ianzRB) = RBNR
-   !ianzW(ianzRB) = NrSchr(mstr,RBNR)
-   !
-   !      do 226 iwe = 1,NrSchr(mstr,RBNR)
-   !      read(92,9240)                                                     &
-   !     &itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe)            &
-   !     &,uhrl(ianzRB,iwe),(werts(ianzRB,ixpp,iwe),ixpp=1,28)
-   !  226 continue
-   goto 343
-   341  continue
+      endif
+      !print*,'RB; nr,anzi=',nr,anzi
+      if (min_nr > nr) min_nr = nr
+      if (max_rand_nr < nr) max_rand_nr = nr
+      ianz_rb = ianz_rb+1
+      if (anzi > anzmax)anzmax = anzi
+      if (anzi == 0) cycle
+      do n = 1,anzi  ! Datenzeilen im Ersten Durchgang überlesen.
+         if ( .not. zeile(ion)) then
+            write(fehler,*)'read_error in EREIGG.txt; Randbedingung # ',ianz_rb,' Zeile ',n
+            call qerror(fehler)
+         end if ! open_error.ne.0
+      end do
+      !imstr(ianzRB) = mstr
+      !iRBNR(ianzRB) = RBNR
+      !ianzW(ianzRB) = NrSchr(mstr,RBNR)
+      !      do 226 iwe = 1,NrSchr(mstr,RBNR)
+      !      read(92,9240)                                                     &
+      !     &itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe)            &
+      !     &,uhrl(ianzRB,iwe),(werts(ianzRB,ixpp,iwe),ixpp=1,28)
+      !  226 continue
+   end do ! while zeile
    print*,'ereigg_Randbedingungen_lesen --- ',ianz_rb,' Randbedingungen mit maximal ', anzmax, ' Zeilen'
+   if((hydro_trieb==3).and.(ianz_rb/=max_rand))then
+      call qerror('ereigg_Randbedingungen_lesen: hydro_trieb==3 ianz_rb/=max_rand')
+   endif
    !
    allocate (rabe(ianz_rb), stat = alloc_status )
    if (alloc_status /= 0) then

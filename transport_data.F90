@@ -17,7 +17,7 @@
 !############################################################################################################
 
 !     Do upwind and TVD transport
-      subroutine do_transport_tvd_imp(it,ntr,difnum_max_l) !,nvrt1,npa1,dfh1)
+      subroutine do_transport_tvd_imp(it,ntr=ntracers,difnum_max_l) !,nvrt1,npa1,dfh1)
 !schism_step 4773        call do_transport_tvd_imp(it,ntracers,difnum_max_l) !,nvrt,npa,dfh)
 
 ! it       - timestep-counter  #; info only

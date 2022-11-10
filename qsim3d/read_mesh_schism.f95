@@ -38,7 +38,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global, &
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
-                          itrtype,irange_tr,isbnd,isbe,trth,trobc,               &
+                          itrtype,irange_tr,isbnd,isbe,trth,trobc,natrm,         &
                           snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
                           start_year,start_month,start_day,start_hour,utc_start, &
                           nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
@@ -68,7 +68,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    real                              :: xmax, xmin, ymax, ymin, zmax, zmin, xmaxi, xmini, ymaxi, ymini, zmaxi, zmini
    real                              :: rzone, distmax, distmin, sum_area, totalarea, dx,dy
    real    dummy,xummy,yummy
-   integer nummy, rank_min,rank_max,id_min,id_max, kkk,nnn, lfdb
+   integer nummy, rank_min,rank_max,id_min,id_max, kkk,nnn, lfdb,ll,lll,jsj,ndo
    integer  :: eck(4)
    
    character(len=2),save :: mid,stab
@@ -512,6 +512,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
          ! get boundaries
          read(14,*,iostat = istat)nnn
          print*,'Number of open boundaries=',nnn
+         min_rand=1;max_rand=nnn
          read(14,*,iostat = istat)n
          print*,'Total number of open boundary nodes=',n
          knoten_rand(:)=0
@@ -568,6 +569,8 @@ subroutine read_mesh_schism() !meinrang.eq.0
 
          close(14)
       end if !! prozess 0 only
+      call MPI_Bcast(min_rand,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(max_rand,1,MPI_INT,0,mpi_komm_welt,ierr)
 
       ! check node locations
       call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -597,7 +600,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       !   do i=1,knotenanzahl2D
       !      if(knoten_rand(i).gt.0)print*,i,'knoten_rand(i)',knoten_rand(i)
       !   enddo
-      endif!meinrang==0
+      !endif!meinrang==0
       call mpi_barrier (mpi_komm_welt, ierr)
       
       ! apply element boundary marker
@@ -619,13 +622,47 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_barrier (mpi_komm_welt, ierr)
       ! isbnd(:,:) ! local node to _global_ open bndry segment flags
       if(allocated(isbnd)) deallocate(isbnd); allocate(isbnd(-2:2,npa),stat=istat);
-      if(istat/=0) call parallel_abort('read_mesh_schism: isbnd allocation failure')
+      if(istat/=0) call qerror('read_mesh_schism: isbnd allocation failure')
       isbnd=0
-#grid_subs.f90 2230 ...
+      !#grid_subs.f90 2230 ...
       do i=1,np
-         isbnd(1:2,i)=knoten_rand(iplg(i))
+         isbnd(1,i)=knoten_rand(iplg(i)) ! boundary #
+         isbnd(-1,i)=1                   ! only needs to work together with itrtype(jj,ibnd)==1
+         !if(isbnd(1,i)>0)print*,meinrang,'read_mesh_schism: i,isbnd,iplg',i,isbnd(1,i),iplg(i)
       enddo
-      
+      !check side-node boundary integrity
+      !Hydro/grid_subs.F90:  ! isbs >0 if on open bnd (points to global segment #); =-1 if land bnd; =0 if internal
+      do i=1,ne
+         do j=1,i34(i)
+            if(isbs(elside(j,i))>0)then ! open boundaries only
+               do ll=1,2 ! both nodes of each element side/edge
+                  !do lll=1,2 !2 possible bnds
+                  lll=1 ! only first boundary present
+                  !if( isbnd(lll,isidenode(ll,elside(j,i))) /= isbs(elside(j,i)) ) then
+                  !   print*,meinrang,'read_mesh_schism: isbnd\=isbs',  &
+                  !   i,j,ll,elside(j,i),isidenode(ll,elside(j,i)),isbnd(lll,isidenode(ll,elside(j,i))),isbs(elside(j,i))
+                  !endif
+                  !enddo !lll
+                  if(isbnd(1,isidenode(ll,elside(j,i))) /= isbs(elside(j,i)))then
+                     print*,meinrang,'read_mesh_schism: isbnd /= isbs',  &
+                     isbnd(1,isidenode(ll,elside(j,i))),isbs(elside(j,i)),i,j,ll,  &
+                     elside(j,i),isidenode(ll,elside(j,i)),iplg(isidenode(ll,elside(j,i)))
+                  endif ! 
+               enddo ! ll
+            endif ! isbs>0
+         enddo ! j
+      enddo ! i
+
+      ! set boundary properties itrtype=1 - time series uniform along boundary ; trobc=1.0 - no nudging
+      ntracers=number_plankt_vari ! number of concentrations , ntr !# of tracers (=ntracers)
+      if(allocated(itrtype)) deallocate(itrtype); allocate(itrtype(natrm,max_rand),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: itrtype allocation failure')
+      itrtype=1
+      if(allocated(trobc)) deallocate(trobc); allocate(trobc(natrm,max_rand),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: trobc allocation failure')
+      trobc=1.0
+      irange_tr=1 ! irange_tr(2,natrm) in schism_glbl
+      irange_tr(2,1)=ntracers ! all planctonic variables in first model
 
       ! element center approximation
       call mpi_barrier (mpi_komm_welt, ierr)

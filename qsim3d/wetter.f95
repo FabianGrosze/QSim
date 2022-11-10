@@ -79,92 +79,110 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
                         , meinrang, alloc_status
          call qerror(fehler)
       end if
+      Wetterstationskennung_T=0.0
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel iWSta :', alloc_status
          call qerror(fehler)
       end if
+      iWSta_T=0.0
       allocate (mwetts_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel mwetts :', alloc_status
          call qerror(fehler)
       end if
+      mwetts_T=0.0
       allocate (itagw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel itagw :', alloc_status
          call qerror(fehler)
       end if
+      itagw_T=0.0
       allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel monatw :', alloc_status
          call qerror(fehler)
       end if
+      monatw_T=0.0
       allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel jahrw :', alloc_status
          call qerror(fehler)
       end if
+      jahrw_T=0.0
       allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel uhrzw_T:', alloc_status
          call qerror(fehler)
       end if
+      uhrzw_T=0.0
       allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel zeitpunktw:', alloc_status
          call qerror(fehler)
       end if
+      zeitpunktw=0.0
       allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel wertw :', alloc_status
          call qerror(fehler)
       end if
+      wertw_T=0.0
       !     allokieren der Felder für die Momentan-Werte
       allocate (glob_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel glob_T :', alloc_status
          call qerror(fehler)
       end if
+      glob_T=0.0
       allocate (tlmax_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel tlmax_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmax_T=0.0
       allocate (tlmin_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmin_T=0.0
       allocate (tlmed_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmed_T=0.0
       allocate (ro_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel ro_T :', alloc_status
          call qerror(fehler)
       end if
+      ro_T=0.0
       allocate (wge_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel wge_T :', alloc_status
          call qerror(fehler)
       end if
+      wge_T=0.0
       allocate (cloud_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel cloud_T :', alloc_status
          call qerror(fehler)
       end if
+      cloud_T=0.0
       allocate (typw_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel typw_T :', alloc_status
          call qerror(fehler)
       end if
+      typw_T=0.0
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' allocate faile in wetter_parallel strahlung :', alloc_status
          call qerror(fehler)
       end if
+      schwi_T=0.0
    end if !! alle Prozesse ausser 0
    call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
@@ -241,16 +259,19 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          write(fehler,*)' Rueckgabewert   von   allocate Wetterstationskennung :', alloc_status
          call qerror(fehler)
       end if
+      Wetterstationskennung_T=0.0
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate iWSta :', alloc_status
          call qerror(fehler)
       end if
+      iWSta_T=0.0
       allocate (mwetts_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate mwetts :', alloc_status
          call qerror(fehler)
       end if
+      mwetts_T=0.0
       ! 1. Schleife über alle Wetterstationen(Datenblöcke)
       ! nur Datenblockköpfe lesen, um Dimensionierung zu ermitteln ... allokieren.
       mwettmax_T = 0
@@ -278,31 +299,37 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          write(fehler,*)' Rueckgabewert   von   allocate itagw :', alloc_status
          call qerror(fehler)
       end if
+      itagw_T=0.0
       allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate monatw :', alloc_status
          call qerror(fehler)
       end if
+      monatw_T=0.0
       allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate jahrw :', alloc_status
          call qerror(fehler)
       end if
+      jahrw_T=0.0
       allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate uhrzw_T:', alloc_status
          call qerror(fehler)
       end if
+      uhrzw_T=0.0
       allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate zeitpunktw:', alloc_status
          call qerror(fehler)
       end if
+      zeitpunktw=0.0
       allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate wertw :', alloc_status
          call qerror(fehler)
       end if
+      wertw_T=0.0
       !dlt=2.0 ! 87 delta
       !write(dateiname,'(2A)')trim(modellverzeichnis),'WETTER.delta_2.0.txt' ! 87 delta
       !write(systemaufruf,'(2A)')'rm -rf ',trim(dateiname)
@@ -431,46 +458,55 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          write(fehler,*)' Rueckgabewert   von   allocate glob_T :', alloc_status
          call qerror(fehler)
       end if
+      glob_T=0.0
       allocate (tlmax_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate tlmax_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmax_T=0.0
       allocate (tlmin_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmin_T=0.0
       allocate (tlmed_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmed_T=0.0
       allocate (ro_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate ro_T :', alloc_status
          call qerror(fehler)
       end if
+      ro_T=0.0
       allocate (wge_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate wge_T :', alloc_status
          call qerror(fehler)
       end if
+      wge_T=0.0
       allocate (cloud_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate cloud_T :', alloc_status
          call qerror(fehler)
       end if
+      cloud_T=0.0
       allocate (typw_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate typw_T :', alloc_status
          call qerror(fehler)
       end if
+      typw_T=0.0
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate strahlung :', alloc_status
          call qerror(fehler)
       end if
+      schwi_T=0.0
       ! check zone <-> weather-station connectivity
       do i = 1,zonen_anzahl
          existing_station = .false.
@@ -785,16 +821,16 @@ subroutine strahlg_wetter()
       anze = 1    ! nur an einem Punkt/Profil
       ifehl = 1     !
       ifhStr = 1     !
-      if (kontrollknoten > 0)      &
-          !print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
+      !if (kontrollknoten > 0)      &
+      !    print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
       ij = 1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
       azStr = 1 ! Laufindex über alle Stränge =1 in 3D
       call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   &
                    ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
                    ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
-      if (kontrollknoten > 0)      &
-          !print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
+      !if (kontrollknoten > 0)      &
+      !    print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
       !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &
       !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr
       !                     ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)

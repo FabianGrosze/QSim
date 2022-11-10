@@ -121,7 +121,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
             read(92,9240,iostat = read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
                  ,(werts(ianzRB,ixpp,iwe),ixpp = 1,ipps)
             if (read_error < 0.0) then
-               print*,'funkstar: reading time series from EREIGG.txt went wrong',iwe,mstr,RBNR,ianzRB
+               print*,'funkstar: reading time series from EREIGG.txt went wrong',iwe,mstr,RBNR,ianzRB,ipps
                stop 63
             endif
             

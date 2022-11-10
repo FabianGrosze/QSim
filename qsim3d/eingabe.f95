@@ -75,13 +75,14 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
             if(.not. read_elemente_gerris()) then  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
                if(.not. read_zone_gr3()) call qerror('neither ELEMENTE.txt nor zone.gr3 available')
             endif ! ELEMENTE.txt
+            print*,'0 got SCHISM zones ',min_zone, max_zone
          endif ! meinrang 0
-         !call MPI_Bcast(cornernumber,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(min_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(max_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          !call MPI_Bcast(elementnodes,n_elemente*4,MPI_INT,0,mpi_komm_welt,ierr)
          !call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
          !call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
-         print*,meinrang,' got schism mesh'
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
@@ -109,8 +110,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    call mesh_output(0)
    call mpi_barrier (mpi_komm_welt, ierr)
    
-   !if(hydro_trieb==3)call qerror('eingabe.f95 getting SCHISM not yet complete')
-   
    call ini_zeit() ! initialise time preliminary to reference-year
    call mpi_barrier (mpi_komm_welt, ierr)
    select case (hydro_trieb)
@@ -135,8 +134,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
-               call qerror('eingabe.f95 schism not yet complete')
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
+call qerror('eingabe.f95 schism not yet complete  screen_schism() ')!!!---
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
       !     read global model-parameters now in module ::uebergabe_werte
