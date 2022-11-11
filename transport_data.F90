@@ -45,7 +45,7 @@
 
       use schism_glbl, only : ! fixed in
                               !integer,parameter :: rkind = 8      ! Default real datatype
-                              rkind,                                 &    = 8
+                              rkind,                                 &    = 8 ! schism_glbl integer,parameter :: rkind = 8
                               ! settling Velocities computation
                               iwsett,wsett,                          &    = 0,0 no settling
                               ! clipping values for salt and temp
@@ -65,8 +65,8 @@
                               !boundaries
                               itrtype,irange_tr,                     &
                               isbnd,isbe,trth,trobc,                 &
-        write(16,*)'# of tracers in each module:',ntrs(:)
-        write(16,*)'Total # of tracers=',ntracers
+        write(16,*)'# of tracers in each module:',ntrs(:)  ! alle number_plankt_vari planctonic_variable() in ntrs(1)
+        write(16,*)'Total # of tracers=',ntracers = number_plankt_vari
         write(16,*)'Index ranges of each module:',irange_tr(:,:)
                               ! integer,parameter :: natrm=12 !# of _available_ tracer models at the moment (including T,S)
                               natrm,                                 &
@@ -78,7 +78,7 @@
                               elside(:,:),ssign(:,:),area,           &   ! elements  added
                               isdel(:,:),isbs,kbs,                   &   ! sides added
                               distj,delj,snx,sny,                    &   ! sides added
-                              nvrt,ntrs(natrm),                      &
+                              nvrt,ntrs(natrm),                      &   ! 
                               ne,ielg,ns,i34,isidenode,elnode,       &
                               nsa,nea,                               &   ! added to local_to_global
                               xnd(m),ynd(m),real(dp00(m)),kbp00(m)   &   ! not needed for transport

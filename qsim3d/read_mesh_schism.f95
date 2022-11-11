@@ -36,13 +36,15 @@ subroutine read_mesh_schism() !meinrang.eq.0
    use netcdf
    use modell
    use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global, &
+                          tr_nd,                                                 &
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
-                          itrtype,irange_tr,isbnd,isbe,trth,trobc,natrm,         &
+                          itrtype,irange_tr,isbnd,isbe,trth,trobc,natrm,ntrs,    &
                           snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
                           start_year,start_month,start_day,start_hour,utc_start, &
                           nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
-                          ssign,kbs,iegl2,                                       &
+                          wsett,iwsett,tr_nd0,saltmax,saltmin,tempmax,tempmin,   &
+                          ssign,kbs,iegl2,isten_qual2,                           &
                           ihdif,ihconsv,isconsv,itur,itr_met,                    &
                           h_tvd,eps1_tvd_imp,eps2_tvd_imp,                       &
                           ip_weno,courant_weno,ntd_weno,nquad,                   &
@@ -586,7 +588,23 @@ subroutine read_mesh_schism() !meinrang.eq.0
             print*,meinrang,'ii=',i,iplg(i),'xx,yy=',knoten_x(iplg(i)),xnd(i),knoten_y(iplg(i)),ynd(i)
       enddo
       
-      !check boundaries
+      ! element center approximation
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if (meinrang == 0) then !! nur prozessor 0
+         element_x(:)=0.0
+         element_y(:)=0.0
+         do i=1,n_elemente
+            do j=1,cornernumber(i)
+               element_x(i)=element_x(i)+knoten_x(elementnodes(i,j))
+               element_y(i)=element_y(i)+knoten_y(elementnodes(i,j))
+            enddo ! all j corners
+            element_x(i)=element_x(i)/(real(cornernumber(i)))
+            element_y(i)=element_y(i)/(real(cornernumber(i)))
+         enddo ! all i elements
+      end if !! prozess 0 only
+      
+!#### check boundaries and set their properties ###########################################!
+
       !Hydro/grid_subs.F90:  ! isbs >0 if on open bnd (points to global segment #); =-1 if land bnd; =0 if internal
       if(.not.allocated(knoten_rand)) allocate (knoten_rand(knotenanzahl2D))
       call MPI_Bcast(knoten_rand,knotenanzahl2D,MPI_FLOAT,0,mpi_komm_welt,ierr)
@@ -661,23 +679,43 @@ subroutine read_mesh_schism() !meinrang.eq.0
       if(allocated(trobc)) deallocate(trobc); allocate(trobc(natrm,max_rand),stat=istat);
       if(istat/=0) call qerror('read_mesh_schism: trobc allocation failure')
       trobc=1.0
-      irange_tr=1 ! irange_tr(2,natrm) in schism_glbl
+      irange_tr(2,:)=0 ! irange_tr(2,natrm) in schism_glbl
+      irange_tr(1,:)=1 
       irange_tr(2,1)=ntracers ! all planctonic variables in first model
+      ntrs=0
+      ntrs(1)=ntracers
+      
+!#### set concentration and transport scheme properties ###########################################!
 
-      ! element center approximation
-      call mpi_barrier (mpi_komm_welt, ierr)
-      if (meinrang == 0) then !! nur prozessor 0
-         element_x(:)=0.0
-         element_y(:)=0.0
-         do i=1,n_elemente
-            do j=1,cornernumber(i)
-               element_x(i)=element_x(i)+knoten_x(elementnodes(i,j))
-               element_y(i)=element_y(i)+knoten_y(elementnodes(i,j))
-            enddo ! all j corners
-            element_x(i)=element_x(i)/(real(cornernumber(i)))
-            element_y(i)=element_y(i)/(real(cornernumber(i)))
-         enddo ! all i elements
-      end if !! prozess 0 only
+      ! real(rkind),save,allocatable :: wsett(:,:,:) 
+      ! integer,save,allocatable :: iwsett(:) !iwsett(ntracers)
+      if(allocated(wsett)) deallocate(wsett); allocate(wsett(ntracers,nvrt,nea),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: wsett allocation failure')
+      wsett=0.0 ! no settling velocity
+      if(allocated(iwsett)) deallocate(iwsett); allocate(iwsett(ntracers),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: iwsett allocation failure')
+      iwsett=0  ! settling not activated
+      
+      saltmax=35.0
+      saltmin=0.0
+      tempmax=35.0
+      tempmin=0.0
+      
+      if(allocated(tr_nd0)) deallocate(tr_nd0); allocate(tr_nd0(ntracers,nvrt,npa),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: tr_nd0 allocation failure')
+      tr_nd0=0.0 ! initialize all concentrations to zero
+      if(allocated(tr_nd)) deallocate(tr_nd); allocate(tr_nd(ntracers,nvrt,npa),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: tr_nd allocation failure')
+      tr_nd=0.0 ! initialize all concentrations to zero
+      !Hydro/schism_init.F90:      allocate(tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa),tr_nd(ntracers,nvrt,npa),stat=istat)
+      if(allocated(tr_el)) deallocate(tr_el); allocate(tr_el(ntracers,nvrt,nea),stat=istat);
+      if(istat/=0) call qerror('read_mesh_schism: tr_el allocation failure')
+      tr_el=0.0 ! initialize all concentrations to zero
+      
+      !logical,save,allocatable :: isten_qual2(:)
+      if(allocated(isten_qual2)) deallocate(isten_qual2); allocate(isten_qual2(ne),stat=istat)
+      if(istat/=0) call qerror('read_mesh_schism: isten_qual2 allocation failure')
+      isten_qual2=.true. ! assuming all sides have qualified stencils | subroutine CheckSten2
 
 !#### read manning.gr3 ###########################################################################!
       if (meinrang == 0) then !! nur prozessor 0
