@@ -31,7 +31,7 @@ SHELL=/usr/bin/bash
 
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-PV='qsim3d_14.09.09_dev'
+PV='qsim3d_organic_carbon'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -77,7 +77,6 @@ SCHISM_CORE  = ../../Core
 QSIM_LIB     = -L../metabolism -lqsim
 SCHISM_LIB   = -L. -lschism
 
-
 # list of all qsim3d files
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o\
@@ -86,7 +85,7 @@ Q3 = version.co trans_read.co \
      planktische_variablen.o module_suspendedMatter.o parallel.o \
      temperw_huelle.o alter.o\
      po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
-     oxygen_huelle.o orgc_huelle.o ph_wrapper_3d.o \
+     oxygen_huelle.o organic_carbon_wrapper_3d.o ph_wrapper_3d.o \
      algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
      eingabe.o initialisieren.o randbedingungen.o \
@@ -104,7 +103,6 @@ Q3 = version.co trans_read.co \
 #--------------------------------------------------------------------
 
 usual: check date metabolism qsim3d
-
 
 check:
 	@if [ `hostname` != "oss-cln51" ]; then \
@@ -131,7 +129,6 @@ date:
 	@echo "int version=$(JETZT);">version.h
 	@rm -f version.co nachricht.o
 	@echo 'write(codesource,*) "'$(HIER)'" ' >code_source.h
-
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \

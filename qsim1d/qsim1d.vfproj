@@ -51,6 +51,10 @@
 		<File RelativePath=".\version.rc"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="metabolism">
+		<Filter Name="organic_carbon">
+		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
+		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="ph">
 		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
 		<File RelativePath="..\metabolism\ph\ph.f90">
@@ -83,7 +87,6 @@
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\ncyc.f90"/>
-		<File RelativePath="..\metabolism\orgc.f90"/>
 		<File RelativePath="..\metabolism\oxygen.f90"/>
 		<File RelativePath="..\metabolism\po4s.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>
@@ -133,6 +136,7 @@
 		<File RelativePath=".\Masse_neu_QSim.f90"/>
 		<File RelativePath=".\ModellGParam.f90"/>
 		<File RelativePath=".\module_model_settings.f90"/>
+		<File RelativePath=".\organic_carbon_inflow_1d.f90"/>
 		<File RelativePath=".\ph_inflow_1d.f90"/>
 		<File RelativePath=".\qsim.f90"/>
 		<File RelativePath=".\randbedingungen.f90"/>

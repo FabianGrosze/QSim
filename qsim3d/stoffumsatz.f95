@@ -26,6 +26,9 @@
 ! --------------------------------------------------------------------------- !
 subroutine stoffumsatz()
    use modell
+   use module_organic_carbon, only: organic_carbon
+   
+   
    implicit none
    integer :: i, j , i1, i2, i3, n,k,nk
    logical :: printi, nix, fehler_nan
@@ -34,13 +37,19 @@ subroutine stoffumsatz()
    real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
    real , allocatable , dimension (:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
    real , allocatable , dimension (:) :: tempsed_k, tempw_k
-   if (meinrang == 0)print*,'stoffumsatz start'
+   
+   
+   if (meinrang == 0) print*,'stoffumsatz start'
    !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
    do i = 1,part ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
+      
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
-         if (iglob == kontrollknoten) print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
+         if (iglob == kontrollknoten) then
+            print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
+         endif
+         
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             
             if (.not. nur_temp) then ! wenn nur_temp keine anderen Stoffumsätze
@@ -50,6 +59,7 @@ subroutine stoffumsatz()
                   if (iglob == kontrollknoten) print*,'stoffumsatz: nur aufenthaltszeit (alter)'
                   cycle ! bei nur_alter nix anderes
                endif
+               
                !------------------------------------------------------------------------ Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
                !call sedflux_huelle(i)
                !------------------------------------------------------------------------ Konsumenten / Rotatorien
@@ -61,11 +71,12 @@ subroutine stoffumsatz()
                      !fehler_nan=.true.
                   endif
                end do
+               
                !------------------------------------------------------------------------ Corophium, auch ein Konsument ## in Überarbeitung
                !call coroph_huelle(i)
                !------------------------------------------------------------------------ Muscheln (dreissena), auch Konsumenten
                call dreissen_huelle(i)
-               !if(iglob.eq.kontrollknoten) print*,'stoffumsatz: deissena gerade mal weggeschaltet 28okt19'
+               
                !------------------------------------------------------------------------ heterotrophe Nanoflagellaten
                !call hnf_huelle(i)
                !----------------------------------------------------------------------------------------------------------- Algen-Baustein
@@ -75,6 +86,8 @@ subroutine stoffumsatz()
                      if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
                   endif
                end do
+               
+               
                call algae_huelle(i)
                ! algaeski()
                ! algaesbl()
@@ -92,27 +105,22 @@ subroutine stoffumsatz()
                      if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
                   endif
                end do
+               
                !------------------------------------------------------------------------ benthische Algen
                call albenth_huelle(i)
+               
                !------------------------------------------------------------------------ Makrophythen
                call mphyt_huelle(i)
-               !------------------------------------------------------------------------ organischer Kohlenstoff BSB
-               if (iglob == kontrollknoten) print*,'stoffumsatz: bac(1) vor orgc_huelle = '  &
-                   , planktonic_variable_p(42+(i-1)*number_plankt_vari)
-               call orgc_huelle(i)
-               do k = 1,number_trans_quant
-                  if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
-                     print*,'nach orgc_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
-                     !fehler_nan=.true.
-                  endif
-               end do
+               
+               ! organischer Kohlenstoff BSB
+               call organic_carbon_wrapper_3d(i)
+               
                !------------------------------------------------------------------------ Stickstoff in Ammonium, Nitrit und Nitrat
                call ncyc_huelle(i)
                do k = 1,number_trans_quant
                   if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
                      print*,'nach ncyc_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
+                     if (meinrang == 0) print*, 'trans_quant_name:',trans_quant_name(k)
                      fehler_nan = .true.
                   endif
                end do

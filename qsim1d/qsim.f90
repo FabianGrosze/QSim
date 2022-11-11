@@ -29,6 +29,7 @@ program qsim
    use aparam
    use mod_model_settings
    use module_ph
+   use module_organic_carbon
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -1027,9 +1028,14 @@ program qsim
       ! wird ERGEB2D.txt erzeugt
       if (i2Ds(mstr) > 0) then
          i2Daus = 1
+         print *, 'You are running a simulation with depth resolved calculations (2D).'
+         print *, 'This is currently not supported by QSim. Please use a different version.'
+         print *, 'Stop.'
+         stop
       else
          i2Daus = 0
       endif
+
    endif
    
    6 continue
@@ -5977,255 +5983,112 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! orgC
+      ! organic carbon
       ! -----------------------------------------------------------------------
       1530 continue
-      if (vbsb(1) < 0.0 .and. vbsb(1) < 0.0)goto 1514
-      call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,flae,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze         &
-                ,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor,jiein,bsbgr,bsbki,akbcm        &
-                ,agbcm,pfl,ezind,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb,csbki,csbgr,ischif,echla          &
-                ,evkigr,eantbl,aki,agr,drfaek,drfaeg,drfaes,ssdr,orgCsd,orgCsd0,orgCsd_abb,CD,CP,CM,BAC,eCD  &
-                ,eCP,eCM,eBAC,TOC_CSB,GROT,vcsb,vkigr,antbl,HNFBAC,BSBHNF,CHNF,zBAC                          &
-                ,BVHNF,eCHNF,fbsgr,frfgr,fbsgrs,frfgrs,BACmua,dorgSS,ilbuhn,iwied,fkm,bsbct,qeinlL           &
-                ,iorLa,iorLe,ieinLs,pl0,Q_PK,Q_PB,Q_PG,pZoo,nl0,Q_NK,Q_NB,Q_NG,nzoo,etemp,bsbctP             &
-                ,doN,hsdFluB,HyP1,hymxD,KsD1,KsD2,KsM,upBAC,JDOC1,JDOC2,YBAC,rsGBAC                          &
-                ,nkzs,mstr,itags,monats,uhrz,azStrs,bsbZoo                                                   &
-                ,.false.,0)
+      if (vbsb(1) < 0.0 .and. vbsb(1) < 0.0) goto 1514
       
-      if (nbuhn(mstr) == 0)goto 1514
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwtief(ior) = tiefe(ior)
-            zwvm(ior) = vmitt(ior)
-            zwobsb(ior) = obsb(ior)
-            zwocsb(ior) = ocsb(ior)
-            zwvbsb(ior) = vbsb(ior)
-            zwvcsb(ior) = vcsb(ior)
-            zwbsbt(ior) = bsbt(ior)
-            zwbsct(ior) = bsbct(ior)
-            zwbsP(ior) = bsbctP(ior)
-            zwbsN(ior) = doN(ior)
-            zwzooi(ior) = zooind(ior)
-            zwabsz(ior) = abszo(ior)
-            zwsbsb(ior) = sdbsb(ior)
-            zwzexk(ior) = zexki(ior)
-            zwzexg(ior) = zexgr(ior)
-            zwzexb(ior) = zexbl(ior)
-            zwbsbe(ior) = bsbbet(ior)
-            zwkmor(ior) = dkimor(ior)
-            zwgmor(ior) = dgrmor(ior)
-            zwbmor(ior) = dblmor(ior)
-            zwkbcm(ior) = akbcm(ior)
-            zwgbcm(ior) = agbcm(ior)
-            zwbbcm(ior) = abbcm(ior)
-            zwkigr(ior) = vkigr(ior)
-            zwantb(ior) = antbl(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwdfak(ior) = drfaek(ior)
-            zwdfag(ior) = drfaeg(ior)
-            zwdfab(ior) = drfaeb(ior)
-            zwdfas(ior) = drfaes(ior)
-            zwssdr(ior) = ssdr(ior)
-            zwCsed(ior) = orgCsd(mstr,ior)
-            zwCsed_abb(ior) = orgCsd_abb(mstr,ior)
-            zwcd(1,ior) = CD(1,ior)
-            zwcd(2,ior) = CD(2,ior)
-            zwcp(1,ior) = CP(1,ior)
-            zwcp(2,ior) = CP(2,ior)
-            zwcm(ior) = CM(ior)
-            zwBAC(ior) = BAC(ior)
-            zwHNFB(ior) = HNFBAC(ior)
-            zwBSBH(ior) = BSBHNF(ior)
-            zwHNF(ior) = CHNF(ior)
-            zwfbgr(ior) = fbsgr(ior)
-            zwfrgr(ior) = frfgr(ior)
-            zworgS(ior) = dorgSS(ior)
-            zwnkzs(ior) = nkzs(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            obsb(ior) = bbsb(mstr,ior)
-            ocsb(ior) = bcsb(mstr,ior)
-            vbsb(ior) = bvbsb(mstr,ior)
-            vcsb(ior) = bvcsb(mstr,ior)
-            zooind(ior) = bzooi(mstr,ior)
-            abszo(ior) = babszo(mstr,ior)
-            sdbsb(ior) = bsdbsb(mstr,ior)
-            zexki(ior) = bzexki(mstr,ior)
-            zexgr(ior) = bzexgr(mstr,ior)
-            zexbl(ior) = bzexbl(mstr,ior)
-            dkimor(ior) = bdkmor(mstr,ior)
-            dgrmor(ior) = bdgmor(mstr,ior)
-            dblmor(ior) = bdbmor(mstr,ior)
-            akbcm(ior) = bakbcm(mstr,ior)
-            agbcm(ior) = bagbcm(mstr,ior)
-            abbcm(ior) = babbcm(mstr,ior)
-            vkigr(ior) = bvkigr(mstr,ior)
-            antbl(ior) = bantbl(mstr,ior)
-            pfl(ior) = bpfl(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            drfaek(ior) = bdfaek(mstr,ior)
-            drfaeg(ior) = bdfaeg(mstr,ior)
-            drfaeg(ior) = bdfaeb(mstr,ior)
-            drfaes(ior) = bdfaes(mstr,ior)
-            ssdr(ior) = bssdr(mstr,ior)
-            CD(1,ior) = bCD(mstr,1,ior)
-            CD(2,ior) = bCD(mstr,2,ior)
-            CP(1,ior) = bCP(mstr,1,ior)
-            CP(2,ior) = bCP(mstr,2,ior)
-            CM(ior) = bCM(mstr,ior)
-            BAC(ior) = bBAC(mstr,ior)
-            HNFBAC(ior) = bHNFBS(mstr,ior)
-            BSBHNF(ior) = bBSBHN(mstr,ior)
-            CHNF(ior) = bCHNF(mstr,ior)
-            fbsgr(ior) = bfbsgr(mstr,ior)
-            frfgr(ior) = bfrfgr(mstr,ior)
-            JDOC1(ior) = bJDOC1(ior)
-            JDOC2(ior) = bJDOC2(ior)
-         enddo
-         
-         ilbuhn = 1
-         goto 1530
-      endif
+      ! inflow from diffuse and point sources
+      call organic_carbon_inflow_1d(                      &
+               ocsb, obsb, CD, CP, CM, BAC, fbsgr, frfgr, &
+               vkigr, antbl, ecsb, ebsb, echla, evkigr,   &
+               eantbl, ezind, eCD, eCP, eCM, eBAC, frfgrs,&
+               fbsgrs, akbcm, agbcm, abbcm, tempw, bsbzoo,&
+               toc_csb, mstr, ieinLs, qeinlL, qeinl,      &
+               vabfl, iorLe, iorLa, jiein, flae, anze,    &
+               flag, tflie)
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bbsb(mstr,ior) = obsb(ior)
-            bcsb(mstr,ior) = ocsb(ior)
-            bvbsb(mstr,ior) = vbsb(ior)
-            bvcsb(mstr,ior) = vcsb(ior)
-            bbsbt(mstr,ior) = bsbt(ior)
-            bbsbct(mstr,ior) = bsbct(ior)
-            bbsbcP(mstr,ior) = bsbctP(ior)
-            bdoN(mstr,ior) = doN(ior)
-            bsdbsb(mstr,ior) = sdbsb(ior)
-            bbsbbe(mstr,ior) = bsbbet(ior)
-            borgCs(mstr,ior) = orgCsd(mstr,ior)
-            borgCs_abb(mstr,ior) = orgCsd_abb(mstr,ior)
-            bcd(mstr,1,ior) = CD(1,ior)
-            bcd(mstr,2,ior) = CD(2,ior)
-            bcp(mstr,1,ior) = CP(1,ior)
-            bcp(mstr,2,ior) = CP(2,ior)
-            bcm(mstr,ior) = CM(ior)
-            bBAC(mstr,ior) = BAC(ior)
-            bCHNF(mstr,ior) = CHNF(ior)
-            bfbsgr(mstr,ior) = fbsgr(ior)
-            bfrfgr(mstr,ior) = frfgr(ior)
-            borgSS(mstr,ior) = dorgSS(ior)
+      ! metabolism in main river
+      do ior = 1, anze+1
+         call organic_carbon(                                                    &
+               ocsb(ior), obsb(ior), CD(1,ior), CD(2,ior), CP(1,ior), CP(2,ior), &
+               CM(ior), bac(ior), fbsgr(ior), frfgr(ior),  nl0(ior), pl0(ior),   &
+               cHNF(ior), bvHNF(ior),                                            &
+               tempw(ior), tiefe(ior), pfl(ior), jdoc1(ior), jdoc2(ior),         &
+               rau(ior), vmitt(ior), bsbHNF(ior),                                &
+               dKiMor(ior), dGrMor(ior), dBlMor(ior), abszo(ior),                &
+               Q_PK(ior), Q_PG(ior), Q_PB(ior),                                  &
+               Q_NK(ior), Q_NG(ior), Q_NB(ior),                                  &
+               zexKi(ior), zexGr(ior), zexbl(ior),                               &
+               drfaek(ior), drfaeg(ior), drfaeb(ior),                            &
+               ssdr(ior), hnfbac(ior), zBAC(ior),                                &
+               abl(ior), agr(ior), aki(ior), zooind(ior),                        &
+               bsbzoo, toc_csb, tflie,                                           &
+               BAcmua(ior), bsbct(ior), BSBctP(ior), doN(ior), bsbt(ior),        &
+               BSBbet(ior), orgCsd0(ior), orgCsd(mstr,ior), orgCsd_abb(mstr,ior),&
+               dorgSS(ior), vBSB(ior), vCSB(ior),                                &
+               kontroll, jjj)
+      enddo
+      
+      ! groyne-field
+      if (nbuhn(mstr) > 0) then 
+         do ior = 1, anze+1
+            ! metabolism in groyne-field
+            call organic_carbon(                                                                &
+                     bcsb(mstr,ior), bbsb(mstr,ior), bCD(mstr,1,ior), bCD(mstr,2,ior),          &
+                     bCP(mstr,1,ior), bCP(mstr,2,ior),                                          &
+                     bCM(mstr,ior), bBAC(mstr,ior), bfbsgr(mstr,ior), bfrfgr(mstr,ior),         &
+                     nl0(ior), pl0(ior),                                                        &
+                     bCHNF(mstr,ior), bvHNF(ior),                                               &
+                     btempw(mstr,ior), bh(mstr,ior), bpfl(mstr,ior), bJDOC1(ior), bJDOC2(ior),  &
+                     rau(ior), vbm(mstr,ior), bBSBHN(mstr,ior),                                 &
+                     bdkmor(mstr,ior), bdgmor(mstr,ior), bdbmor(mstr,ior), babszo(mstr,ior),    &
+                     Q_PK(ior), Q_PG(ior), Q_PB(ior),                                           &
+                     Q_NK(ior), Q_NG(ior), Q_NB(ior),                                           &
+                     bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                      &
+                     bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                      &
+                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                              &
+                     babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),           &
+                     bsbzoo, toc_csb, tflie,                                                    &
+                     BAcmua(ior),  bsbct(ior), bsbctP(ior), doN(ior), bbsbt(mstr,ior),          &
+                     bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),    &
+                     dorgSS(ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                             &
+                     kontroll, jjj)
             
-            tempw(ior) = zwtemp(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            obsb(ior) = zwobsb(ior)
-            ocsb(ior) = zwocsb(ior)
-            vbsb(ior) = zwvbsb(ior)
-            vcsb(ior) = zwvcsb(ior)
-            bsbt(ior) = zwbsbt(ior)
-            bsbct(ior) = zwbsct(ior)
-            bsbctP(ior) = zwbsP(ior)
-            doN(ior) = zwbsN(ior)
-            zooind(ior) = zwzooi(ior)
-            abszo(ior) = zwabsz(ior)
-            sdbsb(ior) = zwsbsb(ior)
-            zexki(ior) = zwzexk(ior)
-            zexgr(ior) = zwzexg(ior)
-            zexbl(ior) = zwzexb(ior)
-            bsbbet(ior) = zwbsbe(ior)
-            dkimor(ior) = zwkmor(ior)
-            dgrmor(ior) = zwgmor(ior)
-            dblmor(ior) = zwbmor(ior)
-            akbcm(ior) = zwkbcm(ior)
-            agbcm(ior) = zwgbcm(ior)
-            abbcm(ior) = zwbbcm(ior)
-            vkigr(ior) = zwkigr(ior)
-            antbl(ior) = zwantb(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            drfaek(ior) = zwdfak(ior)
-            drfaeg(ior) = zwdfag(ior)
-            drfaeb(ior) = zwdfab(ior)
-            drfaes(ior) = zwdfas(ior)
-            ssdr(ior) = zwssdr(ior)
-            orgCsd(mstr,ior) = zwCsed(ior)
-            orgCsd_abb(mstr,ior) = zwCsed_abb(ior)
-            CD(1,ior) = zwcd(1,ior)
-            CD(2,ior) = zwcd(2,ior)
-            CP(1,ior) = zwcp(1,ior)
-            CP(2,ior) = zwcp(2,ior)
-            CM(ior) = zwcm(ior)
-            BAC(ior) = zwBAC(ior)
-            HNFBAC(ior) = zwHNFB(ior)
-            BSBHNF(ior) = zwBSBH(ior)
-            CHNF(ior) = zwHNF(ior)
-            fbsgr(ior) = zwfbgr(ior)
-            frfgr(ior) = zwfrgr(ior)
-            dorgSS(ior) = zworgS(ior)
-            nkzs(ior) = zwnkzs(ior)
-            diff1 = bbsb(mstr,ior)-obsb(ior)
-            diff2 = bcsb(mstr,ior)-ocsb(ior)
-            diff3 = bvbsb(mstr,ior)-vbsb(ior)
-            diff4 = bvcsb(mstr,ior)-vcsb(ior)
-            diff5 = bcd(mstr,1,ior)-CD(1,ior)
-            diff6 = bcd(mstr,2,ior)-CD(2,ior)
-            diff7 = bcp(mstr,1,ior)-CP(1,ior)
-            diff8 = bcp(mstr,2,ior)-CP(2,ior)
-            diff9 = bcm(mstr,ior)-CM(ior)
-            diff10 = bBAC(mstr,ior)-BAC(ior)
-            diff11 = bfbsgr(mstr,ior)-fbsgr(ior)
-            diff12 = bfrfgr(mstr,ior)-frfgr(ior)
-            
-            bdiff1 = obsb(ior)-bbsb(mstr,ior)
-            bdiff2 = ocsb(ior)-bcsb(mstr,ior)
-            bdiff3 = vbsb(ior)-bvbsb(mstr,ior)
-            bdiff4 = vcsb(ior)-bvcsb(mstr,ior)
-            bdiff5 = CD(1,ior)-bcd(mstr,1,ior)
-            bdiff6 = CD(2,ior)-bcd(mstr,2,ior)
-            bdiff7 = CP(1,ior)-bcp(mstr,1,ior)
-            bdiff8 = CP(2,ior)-bcp(mstr,2,ior)
-            bdiff9 = CM(ior)-bcm(mstr,ior)
-            bdiff10 = BAC(ior)-bBAC(mstr,ior)
-            bdiff11 = fbsgr(ior)-bfbsgr(mstr,ior)
-            bdiff12 = frfgr(ior)-bfrfgr(mstr,ior)
+            ! --- mixing between groyne-field and main river ---
+            diff1  = bbsb(mstr,ior)   - obsb(ior)
+            diff2  = bcsb(mstr,ior)   - ocsb(ior)
+            diff3  = bvbsb(mstr,ior)  - vbsb(ior)
+            diff4  = bvcsb(mstr,ior)  - vcsb(ior)
+            diff5  = bcd(mstr,1,ior)  - CD(1,ior)
+            diff6  = bcd(mstr,2,ior)  - CD(2,ior)
+            diff7  = bcp(mstr,1,ior)  - CP(1,ior)
+            diff8  = bcp(mstr,2,ior)  - CP(2,ior)
+            diff9  = bcm(mstr,ior)    - CM(ior)
+            diff10 = bBAC(mstr,ior)   - BAC(ior)
+            diff11 = bfbsgr(mstr,ior) - fbsgr(ior)
+            diff12 = bfrfgr(mstr,ior) - frfgr(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               obsb(ior) = obsb(ior)+diff1*(1.-exp(-hctau1(ior)))
-               ocsb(ior) = ocsb(ior)+diff2*(1.-exp(-hctau1(ior)))
-               vbsb(ior) = vbsb(ior)+diff3*(1.-exp(-hctau1(ior)))
-               vcsb(ior) = vcsb(ior)+diff4*(1.-exp(-hctau1(ior)))
-               CD(1,ior) = CD(1,ior)+diff5*(1.-exp(-hctau1(ior)))
-               CD(2,ior) = CD(2,ior)+diff6*(1.-exp(-hctau1(ior)))
-               CP(1,ior) = CP(1,ior)+diff7*(1.-exp(-hctau1(ior)))
-               CP(2,ior) = CP(2,ior)+diff8*(1.-exp(-hctau1(ior)))
-               CM(ior) = CM(ior)+diff9*(1.-exp(-hctau1(ior)))
-               BAC(ior) = BAC(ior)+diff10*(1.-exp(-hctau1(ior)))
-               fbsgr(ior) = fbsgr(ior)+diff11*(1.-exp(-hctau1(ior)))
-               frfgr(ior) = frfgr(ior)+diff12*(1.-exp(-hctau1(ior)))
+               obsb(ior)  = obsb(ior)  + diff1  * (1. - exp(-hctau1(ior)))
+               ocsb(ior)  = ocsb(ior)  + diff2  * (1. - exp(-hctau1(ior)))
+               vbsb(ior)  = vbsb(ior)  + diff3  * (1. - exp(-hctau1(ior)))
+               vcsb(ior)  = vcsb(ior)  + diff4  * (1. - exp(-hctau1(ior)))
+               CD(1,ior)  = CD(1,ior)  + diff5  * (1. - exp(-hctau1(ior)))
+               CD(2,ior)  = CD(2,ior)  + diff6  * (1. - exp(-hctau1(ior)))
+               CP(1,ior)  = CP(1,ior)  + diff7  * (1. - exp(-hctau1(ior)))
+               CP(2,ior)  = CP(2,ior)  + diff8  * (1. - exp(-hctau1(ior)))
+               CM(ior)    = CM(ior)    + diff9  * (1. - exp(-hctau1(ior)))
+               BAC(ior)   = BAC(ior)   + diff10 * (1. - exp(-hctau1(ior)))
+               fbsgr(ior) = fbsgr(ior) + diff11 * (1. - exp(-hctau1(ior)))
+               frfgr(ior) = frfgr(ior) + diff12 * (1. - exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bbsb(mstr,ior) = bbsb(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bcsb(mstr,ior) = bcsb(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bvbsb(mstr,ior) = bvbsb(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-               bvcsb(mstr,ior) = bvcsb(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-               bCD(mstr,1,ior) = bCD(mstr,1,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-               bCD(mstr,2,ior) = bCD(mstr,2,ior)+bdiff6*(1.-exp(-hctau2(ior)))
-               bCP(mstr,1,ior) = bCP(mstr,1,ior)+bdiff7*(1.-exp(-hctau2(ior)))
-               bCP(mstr,2,ior) = bCP(mstr,2,ior)+bdiff8*(1.-exp(-hctau2(ior)))
-               bCM(mstr,ior) = bCM(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior)))
-               bBAC(mstr,ior) = bBAC(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior)))
-               bfbsgr(mstr,ior) = bfbsgr(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior)))
-               bfrfgr(mstr,ior) = bfrfgr(mstr,ior)+bdiff12*(1.-exp(-hctau2(ior)))
+               bbsb(mstr,ior)   = bbsb(mstr,ior)   - diff1  * (1.-exp(-hctau2(ior)))
+               bcsb(mstr,ior)   = bcsb(mstr,ior)   - diff2  * (1.-exp(-hctau2(ior)))
+               bvbsb(mstr,ior)  = bvbsb(mstr,ior)  - diff3  * (1.-exp(-hctau2(ior)))
+               bvcsb(mstr,ior)  = bvcsb(mstr,ior)  - diff4  * (1.-exp(-hctau2(ior)))
+               bCD(mstr,1,ior)  = bCD(mstr,1,ior)  - diff5  * (1.-exp(-hctau2(ior)))
+               bCD(mstr,2,ior)  = bCD(mstr,2,ior)  - diff6  * (1.-exp(-hctau2(ior)))
+               bCP(mstr,1,ior)  = bCP(mstr,1,ior)  - diff7  * (1.-exp(-hctau2(ior)))
+               bCP(mstr,2,ior)  = bCP(mstr,2,ior)  - diff8  * (1.-exp(-hctau2(ior)))
+               bCM(mstr,ior)    = bCM(mstr,ior)    - diff9  * (1.-exp(-hctau2(ior)))
+               bBAC(mstr,ior)   = bBAC(mstr,ior)   - diff10 * (1.-exp(-hctau2(ior)))
+               bfbsgr(mstr,ior) = bfbsgr(mstr,ior) - diff11 * (1.-exp(-hctau2(ior)))
+               bfrfgr(mstr,ior) = bfrfgr(mstr,ior) - diff12 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         
-         ilbuhn = 0
       endif
       
       ! -----------------------------------------------------------------------
