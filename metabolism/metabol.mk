@@ -8,6 +8,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/module_aparam.o \
       ../metabolism/ph/module_ph.o\
       ../metabolism/organic_carbon/module_organic_carbon.o \
+      ../metabolism/phosphate/module_phosphate.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \
@@ -31,7 +32,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/oxygen.o \
       ../metabolism/ph/ph.o \
       ../metabolism/ph/pwert.o \
-      ../metabolism/po4s.o \
       ../metabolism/runge_kutta.o \
       ../metabolism/sasu.o \
       ../metabolism/schiff.o \

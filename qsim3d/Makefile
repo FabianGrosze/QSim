@@ -31,7 +31,8 @@ SHELL=/usr/bin/bash
 
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-PV='qsim3d_organic_carbon'
+#PV='qsim3d_organic_carbon'
+PV='qsim3d_module_phosphate'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -79,22 +80,27 @@ SCHISM_LIB   = -L. -lschism
 
 # list of all qsim3d files
 Q3 = version.co trans_read.co \
-     module_modell.o module_QSimDatenfelder.o nachricht.o\
-     benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
-     zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
-     planktische_variablen.o module_suspendedMatter.o parallel.o \
-     temperw_huelle.o alter.o\
-     po4s_huelle.o silikat_huelle.o module_isotope.o ncyc_huelle.o \
-     oxygen_huelle.o organic_carbon_wrapper_3d.o ph_wrapper_3d.o \
-     algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
-     ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
-     eingabe.o initialisieren.o randbedingungen.o \
-     schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
-     stofftransport_casu.o \
-     stofftransport_untrim.o stofftransport.o\
-     sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
-     stoffumsatz.o \
-     QSim3D.o
+	module_modell.o module_QSimDatenfelder.o nachricht.o\
+	benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
+	zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
+	planktische_variablen.o module_suspendedMatter.o parallel.o \
+	temperw_huelle.o alter.o\
+	module_isotope.o \
+	ncyc_huelle.o \
+	oxygen_huelle.o \
+	phosphate_wrapper_3d.o \
+	silikat_huelle.o \
+	organic_carbon_wrapper_3d.o \
+	ph_wrapper_3d.o \
+	algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
+	ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
+	eingabe.o initialisieren.o randbedingungen.o \
+	schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
+	stofftransport_casu.o \
+	stofftransport_untrim.o stofftransport.o\
+	sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
+	stoffumsatz.o \
+	QSim3D.o
 
 # list of all metabolism files
 -include ../metabolism/metabol.mk
@@ -168,7 +174,7 @@ qsim3d: $(Q3)
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
-	cp -f $(PV) $(MY_BIN)/$(PV)
+	mv -f $(PV) $(MY_BIN)/$(PV)
 	cp -f ./scripte/* $(MY_BIN)
 
 KT = version.co trans_read.co \

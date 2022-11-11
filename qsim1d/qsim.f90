@@ -28,8 +28,9 @@ program qsim
    use allodim
    use aparam
    use mod_model_settings
-   use module_ph
-   use module_organic_carbon
+   use module_ph,             only: ph, pwert 
+   use module_organic_carbon, only: organic_carbon
+   use module_phosphate,      only: phosphate
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -6608,206 +6609,84 @@ program qsim
       ! -----------------------------------------------------------------------
       413 continue
       
-      if (iwsim == 2 .and. icoli == 1)goto 1525
-      if (iwsim == 4 .or. iwsim == 2 .or. iwsim == 5)goto 118
-      if (gelP(1) < 0.0)goto 1516
+      if (iwsim == 2 .and. icoli == 1) goto 1525
+      if (iwsim == 4 .or. iwsim == 2 .or. iwsim == 5) goto 118
+      if (gelP(1) < 0.0) goto 1516
+      
       if (nbuhn(mstr) > 0 .and. ilbuhn == 0) then
-         do ior = 1,anze+1
-            albewg(ior) = 0.0
-            alberg(ior) = 0.0
-            albewk(ior) = 0.0
-            alberk(ior) = 0.0
-         enddo
+         albewg(:) = 0.0
+         alberg(:) = 0.0
+         albewk(:) = 0.0
+         alberk(:) = 0.0
       endif
       
-      call po4s(gelp,flag,elen,ior,tiefe                                       &
-                ,dalggr,dalgki,dalgag,dalgak                                   &
-                ,ep,qeinl,vabfl,anze,tflie,dzres1,dzres2                       &
-                ,jiein,sedalk,sedalb,sedalg                                    &
-                ,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,pl0   &
-                ,abl,dalgbl,dalgab,exdrvb,gesP,orgCsd                          &
-                ,zooind,GROT,pZoo,egesP,ilbuhn,iwied                           &
-                ,CD,CP,CM,BAC,bsbctP,Qmx_PK,Q_PK,up_PKz                        &
-                ,Qmx_PG,Q_PG,up_PGz,Qmx_PB,Q_PB,up_PBz,epl0                    &
-                ,gelpz,agrtbr,akitbr,abltbr,agrbrz                             &
-                ,akibrz,ablbrz,algakz,algagz,algabz,hJPO4,nkzs,dH2D            &
-                ,dH2De,mstr,iorLa,iorLe,ieinLs,flae,qeinlL,gPL,gesPL,hgesPz    &
-                ,algdrk,algdrg,algdrb,itags,monats,uhrz,azStrs                 &
-                ,.false.,0)
-                
-      if (nbuhn(mstr) == 0)goto 1516
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtief(ior) = tiefe(ior)
-            zwgelp(ior) = gelp(ior)
-            zwgesP(ior) = gesP(ior)
-            zwbsP(ior) = bsbctP(ior)
-            zwsedk(ior) = sedalk(ior)
-            zwsedg(ior) = sedalg(ior)
-            zwsedb(ior) = sedalb(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            zwrdr(ior) = resdr(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwexdk(ior) = exdrvk(ior)
-            zwexdg(ior) = exdrvg(ior)
-            zwexdb(ior) = exdrvb(ior)
-            zwadrk(ior) = algdrk(ior)
-            zwadrg(ior) = algdrg(ior)
-            zwadrb(ior) = algdrb(ior)
-            zwpl0(ior) = pl0(ior)
-            zup_PK(ior) = up_PKz(1,ior)
-            zup_PG(ior) = up_PGz(1,ior)
-            zup_PB(ior) = up_PBz(1,ior)
-            zQ_PK(ior) = Q_PK(ior)
-            zQ_PG(ior) = Q_PG(ior)
-            zQ_PB(ior) = Q_PB(ior)
-            zwJPO4(ior) = hJPO4(mstr,ior)
-            zaktbr(ior) = akibrz(1,ior)
-            zagtbr(ior) = agrbrz(1,ior)
-            zabtbr(ior) = ablbrz(1,ior)
-            zwakz(ior) = dalgkz(1,ior)
-            zwaakz(ior) = algakz(1,ior)
-            zwagz(ior) = dalggz(1,ior)
-            zwaagz(ior) = algagz(1,ior)
-            zwabz(ior) = dalgbz(1,ior)
-            zwaabz(ior) = algabz(1,ior)
-            zwPz(ior) = gelPz(1,ior)
-            zwCsed(ior) = orgCsd(mstr,ior)
-            
-            zwnkzs(ior) = nkzs(ior)
-            
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            gelp(ior) = bgelp(mstr,ior)
-            gesP(ior) = bgesP(mstr,ior)
-            bsbct(ior) = bbsbct(mstr,ior)
-            bsbctP(ior) = bbsbcP(mstr,ior)
-            sedalk(ior) = bsedak(mstr,ior)
-            sedalg(ior) = bsedag(mstr,ior)
-            sedalb(ior) = bsedab(mstr,ior)
-            dzres1(ior) = bzres1(mstr,ior)
-            dzres2(ior) = bzres2(mstr,ior)
-            albewg(ior) = babewg(mstr,ior)
-            albewk(ior) = babewk(mstr,ior)
-            alberg(ior) = baberg(mstr,ior)
-            alberk(ior) = baberk(mstr,ior)
-            resdr(ior) = bresdr(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            exdrvk(ior) = bexdvk(mstr,ior)
-            exdrvg(ior) = bexdvg(mstr,ior)
-            exdrvb(ior) = bexdvb(mstr,ior)
-            algdrk(ior) = badrk(mstr,ior)
-            algdrg(ior) = badrg(mstr,ior)
-            algdrb(ior) = badrb(mstr,ior)
-            pl0(ior) = bpl0(mstr,ior)
-            orgCsd(mstr,ior) = borgCs(mstr,ior)
-            up_PKz(1,ior) = bup_PK(mstr,ior)
-            up_PGz(1,ior) = bup_PG(mstr,ior)
-            up_PBz(1,ior) = bup_PB(mstr,ior)
-            Q_PK(ior) = bQ_PK(mstr,ior)
-            Q_PG(ior) = bQ_PG(mstr,ior)
-            Q_PB(ior) = bQ_PB(mstr,ior)
-            hJPO4(mstr,ior) = bJPO4(mstr,ior)
-            akibrz(1,ior) = baktbr(mstr,ior)
-            agrbrz(1,ior) = bagtbr(mstr,ior)
-            ablbrz(1,ior) = babtbr(mstr,ior)
-            dalgkz(1,ior) = balgkz(mstr,ior)
-            algakz(1,ior) = balakz(mstr,ior)
-            dalggz(1,ior) = balggz(mstr,ior)
-            algagz(1,ior) = balagz(mstr,ior)
-            dalgbz(1,ior) = balgbz(mstr,ior)
-            algabz(1,ior) = balabz(mstr,ior)
-            gelPz(1,ior) = bgelP(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 413
-      endif
+      ! inflow from point and diffuse sources
+      call phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
+                               gelPz, gPL, gesPL, egesP, eP, epl0, mstr,   &
+                               ieinLs, qeinlL, qeinl, vabfl, iorLa, iorLe, &
+                               jiein, flae, anze, nkzs, flag, tflie)
+   
+      ! metabolism
+      do ior = 1, anze+1
+         call phosphate(gelP(ior), gesP(ior), bsbctP(ior),                      &
+                        aki(ior), agr(ior), abl(ior), dzres1(ior), dzres2(ior), &
+                        Q_PK(ior), Q_PG(ior), Q_PB(ior),                        &
+                        resdr(ior), exdrvk(ior), exdrvg(ior), exdrvb(ior),      &
+                        up_PGz(1,ior), up_PKz(1,ior), up_PBz(1,ior),            &
+                        agrbrz(1,ior), akibrz(1,ior), ablbrz(1,ior),            &
+                        algagz(1,ior), algakz(1,ior), algabz(1,ior),            &
+                        albewg(ior), alberg(ior), albewk(ior), alberk(ior),     &
+                        tiefev, hJPO4(mstr,ior), orgCsd(mstr, ior), pl0(ior),   &
+                        sedalk(ior), sedalb(ior), sedalg(ior),                  &
+                        algdrk(ior), algdrb(ior), algdrg(ior),                  &
+                        tflie,                                                  &
+                        kontroll, jjj)
+      enddo
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bgelp(mstr,ior) = gelp(ior)
-            bgesP(mstr,ior) = gesP(ior)
-            bpl0(mstr,ior) = pl0(ior)
+      ! --- groyne fields ---
+      if (nbuhn(mstr) > 0) then
+         do ior = 1, anze+1
+            ! metabolism in groyne fields
+            call phosphate(bgelp(mstr,ior), bgesP(mstr,ior), bbsbcP(mstr,ior),                                &
+                           baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),&
+                           bQ_PK(mstr,ior), bQ_PG(mstr,ior),  bQ_PB(mstr,ior),                                &
+                           bresdr(mstr,ior), bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),            &
+                           bup_PG(mstr,ior), bup_PK(mstr,ior), bup_PB(mstr,ior),                              &
+                           bagtbr(mstr,ior), baktbr(mstr,ior), babtbr(mstr,ior),                              &
+                           balagz(mstr,ior), balakz(mstr,ior), balabz(mstr,ior),                              &
+                           albewg(ior), alberg(ior), albewk(ior), alberk(ior),                                &
+                           bh(mstr,ior), bJPO4(mstr,ior), borgCs(mstr,ior), bpl0(mstr,ior),                   &
+                           bsedak(mstr,ior), bsedab(mstr,ior), bsedag(mstr,ior),                              &
+                           badrk(mstr,ior), badrb(mstr,ior), badrg(mstr,ior),                                 &
+                           tflie,                                                                             &
+                           kontroll, jjj)
             
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            gelp(ior) = zwgelp(ior)
-            gesP(ior) = zwgesP(ior)
-            bsbct(ior) = zwbsct(ior)
-            bsbctP(ior) = zwbsP(ior)
-            sedalk(ior) = zwsedk(ior)
-            sedalg(ior) = zwsedg(ior)
-            sedalb(ior) = zwsedb(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            resdr(ior) = zwrdr(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            exdrvk(ior) = zwexdk(ior)
-            exdrvg(ior) = zwexdg(ior)
-            exdrvb(ior) = zwexdb(ior)
-            algdrk(ior) = zwadrk(ior)
-            algdrg(ior) = zwadrg(ior)
-            algdrb(ior) = zwadrb(ior)
-            pl0(ior) = zwpl0(ior)
-            up_PKz(1,ior) = zup_PK(ior)
-            up_PGz(1,ior) = zup_PG(ior)
-            up_PBz(1,ior) = zup_PB(ior)
-            Q_PK(ior) = zQ_PK(ior)
-            Q_PG(ior) = zQ_PG(ior)
-            Q_PB(ior) = zQ_PB(ior)
-            hJPO4(mstr,ior) = zwJPO4(ior)
-            akibrz(1,ior) = zaktbr(ior)
-            agrbrz(1,ior) = zagtbr(ior)
-            ablbrz(1,ior) = zabtbr(ior)
-            dalgkz(1,ior) = zwakz(ior)
-            algakz(1,ior) = zwaakz(ior)
-            dalggz(1,ior) = zwagz(ior)
-            algagz(1,ior) = zwaagz(ior)
-            dalgbz(1,ior) = zwabz(ior)
-            algabz(1,ior) = zwaabz(ior)
-            orgCsd(mstr,ior) = zwCsed(ior)
-            
-            nkzs(ior) = zwnkzs(ior)
-            gelPz(1,ior) = zwPz(ior)
-            diff1 = bgelp(mstr,ior)-gelp(ior)
-            diff2 = bpl0(mstr,ior)-pl0(ior)
-            diff3 = bgesP(mstr,ior)-gesP(ior)
-            diff4 = bQ_PK(mstr,ior)-Q_PK(ior)
-            diff5 = bQ_PG(mstr,ior)-Q_PG(ior)
-            diff6 = bQ_PB(mstr,ior)-Q_PB(ior)
-            bdiff1 = gelp(ior)-bgelp(mstr,ior)
-            bdiff2 = pl0(ior)-bpl0(mstr,ior)
-            bdiff3 = gesP(ior)-bgesP(mstr,ior)
-            bdiff4 = Q_PK(ior)-bQ_PK(mstr,ior)
-            bdiff5 = Q_PG(ior)-bQ_PG(mstr,ior)
-            bdiff6 = Q_PB(ior)-bQ_PB(mstr,ior)
+            ! mixing of groyne fields and main river 
+            diff1 = bgelp(mstr,ior) - gelp(ior)
+            diff2 = bpl0(mstr,ior)  - pl0(ior)
+            diff3 = bgesP(mstr,ior) - gesP(ior)
+            diff4 = bQ_PK(mstr,ior) - Q_PK(ior)
+            diff5 = bQ_PG(mstr,ior) - Q_PG(ior)
+            diff6 = bQ_PB(mstr,ior) - Q_PB(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               gelp(ior) = gelp(ior)+diff1*(1.-exp(-hctau1(ior)))
-               pl0(ior) = pl0(ior)+diff2*(1.-exp(-hctau1(ior)))
-               gesP(ior) = gesP(ior)+diff3*(1.-exp(-hctau1(ior)))
-               Q_PK(ior) = Q_PK(ior)+diff4*(1.-exp(-hctau1(ior)))
-               Q_PG(ior) = Q_PG(ior)+diff5*(1.-exp(-hctau1(ior)))
-               Q_PB(ior) = Q_PB(ior)+diff6*(1.-exp(-hctau1(ior)))
+               gelp(ior) = gelp(ior) + diff1 * (1.-exp(-hctau1(ior)))
+               pl0(ior)  = pl0(ior)  + diff2 * (1.-exp(-hctau1(ior)))
+               gesP(ior) = gesP(ior) + diff3 * (1.-exp(-hctau1(ior)))
+               Q_PK(ior) = Q_PK(ior) + diff4 * (1.-exp(-hctau1(ior)))
+               Q_PG(ior) = Q_PG(ior) + diff5 * (1.-exp(-hctau1(ior)))
+               Q_PB(ior) = Q_PB(ior) + diff6 * (1.-exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bgelp(mstr,ior) = bgelp(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bpl0(mstr,ior) = bpl0(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bgesP(mstr,ior) = bgesP(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-               bQ_PK(mstr,ior) = bQ_PK(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-               bQ_PG(mstr,ior) = bQ_PG(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-               bQ_PB(mstr,ior) = bQ_PB(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior)))
+               bgelp(mstr,ior) = bgelp(mstr,ior) - diff1*(1.-exp(-hctau2(ior)))
+               bpl0(mstr,ior)  = bpl0(mstr,ior)  - diff2*(1.-exp(-hctau2(ior)))
+               bgesP(mstr,ior) = bgesP(mstr,ior) - diff3*(1.-exp(-hctau2(ior)))
+               bQ_PK(mstr,ior) = bQ_PK(mstr,ior) - diff4*(1.-exp(-hctau2(ior)))
+               bQ_PG(mstr,ior) = bQ_PG(mstr,ior) - diff5*(1.-exp(-hctau2(ior)))
+               bQ_PB(mstr,ior) = bQ_PB(mstr,ior) - diff6*(1.-exp(-hctau2(ior)))
             endif
          enddo
-         ilbuhn = 0
       endif
       
       ! -----------------------------------------------------------------------
@@ -7735,13 +7614,16 @@ program qsim
                hCChlgz(mstr,1,ior) = agbcm(ior)
             enddo
          else
-            call Transportz(anze,deltat,izeits,isub_dt,isub_dt_Mac,dtmin_Mac,hvmitt,elen,flag       &
-                            ,tempwz,vnh4z,vno2z,vno3z,vo2z,gelPz,Siz,akiz,agrz                      &
-                            ,ablz,chlaz,hgesPz,hgesNz,nkzs,dH2D,i2Ds,iwsim,mstr                     &
-                            ,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz,hQ_NKz,hQ_NBz,hQ_NGz         &
-                            ,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz  &
-                            ,iflRi,dl,iMAC,Uvert,tflie,jpoin1,itags,monats,iwied,uhrz,iverfahren    &
-                            ,azStrs,ianze_max,nkztot_max,Qmx_NK,Qmx_NB,Qmx_NG,mtracer)
+            call Transportz(anze, deltat, izeits, isub_dt, isub_dt_Mac, dtmin_Mac,  &
+                            hvmitt, elen, flag, tempwz, vnh4z, vno2z, vno3z, vo2z,  &
+                            gelPz, Siz, akiz, agrz, ablz, chlaz, hgesPz, hgesNz,    &
+                            nkzs, dH2D, i2Ds, iwsim, mstr, htempz, ho2z, hnh4z,     &
+                            hno2z, hno3z, hgelPz, hSiz, hQ_NKz, hQ_NBz, hQ_NGz,     &
+                            hakiz, hagrz, hablz, hchlaz, hchlkz, hchlgz, hchlbz,    &
+                            hCChlkz, hCChlbz, hCChlgz, iflRi, dl, iMAC, Uvert,      &
+                            tflie, jpoin1, itags, monats, iwied, uhrz, iverfahren,  &
+                            azStrs, ianze_max, nkztot_max, Qmx_NK, Qmx_NB, Qmx_NG,  &
+                            mtracer)
          endif
          
          ! k_eps 

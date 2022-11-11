@@ -1,6 +1,7 @@
 ## 14.09.09
 
 * Bugfix (QSim3D): Correct error in initializing variable schwi
+
 ## 14.09.08
 
 * Bugfix: vtk-output now includes all variables
@@ -17,6 +18,7 @@
 ## 14.09.05
 
 * Bugfix: correct arguments in call ph for groyne-fields
+
 
 ## 14.09.04
 * Refactoring of Code: module for pH
@@ -53,13 +55,13 @@ added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qim
 compiled at 16.mae.2022 
 
 
-## TAG 14.06
+## 14.06
 including extended and restructured temperature module `temperw_kern.f90`
 * evaporation (different formulas) added - in Gerris, use "Verdunstungsberechnung nach Sweers (1976)" für Vergleichbarkeit mit bisherigen Versionen
 * including subroutine into QSim3D
 
 
-## tag 14.04
+## 14.04
 Restrukturierung und Dokumentation pH-Modul
 Dokumentationsportal in eigenem Verzeichnis (27aug20):
  

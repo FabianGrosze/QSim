@@ -31,7 +31,7 @@
 subroutine transportz(anze, deltat, izeits, isub_dt, isub_dt_Mac, dtmin_Mac,  &
                       hvmitt, elen, flag, tempwz, vnh4z, vno2z, vno3z, vo2z,  &
                       gelPz, Siz, akiz, agrz, ablz, chlaz, hgesPz, hgesNz,    &
-                      nkzs, dH2D, i2Ds, iwsim, mstr, tempz, ho2z, hnh4z,      &
+                      nkzs, dH2D, i2Ds, iwsim, mstr, htempz, ho2z, hnh4z,     &
                       hno2z, hno3z, hgelPz, hSiz, hQ_NKz, hQ_NBz, hQ_NGz,     &
                       hakiz, hagrz, hablz, hchlaz, hchlkz, hchlgz, hchlbz,    &
                       hCChlkz, hCChlbz, hCChlgz, iflRi, dl, iMAC, Uvert,      &
@@ -52,7 +52,7 @@ subroutine transportz(anze, deltat, izeits, isub_dt, isub_dt_Mac, dtmin_Mac,  &
    real, dimension(azStrs,50,1000)    :: hSiz ,hakiz, hagrz, hablz, hchlaz, hchlkz, hchlgz, hchlbz, hgesPz, hgesNz
    real, dimension(azStrs,50,1000)    :: hCChlkz, hCChlbz, hCChlgz
    
-   open(unit = 876,file = 'transportz.tst')
+
    iwahlD = 2
    nkzmax = 1
    nkz = 1

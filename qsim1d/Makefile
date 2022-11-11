@@ -46,14 +46,17 @@ PV= qsim1d_schwer$(VERSION)
 FC              = gfortran
 
 Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
-    E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
-    Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o  \
-    ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  qsim.o  \
-    randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o s  \
-    ys_z_gitter.o transport.o transportz.o trimat_z.o  \
-    van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o  \
-    z_gitter_einl.o Masse_neu_QSim.o lax_wen.o lin_interpolation.o  \
-    write_gerris_definitions.o
+	E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
+	Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o  \
+	ErgebTParam.o fehlermeldungen.o k_eps.o km_sys.o ModellGParam.o  qsim.o  \
+	randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o  \
+	sys_z_gitter.o transport.o transportz.o trimat_z.o  \
+	van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o  \
+	z_gitter_einl.o Masse_neu_QSim.o lax_wen.o lin_interpolation.o  \
+	write_gerris_definitions.o \
+	organic_carbon_inflow_1d.o \
+	ph_inflow_1d.o \
+	phosphate_inflow_1d.o \
 
 -include ../metabolism/metabol.mk
 
@@ -94,7 +97,9 @@ metabo: $(META)
 
 qsim1d:	$(Q1)
 	$(FC) $(Q1) -L. -lmetabol -o $(PV)
-	cp -pf ./$(PV) $(MY_BIN)/$(PV)
+
+exe:
+	mv -pf ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."
