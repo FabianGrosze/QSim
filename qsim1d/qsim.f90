@@ -31,6 +31,7 @@ program qsim
    use module_ph,             only: ph, pwert 
    use module_organic_carbon, only: organic_carbon
    use module_phosphate,      only: phosphate
+   use module_silicate,       only: silicate
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -6733,84 +6734,45 @@ program qsim
       ! -----------------------------------------------------------------------
       1516 continue
       if (si(1) < 0.0)goto 1517
-      call silikat(si,flag,elen,ior,esi,qeinl,vabfl,anze,tflie,jiein,aki         &
-                   ,albewk,alberk,tiefe,tempw,ilbuhn,akkssi,Qmx_SK,Q_SK          &
-                   ,up_Siz,Siz,algakz,akitbr,akibrz,hJSi,nkzs,dH2D,dH2De,mstr    &
-                   ,iorLa,iorLe,ieinLs,flae,qeinlL,SiL,itags,Uhrz,azStrs         &
-                   ,.false.,0)
-      if (nbuhn(mstr) == 0)goto 1517
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtief(ior) = tiefe(ior)
-            zwtemp(ior) = tempw(ior)
-            zwsi(ior) = si(ior)
-            zwabwk(ior) = albewk(ior)
-            zwabrk(ior) = alberk(ior)
-            zwsisd(ior) = sised(ior)
-            zwSKmo(ior) = SKmor(ior)
-            zup_Si(ior) = up_Siz(1,ior)
-            zQ_SK(ior) = Q_SK(ior)
-            zwaakz(ior) = algakz(1,ior)
-            zwJSi(ior) = hJSi(mstr,ior)
-            
-            zwnkzs(ior) = nkzs(ior)
-            zwsiz(ior) = siz(1,ior)
-            
-            tiefe(ior) = bh(mstr,ior)
-            tempw(ior) = btempw(mstr,ior)
-            si(ior) = bsi(mstr,ior)
-            albewk(ior) = babewk(mstr,ior)
-            alberk(ior) = baberk(mstr,ior)
-            sised(ior) = bsised(mstr,ior)
-            SKmor(ior) = bSKmor(mstr,ior)
-            up_Siz(1,ior) = bup_Si(mstr,ior)
-            Q_SK(ior) = bQ_SK(mstr,ior)
-            hJSi(mstr,ior) = bJSi(mstr,ior)
-            akibrz(1,ior) = baktbr(mstr,ior)
-            algakz(1,ior) = balakz(mstr,ior)
-            Siz(1,ior) = bsi(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1516
-      endif
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bsi(mstr,ior) = si(ior)
-            bsised(mstr,ior) = sised(ior)
-            bSKmor(mstr,ior) = SKmor(ior)
+      ! inflow from point and diffuse sources
+      call silicate_inflow_1d(si, q_sk, siL, esi, mstr, ieinLs,    &
+                              qeinlL, qeinl, vabfl, iorLe, iorLa,  &
+                              jiein, flae, anze, flag, tflie)
+      
+      ! metabolism in main river
+      do ior = 1, anze+1
+         call silicate(si(ior), hJSi(mstr,ior), up_Siz(1,ior), akibrz(1,ior), &
+                       algakz(1,ior), albewk(ior),                            &
+                       tiefe(ior), tflie,                                     &
+                       kontroll, jjj)
+      enddo
+      
+      ! --- groyne-field ---
+      if (nbuhn(mstr) > 0) then
+         do ior = 1, anze+1
             
-            tiefe(ior) = zwtief(ior)
-            tempw(ior) = zwtemp(ior)
-            si(ior) = zwsi(ior)
-            albewk(ior) = zwabwk(ior)
-            alberk(ior) = zwabrk(ior)
-            sised(ior) = zwsisd(ior)
-            SKmor(ior) = zwSKmo(ior)
-            up_Siz(1,ior) = zup_Si(ior)
-            Q_SK(ior) = zQ_SK(ior)
-            hJSi(mstr,ior) = zwJSi(ior)
-            algakz(1,ior) = zwaakz(ior)
+            ! metabolism
+            call silicate(bsi(mstr,ior), bJSi(mstr,ior), bup_Si(mstr,ior), baktbr(mstr,ior), &
+                          balakz(mstr,ior), babewk(mstr,ior),                                &
+                          bh(mstr,ior), tflie,                                               &
+                          kontroll, jjj)
             
-            nkzs(ior) = zwnkzs(ior)
-            siz(1,ior) = zwsiz(ior)
-            diff1 = bsi(mstr,ior)-si(ior)
-            diff2 = bQ_SK(mstr,ior)-Q_SK(ior)
-            bdiff1 = si(ior)-bsi(mstr,ior)
-            bdiff2 = Q_SK(ior)-bQ_SK(mstr,ior)
+            ! mixing between main river and groyne-field 
+            diff1 = bsi(mstr,ior)   - si(ior)
+            diff2 = bQ_SK(mstr,ior) - Q_SK(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               si(ior) = si(ior)+diff1*(1.-exp(-hctau1(ior)))
-               Q_SK(ior) = Q_SK(ior)+diff2*(1.-exp(-hctau1(ior)))
+               si(ior)   = si(ior)   + diff1 * (1.-exp(-hctau1(ior)))
+               Q_SK(ior) = Q_SK(ior) + diff2 * (1.-exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bsi(mstr,ior) = bsi(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bQ_SK(mstr,ior) = bQ_SK(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
+               bsi(mstr,ior)   = bsi(mstr,ior)   - diff1 * (1.-exp(-hctau2(ior)))
+               bQ_SK(mstr,ior) = bQ_SK(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         
-         ilbuhn = 0
+      
       endif
       
       ! -----------------------------------------------------------------------

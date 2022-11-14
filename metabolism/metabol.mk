@@ -9,6 +9,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/ph/module_ph.o\
       ../metabolism/organic_carbon/module_organic_carbon.o \
       ../metabolism/phosphate/module_phosphate.o \
+      ../metabolism/silicate/module_silicate.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \
@@ -40,7 +41,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/Sedimentation.o \
       ../metabolism/sediment.o \
       ../metabolism/sed_pom.o \
-      ../metabolism/silikat.o \
       ../metabolism/strahlg.o \
       ../metabolism/tage.o \
       ../metabolism/temperl.o \

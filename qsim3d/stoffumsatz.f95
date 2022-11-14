@@ -136,10 +136,9 @@ subroutine stoffumsatz()
              ,meinrang,i,iglob,itemp,rb_hydraul_p(2+(i-1)*number_rb_hydraul),min_tief
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             if ( .not. nur_temp) then
-               !------------------------------------------------------------------------ ortho-Phosphat Phosphor
+               
                call phosphate_wrapper_3d(i)
-               !------------------------------------------------------------------------ Silikat
-               call silikat_huelle(i)
+               call silicate_wrapper_3d(i)
                !------------------------------------------------------------------------ Sauerstoff
                call oxygen_huelle(i)
                !------------------------------------------------------------------------ Schwebstoff-Bilanz + Sedimentation Min.

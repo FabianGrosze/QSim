@@ -89,7 +89,7 @@ Q3 = version.co trans_read.co \
 	ncyc_huelle.o \
 	oxygen_huelle.o \
 	phosphate_wrapper_3d.o \
-	silikat_huelle.o \
+	silicate_wrapper_3d.o \
 	organic_carbon_wrapper_3d.o \
 	ph_wrapper_3d.o \
 	algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \

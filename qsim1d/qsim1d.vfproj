@@ -62,8 +62,15 @@
 		<Filter Name="ph">
 		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
 		<File RelativePath="..\metabolism\ph\ph.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\ph\pwert.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="silicate">
+		<File RelativePath="..\metabolism\silicate\module_silicate.f90"/>
+		<File RelativePath="..\metabolism\silicate\silicate.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<File RelativePath="..\metabolism\albenth.f90"/>
 		<File RelativePath="..\metabolism\algaesbl.f90"/>
@@ -105,7 +112,6 @@
 		<File RelativePath="..\metabolism\sediment.f90"/>
 		<File RelativePath="..\metabolism\Sedimentation.f90"/>
 		<File RelativePath="..\metabolism\Sedimentbelastung.f90"/>
-		<File RelativePath="..\metabolism\silikat.f90"/>
 		<File RelativePath="..\metabolism\strahlg.f90"/>
 		<File RelativePath="..\metabolism\tage.f90"/>
 		<File RelativePath="..\metabolism\temperl.f90"/>
@@ -144,6 +150,7 @@
 		<File RelativePath=".\phosphate_inflow_1d.f90"/>
 		<File RelativePath=".\qsim.f90"/>
 		<File RelativePath=".\randbedingungen.f90"/>
+		<File RelativePath=".\silicate_inflow_1d.f90"/>
 		<File RelativePath=".\sys_gitterStrang.f90"/>
 		<File RelativePath=".\sys_gitterTrans.f90"/>
 		<File RelativePath=".\sys_z_gitter.f90"/>
