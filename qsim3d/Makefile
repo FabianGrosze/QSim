@@ -31,7 +31,6 @@ SHELL=/usr/bin/bash
 
 # PV='qsim3d_schwer14.09.00'
 # PV='qsim3d_schwer11new'
-#PV='qsim3d_organic_carbon'
 PV='qsim3d_14.09.10_dev'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -87,7 +86,7 @@ Q3 = version.co trans_read.co \
 	temperw_huelle.o alter.o\
 	module_isotope.o \
 	ncyc_huelle.o \
-	oxygen_huelle.o \
+	oxygen_wrapper_3d.o \
 	phosphate_wrapper_3d.o \
 	silicate_wrapper_3d.o \
 	organic_carbon_wrapper_3d.o \

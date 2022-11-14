@@ -24,21 +24,27 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine dichte(tempwz,nkzs,D,ior,itags,uhrz,fkm)
+subroutine dichte(tempwz,nkzs,D)
+   use allodim
+   implicit none
+   real,    intent(in),  dimension(ialloc5,ialloc2) :: tempwz
+   integer, intent(in),  dimension(ialloc2)         :: nkzs
+   real,    intent(out), dimension(ialloc5)         :: D
    
-   integer, dimension(1000)             :: nkzs
-   real, dimension(50)                  :: D
-   real, dimension(1000)                :: fkm
-   real, dimension(50,1000)             :: tempwz
-
-   a0 =  999.842594
-   a1 =  6.793952e-2
-   a2 = -9.095290e-3
-   a3 =  1.001685e-4
-   a4 = -1.120083e-6
-   a5 =  6.536332e-9
+   integer         :: j, nkz, ior
+   
+   real, parameter :: a0 =  999.842594
+   real, parameter :: a1 =  6.793952e-2
+   real, parameter :: a2 = -9.095290e-3
+   real, parameter :: a3 =  1.001685e-4
+   real, parameter :: a4 = -1.120083e-6
+   real, parameter :: a5 =  6.536332e-9
+   
+   
+   ! TODO (Schoenung, august 2022): This is wrong. This way the deepest layers use
+   ! the temperature form the highest layers and vice versa. They must use their 
+   ! corresponding layers.
    j = nkzs(ior)
-   
    do nkz = 1,nkzs(ior)
       d(nkz) = a0                      &
              + a1 * tempwz(j,ior)      &

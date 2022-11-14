@@ -74,7 +74,7 @@ contains
       
       integer              :: i
       character(len=1)     :: sep 
-	  character(2)         :: bckslsh = '\\'
+      character(2)         :: bckslsh = '\\'
       
       ! read program arguments
       call GETARG(1, cpfad)

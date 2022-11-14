@@ -147,9 +147,7 @@ subroutine initialisieren()
       !call ini_po4s()
       !     Silizium:
       !call ini_silikat()
-      !     Sauerstoff:
-      !call ini_oxygen()
-      
+
       ! Strömungsfeld anlegen für ersten Schritt Stoffumsatz
       select case (hydro_trieb)
          case(1) ! casu-transinfo

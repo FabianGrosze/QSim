@@ -5,8 +5,6 @@ Es werden folgende Umgebungsvariablen benötigt:
  * `MY_ARC` als Pfad zum Verzeichnis, in dem Sicherungskopien von make save abgelegt werden können.
 Üblicherweise werden die Variablen in `~/.bashrc` mit `export MY_BIN=/home/beispiel/bin` gesetzt.
 
-
-
 * `make all`   ... compiliert und installiert
 * `make save`  ... legt eine Sicherungskopie der Programmquelle an.
 * `make clean` ... bereinigt das Verzeichnis, so dass beim nächsten make alle Dateien neu compiliert werden.

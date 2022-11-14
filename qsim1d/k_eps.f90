@@ -58,7 +58,7 @@ subroutine k_eps(tempwz,tiefe,hvmitt,rau,dH2D,nkzs,tflie,dtemp,IDWe,WGe,mstr,Dz2
                  ,WGe,IDWe,mstr,ior,hconus,hconub,Uvert,Wlage,hWS,i_windP,azStrs)
    
    ! Berechnung der Dichte zu Beginn der Zeitschleife
-   call Dichte(tempwz,nkzs,D,ior,itags,uhrz,fkm)
+   call dichte(tempwz,nkzs,D)
    
    Jsteps = 1
    dt = 300.
@@ -217,7 +217,6 @@ subroutine Mixing (Janz, Jstp, xU, xD, xDT, xzf, xub, xus, xh, tiefe, xMu,tflie,
                ,sedalb0,sedalg0,tiefe,aki,abl,agr,Q_PK,Q_PB,Q_PG,hQ_NKz,hQ_NBz,hQ_NGz,Q_NK,Q_NB,Q_NG           &
                ,Qmx_NK,Qmx_NB,Qmx_NG,akbcm,abbcm,agbcm,dH2D,tflie,mstr,uhrz,monats,azStrs)
    if (tflies == 0.0)goto 999
-   ! call Dichte(tempwz,nkzs,xD,dtemp)
    ilauf = ilauf+1
    if (ilauf >= ilend) then
       ilauf = 0

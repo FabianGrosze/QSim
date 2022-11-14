@@ -4,6 +4,7 @@
 !! modules in a single step. 
 module module_metabolism
    use module_organic_carbon
+   use module_oxygen
    use module_ph
    use module_phosphate
    use module_silicate

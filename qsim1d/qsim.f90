@@ -61,7 +61,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: RBtyp, Weinl, NRSchr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, ESTRNR
    real                                    :: N4end, N2end, N3end, Kiend, lat_k, mues,lgh
-   real                                    :: nbiogr
+   real                                    :: nbiogr, o2ein
    real                                    :: mikonsS, mxkonsS
    real, dimension(2)                      :: xCD, xCP, xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
@@ -91,7 +91,7 @@ program qsim
    real, dimension(ialloc2)                :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesN, gesP, sdbsb, abszo, bsbt, bsbct, bsbctP
    real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, SiRuek, svkh1, sised
-   real, dimension(ialloc2)                :: SKmor, schwi, Dz2D, dC_DenW, fkm, dO2o2D, salgo
+   real, dimension(ialloc2)                :: SKmor, schwi, Dz2D, dC_DenW, fkm, dO2o2D
    real, dimension(ialloc2)                :: CHNF, HNFBAC, BSBHNF, drHNF, BVHNF, coli, zHNF, zBAC, rO2HNF, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, nbiobl, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
@@ -127,7 +127,7 @@ program qsim
    real, dimension(ialloc2)                :: zwZnSed,zwCadSed,zwCuSed,zwNiSed,zwAsSed,zwPbSed
    real, dimension(ialloc2)                :: zwCrSed,zwFeSed,zwHgSed,zwMnSed,zwUSed
    real, dimension(ialloc2)                :: zwKorn, zwFlN3, zwJNO3, zwJNH4, zwJPO4, zwJO2, zwJSi, zwJDOC1, zwJDOC2
-   real, dimension(ialloc2)                :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, so2ein, ir, gwdmax, sedx0, don, susn
+   real, dimension(ialloc2)                :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, ir, gwdmax, sedx0, don, susn
    real, dimension(ialloc2)                :: bettn, agrnh4, akinh4, susno, akino3, agrno3, iras, sedalg, sedalk
    real, dimension(ialloc2)                :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr
    real, dimension(ialloc2)                :: mw, pw,lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1
@@ -139,7 +139,7 @@ program qsim
    real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsNy, sedn, orgCsd0, susny, bettny, dony
    real, dimension(ialloc2)                :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
    real, dimension(ialloc2)                :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy
-   real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy, salgoy
+   real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy
    real, dimension(ialloc2)                :: bsbty, dalgoy, dalaoy, schlry, bsbbey, o2ei1y, ro2dry, zoro2y, po2py
    real, dimension(ialloc2)                :: po2ry, nl0y, pl0y, extky, JNO3y, JNH4y, JPO4y, JO2y, JSiy, Q_NKy, Q_PKy
    real, dimension(ialloc2)                :: Q_SKy, Q_NGy, Q_PGy, Q_NBy, Q_PBy, coroy, corosy, ffoody, pfly
@@ -160,7 +160,7 @@ program qsim
    real, dimension(ialloc2)                :: bgsAsy, bglAsy, bgsPby, bglPby, bgsCry, bglCry, bgsFey, bglFey
    real, dimension(ialloc2)                :: bgsHgy, bglHgy, bgsMny, bglMny, bgsUy, bglUy, bSSeros
    real, dimension(ialloc2)                :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs, corol, corosl
-   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, susO2N, SSeros
+   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, abeow, susO2N, SSeros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
    real, dimension(ialloc2,5)              :: coro, coros, hcoro, hcoros, coro2, coros2
@@ -182,7 +182,7 @@ program qsim
    real, dimension(:,:), allocatable       :: hsedag, hsedak, hsedab, halgzg, halgzk, halgzb, halgdg, halgdk
    real, dimension(:,:), allocatable       :: halgdb, halgcg, halgck, halgcb, habowg, habowk, hvolfd, hdrpfe
    real, dimension(:,:), allocatable       :: haborg, habork, hdalgg, hdalgk, hdalgb, hdalag, hdalak, hdalab, hdgmor
-   real, dimension(:,:), allocatable       :: hdkmor, hdbmor, hsgo2n, hsdbsb, hsoein, hsalgo, hbsbt, hdalgo, hdalao
+   real, dimension(:,:), allocatable       :: hdkmor, hdbmor, hsgo2n, hsdbsb, hbsbt, hdalgo, hdalao
    real, dimension(:,:), allocatable       :: hSedOM, hBedGS, hsedvvert, hdKorn, dkorn, hbsbbe, hoein1, hro2dr, hzoro2, hpo2p
    real, dimension(:,:), allocatable       :: hpo2r, hiras, hrmuas, hrakr, hrbar, hkmuea, hgmuea, hbmuea, hftaau
    real, dimension(:,:), allocatable       :: hfiaus, hfigau, hfibau, hfheau, hfhega, hfheba, hakrau, hagrau, habrau
@@ -232,6 +232,7 @@ program qsim
    real, dimension(:,:), allocatable       :: bfhgau, bagrau, babszo, bzres1, bzres2, bzexki, bzexgr, brmuas, bzexbl
    real, dimension(:,:), allocatable       :: biras, brakr, brbar, bfssgr, bfbsgr, bfrfgr, bexdvk, bexdvg, bsgon, bsedx0
    real, dimension(:,:), allocatable       :: bexdvb, bdon, bsusn, bbettn, bsuso, bagn4, bakn4, bagn3, babn4, babn3
+   real, dimension(:,:), allocatable       :: bdalgo, bdalgao,babeowg, babeowk, babeorg, babeork, bzooro2, bo2ein, bo2ein1, balgo
    real, dimension(:,:), allocatable       :: bakn3, bsedn, bBVHNF, bsdbsb, bbsbbe, bdfaek, bdfaeg, bdfaeb, bdfaes
    real, dimension(:,:), allocatable       :: bssdr, borgCs, borgCs_abb, bbsbct, bbsbcP, bcm, bBAC, bHNFBS, bBSBHN
    real, dimension(:,:), allocatable       :: bCHNF, bnl0, bpl0, bgo2n, bpo2p, bpo2r, bro2dr, bro2HF, borgSS, bJNO3, bJN2
@@ -327,7 +328,7 @@ program qsim
    character (len = 8)                     :: versionstext, dummy
    
    ! --- settings ---
-   linux = .true.
+   linux = .false.
    kontroll = .false.
    mitsedflux = .false.    ! sediment fluxes switched off temporarily
    write_csv_output = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -458,9 +459,9 @@ program qsim
    allocate(halgck(azStrs,ialloc2), halgcb(azStrs,ialloc2), habowg(azStrs,ialloc2), habowk(azStrs,ialloc2))
    allocate(hvolfd(azStrs,ialloc2), hdrpfe(azStrs,ialloc2),haborg(azStrs,ialloc2), habork(azStrs,ialloc2))
    allocate(hdalgg(azStrs,ialloc2), hdalgk(azStrs,ialloc2), hdalgb(azStrs,ialloc2), hdalag(azStrs,ialloc2))
-   allocate(hdalak(azStrs,ialloc2), hdalab(azStrs,ialloc2), hdgmor(azStrs,ialloc2), hsoein(azStrs,ialloc2))
+   allocate(hdalak(azStrs,ialloc2), hdalab(azStrs,ialloc2), hdgmor(azStrs,ialloc2))
    allocate(hdkmor(azStrs,ialloc2), hdbmor(azStrs,ialloc2), hsgo2n(azStrs,ialloc2), hsdbsb(azStrs,ialloc2))
-   allocate(hsalgo(azStrs,ialloc2), hbsbt(azStrs,ialloc2), hdalgo(azStrs,ialloc2), hdalao(azStrs,ialloc2))
+   allocate(hbsbt(azStrs,ialloc2), hdalgo(azStrs,ialloc2), hdalao(azStrs,ialloc2))
    allocate(hSedOM(azStrs,ialloc2), hBedGS(azStrs,ialloc2), hdKorn(azStrs,ialloc2), dkorn(azStrs,ialloc2))
    allocate(hbsbbe(azStrs,ialloc2), hoein1(azStrs,ialloc2), hro2dr(azStrs,ialloc2), hzoro2(azStrs,ialloc2))
    allocate(hpo2p(azStrs,ialloc2), hpo2r(azStrs,ialloc2), hiras(azStrs,ialloc2), hrmuas(azStrs,ialloc2))
@@ -569,6 +570,8 @@ program qsim
    allocate(bfssgr(azStrs,ialloc2), bfbsgr(azStrs,ialloc2), bfrfgr(azStrs,ialloc2), bexdvk(azStrs,ialloc2))
    allocate(bexdvg(azStrs,ialloc2), bsgon(azStrs,ialloc2), bsedx0(azStrs,ialloc2), bexdvb(azStrs,ialloc2))
    allocate(bdon(azStrs,ialloc2), bsusn(azStrs,ialloc2), bbettn(azStrs,ialloc2), bsuso(azStrs,ialloc2))
+   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(mStrs,iallco2))
+   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(mstr,ialloc2), bo2ein1(azStrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
    allocate(bsdbsb(azStrs,ialloc2), bbsbbe(azStrs,ialloc2), bdfaek(azStrs,ialloc2), bdfaeg(azStrs,ialloc2))
@@ -773,7 +776,7 @@ program qsim
    ! --------------------------------------------------------------------------
    print *, ''
    print *, repeat('=', 78)
-   print *, repeat(' ',33), 'ModellA.txt'
+   print *, repeat(' ', 33), 'ModellA.txt'
    print *, repeat('=', 78)
    
    isumAnzSta = 0
@@ -1039,17 +1042,17 @@ program qsim
    
    6 continue
    mPf = 0
-   mS = 0
-   mD = 0
-   mC = 0
-   mB = 0
+   mS  = 0
+   mD  = 0
+   mC  = 0
+   mB  = 0
    mD2 = 0
-   mU = 0
+   mU  = 0
    mWe = 0
-   mV = 0
-   mZ = 0
-   mA = 0
-   mE = 0
+   mV  = 0
+   mZ  = 0
+   mA  = 0
+   mE  = 0
    read(103,'(a1,2x,I5)',iostat = read_error)ckenn,mstr
    if (read_error /= 0)goto 339
    nbuhn(mstr) = 0
@@ -2895,88 +2898,88 @@ program qsim
                iein = iein+1
                
                qeinlh(mstr,iein) = abfls(mstr,mRB)
-               ebsbh(mstr,iein) = vbsbs(mstr,mRB)
-               ecsbh(mstr,iein) = vcsbs(mstr,mRB)
-               enh4h(mstr,iein) = vnh4s(mstr,mRB)
-               eno2h(mstr,iein) = vno2s(mstr,mRB)
-               eno3h(mstr,iein) = vno3s(mstr,mRB)
+               ebsbh(mstr,iein)  = vbsbs(mstr,mRB)
+               ecsbh(mstr,iein)  = vcsbs(mstr,mRB)
+               enh4h(mstr,iein)  = vnh4s(mstr,mRB)
+               eno2h(mstr,iein)  = vno2s(mstr,mRB)
+               eno3h(mstr,iein)  = vno3s(mstr,mRB)
                egesNh(mstr,iein) = gesNs(mstr,mRB)
-               ex0h(mstr,iein) = vx0s(mstr,mRB)
-               ex02h(mstr,iein) = vx02s(mstr,mRB)
-               egph(mstr,iein) = gelps(mstr,mRB)
+               ex0h(mstr,iein)   = vx0s(mstr,mRB)
+               ex02h(mstr,iein)  = vx02s(mstr,mRB)
+               egph(mstr,iein)   = gelps(mstr,mRB)
                egesPh(mstr,iein) = gesPs(mstr,mRB)
-               esih(mstr,iein) = sis(mstr,mRB)
+               esih(mstr,iein)   = sis(mstr,mRB)
                echlah(mstr,iein) = chlas(mstr,mRB)
-               evkgh(mstr,iein) = vkigrs(mstr,mRB)
+               evkgh(mstr,iein)  = vkigrs(mstr,mRB)
                eantbh(mstr,iein) = antbls(mstr,mRB)
                ezindh(mstr,iein) = zooins(mstr,mRB)
-               ephh(mstr,iein) = vphs(mstr,mRB)
-               emwh(mstr,iein) = mws(mstr,mRB)
-               ecah(mstr,iein) = cas(mstr,mRB)
-               elfh(mstr,iein) = lfs(mstr,mRB)
-               essh(mstr,iein) = ssalgs(mstr,mRB)
+               ephh(mstr,iein)   = vphs(mstr,mRB)
+               emwh(mstr,iein)   = mws(mstr,mRB)
+               ecah(mstr,iein)   = cas(mstr,mRB)
+               elfh(mstr,iein)   = lfs(mstr,mRB)
+               essh(mstr,iein)   = ssalgs(mstr,mRB)
                etemph(mstr,iein) = tempws(mstr,mRB)
-               eo2h(mstr,iein) = vo2s(mstr,mRB)
+               eo2h(mstr,iein)   = vo2s(mstr,mRB)
                eCHNFh(mstr,iein) = CHNFs(mstr,mRB)
                eBVHNh(mstr,iein) = BVHNFs(mstr,mRB)
                ecolih(mstr,iein) = colis(mstr,mRB)
                ewaerh(mstr,iein) = waers(mstr,mRB)
-               typh(mstr,iein) = weinl(mstr,mRB)
-               enl0h(mstr,iein) = nl0s(mstr,mRB)
-               epl0h(mstr,iein) = pl0s(mstr,mRB)
-               eCD(mstr,1,iein) = CDs(mstr,1,mRB)
-               eCD(mstr,2,iein) = CDs(mstr,2,mRB)
-               eCP(mstr,1,iein) = CPs(mstr,1,mRB)
-               eCP(mstr,2,iein) = CPs(mstr,2,mRB)
-               eCM(mstr,iein) = CMs(mstr,mRB)
-               eBAC(mstr,iein) = BACs(mstr,mRB)
-               egsZn(mstr,iein) = gsZns(mstr,mRB)
-               eglZn(mstr,iein) = glZns(mstr,mRB)
+               typh(mstr,iein)   = weinl(mstr,mRB)
+               enl0h(mstr,iein)  = nl0s(mstr,mRB)
+               epl0h(mstr,iein)  = pl0s(mstr,mRB)
+               eCD(mstr,1,iein)  = CDs(mstr,1,mRB)
+               eCD(mstr,2,iein)  = CDs(mstr,2,mRB)
+               eCP(mstr,1,iein)  = CPs(mstr,1,mRB)
+               eCP(mstr,2,iein)  = CPs(mstr,2,mRB)
+               eCM(mstr,iein)    = CMs(mstr,mRB)
+               eBAC(mstr,iein)   = BACs(mstr,mRB)
+               egsZn(mstr,iein)  = gsZns(mstr,mRB)
+               eglZn(mstr,iein)  = glZns(mstr,mRB)
                egsCad(mstr,iein) = gsCads(mstr,mRB)
                eglCad(mstr,iein) = glCads(mstr,mRB)
-               egsCu(mstr,iein) = gsCus(mstr,mRB)
-               eglCu(mstr,iein) = glCus(mstr,mRB)
-               egsNi(mstr,iein) = gsNis(mstr,mRB)
-               eglNi(mstr,iein) = glNis(mstr,mRB)
-               egsAs(mstr,iein) = gsAss(mstr,mRB)
-               eglAs(mstr,iein) = glAss(mstr,mRB)
-               egsPb(mstr,iein) = gsPbs(mstr,mRB)
-               eglPb(mstr,iein) = glPbs(mstr,mRB)
-               egsCr(mstr,iein) = gsCrs(mstr,mRB)
-               eglCr(mstr,iein) = glCrs(mstr,mRB)
-               egsFe(mstr,iein) = gsFes(mstr,mRB)
-               eglFe(mstr,iein) = glFes(mstr,mRB)
-               egsHg(mstr,iein) = gsHgs(mstr,mRB)
-               eglHg(mstr,iein) = glHgs(mstr,mRB)
-               egsMn(mstr,iein) = gsMns(mstr,mRB)
-               eglMn(mstr,iein) = glMns(mstr,mRB)
-               egsU(mstr,iein) = gsUs(mstr,mRB)
-               eglU(mstr,iein) = glUs(mstr,mRB)
+               egsCu(mstr,iein)  = gsCus(mstr,mRB)
+               eglCu(mstr,iein)  = glCus(mstr,mRB)
+               egsNi(mstr,iein)  = gsNis(mstr,mRB)
+               eglNi(mstr,iein)  = glNis(mstr,mRB)
+               egsAs(mstr,iein)  = gsAss(mstr,mRB)
+               eglAs(mstr,iein)  = glAss(mstr,mRB)
+               egsPb(mstr,iein)  = gsPbs(mstr,mRB)
+               eglPb(mstr,iein)  = glPbs(mstr,mRB)
+               egsCr(mstr,iein)  = gsCrs(mstr,mRB)
+               eglCr(mstr,iein)  = glCrs(mstr,mRB)
+               egsFe(mstr,iein)  = gsFes(mstr,mRB)
+               eglFe(mstr,iein)  = glFes(mstr,mRB)
+               egsHg(mstr,iein)  = gsHgs(mstr,mRB)
+               eglHg(mstr,iein)  = glHgs(mstr,mRB)
+               egsMn(mstr,iein)  = gsMns(mstr,mRB)
+               eglMn(mstr,iein)  = glMns(mstr,mRB)
+               egsU(mstr,iein)   = gsUs(mstr,mRB)
+               eglU(mstr,iein)   = glUs(mstr,mRB)
             
             else
                ! diffuse sources
                ieinL = ieinL+1
-               qLh(mstr,ieinL) = abfls(mstr,mRB)/WirkLL(mstr,ieinL)
-               bsbLh(mstr,ieinL) = vbsbs(mstr,mRB)
-               csbLh(mstr,ieinL) = vcsbs(mstr,mRB)
+               qLh(mstr,ieinL)    = abfls(mstr,mRB)/WirkLL(mstr,ieinL)
+               bsbLh(mstr,ieinL)  = vbsbs(mstr,mRB)
+               csbLh(mstr,ieinL)  = vcsbs(mstr,mRB)
                enh4Lh(mstr,ieinL) = vnh4s(mstr,mRB)
                eno2Lh(mstr,ieinL) = vno2s(mstr,mRB)
                eno3Lh(mstr,ieinL) = vno3s(mstr,mRB)
                gesNLh(mstr,ieinL) = gesNs(mstr,mRB)
-               x0Lh(mstr,ieinL) = vx0s(mstr,mRB)
-               x02Lh(mstr,ieinL) = vx02s(mstr,mRB)
-               gpLh(mstr,ieinL) = gelps(mstr,mRB)
+               x0Lh(mstr,ieinL)   = vx0s(mstr,mRB)
+               x02Lh(mstr,ieinL)  = vx02s(mstr,mRB)
+               gpLh(mstr,ieinL)   = gelps(mstr,mRB)
                gesPLh(mstr,ieinL) = gesPs(mstr,mRB)
-               siLh(mstr,ieinL) = sis(mstr,mRB)
-               phLh(mstr,ieinL) = vphs(mstr,mRB)
-               caLh(mstr,ieinL) = cas(mstr,mRB)
-               elfLh(mstr,ieinL) = lfs(mstr,mRB)
-               ssLh(mstr,ieinL) = ssalgs(mstr,mRB)
+               siLh(mstr,ieinL)   = sis(mstr,mRB)
+               phLh(mstr,ieinL)   = vphs(mstr,mRB)
+               caLh(mstr,ieinL)   = cas(mstr,mRB)
+               elfLh(mstr,ieinL)  = lfs(mstr,mRB)
+               ssLh(mstr,ieinL)   = ssalgs(mstr,mRB)
                tempLh(mstr,ieinL) = tempws(mstr,mRB)
-               o2Lh(mstr,ieinL) = vo2s(mstr,mRB)
+               o2Lh(mstr,ieinL)   = vo2s(mstr,mRB)
                coliLh(mstr,ieinL) = colis(mstr,mRB)
                enl0Lh(mstr,ieinL) = nl0s(mstr,mRB)
-               pl0Lh(mstr,ieinL) = pl0s(mstr,mRB)
+               pl0Lh(mstr,ieinL)  = pl0s(mstr,mRB)
                chlaLh(mstr,ieinL) = chlas(mstr,mRB)
                ! CDL(mstr,1,iein) = CDs(mstr,1,mRB)
                ! CDL(mstr,2,iein) = CDs(mstr,2,mRB)
@@ -3066,94 +3069,99 @@ program qsim
                   habbcm(mstr,ior) = abbcms(mstr1,mRB)
                endif
                
-               if (nl0s(mstr1,mRB) > 0.0)hnl0(mstr,ior) = nl0s(mstr1,mRB)
-               if (pl0s(mstr1,mRB) > 0.0)hpl0(mstr,ior) = pl0s(mstr1,mRB)
-               if (gesNs(mstr1,mRB) >= 0.0)hgesN(mstr,ior) = gesNs(mstr1,mRB)
-               if (gesPs(mstr1,mRB) >= 0.0)hgesP(mstr,ior) = gesPs(mstr1,mRB)
-               if (Q_NKs(mstr1,mRB) > 0.0)hQ_NK(mstr,ior) = Q_NKs(mstr1,mRB)
-               if (Q_PKs(mstr1,mRB) > 0.0)hQ_PK(mstr,ior) = Q_PKs(mstr1,mRB)
-               if (Q_SKs(mstr1,mRB) > 0.0)hQ_SK(mstr,ior) = Q_SKs(mstr1,mRB)
-               if (Q_NGs(mstr1,mRB) > 0.0)hQ_NG(mstr,ior) = Q_NGs(mstr1,mRB)
-               if (Q_PGs(mstr1,mRB) > 0.0)hQ_PG(mstr,ior) = Q_PGs(mstr1,mRB)
-               if (Q_NBs(mstr1,mRB) > 0.0)hQ_NB(mstr,ior) = Q_NBs(mstr1,mRB)
-               if (Q_PBs(mstr1,mRB) > 0.0)hQ_PB(mstr,ior) = Q_PBs(mstr1,mRB)
-               if (tempws(mstr1,mRB) > Wtst_T)htempw(mstr,ior) = tempws(mstr1,mRB)
+               if (nl0s(mstr1,mRB)   > 0.0) hnl0(mstr,ior)  = nl0s(mstr1,mRB)
+               if (pl0s(mstr1,mRB)   > 0.0) hpl0(mstr,ior)  = pl0s(mstr1,mRB)
+               if (gesNs(mstr1,mRB)  >=0.0) hgesN(mstr,ior) = gesNs(mstr1,mRB)
+               if (gesPs(mstr1,mRB)  >=0.0) hgesP(mstr,ior) = gesPs(mstr1,mRB)
+               if (Q_NKs(mstr1,mRB)  > 0.0) hQ_NK(mstr,ior) = Q_NKs(mstr1,mRB)
+               if (Q_PKs(mstr1,mRB)  > 0.0) hQ_PK(mstr,ior) = Q_PKs(mstr1,mRB)
+               if (Q_SKs(mstr1,mRB)  > 0.0) hQ_SK(mstr,ior) = Q_SKs(mstr1,mRB)
+               if (Q_NGs(mstr1,mRB)  > 0.0) hQ_NG(mstr,ior) = Q_NGs(mstr1,mRB)
+               if (Q_PGs(mstr1,mRB)  > 0.0) hQ_PG(mstr,ior) = Q_PGs(mstr1,mRB)
+               if (Q_NBs(mstr1,mRB)  > 0.0) hQ_NB(mstr,ior) = Q_NBs(mstr1,mRB)
+               if (Q_PBs(mstr1,mRB)  > 0.0) hQ_PB(mstr,ior) = Q_PBs(mstr1,mRB)
+               if (tempws(mstr1,mRB) > Wtst_T) htempw(mstr,ior) = tempws(mstr1,mRB)
                
                ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
                if (iwied == 0)hTsed(mstr,ior) = htempw(mstr,ior)
-               if (obsbs(mstr1,mRB) >= Wtst)hbsb(mstr,ior) = obsbs(mstr1,mRB)
-               if (ocsbs(mstr1,mRB) >= Wtst)hcsb(mstr,ior) = ocsbs(mstr1,mRB)
-               if (CHNFs(mstr1,mRB) >= Wtst)hCHNF(mstr,ior) = CHNFs(mstr1,mRB)
-               if (BVHNFs(mstr1,mRB) >= Wtst)hBVHNF(mstr,ior) = BVHNFs(mstr1,mRB)
-               if (CDs(mstr1,1,mRB) >= Wtst)hCD(mstr,1,ior) = CDs(mstr1,1,mRB)
-               if (CDs(mstr1,2,mRB) >= Wtst)hCD(mstr,2,ior) = CDs(mstr1,2,mRB)
-               if (CPs(mstr1,1,mRB) >= Wtst)hCP(mstr,1,ior) = CPs(mstr1,1,mRB)
-               if (CPs(mstr1,2,mRB) >= Wtst)hCP(mstr,2,ior) = CPs(mstr1,2,mRB)
-               if (CMs(mstr1,mRB) >= Wtst)hCM(mstr,ior) = CMs(mstr1,mRB)
-               if (BACs(mstr1,mRB) >= Wtst)hBAC(mstr,ior) = BACs(mstr1,mRB)
-               if (vnh4s(mstr1,mRB) >= Wtst)hnh4(mstr,ior) = vnh4s(mstr1,mRB)
-               if (vo2s(mstr1,mRB) >= Wtst)ho2(mstr,ior) = vo2s(mstr1,mRB)
-               if (isnan(ho2(mstr,ior)))print*,"ho2(mstr,ior) = vo2s(mstr1,mRB)",ho2(mstr,ior),mstr,ior,vo2s(mstr1,mRB),mstr1,mRB
-               if (vno3s(mstr1,mRB) >= Wtst)hno3(mstr,ior) = vno3s(mstr1,mRB)
-               if (vno2s(mstr1,mRB) >= Wtst)hno2(mstr,ior) = vno2s(mstr1,mRB)
-               if (vx0s(mstr1,mRB) >= Wtst)hx0(mstr,ior) = vx0s(mstr1,mRB)
-               if (vx02s(mstr1,mRB) >= Wtst)hx02(mstr,ior) = vx02s(mstr1,mRB)
-               if (sis(mstr1,mRB) >= Wtst)hsi(mstr,ior) = sis(mstr1,mRB)
-               if (chlas(mstr1,mRB) >= Wtst)hchla(mstr,ior) = chlas(mstr1,mRB)
-               if (akis(mstr1,mRB) >= Wtst)haki(mstr,ior) = akis(mstr1,mRB)
-               if (agrs(mstr1,mRB) >= Wtst)hagr(mstr,ior) = agrs(mstr1,mRB)
-               if (abls(mstr1,mRB) >= Wtst)habl(mstr,ior) = abls(mstr1,mRB)
-               if (chlaks(mstr1,mRB) >= Wtst) hchlak(mstr,ior) = chlaks(mstr1,mRB)
-               if (chlags(mstr1,mRB) >= Wtst)hchlag(mstr,ior) = chlags(mstr1,mRB)
-               if (chlabs(mstr1,mRB) >= Wtst)hchlab(mstr,ior) = chlabs(mstr1,mRB)
-               if (vkigrs(mstr1,mRB) >= Wtst)hvkigr(mstr,ior) = vkigrs(mstr1,mRB)
-               if (antbls(mstr1,mRB) >= Wtst)hantbl(mstr,ior) = antbls(mstr1,mRB)
+               if (obsbs(mstr1,mRB) >= Wtst) hbsb(mstr,ior)   = obsbs(mstr1,mRB)
+               if (ocsbs(mstr1,mRB) >= Wtst) hcsb(mstr,ior)   = ocsbs(mstr1,mRB)
+               if (CHNFs(mstr1,mRB) >= Wtst) hCHNF(mstr,ior)  = CHNFs(mstr1,mRB)
+               if (BVHNFs(mstr1,mRB)>= Wtst) hBVHNF(mstr,ior) = BVHNFs(mstr1,mRB)
+               if (CDs(mstr1,1,mRB) >= Wtst) hCD(mstr,1,ior)  = CDs(mstr1,1,mRB)
+               if (CDs(mstr1,2,mRB) >= Wtst) hCD(mstr,2,ior)  = CDs(mstr1,2,mRB)
+               if (CPs(mstr1,1,mRB) >= Wtst) hCP(mstr,1,ior)  = CPs(mstr1,1,mRB)
+               if (CPs(mstr1,2,mRB) >= Wtst) hCP(mstr,2,ior)  = CPs(mstr1,2,mRB)
+               if (CMs(mstr1,mRB)   >= Wtst) hCM(mstr,ior)    = CMs(mstr1,mRB)
+               if (BACs(mstr1,mRB)  >= Wtst) hBAC(mstr,ior)   = BACs(mstr1,mRB)
+               if (vnh4s(mstr1,mRB) >= Wtst) hnh4(mstr,ior)   = vnh4s(mstr1,mRB)
+               if (vo2s(mstr1,mRB)  >= Wtst) ho2(mstr,ior)    = vo2s(mstr1,mRB)
+               if (isnan(ho2(mstr,ior))) print*,"ho2(mstr,ior) = vo2s(mstr1,mRB)",ho2(mstr,ior),mstr,ior,vo2s(mstr1,mRB),mstr1,mRB
+               if (vno3s(mstr1,mRB) >= Wtst) hno3(mstr,ior)   = vno3s(mstr1,mRB)
+               if (vno2s(mstr1,mRB) >= Wtst) hno2(mstr,ior)   = vno2s(mstr1,mRB)
+               if (vx0s(mstr1,mRB)  >= Wtst) hx0(mstr,ior)    = vx0s(mstr1,mRB)
+               if (vx02s(mstr1,mRB) >= Wtst) hx02(mstr,ior)   = vx02s(mstr1,mRB)
+               if (sis(mstr1,mRB)   >= Wtst) hsi(mstr,ior)    = sis(mstr1,mRB)
+               if (chlas(mstr1,mRB) >= Wtst) hchla(mstr,ior)  = chlas(mstr1,mRB)
+               if (akis(mstr1,mRB)  >= Wtst) haki(mstr,ior)   = akis(mstr1,mRB)
+               if (agrs(mstr1,mRB)  >= Wtst) hagr(mstr,ior)   = agrs(mstr1,mRB)
+               if (abls(mstr1,mRB)  >= Wtst) habl(mstr,ior)   = abls(mstr1,mRB)
+               if (chlaks(mstr1,mRB)>= Wtst) hchlak(mstr,ior) = chlaks(mstr1,mRB)
+               if (chlags(mstr1,mRB)>= Wtst) hchlag(mstr,ior) = chlags(mstr1,mRB)
+               if (chlabs(mstr1,mRB)>= Wtst) hchlab(mstr,ior) = chlabs(mstr1,mRB)
+               if (vkigrs(mstr1,mRB)>= Wtst) hvkigr(mstr,ior) = vkigrs(mstr1,mRB)
+               if (antbls(mstr1,mRB)>= Wtst) hantbl(mstr,ior) = antbls(mstr1,mRB)
                habrz1(mstr,ior) = 0.0
-               if (ssalgs(mstr1,mRB) >= Wtst)hssalg(mstr,ior) = ssalgs(mstr1,mRB)
-               if (sss(mstr1,mRB) >= Wtst)hss(mstr,ior) = sss(mstr1,mRB)
-               if (zooins(mstr1,mRB) >= Wtst)hzooi(mstr,ior) = zooins(mstr1,mRB)
-               if (gelps(mstr1,mRB) >= Wtst)hgelp(mstr,ior) = gelps(mstr1,mRB)
-               if (mws(mstr1,mRB) >= Wtst)hmw(mstr,ior) = mws(mstr1,mRB)
-               if (mws(mstr1,mRB) >= Wtst)hpw(mstr,ior) = pws(mstr1,mRB)
-               if (cas(mstr1,mRB) >= Wtst)hca(mstr,ior) = cas(mstr1,mRB)
-               if (lfs(mstr1,mRB) >= Wtst)hlf(mstr,ior) = lfs(mstr1,mRB)
-               if (vphs(mstr1,mRB) >= Wtst)hph(mstr,ior) = vphs(mstr1,mRB)
+               if (ssalgs(mstr1,mRB)>= Wtst) hssalg(mstr,ior) = ssalgs(mstr1,mRB)
+               if (sss(mstr1,mRB)   >= Wtst) hss(mstr,ior)    = sss(mstr1,mRB)
+               if (zooins(mstr1,mRB)>= Wtst) hzooi(mstr,ior)  = zooins(mstr1,mRB)
+               if (gelps(mstr1,mRB) >= Wtst) hgelp(mstr,ior)  = gelps(mstr1,mRB)
+               if (mws(mstr1,mRB)   >= Wtst) hmw(mstr,ior)    = mws(mstr1,mRB)
+               if (mws(mstr1,mRB)   >= Wtst) hpw(mstr,ior)    = pws(mstr1,mRB)
+               if (cas(mstr1,mRB)   >= Wtst) hca(mstr,ior)    = cas(mstr1,mRB)
+               if (lfs(mstr1,mRB)   >= Wtst) hlf(mstr,ior)    = lfs(mstr1,mRB)
+               if (vphs(mstr1,mRB)  >= Wtst) hph(mstr,ior)    = vphs(mstr1,mRB)
                if (colis(mstr1,mRB) >= Wtst) then
-                  hcoli(mstr,ior) = colis(mstr1,mRB)
+                  hcoli(mstr,ior)  = colis(mstr1,mRB)
                   hDOSCF(mstr,ior) = DOSCFs(mstr1,mRB)
                endif
-               if (gesPs(mstr1,mRB) >= Wtst)hgesP(mstr,ior) = gesPs(mstr1,mRB)
-               if (gesNs(mstr1,mRB) >= Wtst)hgesN(mstr,ior) = gesNs(mstr1,mRB)
-               if (gsZns(mstr1,mRB) >= Wtst)hgsZn(mstr,ior) = gsZns(mstr1,mRB)
-               if (glZns(mstr1,mRB) >= Wtst)hglZn(mstr,ior) = glZns(mstr1,mRB)
-               if (gsCads(mstr1,mRB) >= Wtst)hgsCad(mstr,ior) = gsCads(mstr1,mRB)
-               if (glCads(mstr1,mRB) >= Wtst)hglCad(mstr,ior) = glCads(mstr1,mRB)
-               if (gsCus(mstr1,mRB) >= Wtst)hgsCu(mstr,ior) = gsCus(mstr1,mRB)
-               if (glCus(mstr1,mRB) >= Wtst)hglCu(mstr,ior) = glCus(mstr1,mRB)
-               if (gsNis(mstr1,mRB) >= Wtst)hgsNi(mstr,ior) = gsNis(mstr1,mRB)
-               if (glNis(mstr1,mRB) >= Wtst)hglNi(mstr,ior) = glNis(mstr1,mRB)
-               if (gsAss(mstr1,mRB) >= Wtst)hgsAs(mstr,ior) = gsAss(mstr1,mRB)
-               if (glAss(mstr1,mRB) >= Wtst)hglAs(mstr,ior) = glAss(mstr1,mRB)
-               if (gsPbs(mstr1,mRB) >= Wtst) hgsPb(mstr,ior) = gsPbs(mstr1,mRB)
-               if (glPbs(mstr1,mRB) >= Wtst)hglPb(mstr,ior) = glPbs(mstr1,mRB)
-               if (gsCrs(mstr1,mRB) >= Wtst)hgsCr(mstr,ior) = gsCrs(mstr1,mRB)
-               if (glCrs(mstr1,mRB) >= Wtst)hglCr(mstr,ior) = glCrs(mstr1,mRB)
-               if (gsFes(mstr1,mRB) >= Wtst)hgsFe(mstr,ior) = gsFes(mstr1,mRB)
-               if (glFes(mstr1,mRB) >= Wtst)hglFe(mstr,ior) = glFes(mstr1,mRB)
-               if (gsHgs(mstr1,mRB) >= Wtst)hgsHg(mstr,ior) = gsHgs(mstr1,mRB)
-               if (glHgs(mstr1,mRB) >= Wtst)hglHg(mstr,ior) = glHgs(mstr1,mRB)
-               if (gsMns(mstr1,mRB) >= Wtst)hgsMn(mstr,ior) = gsMns(mstr1,mRB)
-               if (glMns(mstr1,mRB) >= Wtst)hglMn(mstr,ior) = glMns(mstr1,mRB)
-               if (gsUs(mstr1,mRB) >= Wtst)hgsU(mstr,ior) = gsUs(mstr1,mRB)
-               if (glUs(mstr1,mRB) >= Wtst)hglU(mstr,ior) = glUs(mstr1,mRB)
+               if (gesPs(mstr1,mRB) >= Wtst) hgesP(mstr,ior)  = gesPs(mstr1,mRB)
+               if (gesNs(mstr1,mRB) >= Wtst) hgesN(mstr,ior)  = gesNs(mstr1,mRB)
+               if (gsZns(mstr1,mRB) >= Wtst) hgsZn(mstr,ior)  = gsZns(mstr1,mRB)
+               if (glZns(mstr1,mRB) >= Wtst) hglZn(mstr,ior)  = glZns(mstr1,mRB)
+               if (gsCads(mstr1,mRB)>= Wtst) hgsCad(mstr,ior) = gsCads(mstr1,mRB)
+               if (glCads(mstr1,mRB)>= Wtst) hglCad(mstr,ior) = glCads(mstr1,mRB)
+               if (gsCus(mstr1,mRB) >= Wtst) hgsCu(mstr,ior)  = gsCus(mstr1,mRB)
+               if (glCus(mstr1,mRB) >= Wtst) hglCu(mstr,ior)  = glCus(mstr1,mRB)
+               if (gsNis(mstr1,mRB) >= Wtst) hgsNi(mstr,ior)  = gsNis(mstr1,mRB)
+               if (glNis(mstr1,mRB) >= Wtst) hglNi(mstr,ior)  = glNis(mstr1,mRB)
+               if (gsAss(mstr1,mRB) >= Wtst) hgsAs(mstr,ior)  = gsAss(mstr1,mRB)
+               if (glAss(mstr1,mRB) >= Wtst) hglAs(mstr,ior)  = glAss(mstr1,mRB)
+               if (gsPbs(mstr1,mRB) >= Wtst) hgsPb(mstr,ior)  = gsPbs(mstr1,mRB)
+               if (glPbs(mstr1,mRB) >= Wtst) hglPb(mstr,ior)  = glPbs(mstr1,mRB)
+               if (gsCrs(mstr1,mRB) >= Wtst) hgsCr(mstr,ior)  = gsCrs(mstr1,mRB)
+               if (glCrs(mstr1,mRB) >= Wtst) hglCr(mstr,ior)  = glCrs(mstr1,mRB)
+               if (gsFes(mstr1,mRB) >= Wtst) hgsFe(mstr,ior)  = gsFes(mstr1,mRB)
+               if (glFes(mstr1,mRB) >= Wtst) hglFe(mstr,ior)  = glFes(mstr1,mRB)
+               if (gsHgs(mstr1,mRB) >= Wtst) hgsHg(mstr,ior)  = gsHgs(mstr1,mRB)
+               if (glHgs(mstr1,mRB) >= Wtst) hglHg(mstr,ior)  = glHgs(mstr1,mRB)
+               if (gsMns(mstr1,mRB) >= Wtst) hgsMn(mstr,ior)  = gsMns(mstr1,mRB)
+               if (glMns(mstr1,mRB) >= Wtst) hglMn(mstr,ior)  = glMns(mstr1,mRB)
+               if (gsUs(mstr1,mRB)  >= Wtst) hgsU(mstr,ior)   = gsUs(mstr1,mRB)
+               if (glUs(mstr1,mRB)  >= Wtst) hglU(mstr,ior)   = glUs(mstr1,mRB)
                if (iwsim == 4) cycle  ! bei Tracer wird dieser Programmteil nicht ausgeführt!
                
-               algb5 = haki(mstr,ior)*Caki*bsbki+hagr(mstr,ior)*Cagr*bsbgr+habl(mstr,ior)*Cabl*bsbbl
-               hvbsb(mstr,ior) = hbsb(mstr,ior)+algb5
-               zoobsb = (hzooi(mstr,ior)*GROT/1000.)*bsbZoo
-               hvbsb(mstr,ior) = hvbsb(mstr,ior)+zoobsb
+               algb5 = haki(mstr,ior) * Caki * bsbki  &
+                     + hagr(mstr,ior) * Cagr * bsbgr  &
+                     + habl(mstr,ior) * Cabl * bsbbl
+                     
+               hvbsb(mstr,ior) = hbsb(mstr,ior) + algb5
+               zoobsb = (hzooi(mstr,ior)*GRot/1000.) * bsbZoo
+               hvbsb(mstr,ior) = hvbsb(mstr,ior) + zoobsb
                
-               algcs = haki(mstr,ior)*Caki*csbki+habl(mstr,ior)*Cabl*csbbl+hagr(mstr,ior)*Cagr*csbgr
+               algcs = haki(mstr,ior) * Caki * csbki  &
+                     + habl(mstr,ior) * Cabl * csbbl  &
+                     + hagr(mstr,ior) * Cagr * csbgr
                hvcsb(mstr,ior) = hcsb(mstr,ior)+algcs
                zoocsb = hzooi(mstr,ior)*(GROT*CZoo/1000.)*TOC_BSB
                hvcsb(mstr,ior) = hvcsb(mstr,ior)+zoocsb
@@ -6778,7 +6786,8 @@ program qsim
       1517 continue
       
       if (vo2(1) < 0.0)goto 1518
-      if (nbuhn(mstr) > 0 .and. ilbuhn == 0) then
+      
+      if (nbuhn(mstr) > 0) then
          do ior = 1,anze+1
             bpo2p(mstr,ior) = po2p(ior)
             bpo2r(mstr,ior) = po2r(ior)
@@ -6793,166 +6802,66 @@ program qsim
             ro2dr(ior) = 0.0
          enddo
       endif
-      call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,RHYD,FLAE,TFLIE,go2n,dalgki,dalggr,dalgak,dalgag,akinh4  &
-                  ,agrnh4,akino3,agrno3,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr            &
-                  ,eo2,qeinl,vabfl,po2p,po2r,so2ein,dO2o2D,salgo,dalgo,dalgao,o2ein1,jiein           &
-                  ,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg,opblmi,opblma,ablnh4      &
-                  ,ablno3,dalgbl,dalgab,albewk,alberk,abeowk,abeork,ro2dr,wge,IDWe,fkm,uhrz          &
-                  ,zooro2,rO2HNF,ilbuhn,iwied,vo2z,susO2N,nkzs,dH2D,o2L,qeinlL                       &
-                  ,iorLa,iorLe,ieinLs,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z        &
-                  ,abno3z,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats           &
-                  ,dC_DenW,TOC_CSB,WLage,hWS,etemp,dH2De,ifehl,ifhStr,azStrs,zooind,GROT,iphy        &
-                  ,kontroll,0)
       
-      if (ifehl > 0)goto 989
+      call oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
+                         dh2d, ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa,    &
+                         jiein, flae, anze, flag, tflie)
       
-      if (nbuhn(mstr) == 0)goto 1518
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwtief(ior) = tiefe(ior)
-            zwvm(ior) = vmitt(ior)
-            zwno3(ior) = vno3(ior)
-            zwnh4(ior) = vnh4(ior)
-            zwvo2(ior) = vo2(ior)
-            do nkz = 1,nkzs(ior)
-               zwo2z(nkz,ior) = vo2z(nkz,ior)
-            enddo
-            zwnkzs(ior) = nkzs(ior)
-            zwgo2n(ior) = go2n(ior)
-            zwbsbt(ior) = bsbt(ior)
-            zwdalk(ior) = dalgki(ior)
-            zwdalg(ior) = dalggr(ior)
-            zwdalb(ior) = dalgbl(ior)
-            zwdaak(ior) = dalgak(ior)
-            zwdaag(ior) = dalgag(ior)
-            zwdaab(ior) = dalgab(ior)
-            zwschr(ior) = hschlr(mstr,ior)
-            zwagn4(ior) = agrnh4(ior)
-            zwakn4(ior) = akinh4(ior)
-            zwabn4(ior) = ablnh4(ior)
-            zwagn3(ior) = agrno3(ior)
-            zwakn3(ior) = akino3(ior)
-            zwabn3(ior) = ablno3(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            zwso2e(ior) = so2ein(ior)
-            zwsalo(ior) = salgo(ior)
-            zwdalo(ior) = dalgo(ior)
-            zwdago(ior) = dalgao(ior)
-            zwo2ei(ior) = o2ein1(ior)
-            zwabwg(ior) = abeowg(ior)
-            zwabwk(ior) = abeowk(ior)
-            zwabrg(ior) = abeorg(ior)
-            zwabrk(ior) = abeork(ior)
-            zwrzo(ior) = zooro2(ior)
-            zwrHNF(ior) = ro2HNF(ior)
-            zwJO2(ior) = hJO2(mstr,ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            vno3(ior) = bno3(mstr,ior)
-            vnh4(ior) = bnh4(mstr,ior)
-            vo2(ior) = bo2(mstr,ior)
-            vo2z(1,ior) = bo2(mstr,ior)
-            go2n(ior) = bgo2n(mstr,ior)
-            bsbt(ior) = bbsbt(mstr,ior)
-            dalgki(ior) = bdaki(mstr,ior)
-            dalggr(ior) = bdagr(mstr,ior)
-            dalgbl(ior) = bdabl(mstr,ior)
-            dalgak(ior) = bdaak(mstr,ior)
-            dalgag(ior) = bdaag(mstr,ior)
-            dalgab(ior) = bdaab(mstr,ior)
-            agrnh4(ior) = bagn4(mstr,ior)
-            akinh4(ior) = bakn4(mstr,ior)
-            ablnh4(ior) = babn4(mstr,ior)
-            agrno3(ior) = bagn3(mstr,ior)
-            akino3(ior) = bakn3(mstr,ior)
-            ablno3(ior) = babn3(mstr,ior)
-            dzres1(ior) = bzres1(mstr,ior)
-            dzres2(ior) = bzres2(mstr,ior)
-            po2p(ior) = bpo2p(mstr,ior)
-            po2r(ior) = bpo2r(mstr,ior)
-            albewg(ior) = babewg(mstr,ior)
-            albewk(ior) = babewk(mstr,ior)
-            alberg(ior) = baberg(mstr,ior)
-            alberk(ior) = baberk(mstr,ior)
-            ro2dr(ior) = bro2dr(mstr,ior)
-            ro2HNF(ior) = bro2HF(mstr,ior)
-            dalgkz(1,ior) = balgkz(mstr,ior)
-            algakz(1,ior) = balakz(mstr,ior)
-            dalggz(1,ior) = balggz(mstr,ior)
-            algagz(1,ior) = balagz(mstr,ior)
-            akNH4z(1,ior) = bkN4z(mstr,ior)
-            akNO3z(1,ior) = bkN3z(mstr,ior)
-            agNH4z(1,ior) = bgN4z(mstr,ior)
-            agNO3z(1,ior) = bgN3z(mstr,ior)
-            hJO2(mstr,ior) = bJO2(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1517
-      endif
-      
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bo2(mstr,ior) = vo2(ior)
-            bschlr(mstr,ior) = hschlr(mstr,ior)
-            
-            tempw(ior) = zwtemp(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            vno3(ior) = zwno3(ior)
-            vnh4(ior) = zwnh4(ior)
-            vo2(ior) = zwvo2(ior)
-            nkzs(ior) = zwnkzs(ior)
-            do nkz = 1,nkzs(ior)
-               vo2z(nkz,ior) = zwo2z(nkz,ior)
-            enddo
-            go2n(ior) = zwgo2n(ior)
-            bsbt(ior) = zwbsbt(ior)
-            dalgki(ior) = zwdalk(ior)
-            dalggr(ior) = zwdalg(ior)
-            dalgbl(ior) = zwdalb(ior)
-            dalgak(ior) = zwdaak(ior)
-            dalgag(ior) = zwdaag(ior)
-            dalgab(ior) = zwdaab(ior)
-            hschlr(mstr,ior) = zwschr(ior)
-            agrnh4(ior) = zwagn4(ior)
-            akinh4(ior) = zwakn4(ior)
-            ablnh4(ior) = zwabn4(ior)
-            agrno3(ior) = zwagn3(ior)
-            akino3(ior) = zwakn3(ior)
-            ablno3(ior) = zwabn3(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            so2ein(ior) = zwso2e(ior)
-            salgo(ior) = zwsalo(ior)
-            dalgo(ior) = zwdalo(ior)
-            dalgao(ior) = zwdago(ior)
-            o2ein1(ior) = zwo2ei(ior)
-            abeowg(ior) = zwabwg(ior)
-            abeowk(ior) = zwabwk(ior)
-            abeorg(ior) = zwabrg(ior)
-            abeork(ior) = zwabrk(ior)
-            zooro2(ior) = zwrzo(ior)
-            ro2HNF(ior) = zwrHNF(ior)
-            hJO2(mstr,ior) = zwJO2(ior)
-            
-            diff1 = bo2(mstr,ior)-vo2(ior)
-            bdiff1 = vo2(ior)-bo2(mstr,ior)
-            if (bleb(mstr,ior) > 0.0) then
-               vo2(ior) = vo2(ior)+diff1*(1.-exp(-hctau1(ior)))
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bo2(mstr,ior) = bo2(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-            endif
-         enddo
+      do ior = 1, anze+1
          
-         ilbuhn = 0
-      endif
-      
+         call oxygen(vO2(ior), zooind(ior),                                        &
+                  agrNH4(ior), akiNH4(ior), ablNH4(ior),                           &
+                  agrNO3(ior), akiNO3(ior), ablNO3(ior),                           &
+                  dalggr(ior), dalgki(ior), dalgbl(ior), albewg(ior), albewk(ior), &
+                  dalgag(ior), dalgak(ior), dalgab(ior), alberg(ior), alberk(ior), &
+                  hJO2(mstr,ior), bsbt(ior), dC_DenW(ior), TOC_CSB, gO2n(ior),     &
+                  pO2p(ior), pO2r(ior), rO2dr(ior), rO2hnf(ior),                   &
+                  rau(ior), tiefe(ior), rhyd(ior), vmitt(ior), flae(ior),          &
+                  wlage(mstr,ior), hws(mstr,ior), wge(IDWe(mstr,ior)), tempw(ior), &
+                  iPhy, tflie,                                                     &
+                  dalgo(ior), dalgao(ior), algo, abeowg(ior), abeowk(ior),         &
+                  abeorg(ior), abeork(ior), zooro2(ior), hSchlr(mstr,ior),         &
+                  o2ein, o2ein1(ior), saett(ior),                                  &
+                  kontroll, jjj)
+         
+         if (isnan(vo2(ior))) then
+            ifehl = 23
+            ifhStr = mstr
+            goto 990
+         endif
+         
+         if (nbuhn(mstr) > 0) then
+            ! TODO (schoenung, august 2022): Ticket #52
+            ! Folgende Größen aus dem Hauptfluss werden fehlerhafterweise an das Buhnenfeld übergeben:
+            ! * zooind: hier muss bzooi übergeben werden
+            ! * saett:  hier muss eine neue Variable für das Buhnenfeld angelegt und übergeben werden
+            call oxygen(bo2(mstr,ior), zooind(ior),                                                                &
+                     bagn4(mstr,ior), bakn4(mstr,ior), babn4(mstr,ior),                                            &
+                     bagn3(mstr,ior), bakn3(mstr,ior), babn3(mstr,ior),                                            &
+                     bdagr(mstr,ior), bdaki(mstr,ior), bdabl(mstr,ior), babewg(mstr,ior), babewk(mstr,ior),        &
+                     bdaag(mstr,ior), bdaak(mstr,ior), bdaab(mstr,ior), baberg(mstr,ior), baberk(mstr,ior),        &
+                     bJO2(mstr,ior), bbsbt(mstr,ior), dC_DenW(ior), TOC_CSB, bgo2n(mstr,ior),                      &
+                     bpo2p(mstr,ior), bpo2r(mstr,ior), bro2dr(mstr,ior), bro2HF(mstr,ior),                         &
+                     rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), flae(ior),                                  &
+                     wlage(mstr,ior), hws(mstr,ior), wge(IDWe(mstr,ior)), btempw(mstr,ior),                        &
+                     iPhy, tflie,                                                                                  &
+                     bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
+                     babeorg(mstr,ior), babeork(mstr,ior), bzooro2(mstr,ior), bschlr(mstr,ior),                    &
+                     bo2ein(mstr,ior), bo2ein1(mstr,ior), saett(ior),                                              &
+                     kontroll, jjj)
+            
+            ! Mixing of main river and groyne-fields
+            diff1 = bo2(mstr,ior) - vo2(ior)
+            
+            if (bleb(mstr,ior) > 0.0) then
+               vo2(ior) = vo2(ior) + diff1 * (1.-exp(-hctau1(ior)))
+            endif
+               
+            if (hctau2(ior) > 0.0) then
+                bo2(mstr,ior) = bo2(mstr,ior) - diff1 * (1. - exp(-hctau2(ior)))
+            endif
+         endif
+      enddo
       ! -----------------------------------------------------------------------
       ! Schwebstoffe
       ! -----------------------------------------------------------------------
@@ -7768,8 +7677,6 @@ program qsim
       dblmor(anze+1) = dblmor(anze)
       sgo2n(anze+1) = sgo2n(anze)
       sdbsb(anze+1) = sdbsb(anze)
-      so2ein(anze+1) = so2ein(anze)
-      salgo(anze+1) = salgo(anze)
       bsbt(anze+1) = bsbt(anze)
       dalgo(anze+1) = dalgo(anze)
       dalgao(anze+1) = dalgao(anze)
@@ -8099,8 +8006,6 @@ program qsim
          hdbmor(mstr,ior) = dblmor(ior)
          hsgo2n(mstr,ior) = sgo2n(ior)
          hsdbsb(mstr,ior) = sdbsb(ior)
-         hsoein(mstr,ior) = so2ein(ior)
-         hsalgo(mstr,ior) = salgo(ior)
          hbsbt(mstr,ior) = bsbt(ior)
          hdalgo(mstr,ior) = dalgo(ior)
          hdalao(mstr,ior) = dalgao(ior)
@@ -8883,8 +8788,6 @@ program qsim
          dbmory(mSta) = hdbmor(mstr,iior)
          sgo2ny(mSta) = hsgo2n(mstr,iior)
          sdbsby(mSta) = hsdbsb(mstr,iior)
-         so2eiy(mSta) = hsoein(mstr,iior)
-         salgoy(mSta) = hsalgo(mstr,iior)
          bsbty(mSta) = hbsbt(mstr,iior)
          dalgoy(mSta) = hdalgo(mstr,iior)
          dalaoy(mSta) = hdalao(mstr,iior)
@@ -9600,8 +9503,6 @@ program qsim
          sblmor(mstr,iior)  = sblmor(mstr,iior)  + dbmory(iior)
          ssgo2n(mstr,iior)  = ssgo2n(mstr,iior)  + sgo2ny(iior)
          ssdbsb(mstr,iior)  = ssdbsb(mstr,iior)  + sdbsby(iior)
-         ssoein(mstr,iior)  = ssoein(mstr,iior)  + so2eiy(iior)
-         ssalgo(mstr,iior)  = ssalgo(mstr,iior)  + salgoy(iior)
          sbsbt(mstr,iior)   = sbsbt(mstr,iior)   + bsbty(iior)
          s2algo(mstr,iior)  = s2algo(mstr,iior)  + dalgoy(iior)
          s2algao(mstr,iior) = s2algao(mstr,iior) + dalaoy(iior)

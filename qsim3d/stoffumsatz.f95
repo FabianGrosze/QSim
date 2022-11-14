@@ -140,7 +140,7 @@ subroutine stoffumsatz()
                call phosphate_wrapper_3d(i)
                call silicate_wrapper_3d(i)
                !------------------------------------------------------------------------ Sauerstoff
-               call oxygen_huelle(i)
+               call oxygen_wrapper_3d(i)
                !------------------------------------------------------------------------ Schwebstoff-Bilanz + Sedimentation Min.
                call schweb_huelle(i)
                
