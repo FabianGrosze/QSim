@@ -119,10 +119,9 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          end if ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
       case(2) ! Untrim² netCDF
-         call nc_sichten()
+         call untrim_nc_sichten()
       case(3) ! SCHISM netCDF
-         !call screen_schism()
-         !call qerror('eingabe.f95 screen_schism() not yet complete')
+         call screen_schism()
       case default
          call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select

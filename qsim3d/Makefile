@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_08'
+PV='qsim3d_schiqu22_09'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -72,8 +72,8 @@ Q3 = version.co trans_read.co \
      eingabe.o initialisieren.o randbedingungen.o \
      schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
      stofftransport_casu.o \
-     stofftransport_untrim.o read_mesh_nc.o read_elemente_gerris.o \
-     stofftransport.o \
+     stofftransport_untrim.o read_mesh_nc.o read_elemente_gerris.o holen_trans_untrim.o untrim_nc_sichten.o\
+     stofftransport.o allo_trans.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
      stoffumsatz.o \
      QSim3D.o
@@ -91,7 +91,7 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fcheck=all -Wuninitialized ## -fbounds-check ## develop ## 
+CFLAGS2         = -O -g -fcheck=all ## -Wuninitialized ## -fbounds-check ## develop ## 
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 

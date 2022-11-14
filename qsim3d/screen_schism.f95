@@ -49,7 +49,7 @@ subroutine screen_schism()
    real , allocatable , dimension (:) :: zeiten
    real zeit_min, zeit_max
    real zeit_delta
-   integer :: nnd, nnv, sumtra, nnt
+   integer :: nnd, nnv, sumtra, nnt, sumstack
    
    if (meinrang == 0) print*,'screen_schism starts'
    
@@ -62,59 +62,78 @@ subroutine screen_schism()
    nVars = 0
    do while (weiter)
       write(chari,*),i
-      write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+      write(dateiname,'(2A,I6.6,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
       systemaufruf = 'stat '//trim(adjustl(dateiname))//' >/dev/null 2>/dev/null'
       call system(trim(systemaufruf),istat)
       if (istat == 0) then
          n_stacks = i
          i = i+1
+         !print*,'screen_schism found:',trim(adjustl(dateiname))
       else
          weiter = .false.
+         !print*,'screen_schism not found:',trim(adjustl(dateiname))
          !if(meinrang.eq.0)print*,'screen_schism: systemaufruf',trim(adjustl(systemaufruf))
       endif
    end do
-   if (meinrang == 0)print*,"screen_schism,n_stacks = ",n_stacks
+   !print*,meinrang," screen_schism,n_stacks = ",n_stacks
+   
+   ! check stack number
    call mpi_barrier (mpi_komm_welt, ierr)
+   call mpi_reduce(n_stacks,sumstack,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+   !print*,meinrang,'sumstack,proz_anz,n_stacks=',sumstack,proz_anz,n_stacks
+   if (meinrang==0)then
+      if((sumstack/proz_anz)/=n_stacks)then
+         call qerror('screen_schism: something gone wrong with the number of schout**.nc files')
+      else
+         print*,'screen_schism: got ',n_stacks,' schout**.nc files for all',proz_anz,' parallel processes'
+      endif
+   endif
+   call mpi_barrier (mpi_komm_welt, ierr)
+
+   ! screen available files ...
    transinfo_anzahl = 0
    zeit_min = 3153600000.0
    zeit_max = -3153600000.0
    do i = 1,n_stacks
       !do i=1,10
       write(chari,*),i
-      write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-      print*,"screen_schism: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
+      write(dateiname,'(2A,I6.6,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+      !print*,"screen_schism: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
       iret = nf_open(dateiname, NF_NOWRITE, ncid)
       if (iret /= 0) then
          call check_err(iret)
          write(fehler,*)meinrang,i,' screen_schism: nf_open failed ',dateiname,iret
          call qerror(fehler)
-      else
-         print*,"screen_schism: nf_open(ncid = ",ncid
+      !else
+         !print*,"screen_schism: nf_open(ncid = ",ncid,adjustl(trim(dateiname))
       end if ! open failed
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
       call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
-      !! dimensions
+      if(meinrang == 0)print*,'screen_schism: ',ndims,' dimensions ',nVars,' variables '
+      !! get dimensions
       if (i == 1)allocate (dlength(ndims),dname(ndims), stat = istat)
       if (i == 1)allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
       do j = 1,ndims
          iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
          call check_err(iret)
-         if ((meinrang == 2) .and. (i == 1))  &
-             print*,meinrang,i,j,' screen_schism: dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
+         if((meinrang ==0).and.(i==1).and.(kontrollknoten>0))then
+            print*,'screen_schism: dimension  ',trim(dname(j)), dlength(j),j
+         endif
+         !print*,meinrang,i,j,' screen_schism: dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
       end do !all j dimension
-      !! Variables
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !! get Variables
       do j = 1,nVars
          iret = nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts)
          call check_err(iret)
-         if ((meinrang == 0) .and. (i == 1))  &
-             print*, j,'-th variable; name = ' ,trim(adjustl(vname(j))),' , vxtype = ',vxtype(j)
-         do k = 1,vndims(j)
-            if ((meinrang == 0) .and. (i == 1))  &
-                print*, k,'-th dimension; name = ',trim(adjustl(dname(dimids(k)))),' dim.length = '  &
-                ,dlength(dimids(k)),' dimid = ' ,dimids(k)
-         end do !k Dimensionen von Variable j
-         !print*,"Attribute : "
-         !call print_attributes(j, nAtts)
+         if((meinrang ==0).and.(i==1).and.(kontrollknoten>0))then
+            print*,'screen_schism: variable  ' ,trim(vname(j)),vxtype(j),j
+         endif
       end do ! Variable j
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       !! time-steps
       iret = nf_inq_varid(ncid,'time', varid)
       if (iret /= 0) then
@@ -124,11 +143,15 @@ subroutine screen_schism()
       end if
       iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
       call check_err(iret)
-      print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid = ',varid,iret,ncid
       n = dlength(dimids(1))
+      if((meinrang ==0).and.(i==1).and.(kontrollknoten>0))then
+         print*,meinrang,'screen_schism: time varid=',varid,' dlength=',n,iret,ncid
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       if (n > 0) then
          transinfo_anzahl = transinfo_anzahl+n
-         print*,i,'read_mesh_nc_sc: transinfo_anzahl = ',transinfo_anzahl,n
+         !print*,i,'read_mesh_nc_sc: transinfo_anzahl = ',transinfo_anzahl,n
          allocate (zeiten(n), stat = istat )
          iret = nf90_get_var(ncid, varid, zeiten)
          call check_err(iret)
@@ -141,9 +164,11 @@ subroutine screen_schism()
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
          end if ! more than one timestep
-         print*,meinrang,' screen_schism Zeit stack ',i,' zeiten 1,2 = ',zeiten(1), zeiten(2),zeit_delta
+         if (meinrang==0)print*,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl,i
          deallocate(zeiten)
       end if ! dlength ok
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
       !! checking necessary variables
       iret = nf_inq_varid(ncid,'elev', varid)
       if (iret /= 0) then
@@ -152,22 +177,25 @@ subroutine screen_schism()
          write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > elev <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
       end if
-      iret = nf_inq_varid(ncid,'dahv', varid)
-      if (iret /= 0) then
-         if (meinrang == 0) print*,'screen_schism: node veocities needed by QSim, param.nml: iof_hydro(16) = 1'
-         call check_err( iret )
-         write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > dahv <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      end if
-      iret = nf_inq_varid(ncid,'hvel_side', varid)
-      if (iret /= 0) then
-         if (meinrang == 0) print*,'screen_schism: side velocities needed by QSim, param.nml: iof_hydro(26) = 1'
-         call check_err( iret )
-         write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > hvel_side <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      end if
+      !iret = nf_inq_varid(ncid,'dahv', varid)
+      !if (iret /= 0) then
+      !   if (meinrang == 0) print*,'screen_schism: node veocities needed by QSim, param.nml: iof_hydro(16) = 1'
+      !   call check_err( iret )
+      !   write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > dahv <  < failed, iret = ',iret, " rank = ",meinrang
+      !   call qerror(fehler)
+      !end if
+      !iret = nf_inq_varid(ncid,'hvel_side', varid)
+      !if (iret /= 0) then
+      !   if (meinrang == 0) print*,'screen_schism: side velocities needed by QSim, param.nml: iof_hydro(26) = 1'
+      !   call check_err( iret )
+      !   write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > hvel_side <  < failed, iret = ',iret, " rank = ",meinrang
+      !   call qerror(fehler)
+      !end if
       call check_err( nf_close(ncid) )
    end do !all i stacks
+   call mpi_barrier (mpi_komm_welt, ierr)
+   
+   ! get number of timesteps
    if (transinfo_anzahl < 1)call qerror('screen_schism: No transport info')
    !print*,meinrang,' screen_schism Zeit  von:',zeit_min,' bis: ',zeit_max,' zeit_delta=',zeit_delta
    call MPI_Allreduce(zeit_delta, dttrans, 1, MPI_FLOAT, MPI_SUM, mpi_komm_welt, iret)
@@ -182,6 +210,8 @@ subroutine screen_schism()
    !print*,meinrang,'screen_schism timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0)
    if (transinfo_anzahl /= sumtra)call qerror('timestep number unclear screen_schism')
    call mpi_barrier (mpi_komm_welt, ierr)
+
+   ! get time steps
    if (meinrang == 0) then ! prozess 0 only
       allocate (transinfo_zeit(transinfo_anzahl), transinfo_zuord(transinfo_anzahl), stat = istat )
       allocate (transinfo_datei(transinfo_anzahl), stat = istat )
@@ -190,7 +220,7 @@ subroutine screen_schism()
       nnt = 0
       do i = 1,n_stacks ! reread all stacks
          write(chari,*),i
-         write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+         write(dateiname,'(2A,I6.6,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
          iret = nf_open(dateiname, NF_NOWRITE, ncid)
          if (iret /= 0) print*,meinrang,i,' screen_schism reread 0: nf_open failed   iret = ',iret
          do j = 1,ndims
@@ -220,18 +250,22 @@ subroutine screen_schism()
       end do !all i stacks
       print*,'screen_schism reread 0 timestep number = ',transinfo_anzahl, nnt, n_stacks
       if (nnt /= transinfo_anzahl)call qerror('screen_schism reread 0 timestep number unclear ')
-      !write(time_offset_string,'(A)')'2011 01 01 00 00 00' !#################
+      
+      ! check timesteps
+      do j = 2,transinfo_anzahl
+         if(transinfo_zeit(transinfo_zuord(j))-transinfo_zeit(transinfo_zuord(j-1))/=dttrans)then
+            call qerror('screen_schism uneven timesteping')
+         endif
+      end do
+
+      ! starting time obtained from local_to_global_000000 Header: section by read_mesh_schism
       write(time_offset_string,'(I4,x,I2,x,I2,x,I2,x,I2,x,I2)')jahr, monat, tag , stunde, minute, sekunde
-      print*,'screen_schism: ', transinfo_anzahl,' Transport-Zeitschritte ab ',trim(adjustl(time_offset_string)) ! &
-      !&      ,' ######## WARNING ###### start time hard coded ########'
-      !read(time_offset_string,*,iostat=istat) jahr, monat, tag, stunde, minute, sekunde
-      !if(istat.ne.0)call qerror('screen_schism: time_offset-Lesefehler')
-      print*,"screen_schism time_offset = ",tag, monat, jahr, stunde, minute, sekunde
-      print*,"screen_schism time_offset_string = ",trim(time_offset_string)
       call sekundenzeit(1)
-      write(*,227)"screen_schism: time-offset = "  &
-                                                   ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
-      time_offset = zeitpunkt !! Offset vom Referenzjahr zum netcdf-Zeitursprung
+      write(*,227)"screen_schism: time-offset = ",tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
+      time_offset = zeitpunkt
+  227 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit Jahresanfang ",I4)
+      
+      ! time span output
       zeitpunkt = transinfo_zeit(transinfo_zuord(1))
       call zeitsekunde()
       write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
@@ -240,14 +274,15 @@ subroutine screen_schism()
       write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
       print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
+  228 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit ",A)
+  
    end if ! only prozessor 0
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    deallocate (dlength,dname, stat = istat)
    deallocate (vxtype,vndims,vname,  stat = istat )
    ncid = -333
    call mpi_barrier (mpi_komm_welt, ierr)
-   227 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit Jahresanfang ",I4)
-   228 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit ",A)
    if (meinrang == 0) print*,"screen_schism finished"
    return
 end subroutine screen_schism
