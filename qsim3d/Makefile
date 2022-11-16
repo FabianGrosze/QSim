@@ -93,7 +93,8 @@ Q3 = version.co trans_read.co \
      schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
      stofftransport_casu.o \
      stofftransport_untrim.o stofftransport.o\
-     sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
+     sedflux_huelle.o coliform_huelle.o albenth_huelle.o \
+     macrophytes_wrapper_3d.o\
      stoffumsatz.o \
      QSim3D.o
 

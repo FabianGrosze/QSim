@@ -94,8 +94,10 @@ subroutine stoffumsatz()
                end do
                !------------------------------------------------------------------------ benthische Algen
                call albenth_huelle(i)
-               !------------------------------------------------------------------------ Makrophythen
-               call mphyt_huelle(i)
+               
+               ! macrophytes
+               call macrophytes_wrapper_3d(i)
+               
                !------------------------------------------------------------------------ organischer Kohlenstoff BSB
                if (iglob == kontrollknoten) print*,'stoffumsatz: bac(1) vor orgc_huelle = '  &
                    , planktonic_variable_p(42+(i-1)*number_plankt_vari)

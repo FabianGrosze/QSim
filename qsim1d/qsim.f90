@@ -29,6 +29,7 @@ program qsim
    use aparam
    use mod_model_settings
    use module_ph
+   use module_macrophytes, only: macrophytes
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -1027,6 +1028,10 @@ program qsim
       ! wird ERGEB2D.txt erzeugt
       if (i2Ds(mstr) > 0) then
          i2Daus = 1
+         print *, 'You are running a simulation with depth resolved calculations (2D).'
+         print *, 'This is currently not supported by QSim. Please use a different version.'
+         print *, 'Stop.'
+         stop
       else
          i2Daus = 0
       endif
@@ -5960,19 +5965,33 @@ program qsim
                    ,.false.,0)
       
       ! -----------------------------------------------------------------------
-      ! Makrophythen
+      ! macrophytes
       ! -----------------------------------------------------------------------
-      call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-                 ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-                 ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
-                 ,.false.,0)
-      if (ifehl > 0)goto 989
+      if (nbuhn(mstr) == 0) then 
+         do ior = 1, anze+1
+            call macrophytes(pfl(ior), pflmax(ior), pflmin(ior), tempw(ior), &
+                             schwi(ior), extk(ior), tiefe(ior),              &
+                             itstart, mstart, itmax, mmax, itend, mend,      &
+                             itags, monats, sa, su,                          &
+                             tflie,                                          &
+                             po2p(ior), po2r(ior),                           &
+                             kontroll, jjj)
+         enddo
       
-      
-      if (nbuhn(mstr) > 0) then
-         do ior = 1,anze+1
-            bpfl(mstr,ior) = pfl(ior)
-            pfl(ior) = 0.0
+      else
+         do ior = 1, anze+1
+            ! TODO (schoenung, august 2022): Hier werden falsche Variablen übergeben.
+            ! Das Buhnenfeld hat eine eigene Tiefe und eine eigene Temperatur. Stattdessen
+            ! werden hier die Variablen des Hauptflusses übergeben.
+            ! Ticket #54
+            call macrophytes(bpfl(mstr,ior), pflmax(ior), pflmin(ior), tempw(ior), &
+                             schwi(ior), extk(ior), tiefe(ior),                    &
+                             itstart, mstart, itmax, mmax, itend, mend,            &
+                             itags, monats, sa, su,                                &
+                             tflie,                                                &
+                             po2p(ior), po2r(ior),                                 &
+                             kontroll, jjj)
+         pfl(ior) = 0.0
          enddo
       endif
       

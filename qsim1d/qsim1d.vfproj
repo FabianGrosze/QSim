@@ -51,6 +51,10 @@
 		<File RelativePath=".\version.rc"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="metabolism">
+		<Filter Name="macrophytes">
+		<File RelativePath="..\metabolism\macrophytes\macrophytes.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90"/></Filter>
 		<Filter Name="ph">
 		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
 		<File RelativePath="..\metabolism\ph\ph.f90">
@@ -81,7 +85,6 @@
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
 		<File RelativePath="..\metabolism\module_allodim.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
-		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\ncyc.f90"/>
 		<File RelativePath="..\metabolism\orgc.f90"/>
 		<File RelativePath="..\metabolism\oxygen.f90"/>
