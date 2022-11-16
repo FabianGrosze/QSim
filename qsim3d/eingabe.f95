@@ -134,7 +134,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
-call qerror('eingabe.f95 schism not yet complete  screen_schism() ')!!!---
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
       !     read global model-parameters now in module ::uebergabe_werte
@@ -150,6 +149,7 @@ call qerror('eingabe.f95 schism not yet complete  screen_schism() ')!!!---
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
+call qerror('eingabe.f95 schism not yet complete transinfo_schritte() ')!!!---
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
       call ganglinien_lesen()

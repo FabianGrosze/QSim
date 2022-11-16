@@ -91,7 +91,7 @@ subroutine allo_trans()
             allocate (cu(number_plankt_point), stat = alloc_status )
          case(3) ! SCHISM netCDF
             print*,'####### allo_trans SCHISM macht noch nix spezielles VORSICHT #######'
-            case default
+         case default
             call qerror('allo_trans: Hydraulischer Antrieb unbekannt')
       end select
    end if ! only prozessor 0
