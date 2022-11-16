@@ -7,6 +7,7 @@
 META= ../metabolism/module_allodim.o \
       ../metabolism/module_aparam.o \
       ../metabolism/ph/module_ph.o\
+      ../metabolism/dreissena/module_dreissena.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \
@@ -16,7 +17,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/coliform.o \
       ../metabolism/coroph.o \
       ../metabolism/dichte.o \
-      ../metabolism/dreissen.o \
+      ../metabolism/dreissena.o \
       ../metabolism/e_extnct_lesen.o \
       ../metabolism/einleiter_misch.o \
       ../metabolism/funkstar.o \
@@ -29,8 +30,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/ncyc.o \
       ../metabolism/orgc.o \
       ../metabolism/oxygen.o \
-      ../metabolism/ph/ph.o \
-      ../metabolism/ph/pwert.o \
       ../metabolism/po4s.o \
       ../metabolism/runge_kutta.o \
       ../metabolism/sasu.o \
@@ -50,7 +49,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/anztag.o \
       ../metabolism/zuflussrand.o \
       ../metabolism/belueftung_K2.o \
-      ../metabolism/dreissen.o \
       ../metabolism/wettles.o \
       ../metabolism/version_string.o \
       ../metabolism/verteilungskoeff.o \

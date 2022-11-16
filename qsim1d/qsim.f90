@@ -28,7 +28,8 @@ program qsim
    use allodim
    use aparam
    use mod_model_settings
-   use module_ph
+   use module_ph,        only: ph, pwert
+   use module_dreissena, only: dreissena
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end
@@ -5179,17 +5180,17 @@ program qsim
          enddo
       endif
       
-      call dreissen(zdrei,zdreis,tempw,flae,elen,anze                   &
-                    ,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg       &
-                    ,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek        &
-                    ,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs      &
-                    ,lait1,laim1,laid1,ilang                            &
-                    ,resdr,exdrvg,exdrvk,ssalg,drpfec                   &
-                    ,abl,exdrvb,abbcm,algdrb,drfaeb                     &
-                    ,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs   &
-                    ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax              &
-                    ,sgwmue,fkm,FoptD,mstr,azStr,                       &
-                    .false., 0)
+      call dreissena(zdrei, zdreis, tempw, flae, elen, anze,                  &
+                     ior, volfdr, akbcm, agbcm, aki, agr, algdrk, algdrg,     &
+                     tflie, ro2dr, lboem, bsohlm, ss, vo2, ssdr, drfaek,      &
+                     drfaeg, drfaes, gewdr, dlarvn, itags, monats, jahrs,     &
+                     lait1, laim1, laid1, ilang,                              &
+                     resdr, exdrvg, exdrvk, ssalg, drpfec,                    &
+                     abl, exdrvb, abbcm, algdrb, drfaeb,                      &
+                     idras, drmas, drakr, drbar, drmor, ffood, coroI, coroIs, &
+                     CHNF, drHNF, HNFdra, dlmax, dlmaxs, gwdmax,              &
+                     sgwmue, fkm, FoptD, mstr, azStr,                         &
+                     .false.,  0)
       if (nbuhn(mstr) == 1) then
          do ior = 1,anze+1
             tempw(ior) = zwtemp(ior)

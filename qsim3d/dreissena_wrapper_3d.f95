@@ -25,24 +25,30 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine dreissen_huelle(i)
+subroutine dreissena_wrapper_3d(i)
    use modell
    use QSimDatenfelder
    use aparam
+   use module_dreissena, only: dreissena
    implicit none
-   integer :: i,j, azStr,k
-   real, dimension(1000) :: lboem, bsohlm
-   real, dimension(1000) :: volfdr
-   integer lait1, laim1, laid1
-   real drpfec(1000), idras(1000,2), drmas(1000,2), drakr(1000,2), drbar(1000,2), drmor(1000,2),ffood(1000)
-   real HNFdra(1000)
-   iglob = (i+meinrang*part)
+   
+   integer, intent(in)     :: i
+   integer                 :: j, azStr,k
+   real, dimension(1000)   :: lboem, bsohlm
+   real, dimension(1000)   :: volfdr
+   integer                 :: lait1, laim1, laid1
+   real, dimension(1000)   :: drpfec, ffood, HNFdra
+   real, dimension(1000,2) :: idras, drmas, drakr, drbar, drmor
+   
+   
+   iglob = i + meinrang*part
    if (zone(point_zone(iglob))%dreissen%dreissena_aktiv == 0) then
       if (kontroll)print*,'dreissen_huelle: keine muscheln in zone',point_zone(iglob)
       return ! keine Muscheln in dieser Zone
    else
       if (kontroll)print*,'dreissen_huelle ... start',iglob
    endif
+   
    ! Bilanzvariablen
    zdreis(1:2,1) = benthic_distribution_p(56+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (0. Kohorte)
    zdreis(1:2,2) = benthic_distribution_p(57+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (1. Kohorte)
@@ -116,17 +122,17 @@ subroutine dreissen_huelle(i)
    end do
    
    !----------------------------------------------------------------------------------
-   call dreissen(zdrei,zdreis,tempw,flae,elen,anze                  &
-                 ,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg      &
-                 ,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek       &
-                 ,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs     &
-                 ,lait1,laim1,laid1,ilang                           &
-                 ,resdr,exdrvg,exdrvk,ssalg,drpfec                  &
-                 ,abl,exdrvb,abbcm,algdrb,drfaeb                    &
-                 ,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs  &
-                 ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax             &
-                 ,sgwmue,fkm,FoptD,mstr,azStr                       &
-                 ,kontroll ,iglob ) !!wy
+   call dreissena(zdrei,zdreis,tempw,flae,elen,anze,                &
+                 ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg,      &
+                 tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek,       &
+                 drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs,     &
+                 lait1,laim1,laid1,ilang,                           &
+                 resdr,exdrvg,exdrvk,ssalg,drpfec,                  &
+                 abl,exdrvb,abbcm,algdrb,drfaeb,                    &
+                 idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs,  &
+                 CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax,             &
+                 sgwmue,fkm,FoptD,mstr,azStr,                       &
+                 kontroll ,iglob )
    !----------------------------------------------------------------------------------
    if (kontroll)print*,'dreissen_huelle ... zdreis(1,1), dlmax(1) = ',zdreis(1,1),dlmax(1)
    !Übergabe
@@ -179,4 +185,4 @@ subroutine dreissen_huelle(i)
       print*,'Flagellatenverlustrate durch Dreissena hnfdra = ',hnfdra(1)
    end if ! kontroll
    return
-end subroutine dreissen_huelle
+end subroutine dreissena_wrapper_3d

@@ -63,9 +63,9 @@ subroutine stoffumsatz()
                end do
                !------------------------------------------------------------------------ Corophium, auch ein Konsument ## in Überarbeitung
                !call coroph_huelle(i)
-               !------------------------------------------------------------------------ Muscheln (dreissena), auch Konsumenten
-               call dreissen_huelle(i)
-               !if(iglob.eq.kontrollknoten) print*,'stoffumsatz: deissena gerade mal weggeschaltet 28okt19'
+               
+               ! Muscheln (Dreissena)
+               call dreissena_wrapper_3d(i)
                !------------------------------------------------------------------------ heterotrophe Nanoflagellaten
                !call hnf_huelle(i)
                !----------------------------------------------------------------------------------------------------------- Algen-Baustein
