@@ -5985,11 +5985,18 @@ program qsim
       ! benthische Algen
       ! -----------------------------------------------------------------------
       1513 continue
-      call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
-                   ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
-                   ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
-                   ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
-                   ,.false.,0)
+      ! call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
+      !              ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
+      !              ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
+      !              ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
+      !              ,.false.,0)
+      albewg(:) = 0.0
+      albewk(:) = 0.0
+      alberg(:) = 0.0
+      alberk(:) = 0.0
+      cmatgr(:) = 0.0
+      cmatki(:) = 0.0
+     
       
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]

@@ -90,9 +90,7 @@ subroutine stoffumsatz()
                
                
                call algae_huelle(i)
-               ! algaeski()
-               ! algaesbl()
-               ! algaesgr()
+               
                do k = 1,number_trans_quant
                   if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
                      print*,'nach algae_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
@@ -107,7 +105,7 @@ subroutine stoffumsatz()
                   endif
                end do
                
-               !------------------------------------------------------------------------ benthische Algen
+               ! benthic algae [turned off]
                call albenth_huelle(i)
                
                ! macrophytes [turned off]
