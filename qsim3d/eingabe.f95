@@ -252,6 +252,21 @@ subroutine ereigg_modell()
    if ( .not. zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
         ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
+   
+   ! Schönung, November 2022
+   ! Schwermetalle sind noch nicht ausreichend getestet unter QSim3D
+   ! Im Codecafe am 17.November 2022 wurde beschlossen, die Schwermetalle vorläufig
+   ! zu deaktivieren. 
+   ! Aktuell finden Entwicklungsarbeiten zur Verknüpfung zwischen Schwermetalle, 
+   ! Schwebstoffe und Erosion statt. Nach Abschluss dieser Arbeiten und erfolgreichen
+   ! Tests für QSim1D und QSim3D sollen die Schwermetalle auch in QSim3D wieder
+   ! aktiviert werden können.
+   if (iSchwer == 1) then
+      print*, 'You are trying to run a simulation with heavy metals.'
+      print*, 'This is not supported by this version of QSim3D'
+      call qerror('Heavy metals not supported by this version of QSim3D')
+   endif
+   
    print*,'Zeile 5 von EREIGG.txt:'
    print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
    print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr

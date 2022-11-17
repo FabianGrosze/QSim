@@ -156,8 +156,8 @@ subroutine stoffumsatz()
                !------------------------------------------------------------------------ Erosion von Schwebstoffe
                if (ieros == 1)call erosion_huelle(i)
                
-               !------------------------------------------------------------------------ Schwermetalle
-               if (iSchwer == 1)call schwermetalle_huelle(i)
+               ! Schwermetalle
+               ! if (iSchwer == 1)call schwermetalle_huelle(i)
                ! erosion
             end if ! .not. nur_temp
          end if ! Knoten nass

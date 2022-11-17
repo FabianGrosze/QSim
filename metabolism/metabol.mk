@@ -55,8 +55,8 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/version_string.o \
       ../metabolism/verteilungskoeff.o \
       ../metabolism/Sedimentbelastung.o \
-      ../metabolism/Schwermetalle.o \
-      ../metabolism/Schwermetalle_kern.o \
+      ../metabolism/schwermetalle.o \
+      ../metabolism/schwermetalle_kern.o \
       ../metabolism/erosion.o \
       ../metabolism/erosion_kern.o \
       ../metabolism/schweb.o \
