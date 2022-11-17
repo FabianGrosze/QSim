@@ -5090,66 +5090,83 @@ program qsim
       ! -----------------------------------------------------------------------
       1415 continue
       
-      if (nbuhn(mstr) == 0)goto 1440
-      do ior = 1,anze+1
-         do jC = 1,5
-            zwcoro(ior,jC) = coro(ior,jC)
-            Coro(ior,jC) = 0.0
-         enddo
-      enddo
+      ! if (nbuhn(mstr) == 0)goto 1440
+      ! do ior = 1,anze+1
+      !    do jC = 1,5
+      !       zwcoro(ior,jC) = coro(ior,jC)
+      !       Coro(ior,jC) = 0.0
+      !    enddo
+      ! enddo
+      ! 
+      ! 1440 continue
+      ! call coroph(coro,coros,tempw,flae,elen,anze,ior                                  &
+      !            ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
+      !            ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs, &
+      !            .false., 0)
+      !
+      coro(:,:)  = 0.0
+      coros(:,:) = 0.0
+      volfco(:)  = 0.0
+      algcok(:)  = 0.0
+      algcog(:)  = 0.0
+      coroI(:)   = 0.0
+      coroIs(:)  = 0.0
+      algcob(:)  = 0.0
       
-      1440 call coroph(coro,coros,tempw,flae,elen,anze,ior                                   &
-                       ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
-                       ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs, &
-                       .false., 0) !!wy ,kontroll, iglob 3D
-      if (nbuhn(mstr) == 0)goto 1441
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwflae(ior) = flae(ior)
-            zwlboe(ior) = lboem(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwacok(ior) = algcok(ior)
-            zwacog(ior) = algcog(ior)
-            zwacob(ior) = algcob(ior)
-            zwCoIs(ior) = coroIs(ior)
-            zwcors(ior,1:5) = coros(ior,1:5)
-            Coros(ior,1:5) = 0.0
-              coro(ior,1:5) = zwcoro(ior,1:5)
-            
-            flae(ior) = bf(mstr,ior)
-            lboem(ior) = blb(mstr,ior)
-            tempw(ior) = btempw(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1440
+      if (nbuhn(mstr) > 0) then
+         bacok(mstr,:) = 0.0
+         bacog(mstr,:) = 0.0
+         bacob(mstr,:) = 0.0
       endif
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bacok(mstr,ior) = algcok(ior)
-            bacog(mstr,ior) = algcog(ior)
-            bacob(mstr,ior) = algcob(ior)
-            
-            flae(ior) = zwflae(ior)
-            lboem(ior) = zwlboe(ior)
-            tempw(ior) = zwtemp(ior)
-            CoroIs(ior) = zwCoIs(ior)
-            coros(ior,1:5) = zwcors(ior,1:5)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            algcok(ior) = zwacok(ior)
-            algcog(ior) = zwacog(ior)
-            algcob(ior) = zwacob(ior)
-         enddo
-         ilbuhn = 0
-      endif
+      ! if (nbuhn(mstr) == 0)goto 1441
+      ! if (ilbuhn == 0) then
+      !    do ior = 1,anze+1
+      !       zwtemp(ior) = tempw(ior)
+      !       zwflae(ior) = flae(ior)
+      !       zwlboe(ior) = lboem(ior)
+      !       zwaki(ior) = aki(ior)
+      !       zwagr(ior) = agr(ior)
+      !       zwabl(ior) = abl(ior)
+      !       zwacok(ior) = algcok(ior)
+      !       zwacog(ior) = algcog(ior)
+      !       zwacob(ior) = algcob(ior)
+      !       zwCoIs(ior) = coroIs(ior)
+      !       zwcors(ior,1:5) = coros(ior,1:5)
+      !       Coros(ior,1:5) = 0.0
+      !       coro(ior,1:5) = zwcoro(ior,1:5)
+      !
+      !       flae(ior) = bf(mstr,ior)
+      !       lboem(ior) = blb(mstr,ior)
+      !       tempw(ior) = btempw(mstr,ior)
+      !       aki(ior) = baki(mstr,ior)
+      !       agr(ior) = bagr(mstr,ior)
+      !       abl(ior) = babl(mstr,ior)
+      !    enddo
+      !    ilbuhn = 1
+      !    goto 1440
+      ! endif
+      
+      ! if (ilbuhn == 1) then
+      !    do ior = 1,anze+1
+      !       bacok(mstr,ior) = algcok(ior)
+      !       bacog(mstr,ior) = algcog(ior)
+      !       bacob(mstr,ior) = algcob(ior)
+      ! 
+      !       flae(ior) = zwflae(ior)
+      !       lboem(ior) = zwlboe(ior)
+      !       tempw(ior) = zwtemp(ior)
+      !       CoroIs(ior) = zwCoIs(ior)
+      !       coros(ior,1:5) = zwcors(ior,1:5)
+      !       aki(ior) = zwaki(ior)
+      !       agr(ior) = zwagr(ior)
+      !       abl(ior) = zwabl(ior)
+      !       algcok(ior) = zwacok(ior)
+      !       algcog(ior) = zwacog(ior)
+      !       algcob(ior) = zwacob(ior)
+      !    enddo
+      !    ilbuhn = 0
+      ! endif
       
       ! -----------------------------------------------------------------------
       ! Dreissena
