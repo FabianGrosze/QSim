@@ -5992,21 +5992,28 @@ program qsim
                    ,.false.,0)
       
       ! -----------------------------------------------------------------------
-      ! Makrophythen
+      ! macrophytes [turned off]
       ! -----------------------------------------------------------------------
-      call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-                 ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-                 ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
-                 ,.false.,0)
-      if (ifehl > 0)goto 989
+      ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
+      !            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
+      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
+      !            ,.false.,0)
+      ! if (ifehl > 0)goto 989
       
+      ! if (nbuhn(mstr) > 0) then
+      !    do ior = 1,anze+1
+      !       bpfl(mstr,ior) = pfl(ior)
+      !       pfl(ior) = 0.0
+      !    enddo
+      ! endif
       
-      if (nbuhn(mstr) > 0) then
-         do ior = 1,anze+1
-            bpfl(mstr,ior) = pfl(ior)
-            pfl(ior) = 0.0
-         enddo
-      endif
+      pfl(:)    = 0.0
+      pflmax(:) = 0.0
+      pflmin(:) = 0.0
+      po2p(:)   = 0.0
+      po2r(:)   = 0.0
+      
+      if (nbuhn(mstr) > 0) bpfl(:,:) = 0.0
       
       ! -----------------------------------------------------------------------
       ! organic carbon

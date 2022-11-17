@@ -110,7 +110,7 @@ subroutine stoffumsatz()
                !------------------------------------------------------------------------ benthische Algen
                call albenth_huelle(i)
                
-               !------------------------------------------------------------------------ Makrophythen
+               ! macrophytes [turned off]
                call mphyt_huelle(i)
                
                ! organischer Kohlenstoff BSB
