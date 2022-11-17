@@ -27,18 +27,7 @@
 
 # Makefile for QSim1D
 
-VERSION = 14.09.09_dev
-
-# PV= qsim1d_voll
-# PV= qsim1d_ohnesedflux
-# PV= qsim1d_formatfrei
-# PV= qsim1d_ohne_sedflux
-# PV= qsim1d_mit_sedflux
-# PV= qsim1d_entwicklung
-# PV= qsim1d_final_v
-# PV= qsim1d_14.06
-# PV= qsim1d14.10.01
-PV= qsim1d_schwer$(VERSION)
+PV= qsim1d_14.09.10_dev
 
 #====================================================================
 

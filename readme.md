@@ -1,3 +1,14 @@
+## 14.09.10
+
+* Modules and Corefunctions for organic carbon and phosphate. Calculations
+are not change, only code was refactored
+* The following modules are turned off as decided in QSim-Runde:
+  * Sedimentflux
+  * HNF
+  * Corophium
+  * Macrophytes
+  * Benthic Algae
+
 ## 14.09.09
 
 * Bugfix (QSim3D): Correct error in initializing variable schwi
