@@ -77,8 +77,9 @@ subroutine stoffumsatz()
                !------------------------------------------------------------------------ Muscheln (dreissena), auch Konsumenten
                call dreissen_huelle(i)
                
-               !------------------------------------------------------------------------ heterotrophe Nanoflagellaten
-               !call hnf_huelle(i)
+               ! heterotrophe Nanoflagellaten [turned off]
+               ! call hnf_huelle(i)
+               
                !----------------------------------------------------------------------------------------------------------- Algen-Baustein
                do k = 1,number_plankt_vari
                   if (isnan(planktonic_variable_p(k+nk))) then

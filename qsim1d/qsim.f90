@@ -5262,6 +5262,14 @@ program qsim
       !         ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks  &
       !         ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz,   &
       !          .false., 0)
+      HNFmua(:) = 0.0
+      HNFrea(:) = 0.0
+      HNFupa(:) = 0.0
+      HNFmoa(:) = 0.0
+      HNFexa(:) = 0.0
+      HNFbac(:) = 0.0
+      rO2HNF(:) = 0.0
+      bsbHNF(:) = 0.0
       
       ! -----------------------------------------------------------------------
       ! Kieselalgen
