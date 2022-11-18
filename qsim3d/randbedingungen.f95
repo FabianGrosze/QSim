@@ -34,7 +34,7 @@ subroutine randbedingungen_setzen()
    use QSimDatenfelder
    use aparam
    implicit none
-   integer :: j, RB_zaehl
+   integer :: j, RB_zaehl, ierr
    logical einmalig
    !print*,'randbedingungen_setzen'
    !!wy call gather_planktkon() ! syncronize non-parallel fields to paralell ones
@@ -134,7 +134,7 @@ end subroutine randbedingungen_setzen
 subroutine scatter_rb_hydraul()
    use modell
    implicit none
-   integer :: j, RB_zaehl
+   integer :: j, RB_zaehl,ierr
    !>>>> Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    ! wurden von prozess 0 in holen_trans() gelesen und werden hier auf alle Prozesse gescattert.
    !if(meinrang.eq.0)then !! nur prozessor 0
@@ -161,7 +161,7 @@ subroutine randwert_planctonic(jjj,zaehl,logi)
    use aparam
    implicit none
    !!  \anchor jjj wahrscheinlich ein Zähler (def. in randbedingungen; referenziert in N subroutine!?)
-   integer :: jjj, zaehl, nk, i, l
+   integer :: jjj, zaehl, nk, i, l,ierr
    logical logi
    if (meinrang > 0) then !! nur prozessor 0
       write(fehler,*)' 789 subroutine randwert_planctonic darf nur auf prozess 0'
@@ -293,7 +293,7 @@ end subroutine randwert_planctonic
 subroutine tiefenprofil(jjj)
    use modell
    implicit none
-   integer :: jjj, nk, i, l
+   integer :: jjj, nk, i, l,ierr
    if (jjj > number_plankt_point)call qerror('tiefenprofil: jjj > number_plankt_point')
    nk = (jjj-1)*number_plankt_vari
    if (nk+number_plankt_vari > number_plankt_vari*number_plankt_point) then
@@ -326,7 +326,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    use aparam
    use module_ph, only: pwert
    implicit none
-   integer :: j,nk
+   integer :: j,nk,ierr
    real :: CPges,CDges,Cref,TOC
    logical einmalig
    !     if(j.eq.1)print*,'randbedingungen_ergaenzen'
@@ -442,7 +442,7 @@ end subroutine randbedingungen_ergaenzen
 subroutine randbedingungen_parallel()
    use modell
    implicit none
-   integer :: as, ini
+   integer :: as, ini,ierr
    
    ! print*,meinrang,' randbedingungen_parallel() ,part, number_rb_hydraul,number_rb_wetter='  &
    !       ,part, number_rb_hydraul,number_rb_wetter
@@ -509,7 +509,7 @@ end subroutine randbedingungen_parallel
 subroutine scatter_BC()
    use modell
    implicit none
-   integer :: i
+   integer :: i,ierr
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
@@ -528,7 +528,7 @@ end subroutine scatter_BC
 subroutine RB_werte_aktualisieren(t)
    use modell
    implicit none
-   integer n,j,k
+   integer n,j,k,ierr
    integer t, zeit_vor, zeit_nach
    real ::a, wert_vor, wert_nach, wert
    logical :: randwert_gueltig, vor_da, nach_da
@@ -609,7 +609,7 @@ end subroutine RB_werte_aktualisieren
 logical function randwert_gueltig(wert,n)
    use modell
    implicit none
-   integer :: n
+   integer :: n,ierr
    real :: wert
    randwert_gueltig = .false.
    if ((n > n_active_concentrations) .or. (n <= 0)) then
@@ -644,7 +644,7 @@ subroutine ereigg_Randbedingungen_lesen()
    use modell
    implicit none
    character(500) dateiname, text
-   integer :: open_error, ion, read_error, alloc_status, ini
+   integer :: open_error, ion, read_error, alloc_status, ini,ierr
    integer :: idumm, anzi, i, j, n, m, min_nr, nr, maxrandnr, nini
    integer :: anzmax = -1
    logical :: rb_vorhanden, randwert_gueltig
@@ -1045,7 +1045,7 @@ subroutine extnct_lesen()
    use aparam
    implicit none
    character(500) dateiname, text
-   integer :: io_error,i, alloc_status, ini
+   integer :: io_error,i, alloc_status, ini,ierr
    if (meinrang /= 0) then ! prozess 0 only
       write(fehler,*)' 724 extnct_lesen darf nur von Prozess 0 aufgerufen werden'
       call qerror(fehler)
@@ -1083,7 +1083,7 @@ end subroutine extnct_lesen
 subroutine alloc_hydraul_BC(nk)
    use modell
    implicit none
-   integer :: nk, as, ini
+   integer :: nk, as, ini,ierr
    !allocate (rb_hydraul(nk*number_rb_hydraul), stat = as )
    allocate (rb_hydraul(part*proz_anz*number_rb_hydraul), stat = as )
    if (as /= 0) then
@@ -1105,7 +1105,7 @@ subroutine rand_flux(zeitzaehler)
    use modell
    implicit none
    integer :: zeitzaehler, n, i, k
-   integer :: nbot, ntop, fall
+   integer :: nbot, ntop, fall,ierr
    real :: deltax, d1, d2, deltad, x_kreuz, u1, u2, v1x,v1y,v2x,v2y, vox2, volst2
    real :: lang, flaeche, vol_strom, pot_ener_flux, kin_ener_flux
    real :: la,flae,vox,pox,kix
@@ -1193,7 +1193,7 @@ end subroutine rand_flux
 subroutine randlinie_zusammenstellen()
    use modell
    implicit none
-   integer :: j,k, n, anzranz, nexi, anzel, alloc_status , dreidrin, vierdrin,nzwi
+   integer :: j,k, n, anzranz, nexi, anzel, alloc_status , dreidrin, vierdrin,nzwi,ierr
    real :: kx,ky,nx,ny,einwaerts,lang,kantlang
    logical :: top
    if (meinrang /= 0) then

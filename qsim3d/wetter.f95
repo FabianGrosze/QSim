@@ -65,7 +65,7 @@
 subroutine wetter_parallel()  ! called from all processes randbedingungen_parallel()
    use modell
    implicit none
-   integer :: alloc_status
+   integer :: alloc_status,ierr
    call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -209,7 +209,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
    character(300) systemaufruf
    ! integer iWETTs, IMET, iWSta(20), mwetts(20), itagw(20,10000), monatw(20,10000), jahrw(20,10000)
    ! real wertw(7,10000), uhrzw(20,10000)
-   integer :: alloc_status , dealloc_status, flag, open_error, io_error ,i,j
+   integer :: alloc_status , dealloc_status, flag, open_error, io_error ,i,j,ierr
    integer :: ifehl_T, ifhStr_T, ixw_T, mwett_T, iWETT_T
    real hcTmx2_T, dummreal
    character(300) txt
@@ -553,7 +553,7 @@ end subroutine wetter_readallo0
 subroutine update_weather()
    use modell
    implicit none
-   integer i, nuzo, i2
+   integer i, nuzo, i2,ierr
    ! update weather station values *_T values
    call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt
    call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
@@ -588,7 +588,7 @@ end subroutine update_weather
 subroutine wettles_wetter()
    use modell
    implicit none
-   integer i, j, ipw ,z1,z2
+   integer i, j, ipw ,z1,z2,ierr
    real b,ywert,w1,w2
    logical found1,found2,wert_gueltig
    !print*,'i : glob_T | tlmax_T | tlmin_T | ro_T | wge_T | cloud_T | typw_T'
@@ -699,7 +699,7 @@ subroutine temperl_wetter()
    implicit none
    integer i
    real dk, sa, su, zg, zlk, geol, geob
-   integer tdj, imet
+   integer tdj, imet,ierr
    real, dimension(20)              :: TLMAX, TLMIN
    do i = 1,IWETTs_T   !! Schleife über alle Wetterstationen
       geol = modell_geol
@@ -756,7 +756,7 @@ subroutine strahlg_wetter()
    use modell
    use QSimDatenfelder
    implicit none
-   integer NRV(8)
+   integer NRV(8),ierr
    real maxi,lt
    real ar(4),br(4),Breite(1000)
    real EVALT(14),EKRBRT(14),EDUFER(14),EVDICH(14)

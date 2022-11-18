@@ -30,7 +30,7 @@
 subroutine planktkon_parallel()
    use modell
    implicit none
-   integer as,j,k,i,iloka
+   integer as,j,k,i,iloka,ierr
    !print*,meinrang, ' planktkon_parallel starting'
    if ((meinrang == 0) .and. (kontrollknoten > 0))print*,'0 planktkon_parallel starting GlMn = (',kontrollknoten,') = '   &
        ,planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
@@ -78,6 +78,7 @@ end subroutine planktkon_parallel
 subroutine scatter_planktkon()
    use modell
    implicit none
+   integer ierr
    print*,'scatter_planktkon'
    !print*,'scatter_planktkon part,number_plankt_vari,meinrang=',part, number_plankt_vari, meinrang
    call MPI_Scatter(planktonic_variable, part*number_plankt_vari, MPI_FLOAT,  &
@@ -101,6 +102,7 @@ end subroutine scatter_planktkon
 subroutine gather_planktkon()
    use modell
    implicit none
+   integer ierr
    !print*,'gather_planktkon'
    call MPI_Gather(planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT,  &
                    planktonic_variable, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -123,6 +125,7 @@ subroutine ini_planktkon0(nk)
    use modell
    implicit none
    integer nk,k,n,as,j,l,ini
+   integer ierr
    if (meinrang == 0) then ! prozess 0 only
       print*,'ini_planktkon0'
       number_plankt_point = nk

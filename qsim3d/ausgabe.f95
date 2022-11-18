@@ -28,6 +28,8 @@
 subroutine ausgeben()
    use modell
    implicit none
+   integer ierr
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    call gather_benthic()
    call gather_ueber()
@@ -54,7 +56,7 @@ end subroutine ausgeben
 subroutine tagesmittelwert()
    use modell
    implicit none
-   integer j,n, ion, open_error, system_error, errcode
+   integer j,n, ion, open_error, system_error, errcode,ierr
    real tagesanteil, null
    character(len = longname) :: dateiname, dateiname2, systemaufruf, zahl
    character(50) tm,tt,tj
@@ -205,7 +207,7 @@ end subroutine tagesmittelwert
 subroutine ausgabekonzentrationen()
    use modell
    implicit none
-   integer :: ion, ibei, open_error, io_error, alloc_status, iscan, j, n, sysa
+   integer :: ion, ibei, open_error, io_error, alloc_status, iscan, j, n, sysa,ierr
    character (len = 200) :: dateiname, text
    logical :: found
    character(300) systemaufruf
@@ -345,7 +347,7 @@ end subroutine ausgabekonzentrationen
 subroutine ausgabekonzentrationen_beispiel()
    use modell
    implicit none
-   integer :: j,open_error
+   integer :: j,open_error,ierr
    character (len = 300) :: dateiname
    write(dateiname,'(2A)')trim(modellverzeichnis),'ausgabekonzentrationen_beispiel.txt'
    open ( unit = 104 , file = dateiname, status = 'replace', action = 'write ', iostat = open_error )
@@ -389,7 +391,7 @@ end subroutine ausgabekonzentrationen_beispiel
 subroutine ausgabezeitpunkte()
    use modell
    implicit none
-   integer :: n, ion, open_error, io_error, alloc_status, nba
+   integer :: n, ion, open_error, io_error, alloc_status, nba,ierr
    character (len = 200) :: dateiname
    !integer :: n_ausgabe
    !integer , allocatable , dimension (:) :: ausgabe_punkt
@@ -454,7 +456,7 @@ end subroutine ausgabezeitpunkte
 subroutine ausgeben_parallel()
    use modell
    implicit none
-   integer :: alloc_status
+   integer :: alloc_status,ierr
    !print*,meinrang,'ausgeben_parallel() n_ausgabe=',n_ausgabe
    call MPI_Bcast(n_ausgabe,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
@@ -486,7 +488,7 @@ end subroutine ausgeben_parallel
 logical function jetzt_ausgeben()
    use modell
    implicit none
-   integer :: n , diff
+   integer :: n , diff,ierr
    jetzt_ausgeben = .false.
    bali = .false.
    !if(hydro_trieb.eq. 3)then
@@ -519,7 +521,7 @@ end function jetzt_ausgeben
 subroutine ini_aus(nk)
    use modell
    implicit none
-   integer nk,k,n,as,j
+   integer nk,k,n,as,j,ierr
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       knotenanzahl_ausgabe = nk
       anzahl_auskonz = 1
@@ -548,7 +550,7 @@ end subroutine ini_aus
 subroutine aus_grd()
    use modell
    implicit none
-   integer :: ion, open_error, io_error, n
+   integer :: ion, open_error, io_error, n,ierr
    character (len = 200) :: dateiname
    if ( .not. uedau_flag) return !! Überstaudauern nur ausgeben wenn parameter in module_modell.f95 gesetzt
    if (uedau_flag) call qerror(" aus_grd() Überstaudauer nicht mehr implementiert")

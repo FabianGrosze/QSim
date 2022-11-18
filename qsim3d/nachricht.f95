@@ -31,7 +31,7 @@ subroutine qerror(fehlermeldung)
    implicit none
    character fehlermeldung*(*)
    character (len = longname) :: systemaufruf
-   integer errcode,sysa
+   integer errcode,sysa,ierr
    print*,'qsim3d-error: ',trim(fehlermeldung)
    write(*,*)meinrang,' exiting '
    write(systemaufruf,'(3A)',iostat = errcode)'rm -rf ',trim(modellverzeichnis),'fortschritt'
@@ -69,7 +69,7 @@ end subroutine qerror
 subroutine fortschritt(n,f)
    use modell
    implicit none
-   integer n
+   integer n,ierr
    real f, f_old
    integer ion, sysa, system_error,errcode
    character (len = longname) :: systemaufruf,progressfile

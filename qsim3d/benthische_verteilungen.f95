@@ -30,7 +30,7 @@
 subroutine benthic_parallel()
    use modell
    implicit none
-   integer :: i,j,as
+   integer :: i,j,as,ierr
    !print*,meinrang,'benthic_parallel'
    call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (benthic_distribution_p(number_benth_distr*part), stat = as )
@@ -60,6 +60,7 @@ end subroutine benthic_parallel
 subroutine scatter_benthic()
    use modell
    implicit none
+   integer ierr
    !print*,'scatter_benthic'
    
    call MPI_Scatter(benthic_distribution, part*number_benth_distr, MPI_FLOAT,  &
@@ -77,6 +78,7 @@ end subroutine scatter_benthic
 subroutine gather_benthic()
    use modell
    implicit none
+   integer ierr
    !print*,'gather_benthic'
    
    call MPI_Gather(benthic_distribution_p, part*number_benth_distr, MPI_FLOAT,  &
@@ -96,6 +98,7 @@ subroutine ini_benthic0(nk)
    use modell
    implicit none
    integer nk,j,i, as
+   integer ierr
    if (meinrang == 0) then ! prozess 0 only
       number_benthic_points = nk
       do j = 1,number_benth_distr ! initialise

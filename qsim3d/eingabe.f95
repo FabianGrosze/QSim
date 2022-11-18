@@ -33,7 +33,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    use modell
    use QSimDatenfelder
    use aparam
-   
+   use schism_msgp
+      
    implicit none
    integer :: i, j, n, n_cal
    logical :: vorhanden, only, querschnitt_lesen
@@ -83,6 +84,14 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          !call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
          !call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
+         ! use same MPI-environment
+         comm=mpi_komm_welt
+         myrank=meinrang
+         ! Construct parallel message-passing tables
+         call msgp_tables
+         ! Initialize parallel message-passing datatypes
+         call msgp_init
+         if(meinrang==0) print*,'done msg passing table...'
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
@@ -296,12 +305,13 @@ subroutine ereigg_modell()
        'ist in QSim3D nicht implementiert.'
    if (ipH == 0) &
        print*,'### Warnung ###, in EREIGG.txt wird mittels ipH = 0 eine Sim. ohne ph-Wert Berechnung angefordert !!!'
-   if (idl == 0) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 0 angeforderte Einlesen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
+   !qsim.f90:! falls idl = 1 wird der Koeffizient eingelesen, andernfalls wird er berechnet
    if (idl == 1) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 1 angeforderte Berechnen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
+       print*,'### warning ###, EREIGG.txt idl = 1 askes for input of dispersion coefficients. ', &
+              '### not yet implemented in QSim3D ####'
+   !if (idl /= 1) &
+   !    print*,'### Warnung ###, die in EREIGG.txt mittels idl =',idl,' angeforderte Berechnen von Disp.Koeff.', &
+   !    'ist in QSim3D noch nicht implementiert.'
    if (itemp == 1) then
       print*,'### Warning ### Temperature-simulation only. Asked for by itemp = 1 in EREIGG.txt'
       nur_temp = .true.

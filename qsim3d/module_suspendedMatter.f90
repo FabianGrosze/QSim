@@ -65,6 +65,7 @@ module mod_suspendedMatter
    real, allocatable, dimension(:,:)     :: spm_classes_element         !< mass of SPM size classes (kg)
    
    logical, parameter                    :: debug = .true.              !<s turn debugging on/off
+   integer ierr
    
 contains
    

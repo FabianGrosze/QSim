@@ -31,7 +31,7 @@ subroutine initialisieren()
    use aparam
    
    implicit none
-   integer i,j,k,nini,nuzo, nt, irn
+   integer i,j,k,nini,nuzo, nt, irn,ierr
    logical vorhanden, einmal
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       print*,'initialisieren mit rechenzeit = ',rechenzeit

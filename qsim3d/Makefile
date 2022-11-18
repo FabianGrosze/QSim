@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_09'
+PV='qsim3d_schiqu22_10'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -71,7 +71,7 @@ Q3 = version.co trans_read.co \
      ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
      eingabe.o initialisieren.o randbedingungen.o \
      schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
-     stofftransport_casu.o \
+     stofftransport_casu.o transinfo_schritte.o \
      stofftransport_untrim.o read_mesh_nc.o read_elemente_gerris.o holen_trans_untrim.o untrim_nc_sichten.o\
      stofftransport.o allo_trans.o\
      sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
@@ -157,7 +157,8 @@ schism: $(SC)
 	ar ruv libschism.a $(SC)
 	ranlib libschism.a
 	@echo "libschism.a done"
-	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
+   
+#	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
 %.co: %.c
 	$(MCC) -c  $(CCLAGS) $< -o $@

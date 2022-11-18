@@ -33,7 +33,7 @@ subroutine get_schism_step(nt)
    use modell
    use schism_glbl, only:su2,sv2,tr_el,eta2  &
    ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
-   ,ielg,iplg,islg,isidenode, znl, zs
+   ,ielg,iplg,islg,isidenode, znl, zs,,ierr
    use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
    include "netcdf.inc"

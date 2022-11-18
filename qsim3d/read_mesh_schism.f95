@@ -35,12 +35,12 @@
 subroutine read_mesh_schism() !meinrang.eq.0
    use netcdf
    use modell
-   use schism_glbl, only: su2, sv2, tr_el, eta2, npa, nsa, nea, nvrt, ns_global, &
-                          tr_nd,                                                 &
+   use schism_glbl, only: su2, sv2, tr_el, eta2, nvrt, ns_global, tr_nd,         &
+                          np,npa,ne,nea,nea2,ns,nsa,                             &
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
                           itrtype,irange_tr,isbnd,isbe,trth,trobc,natrm,ntrs,    &
-                          snx, sny, distj,ntracers,ne,np,ns,kbe,isdel,delj,      &
+                          snx, sny, distj,ntracers,kbe,isdel,delj,               &
                           start_year,start_month,start_day,start_hour,utc_start, &
                           nrec,nspool,kz,ics,xlon,ylat,area,elside,ic3,isbs,     &
                           wsett,iwsett,tr_nd0,saltmax,saltmin,tempmax,tempmin,   &
@@ -56,7 +56,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    include 'netcdf.inc'
    
    integer                           :: i,j,k,n,m,mm, nr
-   integer                           :: istat, nproc
+   integer                           :: istat, nproc, ierr
    character (len = longname)        :: dateiname,systemaufruf
    character(len = 72)               :: fgb,fgb2  ! Processor specific global output file name
    character(len = 400)              :: textline
@@ -160,13 +160,12 @@ subroutine read_mesh_schism() !meinrang.eq.0
          print*,meinrang,' proz_anz .ne. nproc ',proz_anz,nproc
          call qerror('incompatible process number SCHISM - QSim')
       endif
-      read(10+meinrang,*)ne,nea
+      read(10+meinrang,*)ne,nea,nea2
       if(allocated(ielg)) deallocate(ielg); allocate(ielg(nea));
       do i=1,ne
          read(10+meinrang,*)j,ielg(j)
       enddo
       read(10+meinrang,*)np,npa
-      print*,meinrang,'local_to_global:',np,npa
       if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa));
       do i=1,np
          read(10+meinrang,*)j,iplg(j)
@@ -176,6 +175,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       do i=1,ns
          read(10+meinrang,*)j,islg(j)
       enddo
+      print*,meinrang,'local_to_global: elements',ne,nea,nea2,' points',np,npa,' sides/edges',ns,nsa
       read(10+meinrang,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10+meinrang,*)'Header:'
       read(10+meinrang,*)start_year,start_month,start_day,start_hour,utc_start
       read(10+meinrang,*)nrec,dummy,nspool,nvrt,kz, &
@@ -708,7 +708,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       if(istat/=0) call qerror('read_mesh_schism: tr_nd allocation failure')
       tr_nd=0.0 ! initialize all concentrations to zero
       !Hydro/schism_init.F90:      allocate(tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa),tr_nd(ntracers,nvrt,npa),stat=istat)
-      if(allocated(tr_el)) deallocate(tr_el); allocate(tr_el(ntracers,nvrt,nea),stat=istat);
+      if(allocated(tr_el)) deallocate(tr_el); allocate(tr_el(ntracers,nvrt,nea2),stat=istat);
       if(istat/=0) call qerror('read_mesh_schism: tr_el allocation failure')
       tr_el=0.0 ! initialize all concentrations to zero
       

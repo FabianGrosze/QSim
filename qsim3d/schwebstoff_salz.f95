@@ -29,7 +29,8 @@ subroutine schwebstoff_salz()
    use modell
    implicit none
    save
-   integer :: i,j,n, nk, nvor, nach, nvor_alt, nach_alt, error
+   integer :: i,j,n, nk, nvor, nach, nvor_alt, nach_alt, error,ierr
+
    real a
    logical aenderung
    if (trueb_anzahl < 1)return ! keine Schwebstoffvorgaben ...
@@ -257,7 +258,8 @@ end subroutine schwebstoff_salz_sichten
 subroutine schwebstoff_salz_parallel()
    use modell
    implicit none
-   integer alloc_status
+   integer alloc_status,ierr
+   
    !allocate (trueb(knotenanzahl2D), stat = alloc_status )
    !if(alloc_status.ne.0)then
    !   write(fehler,*)' Rueckgabewert von allocate (trueb(knotenanzahl2D) :', alloc_status

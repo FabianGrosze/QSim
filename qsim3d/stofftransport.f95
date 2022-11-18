@@ -28,7 +28,7 @@
 subroutine stofftransport()
    use modell
    implicit none
-   integer :: i, n, j
+   integer :: i, n, j,ierr
    do i = 1,part ! all i elements/nodes on this process
       iglob = i + meinrang * part
       if (kontrollknoten == iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph = ",  &

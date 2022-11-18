@@ -54,7 +54,7 @@ module modell
    !-------------------------------------------------------------------------------parallel_datenfelder
    ! Beschreibung in parallel.f95
    !> nummer und Gesamtzahl prozessoren (MPI)
-   integer :: meinrang, part, proz_anz, ierr
+   integer :: meinrang, part, proz_anz ! , ierr
    integer :: mpi_komm_welt
    !-------------------------------------------------------------------------------Modell+Netz
    !> modellverzeichnis etc.

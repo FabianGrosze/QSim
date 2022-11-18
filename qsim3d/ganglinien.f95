@@ -30,7 +30,7 @@
 subroutine ganglinien_parallel()
    use modell
    implicit none
-   integer :: i,j, alloc_status, agp
+   integer :: i,j, alloc_status, agp,ierr
    call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (meinrang /= 0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
    call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
@@ -91,7 +91,7 @@ subroutine ganglinien_lesen()
    use modell
    implicit none
    character(200) dateiname, nummer, systemaufruf
-   integer :: open_error, io_error, alloc_status, knumm, nn, i, sys_error, j
+   integer :: open_error, io_error, alloc_status, knumm, nn, i, sys_error, j,ierr
    logical :: querschnitt_lesen
    if (meinrang > 0) then !! has to be on process 0
       write(fehler,*)' 7 ganglinien_oeffnen auf process #',meinrang,' ... darf nicht sein'
@@ -176,7 +176,7 @@ end subroutine ganglinien_lesen
 subroutine ganglinien_zeitschritt(izeit_gang)
    use modell
    implicit none
-   integer :: i, k, izeit_gang, n,nk !! Zeitschrittzähler
+   integer :: i, k, izeit_gang, n,nk,ierr !! Zeitschrittzähler
    !print*,'ganglinien_zeitschritt meinrang=', meinrang,' izeit_gang=',izeit_gang,' anz_gangl=',anz_gangl
    do i = 1,anz_gangl
       nk = knot_gangl(i)-meinrang*part
@@ -278,7 +278,7 @@ subroutine ganglinien_schliessen()
    character(40000) beschriftung, r_zeile
    character(3) spalte
    integer :: i,j,k,n, sys_error, open_error, ngnu, nk, errcode
-   integer :: time_style
+   integer :: time_style,ierr
    time_style = 0 ! Gerris
    !time_style=1 ! Ausgabeformat Stil wsa_cux
    !time_style=2 ! sekunden a la SCHISM

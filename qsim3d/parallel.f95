@@ -30,6 +30,8 @@ subroutine parallel_ini()
    use QSimDatenfelder
    !!!####     use schism_msgp, only: myrank,parallel_abort !,nproc
    implicit none
+   integer ierr
+   
    call mpi_init(ierr)
    if (ierr /= 0)call qerror('mpi_init(ierr) /= 0')
    mpi_komm_welt = MPI_COMM_WORLD
@@ -53,7 +55,7 @@ subroutine parallel_vorbereiten()
    use mod_suspendedMatter, only: init_suspendedMatter
    !!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
    implicit none
-   integer kontroll_lokal
+   integer kontroll_lokal,ierr
    ! prepare for parallel
    call modell_parallel()
    !print*,meinrang," modell_parallel() ... danach"
@@ -114,7 +116,7 @@ subroutine modell_parallel()
    use modell
    use QSimDatenfelder
    implicit none
-   integer n, alloc_status
+   integer n, alloc_status,ierr
    !print*,meinrang," modell_parallel() ... startet"
    call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(rechenzeit,1,MPI_INT,0,mpi_komm_welt,ierr)

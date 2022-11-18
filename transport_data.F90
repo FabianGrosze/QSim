@@ -1,4 +1,7 @@
 
+    nbr(iegrpv(ielg(ie)))=.true. #3  0x4EB097 in __schism_msgp_MOD_msgp_tables at schism_msgp.F90:608 (discriminator 8)
+
+
 
 !############################################################################################################
 !misc_subs.F90:
@@ -60,8 +63,8 @@
                               !weno stuff
                               itvd_e,isten1,isten2,fwts2,            &
                               wts1,wts2,wmat1,wmat2,                 &
-                              iside_table,                           &   !a record of all interface sides within the current rank
-                              isten_qual2,                           &   !stencil quality, check if at least 1 stencil is on one side of an element side
+                              ! stencil quality ??
+                              isten_qual2,                           &   !check if at least 1 stencil is on one side of an element side
                               !boundaries
                               itrtype,irange_tr,                     &
                               isbnd,isbe,trth,trobc,                 &
@@ -70,7 +73,9 @@
         write(16,*)'Index ranges of each module:',irange_tr(:,:)
                               ! integer,parameter :: natrm=12 !# of _available_ tracer models at the moment (including T,S)
                               natrm,                                 &
-                              ! call aquire_hgrid(.true.)    -------------------
+                              ! call aquire_hgrid(.true.)    ------------------- ??
+                              ! written by subroutine msgp_tables in module schism_msgp needs:
+                              iside_table,                           &   !a record of all interface sides within the current rank
                               ! mesh
                               iegl2(:,:),                            &   ! added to global_to_local.prop
                               ! local_to_global 
@@ -100,7 +105,8 @@
                               flux_adv_vface,                              &   ++
                               dp,                                          &   ! depth, writeout_nc
                               ! wet/dry flag
-                              idry_s,idry_e,idry_e_2t,                     &   ++
+                              idry_s,idry_e,                               & ! writeout_nc
+
                               !=0
                               dfhm,bdy_frc,flx_sf,flx_bt                   &
                               ,                                            &
@@ -110,6 +116,8 @@
                                                                   tr_nd          &
                               ,                                                  &
                               ! output
+                              !allocate(idry_e_2t(nea2))
+                              idry_e_2t,                                   & !transport_TVD_imp.F90:203: idry_e_2t(1:ne)=idry_e(1:ne)
                               errmsg
                               
 

@@ -36,7 +36,7 @@ program QSim3D
    !use mpi
    implicit none
    include 'netcdf.inc'
-   integer :: i,ni,j,k,n, system_error
+   integer :: i,ni,j,k,n, system_error,ierr
    character(300) systemaufruf
    logical :: raus, jetzt_ausgeben, only
    !----initialize parallel computing:

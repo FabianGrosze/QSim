@@ -33,7 +33,7 @@ subroutine untrim_nc_sichten()
    integer, parameter :: attstrlen = 2000
    character(attstrlen) :: attstring
    character(256) :: aname
-   integer i,j,k,n, alloc_status, didi, io_error, nnn, timesteps
+   integer i,j,k,n, alloc_status, didi, io_error, nnn, timesteps,ierr
    real delt, parttime
    real , allocatable , dimension (:) :: zeitstunde, secuz
    if (meinrang == 0) then ! prozess 0 only

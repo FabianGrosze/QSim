@@ -78,7 +78,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    
    exzo = zexkis+zexgrs+zexbls
    
-   !...Schwebstoffverluste durch Dreissena werden nicht bercksichtigt
+   !...Schwebstoffverluste durch Dreissena werden nicht berücksichtigt
    ssdrs = 0.0
    
    SSt = SSs                          &

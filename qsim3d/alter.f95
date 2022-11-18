@@ -32,7 +32,7 @@ subroutine alter(i)
    use aparam
    
    implicit none
-   integer :: i,nk
+   integer :: i,nk,ierr
    real :: depth
    real , parameter :: rate = 0.1 ! 1/d
    tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim1D)
@@ -79,7 +79,7 @@ subroutine alter_lesen()
    use modell
    implicit none
    character (len = 300) :: dateiname, b
-   integer open_error, ion, i,j, read_stat, alloc_status,n, altzaehl
+   integer open_error, ion, i,j, read_stat, alloc_status,n, altzaehl,ierr
    logical dummy
    print*," "
    print*,"alter_lesen() ..."
@@ -170,6 +170,7 @@ end subroutine alter_lesen
 subroutine alter_parallel()
    use modell
    implicit none
+   integer ierr
    call MPI_Bcast(nur_alter,1,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(nur_temp,1,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    return
@@ -180,7 +181,7 @@ end subroutine alter_parallel
 subroutine alter_ini()
    use modell
    implicit none
-   integer i, nk, nura,nuzo
+   integer i, nk, nura,nuzo,ierr
    !! vorab alles 0.0
    do i = 1,number_plankt_point ! alle i knoten
       nk = (i-1)*number_plankt_vari
@@ -231,7 +232,7 @@ end subroutine alter_ini
 subroutine alter_zeitschritt(izeit_gang)
    use modell
    implicit none
-   integer :: j, izeit_gang
+   integer :: j, izeit_gang,ierr
    real volumen, tracer, entropy, c, tief
    !         allocate (tr_integral_zone(zonen_anzahl,zeitschrittanzahl+1), stat = alloc_status )
    !         allocate (vol_integral_zone(zonen_anzahl,zeitschrittanzahl+1), stat = alloc_status )
@@ -271,7 +272,7 @@ subroutine alter_ausgabe()
    implicit none
    character(4000) beschriftung1
    character(300) dateiname, zeitig
-   integer i, j, open_error
+   integer i, j, open_error,ierr
    ! Ganglinienausgabe Tracer+Volumen-Integrale auf tracer.txt
    write(dateiname,'(4A)')trim(modellverzeichnis),'ganglinien/tracer_zonen_integrale.txt'
    print*,'Tracer+Volumen-Integrale Ausgabe auf:', trim(dateiname), ' meinrang = ',meinrang
@@ -306,7 +307,7 @@ end subroutine alter_ausgabe
 subroutine alter_rand(j)
    use modell
    implicit none
-   integer :: j,nk, nura
+   integer :: j,nk, nura,ierr
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          nura = knoten_rand(j)

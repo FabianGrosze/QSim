@@ -28,7 +28,7 @@
 subroutine zonen_parallel()
    use modell
    implicit none
-   integer :: alloc_status, ini
+   integer :: alloc_status, ini,ierr
    call MPI_Bcast(zonen_anzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (meinrang /= 0) then ! alle Prozesse ausser 0
       allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )

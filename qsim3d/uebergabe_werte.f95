@@ -33,7 +33,7 @@ subroutine ueber_parallel()
    use QSimDatenfelder
    use aparam
    implicit none
-   integer :: allostat
+   integer :: allostat,ierr
    call MPI_Bcast(number_trans_quant_points,1,MPI_INT,0,mpi_komm_welt,ierr)
    !      print*,meinrang,' ueber_parallel, number_trans_quant_points,number_trans_quant='  &
    !     &      ,number_trans_quant_points,number_trans_quant
@@ -66,6 +66,8 @@ end subroutine ueber_parallel
 subroutine scatter_ueber()
    use modell
    implicit none
+   integer :: ierr
+
    call MPI_Bcast(transfer_value_p,number_trans_val,MPI_FLOAT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)' MPI_Bcast(transfer_value_p failed :',ierr
@@ -104,7 +106,8 @@ end subroutine scatter_ueber
 subroutine gather_ueber()
    use modell
    implicit none
-   integer :: i
+   integer :: i,ierr
+
    call MPI_Gather(transfer_quantity_p, part*number_trans_quant, MPI_FLOAT,  &
                    transfer_quantity, part*number_trans_quant, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
@@ -125,7 +128,7 @@ end subroutine gather_ueber
 subroutine ini_ueber(nk)
    use modell
    implicit none
-   integer nk,i,n,as,j,l,k
+   integer nk,i,n,as,j,l,k,ierr
    real, parameter  :: bk1 = 0.51 , bk2 = 0.02  !! Konstanten wie in orgc gesetzt
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       !--------------------------------------------- Übergabe Konzentrationen
@@ -345,6 +348,8 @@ subroutine broadcast_parameter()
    use QSimDatenfelder
    use aparam
    implicit none
+   integer ierr
+   
    !----------------------------------------------------------------- APARAM.txt
    call MPI_Bcast(agchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(aggmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !

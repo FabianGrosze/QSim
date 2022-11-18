@@ -36,7 +36,8 @@ subroutine screen_schism()
    use modell
    implicit none
    include 'netcdf.inc'
-   integer :: i,j,k,l,m,n, istat
+   integer :: i,j,k,l,m,n, istat, ierr
+
    character (len = 400) :: dateiname,systemaufruf, chari
    integer :: iret, ndims, nVars, nGlobalAtts, unlimdimid, nAtts
    integer , allocatable , dimension (:) :: dlength
