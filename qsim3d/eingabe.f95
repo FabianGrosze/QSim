@@ -275,12 +275,13 @@ subroutine ereigg_modell()
        'ist in QSim3D nicht implementiert.'
    if (ipH == 0) &
        print*,'### Warnung ###, in EREIGG.txt wird mittels ipH = 0 eine Sim. ohne ph-Wert Berechnung angefordert !!!'
-   if (idl == 0) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 0 angeforderte Einlesen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
+   !qsim.f90:! falls idl = 1 wird der Koeffizient eingelesen, andernfalls wird er berechnet
    if (idl == 1) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 1 angeforderte Berechnen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
+       print*,'### warning ###, EREIGG.txt idl = 1 askes for input of dispersion coefficients. ', &
+              '### not yet implemented in QSim3D ####'
+   !if (idl /= 1) &
+   !    print*,'### Warnung ###, die in EREIGG.txt mittels idl =',idl,' angeforderte Berechnen von Disp.Koeff.', &
+   !    'ist in QSim3D noch nicht implementiert.'
    if (itemp == 1) then
       print*,'### Warning ### Temperature-simulation only. Asked for by itemp = 1 in EREIGG.txt'
       nur_temp = .true.
