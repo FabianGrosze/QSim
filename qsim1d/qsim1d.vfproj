@@ -51,10 +51,6 @@
 		<File RelativePath=".\version.rc"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="metabolism">
-		<Filter Name="phosphate">
-		<File RelativePath="..\metabolism\phosphate\module_phosphate.f90"/>
-		<File RelativePath="..\metabolism\phosphate\phosphate.f90">
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="organic_carbon">
 		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
 		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90">
@@ -66,6 +62,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\ph\pwert.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="phosphate">
+		<File RelativePath="..\metabolism\phosphate\module_phosphate.f90"/>
+		<File RelativePath="..\metabolism\phosphate\phosphate.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="silicate">
 		<File RelativePath="..\metabolism\silicate\module_silicate.f90"/>
@@ -96,6 +96,7 @@
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
 		<File RelativePath="..\metabolism\module_allodim.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
+		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\ncyc.f90"/>
 		<File RelativePath="..\metabolism\oxygen.f90"/>

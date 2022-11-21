@@ -27,7 +27,7 @@
 subroutine phosphate_wrapper_3d(i)
    use modell
    use QSimDatenfelder
-   use module_phosphate, only: phosphate
+   use module_metabolism, only: phosphate
    use aparam
    implicit none
    

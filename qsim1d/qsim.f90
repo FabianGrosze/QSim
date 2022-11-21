@@ -28,10 +28,7 @@ program qsim
    use allodim
    use aparam
    use mod_model_settings
-   use module_ph,             only: ph, pwert 
-   use module_organic_carbon, only: organic_carbon
-   use module_phosphate,      only: phosphate
-   use module_silicate,       only: silicate
+   use module_metabolism
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
    character                               :: ckenn,cpoint,CST_end

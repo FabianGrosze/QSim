@@ -29,7 +29,7 @@ subroutine silicate_wrapper_3d(i)
    use modell
    use QSimDatenfelder
    use aparam
-   use module_silicate, only : silicate
+   use module_metabolism, only : silicate
    implicit none
    
    integer, intent(in) :: i

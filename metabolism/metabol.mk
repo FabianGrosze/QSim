@@ -1,7 +1,7 @@
 #====================================================================
 # to include in Makefiles of QSim1D and QSim3D
 # Linux
-# wyrwa 02sep22
+# Wyrwa 02.September 2022
 #====================================================================
 
 META= ../metabolism/module_allodim.o \
@@ -10,6 +10,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/organic_carbon/module_organic_carbon.o \
       ../metabolism/phosphate/module_phosphate.o \
       ../metabolism/silicate/module_silicate.o \
+	  ../metabolism/module_metabolism.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \

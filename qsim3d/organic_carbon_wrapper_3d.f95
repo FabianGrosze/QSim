@@ -34,7 +34,7 @@ subroutine organic_carbon_wrapper_3d(i)
    use modell
    use aparam
    use QSimDatenfelder
-   use module_organic_carbon, only: organic_carbon
+   use module_metabolism, only: organic_carbon
 
    implicit none
    
