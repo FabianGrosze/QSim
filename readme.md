@@ -1,3 +1,8 @@
+## 14.09.11
+Code Refactoring - Calculations were not altered.
+* Modules and Corefunctions for oxygen and silicate
+* New Module `module_metabolism` to cpmbine all metabolism-modules
+
 ## 14.09.10
 
 * Modules and Corefunctions for organic carbon and phosphate. Calculations

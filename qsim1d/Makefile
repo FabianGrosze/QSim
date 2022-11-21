@@ -27,12 +27,12 @@
 
 # Makefile for QSim1D
 
-PV= qsim1d_14.09.10_dev
+PV= qsim1d_14.09.11_dev
 
 #====================================================================
 
 #compiler:
-FC              = gfortran
+FC = gfortran
 
 Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
 	E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
