@@ -74,24 +74,24 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call mpi_barrier (mpi_komm_welt, ierr)
          if (meinrang == 0)then
             if(.not. read_elemente_gerris()) then  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
-               if(.not. read_zone_gr3()) call qerror('neither ELEMENTE.txt nor zone.gr3 available')
+               if(.not. read_zone_gr3(min_zone,max_zone)) call qerror('neither ELEMENTE.txt nor zone.gr3 available')
             endif ! ELEMENTE.txt
-            print*,'0 got SCHISM zones ',min_zone, max_zone
+            print*,'0 eingabe got SCHISM zones ',min_zone,max_zone
          endif ! meinrang 0
          call MPI_Bcast(min_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call MPI_Bcast(max_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
-         !call MPI_Bcast(elementnodes,n_elemente*4,MPI_INT,0,mpi_komm_welt,ierr)
-         !call MPI_Bcast(element_zone,n_elemente,MPI_INT,0,mpi_komm_welt,ierr)
-         !call MPI_Bcast(knoten_zone,knotenanzahl2D,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
          ! use same MPI-environment
          comm=mpi_komm_welt
          myrank=meinrang
          ! Construct parallel message-passing tables
          call msgp_tables
+         print*,meinrang,' eingabe did msgp_tables'
+         call mpi_barrier (mpi_komm_welt, ierr)
          ! Initialize parallel message-passing datatypes
          call msgp_init
-         if(meinrang==0) print*,'done msg passing table...'
+         print*,meinrang,' done msgp_init ...'
+         call mpi_barrier (mpi_komm_welt, ierr)
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select

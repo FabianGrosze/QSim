@@ -36,7 +36,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    use netcdf
    use modell
    use schism_glbl, only: su2, sv2, tr_el, eta2, nvrt, ns_global, tr_nd,         &
-                          np,npa,ne,nea,nea2,ns,nsa,                             &
+                          np,npa,ne,nea,nea2,ns,nsa,iegrpv,                      &
                           ne_global, np_global, ielg, iplg, islg, RNDAY, dt,     &
                           rkind, xnd, ynd, dp00, kbp00, i34, elnode, isidenode,  &
                           itrtype,irange_tr,isbnd,isbe,trth,trobc,natrm,ntrs,    &
@@ -49,14 +49,15 @@ subroutine read_mesh_schism() !meinrang.eq.0
                           h_tvd,eps1_tvd_imp,eps2_tvd_imp,                       &
                           ip_weno,courant_weno,ntd_weno,nquad,                   &
                           epsilon1,epsilon2,ielm_transport,                      &
-                          ztot,sigma
+                          ztot,sigma,in_dir,len_in_dir,nxq
+                          
+  use schism_msgp, only:  comm, nproc, myrank
 
-      !use schism_msgp, only: nproc, myrank
    implicit none
    include 'netcdf.inc'
    
    integer                           :: i,j,k,n,m,mm, nr
-   integer                           :: istat, nproc, ierr
+   integer                           :: istat, ierr
    character (len = longname)        :: dateiname,systemaufruf
    character(len = 72)               :: fgb,fgb2  ! Processor specific global output file name
    character(len = 400)              :: textline
@@ -161,17 +162,17 @@ subroutine read_mesh_schism() !meinrang.eq.0
          call qerror('incompatible process number SCHISM - QSim')
       endif
       read(10+meinrang,*)ne,nea,nea2
-      if(allocated(ielg)) deallocate(ielg); allocate(ielg(nea));
+      if(allocated(ielg)) deallocate(ielg); allocate(ielg(nea)); ielg=0
       do i=1,ne
          read(10+meinrang,*)j,ielg(j)
       enddo
       read(10+meinrang,*)np,npa
-      if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa));
+      if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa)); iplg=0
       do i=1,np
          read(10+meinrang,*)j,iplg(j)
       enddo
       read(10+meinrang,*)ns,nsa
-      if(allocated(islg)) deallocate(islg); allocate(islg(nsa));
+      if(allocated(islg)) deallocate(islg); allocate(islg(nsa)); islg=0
       do i=1,ns
          read(10+meinrang,*)j,islg(j)
       enddo
@@ -234,16 +235,19 @@ subroutine read_mesh_schism() !meinrang.eq.0
       if (meinrang==0)print*,'area[km²]=',totalarea,' bottom left=',xmini,ymini,' top right=',xmaxi,ymaxi
 
  !#### read global_to_local.prop #################################################################!
-      if(allocated(iegl2)) deallocate(iegl2); allocate(iegl2(2,ne_global))
+      !integer,save,allocatable :: iegl2(:,:)      ! Global-to-local element index table (2-tier augmented)
+      if(allocated(iegl2)) deallocate(iegl2); allocate(iegl2(2,ne_global)); iegl2=0
+      !integer,save,allocatable :: iegrpv(:)    ! Global element to resident processor vector
+      if(allocated(iegrpv)) deallocate(iegrpv); allocate(iegrpv(ne_global)) ; iegrpv=0
       allocate(ipgl_rank(np_global)) ; allocate(ipgl_id(np_global))
       call mpi_barrier (mpi_komm_welt, ierr)
       if(meinrang==0) then
          write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/global_to_local.prop"
          open(32,file=trim(dateiname),status='unknown')
          do i=1,ne_global
-            read(32,*)j,nummy,iegl2(1,i),iegl2(2,i)
             !read(32,'(i8,1x,i6,1x,i6,1x,i6)')j,nummy,iegl2(1,i),iegl2(2,i)
             !write(32,'(i8,1x,i6,1x,i6,1x,i6)')ie,iegrpv(ie),iegl2(1,ie),iegl2(2,ie)
+            read(32,*)j,iegrpv(i),iegl2(1,i),iegl2(2,i)
          enddo !i
          do i=1,np_global
             read(32,*)j, ipgl_rank(i), ipgl_id(i)
@@ -254,6 +258,8 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_barrier (mpi_komm_welt, ierr)
       call MPI_Bcast(ipgl_rank,np_global,MPI_INT,0,mpi_komm_welt,ierr)
       call MPI_Bcast(ipgl_id,np_global,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(iegrpv,ne_global,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(iegl2,2*ne_global,MPI_INT,0,mpi_komm_welt,ierr)
       rank_min=777777 ; rank_max=-777777 ; id_min=777777 ; id_max=-777777 ;j=0
       do i=1,np_global
          if(rank_min.gt.ipgl_rank(i))rank_min=ipgl_rank(i)
@@ -472,8 +478,31 @@ subroutine read_mesh_schism() !meinrang.eq.0
       print*,'maxstack = ',maxstack
       !print*,'edge length distmax+distmin', distmax, distmin
    end if !! prozess 0 only
+   
+!#### do aquire_hgrid ################################################################################!
+      call mpi_barrier (mpi_komm_welt, ierr)
+      ! nxq Cyclic index of nodes in an element (tri/quads) from schism_init
+      do k=3,4 !elem. type
+        do i=1,k  !local index
+          do j=1,k-1 !offset
+            nxq(j,i,k)=i+j
+            if(nxq(j,i,k)>k) nxq(j,i,k)=nxq(j,i,k)-k
+            if(nxq(j,i,k)<1.or.nxq(j,i,k)>k) then
+              write(fehler,*)'INIT: nxq wrong',i,j,k,nxq(j,i,k)
+              call qerror(fehler)
+            endif
+          enddo !j
+        enddo !i
+      enddo !k
+      write(in_dir,"(2A)")trim(modellverzeichnis),"outputs_schism/"
+      len_in_dir=len(in_dir)
+      comm=mpi_komm_welt
+      myrank=meinrang
+      call aquire_hgrid(.true.)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if (meinrang == 0) print*,'aquire_hgrid finished in read_mesh_schism'
 
-!#### read hgrid.gr3 ###########################################################################!
+!#### read hgrid.gr3 into QSim data-structures ########################################################!
       if (meinrang == 0) then !! nur prozessor 0
          write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/hgrid.gr3"
          open(14,file = trim(dateiname),status = 'old',iostat = istat)

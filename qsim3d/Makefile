@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_10'
+PV='qsim3d_schiqu22_11'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -91,7 +91,7 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fcheck=all ## -Wuninitialized ## -fbounds-check ## develop ## 
+CFLAGS2         = -O -g -fcheck=all -DMPIVERSION=2 ## -Wuninitialized ## -fbounds-check ## develop ## 
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
@@ -148,7 +148,8 @@ date:
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \
-     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/aquire_hgrid.o  $(SCHISM_HYDRO)/misc_subs_QSIM.o\
+     $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
 %.o: %.F90
 	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<

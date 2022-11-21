@@ -27,7 +27,7 @@
 
 !> get zones and boundaries from zone.gr3,
 !! created by Janet like manning.gr3
-logical function read_zone_gr3()
+logical function read_zone_gr3(minzoni,maxzoni)
       use modell
       use schism_glbl
       implicit none
@@ -55,7 +55,7 @@ logical function read_zone_gr3()
          if(maxzoni.lt.knoten_zone(n))maxzoni=knoten_zone(n)
          if(minzoni.gt.knoten_zone(n))minzoni=knoten_zone(n)
       enddo ! all i nodes
-      print*,'zone.gr3 Zonen-Nummern von ',minzoni,' bis ',maxzoni
+      !print*,'zone.gr3 Zonen-Nummern von ',minzoni,' bis ',maxzoni
       
       do i=1,n_elemente
          read(14,*) iegb,cornernumber(iegb),(elementnodes(iegb,k),k=1,cornernumber(iegb))

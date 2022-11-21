@@ -1317,7 +1317,7 @@ end subroutine randlinie_zusammenstellen
 !      if(alphaD.lt.0.0)alphaD = 0.0
 !      CDges = BTOCs*alphaD-CMs(mstr,mRB)
 !      if(CDges.lt.0.00001)CDges = 0.00001
-!!.......Aufteilung der gelsten Fraktion in leicht und schwer abbaubar
+!!.......Aufteilung der gelösten Fraktion in leicht und schwer abbaubar
 !      alphlD = 0.218*log(vcb)+0.717
 !      if(alphlD.lt.0.0)alphlD = 0.0
 !      CD1s(mstr,mRB) = CDges*alphlD
