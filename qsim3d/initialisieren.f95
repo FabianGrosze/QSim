@@ -199,12 +199,13 @@ subroutine initialisieren()
    end if !! nur prozessor 0
    !print*,'initialisieren(): kontrollpunkt', meinrang
    call mpi_barrier (mpi_komm_welt, ierr)
-   call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
    
    ! SCHISM initialization in parallel ! get first schism flowfield
    if (hydro_trieb == 3) then
-      print*,'initialisieren shall get_schism_step na_transinfo=',na_transinfo
+      print*,meinrang,' initialisieren shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
       call get_schism_step(na_transinfo)
       ! set schism transport parameters:
       call schism_transport_parameters()

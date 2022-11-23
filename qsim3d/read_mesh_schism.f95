@@ -127,18 +127,22 @@ subroutine read_mesh_schism() !meinrang.eq.0
       !print*,meinrang,' read_mesh_schism starts ',proz_anz
       
 !#### read param.nml #############################################################################!
-      if (meinrang == 0) then !! nur prozessor 0
          ! read param.out.nml
-         write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
-         open(15,file = dateiname,delim = 'apostrophe',status = 'old')
-         read(15,nml = CORE)
-         deltat = int(dt)
-         print*,"read_mesh_schism: param.out.nml DT,RNDAY = ",DT,deltat,RNDAY
-         read(15,nml = OPT)
+      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
+      open(15,file = dateiname,delim = 'apostrophe',status = 'old',iostat = istat)
+      if (istat /= 0)then
+         write(fehler,*)meinrang,' opening ',trim(dateiname),' failed'
+         call qerror(fehler)
+      endif
+      read(15,nml = CORE)
+      deltat = int(dt)
+      read(15,nml = OPT)
+      if (meinrang == 0) then !! nur prozessor 0
          print*,"ihdif,ihconsv,isconsv,itur,itr_met  = ",ihdif,ihconsv,isconsv,itur,itr_met
          print*,"h_tvd,eps1_tvd_imp,eps2_tvd_imp     = ",h_tvd,eps1_tvd_imp,eps2_tvd_imp
          print*,"ip_weno,courant_weno,ntd_weno,nquad = ",ip_weno,courant_weno,ntd_weno,nquad
          print*,"epsilon1,epsilon2,ielm_transport    = ",epsilon1,epsilon2,ielm_transport
+         print*,"read_mesh_schism: param.out.nml DT,RNDAY = ",DT,deltat,RNDAY
          close(15)
       endif ! process0 only
       call mpi_barrier (mpi_komm_welt, ierr)
@@ -147,7 +151,11 @@ subroutine read_mesh_schism() !meinrang.eq.0
       write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/local_to_global_000000"
       i=len_trim(dateiname)
       write(dateiname(i-5:i),'(i6.6)') meinrang
-      open(10+meinrang,file=trim(dateiname),status='old')
+      open(10+meinrang,file=trim(dateiname),status='old',iostat = istat)
+      if (istat /= 0)then
+         write(fehler,*)'opening ',trim(dateiname),' failed'
+         call qerror(fehler)
+      endif
 !     header info 
       read(10+meinrang,*)ns_global,ne_global,np_global,nvrt,nproc,ntracers ! ,ntrs(:) ??? !global info
       read(10+meinrang,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10,*)'Header:'
@@ -480,6 +488,16 @@ subroutine read_mesh_schism() !meinrang.eq.0
    end if !! prozess 0 only
    
 !#### do aquire_hgrid ################################################################################!
+      if (meinrang == 0)then
+         write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/hgrid.gr3"
+         open(14,file = trim(dateiname),status = 'old',iostat = istat)
+         if (istat /= 0)then
+            print*,'mesh information expected on outputs_schism/hgrid.gr3 is missing'
+            write(fehler,*)'read_mesh_schism: hgrid.gr3 open failure'
+            call qerror(fehler)
+         endif
+         close(14)
+      endif
       call mpi_barrier (mpi_komm_welt, ierr)
       ! nxq Cyclic index of nodes in an element (tri/quads) from schism_init
       do k=3,4 !elem. type
@@ -506,8 +524,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       if (meinrang == 0) then !! nur prozessor 0
          write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/hgrid.gr3"
          open(14,file = trim(dateiname),status = 'old',iostat = istat)
-         !open(14,file = 'zone.gr3',status = 'old',iostat = istat)
-         if (istat /= 0) call qerror('read_mesh_schism: hgrid.gr3 open failure')
+         if (istat /= 0)call qerror('read_mesh_schism: hgrid.gr3 open failure2')
          read(14,*); read(14,*) n,k
          if(n.ne.n_elemente)call qerror('hgrid.gr3 element number missmatch')
          if(k.ne.knotenanzahl2D)call qerror('hgrid.gr3 node number missmatch')
@@ -751,7 +768,12 @@ subroutine read_mesh_schism() !meinrang.eq.0
          write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/manning.gr3"
          open(14,file = trim(dateiname),status = 'old',iostat = istat)
          !open(14,file = 'zone.gr3',status = 'old',iostat = istat)
-         if (istat /= 0) call qerror('read_mesh_schism: manning.gr3 open failure')
+         if (istat /= 0)then
+            print*,'friction coefficients (Mannings n ~ bottom roughness)'
+            print*,'expected on outputs_schism/manning.gr3 is missing'
+            write(fehler,*)'read_mesh_schism: manning.gr3 open failure'
+            call qerror(fehler)
+         endif
          if(allocated(knoten_manni)) deallocate(knoten_manni); allocate(knoten_manni(knotenanzahl2D))
          read(14,*); read(14,*) n,k
          if(n.ne.n_elemente)call qerror('manning.gr3 element number missmatch')

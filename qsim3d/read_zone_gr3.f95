@@ -39,7 +39,13 @@ logical function read_zone_gr3(minzoni,maxzoni)
       
       write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/zone.gr3"
       open(14,file = trim(dateiname),status = 'old',iostat = istat)
-      if (istat /= 0) call qerror('read_mesh_nc_sc: zone.gr3 open failure')
+      if (istat /= 0)then
+         write(fehler,*)'read_mesh_nc_sc: zone.gr3 open failure'
+         print*, 'zone infos missing:'
+         print*, 'additional to SCHISM, QSim3D needs an information about zones'
+         print*, 'either on ELEMENTE.txt or on outputs_schism/zone.gr3'
+         call qerror(fehler)
+      endif
       read(14,*); read(14,*) n,k
       if(n.ne.n_elemente)call qerror('zone.gr3 element number missmatch')
       if(k.ne.knotenanzahl2D)call qerror('zone.gr3 node number missmatch')

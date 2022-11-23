@@ -41,6 +41,8 @@ subroutine ausgeben_schism(itime)
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
    real , allocatable , dimension (:) :: output
    
+   call qerror('ausgeben_schism() schism-entwicklung erstmal nur bis hier')
+
    if (meinrang /= 0)call qerror('ausgeben_schism() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
    write(zahl,*)itime
    zahl = adjustl(zahl)
@@ -65,23 +67,23 @@ subroutine ausgeben_schism(itime)
    !! hydraulic
    write(ion,'(A)')'SCALARS WSP float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
+   do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') p(n)
       !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
    end do
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
+   do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
    end do ! alle Knoten
    write(ion,'(A)')'SCALARS vel_norm float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
+   do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') u(n)
    end do
    write(ion,'(A)')'VECTORS vel float'
    !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
-   do n = 1,number_plankt_point
+   do n = 1,knotenanzahl2D
       !   vel_x(j)=u(j)
       !   vel_y(j)=dir(j)
       !vx=u(n)*cos(dir(n))*(-1.0)
@@ -91,22 +93,26 @@ subroutine ausgeben_schism(itime)
    end do ! alle Knoten
    write(ion,'(A)')'SCALARS rang float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
+   do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') real( knoten_rang(n) )
    end do ! alle Knoten
-   !! planktonic variables
-   do j = 1,number_plankt_vari ! all depth averaged planktonic variables
-      if (output_plankt(j)) then ! output requested
-         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
-         write(ion,'(A)')'LOOKUP_TABLE default'
-         do n = 1,number_plankt_point ! all nodes
-            aus = planktonic_variable(j+(n-1)*number_plankt_vari)
-            write(ion,'(f27.6)') aus
-         end do ! all nodes
-      end if ! output requested
-   end do ! all planktonic_variable
+   write(ion,'(A)')'SCALARS rand float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,knotenanzahl2D
+      write(ion,'(f27.6)') real( knoten_rand(n) )
+   end do ! alle Knoten
+   write(ion,'(A)')'SCALARS zone float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,knotenanzahl2D
+      write(ion,'(f27.6)') real( knoten_zone(n) )
+   end do ! alle Knoten
    close (ion)
    print*,'node output ausgeben_schism done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+   close (ion)
+   print*,meinrang,myrank,'edge output ausgeben_schism not yet done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   return
+
    
    !!! Element sides, edges=kanten
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'

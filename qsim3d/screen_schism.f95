@@ -111,7 +111,7 @@ subroutine screen_schism()
       call mpi_barrier (mpi_komm_welt, ierr)
       
       call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
-      if(meinrang == 0)print*,'screen_schism: ',ndims,' dimensions ',nVars,' variables '
+      if((meinrang == 0).and.(i==1))print*,i,'screen_schism: ',ndims,' dimensions ',nVars,' variables '
       !! get dimensions
       if (i == 1)allocate (dlength(ndims),dname(ndims), stat = istat)
       if (i == 1)allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
@@ -165,7 +165,7 @@ subroutine screen_schism()
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
          end if ! more than one timestep
-         if (meinrang==0)print*,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl,i
+         if (meinrang==0)print*,i,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl,i
          deallocate(zeiten)
       end if ! dlength ok
       call mpi_barrier (mpi_komm_welt, ierr)
