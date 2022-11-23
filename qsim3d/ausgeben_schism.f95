@@ -33,7 +33,6 @@ subroutine ausgeben_schism(itime)
    ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
    ,ielg,iplg,islg
    use schism_msgp, only: myrank,nproc,parallel_abort
-   use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
    character(len = longname) :: dateiname, systemaufruf, zahl
    integer :: i,j,k,n, istat, ion, errcode
@@ -47,9 +46,8 @@ subroutine ausgeben_schism(itime)
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
 
-      call qerror('ausgeben_schism not ready for use yet')
-      return !! preliminary end
-   
+   !call qerror('ausgeben_schism not ready for use yet')
+   !return !! preliminary end
    
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'node',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename node_ failed')

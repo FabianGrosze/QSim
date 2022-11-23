@@ -60,7 +60,8 @@ MFC             = $(MPI_BIN)/$(FC)
 
 Q3 = version.co trans_read.co \
      module_modell.o module_QSimDatenfelder.o nachricht.o \
-     read_mesh_schism.o screen_schism.o ausgeben_schism.o read_zone_gr3.o mesh_output.o\
+     read_mesh_schism.o screen_schism.o ausgeben_schism.o read_zone_gr3.o \
+     mesh_output.o get_schism_step.o stofftransport_schism.o \
      benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o \
      zonen.o modellg.o wetter.o ganglinien.o schnitt.o \
      planktische_variablen.o module_suspendedMatter.o parallel.o \
@@ -91,7 +92,7 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fcheck=all -DMPIVERSION=2 ## -Wuninitialized ## -fbounds-check ## develop ## 
+CFLAGS2         = -O -g -fbounds-check -DMPIVERSION=2 ## -Wuninitialized ## -fbounds-check ## develop ##  -fcheck=all
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 
@@ -177,7 +178,7 @@ schism: $(SC)
 	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
 #	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
-#  screen_schism_nc.o stofftransport_schism.o 
+#  screen_schism_nc.o 
 #	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
 
 metabo: $(META)

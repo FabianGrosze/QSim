@@ -158,7 +158,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       call ausgabezeitpunkte() !! reading points in time for output
       call ausgabekonzentrationen() !! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
-call qerror('eingabe.f95 schism not yet complete transinfo_schritte() ')!!!---
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
       call ganglinien_lesen()

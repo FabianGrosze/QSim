@@ -60,8 +60,8 @@ subroutine stofftransport()
          end if !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
-         !! call stofftransport_schism() !parallel and 3D
-         case default
+         call stofftransport_schism() !parallel and 3D
+      case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
    end select
    call mpi_barrier (mpi_komm_welt, ierr)

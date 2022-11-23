@@ -42,7 +42,7 @@ subroutine ausgeben()
             call ausgeben_untrim(rechenzeit)
          case(3) ! SCHISM
             call ausgeben_schism(rechenzeit)
-            case default
+         case default
             print*,'hydro_trieb = ',hydro_trieb
             call qerror('ausgeben: Hydraulischer Antrieb unbekannt')
       end select

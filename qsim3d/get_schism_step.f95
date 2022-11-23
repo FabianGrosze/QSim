@@ -33,12 +33,12 @@ subroutine get_schism_step(nt)
    use modell
    use schism_glbl, only:su2,sv2,tr_el,eta2  &
    ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
-   ,ielg,iplg,islg,isidenode, znl, zs,,ierr
+   ,ielg,iplg,islg,isidenode, znl, zs
    use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
    include "netcdf.inc"
    integer :: nt, nst, nin ,iret, varid !, np_p
-   integer :: i,j,k,l,m,n, istat
+   integer :: i,j,k,l,m,n, istat,ierr
    character (len = 400) :: dateiname, chari
    integer :: start4(4), count4(4)
    integer :: start3(3), count3(3)
@@ -58,6 +58,9 @@ subroutine get_schism_step(nt)
    real , allocatable , dimension (:) :: var_g
    real , allocatable , dimension (:) :: var1_g
    real , allocatable , dimension (:) :: var2_g
+   
+   print*,meinrang,' get_schism_step ### not ### starting for nt=',nt
+   return
    
    if (meinrang == 0) then
       allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)

@@ -178,20 +178,20 @@ subroutine fortschritt(n,f)
                write(fehler,*)'tail lauf fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
             end if !
-            if (send_email) then
-               write(systemaufruf,'(7A)',iostat = errcode)'mail ',trim(email),' -s "qsim3d ',trim(modellverzeichnis)  &
-                                                  ,' fertig" < ',trim(modellverzeichnis),'lauf'
-               if (errcode /= 0)call qerror('fortschritt systemaufruf mail fertig')
-               !write(systemaufruf,*)trim(email),' -s " qsim3d_notrans hpc01 ',trim(modellverzeichnis),' fertig" < lauf'
-               call system (trim(systemaufruf),system_error)
-               if (system_error /= 0) then
-                  print*,'Email versenden fehlgeschlagen',trim(systemaufruf)
-               else
-                  print*,trim(systemaufruf), ' erfoglreich verschickt'
-               endif
-            else
-               print*,'keine Beenden-Email verschickt'
-            endif
+            !if (send_email) then
+               !write(systemaufruf,'(7A)',iostat = errcode)'mail ',trim(email),' -s "qsim3d ',trim(modellverzeichnis)  &
+               !                                   ,' fertig" < ',trim(modellverzeichnis),'lauf'
+               !if (errcode /= 0)call qerror('fortschritt systemaufruf mail fertig')
+               !!write(systemaufruf,*)trim(email),' -s " qsim3d_notrans hpc01 ',trim(modellverzeichnis),' fertig" < lauf'
+               !call system (trim(systemaufruf),system_error)
+               !if (system_error /= 0) then
+               !   print*,'Email versenden fehlgeschlagen',trim(systemaufruf)
+               !else
+               !   print*,trim(systemaufruf), ' erfoglreich verschickt'
+               !endif
+            !else
+               print*,'QSim3D does not send emails any more, please use slurm-queue script instead'
+            !endif
             write(systemaufruf,'(3A)',iostat = errcode) 'stat ',trim(adjustl(codesource)),'/*source*.taz >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf stat codesource')
             call system(trim(systemaufruf),system_error)
@@ -213,11 +213,13 @@ subroutine fortschritt(n,f)
             end if ! system_error.ne.0
             ! Ereignis sichern:
             write(systemaufruf,'(3A)',iostat = errcode)'qusave ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
+            !write(systemaufruf,'(2A)',iostat = errcode)'qusave ',trim(modellverzeichnis)
             if (errcode /= 0)call qerror('fortschritt: systemaufruf qusave modellverzeichnis fehlgeschlagen')
             call system(trim(systemaufruf),system_error) !qusave löscht Quellcode-Sicherung im Modellverzeichnis
             if (system_error == 0) then
                print*,'Eingabedaten in qsim3d_modell_<Modell>_<Datum>.taz archiviert.'
             else
+               print*,trim(systemaufruf)
                print*,"### Archivierung der Eingabedaten schlug fehl."
             end if
             ! vtk-Dateien (d.h. Variablenfelder zu den Ausgabezeitpunkten) archivieren:

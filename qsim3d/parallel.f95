@@ -61,7 +61,7 @@ subroutine parallel_vorbereiten()
    !print*,meinrang," modell_parallel() ... danach"
    call mpi_barrier (mpi_komm_welt, ierr)
    call planktkon_parallel() !calls scatter_planktkon()
-   !print*,meinrang," planktkon_parallel() ... fertig"
+   print*,meinrang," planktkon_parallel() ... fertig"
    call mpi_barrier (mpi_komm_welt, ierr)
    call benthic_parallel()
    !print*,meinrang," benthic_parallel() ... danach"

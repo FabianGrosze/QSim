@@ -157,9 +157,8 @@ subroutine initialisieren()
             call holen_trans_untrim(na_transinfo)
             print*,'initialisieren(): holen_trans_untrim fetching step = ',na_transinfo
          case(3) ! SCHISM
-            nt = na_transinfo
-            ! don't call get_schism_step(nt) here only on rank 0
-            case default
+            print*,'doing schism initialization in parallel ...'
+         case default
             call qerror('initialisieren: Hydraulischer Antrieb unbekannt')
       end select
       !!call ganglinien_zeitschritt(1)  !! will be done by Program QSIM3D
@@ -202,10 +201,15 @@ subroutine initialisieren()
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
-   if (hydro_trieb == 3) then ! get first schism flowfield for initialization in parallel
-      !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
-      !!!### call get_schism_step(nt)
+   
+   ! SCHISM initialization in parallel ! get first schism flowfield
+   if (hydro_trieb == 3) then
+      print*,'initialisieren shall get_schism_step na_transinfo=',na_transinfo
+      call get_schism_step(na_transinfo)
+      ! set schism transport parameters:
+      call schism_transport_parameters()
    end if ! hydro_trieb=SCHISM,3
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &

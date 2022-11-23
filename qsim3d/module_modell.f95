@@ -1159,22 +1159,25 @@ contains
          modell_vollstaendig = .false.
          print*,'in Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
       end if
+      
+      ! Email mechanism switched off in QSim3D, refer to slurm-queue batch-script
       send_email = .False.
-      write(emaildatei,'(2A)')trim(modellverzeichnis),'email.txt'
-      ion = 101
-      open ( unit = ion , file = emaildatei, status = 'old', action = 'read ', iostat = sysa )
-      if (sysa /= 0) then
-         print*,'ohne Datei email.txt keine Benachrichtigung'
-      else
-         do while ( zeile(ion))
-            if (ctext(1:1) /= '#') then !! keine Kommentarzeile
-               write(email,'(A)')trim(adjustl(ctext))
-               print*,'Über das Programmende werden Sie unter der Emailadresse ',trim(email),' benachrichtigt.'
-               send_email = .True.
-            end if ! keine Kommentarzeile
-         end do ! alle Zeilen
-         if ( .not. send_email)print*,'nix brauchbares aus Datei email.txt gelesen'
-      end if ! Datei lässt sich öffnen
+      !write(emaildatei,'(2A)')trim(modellverzeichnis),'email.txt'
+      !ion = 101
+      !open ( unit = ion , file = emaildatei, status = 'old', action = 'read ', iostat = sysa )
+      !if (sysa /= 0) then
+      !   print*,'ohne Datei email.txt keine Benachrichtigung'
+      !else
+      !   do while ( zeile(ion))
+      !      if (ctext(1:1) /= '#') then !! keine Kommentarzeile
+      !         write(email,'(A)')trim(adjustl(ctext))
+      !         print*,'Über das Programmende werden Sie unter der Emailadresse ',trim(email),' benachrichtigt.'
+      !         send_email = .True.
+      !      end if ! keine Kommentarzeile
+      !   end do ! alle Zeilen
+      !   if ( .not. send_email)print*,'nix brauchbares aus Datei email.txt gelesen'
+      !end if ! Datei lässt sich öffnen
+      
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)

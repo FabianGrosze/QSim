@@ -32,8 +32,9 @@ subroutine planktkon_parallel()
    implicit none
    integer as,j,k,i,iloka,ierr
    !print*,meinrang, ' planktkon_parallel starting'
-   if ((meinrang == 0) .and. (kontrollknoten > 0))print*,'0 planktkon_parallel starting GlMn = (',kontrollknoten,') = '   &
-       ,planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
+   if ((meinrang == 0) .and. (kontrollknoten > 0))print*,'0 planktkon_parallel starting 99:',  &
+       planktonic_variable_name(99),' = (',kontrollknoten,') = ',                             &
+       planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
    ! depth averaged
    allocate (planktonic_variable_p(number_plankt_vari*part), stat = as )
    if (as /= 0) then
@@ -79,8 +80,15 @@ subroutine scatter_planktkon()
    use modell
    implicit none
    integer ierr
-   print*,'scatter_planktkon'
+
    !print*,'scatter_planktkon part,number_plankt_vari,meinrang=',part, number_plankt_vari, meinrang
+   !if(allocated(planktonic_variable))then
+   !   print*,meinrang,' scatter_planktkon: planktonic_variable allocated'
+   !else
+   !   print*,meinrang,' scatter_planktkon: planktonic_variable not allocated'
+   !endif
+   !call mpi_barrier (mpi_komm_welt, ierr)
+
    call MPI_Scatter(planktonic_variable, part*number_plankt_vari, MPI_FLOAT,  &
                     planktonic_variable_p, part*number_plankt_vari, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then

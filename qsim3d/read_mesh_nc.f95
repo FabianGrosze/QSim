@@ -120,15 +120,11 @@ subroutine read_mesh_nc()
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_z failed')
    knoten_z(1:knotenanzahl2D) = 0.0
-   !allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
-   !if(alloc_status.ne.0) call qerror('allocate (knoten_rand( failed')
    !call check_err(  nf_inq_varid(ncid,'', didi) )
    !call check_err(  nf90_get_var(ncid, didi,  )
-   allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
+   allocate (knoten_zone(knotenanzahl2D),knoten_rang(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_zone( failed')
-   do n = 1,knotenanzahl2D !initialize zones
-      knoten_zone(n) = 0
-   end do ! alle Knoten
+   knoten_zone = 0; knoten_rang=0
    !call check_err(  nf_inq_varid(ncid,'', didi) )
    !call check_err(  nf90_get_var(ncid, didi,  )
    !allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
@@ -203,15 +199,13 @@ subroutine read_mesh_nc()
    if (alloc_status /= 0) call qerror('allocate (element_rand failed')
    call check_err( nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
    call check_err( nf90_get_var(ncid, didi, element_rand) )
-   allocate (element_zone(n_elemente), stat = alloc_status )
+   allocate (element_zone(n_elemente),element_rang(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) then
       call qerror('allocate (element_zone failed')
    else
       print*,' allocate (element_zone(n_elemente) worked read_mesh_nc',meinrang,n_elemente
    endif
-   do n = 1,n_elemente ! alle Elemente
-      element_zone(n) = 0
-   end do ! alle Elemente
+   element_zone = 0 ; element_rang = 0
    ! print*,'nach lesen von untrim netcdf-Datei alle Elemente zunächst in zone 0'
    allocate (elementedges(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementedges failed')

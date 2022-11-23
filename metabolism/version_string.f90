@@ -30,6 +30,6 @@ subroutine version_string(versionstext)
    implicit none
    character(len=8), intent(out) :: versionstext !< current version number
    
-   versionstext = '14.09.04'
+   versionstext = '77.77.77' ! schism-connection development ! '14.09.04'
    return
 end subroutine version_string
