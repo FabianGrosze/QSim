@@ -205,7 +205,7 @@ subroutine initialisieren()
    
    ! SCHISM initialization in parallel ! get first schism flowfield
    if (hydro_trieb == 3) then
-      print*,meinrang,' initialisieren shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
+      if(meinrang==0)print*,' initialisieren shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
       call get_schism_step(na_transinfo)
       ! set schism transport parameters:
       call schism_transport_parameters()

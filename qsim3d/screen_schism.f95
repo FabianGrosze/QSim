@@ -151,8 +151,7 @@ subroutine screen_schism()
       call mpi_barrier (mpi_komm_welt, ierr)
 
       if (n > 0) then
-         transinfo_anzahl = transinfo_anzahl+n
-         !print*,i,'read_mesh_nc_sc: transinfo_anzahl = ',transinfo_anzahl,n
+         transinfo_anzahl = transinfo_anzahl+n ! total number of timesteps
          allocate (zeiten(n), stat = istat )
          iret = nf90_get_var(ncid, varid, zeiten)
          call check_err(iret)
@@ -165,7 +164,7 @@ subroutine screen_schism()
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
          end if ! more than one timestep
-         if (meinrang==0)print*,i,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl,i
+         if (meinrang==0)print*,i,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl
          deallocate(zeiten)
       end if ! dlength ok
       call mpi_barrier (mpi_komm_welt, ierr)
@@ -211,13 +210,13 @@ subroutine screen_schism()
    !print*,meinrang,'screen_schism timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0)
    if (transinfo_anzahl /= sumtra)call qerror('timestep number unclear screen_schism')
    call mpi_barrier (mpi_komm_welt, ierr)
+   allocate (transinfo_zeit(transinfo_anzahl), transinfo_zuord(transinfo_anzahl), stat = istat )
+   allocate (transinfo_datei(transinfo_anzahl), stat = istat )
+   allocate (transinfo_stack(transinfo_anzahl), transinfo_instack(transinfo_anzahl), stat = istat )
+   if (istat /= 0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")
 
    ! get time steps
    if (meinrang == 0) then ! prozess 0 only
-      allocate (transinfo_zeit(transinfo_anzahl), transinfo_zuord(transinfo_anzahl), stat = istat )
-      allocate (transinfo_datei(transinfo_anzahl), stat = istat )
-      allocate (transinfo_stack(transinfo_anzahl), transinfo_instack(transinfo_anzahl), stat = istat )
-      if (istat /= 0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")
       nnt = 0
       do i = 1,n_stacks ! reread all stacks
          write(chari,*),i
@@ -279,6 +278,10 @@ subroutine screen_schism()
   
    end if ! only prozessor 0
    
+   call MPI_Bcast(transinfo_zeit,transinfo_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(transinfo_zuord,transinfo_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(transinfo_stack,transinfo_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(transinfo_instack,transinfo_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
    call mpi_barrier (mpi_komm_welt, ierr)
    deallocate (dlength,dname, stat = istat)
    deallocate (vxtype,vndims,vname,  stat = istat )

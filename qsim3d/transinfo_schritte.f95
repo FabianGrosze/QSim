@@ -42,7 +42,7 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
    na_transinfo = -1
    ne_transinfo = -1
    do n = 1,transinfo_anzahl
-      if ((transinfo_zeit(transinfo_zuord(n)) > start_zeitschritt) .and. ( .not. gefunden)) then
+      if ((transinfo_zeit(transinfo_zuord(n)) >= start_zeitschritt) .and. ( .not. gefunden)) then
          na_transinfo = n
          gefunden = .true.
          !print*,'na_transinfo,n ',na_transinfo,n
@@ -83,6 +83,7 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       deti = transinfo_zeit(transinfo_zuord(ne_transinfo))-transinfo_zeit(transinfo_zuord(na_transinfo))
       deti = deti+dttrans
    end if
+   
    if (deti /= deltat) then
       print*,'Zeitschrittweiten Transport = ',dttrans,' - Güte = ',deltat,' passen nicht zueinander.'
       print*,'ganzzahlige Vielfache erforderlich.'
@@ -91,10 +92,11 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       print*,'  ende ',ne_transinfo, transinfo_zuord(ne_transinfo), transinfo_zeit(transinfo_zuord(ne_transinfo))
       if (hydro_trieb == 1)call qerror('deti /= deltat')!! nur bei casu-Strombahnen abbrechen
    end if
-   print*," Für den Transport im Gütezeitschritt von ",start_zeitschritt," bis ", ende_zeitschritt  &
-   ," werden ", anz_transinfo," Transportzeitschritte verwendet."
-   !do n=1,anz_transinfo
-   !   print*,"#",na_transinfo+n-1," Zeitpunkt=",transinfo_zeit(transinfo_zuord(na_transinfo+n-1))
-   !end do
+   
+   print*," Für den Transport im Gütezeitschritt von ",start_zeitschritt," bis ", ende_zeitschritt
+   print*," werden ", anz_transinfo," Transportzeitschritte verwendet. transinfo_zeit(anfang/ende)="
+   print*,transinfo_zeit(transinfo_zuord(na_transinfo)),transinfo_zeit(transinfo_zuord(ne_transinfo))
+   print*,'Zeitschritnummern Anfang/Ende=',na_transinfo,ne_transinfo
+
    return
 end subroutine transinfo_schritte

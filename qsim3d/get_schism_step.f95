@@ -29,133 +29,125 @@
 !! \n\n
 !! aus Datei get_schism_step.f95 ; zurück: \ref lnk_transport_schism .
 subroutine get_schism_step(nt)
-   use netcdf
-   use modell
-   use schism_glbl, only:su2,sv2,tr_el,eta2  &
-   ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
-   ,ielg,iplg,islg,isidenode, znl, zs
-   use schism_msgp, only: myrank,nproc,parallel_abort
-   implicit none
-   include "netcdf.inc"
-   integer :: nt, nst, nin ,iret, varid !, np_p
-   integer :: i,j,k,l,m,n, istat,ierr
-   character (len = 400) :: dateiname, chari
-   integer :: start4(4), count4(4)
-   integer :: start3(3), count3(3)
-   integer :: start2(2), count2(2)
-   integer :: ndims, nVars, nGlobalAtts, unlimdimid, nAtts
-   integer , allocatable , dimension (:) :: dlength
-   character(256) , allocatable , dimension (:) :: dname
-   integer, dimension(nf90_max_var_dims) :: dimids
-   integer , allocatable , dimension (:) :: vxtype, vndims
-   character(256) , allocatable , dimension (:) :: vname
-   real vel_norm, vel_dir, minwert, maxwert, tempi
-   !> arrays to read stored variables from .nc files, each process its part
-   real , allocatable , dimension (:) :: var_p
-   real , allocatable , dimension (:) :: var1_p
-   real , allocatable , dimension (:) :: var2_p
-   ! array into which var_p variables are gathered (recombined) on process 0
-   real , allocatable , dimension (:) :: var_g
-   real , allocatable , dimension (:) :: var1_g
-   real , allocatable , dimension (:) :: var2_g
+      use netcdf
+      use modell
+      use schism_glbl, only:su2,sv2,tr_el,eta2  &
+      ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
+      ,ielg,iplg,islg,isidenode, znl, zs
+      use schism_msgp, only: myrank,nproc,parallel_abort
+      implicit none
+      
+      include "netcdf.inc"
+      
+      integer :: nt, nst, nin ,iret, varid !, np_p
+      integer :: i,j,k,l,m,n, istat,ierr
+      character (len = 400) :: dateiname, chari
+      integer :: start4(4), count4(4)
+      integer :: start3(3), count3(3)
+      integer :: start2(2), count2(2)
+      integer :: ndims, nVars, nGlobalAtts, unlimdimid, nAtts
+      integer , allocatable , dimension (:) :: dlength
+      character(256) , allocatable , dimension (:) :: dname
+      integer, dimension(nf90_max_var_dims) :: dimids
+      integer , allocatable , dimension (:) :: vxtype, vndims
+      character(256) , allocatable , dimension (:) :: vname
+      real vel_norm, vel_dir, minwert, maxwert, tempi
+      !> arrays to read stored variables from .nc files, each process its part
+      real , allocatable , dimension (:) :: var_p
+      real , allocatable , dimension (:) :: var1_p
+      real , allocatable , dimension (:) :: var2_p
+      ! array into which var_p variables are gathered (recombined) on process 0
+      real , allocatable , dimension (:) :: var_g
+      real , allocatable , dimension (:) :: var1_g
+      real , allocatable , dimension (:) :: var2_g
    
-   print*,meinrang,' get_schism_step ### not ### starting for nt=',nt
-   return
+      if (meinrang == 0) then
+         allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)
+         if (istat /= 0) call qerror("allocate var_g( failed")
+      endif
+      allocate(var_p(maxstack),var1_p(maxstack),var2_p(maxstack),stat = istat)
+      if (istat /= 0) call qerror("allocate var_p( failed")
    
-   if (meinrang == 0) then
-      allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)
-      if (istat /= 0) call qerror("allocate var_g( failed")
-   endif
-   allocate(var_p(maxstack),var1_p(maxstack),var2_p(maxstack),stat = istat)
-   if (istat /= 0) call qerror("allocate var_p( failed")
-   if (meinrang == 0) then
       nst = transinfo_stack(transinfo_zuord(nt))
       nin = transinfo_instack(transinfo_zuord(nt))
-      print*,"get_schism_step: nt,zuord,zeit = ",nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))
-   end if ! proc. 0 only
-   call mpi_barrier (mpi_komm_welt, ierr)
-   call MPI_Bcast(nst,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(nin,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call mpi_barrier (mpi_komm_welt, ierr)
-   if (nst /= nst_prev) then ! proceed to next stack
-      if (meinrang == 0)print*,"get_schism_step proceeds to next stack ",nst,ncid
-      if (ncid /= -333) call check_err( nf_close(ncid) ) ! close previous
-      !! open nc files
+      if (meinrang == 0)print*,'get_schism_step: nt,zuord,zeit = ',nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))
+      if (meinrang == 0)print*,transinfo_instack(nt),'-rd timestep in stack=',transinfo_stack(nt)
+      call mpi_barrier (mpi_komm_welt, ierr)
+   
+      !! open stack schout_******_*.nc
       write(chari,*),nst
-      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
+      write(dateiname,"(2A,I6.6,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
       iret = nf_open(dateiname, NF_NOWRITE, ncid)
       if (iret /= 0) then ! open error
          call check_err( iret )
-         write(fehler,*)" get_schism_step: nf_open failed, iret = ",iret, " rank = ",meinrang
+         write(fehler,*)meinrang,' get_schism_step: nf_open failed, iret = ',iret,' dateiname=',trim(dateiname)
          call qerror(fehler)
-         !else ! no open error
-         !   print*,meinrang,"get_schism_step opens: ", trim(adjustl(dateiname)), ncid
+      !else ! no open error
+      !   print*,meinrang,"get_schism_step opens: ", trim(adjustl(dateiname)), ncid
       end if ! open error
-      nst_prev = nst
-   end if !next stack
-   call mpi_barrier (mpi_komm_welt, ierr)!#!
-   !! get Dimensions
-   call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
-   allocate (dlength(ndims),dname(ndims), stat = istat)
-   allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
-   do j = 1,ndims
-      iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      
+      !! get Dimensions
+      call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
+      allocate (dlength(ndims),dname(ndims), stat = istat)
+      allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
+      do j = 1,ndims
+         iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang,j," get_schism_step nf90_Inquire_Dimension failed iret = ",iret
+      end do ! all dimensions
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      
+      !!!!! elev -> p
+      call check_err( nf_inq_varid(ncid,"elev", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("elev:dlength(dimids(1)) > maxstack")
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+   
+      !! get data
+      start2 = (/ 1, nin /)
+      count2 = (/ npa, 1 /) ! nodenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
       call check_err(iret)
-      if (iret /= 0) print*,meinrang,j," get_schism_step nf90_Inquire_Dimension failed iret = ",iret
-   end do ! all dimensions
-   call mpi_barrier (mpi_komm_welt, ierr)!#!
-   !!!!! elev -> p
-   call check_err( nf_inq_varid(ncid,"elev", varid) )
-   call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
-   call mpi_barrier (mpi_komm_welt, ierr)!#!
-   if (dlength(dimids(1)) > maxstack)call qerror("elev:dlength(dimids(1)) > maxstack")
-   !! initialize
-   do j = 1,maxstack
-      var_p(j) = 666.666
-   end do ! all j
-   if (meinrang == 0) then
-      do j = 1,proz_anz*maxstack
-         var_g(j) = 777.777
-      end do ! all j
-   end if ! proc. 0 only
-   call mpi_barrier (mpi_komm_welt, ierr)
-   !! get data
-   start2 = (/ 1, nin /)
-   count2 = (/ npa, 1 /) ! nodenumber first dimension
-   iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
-   call check_err(iret)
-   if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var elev failed iret = ",iret
-   eta2(1:npa) = var_p(1:npa)
-   !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
-   !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
-   !print*,meinrang," eta2(topnode side 7",isidenode(1,7),") =",eta2(isidenode(1,7))
-   !print*,meinrang," eta2(bottomnode side 7",isidenode(2,7),") =",eta2(isidenode(2,7))
-   call mpi_barrier (mpi_komm_welt, ierr)
-   ! gather var_p into var_g
-   call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-   if (ierr /= 0) then
-      write(fehler,*)"get_schism_step MPI_Gather(var_p elev failed : ", ierr
-      call qerror(fehler)
-   end if
-   call mpi_barrier (mpi_komm_welt, ierr)
-   !! recombine into global numbers
-   if (meinrang == 0) then
-      !print*,meinrang," get_schism_step elev recombine into global",npa,varid,trim(adjustl(vname(varid)))
-      do j = 1,proz_anz ! all processes/ranks
-         !print*,j," get_schism_step np_sc=",np_sc(j)
-         do k = 1,np_sc(j) ! all nodes at this rank
-            p(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var elev failed iret = ",iret
+      eta2(1:npa) = var_p(1:npa)
+      !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
+      !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
+      !print*,meinrang," eta2(topnode side 7",isidenode(1,7),") =",eta2(isidenode(1,7))
+      !print*,meinrang," eta2(bottomnode side 7",isidenode(2,7),") =",eta2(isidenode(2,7))
+      print*,meinrang,' elev from...until ',minval(eta2),maxval(eta2)
+      call mpi_barrier (mpi_komm_welt, ierr)
+   
+      ! gather var_p into var_g
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      if (ierr /= 0) then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p elev failed : ", ierr
+         call qerror(fehler)
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !! recombine into global numbers
+      if (meinrang == 0) then
+         !print*,meinrang," get_schism_step elev recombine into global",npa,varid,trim(adjustl(vname(varid)))
+         do j = 1,proz_anz ! all processes/ranks
+            !print*,j," get_schism_step np_sc=",np_sc(j)
+            do k = 1,np_sc(j) ! all nodes at this rank
+               p(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
+            end do
          end do
-      end do
-      minwert = 99999.9
-      maxwert = -99999.9
-      do j = 1,knotenanzahl2D
-         if (p(j) > maxwert)maxwert = p(j)
-         if (p(j) < minwert)minwert = p(j)
-      end do ! all j
-      print*," get_schism_step wsp minwert, maxwert = ",minwert, maxwert
-   end if ! proc. 0 only
-   call mpi_barrier (mpi_komm_welt, ierr)
+         print*," get_schism_step wsp minwert, maxwert = ",minval(p),maxval(p)
+      end if ! proc. 0 only
+      call mpi_barrier (mpi_komm_welt, ierr)
+   
+   
+      call qerror('get_schism_step ### in development ###')
+
+
+
    !print*,meinrang," get_schism_step elev recombined"
    !!!!! dahv -> u,dir
    iret = nf_inq_varid(ncid,"dahv", varid)
