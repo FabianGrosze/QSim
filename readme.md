@@ -1,6 +1,8 @@
 ## 14.08.00
 Stable release comprising evaporation options in temperature module (see 14.06) and reading of UnTRIM SPM (see 14.07.02)
 
+Do not use this version or earlier ones for QSim3D simulations due to an error in the zooplankton fluxes in N and P  (`Nzoo` and `Pzoo` = 0)
+
 
 ## 14.07.02
 added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qims3d/module_suspendedMatter.f90)
