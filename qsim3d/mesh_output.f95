@@ -33,10 +33,9 @@ subroutine mesh_output(ioni)
    integer ion,ioni,n,igr3,ielem
    integer io_error
    
-   ion=ioni
-   print*,'mesh_output: starting',ion,ioni
-   
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
+      ion=ioni
+      print*,'mesh_output: starting',ion,ioni
       !-------------------------------------------------------------------------------------------- nodes
       if(ioni==0)then
          write(dateiname,'(4A)',iostat = io_error)trim(modellverzeichnis),'mesh_node.vtk'
@@ -202,7 +201,7 @@ subroutine mesh_output(ioni)
          print*,'written elemente.vtk'
 
       endif !ioni==0
-      print*,'mesh_output: finished'
+      print*,'--- mesh_output: done ---'
    end if ! nur Prozessor 0
    return
 end subroutine mesh_output

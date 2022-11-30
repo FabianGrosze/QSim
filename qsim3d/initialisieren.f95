@@ -34,7 +34,7 @@ subroutine initialisieren()
    integer i,j,k,nini,nuzo, nt, irn,ierr
    logical vorhanden, einmal
    
-   print*,hydro_trieb,' initialisieren(): kontrollpunkt 1', meinrang
+   print*,meinrang,' initialisieren(): start ---', hydro_trieb
 
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       print*,'initialisieren mit rechenzeit = ',rechenzeit
@@ -208,14 +208,15 @@ subroutine initialisieren()
    call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
 
    print*,meinrang,' initialisieren(): na_transinfo,ne_transinfo=',na_transinfo,ne_transinfo
+   !na_transinfo=1; ne_transinfo=2 ! ####
    
    if (hydro_trieb == 3) then
-      if(meinrang==0)print*,' initialisieren (SCHISM) shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
+      print*,' initialisieren (SCHISM) shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo !if(meinrang==0)
       call get_schism_step(na_transinfo)
       ! set schism transport parameters:
       call schism_transport_parameters()
    end if ! hydro_trieb=SCHISM,3
-   call mpi_barrier (mpi_komm_welt, ierr)
+   !call mpi_barrier (mpi_komm_welt, ierr)
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &
    !   print*,'nach initialisieren: tempw,chla,obsb,ocsb,glMn=',                     &

@@ -70,7 +70,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call read_mesh_schism()
          n_cal = n_elemente !!??
          !n_cal = knotenanzahl2D
-         print*,meinrang,' got SCHISM mesh ',n_elemente,knotenanzahl2D,kantenanzahl
+         if(meinrang==0)print*,'0 eingabe got SCHISM mesh ',n_elemente,knotenanzahl2D,kantenanzahl
          call mpi_barrier (mpi_komm_welt, ierr)
          if (meinrang == 0)then
             if(.not. read_elemente_gerris()) then  ! Zonen und Randnummern von ELEMENTE.txt einlesen, 
@@ -81,27 +81,27 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call MPI_Bcast(min_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call MPI_Bcast(max_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
+         !print*,meinrang,' eingabe got SCHISM mpi vorher comm,mpi_komm_welt, ierr=',comm,mpi_komm_welt, ierr
          ! use same MPI-environment
          comm=mpi_komm_welt
          myrank=meinrang
          ! Construct parallel message-passing tables
          call msgp_tables
-         if (meinrang == 0)print*,meinrang,' eingabe did msgp_tables'
          call mpi_barrier (mpi_komm_welt, ierr)
          ! Initialize parallel message-passing datatypes
          call msgp_init
-         if (meinrang == 0)print*,meinrang,' done msgp_init ...'
+         if(meinrang==0)print*,meinrang,'--- done msgp_tables and msgp_init ---',comm,mpi_komm_welt, ierr
          call mpi_barrier (mpi_komm_welt, ierr)
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
+   call mpi_barrier (mpi_komm_welt, ierr)
    ! partitioning of variable arrays
    part = n_cal/proz_anz
    n = part*proz_anz
    !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
    if (n < n_cal)part = part+1
-   print*,'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
-                  ," modell_parallel() n_cal = ", n_cal
+   if(meinrang==0)print*,'0 part =',part,' part*proz_anz=',part*proz_anz,' n_cal = ', n_cal
    call mpi_barrier (mpi_komm_welt, ierr)
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)
@@ -175,7 +175,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    end if ! only prozessor 0
    
    call mpi_barrier (mpi_komm_welt, ierr)
-   print*,meinrang,'--- eingabe: done ---',mpi_komm_welt, ierr
+   if(meinrang==0)print*,'--- eingabe: done ---',comm,mpi_komm_welt
    call mpi_barrier (mpi_komm_welt, ierr)
    
    return
