@@ -46,14 +46,13 @@ program QSim3D
    !------- reading input, allocation, initialisation etc.
    call eingabe()        ! --- input
    call initialisieren() ! --- initialize
-   print*,meinrang,' QSim3D initialisieren done'
    !----preparing parallel computing:
    call parallel_vorbereiten()
    !! mirror inital values
    call ausgeben()
    call ganglinien_zeitschritt(1)
    
-   if(hydro_trieb==3)call qerror('QSim3D schism preparation only ')!!!---
+   !if(hydro_trieb==3)call qerror('QSim3D schism preparation only ')!!!---
 
    !==== Stat of time-loop, time (zeitpunkt) in seconds (integer) =================================================================
    do izeit = 1,zeitschrittanzahl !------------------------------------------------- proceed in time

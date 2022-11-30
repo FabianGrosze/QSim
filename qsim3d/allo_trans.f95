@@ -30,16 +30,18 @@
 subroutine allo_trans()
    use modell
    implicit none
-   integer :: alloc_status,j
+   integer :: alloc_status,j,n
+   
    if (meinrang == 0) then ! prozess 0 only
-      allocate( p(number_plankt_point), stat = alloc_status ) !, tief(number_plankt_point)
+      n=number_plankt_point
+      if (hydro_trieb==3)n=knotenanzahl2D
+      allocate( p(n), stat = alloc_status ) !, tief(number_plankt_point)
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate p :', alloc_status
          call qerror(fehler)
       end if
-      do j = 1,number_plankt_point ! alle j Berechnungsstützstellen
-         p(j) = -777.777
-      end do ! alle j Berechnungsstützstellen
+      p = -777.777
+
       allocate( u(number_plankt_point), dir(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate u :', alloc_status

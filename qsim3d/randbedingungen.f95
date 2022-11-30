@@ -34,7 +34,7 @@ subroutine randbedingungen_setzen()
    use QSimDatenfelder
    use aparam
    implicit none
-   integer :: j, RB_zaehl, ierr
+   integer :: j, RB_zaehl, ierr, ni,nb
    logical einmalig
    !print*,'randbedingungen_setzen'
    !!wy call gather_planktkon() ! syncronize non-parallel fields to paralell ones
@@ -49,7 +49,9 @@ subroutine randbedingungen_setzen()
    !
    if (meinrang == 0) then !! nur prozessor 0
       einmalig = .true. !Fehlermeldung nur einmal ausgeben
+      ni=0;nb=0
       call RB_werte_aktualisieren(rechenzeit)
+      if(hydro_trieb==3)print*,'randbedingungen_setzen SCHISM Ränder=',minval(element_rand),maxval(element_rand)
       do j = 1,number_plankt_point ! nur bei casu=knotenanzahl2D
          select case (hydro_trieb)
             case(1) ! casu-transinfo
@@ -57,8 +59,8 @@ subroutine randbedingungen_setzen()
             case(2) ! Untrim² netCDF
                RB_zaehl = element_rand(j)
             case(3) ! SCHISM
-               RB_zaehl = knoten_rand(j)
-               case default
+               RB_zaehl = element_rand(j)
+            case default
                call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
          if ( (RB_zaehl > 0) .and. (RB_zaehl < 100000) ) then !! Alle Knoten, deren RB's bedient werden:
@@ -76,7 +78,9 @@ subroutine randbedingungen_setzen()
                !    print*,'kontrollknoten Randknoten: inflow =', inflow(j),' #', j,  &
                !    ' lf=',planktonic_variable(65+nk)
                !end if !kontrollknoten
+               ni=ni+1
             end if ! Zufluss-Randknoten
+            nb=nb+1
          end if ! bedienter Randknoten
       end do ! alle j Knoten
       ! meteorological Boundary Conditions
@@ -86,9 +90,11 @@ subroutine randbedingungen_setzen()
       !      schwi(1)=strahlung        ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
       !      cloud(1)=bewoelkung       ! Bewölkungsdichte  aus Wetterstationsdaten
       !      typw(1)=wolkentyp         ! Wolkentyp  aus Wetterstationsdaten
-      if (kontrollknoten > 0)  &
+      if (kontrollknoten > 0)then
           print*,'randbedingungen_setzen, prozessor 0, chla(kontrollknoten) = '  &
           ,planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
+      endif !kontrollknoten
+      print*,'randbedingungen_setzen inflow locations=',ni,' of boundary locations=',nb,' of total=',number_plankt_point
    end if !! nur prozessor 0
    !
    call mpi_barrier (mpi_komm_welt, ierr)

@@ -84,7 +84,7 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       deti = deti+dttrans
    end if
    
-   if (deti /= deltat) then
+   if (abs(real(deti)-deltat) .gt. 1.0 ) then
       print*,'Zeitschrittweiten Transport = ',dttrans,' - Güte = ',deltat,' passen nicht zueinander.'
       print*,'ganzzahlige Vielfache erforderlich.'
       print*,'deti = ',deti

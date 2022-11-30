@@ -32,7 +32,9 @@ subroutine mesh_output(ioni)
    character(len = longname) :: dateiname,systemaufruf
    integer ion,ioni,n,igr3,ielem
    integer io_error
-   !print*,'mesh_output: starting'
+   
+   ion=ioni
+   print*,'mesh_output: starting',ion,ioni
    
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       !-------------------------------------------------------------------------------------------- nodes

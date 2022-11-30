@@ -32,7 +32,7 @@ subroutine get_schism_step(nt)
       use netcdf
       use modell
       use schism_glbl, only:su2,sv2,tr_el,eta2  &
-      ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
+      ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global  &
       ,ielg,iplg,islg,isidenode, znl, zs
       use schism_msgp, only: myrank,nproc,parallel_abort
       implicit none
@@ -60,6 +60,11 @@ subroutine get_schism_step(nt)
       real , allocatable , dimension (:) :: var_g
       real , allocatable , dimension (:) :: var1_g
       real , allocatable , dimension (:) :: var2_g
+      
+      if((nt.lt.1).or.(nt.gt.transinfo_anzahl))then
+         print*,'nt,transinfo_anzahl=',nt,transinfo_anzahl
+         call qerror('get_schism_step no valid timestep number')
+      endif
    
       if (meinrang == 0) then
          allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)
@@ -70,8 +75,10 @@ subroutine get_schism_step(nt)
    
       nst = transinfo_stack(transinfo_zuord(nt))
       nin = transinfo_instack(transinfo_zuord(nt))
-      if (meinrang == 0)print*,'get_schism_step: nt,zuord,zeit = ',nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))
-      if (meinrang == 0)print*,transinfo_instack(nt),'-rd timestep in stack=',transinfo_stack(nt)
+      if (meinrang == 0)then
+         print*,'get_schism_step: nt,zuord,zeit = ',nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))   &
+               ,'|',transinfo_instack(nt),'-th timestep in stack=',transinfo_stack(nt)
+      endif
       call mpi_barrier (mpi_komm_welt, ierr)
    
       !! open stack schout_******_*.nc
@@ -98,16 +105,21 @@ subroutine get_schism_step(nt)
       end do ! all dimensions
       call mpi_barrier (mpi_komm_welt, ierr)!#!
       
-      !!!!! elev -> p
+      !!!!! find elev
       call check_err( nf_inq_varid(ncid,"elev", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
       call mpi_barrier (mpi_komm_welt, ierr)!#!
       if (dlength(dimids(1)) > maxstack)call qerror("elev:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      !print*,meinrang,' get_schism_step elev dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+
       !! initialize
       var_p = 666.666
       if (meinrang == 0) var_g = 777.777
       call mpi_barrier (mpi_komm_welt, ierr)
-   
+      if(allocated(eta2))deallocate(eta2);allocate(eta2(npa),stat = istat)
+      if (istat /= 0) call qerror("allocate eta2( failed")
+
       !! get data
       start2 = (/ 1, nin /)
       count2 = (/ npa, 1 /) ! nodenumber first dimension
@@ -115,11 +127,7 @@ subroutine get_schism_step(nt)
       call check_err(iret)
       if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var elev failed iret = ",iret
       eta2(1:npa) = var_p(1:npa)
-      !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
-      !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
-      !print*,meinrang," eta2(topnode side 7",isidenode(1,7),") =",eta2(isidenode(1,7))
-      !print*,meinrang," eta2(bottomnode side 7",isidenode(2,7),") =",eta2(isidenode(2,7))
-      print*,meinrang,' elev from...until ',minval(eta2),maxval(eta2)
+      !print*,meinrang,' elev np  from...until ',minval(eta2(1:np)),maxval(eta2(1:np))
       call mpi_barrier (mpi_komm_welt, ierr)
    
       ! gather var_p into var_g
@@ -132,6 +140,12 @@ subroutine get_schism_step(nt)
       
       !! recombine into global numbers
       if (meinrang == 0) then
+         if(.not.allocated(p))then
+            call qerror('get_schism_step .not. allocated(p)')
+         else
+            print*,' p allocated to size=',size( p )
+         endif
+         p = -555.555 ! init
          !print*,meinrang," get_schism_step elev recombine into global",npa,varid,trim(adjustl(vname(varid)))
          do j = 1,proz_anz ! all processes/ranks
             !print*,j," get_schism_step np_sc=",np_sc(j)
@@ -140,10 +154,13 @@ subroutine get_schism_step(nt)
             end do
          end do
          print*," get_schism_step wsp minwert, maxwert = ",minval(p),maxval(p)
+         do k=1,knotenanzahl2D
+            if(p(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
+         enddo
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
    
-   
+      return
       call qerror('get_schism_step ### in development ###')
 
 
@@ -543,5 +560,6 @@ subroutine get_schism_step(nt)
       end do ! all j nodes
    end if ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
+   return
 end subroutine get_schism_step
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

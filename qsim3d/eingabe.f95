@@ -86,11 +86,11 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          myrank=meinrang
          ! Construct parallel message-passing tables
          call msgp_tables
-         print*,meinrang,' eingabe did msgp_tables'
+         if (meinrang == 0)print*,meinrang,' eingabe did msgp_tables'
          call mpi_barrier (mpi_komm_welt, ierr)
          ! Initialize parallel message-passing datatypes
          call msgp_init
-         print*,meinrang,' done msgp_init ...'
+         if (meinrang == 0)print*,meinrang,' done msgp_init ...'
          call mpi_barrier (mpi_komm_welt, ierr)
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
@@ -173,7 +173,11 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
+   
    call mpi_barrier (mpi_komm_welt, ierr)
+   print*,meinrang,'--- eingabe: done ---',mpi_komm_welt, ierr
+   call mpi_barrier (mpi_komm_welt, ierr)
+   
    return
    222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)
 end subroutine eingabe

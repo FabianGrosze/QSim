@@ -53,7 +53,7 @@ subroutine ganglinien_parallel()
    call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_pl,1,MPI_INT,0,mpi_komm_welt,ierr)
-   print*,'ganglinien_parallel:', n_pl,' planktische Variablen für ganglinienausgabe (n_pl)'
+   if(meinrang==0)print*,'ganglinien_parallel:', n_pl,' planktische Variablen für ganglinienausgabe (n_pl)'
    allocate (pl_gang(anz_gangl,zeitschrittanzahl+1,n_pl), stat = alloc_status )
    if (alloc_status /= 0) call qerror("allocate (pl_gang fehlgeschlagen")
    
@@ -168,6 +168,8 @@ subroutine ganglinien_lesen()
          call qerror('ganglinien_lesen: Hydraulischer Antrieb unbekannt')
    end select
    
+   call mpi_barrier (mpi_komm_welt, ierr)
+   if(meinrang==0)print*,'--- ganglinien_lesen done ---'
 end subroutine ganglinien_lesen
 !
 !----+-----+----

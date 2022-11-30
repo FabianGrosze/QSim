@@ -33,6 +33,9 @@ subroutine initialisieren()
    implicit none
    integer i,j,k,nini,nuzo, nt, irn,ierr
    logical vorhanden, einmal
+   
+   print*,hydro_trieb,' initialisieren(): kontrollpunkt 1', meinrang
+
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       print*,'initialisieren mit rechenzeit = ',rechenzeit
       !     Initialisierung aller transportierten planktischen Variablen (Konzentrationen) zunächt auf Null
@@ -149,6 +152,7 @@ subroutine initialisieren()
       !call ini_silikat()
       !     Sauerstoff:
       !call ini_oxygen()
+      
       !     Strömungsfeld anlegen für ersten Schritt Stoffumsatz
       select case (hydro_trieb)
          case(1) ! casu-transinfo
@@ -157,10 +161,11 @@ subroutine initialisieren()
             call holen_trans_untrim(na_transinfo)
             print*,'initialisieren(): holen_trans_untrim fetching step = ',na_transinfo
          case(3) ! SCHISM
-            print*,'doing schism initialization in parallel ...'
+            print*,'schism initialization will be done in parallel ...' ! see below
          case default
             call qerror('initialisieren: Hydraulischer Antrieb unbekannt')
       end select
+      
       !!call ganglinien_zeitschritt(1)  !! will be done by Program QSIM3D
       !do j=1,knotenanzahl2D ! an alle j knoten die Überstaudauern (zurück)-initialisieren
       !   benthic_distribution(44+(j-1)*number_benth_distr) =  0.0
@@ -197,20 +202,19 @@ subroutine initialisieren()
          benthic_distribution(73+(i-1)*number_benth_distr) = zone(point_zone(i))%albenthi%gkiesel  ! Biomasse benthischer Kieselalgen
       end do ! alle k Berechnungspunkte
    end if !! nur prozessor 0
-   !print*,'initialisieren(): kontrollpunkt', meinrang
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(hydro_trieb,1,MPI_INT,0,mpi_komm_welt,ierr)
+
+   print*,meinrang,' initialisieren(): na_transinfo,ne_transinfo=',na_transinfo,ne_transinfo
    
-   ! SCHISM initialization in parallel ! get first schism flowfield
    if (hydro_trieb == 3) then
-      if(meinrang==0)print*,' initialisieren shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
+      if(meinrang==0)print*,' initialisieren (SCHISM) shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo
       call get_schism_step(na_transinfo)
       ! set schism transport parameters:
       call schism_transport_parameters()
    end if ! hydro_trieb=SCHISM,3
-   
    call mpi_barrier (mpi_komm_welt, ierr)
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &
@@ -220,5 +224,7 @@ subroutine initialisieren()
    !       planktonic_variable(17+(kontrollknoten-1)*number_plankt_vari),            &
    !       planktonic_variable(18+(kontrollknoten-1)*number_plankt_vari),            &
    !       planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
+   
+   if(meinrang==0)print*,'--- initialisieren: done ---'
    return
 end subroutine initialisieren

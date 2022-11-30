@@ -41,8 +41,6 @@ subroutine ausgeben_schism(itime)
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
    real , allocatable , dimension (:) :: output
    
-   call qerror('ausgeben_schism() schism-entwicklung erstmal nur bis hier')
-
    if (meinrang /= 0)call qerror('ausgeben_schism() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
    write(zahl,*)itime
    zahl = adjustl(zahl)
@@ -71,6 +69,11 @@ subroutine ausgeben_schism(itime)
       write(ion,'(f27.6)') p(n)
       !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
    end do
+   
+   close (ion)
+   print*,meinrang,myrank,'node output ausgeben_schism done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   return
+   
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D

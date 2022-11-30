@@ -164,7 +164,7 @@ subroutine screen_schism()
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
          end if ! more than one timestep
-         if (meinrang==0)print*,i,' screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl
+         if (meinrang==0)print*,i,'-th stack; screen_schism Zeit',zeiten(1), zeiten(n),zeit_delta,transinfo_anzahl
          deallocate(zeiten)
       end if ! dlength ok
       call mpi_barrier (mpi_komm_welt, ierr)
@@ -177,6 +177,13 @@ subroutine screen_schism()
          write(fehler,*)'screen_schism: nf_inq_varid(ncid, > > elev <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
       end if
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      n = dlength(dimids(1))
+      !print*,'screen_schism: node number in stack',meinrang,' =',n
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      call MPI_Allreduce(n, maxstack, 1, MPI_INT, MPI_MAX, mpi_komm_welt, iret)
+      if (meinrang == 0) print*,'screen_schism: stack=',i,' max node number in stacks =',maxstack
+
       !iret = nf_inq_varid(ncid,'dahv', varid)
       !if (iret /= 0) then
       !   if (meinrang == 0) print*,'screen_schism: node veocities needed by QSim, param.nml: iof_hydro(16) = 1'
@@ -207,10 +214,12 @@ subroutine screen_schism()
    call MPI_Allreduce(transinfo_anzahl, sumtra, 1, MPI_INT, MPI_SUM, mpi_komm_welt, iret)
    call check_err(iret)
    sumtra = sumtra/proz_anz
-   !print*,meinrang,'screen_schism timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0)
+   print*,meinrang,'screen_schism timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0)
    if (transinfo_anzahl /= sumtra)call qerror('timestep number unclear screen_schism')
    call mpi_barrier (mpi_komm_welt, ierr)
-   allocate (transinfo_zeit(transinfo_anzahl), transinfo_zuord(transinfo_anzahl), stat = istat )
+   allocate (transinfo_zeit(transinfo_anzahl))
+   allocate (transinfo_zuord(transinfo_anzahl), stat = istat )
+   if (istat /= 0) call qerror("allocate (transinfo_zuord(transinfo_anzahl) failed")
    allocate (transinfo_datei(transinfo_anzahl), stat = istat )
    allocate (transinfo_stack(transinfo_anzahl), transinfo_instack(transinfo_anzahl), stat = istat )
    if (istat /= 0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")

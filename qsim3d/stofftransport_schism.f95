@@ -26,30 +26,36 @@
 ! --------------------------------------------------------------------------- !
 
 subroutine stofftransport_schism()
-   use netcdf
-   use modell
-   use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
-   use schism_msgp, only: myrank,parallel_abort !,nproc
+      use netcdf
+      use modell
+      use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
+      use schism_msgp, only: myrank,parallel_abort !,nproc
    
-   implicit none
-   include 'netcdf.inc'
-   integer,parameter :: maxsubst = 60      ! max. number of substeps
-   integer nt, n,j,k, subtim, diff, diffprev, alloc_status
-   real :: laeng, cu_max, cu_min, dt_sub, sumwicht
-   real , allocatable , dimension (:,:) :: zwischen
-   integer :: num_sub
-   integer nti(maxsubst)
-   if (meinrang == 0) then !! prozessor 0 only
-      print*,"stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt" ,startzeitpunkt, zeitpunkt, endzeitpunkt
-      call qerror("preliminary Interrupt")
-   endif
+      implicit none
+      include 'netcdf.inc'
+      integer,parameter :: maxsubst = 60      ! max. number of substeps
+      integer nt, n,j,k, subtim, diff, diffprev, alloc_status
+      real :: laeng, cu_max, cu_min, dt_sub, sumwicht
+      real , allocatable , dimension (:,:) :: zwischen
+      integer :: num_sub
+      integer nti(maxsubst)
    
-   num_sub=6
-   do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
-         call get_schism_step(1) !!****
-   end do ! all sub timesteps
-   
-   return
+      if (meinrang == 0) then !! prozessor 0 only
+         print*,'stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt=' ,startzeitpunkt, zeitpunkt, endzeitpunkt
+         print*,'stofftransport_schism: na_transinfo,ne_transinfo=',na_transinfo,ne_transinfo
+         !call qerror("preliminary Interrupt")
+      endif
+      
+      call transinfo_schritte(startzeitpunkt, endzeitpunkt)
+      
+      num_sub=1 !6?
+      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
+         call get_schism_step(na_transinfo) !!****
+      end do ! all sub timesteps
+      
+      print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet implemented ####'
+
+      return
 end subroutine stofftransport_schism
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
 subroutine sc_read_rough()
@@ -79,7 +85,7 @@ subroutine schism_transport_parameters
       max_iadjust_mass_consv=0 ! iadjust_mass_consv0=0 !Enforce mass conservation for a tracer
       max_subcyc=10
       dtb_min_transport=dt/max_subcyc !min dt for transport allowed
-      print*,meinrang,' schism_transport_parameters dt=',dt,dtb_min_transport,max_subcyc
+      if(meinrang==0)print*,' schism_transport_parameters: dt=',dt,dtb_min_transport,max_subcyc
       
       mnweno1=0       !maxium number of p1 polynomial 
       allocate(nweno1(ne),stat=istat)     !number of p1 polynomial 
