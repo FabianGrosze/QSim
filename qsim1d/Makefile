@@ -46,6 +46,7 @@ Q1= module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
 	organic_carbon_inflow_1d.o \
 	ph_inflow_1d.o \
 	phosphate_inflow_1d.o \
+	nitrogen_inflow_1d.o
 
 -include ../metabolism/metabol.mk
 
@@ -57,7 +58,7 @@ CCLAGS = $(CFLAGS2)
 
 #--------------------------------------------------------------------
 
-usual: date check metabo qsim1d
+usual: date check metabolism qsim1d
 
 all: usual save
 
@@ -76,7 +77,7 @@ check:
 	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) available"; else exit 1 ; fi;
 	if test -d ../metabolism; then echo "Directory ../metabolism available"; else echo "../metabolism missing" ; fi;
 
-metabo: $(META)
+metabolism: $(META)
 	ar ruv libmetabol.a $(META)
 	ranlib libmetabol.a
 	@echo "libmetabol.a done"

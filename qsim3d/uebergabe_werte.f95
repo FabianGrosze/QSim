@@ -134,11 +134,18 @@ subroutine ini_ueber(nk)
          write(fehler,*)'Anzahl der Levels num_lev_trans und num_lev(planktonic) müssen gleich sein',num_lev_trans,num_lev
          call qerror(fehler)
       endif
-      !--------single (global) transfer values
-      do j = 1,number_trans_val ! initialise
-         write(trans_val_name(j),'(18x)')
+      
+      
+      ! --- single (global) transfer values ---
+      ! initialize
+      do j = 1,number_trans_val
+         trans_val_name(j)   = "                  "
+         transfer_value_p(j) = 0.0
+         output_trans_val(j) = .false.
       end do
-      trans_val_name( 1) = "               nix" ! leer
+      
+      ! names
+      trans_val_name( 1) = "               nix"
       trans_val_name( 2) = "              nZoo"
       trans_val_name( 3) = "              pZoo"
       trans_val_name( 4) = "               bk1"
@@ -151,14 +158,9 @@ subroutine ini_ueber(nk)
       !algae_huelle.f95:      saettg = transfer_value_p(8)    ! ???
       !algae_huelle.f95:      saettb = transfer_value_p(9)    ! ???
       !trans_val_name()= "               " !
-      do j = 1,number_trans_val ! initialise
-         transfer_value_p(j) = 0.0 !!!####!0.0
-      end do
-      do j = 1,number_trans_val ! default: no output
-         output_trans_val(j) = .false.
-      end do
-      !#! transfer_value_p(2)=
-      !#! transfer_value_p(3)=
+      
+      
+      ! values
       transfer_value_p(4) = 0.51 !! real, parameter  :: bk1 = 0.51 , bk2 = 0.02
       transfer_value_p(5) = 0.02 !! Konstanten wie in orgc gesetzt
       !saettk    transfer_value_p(6)=  !! Rückgabewert Algen
@@ -166,10 +168,13 @@ subroutine ini_ueber(nk)
       ! saettg   transfer_value_p(8)=
       ! saettb   transfer_value_p(9)=
       !#! transfer_value_p(10)=
-      !------- depth averaged quantities
+      
+      
+      ! --- depth averaged quantities ---
       do j = 1,number_trans_quant ! initialise
-         write(trans_quant_name(j),'(18x)')
+         trans_quant_name(j) = "                  "
       end do
+      
       trans_quant_name( 1) = "              bsbt"
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
       trans_quant_name( 3) = "               doN" ! Stickstofffreisetzung orgc
@@ -248,7 +253,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(76) = "             rmuas" !  = mueRot-respRg ! Nettowachstumsrate Rotatorien ?
       trans_quant_name(77) = "              rakr" !  = iras(ior)*respaR ! Fraßabhängige Respiration ?
       trans_quant_name(78) = "              rbar" !  = respRg ! GRund?-Respiration ?
-      trans_quant_name(79) = "              iras" !  Ausgabe Ingestionsrate
+      trans_quant_name(79) = "              iras" ! Ausgabe Ingestionsrate
       trans_quant_name(80) = "              tpgr" ! Ausgabeparameter algaesgr()
       trans_quant_name(81) = "              tpbl" ! Ausgabeparameter algaesbl()
       trans_quant_name(82) = "            figaus" ! Ausgabeparameter algaesgr() Pmit/(Pmax*3.6)
@@ -266,7 +271,11 @@ subroutine ini_ueber(nk)
       trans_quant_name(94) = "          empty_94" !
       trans_quant_name(95) = "            drfaes" ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen
       trans_quant_name(96) = "             drHNF" ! Dreissena-Muscheln fressen HNF
-      !trans_quant_name()= "              " !
+      trans_quant_name(97) = "             susn2" ! nitrite, which is oxidised to nitrate by nitrifiers
+      trans_quant_name(98) = "             pfln1" ! ammonium, which is oxidised to nitrite by nitrifiers (on macrophytes)
+      trans_quant_name(99) = "             pfln2" ! nitrite, which is oxidised to nitrate by nitrifiers(on macrophytes)
+      
+      
       ! allocate transfer_quantity and initialise
       !!! allocate (transfer_quantity(number_trans_quant*number_trans_quant_points), stat = as )
       print*,"ini_ueber allocate (transfer_quantity part*proz_anz = ",part*proz_anz,part,proz_anz
@@ -277,14 +286,20 @@ subroutine ini_ueber(nk)
       end if
       print*,meinrang,'allocate (transfer_quantity(    number_trans_quant,number_trans_quant_points = ' &
             ,number_trans_quant,number_trans_quant_points
-      do i = 1,number_trans_quant_points ! alle knoten
-         do j = 1,number_trans_quant ! initialisierung aller konzentrationen zunächt auf Null
-            transfer_quantity(j+(i-1)*number_trans_quant) = 0.0 !!!####!0.0
+      
+      ! Initialising all concentrationen as 0.0
+      do i = 1,number_trans_quant_points
+         do j = 1,number_trans_quant 
+            transfer_quantity(j+(i-1)*number_trans_quant) = 0.0 
          end do
       end do
-      do j = 1,number_trans_quant ! default: no output
+      
+      ! Initailize as no output
+      do j = 1,number_trans_quant
          output_trans_quant(j) = .false.
       end do
+      
+      
       !--------vertically distributed quantities
       do j = 1,number_trans_quant_vert ! initialise
          write(trans_quant_vert_name(j),'(18x)')

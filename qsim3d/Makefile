@@ -85,7 +85,7 @@ Q3 = version.co trans_read.co \
 	planktische_variablen.o module_suspendedMatter.o parallel.o \
 	temperw_huelle.o alter.o\
 	module_isotope.o \
-	ncyc_huelle.o \
+	nitrogen_wrapper_3d.o \
 	oxygen_wrapper_3d.o \
 	phosphate_wrapper_3d.o \
 	silicate_wrapper_3d.o \

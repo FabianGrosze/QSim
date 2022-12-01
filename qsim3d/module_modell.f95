@@ -452,8 +452,8 @@ module modell
    !     depth averaged quantities
    !>    points where transfer quantities are defined (all mesh points in general)
    integer :: number_trans_quant_points
-   !>    number of transfer quantities
-   integer, parameter :: number_trans_quant = 96
+   !> number of transfer quantities
+   integer, parameter :: number_trans_quant = 99
    !>    Names and Descriptions of transfer quantities
    character(18) ::  trans_quant_name(number_trans_quant)
    !>    output-flag
@@ -1123,7 +1123,7 @@ contains
                !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
                !else
             end if
-            
+
             write(systemaufruf,'(3A)',iostat = errcode) &
                'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')

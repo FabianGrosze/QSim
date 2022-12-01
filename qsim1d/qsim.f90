@@ -30,7 +30,7 @@ program qsim
    use mod_model_settings
    use module_metabolism
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
-   ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt!!!
+   ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
    character                               :: ckenn,cpoint,CST_end
    character (len = 2)                     :: cerrts,ctest1,chcon,ckenn_vers,ckenn_vers1
    character (len = 1)                     :: ctaste
@@ -107,7 +107,7 @@ program qsim
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
    real, dimension(ialloc2)                :: zwrbar, zwno2, zwx0, zwgo2n, zwbsbt, zwschr, zwpfl, zwsgon, zwsdx0
    real, dimension(ialloc2)                :: zwdon, zwsusn, zwbetn, zwsuso, zwagn4, zwakn4, zwagn3, zwabn4, zwabn3
-   real, dimension(ialloc2)                :: zwakn3, zwph, zwx02, zwgesN, zwgesP, zwsedn, zwexdb, zwCsed_abb, zwrdr
+   real, dimension(ialloc2)                :: zwakn3, zwph, zwx02, zwgesN, zwgesP, zwexdb, zwCsed_abb, zwrdr
    real, dimension(ialloc2)                :: zwexdk, zwexdg, zwzexb, zwobsb, zwocsb, zwvbsb, zwvcsb, zwsbsb, zwbsbe
    real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed, zwcm, zwBAC, zwHNFB
    real, dimension(ialloc2)                :: zwBSBH, zwHNF, zwfbgr, zwfrgr, zwnl0, zwpl0, zwpo2p, zwpo2r, zwso2e
@@ -129,6 +129,7 @@ program qsim
    real, dimension(ialloc2)                :: zwKorn, zwFlN3, zwJNO3, zwJNH4, zwJPO4, zwJO2, zwJSi, zwJDOC1, zwJDOC2
    real, dimension(ialloc2)                :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, ir, gwdmax, sedx0, don, susn
    real, dimension(ialloc2)                :: bettn, agrnh4, akinh4, susno, akino3, agrno3, iras, sedalg, sedalk
+   real, dimension(ialloc2)                :: susn2, pfln1, pfln2
    real, dimension(ialloc2)                :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr
    real, dimension(ialloc2)                :: mw, pw,lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1
    real, dimension(ialloc2)                :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm, akbcmz, pfldalg
@@ -136,7 +137,7 @@ program qsim
    real, dimension(ialloc2)                :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
    real, dimension(ialloc2)                :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, CMy, BACy, CHNFy, BVHNFy, dly
    real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gsPy
-   real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsNy, sedn, orgCsd0, susny, bettny, dony
+   real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsNy, orgCsd0, susny, bettny, dony
    real, dimension(ialloc2)                :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
    real, dimension(ialloc2)                :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy
    real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy
@@ -233,6 +234,7 @@ program qsim
    real, dimension(:,:), allocatable       :: biras, brakr, brbar, bfssgr, bfbsgr, bfrfgr, bexdvk, bexdvg, bsgon, bsedx0
    real, dimension(:,:), allocatable       :: bexdvb, bdon, bsusn, bbettn, bsuso, bagn4, bakn4, bagn3, babn4, babn3
    real, dimension(:,:), allocatable       :: bdalgo, bdalgao,babeowg, babeowk, babeorg, babeork, bzooro2, bo2ein, bo2ein1, balgo
+   real, dimension(:,:), allocatable       :: bsusn2, bpfln1, bpfln2
    real, dimension(:,:), allocatable       :: bakn3, bsedn, bBVHNF, bsdbsb, bbsbbe, bdfaek, bdfaeg, bdfaeb, bdfaes
    real, dimension(:,:), allocatable       :: bssdr, borgCs, borgCs_abb, bbsbct, bbsbcP, bcm, bBAC, bHNFBS, bBSBHN
    real, dimension(:,:), allocatable       :: bCHNF, bnl0, bpl0, bgo2n, bpo2p, bpo2r, bro2dr, bro2HF, borgSS, bJNO3, bJN2
@@ -572,6 +574,7 @@ program qsim
    allocate(bdon(azStrs,ialloc2), bsusn(azStrs,ialloc2), bbettn(azStrs,ialloc2), bsuso(azStrs,ialloc2))
    allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(mStrs,iallco2))
    allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(mstr,ialloc2), bo2ein1(azStrs,ialloc2))
+   allocate(bsusn2(azstrs,ialloc2), bpfln1(azstrs,ialloc2), bpfln2(azstrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
    allocate(bsdbsb(azStrs,ialloc2), bbsbbe(azStrs,ialloc2), bdfaek(azStrs,ialloc2), bdfaeg(azStrs,ialloc2))
@@ -1028,16 +1031,14 @@ program qsim
       ! i2Daus steuert die Ausgabe in ERGEB2D.txt
       ! nur wenn mindestens in einem Strang 2D gerechnet wird,
       ! wird ERGEB2D.txt erzeugt
+      i2Daus = 0
       if (i2Ds(mstr) > 0) then
-         i2Daus = 1
-         print *, 'You are running a simulation with depth resolved calculations (2D).'
-         print *, 'This is currently not supported by QSim. Please use a different version.'
-         print *, 'Stop.'
+         print*, "You are trying to run a 2D simulation."
+         print*, "This is not supported by QSim anymore"
+         print*, "Please use an older version."
          stop
-      else
-         i2Daus = 0
       endif
-
+   
    endif
    
    6 continue
@@ -6138,16 +6139,18 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! Stickstoff
+      ! nitrogen
       ! -----------------------------------------------------------------------
       1514 continue
-      if (vnh4(1) < 0.0)goto 1515
-      if (nbuhn(mstr) > 0 .and. ilbuhn == 0) then
+      if (vnh4(1) < 0.0) goto 1515
+      
+      if (nbuhn(mstr) > 0) then
          do ior = 1,anze+1
             babewg(mstr,ior) = albewg(ior)
             baberg(mstr,ior) = alberg(ior)
             babewk(mstr,ior) = albewk(ior)
             baberk(mstr,ior) = alberk(ior)
+      
             pfl(ior) = 0.0
             albewg(ior) = 0.0
             alberg(ior) = 0.0
@@ -6156,353 +6159,138 @@ program qsim
          enddo
       endif
       
-      call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2             &
-                ,go2n,vno3,dC_DenW,flag,elen,ior,anze                     &
-                ,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don            &
-                ,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2             &
-                ,agrno3,akino3,jiein,ischif                               &
-                ,YNMAX1,STKS1,ANITR1,BNMX1,BNKS1,vph,vno2,ij              &
-                ,albewg,alberg,albewk,alberk,resdr,aki,agr                &
-                ,exdrvk,exdrvg,vx02,ex02,eno2,YNMAX2,STKS2,ANITR2         &
-                ,abl,ablnh4,ablno3,exdrvb                                 &
-                ,BNMX2,BNKS2,nl0,zooind,GROT,nzoo,gesN,orgCsd             &
-                ,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm              &
-                ,CD,CP,CM,BAC,bsbct,nkzs,vnh4z,vno2z,vno3z,dH2D           &
-                ,hJNO3,hJNH4,hJN2,susO2N,hFluN3,akksN,agksN,abksN         &
-                ,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB,Q_NB,up_NBz &
-                ,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z  &
-                ,abno3z,vo2z,abltbr,akitbr,agrtbr,agrbrz,akibrz,ablbrz    &
-                ,mstr,uhrz,itags,monats,enl0,algakz,algagz,algabz         &
-                ,up_N2z,iorLa,iorLe,ieinLs,flae,qeinlL,eNH4L              &
-                ,eNO2L,eNO3L,gesNL,hgesNz,algdrk,algdrg,algdrb,ifehl      &
-                ,ifhstr,azStrs                                            &
-                ,.false.,0)
+      ! inflow from point and diffuse sources
+      call nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
+                              Q_NG, Q_NB, hFluN3, mstr, eNH4L, eNO2L, eNO3L,   &
+                              gesNL, eNH4, eNO2, eNO3, ex0, ex02, eGesN, enl0, &
+                              ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa,      &
+                              jiein, flae, anze, flag, tflie)
+                              
+      ! metabolism in main river
+      do ior = 1, anze+1
+         ! nitrifiers
+         call nitrifiers(vx0(ior), vx02(ior), pfl(ior), vph(ior), tempw(ior),   &
+                         vO2(ior), vNH4(ior), vNO2(ior), rhyd(ior), rau(ior),   &
+                         tiefe(ior), vmitt(ior), hJNH4(mstr,ior), tflie,        &
+                         susn(ior), susn2(ior), pfln1(ior), pfln2(ior),         &
+                         sedx0(ior), bettn(ior), go2n(ior), susno(ior),         &
+                         kontroll, jjj)
+         
+         ! nitrogen
+         call nitrogen(vNH4(ior), vNO3(ior), vNO2(ior), gesN(ior), vO2(ior),    &
+                       vx02(ior),                                               &
+                       aki(ior), agr(ior), abl(ior),                            &
+                       Q_NK(ior), Q_NG(ior), Q_NB(ior),                         &
+                       up_NKz(1,ior), up_NGz(1,ior), up_NBz(1,ior),             &
+                       akibrz(1,ior), agrbrz(1,ior), ablbrz(1,ior),             &
+                       algakz(1,ior), algagz(1,ior), algabz(1,ior),             &
+                       sedalk(ior), sedalg(ior), sedalb(ior),                   &
+                       algdrk(ior), algdrg(ior), algdrb(ior),                   &
+                       abltbr(ior),                                             &
+                       albewk(ior), albewg(ior),                                &
+                       alberk(ior), alberg(ior),                                &
+                       resdr(ior), dzres1(ior), dzres2(ior),                    &
+                       exdrvk(ior), exdrvg(ior), exdrvb(ior),                   &
+                       up_N2z(1,ior), orgCsd(mstr,ior), nl0(ior), bsbct(ior),   &
+                       susn(ior), susn2(ior), pfln1(ior), pfln2(ior), don(ior), &
+                       hJNH4(mstr,ior), hJNO3(mstr,ior), hJN2(mstr,ior),        &
+                       tiefe(ior), tflie,                                       &
+                       akiNH4(ior), agrNH4(ior), ablNH4(ior),                   &
+                       akiNO3(ior), agrNO3(ior), ablNO3(ior),                   &
+                       hFluN3(mstr,ior), dC_DenW(ior),                          &
+                       kontroll, jjj)
+      enddo
       
-      if (ifehl > 0) then
-         print*,'qsim ifehl ncyc, aki,agr,abl = ',aki,agr,abl
-         goto 989
-      endif
-      
-      if (nbuhn(mstr) == 0)goto 1515
-      if (ilbuhn == 0) then
+      ! --- groyne-field ---
+      if (nbuhn(mstr) > 0)then
          do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwtief(ior) = tiefe(ior)
-            zwvm(ior) = vmitt(ior)
-            zwno3(ior) = vno3(ior)
-            zwnh4(ior) = vnh4(ior)
-            zwno2(ior) = vno2(ior)
-            zwgesN(ior) = gesN(ior)
-            zwn4z(ior) = vnh4z(1,ior)
-            zwn2z(ior) = vno2z(1,ior)
-            zwn3z(ior) = vno3z(1,ior)
-            zwx0(ior) = vx0(ior)
-            zwx02(ior) = vx02(ior)
-            zwvo2(ior) = vo2(ior)
-            zwgo2n(ior) = go2n(ior)
-            zwbsbt(ior) = bsbt(ior)
-            zwbsct(ior) = bsbct(ior)
-            zwbsN(ior) = doN(ior)
-            zwsedk(ior) = sedalk(ior)
-            zwsedg(ior) = sedalg(ior)
-            zwsedb(ior) = sedalb(ior)
-            zwsgon(ior) = sgo2n(ior)
-            zwsdx0(ior) = sedx0(ior)
-            zwdon(ior) = don(ior)
-            zwsusn(ior) = susn(ior)
-            zwbetn(ior) = bettn(ior)
-            zwsuso(ior) = susno(ior)
-            zwagn4(ior) = agrnh4(ior)
-            zwakn4(ior) = akinh4(ior)
-            zwabn4(ior) = ablnh4(ior)
-            zwagn3(ior) = agrno3(ior)
-            zwakn3(ior) = akino3(ior)
-            zwabn3(ior) = ablno3(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            zwph(ior) = vph(ior)
-            zwsedn(ior) = sedn(ior)
-            zwrdr(ior) = resdr(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwexdk(ior) = exdrvk(ior)
-            zwexdg(ior) = exdrvg(ior)
-            zwexdb(ior) = exdrvb(ior)
-            zwadrk(ior) = algdrk(ior)
-            zwadrg(ior) = algdrg(ior)
-            zwadrb(ior) = algdrb(ior)
-            zwnl0(ior) = nl0(ior)
-            zwCsed(ior) = orgCsd(mstr,ior)
-            zup_NK(ior) = up_NKz(1,ior)
-            zup_NG(ior) = up_NGz(1,ior)
-            zup_NB(ior) = up_NBz(1,ior)
-            zQ_NK(ior) = Q_NK(ior)
-            zQ_NG(ior) = Q_NG(ior)
-            zQ_NB(ior) = Q_NB(ior)
-            zwJNO3(ior) = hJNO3(mstr,ior)
-            zwJNH4(ior) = hJNH4(mstr,ior)
-            zwFlN3(ior) = hFluN3(mstr,ior)
-            zwJN2(ior) = hJN2(mstr,ior)
-            zaktbr(ior) = akibrz(1,ior)
-            zagtbr(ior) = agrbrz(1,ior)
-            zabtbr(ior) = ablbrz(1,ior)
-            zwakz(ior) = dalgkz(1,ior)
-            zwaakz(ior) = algakz(1,ior)
-            zwagz(ior) = dalggz(1,ior)
-            zwaagz(ior) = algagz(1,ior)
-            zwabz(ior) = dalgbz(1,ior)
-            zwaabz(ior) = algabz(1,ior)
+            ! nitrifiers
+         call nitrifiers(bx0(mstr,ior), bx02(mstr,ior), bpfl(mstr,ior), bph(mstr,ior), btempw(mstr,ior), &
+                         bO2(mstr,ior), bNH4(mstr,ior), bNO2(mstr,ior), rhyd(ior), rau(ior),             &
+                         bh(mstr,ior), vbm(mstr,ior), bjNH4(mstr,ior), tflie,                            &
+                         bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior),          &
+                         bsedx0(mstr,ior), bbettn(mstr,ior), bgo2n(mstr,ior), bsuso(mstr,ior),           &
+                         kontroll, jjj)
+         
+         ! nitrogen
+         call nitrogen(bNH4(mstr,ior), bNO3(mstr,ior), bNO2(mstr,ior), bgesN(mstr,ior), bO2(mstr,ior),   &
+                       bx02(mstr,ior),                                                                   &
+                       baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior),                                   &
+                       bQ_NK(mstr,ior), bQ_NG(mstr,ior), bQ_NB(mstr,ior),                                &
+                       bup_NK(mstr,ior), bup_NG(mstr,ior), bup_NB(mstr,ior),                             &
+                       baktbr(mstr,ior), bagtbr(mstr,ior), babtbr(mstr,ior),                             &
+                       balakz(mstr,ior), balagz(mstr,ior), balabz(mstr,ior),                             & 
+                       bsedak(mstr,ior), bsedag(mstr,ior), bsedab(mstr,ior),                             &
+                       badrk(mstr,ior), badrg(mstr,ior), badrb(mstr,ior),                                &
+                       abltbr(ior),                                                                      &
+                       babewk(mstr,ior), babewg(mstr,ior),                                               &
+                       baberk(mstr,ior), baberg(mstr,ior),                                               &
+                       bresdr(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),                             &
+                       bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),                             &
+                       up_N2z(1,ior), borgCs(mstr,ior),bnl0(mstr,ior), bbsbct(mstr,ior),                 &
+                       bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior), bdon(mstr,ior), &
+                       bJNH4(mstr,ior), bJNO3(mstr,ior), bJN2(mstr,ior),                                 &
+                       bh(mstr,ior), tflie,                                                              &
+                       bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                &
+                       bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                &
+                       bFluN3(mstr,ior), dC_DenW(ior),                                                   &
+                       kontroll, jjj)
+                       
+                       ! TODO (Schönung)
+                       ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
+                       
+                       ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
+                       ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
+                       ! auf Identität getestet werden kann
+                       ! Nach einem Erfolgreichen Test sollten diese Fehler hier ausgebessert werden
+                       albewg(ior) = zwabwg(ior)
+                       alberg(ior) = zwabrg(ior)
+                       albewk(ior) = zwabwk(ior)
+                       alberk(ior) = zwabrk(ior)
+                       
             
-            zwkN4z(ior) = akNH4z(1,ior)
-            zwkN3z(ior) = akNO3z(1,ior)
-            zwgN4z(ior) = agNH4z(1,ior)
-            zwgN3z(ior) = agNO3z(1,ior)
-            zwbN4z(ior) = abNH4z(1,ior)
-            zwbN3z(ior) = abNO3z(1,ior)
             
-            zwnkzs(ior) = nkzs(ior)
+            ! mixing between main river and groyne-field 
+            diff1  = bx0(mstr,ior)    - vx0(ior)
+            diff2  = bx02(mstr,ior)   - vx02(ior)
+            diff3  = bnh4(mstr,ior)   - vnh4(ior)
+            diff4  = bno2(mstr,ior)   - vno2(ior)
+            diff5  = bno3(mstr,ior)   - vno3(ior)
+            diff6  = bnl0(mstr,ior)   - nl0(ior)
+            diff7  = bgesN(mstr,ior)  - gesN(ior)
+            diff8  = bQ_NK(mstr,ior)  - Q_NK(ior)
+            diff9  = bQ_NG(mstr,ior)  - Q_NG(ior)
+            diff10 = bQ_NB(mstr,ior)  - Q_NB(ior)
+            diff11 = bFluN3(mstr,ior) - hFluN3(mstr,ior)
             
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            vno3(ior) = bno3(mstr,ior)
-            vnh4(ior) = bnh4(mstr,ior)
-            vno2(ior) = bno2(mstr,ior)
-            gesN(ior) = bgesN(mstr,ior)
-            vnh4z(1,ior) = bnh4(mstr,ior)
-            vno2z(1,ior) = bno2(mstr,ior)
-            vno3z(1,ior) = bno3(mstr,ior)
-            vx0(ior) = bx0(mstr,ior)
-            vx02(ior) = bx02(mstr,ior)
-            vo2(ior) = bo2(mstr,ior)
-            bsbt(ior) = bbsbt(mstr,ior)
-            bsbct(ior) = bbsbct(mstr,ior)
-            dON(ior) = bdoN(mstr,ior)
-            sedalk(ior) = bsedak(mstr,ior)
-            sedalg(ior) = bsedag(mstr,ior)
-            sedalb(ior) = bsedab(mstr,ior)
-            pfl(ior) = bpfl(mstr,ior)
-            dzres1(ior) = bzres1(mstr,ior)
-            dzres2(ior) = bzres2(mstr,ior)
-            vph(ior) = bph(mstr,ior)
-            albewg(ior) = babewg(mstr,ior)
-            albewk(ior) = babewk(mstr,ior)
-            alberg(ior) = baberg(mstr,ior)
-            alberk(ior) = baberk(mstr,ior)
-            resdr(ior) = bresdr(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            exdrvk(ior) = bexdvk(mstr,ior)
-            exdrvg(ior) = bexdvg(mstr,ior)
-            exdrvb(ior) = bexdvb(mstr,ior)
-            algdrk(ior) = badrk(mstr,ior)
-            algdrg(ior) = badrg(mstr,ior)
-            algdrb(ior) = badrb(mstr,ior)
-            nl0(ior) = bnl0(mstr,ior)
-            orgCsd(mstr,ior) = borgCs(mstr,ior)
-            up_NKz(1,ior) = bup_NK(mstr,ior)
-            up_NGz(1,ior) = bup_NG(mstr,ior)
-            up_NBz(1,ior) = bup_NB(mstr,ior)
-            Q_NK(ior) = bQ_NK(mstr,ior)
-            Q_NG(ior) = bQ_NG(mstr,ior)
-            Q_NB(ior) = bQ_NB(mstr,ior)
-            hJNO3(mstr,ior) = bJNO3(mstr,ior)
-            hJNH4(mstr,ior) = bJNH4(mstr,ior)
-            hFluN3(mstr,ior) = bFluN3(mstr,ior)
-            hJN2(mstr,ior) = bJN2(mstr,ior)
-            akibrz(1,ior) = baktbr(mstr,ior)
-            agrbrz(1,ior) = bagtbr(mstr,ior)
-            ablbrz(1,ior) = babtbr(mstr,ior)
-            dalgkz(1,ior) = balgkz(mstr,ior)
-            algakz(1,ior) = balakz(mstr,ior)
-            dalggz(1,ior) = balggz(mstr,ior)
-            algagz(1,ior) = balagz(mstr,ior)
-            dalgbz(1,ior) = balgbz(mstr,ior)
-            algabz(1,ior) = balabz(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1514
-      endif
-      
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bno3(mstr,ior) = vno3(ior)
-            bnh4(mstr,ior) = vnh4(ior)
-            bno2(mstr,ior) = vno2(ior)
-            bgesN(mstr,ior) = gesN(ior)
-            bx0(mstr,ior) = vx0(ior)
-            bx02(mstr,ior) = vx02(ior)
-            bsgon(mstr,ior) = sgo2n(ior)
-            bgo2n(mstr,ior) = go2n(ior)
-            bsedx0(mstr,ior) = sedx0(ior)
-            bdon(mstr,ior) = don(ior)
-            bsusn(mstr,ior) = susn(ior)
-            bbettn(mstr,ior) = bettn(ior)
-            bsuso(mstr,ior) = susno(ior)
-            bagn4(mstr,ior) = agrnh4(ior)
-            bakn4(mstr,ior) = akinh4(ior)
-            babn4(mstr,ior) = ablnh4(ior)
-            bagn3(mstr,ior) = agrno3(ior)
-            bakn3(mstr,ior) = akino3(ior)
-            babn3(mstr,ior) = ablno3(ior)
-            bsedn(mstr,ior) = sedn(ior)
-            bnl0(mstr,ior) = nl0(ior)
-            bup_NK(mstr,ior) = up_NKz(1,ior)
-            bup_NG(mstr,ior) = up_NGz(1,ior)
-            bQ_NK(mstr,ior) = Q_NK(ior)
-            bQ_NG(mstr,ior) = Q_NG(ior)
-            bFluN3(mstr,ior) = hFluN3(mstr,ior)
-            baktbr(mstr,ior) = akibrz(1,ior)
-            bagtbr(mstr,ior) = agrbrz(1,ior)
-            balgkz(mstr,ior) = dalgkz(1,ior)
-            balakz(mstr,ior) = algakz(1,ior)
-            balggz(mstr,ior) = dalggz(1,ior)
-            balagz(mstr,ior) = algagz(1,ior)
-            bkN4z(mstr,ior) = akNH4z(1,ior)
-            bkN3z(mstr,ior) = akNO3z(1,ior)
-            bgN4z(mstr,ior) = agNH4z(1,ior)
-            bgN3z(mstr,ior) = agNO3z(1,ior)
-            bbN4z(mstr,ior) = abNH4z(1,ior)
-            bbN3z(mstr,ior) = abNO3z(1,ior)
-            
-            tempw(ior) = zwtemp(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            vno3(ior) = zwno3(ior)
-            vnh4(ior) = zwnh4(ior)
-            vno2(ior) = zwno2(ior)
-            gesN(ior) = zwgesN(ior)
-            nkzs(ior) = zwnkzs(ior)
-            
-            vnh4z(1,ior) = zwn4z(ior)
-            vno2z(1,ior) = zwn2z(ior)
-            vno3z(1,ior) = zwn3z(ior)
-            
-            vx0(ior) = zwx0(ior)
-            vx02(ior) = zwx02(ior)
-            vo2(ior) = zwvo2(ior)
-            go2n(ior) = zwgo2n(ior)
-            bsbt(ior) = zwbsbt(ior)
-            bsbct(ior) = zwbsct(ior)
-            doN(ior) = zwbsN(ior)
-            sedalk(ior) = zwsedk(ior)
-            sedalg(ior) = zwsedg(ior)
-            sedalb(ior) = zwsedb(ior)
-            sgo2n(ior) = zwsgon(ior)
-            sedx0(ior) = zwsdx0(ior)
-            don(ior) = zwdon(ior)
-            susn(ior) = zwsusn(ior)
-            bettn(ior) = zwbetn(ior)
-            susno(ior) = zwsuso(ior)
-            agrnh4(ior) = zwagn4(ior)
-            akinh4(ior) = zwakn4(ior)
-            ablnh4(ior) = zwabn4(ior)
-            agrno3(ior) = zwagn3(ior)
-            akino3(ior) = zwakn3(ior)
-            ablno3(ior) = zwabn3(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            vph(ior) = zwph(ior)
-            albewg(ior) = zwabwg(ior)
-            alberg(ior) = zwabrg(ior)
-            albewk(ior) = zwabwk(ior)
-            alberk(ior) = zwabrk(ior)
-            sedn(ior) = zwsedn(ior)
-            resdr(ior) = zwrdr(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            exdrvk(ior) = zwexdk(ior)
-            exdrvg(ior) = zwexdg(ior)
-            exdrvb(ior) = zwexdb(ior)
-            algdrk(ior) = zwadrk(ior)
-            algdrg(ior) = zwadrg(ior)
-            algdrb(ior) = zwadrb(ior)
-            nl0(ior) = zwnl0(ior)
-            orgCsd(mstr,ior) = zwCsed(ior)
-            up_NKz(1,ior) = zup_NK(ior)
-            up_NGz(1,ior) = zup_NG(ior)
-            up_NBz(1,ior) = zup_NB(ior)
-            Q_NK(ior) = zQ_NK(ior)
-            Q_NG(ior) = zQ_NG(ior)
-            Q_NB(ior) = zQ_NB(ior)
-            hJNO3(mstr,ior) = zwJNO3(ior)
-            hJNH4(mstr,ior) = zwJNH4(ior)
-            hFluN3(mstr,ior) = zwFlN3(ior)
-            hJN2(mstr,ior) = zwJN2(ior)
-            akibrz(1,ior) = zaktbr(ior)
-            agrbrz(1,ior) = zagtbr(ior)
-            ablbrz(1,ior) = zabtbr(ior)
-            dalgkz(1,ior) = zwakz(ior)
-            algakz(1,ior) = zwaakz(ior)
-            dalggz(1,ior) = zwagz(ior)
-            algagz(1,ior) = zwaagz(ior)
-            dalgbz(1,ior) = zwabz(ior)
-            algabz(1,ior) = zwaabz(ior)
-            
-            vNh4z(1,ior) = zwN4z(ior)
-            vNo2z(1,ior) = zwN2z(ior)
-            vNO3z(1,ior) = zwN3z(ior)
-            akNH4z(1,ior) = zwkN4z(ior)
-            akNO3z(1,ior) = zwkN3z(ior)
-            agNH4z(1,ior) = zwgN4z(ior)
-            agNO3z(1,ior) = zwgN3z(ior)
-            abNH4z(1,ior) = zwbN4z(ior)
-            abNO3z(1,ior) = zwbN3z(ior)
-            diff1 = bx0(mstr,ior)-vx0(ior)
-            diff2 = bx02(mstr,ior)-vx02(ior)
-            diff3 = bnh4(mstr,ior)-vnh4(ior)
-            diff4 = bno2(mstr,ior)-vno2(ior)
-            diff5 = bno3(mstr,ior)-vno3(ior)
-            diff6 = bnl0(mstr,ior)-nl0(ior)
-            diff7 = bgesN(mstr,ior)-gesN(ior)
-            diff8 = bQ_NK(mstr,ior)-Q_NK(ior)
-            diff9 = bQ_NG(mstr,ior)-Q_NG(ior)
-            diff10 = bQ_NB(mstr,ior)-Q_NB(ior)
-            diff11 = bFluN3(mstr,ior)-hFluN3(mstr,ior)
-            bdiff1 = vx0(ior)-bx0(mstr,ior)
-            bdiff2 = vx02(ior)-bx02(mstr,ior)
-            bdiff3 = vnh4(ior)-bnh4(mstr,ior)
-            bdiff4 = vno2(ior)-bno2(mstr,ior)
-            bdiff5 = vno3(ior)-bno3(mstr,ior)
-            bdiff6 = nl0(ior)-bnl0(mstr,ior)
-            bdiff7 = gesN(ior)-bgesN(mstr,ior)
-            bdiff8 = Q_NK(ior)-bQ_NK(mstr,ior)
-            bdiff9 = Q_NG(ior)-bQ_NG(mstr,ior)
-            bdiff10 = Q_NB(ior)-bQ_NB(mstr,ior)
-            bdiff11 = hFluN3(mstr,ior)-bFluN3(mstr,ior)
             if (bleb(mstr,ior) > 0.0) then
-               vx0(ior) = vx0(ior)+diff1*(1.-exp(-hctau1(ior)))
-               vx02(ior) = vx02(ior)+diff2*(1.-exp(-hctau1(ior)))
-               vnh4(ior) = vnh4(ior)+diff3*(1.-exp(-hctau1(ior)))
-               vno2(ior) = vno2(ior)+diff4*(1.-exp(-hctau1(ior)))
-               vno3(ior) = vno3(ior)+diff5*(1.-exp(-hctau1(ior)))
-               nl0(ior) = nl0(ior)+diff6*(1.-exp(-hctau1(ior)))
-               gesN(ior) = gesN(ior)+diff7*(1.-exp(-hctau1(ior)))
-               Q_NK(ior) = Q_NK(ior)+diff8*(1.-exp(-hctau1(ior)))
-               Q_NG(ior) = Q_NG(ior)+diff9*(1.-exp(-hctau1(ior)))
-               Q_NB(ior) = Q_NB(ior)+diff10*(1.-exp(-hctau1(ior)))
-               hFluN3(mstr,ior) = hFluN3(mstr,ior)+diff11*(1.-exp(-hctau1(ior)))
-            endif
+               vx0(ior)         = vx0(ior)         + diff1  * (1.-exp(-hctau1(ior)))
+               vx02(ior)        = vx02(ior)        + diff2  * (1.-exp(-hctau1(ior)))
+               vnh4(ior)        = vnh4(ior)        + diff3  * (1.-exp(-hctau1(ior)))
+               vno2(ior)        = vno2(ior)        + diff4  * (1.-exp(-hctau1(ior)))
+               vno3(ior)        = vno3(ior)        + diff5  * (1.-exp(-hctau1(ior)))
+               nl0(ior)         = nl0(ior)         + diff6  * (1.-exp(-hctau1(ior)))
+               gesN(ior)        = gesN(ior)        + diff7  * (1.-exp(-hctau1(ior)))
+               Q_NK(ior)        = Q_NK(ior)        + diff8  * (1.-exp(-hctau1(ior)))
+               Q_NG(ior)        = Q_NG(ior)        + diff9  * (1.-exp(-hctau1(ior)))
+               Q_NB(ior)        = Q_NB(ior)        + diff10 * (1.-exp(-hctau1(ior)))
+               hFluN3(mstr,ior) = hFluN3(mstr,ior) + diff11 * (1.-exp(-hctau1(ior)))
+            endif 
             
             if (hctau2(ior) > 0.0) then
-               bx0(mstr,ior) = bx0(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bx02(mstr,ior) = bx02(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bnh4(mstr,ior) = bnh4(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-               bno2(mstr,ior) = bno2(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-               bno3(mstr,ior) = bno3(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-               bnl0(mstr,ior) = bnl0(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior)))
-               bgesN(mstr,ior) = bgesN(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior)))
-               bQ_NK(mstr,ior) = bQ_NK(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior)))
-               bQ_NG(mstr,ior) = bQ_NG(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior)))
-               bQ_NB(mstr,ior) = bQ_NB(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior)))
-               bFluN3(mstr,ior) = bFluN3(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior)))
+               bx0(mstr,ior)    = bx0(mstr,ior)    - diff1  * (1.-exp(-hctau2(ior)))
+               bx02(mstr,ior)   = bx02(mstr,ior)   - diff2  * (1.-exp(-hctau2(ior)))
+               bnh4(mstr,ior)   = bnh4(mstr,ior)   - diff3  * (1.-exp(-hctau2(ior)))
+               bno2(mstr,ior)   = bno2(mstr,ior)   - diff4  * (1.-exp(-hctau2(ior)))
+               bno3(mstr,ior)   = bno3(mstr,ior)   - diff5  * (1.-exp(-hctau2(ior)))
+               bnl0(mstr,ior)   = bnl0(mstr,ior)   - diff6  * (1.-exp(-hctau2(ior)))
+               bgesN(mstr,ior)  = bgesN(mstr,ior)  - diff7  * (1.-exp(-hctau2(ior)))
+               bQ_NK(mstr,ior)  = bQ_NK(mstr,ior)  - diff8  * (1.-exp(-hctau2(ior)))
+               bQ_NG(mstr,ior)  = bQ_NG(mstr,ior)  - diff9  * (1.-exp(-hctau2(ior)))
+               bQ_NB(mstr,ior)  = bQ_NB(mstr,ior)  - diff10 * (1.-exp(-hctau2(ior)))
+               bFluN3(mstr,ior) = bFluN3(mstr,ior) - diff11 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         
-         ilbuhn = 0
       endif
       
       ! -----------------------------------------------------------------------
@@ -8116,7 +7904,7 @@ program qsim
    
    ! Vorlauf ilang = 0; Werte werden nicht abgelegt
    if (ilang == 0 .and. ij < itime) then
-      print '(" Vorlauf (",I0,"/",I0,")")', ij, iTime
+      print "(a,i0,a,i0,a)", " Vorlauf (", ij, "/", itime ,")"
       ij = ij+1
       istr = 0
       goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen

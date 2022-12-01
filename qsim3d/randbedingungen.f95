@@ -41,6 +41,7 @@ subroutine randbedingungen_setzen()
    
    ! Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP)
    call scatter_rb_hydraul()
+
    ! Wetter-Randbedingungen
    call update_weather()
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -438,6 +439,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
               planktonic_variable(65+nk),      & ! lf
               planktonic_variable( 1+nk),      & ! tempw 
               planktonic_variable(63+nk))        ! pw 
+
    return
 end subroutine randbedingungen_ergaenzen
 !----+-----+----

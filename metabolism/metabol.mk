@@ -11,6 +11,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/ph/module_ph.o\
       ../metabolism/phosphate/module_phosphate.o \
       ../metabolism/silicate/module_silicate.o \
+      ../metabolism/nitrogen/module_nitrogen.o \
       ../metabolism/module_metabolism.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
@@ -31,7 +32,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/lin_spline.o \
       ../metabolism/lin_sys.o \
       ../metabolism/mphyt.o \
-      ../metabolism/ncyc.o \
       ../metabolism/runge_kutta.o \
       ../metabolism/sasu.o \
       ../metabolism/schiff.o \

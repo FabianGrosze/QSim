@@ -114,12 +114,12 @@ subroutine stoffumsatz()
                ! organischer Kohlenstoff BSB
                call organic_carbon_wrapper_3d(i)
                
-               !------------------------------------------------------------------------ Stickstoff in Ammonium, Nitrit und Nitrat
-               call ncyc_huelle(i)
+               ! Stickstoff in Ammonium, Nitrit und Nitrat
+               call nitrogen_wrapper_3d(i)
                do k = 1,number_trans_quant
                   if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
-                     print*,'nach ncyc_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0) print*, 'trans_quant_name:',trans_quant_name(k)
+                     print*,'nach wrapper_nitrogen_3d: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
+                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
                      fehler_nan = .true.
                   endif
                end do

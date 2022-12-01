@@ -25,7 +25,7 @@
 				<Tool Name="VFPostBuildEventTool"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Debug|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" UninitializedVariablesCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" StandardWarnings="standardWarningsF18" WarnDeclarations="true" WarnUndeclaredExternals="true" WarnUnusedVariables="true" WarnTruncateSource="true" WarnUncalled="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" UninitializedVariablesCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
 				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
@@ -51,16 +51,24 @@
 		<File RelativePath=".\version.rc"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="metabolism">
+		<Filter Name="nitrogen">
+		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
+		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\nitrogen\nitrogen.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="organic_carbon">
+		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
+		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="oxygen">
 		<File RelativePath="..\metabolism\oxygen\module_oxygen.f90"/>
 		<File RelativePath="..\metabolism\oxygen\oxygen.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\oxygen\oxygen_saturation_concentration.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
-		<Filter Name="organic_carbon">
-		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
-		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90">
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="ph">
 		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
 		<File RelativePath="..\metabolism\ph\ph.f90">
@@ -104,7 +112,6 @@
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\mphyt.f90"/>
-		<File RelativePath="..\metabolism\ncyc.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>
 		<File RelativePath="..\metabolism\schiff.f90"/>
@@ -151,6 +158,7 @@
 		<File RelativePath=".\Masse_neu_QSim.f90"/>
 		<File RelativePath=".\ModellGParam.f90"/>
 		<File RelativePath=".\module_model_settings.f90"/>
+		<File RelativePath=".\nitrogen_inflow_1d.f90"/>
 		<File RelativePath=".\organic_carbon_inflow_1d.f90"/>
 		<File RelativePath=".\oxygen_inflow_1d.f90"/>
 		<File RelativePath=".\ph_inflow_1d.f90"/>

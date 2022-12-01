@@ -338,7 +338,7 @@ subroutine modellg()
          call qerror(fehler)
       endif
    end do ! alle i Zonen
-   
+
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          do i = 1,zonen_anzahl
@@ -389,7 +389,5 @@ subroutine modellg()
       print*,'MODELLG.3D.txt: Zone nummer was correctly transformed to zone counter at all simulation points (point_zone()).'
 
    return
-end subroutine modellg
 
-!----+-----+----
-!
+end subroutine modellg
