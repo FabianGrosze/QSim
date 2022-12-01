@@ -2580,7 +2580,7 @@ program qsim
          ! zelluläre Nährstoffgehalte
          call naehr_start(akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                                   &
                           vnh4s(mstr,mRB),vNO3s(mstr,mRB),vno2s(mstr,mRB),gesNs(mstr,mRB),                &
-                          zooins(mstr,mRB),nZoo, pZoo, GROT,                                              &
+                          zooins(mstr,mRB),                                                               &
                           gelPs(mstr,mRB),gesPs(mstr,mRB),                                                &
                           Q_NKs(mstr,mRB),Q_PKs(mstr,mRB),Q_SKs(mstr,mRB),Q_NGs(mstr,mRB),Q_PGs(mstr,mRB),&
                           Q_NBs(mstr,mRB),Q_PBs(mstr,mRB),                                                &

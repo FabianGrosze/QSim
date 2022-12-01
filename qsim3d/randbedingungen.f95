@@ -403,7 +403,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
                     planktonic_variable(67+nk),      & ! GESN | gesNs,
                     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    nZoo, pZoo, GROT,                & ! globale Parameter aus module aparam
                     planktonic_variable( 6+nk),      & ! GELP | gelPs,
                     planktonic_variable(68+nk),      & ! GESP | gesPs,
                     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -1308,53 +1307,4 @@ subroutine randlinie_zusammenstellen()
    ! weil dort erst die Anzahl der Konzentrationen für die Massenflüsse zusammengezählt wird.
    return
 end subroutine randlinie_zusammenstellen
-!----+-----+----
-!aus qsim.f90_v13.10 orgc:
-!!....Berechnung der "BSB-Komponenten" am oberen Rand
-!!     (auch bei Stundenwert-Generierung)!!!!!
-!      bk1 = 0.51
-!      bk2 = 0.02
-!      vcb = obsbs(mstr,mRB)/ocsbs(mstr,mRB)
-!      antBAC = 0.0462*vcb
-!      CMs(mstr,mRB) = 0.03
-!!...Berechnung des BTOC
-!      BTOC5s = obsbs(mstr,mRB)/4.
-!      BTOCs = BTOC5s*0.782*vcb**(-0.921)
-!!....Berechnung des Anteils an gelsten org. C-Verbindungen
-!      alphaD = 0.21*log(vcb)+0.6294
-!      if(alphaD.gt.1.)alphaD = 0.95
-!      if(alphaD.lt.0.0)alphaD = 0.0
-!      CDges = BTOCs*alphaD-CMs(mstr,mRB)
-!      if(CDges.lt.0.00001)CDges = 0.00001
-!!.......Aufteilung der gelsten Fraktion in leicht und schwer abbaubar
-!      alphlD = 0.218*log(vcb)+0.717
-!      if(alphlD.lt.0.0)alphlD = 0.0
-!      CD1s(mstr,mRB) = CDges*alphlD
-!      CD2s(mstr,mRB) = CDges*(1.-alphlD)
-!!.......Aufteilung der part. Fraktion in leicht und schwer abbaubar
-!      CPges = BTOCs*(1.-alphaD)
-!      BACs(mstr,mRB) = CPges*antBAC
-!      CPges = CPges-BACs(mstr,mRB)
-!      alphlP = 0.4258*log(vcb)+1.114
-!      if(alphlP.lt.0.0)alphlP = 0.0
-!      CP1s(mstr,mRB) = CPges*alphlP
-!      CP2s(mstr,mRB) = CPges*(1.-alphlP)
-!!....Verringerung der einzelnen Fraktionen aufrund von HNF
-!      CD1s(mstr,mRB) = CD1s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CD2s(mstr,mRB) = CD2s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CP1s(mstr,mRB) = CP1s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CP2s(mstr,mRB) = CP2s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      if(CD1s(mstr,mRB).le.0.0)CD1s(mstr,mRB) = 0.000001
-!      if(CD2s(mstr,mRB).le.0.0)CD2s(mstr,mRB) = 0.000001
-!      if(CP1s(mstr,mRB).le.0.0)CP1s(mstr,mRB) = 0.000001
-!      if(CP2s(mstr,mRB).le.0.0)CP2s(mstr,mRB) = 0.000001
-!!....Berechnung der Komponenten fuer BSB5
-!      bx1 = alphaD*alphlD+(1.-antBAC)*(1-alphaD)*alphlP                 &
-!     &+antBAC*(1.-alphaD)*0.4
-!      if(bx1.gt.1.)bx1 = 1.
-!      bx2 = (1.-bx1)
-!      hcon = 1.-(bx1*exp(-bk1*5.)+bx2*exp(-bk2*5.))
-!      BL0s = obsbs(mstr,mRB)/hcon
-!      O2BSBs(mstr,mRB) = BL0s/BTOCs
-!      bl01s(mstr,mRB) = bl0s*bx1
-!      bl02s(mstr,mRB) = bl0s*bx2
+

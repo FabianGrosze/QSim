@@ -126,7 +126,6 @@ subroutine ini_ueber(nk)
    use modell
    implicit none
    integer nk,i,n,as,j,l,k
-   real, parameter  :: bk1 = 0.51 , bk2 = 0.02  !! Konstanten wie in orgc gesetzt
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       !--------------------------------------------- Übergabe Konzentrationen
       number_trans_quant_points = nk
@@ -145,11 +144,11 @@ subroutine ini_ueber(nk)
       end do
       
       ! names
-      trans_val_name( 1) = "               nix"
-      trans_val_name( 2) = "              nZoo"
-      trans_val_name( 3) = "              pZoo"
-      trans_val_name( 4) = "               bk1"
-      trans_val_name( 5) = "               bk2"
+      trans_val_name( 1) = "          empty_01"
+      trans_val_name( 2) = "          empty_02"
+      trans_val_name( 3) = "          empty_02"
+      trans_val_name( 4) = "          empty_03"
+      trans_val_name( 5) = "          empty_04"
       trans_val_name( 6) = "            Saettk"
       trans_val_name( 7) = "            tauscs" ! Schiffseinfluss     qsim.f90: tauscs = 1.25
       trans_val_name( 8) = "            saettg"
@@ -161,13 +160,10 @@ subroutine ini_ueber(nk)
       
       
       ! values
-      transfer_value_p(4) = 0.51 !! real, parameter  :: bk1 = 0.51 , bk2 = 0.02
-      transfer_value_p(5) = 0.02 !! Konstanten wie in orgc gesetzt
-      !saettk    transfer_value_p(6)=  !! Rückgabewert Algen
-      transfer_value_p(7) = 1.25 ! Schiffseinfluss     qsim.f90: tauscs = 1.25
-      ! saettg   transfer_value_p(8)=
-      ! saettb   transfer_value_p(9)=
-      !#! transfer_value_p(10)=
+      ! transfer_value_p(6)=     ! saettk  [Rückgabewert Algen]
+      transfer_value_p(7) = 1.25 ! Schiffseinfluss  [qsim.f90: tauscs = 1.25]
+      ! transfer_value_p(8)=     ! saettg
+      ! transfer_value_p(9)=     ! saettb 
       
       
       ! --- depth averaged quantities ---

@@ -95,6 +95,7 @@ clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod
 	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.a ../metabolism/*.mod
+	rm -f libmetabol.a
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 
