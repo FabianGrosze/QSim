@@ -1,9 +1,18 @@
-## 14.09.11
+# QSim 14
+
+## 14.09
+
+### 14.09.12
+Code Refactoring
+* Modules and Corefunctions for nitrogen
+* Correct Issues in ussage of module aparam
+
+### 14.09.11
 Code Refactoring - Calculations were not altered.
 * Modules and Corefunctions for oxygen and silicate
 * New Module `module_metabolism` to cpmbine all metabolism-modules
 
-## 14.09.10
+### 14.09.10
 
 * Modules and Corefunctions for organic carbon and phosphate. Calculations
 are not change, only code was refactored
@@ -14,60 +23,60 @@ are not change, only code was refactored
   * Macrophytes
   * Benthic Algae
 
-## 14.09.09
+### 14.09.09
 
 * Bugfix (QSim3D): Correct error in initializing variable schwi
 
-## 14.09.08
+### 14.09.08
 
 * Bugfix: vtk-output now includes all variables
 * Bugfix: correct zone-numbering in qsim3d
 
-## 14.09.07
+### 14.09.07
 * Bugfix: correct mechanism for interpolation in `subroutine wettles_wetter`
 
 
-## 14.09.06
+### 14.09.06
 
 * Bugfix: correct if-condition in reading from `ModellA.txt` in QSim 1D.
 
-## 14.09.05
+### 14.09.05
 
 * Bugfix: correct arguments in call ph for groyne-fields
 
 
-## 14.09.04
+### 14.09.04
 * Refactoring of Code: module for pH
 
-## 14.09.03
+### 14.09.03
 * Bugfix: remove output of heavy metals in ErgebT.txt to avoid issues with Gerris.
 
-## 14.09.02
+### 14.09.02
 Bugfix:
 * correct format for output files
 * correct dimensions of `tausc` in alagae
 
-## 14.09.01
+### 14.09.01
 * apply parts of style guide rules to sourcecode. No changes in calculations.
 
 ## 14.09.00
 * enabling cross sections in 3D (schnitt.txt)
 * additional heavy metals 
 
-## 14.08.00
+### 14.08.00
 Stable release comprising evaporation options in temperature module (see 14.06) and reading of UnTRIM SPM (see 14.07.02)
 
 
-## 14.07.02
+### 14.07.02
 added functionality for reading SPM from UnTRIM hydrodynamics in QSim3D (see qims3d/module_suspendedMatter.f90)
 
-## 14.10
+### 14.10
 
 * adding additional heavy metal concentrations.
 * restructured modules: Schwermetall, erosion, Schwebstoff and Sedimentbelastung
 * enable input of erosion parameters
 
-## 14.07.01
+### 14.07.01
 compiled at 16.mae.2022 
 
 
