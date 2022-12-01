@@ -35,6 +35,7 @@ subroutine initialisieren()
    logical vorhanden, einmal
    
    print*,meinrang,' initialisieren(): start ---', hydro_trieb
+   call mpi_barrier (mpi_komm_welt, ierr)
 
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       print*,'initialisieren mit rechenzeit = ',rechenzeit
@@ -162,6 +163,9 @@ subroutine initialisieren()
             print*,'initialisieren(): holen_trans_untrim fetching step = ',na_transinfo
          case(3) ! SCHISM
             print*,'schism initialization will be done in parallel ...' ! see below
+            !call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
+            print*,'zeitpunkt,startzeitpunkt,endzeitpunkt,na_transinfo,ne_transinfo=', &
+                    zeitpunkt,startzeitpunkt,endzeitpunkt,na_transinfo,ne_transinfo
          case default
             call qerror('initialisieren: Hydraulischer Antrieb unbekannt')
       end select
@@ -202,21 +206,13 @@ subroutine initialisieren()
          benthic_distribution(73+(i-1)*number_benth_distr) = zone(point_zone(i))%albenthi%gkiesel  ! Biomasse benthischer Kieselalgen
       end do ! alle k Berechnungspunkte
    end if !! nur prozessor 0
-   
    call mpi_barrier (mpi_komm_welt, ierr)
-   call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
-
-   print*,meinrang,' initialisieren(): na_transinfo,ne_transinfo=',na_transinfo,ne_transinfo
-   !na_transinfo=1; ne_transinfo=2 ! ####
    
    if (hydro_trieb == 3) then
-      print*,' initialisieren (SCHISM) shall get_schism_step anfang=',na_transinfo,' ende=',ne_transinfo !if(meinrang==0)
       call get_schism_step(na_transinfo)
       ! set schism transport parameters:
       call schism_transport_parameters()
    end if ! hydro_trieb=SCHISM,3
-   !call mpi_barrier (mpi_komm_welt, ierr)
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &
    !   print*,'nach initialisieren: tempw,chla,obsb,ocsb,glMn=',                     &
@@ -226,6 +222,7 @@ subroutine initialisieren()
    !       planktonic_variable(18+(kontrollknoten-1)*number_plankt_vari),            &
    !       planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
    
+   call mpi_barrier (mpi_komm_welt, ierr)
    if(meinrang==0)print*,'--- initialisieren: done ---'
    return
 end subroutine initialisieren

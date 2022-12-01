@@ -609,10 +609,12 @@ subroutine read_mesh_schism() !meinrang.eq.0
          
          ! wie schism, Randelement braucht nur einen Knoten auf dem Rand
          element_rand(:)=0
+         inflow(:)=.false.
          do i = 1,n_elemente
             do mm=1,cornernumber(i)
                if(knoten_rand(elementnodes(i,mm)).gt.0) element_rand(i) = knoten_rand(elementnodes(i,mm))
             enddo
+            if(element_rand(i)>0)inflow(i)=.true.
          enddo ! all i elements
 
          close(14)

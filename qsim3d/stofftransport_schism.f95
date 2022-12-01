@@ -53,7 +53,7 @@ subroutine stofftransport_schism()
          call get_schism_step(na_transinfo) !!****
       end do ! all sub timesteps
       
-      print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet implemented ####'
+      print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
 
       return
 end subroutine stofftransport_schism

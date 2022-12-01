@@ -168,8 +168,7 @@ subroutine ganglinien_lesen()
          call qerror('ganglinien_lesen: Hydraulischer Antrieb unbekannt')
    end select
    
-   call mpi_barrier (mpi_komm_welt, ierr)
-   if(meinrang==0)print*,'--- ganglinien_lesen done ---'
+   print*,'--- ganglinien_lesen done ---'
 end subroutine ganglinien_lesen
 !
 !----+-----+----

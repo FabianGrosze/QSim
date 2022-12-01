@@ -364,7 +364,7 @@ subroutine get_schism_step(nt)
    !dingdong=##########
    !print*,meinrang," znl (topnode side 7",   isidenode(1,7),") =",znl(1,isidenode(1,7)),znl(2,isidenode(1,7))
    !print*,meinrang," znl (bottomnode side 7",isidenode(2,7),") =",znl(1,isidenode(2,7)),znl(2,isidenode(2,7))
-   goto 7777
+
    !!!!! temp -> planktonic_variable_name(1)
    if (meinrang == 0) then
       do j = 1,proz_anz*maxstack
@@ -531,7 +531,6 @@ subroutine get_schism_step(nt)
       end do
    end if ! proc. 0 only
    
-   7777 continue
    call mpi_barrier (mpi_komm_welt, ierr)
    !! close, clean, return
    if (meinrang == 0) then
@@ -552,12 +551,6 @@ subroutine get_schism_step(nt)
          benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
       end do ! all j nodes
       print*,"### stofftransport_schism: ks and utau, only first guess ###"
-   end if ! proc. 0 only
-   call mpi_barrier (mpi_komm_welt, ierr)
-   if (meinrang == 0) then !! all boundary nodes inflow ####
-      do j = 1,number_plankt_point ! all j nodes
-         if (knoten_rand(j) > 0 ) inflow(j) = .true.
-      end do ! all j nodes
    end if ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
    return

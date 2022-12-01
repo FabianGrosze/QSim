@@ -81,7 +81,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call MPI_Bcast(min_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call MPI_Bcast(max_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
-         !print*,meinrang,' eingabe got SCHISM mpi vorher comm,mpi_komm_welt, ierr=',comm,mpi_komm_welt, ierr
+         print*,meinrang,' eingabe got SCHISM mpi vorher comm,mpi_komm_welt, ierr=',comm,mpi_komm_welt, ierr
          ! use same MPI-environment
          comm=mpi_komm_welt
          myrank=meinrang
@@ -99,7 +99,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    ! partitioning of variable arrays
    part = n_cal/proz_anz
    n = part*proz_anz
-   !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
+   !print*,meinrang,' ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
    if (n < n_cal)part = part+1
    if(meinrang==0)print*,'0 part =',part,' part*proz_anz=',part*proz_anz,' n_cal = ', n_cal
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -131,6 +131,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call untrim_nc_sichten()
       case(3) ! SCHISM netCDF
          call screen_schism()
+         print*,meinrang,'eingabe nach screen_schism hydro_trieb==3'
       case default
          call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select
@@ -140,6 +141,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    call mpi_barrier (mpi_komm_welt, ierr)
    !call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
    call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
+   
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
@@ -174,10 +176,12 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
    
+   call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
+
+   print*,meinrang,'--- eingabe: done ---',comm,mpi_komm_welt,na_transinfo,ne_transinfo
    call mpi_barrier (mpi_komm_welt, ierr)
-   if(meinrang==0)print*,'--- eingabe: done ---',comm,mpi_komm_welt
-   call mpi_barrier (mpi_komm_welt, ierr)
-   
+
    return
    222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)
 end subroutine eingabe
