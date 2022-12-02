@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Writes file `e_extnctParam.xml'`
+!> Write file e_extnctParam.xml
 subroutine E_extnctParam(cpfad1)
    implicit none
    
@@ -40,6 +40,7 @@ subroutine E_extnctParam(cpfad1)
    
    write(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
    write(1, '(3A)') '<GerrisParam FileType="E_extnct" QsimVersion="',versionstext,'">' 
+   
    write(1, '(A)') '<ParamSetDef Ident="E_extnct" Text="Absorption" Help="Wellenlängenabhängige Absorptionskoeffizienten verschiedener Stoffe">'
    write(1, '(A)') '  <Parameter Ident="Lambda" Text="Wellenlänge" Help="Wellenlänge" Unit="nm" Format="F5.1" Null="-1" Default="" Min="" Max="" />'
    write(1, '(A)') '  <Parameter Ident="Wasser" Text="Wasser" Help="Absorptionskoeffizienten von Wasser" Unit="" Format="F8.6" Null="-1" Default="" Min="" Max="" />'
@@ -50,6 +51,7 @@ subroutine E_extnctParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="Schweb" Text="Susp. Schwebstoff" Help="Absorptionskoeffizienten von suspendiertem Schwebstoff" Unit="" Format="F8.6" Null="-1" Default="" Min="" Max="" />'
    write(1, '(A)') '  <Parameter Ident="Sonne" Text="Sonnenlicht" Help="Absorptionskoeffizienten von Sonnenlicht" Unit="" Format="F8.6" Null="-1" Default="" Min="" Max="" />'
    write(1, '(A)') '</ParamSetDef>'
+   
    write(1, '(A)') '</GerrisParam>'
    
    close(1)
