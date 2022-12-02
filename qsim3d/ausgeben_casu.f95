@@ -37,7 +37,7 @@ subroutine ausgeben_casu()
    integer :: i,j,n, open_error, ion, system_error, string_read_error, alloc_status
    integer :: sysa, errcode
    real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, summwicht
-   real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al,aufenthaltszeit
+   real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al
    !bali=.false. !! z. Z. Keine bahnlinien_ausgabe
    !bali=.true.  jetzt in jetzt_ausgeben !! bahnlinien_ausgabe bitte
    if (meinrang /= 0)call qerror('ausgeben_casu sollte eigentlich nur von Prozessor 0 aufgerufen werden')
@@ -229,15 +229,26 @@ subroutine ausgeben_casu()
    !   if(inflow(n))infl=1.0
    !   write(ion,'(f27.6)') infl
    !end do ! alle Knoten
-   if (nur_alter) then ! Aufenthaltszeit in Tagen ! Altersberechnung wie in Shen&Wang 2007 mit real function aufenthaltszeit (tracer,alter)
+   if (nur_alter) then
+      ! Altersberechnung nach Shen&Wang 2007
+      write(ion,'(A)')'SCALARS age_arith float 1'
+      write(ion,'(A)')'LOOKUP_TABLE default'
+      do n = 1,number_plankt_point
+         tr = planktonic_variable(71+(n-1)*number_plankt_vari)
+         al = planktonic_variable(74+(n-1)*number_plankt_vari)
+         aus = 0.0
+         if (tr > minimum_age_tracer ) aus = al / tr
+         write(ion,'(6x,f27.6)') aus
+      end do ! alle Knoten
+      ! Aufenthaltszeit in Tagen
       write(ion,'(A)')'SCALARS Tage_Aufenthalt float 1'
       write(ion,'(A)')'LOOKUP_TABLE default'
       do n = 1,knotenanzahl2D
          tr = planktonic_variable(71+(n-1)*number_plankt_vari)
          al = planktonic_variable(73+(n-1)*number_plankt_vari)
-         aufenthaltszeit = 0.0
-         if (tr > 0.00001 ) aufenthaltszeit = al / tr
-         write(ion,'(6x,f27.6)') aufenthaltszeit
+         aus = 0.0
+         if (tr > minimum_age_tracer ) aus = al / tr
+         write(ion,'(6x,f27.6)') aus
       end do ! alle Knoten
    end if !nur_alter
    ! planktische, transportierte Konzentrationen entsprechend ausgabeflag
