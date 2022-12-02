@@ -2,6 +2,10 @@
 
 ## 14.09
 
+### 14.09.13
+* QSim3D: initialise tracers with 0; write actual mean age to ganglinien files
+* QSim1D: Remove xml-definitions for deactivated modules
+
 ### 14.09.12
 Code Refactoring
 * Modules and Corefunctions for nitrogen
