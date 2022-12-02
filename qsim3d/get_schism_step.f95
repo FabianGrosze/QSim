@@ -51,7 +51,7 @@ subroutine get_schism_step(nt)
       integer, dimension(nf90_max_var_dims) :: dimids
       integer , allocatable , dimension (:) :: vxtype, vndims
       character(256) , allocatable , dimension (:) :: vname
-      real vel_norm, vel_dir, minwert, maxwert, tempi
+      real vel_norm, vel_dir, minwert, maxwert, tempi, sump
       !> arrays to read stored variables from .nc files, each process its part
       real , allocatable , dimension (:) :: var_p
       real , allocatable , dimension (:) :: var1_p
@@ -153,16 +153,29 @@ subroutine get_schism_step(nt)
                p(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
             end do
          end do
-         print*," get_schism_step wsp minwert, maxwert = ",minval(p),maxval(p)
+         print*,'get_schism_step wsp minwert, maxwert = ',minval(p),maxval(p)
          do k=1,knotenanzahl2D
             if(p(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
          enddo
+         ! set water level at elements
+         do j = 1,number_plankt_point ! all j elements
+            sump=0.0
+            do m=1,cornernumber(j)
+               sump=sump+p(elementnodes(j,m))
+            end do ! all m corners
+            rb_hydraul(3+(j-1)*number_rb_hydraul) = sump/real(cornernumber(j))
+         end do ! all j elements
+         ! rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
+         ! rb_hydraul(2+(j-1)*number_rb_hydraul) = p(j)-knoten_z(j) ! Tiefe
+         ! rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
+         ! benthic_distribution(44+(j-1)*number_benth_distr) = 0.1      ! ks #### jetzt anders gelöst mit zone()%reib
+         ! benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
-   
+
       return
       call qerror('get_schism_step ### in development ###')
-
+!################################################################################################################################
 
 
    !print*,meinrang," get_schism_step elev recombined"
@@ -541,18 +554,6 @@ subroutine get_schism_step(nt)
    if (istat /= 0) call qerror("deallocate var_p( failed")
    deallocate (dlength,dname, stat = istat)
    deallocate (vxtype,vndims,vname,  stat = istat )
-   call mpi_barrier (mpi_komm_welt, ierr)
-   if (meinrang == 0) then
-      do j = 1,number_plankt_point ! all j nodes
-         rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
-         rb_hydraul(2+(j-1)*number_rb_hydraul) = p(j)-knoten_z(j) ! Tiefe
-         rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
-         benthic_distribution(44+(j-1)*number_benth_distr) = 0.1      ! ks #### jetzt anders gelöst mit zone()%reib
-         benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
-      end do ! all j nodes
-      print*,"### stofftransport_schism: ks and utau, only first guess ###"
-   end if ! proc. 0 only
-   call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine get_schism_step
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

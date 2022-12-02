@@ -52,7 +52,7 @@ subroutine allo_trans()
          write(fehler,*)' Rueckgabewert   von   allocate u :', alloc_status
          call qerror(fehler)
       end if
-      allocate (inflow(number_plankt_point), stat = alloc_status )
+      if(.not.allocated(inflow))allocate (inflow(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate inflow :', alloc_status
          call qerror(fehler)

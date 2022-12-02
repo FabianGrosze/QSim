@@ -81,7 +81,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call MPI_Bcast(min_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call MPI_Bcast(max_zone,1,MPI_INT,0,mpi_komm_welt,ierr)
          call mpi_barrier (mpi_komm_welt, ierr)
-         print*,meinrang,' eingabe got SCHISM mpi vorher comm,mpi_komm_welt, ierr=',comm,mpi_komm_welt, ierr
          ! use same MPI-environment
          comm=mpi_komm_welt
          myrank=meinrang
@@ -131,7 +130,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call untrim_nc_sichten()
       case(3) ! SCHISM netCDF
          call screen_schism()
-         print*,meinrang,'eingabe nach screen_schism hydro_trieb==3'
       case default
          call qerror('eingabe.f95: no hydraulic driver ; screening ')
    end select

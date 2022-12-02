@@ -125,7 +125,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
      &rinflation_icm,iprecip_off_bnd
 
       !print*,meinrang,' read_mesh_schism starts ',proz_anz
-      
+
 !#### read param.nml #############################################################################!
          ! read param.out.nml
       write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
@@ -160,6 +160,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       read(10+meinrang,*)ns_global,ne_global,np_global,nvrt,nproc,ntracers ! ,ntrs(:) ??? !global info
       read(10+meinrang,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10,*)'Header:'
       n_elemente     = ne_global
+      number_plankt_point=n_elemente
       knotenanzahl2D = np_global
       kantenanzahl   = ns_global
       if (meinrang == 0)print*,"read_mesh_schism: local_to_global ns_global,ne_global,np_global= "  &
@@ -298,30 +299,33 @@ subroutine read_mesh_schism() !meinrang.eq.0
          knoten_z(:)=-777777.7
          knoten_rang(:)=0
          knoten_rand(:)=0
-         allocate (element_x(n_elemente), element_y(n_elemente), stat = istat )
+         allocate (element_x(number_plankt_point), element_y(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (element_x failed')
-         allocate (element_rand(n_elemente), stat = istat )
+         allocate (element_rand(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (element_rand failed')
          element_rand(:)=0
-         allocate (element_rang(n_elemente), stat = istat )
+         if(.not.allocated(inflow))allocate (inflow(number_plankt_point), stat = istat )
+         if (istat /= 0) call qerror('allocate (inflow failed')
+         inflow(:)=.false.
+         allocate (element_rang(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (element_rang failed')
          element_rang(:)=0
-         allocate (element_zone(n_elemente), stat = istat )
+         allocate (element_zone(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (element_zone failed')
          element_zone(:)=-1
-         allocate (cornernumber(n_elemente), stat = istat )
+         allocate (cornernumber(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (cornernumber( failed')
-         allocate (elementnodes(n_elemente,4), stat = istat )
+         allocate (elementnodes(number_plankt_point,4), stat = istat )
          if (istat /= 0) call qerror('allocate (elementnodes( failed')
          elementnodes(:,:)=-1
          allocate(ne_sc(proz_anz), np_sc(proz_anz), ns_sc(proz_anz),stat = istat)
          if (istat /= 0) call qerror('Allocation error: np')
          allocate( kbp00_global(knotenanzahl2D) ,stat = istat)
          if (istat /= 0) call qerror('Allocation error: kbp00_global')
-         allocate( ielg_sc(proz_anz,n_elemente) ) !! too large, who cares?
+         allocate( ielg_sc(proz_anz,number_plankt_point) ) !! too large, who cares?
          allocate( iplg_sc(proz_anz,knotenanzahl2D) )
          allocate( islg_sc(proz_anz,kantenanzahl) )
-         allocate( nm2(4,n_elemente), stat = istat)
+         allocate( nm2(4,number_plankt_point), stat = istat)
          allocate( top_node(kantenanzahl), bottom_node(kantenanzahl), stat = istat)
          top_node(:) = -1; bottom_node(:) = -1
          allocate( edge_normal_x(kantenanzahl), edge_normal_y(kantenanzahl), &
@@ -454,7 +458,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
          if ((bottom_node(n) <= 0) .or. (bottom_node(n) > knotenanzahl2D))print*,"bottom_node(",n,")wrong",bottom_node(n)
       end do ! all n sides=edges
       summ_ne = 0 ! needed by vtk output
-      do n = 1,n_elemente
+      do n = 1,number_plankt_point
          summ_ne = summ_ne+cornernumber(n)+1
       end do ! all Elements
       

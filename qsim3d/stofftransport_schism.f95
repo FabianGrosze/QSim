@@ -35,7 +35,7 @@ subroutine stofftransport_schism()
       include 'netcdf.inc'
       integer,parameter :: maxsubst = 60      ! max. number of substeps
       integer nt, n,j,k, subtim, diff, diffprev, alloc_status
-      real :: laeng, cu_max, cu_min, dt_sub, sumwicht
+      real :: laeng, cu_max, cu_min, dt_sub, sumwicht, difnum_max_l
       real , allocatable , dimension (:,:) :: zwischen
       integer :: num_sub
       integer nti(maxsubst)
@@ -49,11 +49,19 @@ subroutine stofftransport_schism()
       call transinfo_schritte(startzeitpunkt, endzeitpunkt)
       
       num_sub=1 !6?
-      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
+      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
+
          call get_schism_step(na_transinfo) !!****
+
+         ! do_transport_tvd_imp(it,ntr,difnum_max_l)
+         ! integer, intent(in) :: it !time stepping #; info only
+         ! ntr=ntracers=number_plankt_vari
+         ! real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
+         !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+
       end do ! all sub timesteps
       
-      print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
+      !print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
 
       return
 end subroutine stofftransport_schism

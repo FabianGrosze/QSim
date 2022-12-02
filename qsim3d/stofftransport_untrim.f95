@@ -69,7 +69,9 @@ subroutine stofftransport_untrim()
       else
          print*,'transportiert mit untrim-Strömungsfeld zeit = ',transinfo_zeit(transinfo_zuord(nti))
       end if
+      
       call holen_trans_untrim(nti)
+      
       !do n=1,number_plankt_point
       !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim  ################
       !end do ! alle n Elemente
