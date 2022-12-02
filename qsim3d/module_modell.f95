@@ -557,10 +557,11 @@ module modell
    real , allocatable , dimension (:) :: vert1, vert2 ! nur auf Prozess 1 vorhanden
    !-------------------------------------------------------------------------------Alter/Aufenthaltszeit
    ! Beschreibung in alter.f95
-   logical :: nur_alter
-   integer :: wie_altern ! 0-nix, 1-Zone, 2-Rand
-   integer :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
-   real , allocatable , dimension (:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
+   logical                            :: nur_alter
+   integer                            :: wie_altern ! 0-nix, 1-Zone, 2-Rand
+   integer                            :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
+   real, parameter                    :: minimum_age_tracer = 0.00001 ! minimum concentration of passive tracer for age calculation
+   real, allocatable , dimension(:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
    !-------------------------------------------------------------------------------Querschnitte - cross-sections
    ! description in schnitt.f95 fluxes in array: schnittflux_gang
    logical :: querschneiden

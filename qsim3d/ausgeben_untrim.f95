@@ -162,7 +162,7 @@ subroutine ausgeben_untrim(itime)
          tr = planktonic_variable(71+(n-1)*number_plankt_vari)
          al = planktonic_variable(74+(n-1)*number_plankt_vari)
          aus = 0.0
-         if (tr > 0.00001 ) aus = al / tr
+         if (tr > minimum_age_tracer ) aus = al / tr
          write(ion,'(6x,f27.6)') aus
       end do ! alle Knoten
    end if !nur_alter
@@ -369,7 +369,7 @@ subroutine ausgeben_untrim(itime)
          tr = planktonic_variable(71+(n-1)*number_plankt_vari)
          al = planktonic_variable(73+(n-1)*number_plankt_vari)
          aus = 0.0
-         if (tr > 0.00001 ) aus = al / tr
+         if (tr > minimum_age_tracer ) aus = al / tr
          do k = 1,cornernumber(n)
             output(elementnodes(n,k)) = output(elementnodes(n,k))+aus
          end do ! alle ecken

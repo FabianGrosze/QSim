@@ -174,9 +174,13 @@ end subroutine ganglinien_lesen
 !> ganglinien_zeitschritt
 !! \n\n
 subroutine ganglinien_zeitschritt(izeit_gang)
+   
    use modell
    implicit none
+   
    integer :: i, k, izeit_gang, n,nk !! Zeitschrittzähler
+   real    :: age_tracer ! concentration of passive tracer used for age calculation after Shen & Wang (2007)
+   
    !print*,'ganglinien_zeitschritt meinrang=', meinrang,' izeit_gang=',izeit_gang,' anz_gangl=',anz_gangl
    do i = 1,anz_gangl
       nk = knot_gangl(i)-meinrang*part
@@ -199,7 +203,17 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                                                                          ,k,n,n_pl, trim(planktonic_variable_name(k))
                   call qerror(fehler)
                endif
-               pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari)
+               if (nur_alter .and. k == 74) then
+                  ! calculate mean age
+                  age_tracer = planktonic_variable_p(71+(nk-1)*number_plankt_vari)
+                  if (age_tracer > minimum_age_tracer) then
+                     pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari) / age_tracer
+                  else
+                     pl_gang(i,izeit_gang,n) = 0.0
+                  endif
+               else
+                  pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari)
+               endif
             endif ! planktic output conc.
          end do ! alle k planktonic_variable
          do k = 1,number_plankt_vari_vert
