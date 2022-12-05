@@ -31,9 +31,11 @@
 subroutine get_schism_step(nt)
       use netcdf
       use modell
-      use schism_glbl, only:su2,sv2,tr_el,eta2  &
-      ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global  &
-      ,ielg,iplg,islg,isidenode, znl, zs
+      use schism_glbl, only:su2,sv2,tr_el,eta2                       &
+      ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global         &
+      ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
+      ,idry_s
+      
       use schism_msgp, only: myrank,nproc,parallel_abort
       implicit none
       
@@ -65,7 +67,7 @@ subroutine get_schism_step(nt)
          print*,'nt,transinfo_anzahl=',nt,transinfo_anzahl
          call qerror('get_schism_step no valid timestep number')
       endif
-   
+      if(maxstack.lt.nea)call qerror('get_schism_step: maxstack.lt.nea')
       if (meinrang == 0) then
          allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)
          if (istat /= 0) call qerror("allocate var_g( failed")
@@ -81,7 +83,7 @@ subroutine get_schism_step(nt)
       endif
       call mpi_barrier (mpi_komm_welt, ierr)
    
-      !! open stack schout_******_*.nc
+      !######################### open stack schout_******_*.nc ################################################
       write(chari,*),nst
       write(dateiname,"(2A,I6.6,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
       iret = nf_open(dateiname, NF_NOWRITE, ncid)
@@ -105,21 +107,66 @@ subroutine get_schism_step(nt)
       end do ! all dimensions
       call mpi_barrier (mpi_komm_welt, ierr)!#!
       
-      !!!!! find elev
+      !######################### wetdry_node ################################################
+      call check_err( nf_inq_varid(ncid,"wetdry_node", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("wetdry_node:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      !print*,meinrang,' get_schism_step wetdry_node dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(allocated(knoten_trocken)) deallocate(knoten_trocken)
+      allocate(knoten_trocken(knotenanzahl2D),stat=istat);
+      if (istat /= 0) call qerror("allocate knoten_trocken( failed")
+      knoten_trocken=0
+      if(allocated(idry))deallocate(idry);allocate(idry(npa),stat = istat)
+      if (istat /= 0) call qerror("allocate idry( failed")
+      start2 = (/ 1, nin /)
+      count2 = (/ npa, 1 /) ! nodenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
+      call check_err(iret)
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var elev failed iret = ",iret
+      print*,meinrang,' Knoten trocken var_p from...until ',minval(var_p(1:np)),maxval(var_p(1:np))
+      idry(1:npa) = int(var_p(1:npa))
+      print*,meinrang,' Knoten trocken idry from...until ',minval(idry(1:np)),maxval(idry(1:np))
+      call mpi_barrier (mpi_komm_welt, ierr)
+      ! gather var_p into var_g
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      if (ierr /= 0) then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p idry failed : ", ierr
+         call qerror(fehler)
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
+      !! recombine into global numbers
+      if (meinrang == 0) then
+         print*,' p allocated to size=',size( knoten_trocken )
+         knoten_trocken = -555 ! init
+         do j = 1,proz_anz ! all processes/ranks
+            do k = 1,np_sc(j) ! all nodes at this rank
+               knoten_trocken(iplg_sc(j,k)) = int(var_g((j-1)*maxstack+k))
+            end do
+         end do
+         print*,'get_schism_step knoten_trocken minwert, maxwert = ',minval(knoten_trocken),maxval(knoten_trocken)
+      end if ! meinrang==0
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+      !######################### elev eta2 p rb_hydraul(3 ################################################
+      ! find elev
       call check_err( nf_inq_varid(ncid,"elev", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
       call mpi_barrier (mpi_komm_welt, ierr)!#!
       if (dlength(dimids(1)) > maxstack)call qerror("elev:dlength(dimids(1)) > maxstack")
       n=dlength(dimids(1))
       !print*,meinrang,' get_schism_step elev dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
-
       !! initialize
       var_p = 666.666
       if (meinrang == 0) var_g = 777.777
       call mpi_barrier (mpi_komm_welt, ierr)
       if(allocated(eta2))deallocate(eta2);allocate(eta2(npa),stat = istat)
       if (istat /= 0) call qerror("allocate eta2( failed")
-
       !! get data
       start2 = (/ 1, nin /)
       count2 = (/ npa, 1 /) ! nodenumber first dimension
@@ -129,7 +176,6 @@ subroutine get_schism_step(nt)
       eta2(1:npa) = var_p(1:npa)
       !print*,meinrang,' elev np  from...until ',minval(eta2(1:np)),maxval(eta2(1:np))
       call mpi_barrier (mpi_komm_welt, ierr)
-   
       ! gather var_p into var_g
       call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
       if (ierr /= 0) then
@@ -137,7 +183,6 @@ subroutine get_schism_step(nt)
          call qerror(fehler)
       end if
       call mpi_barrier (mpi_komm_welt, ierr)
-      
       !! recombine into global numbers
       if (meinrang == 0) then
          if(.not.allocated(p))then
@@ -172,7 +217,145 @@ subroutine get_schism_step(nt)
          ! benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !######################### dp tiefe depth rb_hydraul(2  ################################################
+      ! find depth
+      call check_err( nf_inq_varid(ncid,"depth", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(allocated(dp)) deallocate(dp); allocate(dp(npa),stat=istat);
+      if (istat /= 0) call qerror("allocate dp( failed")
+      !! get data
+      start2 = (/ 1, nin /)
+      count2 = (/ npa, 1 /) ! nodenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
+      call check_err(iret)
+      dp(1:npa) = var_p(1:npa)
+      !print*,meinrang,' dp np  from...until ',minval(dp(1:np)),maxval(dp(1:np))
+      call mpi_barrier (mpi_komm_welt, ierr)
+      ! gather var_p into var_g
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      if (ierr /= 0) then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
+         call qerror(fehler)
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
+      !! recombine into global numbers
+      if (meinrang == 0) then
+         if(.not.allocated(knoten_z))then
+            call qerror('get_schism_step .not. allocated(knoten_z)')
+         else
+            print*,' knoten_z allocated to size=',size( knoten_z )
+         endif
+         knoten_z = -555.555 ! init
+         do j = 1,proz_anz ! all processes/ranks
+            do k = 1,np_sc(j) ! all nodes at this rank
+               knoten_z(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
+            end do
+         end do
+         print*,'get_schism_step wsp minwert, maxwert = ',minval(p),maxval(p)
+         do k=1,knotenanzahl2D
+            if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
+         enddo
+        ! set water depth at elements
+         do j = 1,number_plankt_point ! all j elements
+            sump=0.0
+            do m=1,cornernumber(j)
+               sump=sump+knoten_z(elementnodes(j,m))
+            end do ! all m corners
+            rb_hydraul(2+(j-1)*number_rb_hydraul) = sump/real(cornernumber(j))
+            rb_hydraul(2+(j-1)*number_rb_hydraul) = rb_hydraul(2+(j-1)*number_rb_hydraul)+rb_hydraul(3+(j-1)*number_rb_hydraul)
+         end do ! all j elements
+         ! write bathymetry into knoten_z
+         !do k=1,knotenanzahl2D
+         !   knoten_z(k)=p(k)-knoten_z(k)
+         !enddo
+      end if ! proc. 0 only
+      call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !######################### diffusivity(time, nSCHISM_hgrid_node, ################################################
+      
+      !######################### hdif(time, nSCHISM_hgrid_node ################################################
+      
 
+
+      !######################### wetdry_elem ################################################
+      if(allocated(element_trocken)) deallocate(element_trocken)
+      allocate(element_trocken(number_plankt_point),stat=istat);
+      if (istat /= 0) call qerror("allocate element_trocken( failed")
+      element_trocken=0
+      call check_err( nf_inq_varid(ncid,"wetdry_elem", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("wetdry_elem:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(allocated(idry_e)) deallocate(idry_e); allocate(idry_e(nea),stat=istat);
+      if (istat /= 0) call qerror("allocate dp( failed")
+      !! get data
+      start2 = (/ 1, nin /)
+      count2 = (/ nea, 1 /) ! nodenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:nea), start2, count2 )
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
+      call check_err(iret)
+      idry_e(1:nea) = var_p(1:nea)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      ! gather var_p into var_g
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      if (ierr /= 0) then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
+         call qerror(fehler)
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
+      !! recombine into global numbers
+      if (meinrang == 0) then
+         if(.not.allocated(element_trocken))then
+            call qerror('get_schism_step .not. allocated(element_trocken)')
+         else
+            print*,' element_trocken allocated to size=',size( element_trocken )
+         endif
+         element_trocken = -555.555 ! init
+         do j = 1,proz_anz ! all processes/ranks
+            do k = 1,np_sc(j) ! all nodes at this rank
+               element_trocken(iplg_sc(j,k)) = int(var_g((j-1)*maxstack+k))
+            end do
+         end do
+      end if !meinrang==0
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+      !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
+      
+      !######################### salt_elem(time, nSCHISM_hgrid_face ################################################
+      
+      !######################### flux_adv_vface(time, nSCHISM_hgrid_face ################################################
+      
+
+
+      !######################### wetdry_side ################################################
+      
+      !######################### hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two ################################################
+      
+
+
+      !#########################  ################################################
+      
+      !#########################  ################################################
+      
+      !#########################  ################################################
+
+      
+      call check_err( nf_close(ncid) )
       return
       call qerror('get_schism_step ### in development ###')
 !################################################################################################################################

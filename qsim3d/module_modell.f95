@@ -118,7 +118,7 @@ module modell
    !> Netz-variablen
    integer knotenanzahl2D, knotenanzahl3D
    real , allocatable , dimension (:) :: knoten_x, knoten_y, knoten_z
-   integer , allocatable , dimension (:) :: knoten_rand
+   integer , allocatable , dimension (:) :: knoten_rand, knoten_trocken
    !> \anchor knoten_zone Zonen-zähler an den Knoten bei Antrieb mit casu-Hydraulik aus points
    integer , allocatable , dimension (:) :: knoten_zone, knoten_rang
    !> connecting global node number with rank and local node number of decomposed parts of domain (SCHISM)
@@ -180,7 +180,7 @@ module modell
    integer , allocatable , dimension (:) :: element_rand ! aus Mesh2_face_bc, netCDF
    !> \anchor element_zone Element zonen, null gesetzt, wird bei Antrieb mit untrim-Hydraulik aus netCDF-Dateien verwendet
    integer , allocatable , dimension (:) :: element_zone
-   integer , allocatable , dimension (:) :: element_rang
+   integer , allocatable , dimension (:) :: element_rang , element_trocken
    integer , allocatable , dimension (:,:) :: elementnodes, elementedges
    real , allocatable , dimension (:) :: element_x, element_y
    !> Vermaschung Kanten

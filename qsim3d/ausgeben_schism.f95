@@ -35,7 +35,7 @@ subroutine ausgeben_schism(itime)
    use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
    character(len = longname) :: dateiname, systemaufruf, zahl
-   integer :: i,j,k,n, istat, ion, errcode
+   integer :: i,j,k,n, istat, ion, errcode, open_error
    integer :: sysa, itime
    real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy, vx, vy, vz
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
@@ -45,18 +45,16 @@ subroutine ausgeben_schism(itime)
    write(zahl,*)itime
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
-
-   !call qerror('ausgeben_schism not ready for use yet')
-   !return !! preliminary end
    
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'node',trim(zahl),'.vtk'
+!####### nodes ##########################################################################################   
+   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'nodes_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename node_ failed')
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
    if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf dateiname failed')
    call system(systemaufruf)
    ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = istat )
-   if (istat /= 0) then
+   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
+   if (open_error /= 0) then
       write(fehler,*)'open_error node_.vtk'
       call qerror(fehler)
    end if ! open_error.ne.0
@@ -67,12 +65,111 @@ subroutine ausgeben_schism(itime)
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') p(n)
-      !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
    end do
-   
+   write(ion,'(A)')'SCALARS bathymetry float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,knotenanzahl2D
+      write(ion,'(f27.6)') knoten_z(n)
+   end do
+   write(ion,'(A)')'SCALARS dry float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,knotenanzahl2D
+      write(ion,'(f27.6)') real(knoten_trocken(n))
+   end do
+
    close (ion)
-   print*,meinrang,myrank,'node output ausgeben_schism done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   return
+   print*,meinrang,myrank,'node output ausgeben_schism done'
+   
+!####### elements ##########################################################################################   
+   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'elements_',trim(zahl),'.vtk'
+   if (errcode /= 0)call qerror('ausgeben_schism writing filename elemente_ failed')
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf dateiname failed')
+   call system(systemaufruf)
+   ion = 106
+   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
+   if (open_error /= 0) then
+      write(fehler,*)'open_error elemente_.vtk'
+      call qerror(fehler)
+   end if ! open_error.ne.0
+   write(ion,'(A)')'# vtk DataFile Version 3.0'
+   write(ion,'(A)')'Simlation QSim3D untrim'
+   write(ion,'(A)')'ASCII'
+   write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12,2x,A)')'POINTS ',number_plankt_point, ' float'
+   do n = 1,number_plankt_point
+      write(ion,'(f17.5,2x,f17.5,2x,f8.3)') element_x(n), element_y(n), 0.0
+   end do ! all elements
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12,2x,I12)')'CELLS ', number_plankt_point, number_plankt_point*2
+   do n = 1,number_plankt_point
+      write(ion,'(A,2x,I12)')'1',n
+   end do ! all elements
+   write(ion,'(A)')' ' ! vtk-vertex
+   write(ion,'(A,2x,I12)')'CELL_TYPES ', number_plankt_point
+   do n = 1,number_plankt_point
+      write(ion,'(A)')'1'
+   end do ! all elements
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12)')'POINT_DATA ', number_plankt_point
+   
+   write(ion,'(A)')'SCALARS Rang float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') real(element_rang(n))
+   end do ! all elements
+   write(ion,'(A)')'SCALARS zone float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') real(element_zone(n))
+   end do ! all elements
+   write(ion,'(A)')'SCALARS Rand float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') real(element_rand(n))
+   end do ! all elements
+   write(ion,'(A)')'SCALARS WSP_rb3 float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
+   end do ! all elements
+   write(ion,'(A)')'SCALARS depth_rb2 float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
+   end do ! all elements
+   write(ion,'(A)')'SCALARS dry float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') real(element_trocken(n))
+   end do ! all elements
+
+
+   close (ion)
+   print*,meinrang,myrank,'elements output ausgeben_schism done'
+
+   return !!!#########
+
+!####### Element sides, edges=kanten ##########################################################################################   
+   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
+   if (errcode /= 0)call qerror('ausgeben_schism writing filename kanten_ failed')
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf dateiname kanten_ failed')
+   call system(systemaufruf)
+   ion = 106
+   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = istat )
+   if (istat /= 0) then
+      write(fehler,*)'open_error kanten.vtk'
+      call qerror(fehler)
+   end if ! istat.ne.0
+   write(ion,'(A)')'# vtk DataFile Version 3.0'
+   write(ion,'(A)')'Simlation QSim3D untrim'
+   write(ion,'(A)')'ASCII'
+   write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12,2x,A)')'POINTS ',kantenanzahl, ' float'
+
    
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
@@ -116,8 +213,7 @@ subroutine ausgeben_schism(itime)
    print*,meinrang,myrank,'edge output ausgeben_schism not yet done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    return
 
-   
-   !!! Element sides, edges=kanten
+!####### Element sides, edges=kanten ##########################################################################################   
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename kanten_ failed')
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
