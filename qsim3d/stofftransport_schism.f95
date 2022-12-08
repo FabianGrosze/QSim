@@ -34,19 +34,21 @@ subroutine stofftransport_schism()
       implicit none
       include 'netcdf.inc'
       integer,parameter :: maxsubst = 60      ! max. number of substeps
-      integer nt, n,j,k, subtim, diff, diffprev, alloc_status
-      real :: laeng, cu_max, cu_min, dt_sub, sumwicht, difnum_max_l
+      integer nt, n,j,k, subtim, diff, diffprev, alloc_status, ierr
+      real :: laeng, cu_max, cu_min, dt_sub, sumwicht , difnum_max_l
       real , allocatable , dimension (:,:) :: zwischen
       integer :: num_sub
       integer nti(maxsubst)
    
       if (meinrang == 0) then !! prozessor 0 only
          print*,'stofftransport_schism: startzeitpunkt, zeitpunkt,endzeitpunkt=' ,startzeitpunkt, zeitpunkt, endzeitpunkt
-         print*,'stofftransport_schism: na_transinfo,ne_transinfo=',na_transinfo,ne_transinfo
+         print*,'stofftransport_schism: izeit,na_transinfo,ne_transinfo=',izeit,na_transinfo,ne_transinfo
          !call qerror("preliminary Interrupt")
+         call transinfo_schritte(startzeitpunkt, endzeitpunkt)
       endif
-      
-      call transinfo_schritte(startzeitpunkt, endzeitpunkt)
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
       
       num_sub=1 !6?
       do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
@@ -57,7 +59,7 @@ subroutine stofftransport_schism()
          ! integer, intent(in) :: it !time stepping #; info only
          ! ntr=ntracers=number_plankt_vari
          ! real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
-         !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+         call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
       end do ! all sub timesteps
       

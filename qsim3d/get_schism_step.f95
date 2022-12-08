@@ -34,7 +34,7 @@ subroutine get_schism_step(nt)
       use schism_glbl, only:su2,sv2,tr_el,eta2                       &
       ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global         &
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
-      ,idry_s
+      ,idry_s,nea2
       
       use schism_msgp, only: myrank,nproc,parallel_abort
       implicit none
@@ -131,9 +131,9 @@ subroutine get_schism_step(nt)
       iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
       call check_err(iret)
       if (iret /= 0) print*,meinrang,' get_schism_step nf90_get_var wetdry_node failed iret = ',iret
-      print*,meinrang,' Knoten trocken var_p from...until ',minval(var_p(1:np)),maxval(var_p(1:np))
+      !print*,meinrang,' Knoten trocken var_p from...until ',minval(var_p(1:np)),maxval(var_p(1:np))
       idry(1:npa) = int(var_p(1:npa))
-      print*,meinrang,' Knoten trocken idry from...until ',minval(idry(1:np)),maxval(idry(1:np))
+      !print*,meinrang,' Knoten trocken idry from...until ',minval(idry(1:np)),maxval(idry(1:np))
       call mpi_barrier (mpi_komm_welt, ierr)
       ! gather var_p into var_g
       call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -144,7 +144,7 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
       !! recombine into global numbers
       if (meinrang == 0) then
-         print*,' knoten_trocken allocated to size=',size( knoten_trocken )
+         !print*,' knoten_trocken allocated to size=',size( knoten_trocken )
          knoten_trocken = -555 ! init
          do j = 1,proz_anz ! all processes/ranks
             do k = 1,np_sc(j) ! all nodes at this rank
@@ -189,8 +189,8 @@ subroutine get_schism_step(nt)
       if (meinrang == 0) then
          if(.not.allocated(p))then
             call qerror('get_schism_step .not. allocated(p)')
-         else
-            print*,' p allocated to size=',size( p )
+         !else
+         !   print*,' p allocated to size=',size( p )
          endif
          p = -555.555 ! init
          !print*,meinrang," get_schism_step elev recombine into global",npa,varid,trim(adjustl(vname(varid)))
@@ -227,7 +227,7 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)!#!
       if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
       n=dlength(dimids(1))
-      print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
       !! initialize
       var_p = 666.666
       if (meinrang == 0) var_g = 777.777
@@ -254,8 +254,6 @@ subroutine get_schism_step(nt)
       if (meinrang == 0) then
          if(.not.allocated(knoten_z))then
             call qerror('get_schism_step .not. allocated(knoten_z)')
-         else
-            print*,' knoten_z allocated to size=',size( knoten_z )
          endif
          knoten_z = -555.555 ! init
          do j = 1,proz_anz ! all processes/ranks
@@ -263,7 +261,6 @@ subroutine get_schism_step(nt)
                knoten_z(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
             end do
          end do
-         print*,'get_schism_step wsp minwert, maxwert = ',minval(p),maxval(p)
          do k=1,knotenanzahl2D
             if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
          enddo
@@ -300,13 +297,15 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
       if(.not.allocated(idry_e)) allocate(idry_e(nea),stat=istat);
       if (istat /= 0) call qerror('allocate idry_e( failed')
+      if(.not.allocated(idry_e_2t)) allocate(idry_e_2t(nea2),stat=istat);
+      if (istat /= 0) call qerror('allocate idry_e_2t( failed')
       !! get data
       start2 = (/ 1, nin /)
       count2 = (/ nea, 1 /) ! nodenumber first dimension
       iret = nf90_get_var(ncid, varid, var_p(1:nea), start2, count2 )
       if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var idry_e failed iret = ",iret
       call check_err(iret)
-      idry_e(1:nea) = var_p(1:nea)
+      idry_e(1:nea) = int(var_p(1:nea))
       call mpi_barrier (mpi_komm_welt, ierr)
       ! gather var_p into var_g
       call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -335,7 +334,25 @@ subroutine get_schism_step(nt)
 
 
       !######################### wetdry_side ################################################
-      
+      call check_err( nf_inq_varid(ncid,"wetdry_side", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("wetdry_side:dlength(dimids(1)) > maxstack")
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(.not.allocated(idry_s)) allocate(idry_s(nsa),stat=istat);
+      if (istat /= 0) call qerror('allocate idry_s( failed')
+      !! get data
+      start2 = (/ 1, nin /)
+      count2 = (/ nsa, 1 /) ! sidenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:nsa), start2, count2 )
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var idry_s failed iret = ",iret
+      call check_err(iret)
+      idry_s(1:nsa) = int(var_p(1:nsa))
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       !######################### hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two ################################################
       !## if(iof_hydro(27)==1) call writeout_nc(id_out_var(30),'hvel_side',8,nvrt,nsa,su2,sv2)  !su2(nvrt,nsa),sv2(nvrt,nsa)
       if (meinrang == 0) then
@@ -407,8 +424,6 @@ subroutine get_schism_step(nt)
          
          if(.not.allocated(u))then
             call qerror('get_schism_step .not. allocated(u)')
-         else
-            print*,' u allocated to size=',size( u )
          endif
          u = 0.0 ! init node vel.
          do n = 1,kantenanzahl
