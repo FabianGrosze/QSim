@@ -30,11 +30,11 @@
 !! Segmentlaenge variabel, Zeitschritt fest gleich 60 min
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
-subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                        &
-                  ,ifehl,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
-                  ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij              &
-                  ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                                     &
-                  ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS        &
+subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
+                  ,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
+                  ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
+                  ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
+                  ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
                   ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
    
    character (len = 2)                    :: cwertv
@@ -60,7 +60,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    real, dimension(azStrs,1000)           :: PSREFSS,extkuS, extkS, HMQ, bvMQ, bHMQ
    integer, dimension(:,:), allocatable   :: iflags, iBliak, iBreak, ieinse
    real, dimension(:,:), allocatable      :: hkmhyd, hWSP, hrhyda, hhbu, hflbu, hbsobu, hblabu, hWFlbu, hvmbu
-   
+   character(1000)                        :: message
    
    if (.not.allocated(iflags)) allocate(iflags(azStrs,1000))
    if (.not.allocated(iBliak)) allocate(iBliak(azStrs,1000))
@@ -85,7 +85,6 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    sumt1 = 0.0
    sumbt1 = 0.0
    ianzt = 0
-   ifehl = 0
    testH = 0.0
    ianze_max = 0
    
@@ -167,18 +166,18 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       !  Fehlermeldung wenn htiefa kleiner 0
       if (htiefa(mstrl,khyd) <= 0.0) then
-         ifehl = 1
-         ifhStr = mstrl
-         ifhprof = hkmhyd(mstrl,khyd)
-         print*,'sysgen: 1 htiefa kleiner 0',htiefa(mstrl,khyd),mstrl,khyd
-         print*,'kmhyd,WSP,Q = ',hkmhyd(mstrl,khyd),hWSP(mstrl,khyd),hQaus(mstrl,khyd)
-         goto 888
+         print*, 'sysgen: Water depth is less or equal 0'
+         print*, '   kmhyd = ', hkmhyd(mstrl,khyd)
+         print*, '   WSP   = ', hWSP(mstrl,khyd)
+         print*, '   Q     = ', hQaus(mstrl,khyd)
+         write(message, "(2(a,i0))"), "Subroutine sysgen: Water depth is less &
+                           &or equal 0 in stretch ", mstrl, ", profile ", hkmhyd(mstrl,khyd)
+         call qerror(message)
       endif
-      !
-      if (hlboea(mstrl,khyd) > boeamq(mstrl,khyd))                      &
-          hlboea(mstrl,khyd) = boeamq(mstrl,khyd)
-      !
-      !      hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
+      
+      if (hlboea(mstrl,khyd) > boeamq(mstrl,khyd)) hlboea(mstrl,khyd) = boeamq(mstrl,khyd)
+      
+      ! hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
       
       if (nbuhn(mstrl) == 0)goto 233
       
@@ -195,13 +194,16 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       hbsobu(mstrl,khyd) = bsohla(mstrl,khyd)
       hvmbu(mstrl,khyd) = hVF(mstrl,khyd)
       
-      233 do 211 khyd = 2,mStas(mstrl)
+      233 continue
+      
+      do khyd = 2,mStas(mstrl)
          read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)           &
-              ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd)             &
-              ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)         &
-              ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)            &
-              ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)          &
+              ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd)        &
+              ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)    &
+              ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)       &
+              ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)     &
               ,iBliak(mstrl,khyd),iBreak(mstrl,khyd)
+         
          if (ieros == 1 .and. nbuhn(mstrl) > 0) then
             if (bvmq(mstrl,khyd) > 0.0 .and. (hVF(mstrl,khyd)*0.13) > bvmq(mstrl,khyd)) then
                fhconH = htiefa(mstrl,khyd)/HMQ(mstrl,khyd)-1.
@@ -213,40 +215,43 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          
          !  Fehlermeldung wenn htiefa kleiner 0
          if (htiefa(mstrl,khyd) <= 0.0) then
-            ifehl = 1
-            ifhStr = mstrl
-            fhprof = hkmhyd(mstrl,khyd)
-            print*,'sysgen: 2 htiefa kleiner 0',htiefa(mstrl,khyd),mstrl,khyd
-            print*,'kmhyd,WSP,Q = ',hkmhyd(mstrl,khyd),hWSP(mstrl,khyd),hQaus(mstrl,khyd)
-            goto 888
+            print*, 'sysgen: Water depth is less or equal 0'
+            print*, '   kmhyd = ', hkmhyd(mstrl,khyd)
+            print*, '   WSP   = ', hWSP(mstrl,khyd)
+            print*, '   Q     = ', hQaus(mstrl,khyd)
+            write(message, "(2(a,i0))") 'Subroutine sysgen: &
+               &Water depth is less or equal 0 in stretch ',&
+               mstrl, ', profile ', hkmhyd(mstrl,khyd)
+            call qerror(message)
          endif
          
          if (hlboea(mstrl,khyd) > boeamq(mstrl,khyd))hlboea(mstrl,khyd) = boeamq(mstrl,khyd)
          
-         !      hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
-         !      hVF(mstrl,khyd) = abs(hVF(mstrl,khyd))
+         ! hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
+         ! hVF(mstrl,khyd) = abs(hVF(mstrl,khyd))
          
-         if (nbuhn(mstrl) == 0)goto 211
+         if (nbuhn(mstrl) == 0) cycle
          
          if (iBliak(mstrl,khyd) == 1 .or. iBreak(mstrl,khyd) == 1)goto 213
          goto 214
          213 hcon = hFlaea(mstrl,khyd)*0.001
          if (hhbu(mstrl,khyd) < 0.01 .or. hflbu(mstrl,khyd) < hcon)goto 214
-         goto 211
+         cycle
+         
          214 hflbu(mstrl,khyd) = hFlaea(mstrl,khyd)*0.001
          if (hWFlbu(mstrl,khyd) < 0.0)hWFlbu(mstrl,khyd) = 0.0
          hhbu(mstrl,khyd) = htiefa(mstrl,khyd)
          hblabu(mstrl,khyd) = hlboea(mstrl,khyd)
          hbsobu(mstrl,khyd) = bsohla(mstrl,khyd)
          hvmbu(mstrl,khyd) = hVF(mstrl,khyd)
-      211 continue
+      enddo
       Wsp_UW(mstrl) = hwsp(mstrl,1)
       Wsp_OW(mstrl) = hwsp(mstrl,mStas(mstrl))
    enddo
    
-   do 18 azStr = 1,azStrs
+   do azStr = 1,azStrs
       jz = 0
-      i6 = 0                 ! anzahl der "6-flags"
+      i6 = 0  ! anzahl der "6-flags"
       mstr = mStra(azStr)
       
       iseg = 1
@@ -419,8 +424,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       ! --- Fehlermeldung ---
       if (i > 1000) then
-         ifehl = 2
-         goto 888
+         write(message, "(a,i0)") "Number of nodes exceeds 1000 in stretch ", mstr
+         call qerror(message)
       endif
       
       elen(i) = sumx
@@ -1039,7 +1044,10 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          if (nbuhn(mstr) == 0)goto 646
          
          tau2_0 = tau2m
-         if (tau2_0 <= 0.0)ifehl = 18
+         if (tau2_0 <= 0.0) then
+            call qerror("Missing Value for 'tau2b' (Exchangetime between &
+                         groyne field and main river)")
+         endif
          tau2m = tau2_0/(1.+qsaus(i)/400.)
          
          646 continue
@@ -1084,10 +1092,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       ihydr = 0
       ianzt = 0
       
-      
-      do 289 i3 = 1,1000
-      289 flag(i3) = 0
-      
+      flag(:) = 0
       
       ! Bestimmung der Zeitschrittweite für Advektion und Dispersion
       if (iverfahren == 1) then
@@ -1100,17 +1105,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       courmx = 0.0
       
       if ((anze+1) > ianze_max)ianze_max = anze + 1
-   18 continue
+   enddo
    
-   goto 888
-   
-   ! Ausschreiben der Fehlermeldung in file1.err
-   543 continue
-   write(199,1999)
-   1999 format('maximale Anzahl (1000) der Gitterpunkte wurde ueberschritten')
-   ! ifehl = 1
-   
-   888 continue
    close (11)
    
    return

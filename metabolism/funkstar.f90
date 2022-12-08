@@ -44,7 +44,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &
                     ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &
                     ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
-                    ,iw_max,iformVert,ifehl,ifmRB,ifmstr)
+                    ,iw_max,iformVert)
    
    character (len = 255)                       :: cpfad
    character (len = 275)                       :: pfadstring
@@ -499,12 +499,9 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
       endif
       !...Fehlermeldung
       if (ischwer == 1) then
-         ifehl = 0
-         if (ISNAN(gsZns(mstr,RBNR)) .or. ISNAN(glZns(mstr,RBNR))) then
-            if (vphs(mstr,RBNR) <= 0.0)ifehl = 31
-            if (ssalgs(mstr,RBNR) <= 0.0)ifehl = 32
-            ifmstr = mstr
-            ifmRB = RBNR
+         if (isnan(gszns(mstr,rbnr)) .or. isnan(glzns(mstr,rbnr))) then
+            if (vphs(mstr,RBNR) <= 0.0)   call qerror("Missing values for pH in inflow.")
+            if (ssalgs(mstr,RBNR) <= 0.0) call qerror("Missing values for suspended matter in inflow.")
             exit
          endif
       endif

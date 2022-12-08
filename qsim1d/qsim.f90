@@ -27,12 +27,12 @@
 program qsim
    use allodim
    use aparam
-   use mod_model_settings
+   use module_model_settings
    use module_metabolism
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
    character                               :: ckenn,cpoint,CST_end
-   character (len = 2)                     :: cerrts,ctest1,chcon,ckenn_vers,ckenn_vers1
+   character (len = 2)                     :: ctest1,chcon,ckenn_vers,ckenn_vers1
    character (len = 1)                     :: ctaste
    character (len = 7)                     :: cmin,cmax
    character (len = 40)                    :: ERENAME, MODNAME
@@ -385,17 +385,6 @@ program qsim
    cmin = 'Minimum'
    cmax = 'Maximum'
    cpoint = '.'
-   
-   j1 = 0
-   j2 = 0
-   
-   call fehlermeldungen(cpfad,j1)
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'file1.err'
-   open(unit = 199, file = pfadstring, iostat = open_error)
-   
-   rewind (199)
-   write(199,'(a2)')cerrts
-   rewind (199)
    
    if (iRHKW == 1) then
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'Red_HKW.txt'
@@ -901,9 +890,7 @@ program qsim
    ! -------------------------------------------------------------------------
    if (iwsim == 4 .or. iwsim == 5)goto 329
    if (iwsim == 2 .and. icoli == 0)goto 329
-   call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl)
-   if (ifehl > 0)goto 989
-   
+   call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    
    
    ! --------------------------------------------------------------------------
@@ -1665,9 +1652,8 @@ program qsim
       jsed = 0
       call sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,    &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq, &
-                    bHmq, jsed, w2, w2b, ifehl,                                &
+                    bHmq, jsed, w2, w2b,                                       &
                     kontroll, 0)
-      if (ifehl == 26) goto 990
    endif
    
    
@@ -1856,13 +1842,12 @@ program qsim
    ! --------------------------------------------------------------------------
    dt = tflie*86400.
    
-   call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                             &
-               ,ifehl,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                   &
-               ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij                   &
-               ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                                          &
-               ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS             &
+   call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
+               ,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
+               ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
+               ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
+               ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
                ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
-   if (ifehl > 0)goto 989
    
    pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
    open(unit = 11, file = pfadstring, iostat = open_error)
@@ -1958,9 +1943,8 @@ program qsim
                  ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &
                  ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &
                  ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
-                 ,iw_max,iformVert,ifehl,ifmRB,ifmstr)
+                 ,iw_max,iformVert)
    
-   if (ifehl > 0)goto 989
    call aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
    
    ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
@@ -2273,27 +2257,24 @@ program qsim
             
             ! Nitrosomonas
             if (vnh4s(mstr,mRB) > 0.0 .and. vx0s(mstr,mRB) < 0.0) then
-               ifehl = 6
-               goto 989
+               call qerror("Missing values for nitrosomonas at boundary.")
             endif
             
             ! Nitrobacter
             if (vnh4s(mstr,mRB) > 0.0 .and. vno2s(mstr,mRB) > 0.0.and.vx02s(mstr,mRB) < 0.0) then
-               ifehl = 7
-               goto 989
+               call qerror("Missing values for nitrobacter at boundary.")
             endif
             
             ! Anteil der Kieselalgen
             if (chlas(mstr,mRB) > 0.0 .and. vkigrs(mstr,mRB) < 0.0) then
-               ifehl = 8
-               goto 989
+               call qerror("Missing values for 'Anteil Kieselalgen' at boundary.")
             endif
             
             ! Anteil der Blaualgen
             if (chlas(mstr,mRB) > 0.0 .and. antbls(mstr,mRB) < 0.0) then
-               ifehl = 9
-               goto 989
+               call qerror("Missing values for 'Anteil Blaualgen' at boundary.")
             endif
+            
             ! falls der Anteil der Blaualgen = 0 ist
             if (antbls(mstr,mRB) == 0.0) then
                antbls(mstr,mRB) = 0.01
@@ -2302,53 +2283,40 @@ program qsim
             
             ! Silikat
             if (chlas(mstr,mRB) > 0.0 .and. vkigrs(mstr,mRB) > 0.0.and.Sis(mstr,mRB) < 0.0) then
-               ifehl = 10
-               goto 989
+               call qerror("Missing values for silicate at boundary.")
             endif
             
             ! Temperatur
             if (iwsim == 2 .or. iwsim == 3 .or. iph == 1) then
                if (tempws(mstr,mRB) == -9.99) then
-                  ifehl = 35
-                  ifhstr = mstr
-                  goto 989
+                  call qerror("Missing values for temperature at boundary.")
                endif
             endif
             
             ! ph-Wert
             if (iph == 1 .and. vphs(mstr,mRB) <= 0.0) then
-               ifehl = 34
-               print*,mstr,mRB,' iph = ',iph,' vphs = ',vphs(mstr,mRB)
-               ifhstr = mstr
-               goto 989
+               call qerror("Missing values for 'vphs' at boundary.")
             endif
             
             ! m-Wert
             if (iph == 1 .and. mws(mstr,mRB) <= 0.0) then
-               print*,'### m-Wert,,mstr,mRB,iph = ',mws(mstr,mRB),mstr,mRB,iph
-               ifehl = 19
-               ifhstr = mstr
-               goto 989
+               call qerror("Missing values for 'm-Wert' at boundary.")
             endif
             
             ! Ca-Wert
             if (iph == 1 .and. Cas(mstr,mRB) <= 0.0) then
-               ifehl = 20
-               goto 989
+               call qerror("Missing values for Calcium at boundary.")
             endif
             
             ! BSB5 und CSB
             if (vbsbs(mstr,mRB) < 0.0 .and. vcsbs(mstr,mRB) < 0.0) then
-               ifehl = 28
-               print*,'### BSB5,CSB,mstr,mRB = ',vbsbs(mstr,mRB),vcsbs(mstr,mRB),mstr,mRB
-               ifhstr = mstr
-               goto 989
+               call qerror("Missing values for C-BSB5 or CSB at boundary. &
+                            One of them must be given.")
             endif
             
             ! Schwebstoffe
             if (ssalgs(mstr,mRB) < 0.0) then
-               ifehl = 29
-               goto 989
+               call qerror("Missing values for suspended matter at boundary.")
             endif
             
          enddo
@@ -2541,9 +2509,8 @@ program qsim
          ! Fehlerausgabe falls AnteilGR+AnteilKI+AnteilBL >1
          hconFe = 1.-vkigrs(mstr,mRB)-antbls(mstr,mRB)
          if (hconFe < 0.0) then
-            ifehl = 5
-            ifhStr = mstr
-            goto 989
+            write(message, "(a,i0)") 'Die Anteile der Kiesel- und Blaualgen sind zusammen größer 1 (Strang):', mstr
+            call qerror(message)
          endif
          
          if (RBtyp(mstr,mRB) == 0)TGZoo(mstr,1) = GROT
@@ -2783,8 +2750,7 @@ program qsim
    ! ==========================================================================
    ! Bestimmen von Sonnenauf- und untergang
    ! ==========================================================================
-   call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj,ifehl)
-   if (ifehl > 0)goto 989
+   call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj)
    
    ! ==========================================================================
    ! Ermittlung der Kenngrößen zur Berücksichtigung des Wehrüberfalls
@@ -4765,10 +4731,8 @@ program qsim
       
       if (iwsim /= 4 .and. iwsim /= 5) then
          call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP         &
-                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr,it_h,ij,jahrs,itage,monate,jahre,uhren        &
+                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,it_h,ij,jahrs,itage,monate,jahre,uhren        &
                      ,isim_end,azStr,azStrs)
-         if (ifehl > 0)goto 989
-         
          call temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
       endif
       
@@ -5734,17 +5698,12 @@ program qsim
                     ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
                     ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
                     ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
-                    ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                                    &
+                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1,azStrs                                                                 &
                     ,.false.,0)
       do ior = 1,anze+1
-         if (isnan(agr(ior))) then
-            isinisi = isinisi+1
-         endif
+         if (isnan(agr(ior))) call qerror("Division by zero in subroutine algaesgr")
       enddo
       
-      if (ifehl > 0)goto 989
-      ifehl = isinisi
-      if (ifehl > 0)goto 989
       if (nbuhn(mstr) == 0)goto 1513
       if (ilbuhn == 0) then
          do ior = 1,anze+1
@@ -6010,9 +5969,8 @@ program qsim
       ! -----------------------------------------------------------------------
       ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
       !            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr       &
+      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                   &
       !            ,.false.,0)
-      ! if (ifehl > 0)goto 989
       
       ! if (nbuhn(mstr) > 0) then
       !    do ior = 1,anze+1
@@ -6376,13 +6334,11 @@ program qsim
          call CTracer(TEMPW,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs,itags,uhrz,mstr)
          
       else
-         call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl                 &
+         call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl               &
                    ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL &
                    ,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW,htempw,htempz                    &
-                   ,WUEBKS,SPEWKSS,PSREFSS,extkS,ifehl,ifhstr,azStrs,iwsim,iform_VerdR                                   &
+                   ,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR                                                &
                    ,.false.,0)
-         
-         if (ifehl > 0)goto 989
       endif
       
       if (nbuhn(mstr) == 0)goto 413
@@ -6613,9 +6569,8 @@ program qsim
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
-            ifehl = 23
-            ifhStr = mstr
-            goto 990
+            write(message, "(a,i0)"), "Division by zero in subroutine oxygen in stretch ", mstr
+            call qerror(message)
          endif
          
          if (nbuhn(mstr) > 0) then
@@ -6794,10 +6749,9 @@ program qsim
       1522 continue
       call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli &
                    ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs         &
-                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs,ifehl                                          &
+                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
                    ,.false.,0)
       
-      if (ifehl > 0)goto 989
       if (nbuhn(mstr) == 0 .and. iwsim == 2)goto 118
       if (nbuhn(mstr) == 0 .and. iwsim /= 2)goto 1520
       if (ilbuhn == 0) then
@@ -11138,55 +11092,18 @@ program qsim
    endif
    
    ! --------------------------------------------------------------------------
-   ! Fehlerausgabe
+   ! End of Program
    ! --------------------------------------------------------------------------
-   989 continue
-   if (ifehl == 0) goto 990
-   
-   print '("An error occured. iFehl = ",I0)', ifehl
-   
-   open(unit = 599,file = 'Fehlermeldungen.txt')
-   rewind(599)
-   do i = 1, ifehl
-      read(599,'(a120)')cfehlr
-   enddo
-   
-   if (ifhStr > 0 .and. fhprof > 0.0) then
-      write(199,'(a120,2x,i3,5x,f8.2)')cfehlr,ifhStr,fhprof
-      goto 990
-   endif
-   
-   if (ifhStr > 0 .and. fhprof == 0.0) then
-      write(199,'(a120,2x,i3)')cfehlr,ifhStr
-      goto 990
-   endif
-   if (ifehl == 31) then
-      write(199,'(a120,5x,a50)')cfehlr,CEName(ifmstr,ifmRB)
-      goto 990
-   endif
-   if (ifehl == 32) then
-      write(199,'(a120,5x,a50)')cfehlr,CEName(ifmstr,ifmRB)
-      goto 990
-   endif
-   write(199,'(120a)')cfehlr
-   
-   990 continue
    close (45)     ! ErgebM.txt
    close (155)    ! ErgebT.txt
    close (156)    !
    close (157)    !
    close (158)    !
-   close (199)    ! file1.err
    close (255)    ! Ergeb2D.txt
    
    if (iRHKW == 1) close (177)   ! Red_HKW.txt
    
-   if (ifehl /= 0) then
-      write(*,*)ifehl
-      stop 0 
-   else
-      write(*,*) 'Success.'
-      write(*,*) 'End of Simulation'
-   endif
+   write(*,*) 'Success.'
+   write(*,*) 'End of Simulation'
    
 end program qsim

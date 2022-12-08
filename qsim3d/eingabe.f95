@@ -117,18 +117,14 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
-      !     read global model-parameters now in module ::uebergabe_werte
-      write(cpfad,*,iostat = ifehl)trim(adjustl(modellverzeichnis))
-      if (ifehl /= 0)call qerror('eingabe: write(cpfad went wrong')
-      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl)
-      if (ifehl /= 0) then
-         print*,'cpfad,iwsim,icoli,ieros = ',trim(cpfad),iwsim,icoli,ieros
-         write(fehler,*)'eingabe: aparam_lesen went wrong, ifehl = ',ifehl
-         call qerror(fehler)
-      endif
+      ! read global model-parameters now in module ::uebergabe_werte
+      write(cpfad,*,iostat = ierr)trim(adjustl(modellverzeichnis))
+      if (ierr /= 0) call qerror('eingabe: write(cpfad went wrong')
+      
+      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       call extnct_lesen()
-      call ausgabezeitpunkte() !! reading points in time for output
-      call ausgabekonzentrationen() !! reading output-values
+      call ausgabezeitpunkte()      ! reading points in time for output
+      call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"

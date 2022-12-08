@@ -36,7 +36,7 @@
 !3932      EDUFBL(jR) = EDUFLH(mstr,ior) 
 !4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
 !         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)  
+!         &,VALTBR,EDUFBR,breite,anze)  
 !                        
 !~~~~~~~~~~~~~~ Alle an der Wärmebilanz beteiligten Subroutinen ??
 !1074  740 open(unit=86, DEFAULTFILE=cpfad, file='WETTER.txt') 
@@ -48,7 +48,7 @@
 !3689      do 8888 azStr = 1,azStrs.... !Strangschleife                                   
 !4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
 !         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)                          
+!         &,VALTBR,EDUFBR,breite,anze)                          
 !4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
 !5803      call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
 !         &,vmitt,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl            &
@@ -739,7 +739,7 @@ subroutine temperl_wetter()
       geob = modell_geob
       uhrz = uhrzeit_stunde
       tdj = tagdesjahres !! wird von sasu verändert (wozu ist unklar)
-      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj, ifehl)
+      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
       sonnenaufgang = sa
       sonnenuntergang = su
       IDWe(1,1) = 1
@@ -791,11 +791,10 @@ subroutine strahlg_wetter()
       
       geol = modell_geol
       geob = modell_geob
-      call sasu(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj, ifehl)
-      if (ifehl /= 0) call qerror("error in sasu()")
+      call sasu(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
       if (sa > su) then
-         print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
-         ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+         print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj" &
+         ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj
          call qerror("strahlg_wetter: computing daylight hours went wrong")
       endif
       
@@ -833,11 +832,9 @@ subroutine strahlg_wetter()
       
       call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
                    cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
-                   EDUFBL, VALTBR, EDUFBR, breite, anze, ifehl, ifhStr, it_h,  &
+                   EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
                    ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr,    &
                    azStrs)
-      if (ifehl /= 0) call qerror("Error in strahlg()")   
-      
       schwi_T(i) = schwi(1)    ! global radiation at weather station
       
       !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)

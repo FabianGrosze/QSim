@@ -28,15 +28,10 @@
 !> Berechnung der Wassertemperatur
 !!
 !! @author Volker Kirchesch
-!! @date 19.11.1987
-
-! TODO (frassl)
-! der Stand stimmt nicht. -> Wann soll das Datum ein update bekommen, bei
-! einer substanziellen Veränderung? Oder auch schon bei kleineren? Hier def. zu alt
-subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl           &
-                   ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae        &
-                   ,qeinlL,etempL,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW             &
-                   ,htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,ifehl,ifhStr,azStrs,iwsim,iform_VerdR              &
+subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl      &
+                   ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae   &
+                   ,qeinlL,etempL,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW        &
+                   ,htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR                      &
                    ,kontroll,jjj)
    implicit none
 
@@ -106,8 +101,6 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     AZSTRS : Anzahl der Stränge [-]
    !     IWSIM  : Schalter für die Auswahl der zu simulierenden Parameter [-]
    !     IFORM_VERDR: Schalter für die Auswahl der Verdunstungsformeln [-]
-   !     IFEHL  : Kennzahl für den aufgetretenen Fehler [-]
-   !     IFHSTR : Nummer des Strangs, in dem der Fehler aufgetreten ist [-]
    ! wichtige Parameter, die für die Berechnung benutzt werden
    !   #mf gibt es einen Grund für das "wichtige"? -> wenn nicht: weglassen
    !-----------------------------------------------------------
@@ -138,7 +131,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !....auf 0 gesetzt.
 
    integer                         :: ior, anze, mstr, nkz, azStrs, iein, ieinL, j, ior_flag, ilbuhn, m, ihcQ
-   integer                         :: ji, iwsim, itags, ifehl, ifhStr, iwied, nwaerm, ilang, monats, iRHKW
+   integer                         :: ji, iwsim, itags, iwied, nwaerm, ilang, monats, iRHKW
    integer                         :: iform_VerdR
    real                            :: tflie, WUEBK0, WUEBK, speWKS0, speWKS, PSREFS0, PSREFS, hctemp
    real                            :: hctemp1, hcQ, hcWE, hcQE, deltTW, hcTE, rohE, tempmt, tempwt
@@ -157,6 +150,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    real, dimension(azStrs,50,1000) :: htempz
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
+   character(1000)                 :: message
    save hctemp1,hctemp1z
    
    ! Konstanten
@@ -321,15 +315,14 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
                         ,xdtemp,iform_VerdR,itags,uhrz,ior,kontroll ,jjj )
       dtemp(1:nkzs(ior),ior) = xdtemp(1:nkzs(ior))
       tempwz(1:nkzs(ior),ior) = xtempwz(1:nkzs(ior))
-      ! ################
-      !  Fehlermeldung
-      !#################
-      ifehl = 0
-      if (ISNAN(tempmt)) then
-         ifehl = 24
-         ifhStr = mstr
-         exit
+     
+      ! Fehlermeldung
+      if (isnan(tempmt)) then
+         write(message,"(a,i0)") "subroutine temperw: Division by zero in stretch: ", mstr
+         call qerror(message)
       endif
+      
+      
       extk(ior) = -1.
    enddo ! Ende Knotenschleife
    tempwz(1,anze+1) = tempwt

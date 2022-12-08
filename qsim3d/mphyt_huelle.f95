@@ -73,13 +73,11 @@ subroutine mphyt_huelle(i)
    ! ! module_QSimDatenfelder.f95:    integer , parameter :: ilang=1
    ! extk(1:2) = transfer_quantity_p(54+(i-1)*number_trans_quant) ! mittlerer Extinktionskoeffizient
    ! mstr = 1        ! Strangzähler | nur ein Profil in einem Strang
-   ! ifehl = 0  ! if ISNAN(tempmt)(zwischenwert Wassertemperatur) > ifehl=24
-   ! ifhStr = 0 ! Strangnummer in dem der Fehler auftrat
    ! if (kontroll)print*,'vor mphyt() pfl,po2p,po2r = ',pfl(1),po2p(1),po2r(1)
    ! !----------------------------------------------------------------------------------
-   ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie               &
-              ! ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi          &
-              ! ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhstr             &
+   ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                   &
+              ! ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi   &
+              ! ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                  &
               ! ,kontroll ,iglob ) !!wy
    ! !----------------------------------------------------------------------------------
    ! if (kontroll)print*,'nach mphyt() pfl,po2p,po2r = ',pfl(1),po2p(1),po2r(1)

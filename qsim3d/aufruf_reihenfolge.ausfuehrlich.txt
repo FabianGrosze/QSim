@@ -1,323 +1,323 @@
 qsim.f90 13.00
 
 
-!     Berechnung der SedimentKenngroessen                               
-      call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs                   &
-     &,aschif,eschif,SedOM,w2,SedOMb,w2b,dKorn,dKornb                   &
-     &,raua,vmq,Hmq,nbuhn,bvmq,bHmq)                                    
+!     Berechnung der SedimentKenngroessen
+call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs                   &
+&,aschif,eschif,SedOM,w2,SedOMb,w2b,dKorn,dKornb                   &
+&,raua,vmq,Hmq,nbuhn,bvmq,bHmq)
 
-!     Einteilung der Flussstrecke in Segmente                           
-      call sysgen(ilang,dt,iwsim                                        &
-     &,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                             &
-     &,ifehl,aschif,eschif,mSs,azStrs,mStra                             &
-     &,raua,bsohla,boeamq,hlboea,hflaea,htiefa                          &
-     &,hvF,hQaus,SedOM,w2,dKorn,abfr,mStas,Startkm,endkm                &
-     &,mRBs,RBtyp,RBkm,ij,mwehr,tflie,FZeit                             &
-     &,STRdt,STRiz,iFlRi,cpfad,ior1,ior2,i2Ds,afkm2D                    &
-     &,efkm2D,nkzsSt,H2DeSt,dH2D,SedOMb,w2b,dKornb,itags,monats,uhrz    &
-     &,ifhStr,fhprof)                                                   
+!     Einteilung der Flussstrecke in Segmente
+call sysgen(ilang,dt,iwsim                                        &
+&,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                             &
+&,ifehl,aschif,eschif,mSs,azStrs,mStra                             &
+&,raua,bsohla,boeamq,hlboea,hflaea,htiefa                          &
+&,hvF,hQaus,SedOM,w2,dKorn,abfr,mStas,Startkm,endkm                &
+&,mRBs,RBtyp,RBkm,ij,mwehr,tflie,FZeit                             &
+&,STRdt,STRiz,iFlRi,cpfad,ior1,ior2,i2Ds,afkm2D                    &
+&,efkm2D,nkzsSt,H2DeSt,dH2D,SedOMb,w2b,dKornb,itags,monats,uhrz    &
+&,ifhStr,fhprof)
 
-!     Berechnen der Startwerte                                          
-      call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs           &
-     &,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs,antbls,zooins            &
-     &,vphs,mws,cas,lfs,ssalgs,tempws,vo2s                              &
-     &,CHNFs,BVHNFs,colis,waers,istund,uhrz,RBtyp,NRSCHr                &
-     &,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB)               
+!     Berechnen der Startwerte
+call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs           &
+&,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs,antbls,zooins            &
+&,vphs,mws,cas,lfs,ssalgs,tempws,vo2s                              &
+&,CHNFs,BVHNFs,colis,waers,istund,uhrz,RBtyp,NRSCHr                &
+&,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB)
 
-!     Berechnung des p-Wertes am Start (ohne Algen)                                                                                            
-      call pwert(mws,vphs,lfs,tempws,pws,mRB,mstr) 
+!     Berechnung des p-Wertes am Start (ohne Algen)
+call pwert(mws,vphs,lfs,tempws,pws,mRB,mstr)
 
-!....Ermittlung von SonnenAufgang und SonnenUntergang                                          
-      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj,ifehl)
+!....Ermittlung von SonnenAufgang und SonnenUntergang
+call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj)
 
-!...  Ermittlung der Wehrhoehen bei Vorgabe von O2OW und O2UW           
-      call WEHRLES(itags,monats,Jahrs,itagr,monatr                      &
-     &,jahrr,uhrzr,wertwe,uhrz,wehrh,wehrb,azStrs,mStra                 &
-     &,wehrts,io2Ws,ISWEHR,jlWO2,janzWt)                                
+!...  Ermittlung der Wehrhoehen bei Vorgabe von O2OW und O2UW
+call WEHRLES(itags,monats,Jahrs,itagr,monatr                      &
+&,jahrr,uhrzr,wertwe,uhrz,wehrh,wehrb,azStrs,mStra                 &
+&,wehrts,io2Ws,ISWEHR,jlWO2,janzWt)
 
-! ..Ermittlung der Wetterdaten für den Zeitschritt                      
-      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
-     &,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
-     &,imet,iWSta,iwetts)                                               
+! ..Ermittlung der Wetterdaten für den Zeitschritt
+call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
+&,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
+&,imet,iWSta,iwetts)
 
-!######################################################################################                                                                       
-!...Strangschleife  fuer alle Straenge: Einlesen der Einleiterdaten und Randbedingungen 
-!######################################################################################                                                                       
+!######################################################################################
+!...Strangschleife  fuer alle Straenge: Einlesen der Einleiterdaten und Randbedingungen
+!######################################################################################
 
-! ....Einfluss der Wehre auf O2,pH und Temperatur                       
-        call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw                       &
-       &,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                           &
-       &,tzt,hte_z,htez_z,dH2D,ESTRNR,kanz,inkzmx,iSta                    &
-       &,nstr,istr,jnkz,iflRi,jlWO2,janzWS,janzWt,hnkzs                   &
-       &,mwehr)                                                           
+! ....Einfluss der Wehre auf O2,pH und Temperatur
+call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw                       &
+&,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                           &
+&,tzt,hte_z,htez_z,dH2D,ESTRNR,kanz,inkzmx,iSta                    &
+&,nstr,istr,jnkz,iflRi,jlWO2,janzWS,janzWt,hnkzs                   &
+&,mwehr)
 
-!...Neubelegung des vertikalen Rechengitters an jedem Gitterpunkt       
-      call sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D             &
-     &,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz,hakiz,hagrz      &
-     &,hablz,hchlaz,itags)   
-                                           
-!...nur Tracer         ?????                                                 
-      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
-     &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-     &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)                          
-      if(ifehl.gt.0)goto 989 
-!                                                                       
-      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
+!...Neubelegung des vertikalen Rechengitters an jedem Gitterpunkt
+call sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D             &
+&,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz,hakiz,hagrz      &
+&,hablz,hchlaz,itags)
 
-!***************Sediment-Stofffluxe********                             
-      call sedflux(tiefe,vmitt,rau,hw2,hSedOM,hdKorn,vO2,vNO3,vNH4,gelP &
-     &,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,orgCsd,sedalk,sedalg      &
-     &,sedalb,sedSS,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z    &
-     &,nkzs)                                                            
+!...nur Tracer         ?????
+call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
+&,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
+&,VALTBR,EDUFBR,breite,anze)
+if(ifehl.gt.0)goto 989
+!
+call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet)
 
-!***********Rotatorien***********************                           
-      call konsum(vkigr,TEMPW,VO2,TFLIE                                 &
-     &,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
-     &,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
-     &,irmaxe,zexki,zexgr,zexbl                                         &
-     &,aki,agr,abl,iwied,rmuas,iras                                     &
-     &,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
-     &,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
-     &,itags,mstr,itrein)                                               
+!***************Sediment-Stofffluxe********
+call sedflux(tiefe,vmitt,rau,hw2,hSedOM,hdKorn,vO2,vNO3,vNH4,gelP &
+&,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,orgCsd,sedalk,sedalg      &
+&,sedalb,sedSS,KNH4e,kapN3e,tflie,ilbuhn,itags,monats,uhrz,vo2z    &
+&,nkzs)
 
-!***************Chorophium******************                            
- 1440 call coroph(coro,coros,tempw,flae,elen,anze,ior                   &
-     &,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI            &
-     &,coroIs,abl,algcob,mStas,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn)                            
+!***********Rotatorien***********************
+call konsum(vkigr,TEMPW,VO2,TFLIE                                 &
+&,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
+&,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
+&,irmaxe,zexki,zexgr,zexbl                                         &
+&,aki,agr,abl,iwied,rmuas,iras                                     &
+&,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
+&,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
+&,itags,mstr,itrein)
 
-!*************Dreissena*******************                              
-      call dreissen(zdrei,zdreis,tempw,flae,elen,anze                   &
-     &,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg                     &
-     &,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek                      &
-     &,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs                    &
-     &,lait1,laim1,laid1,drrt,drft,stdpla,ilang                         &
-     &,resdr,exdrvg,exdrvk,ssalg,drpfec                                 &
-     &,abl,exdrvb,abbcm,algdrb,drfaeb                                   &
-     &,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs                 &
-     &,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax                            &
-     &,sgwmue,fkm,FoptDe,mstr,itrein)                                   
+!***************Chorophium******************
+1440 call coroph(coro,coros,tempw,flae,elen,anze,ior                   &
+&,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI            &
+&,coroIs,abl,algcob,mStas,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn)
 
-!***************hetrero. Nanoflagelaten (HNF)********                   
-      call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                           &
-     &,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
-     &,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNFe,BACkse       &
-     &,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itrein)                     
+!*************Dreissena*******************
+call dreissen(zdrei,zdreis,tempw,flae,elen,anze                   &
+&,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg                     &
+&,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek                      &
+&,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs                    &
+&,lait1,laim1,laid1,drrt,drft,stdpla,ilang                         &
+&,resdr,exdrvg,exdrvk,ssalg,drpfec                                 &
+&,abl,exdrvb,abbcm,algdrb,drfaeb                                   &
+&,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs                 &
+&,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax                            &
+&,sgwmue,fkm,FoptDe,mstr,itrein)
 
-!***********Kieselalgen***************                                  
-      call algaeski(SCHWI,TFLIE,TEMPW                                   &
-     &,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemk,CHLA,ir                    &
-     &,SI,dalgki,dalgak,flag,elen,ior,anze                              &
-     &,sedalk,algzok,echla,qeinl,vabfl                                  &
-     &,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl                       &
-     &,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema             &
-     &,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk               &
-     &,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                 &
-     &,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk            &
-     &,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                        &
-     &,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,dH2De,tempwz,cpfad        &
-     &,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                        &
-     &,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke      &
-     &,alamda,akitbr,chlaz,akibrz,akiz,algakz,algzkz,ablz,agrz          &
-     &,Dz2D,mstr,itags,monats,itrein)            
-                       
-!**********************Blaualgen******************                      
-      call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen                         &
-     &,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                    &
-     &,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl            &
-     &,abchl,abgmax,abksn,abksp,saettb,abremi                           &
-     &,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied                         &
-     &,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros           &
-     &,zakie,zagre,zable,asble,qeinl,jiein,echla,ess                    &
-     &,algdrb,algcob,antbl,zooind,GRote,SS,extk                         &
-     &,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,dH2De,tempwz,cpfad            &
-     &,up_PBz,up_NBz,Qmx_PB,Qmn_PB,upmxPB                               &
-     &,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr         &
-     &,chlaz,ablbrz,up_N2z,ablz,algabz,algzbz,Dz2D                      &
-     &,mstr,itags,monats)                                               
+!***************hetrero. Nanoflagelaten (HNF)********
+call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                           &
+&,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl                      &
+&,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNFe,BACkse       &
+&,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itrein)
 
-!**********************Gruenalgen******************                     
-      call algaesgr(SCHWI,TFLIE,TEMPW                                   &
-     &,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA                       &
-     &,SSALG,dalggr,dalgag,flag,elen,ior,anze,sedalg,algzog             &
-     &,dgrmor,fkm,vkigr,chlaki,chlagr                                   &
-     &,vabfl,qeinl,jiein,evkigr,eantbl                                  &
-     &,agchl,aggmax,agksn,agksp,agremi                                  &
-     &,vco2,algdrg,pbiogr,Q_PK,nbiogr,Q_NK,iph                          &
-     &,akbcm,agbcm,aki,agr,cmatgr,cmatki,abbcm                          &
-     &,antbl,abl,nbiobl,pbiobl,chlabl,extk                              &
-     &,tpgr,uhrz,iwied,algcog,figaus,agmuea,fhegas                      &
-     &,agreau,tauscs,ischif,ilbuhn,ieros                                &
-     &,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG                        &
-     &,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,dH2De,tempwz,cpfad            &
-     &,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG,Qmn_PG,upmxPG             &
-     &,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr                   &
-     &,agrbrz,akiz,agrz,ablz,chlaz,algagz,algzgz,Dz2D)                  
+!***********Kieselalgen***************
+call algaeski(SCHWI,TFLIE,TEMPW                                   &
+&,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemk,CHLA,ir                    &
+&,SI,dalgki,dalgak,flag,elen,ior,anze                              &
+&,sedalk,algzok,echla,qeinl,vabfl                                  &
+&,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl                       &
+&,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema             &
+&,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk               &
+&,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                 &
+&,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk            &
+&,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                        &
+&,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,dH2De,tempwz,cpfad        &
+&,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                        &
+&,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke      &
+&,alamda,akitbr,chlaz,akibrz,akiz,algakz,algzkz,ablz,agrz          &
+&,Dz2D,mstr,itags,monats,itrein)
 
-!**********benthische Algen**********************                       
-      call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP         &
-     &,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp              &
-     &,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2         &
-     &,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang)                      
-                                                                       
-!***********************Makrophythen*****************                   
-      call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie               &
-     &,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi          &
-     &,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr)            
-      if(ifehl.gt.0)goto 989 
+!**********************Blaualgen******************
+call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen                         &
+&,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                    &
+&,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl            &
+&,abchl,abgmax,abksn,abksp,saettb,abremi                           &
+&,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied                         &
+&,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros           &
+&,zakie,zagre,zable,asble,qeinl,jiein,echla,ess                    &
+&,algdrb,algcob,antbl,zooind,GRote,SS,extk                         &
+&,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,dH2De,tempwz,cpfad            &
+&,up_PBz,up_NBz,Qmx_PB,Qmn_PB,upmxPB                               &
+&,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr         &
+&,chlaz,ablbrz,up_N2z,ablz,algabz,algzbz,Dz2D                      &
+&,mstr,itags,monats)
 
-!*************orgC********************************                      
-      call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,bl01,bl02               &
-     &,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze                  &
-     &,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor     &
-     &,jiein,bsbgr,bsbki,akbcm,agbcm,pfl,ezind                          &
-     &,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb                        &
-     &,csbki,csbgr,ischif,echla,evkigr,eantbl                           &
-     &,aki,agr,drfaek,drfaeg,drfaes,ssdr,orgCsd                         &
-     &,CD,CP,CM,BAC,O2BSB,GRote,vcsb,vkigr,antbl                        &
-     &,HNFBAC,BSBHNF,CHNF,eCHNF,fbsgr,frfgr,fbsgrs,frfgrs               &
-     &,BACmua,dorgSS,ilbuhn,iwied,fkm,bsbct                             &
-     &,pl0,Q_PK,Q_PB,Q_PG,pZoo,nl0,Q_NK,Q_NB,Q_NG,nzoo                  &
-     &,bsbctP,bsbctN,hyPe,hymxDe,KsD1e,KsD2e,KsMe,upBACe                &
-     &,YBACe,rsGBACe,nkzs,mstr,itags,monats,uhrz,itrein)                
+!**********************Gruenalgen******************
+call algaesgr(SCHWI,TFLIE,TEMPW                                   &
+&,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA                       &
+&,SSALG,dalggr,dalgag,flag,elen,ior,anze,sedalg,algzog             &
+&,dgrmor,fkm,vkigr,chlaki,chlagr                                   &
+&,vabfl,qeinl,jiein,evkigr,eantbl                                  &
+&,agchl,aggmax,agksn,agksp,agremi                                  &
+&,vco2,algdrg,pbiogr,Q_PK,nbiogr,Q_NK,iph                          &
+&,akbcm,agbcm,aki,agr,cmatgr,cmatki,abbcm                          &
+&,antbl,abl,nbiobl,pbiobl,chlabl,extk                              &
+&,tpgr,uhrz,iwied,algcog,figaus,agmuea,fhegas                      &
+&,agreau,tauscs,ischif,ilbuhn,ieros                                &
+&,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG                        &
+&,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,dH2De,tempwz,cpfad            &
+&,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG,Qmn_PG,upmxPG             &
+&,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr                   &
+&,agrbrz,akiz,agrz,ablz,chlaz,algagz,algzgz,Dz2D)
 
-!************Stickstoff****************                                 
-      call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2           &
-     &,go2n,vno3,bsbt,flag,elen,ior,anze                                &
-     &,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
-     &,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2                     &
-     &,agrno3,akino3,jiein,ischif                                       &
-     &,ynmx1e,stks1e,anitrie,bnmx1e,bnks1e,vph,vno2,ij                  &
-     &,albewg,alberg,albewk,alberk,resdr,aki,agr                        &
-     &,exdrvk,exdrvg,vx02,ex02,eno2,ynmx2e,stks2e                       &
-     &,abl,ablnh4,ablno3,exdrvb                                         &
-     &,bnmx2e,bnks2e,nl0,zooind,GRote,nzoo,gesN,orgCsd                  &
-     &,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm                      &
-     &,CD,CP,CM,BAC,bsbct,bsbctN,nkzs,vnh4z,vno2z,vno3z,dH2D            &
-     &,hJNO3,hJNH4,susO2N,hFluN3                                        &
-     &,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB,Q_NB,up_NBz         &
-     &,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z          &
-     &,abno3z,vo2z,abltbr,akitbr,agrtbr,agrbrz,akibrz,ablbrz            &
-     &,mstr,uhrz,itags,monats,enl0,algakz,algagz,algabz                 &
-     &,up_N2z,iorLa,iorLe,ieinLs,flae,qeinlL,eNH4L                      &
-     &,eNO2L,eNO3L,gesNL,itrein)                                        
+!**********benthische Algen**********************
+call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP         &
+&,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp              &
+&,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2         &
+&,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang)
 
-!*****************pH-Wert***********************                        
-      call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbt,dalgki                  &
-     &,dalggr,dalgak,dalgag,po2p,po2r,rau,vmitt,tiefe,flae,vabfl        &
-     &,flag,elen,ior,anze,vph                                           &
-     &,ssalg,stind,albewg,alberg,albewk,alberk,wge                      &
-     &,abl,dalgbl,dalgab,IDWe,iwied,fkm,ij,resdr                        &
-     &,dzres1,dzres2,aki,agr,ilbuhn,eph,emw,elf,eca,vco2,qeinl          &
-     &,jiein,mstr,cpfad,itags,monats,uhrz,itrein)                       
+!***********************Makrophythen*****************
+call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie               &
+&,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi          &
+&,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr)
+if(ifehl.gt.0)goto 989
 
-!****************Temperatur*******************                          
-      call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
-     &,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl                  &
-     &,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs               &
-     &,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL                &
-     &,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed              &
-     &,Wlage,hWS,iRHKW,itrein,htempw,htempz)                            
+!*************orgC********************************
+call orgC(obsb,ocsb,TIEFE,RAU,TFLIE,VMITT,bl01,bl02               &
+&,zooind,abszo,tempw,vbsb,bsbt,flag,elen,ior,anze                  &
+&,ecsb,ebsb,qeinl,vabfl,sdbsb,zexki,zexgr,bsbbet,dkimor,dgrmor     &
+&,jiein,bsbgr,bsbki,akbcm,agbcm,pfl,ezind                          &
+&,abl,abbcm,bsbbl,csbbl,dblmor,zexbl,drfaeb                        &
+&,csbki,csbgr,ischif,echla,evkigr,eantbl                           &
+&,aki,agr,drfaek,drfaeg,drfaes,ssdr,orgCsd                         &
+&,CD,CP,CM,BAC,O2BSB,GRote,vcsb,vkigr,antbl                        &
+&,HNFBAC,BSBHNF,CHNF,eCHNF,fbsgr,frfgr,fbsgrs,frfgrs               &
+&,BACmua,dorgSS,ilbuhn,iwied,fkm,bsbct                             &
+&,pl0,Q_PK,Q_PB,Q_PG,pZoo,nl0,Q_NK,Q_NB,Q_NG,nzoo                  &
+&,bsbctP,bsbctN,hyPe,hymxDe,KsD1e,KsD2e,KsMe,upBACe                &
+&,YBACe,rsGBACe,nkzs,mstr,itags,monats,uhrz,itrein)
 
-!************ortho-Phosphat**********                                   
-      call po4s(gelp,flag,elen,ior,tiefe                                &
-     &,dalggr,dalgki,dalgag,dalgak                                      &
-     &,ep,qeinl,vabfl,anze,tflie,dzres1,dzres2                          &
-     &,jiein,sedalk,sedalb,sedalg                                       &
-     &,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,pl0      &
-     &,abl,dalgbl,dalgab,exdrvb,gesP,orgCsd                             &
-     &,zooind,GRote,pZoo,bl01,bl02,egesP,ilbuhn,iwied                   &
-     &,CD,CP,CM,BAC,bsbctP,Qmx_PK,Q_PK,up_PKz                           &
-     &,Qmx_PG,Q_PG,up_PGz,Qmx_PB,Q_PB,up_PBz,epl0                       &
-     &,gelpz,dalggz,dalgkz,dalgbz,agrtbr,akitbr,abltbr,agrbrz           &
-     &,akibrz,ablbrz,algakz,algagz,algabz,hJPO4,nkzs,dH2D               &
-     &,dH2De,mstr,iorLa,iorLe,ieinLs,flae,qeinlL,gPL,gesPL,itrein)      
+!************Stickstoff****************
+call ncyc(tempw,vx0,vnh4,tflie,rau,tiefe,vmitt,rhyd,vo2           &
+&,go2n,vno3,bsbt,flag,elen,ior,anze                                &
+&,enh4,eno3,ex0,qeinl,vabfl,pfl,sgo2n,sedx0,don                    &
+&,susn,bettn,susno,agrnh4,akinh4,dzres1,dzres2                     &
+&,agrno3,akino3,jiein,ischif                                       &
+&,ynmx1e,stks1e,anitrie,bnmx1e,bnks1e,vph,vno2,ij                  &
+&,albewg,alberg,albewk,alberk,resdr,aki,agr                        &
+&,exdrvk,exdrvg,vx02,ex02,eno2,ynmx2e,stks2e                       &
+&,abl,ablnh4,ablno3,exdrvb                                         &
+&,bnmx2e,bnks2e,nl0,zooind,GRote,nzoo,gesN,orgCsd                  &
+&,egesN,sedalk,sedalb,sedalg,ilbuhn,iwied,fkm                      &
+&,CD,CP,CM,BAC,bsbct,bsbctN,nkzs,vnh4z,vno2z,vno3z,dH2D            &
+&,hJNO3,hJNH4,susO2N,hFluN3                                        &
+&,Qmx_NK,Q_NK,up_NKz,Qmx_NG,Q_NG,up_NGz,Qmx_NB,Q_NB,up_NBz         &
+&,dalgkz,dalgbz,dalggz,agnh4z,aknh4z,abnh4z,agno3z,akno3z          &
+&,abno3z,vo2z,abltbr,akitbr,agrtbr,agrbrz,akibrz,ablbrz            &
+&,mstr,uhrz,itags,monats,enl0,algakz,algagz,algabz                 &
+&,up_N2z,iorLa,iorLe,ieinLs,flae,qeinlL,eNH4L                      &
+&,eNO2L,eNO3L,gesNL,itrein)
 
-!***************Silikat**********************                           
-      call silikat(si,flag,elen,ior                                     &
-     &,esi,qeinl,vabfl,anze,tflie,jiein,aki                             &
-     &,albewk,alberk,tiefe,tempw,sised,ilbuhn,akkssi                    &
-     &,Qmx_SK,Q_SK,up_Siz,Siz,dalgkz,akitbr,akibrz                      &
-     &,SiRuek,Skmor,nkzs,dH2D,dH2De,mstr                                &
-     &,iorLa,iorLe,ieinLs,flae,qeinlL,SiL,itags,uhrz,itrein)            
+!*****************pH-Wert***********************
+call ph(mw,pw,ca,lf,tempw,tflie,susn,bsbt,dalgki                  &
+&,dalggr,dalgak,dalgag,po2p,po2r,rau,vmitt,tiefe,flae,vabfl        &
+&,flag,elen,ior,anze,vph                                           &
+&,ssalg,stind,albewg,alberg,albewk,alberk,wge                      &
+&,abl,dalgbl,dalgab,IDWe,iwied,fkm,ij,resdr                        &
+&,dzres1,dzres2,aki,agr,ilbuhn,eph,emw,elf,eca,vco2,qeinl          &
+&,jiein,mstr,cpfad,itags,monats,uhrz,itrein)
 
-!*********Sauerstoff******************                                  
-      call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,FLAE,TFLIE,go2n             &
-     &,dalgki,dalggr,dalgak,dalgag,akinh4,agrnh4,akino3,agrno3          &
-     &,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                &
-     &,eo2,qeinl,vabfl,po2p,po2r,so2ein                                 &
-     &,bbei2D,salgo,dalgo,dalgao,o2ein1,jiein                           &
-     &,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg          &
-     &,opblmi,opblma,ablnh4,ablno3,dalgbl,dalgab                        &
-     &,albewk,alberk,abeowk,abeork,ro2dr,wge,IDWe                       &
-     &,fkm,uhrz,si,gelp,ssalg,ir,vnh4,vno3,bsbbet                       &
-     &,zooro2,rO2HNF,ilbuhn,iwied                                       &
-     &,vo2z,susO2N,nkzs,dH2D                                            &
-     &,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z,abno3z   &
-     &,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats &
-     &,itrein)
-                                                          
-!***************Schwebstoffe**************                              
-      call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                      &
-     &,tflie,VMITT,flag,elen,ior,anze,ess,qeinl,vabfl                   &
-     &,dkimor,dgrmor,abszo,zexki,zexgr                                  &
-     &,abl,zexbl,dblmor,drfaeb,jiein                                    &
-     &,aki,agr,ssdr,drfaek,drfaeg,drfaes,fssgr,sedss,fssgrs             &
-     &,tauscs,ischif,ilbuhn,fkm,ieros,iwied                             &
-     &,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,GROTe,mstr             &
-     &,itrein)                                                          
+!****************Temperatur*******************
+call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
+&,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl                  &
+&,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs               &
+&,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL                &
+&,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed              &
+&,Wlage,hWS,iRHKW,itrein,htempw,htempz)
 
-!********Coliform***********                                            
-      call COLIFORM(tiefe,vabfl,elen,flag,tflie,schwi                   &
-     &,ss,zooind,GRote,Chla,tempw,jiein,ecoli,qeinl,anze                &
-     &,ilbuhn,coli,DOSCF,alamda,mstr,itrein)                            
+!************ortho-Phosphat**********
+call po4s(gelp,flag,elen,ior,tiefe                                &
+&,dalggr,dalgki,dalgag,dalgak                                      &
+&,ep,qeinl,vabfl,anze,tflie,dzres1,dzres2                          &
+&,jiein,sedalk,sedalb,sedalg                                       &
+&,albewg,alberg,albewk,alberk,resdr,aki,agr,exdrvk,exdrvg,pl0      &
+&,abl,dalgbl,dalgab,exdrvb,gesP,orgCsd                             &
+&,zooind,GRote,pZoo,bl01,bl02,egesP,ilbuhn,iwied                   &
+&,CD,CP,CM,BAC,bsbctP,Qmx_PK,Q_PK,up_PKz                           &
+&,Qmx_PG,Q_PG,up_PGz,Qmx_PB,Q_PB,up_PBz,epl0                       &
+&,gelpz,dalggz,dalgkz,dalgbz,agrtbr,akitbr,abltbr,agrbrz           &
+&,akibrz,ablbrz,algakz,algagz,algabz,hJPO4,nkzs,dH2D               &
+&,dH2De,mstr,iorLa,iorLe,ieinLs,flae,qeinlL,gPL,gesPL,itrein)
 
-!**************Erosion*******************                               
-      call erosion(anze,fkm,ss,ssalg,tflie                              &
-     &,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb                     &
-     &,tiefe,rau,vmitt,mstr)                                            
+!***************Silikat**********************
+call silikat(si,flag,elen,ior                                     &
+&,esi,qeinl,vabfl,anze,tflie,jiein,aki                             &
+&,albewk,alberk,tiefe,tempw,sised,ilbuhn,akkssi                    &
+&,Qmx_SK,Q_SK,up_Siz,Siz,dalgkz,akitbr,akibrz                      &
+&,SiRuek,Skmor,nkzs,dH2D,dH2De,mstr                                &
+&,iorLa,iorLe,ieinLs,flae,qeinlL,SiL,itags,uhrz,itrein)
 
-!     vertikale Diffusion                                               
-      call k_eps(tempwz,tiefe,vmitt,rau,dH2D,nkzs,tflie                 &
-     &,dtemp,IDWe,WGe,mstr,Dz2D,ior,vo2z,hJO2                           &
-     &,BBEI2D,vz1,vNH4z,vNO2z,vNO3z,hJPO4,SiRuek                        &
-     &,hJNH4,hJNO3,vx02,gelPz,Siz,iwied,uhrz,FluxT1                     &
-     &,akiz,agrz,ablz,chlaz,fkm,Uvert,Breite,geoB,Wlage,hWS,itags)    
-  
-! ......Transport...............                                        
-      call Transport(anze,deltat,izeits,isub_dt,hvmitt,elen,flag        &
-     &,tempw,vo2,vnh4,vno3,vno2,vx0,vx02,Si,r1,r2,r3,mstr               &
-     &,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,O2BSB           &
-     &,bl01,bl02,zooind,chla,aki,agr,abl,chlaki,chlagr                  &
-     &,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb          &
-     &,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN,gesP                    &
-     &,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,akiiv,agriv           &
-     &,abliv,stind,mw,pw,ca,lf,coli,DOSCF,dlarvn,vph,iph,iwsim          &
-     &,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF                        &
-     &,hCD,hCP,hCM,hBAC,hO2BSB,hbl01,hbl02,hnh4,ho2                     &
-     &,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl                      &
-     &,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi              &
-     &,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb        &
-     &,SKmor,hSKmor,iflRi,dl,Uvert,iMAC,iwied,nkzs,tflie,jpoin1,itags   &
-     &,monats,itrein,uhrz)                                                   
-                                                                       
+!*********Sauerstoff******************
+call oxygen(VO2,TEMPW,RAU,VMITT,TIEFE,FLAE,TFLIE,go2n             &
+&,dalgki,dalggr,dalgak,dalgag,akinh4,agrnh4,akino3,agrno3          &
+&,bsbt,hJO2,flag,elen,ior,anze,dzres1,dzres2,hschlr                &
+&,eo2,qeinl,vabfl,po2p,po2r,so2ein                                 &
+&,bbei2D,salgo,dalgo,dalgao,o2ein1,jiein                           &
+&,opgrmi,opgrma,opkimi,opkima,albewg,alberg,abeowg,abeorg          &
+&,opblmi,opblma,ablnh4,ablno3,dalgbl,dalgab                        &
+&,albewk,alberk,abeowk,abeork,ro2dr,wge,IDWe                       &
+&,fkm,uhrz,si,gelp,ssalg,ir,vnh4,vno3,bsbbet                       &
+&,zooro2,rO2HNF,ilbuhn,iwied                                       &
+&,vo2z,susO2N,nkzs,dH2D                                            &
+&,agnh4z,aknh4z,abnh4z,dalgkz,dalgbz,dalggz,agno3z,akno3z,abno3z   &
+&,algakz,algagz,algabz,vz1,tempwz,saett,mstr,cpfad,ij,itags,monats &
+&,itrein)
+
+!***************Schwebstoffe**************
+call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                      &
+&,tflie,VMITT,flag,elen,ior,anze,ess,qeinl,vabfl                   &
+&,dkimor,dgrmor,abszo,zexki,zexgr                                  &
+&,abl,zexbl,dblmor,drfaeb,jiein                                    &
+&,aki,agr,ssdr,drfaek,drfaeg,drfaes,fssgr,sedss,fssgrs             &
+&,tauscs,ischif,ilbuhn,fkm,ieros,iwied                             &
+&,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,GROTe,mstr             &
+&,itrein)
+
+!********Coliform***********
+call COLIFORM(tiefe,vabfl,elen,flag,tflie,schwi                   &
+&,ss,zooind,GRote,Chla,tempw,jiein,ecoli,qeinl,anze                &
+&,ilbuhn,coli,DOSCF,alamda,mstr,itrein)
+
+!**************Erosion*******************
+call erosion(anze,fkm,ss,ssalg,tflie                              &
+&,ischic,sedh,tausc,sedss,sedalk,sedalg,sedalb                     &
+&,tiefe,rau,vmitt,mstr)
+
+!     vertikale Diffusion
+call k_eps(tempwz,tiefe,vmitt,rau,dH2D,nkzs,tflie                 &
+&,dtemp,IDWe,WGe,mstr,Dz2D,ior,vo2z,hJO2                           &
+&,BBEI2D,vz1,vNH4z,vNO2z,vNO3z,hJPO4,SiRuek                        &
+&,hJNH4,hJNO3,vx02,gelPz,Siz,iwied,uhrz,FluxT1                     &
+&,akiz,agrz,ablz,chlaz,fkm,Uvert,Breite,geoB,Wlage,hWS,itags)
+
+! ......Transport...............
+call Transport(anze,deltat,izeits,isub_dt,hvmitt,elen,flag        &
+&,tempw,vo2,vnh4,vno3,vno2,vx0,vx02,Si,r1,r2,r3,mstr               &
+&,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,O2BSB           &
+&,bl01,bl02,zooind,chla,aki,agr,abl,chlaki,chlagr                  &
+&,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb          &
+&,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN,gesP                    &
+&,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,akiiv,agriv           &
+&,abliv,stind,mw,pw,ca,lf,coli,DOSCF,dlarvn,vph,iph,iwsim          &
+&,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF                        &
+&,hCD,hCP,hCM,hBAC,hO2BSB,hbl01,hbl02,hnh4,ho2                     &
+&,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl                      &
+&,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi              &
+&,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb        &
+&,SKmor,hSKmor,iflRi,dl,Uvert,iMAC,iwied,nkzs,tflie,jpoin1,itags   &
+&,monats,itrein,uhrz)
+
 !vertikaler Transport
-      call Transportz(anze,deltat,izeits,isub_dt,hvmitt,elen,flag       &
-     &,tempwz,vnh4z,vno2z,vno3z,vo2z,gelPz,Siz,akiz,agrz                &
-     &,ablz,chlaz,nkzs,dH2D,i2Ds,iwsim,mstr,r1,r2,r3                    &
-     &,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz                        &
-     &,hakiz,hagrz,hablz,hchlaz,iflRi,dl,iMAC,Uvert,tflie               &
-     &,jpoin1,itags,monats,itrein,iwied,uhrz)         
-                             
-!.....Ende Strangschleife                                               
- 8888 continue 
+call Transportz(anze,deltat,izeits,isub_dt,hvmitt,elen,flag       &
+&,tempwz,vnh4z,vno2z,vno3z,vo2z,gelPz,Siz,akiz,agrz                &
+&,ablz,chlaz,nkzs,dH2D,i2Ds,iwsim,mstr,r1,r2,r3                    &
+&,htempz,ho2z,hnh4z,hno2z,hno3z,hgelPz,hSiz                        &
+&,hakiz,hagrz,hablz,hchlaz,iflRi,dl,iMAC,Uvert,tflie               &
+&,jpoin1,itags,monats,itrein,iwied,uhrz)
 
-      call anztag(monats,jahrs,jtage) 
+!.....Ende Strangschleife
+8888 continue
 
-      call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs           &
-     &,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs,antbls,zooins            &
-     &,vphs,mws,cas,lfs,ssalgs,tempws,vo2s                              &
-     &,CHNFs,BVHNFs,colis,waers,istund,uhrz,RBtyp,NRSCHr                &
-     &,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB)               
+call anztag(monats,jahrs,jtage)
+
+call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs           &
+&,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs,antbls,zooins            &
+&,vphs,mws,cas,lfs,ssalgs,tempws,vo2s                              &
+&,CHNFs,BVHNFs,colis,waers,istund,uhrz,RBtyp,NRSCHr                &
+&,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB)
 
 
 

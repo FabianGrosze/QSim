@@ -27,7 +27,7 @@
 
 !> Contains settings as defined in EreigG.txt
 !! @date 20.06.2022
-module mod_model_settings
+module module_model_settings
    implicit none
    save
    
@@ -68,7 +68,7 @@ module mod_model_settings
 
 contains
 
-   !> Reads paths as given to the program
+   !> Read paths as given to the program
    subroutine get_paths(linux)
       logical, intent(in)  :: linux    !< Should paths adapt to linux?
       
@@ -89,15 +89,14 @@ contains
          sep = bckslsh(1:1)
       endif
       
-      ! cPfad
       if (cpfad /= '/F') cpfad = trim(cpfad) // sep
-      ! cPfad1 
       cpfad1 = trim(cpfad1) // sep
+      
    end subroutine get_paths
    
    
    
-   !> Reads modell settings as defined in EreigG.txt
+   !> Read modell settings as defined in EreigG.txt
    subroutine read_ereigg_settings()
       implicit none
       
@@ -204,4 +203,4 @@ contains
       
    end subroutine read_ereigg_settings
 
-end module mod_model_settings
+end module module_model_settings

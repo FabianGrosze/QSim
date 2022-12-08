@@ -25,45 +25,64 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Berechnung des Sonnenauf- und untergangs.
+!> Sunset and Sunrise
 !! @author Volker Kirchesch
 !! @date 05.11.1987
-subroutine sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj,ifehl)
+subroutine sasu(itags, monats, geob, geol, sa, su, zg, zlk, dk, tdj)
+   implicit none
    
-   integer :: ANZT, tdj, stunde
+   ! --- dummy arguments ---
+   integer, intent(in)  :: itags   !< current day of simulation
+   integer, intent(in)  :: monats  !< current month of simulation
+   real,    intent(in)  :: geob    !< latitude
+   real,    intent(in)  :: geol    !< longitude
+   real,    intent(out) :: sa      !< sunrise
+   real,    intent(out) :: su      !< sunset
+   real,    intent(out) :: zg      !<
+   real,    intent(out) :: zlk     !<
+   real,    intent(out) :: dk      !<
+   integer, intent(out) :: tdj     !<
+   
+   ! --- local variables ---
+   integer :: anzt, ineg
+   real    :: ph, fk, t0, t1, d0, geobn
+   ! TODO (Schönung): Define pi globally
+   real, parameter :: pi = 22./7.
+   
+   if (geoB < -90.0  .or. geoB > 90.0 .or. &
+       geoL < -180.0 .or. geoL > 180.0) then
+      print "(a,f0.2)", "latitude  = ", geob
+      print "(a,f0.2)", "longidude = ", geol
+      call qerror("The given longitude or latitude is wrong.")
+   endif
    
    ! Berchnung der vergangenen Tage seit dem 21. März
-   call tage(ITAGs,MONATs,ANZT)
+   call tage(itags, monats, anzt)
    
-   ifehl = 0
-   if ((geoB < -90.0 .or. geoB > 90.0) .or. (geoL < -180.0 .or. geoL > 180.0)) then
-      ifehl = 21
-   else
-      PI = 22./7.
-      INEG = 0
-      tdj = anzt+80
-      PH = 0.9876*ANZT*PI/180.
-      ZG = -7.683*SIN(PH+1.3788)+9.867*SIN(2.*PH)
-      FK = 1.921*SIN(PH+1.3788)-1.8855
-      PH = (PH*180./PI)+FK
-      DK = 0.39875*SIN(PH*PI/180.)
-      DK = ATAN(DK/SQRT(1-DK**2))
-      GEOBn = GEOB*PI/180.
-      T0 = (-1.)*TAN(GEOBn)*TAN(DK)
-      if (T0 < 0.0) then
-         T0 = T0*(-1.)
-         INEG = 1
-      endif
-      T0 = ATAN(SQRT(1.-T0**2)/T0)
-      if (ineg > 0) then
-         t1 = pi-t0
-         t0 = t1
-      endif
-      D0 = 0.833/(COS(GEOBn)*COS(DK)*SIN(T0))
-      T0 = ((T0*180./PI)+D0)*4.
-      ZLK = (15.-GEOL)*4.
-      SA = (720.-T0-ZG+ZLK)/60.
-      SU = (720.+T0-ZG+ZLK)/60.
+   ineg = 0
+   tdj = anzt + 80
+   ph = 0.9876 * anzt * pi/180.
+   zg = -7.683 * sin(ph + 1.3788) + 9.867 * sin(2. * ph)
+   fk = 1.921 * sin(ph + 1.3788) - 1.8855
+   ph = (ph*180./pi)+fk
+   dk = 0.39875*sin(ph*pi/180.)
+   dk = atan(dk/sqrt(1-dk**2))
+   geobn = geob*pi/180.
+   t0 = (-1.)*tan(geobn)*tan(dk)
+   if (t0 < 0.0) then
+      t0 = t0*(-1.)
+      ineg = 1
    endif
+   t0 = atan(sqrt(1.-t0**2)/t0)
+   if (ineg > 0) then
+      t1 = pi-t0
+      t0 = t1
+   endif
+   d0 = 0.833/(cos(geobn)*cos(dk)*sin(t0))
+   t0 = ((t0*180./pi)+d0)*4.
+   zlk = (15.-geol)*4.
+   sa = (720. - t0 - zg + zlk) / 60.
+   su = (720. + t0 - zg + zlk) / 60.
+   
    return
 end subroutine sasu

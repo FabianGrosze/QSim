@@ -28,7 +28,7 @@
 !> Berechnung des Makrophytenentwicklung im Jahresgang
 subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
                  itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi,     &
-                 pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,ifehl,ifhStr,        &
+                 pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                     &
                  kontroll,jjj)
    
    logical     :: kontroll
@@ -39,13 +39,11 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
    real        :: pfldalg(1000),po2p(1000),po2r(1000),pflmin(1000)
    real        :: pflmax(1000),schwi(1000)
    real        :: tiefe(1000),tempw(1000),pfl(1000),extk(1000)
+   character(1000) :: message
   
-   ifehl = 0
-   ifhStr = 0
-   !
-   if (ilang == 0)goto 999
-   !
-   !
+   if (ilang == 0) return
+   
+   
    if (mstart > 2)goto 30
    NRStart = ITstart+31*(Mstart-1)
    goto 31
@@ -81,9 +79,8 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
    do 111 ior = 1,anze
       !
       if (itstart <= 0 .and. pflmax(ior) > 0.0) then
-         ifehl = 17
-         ifhStr = mstr
-         goto 999
+         write(message, "(a,i0)"), "Invalid dates for macrophytes growth in stretch ", mstr
+         call qerror(message)
       endif
       !
       if (pflmax(ior) <= 0.0) then
@@ -179,7 +176,5 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
       !
       
    111 continue
-   !
-   !
-   999 return
+
 end

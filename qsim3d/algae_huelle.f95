@@ -424,8 +424,6 @@ subroutine algae_huelle(i)
    it_h(1,2) = it_h(1,1)
    itags = tag     ! Tag im Monat module::modell zeitsekunde()
    monats = monat  ! Monat im Jahr module::modell zeitsekunde()
-   ! ifehl,ifhStr ! Fehlernummer und Strang in dem der Fehler auftrat
-   ifehl = 0
    isim_end = 0
    if (kontroll) print*,'vor algaes**: up_Siz = ',up_Siz(1,1)
    if (kontroll) print*,'vor algaes**: chlaki,chlagr,chlabl = ',chlaki(1),chlagr(1),chlabl(1)
@@ -500,7 +498,7 @@ subroutine algae_huelle(i)
                  ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG            &
                  ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                &
                  ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0,hQ_NGz&
-                 ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                               &
+                 ,a1Gr,a2Gr,a3Gr, isim_end,agmor_1,azStrs                                                           &
                  ,kontroll,iglob)
    
    ! vkigr(ior) = chlaki(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
@@ -524,11 +522,6 @@ subroutine algae_huelle(i)
    if (kontroll) print*,'nach algaes**: up_NKz = ',up_NKz(1,1)
    if (kontroll) print*,'nach algaes**:hchlkz hchlgz hchlbz hCChlgz hCChlkz hCChlbz = ' &
        ,hchlkz(1,1,1), hchlgz(1,1,1), hchlbz(1,1,1), hCChlgz(1,1,1), hCChlkz(1,1,1), hCChlbz(1,1,1)
-   if (ifehl > 0) then
-      print*,'algae_huelle: nk,i,iglob = ',nk,i,iglob
-      print*,'ifehl,ifhstr = ',ifehl,ifhstr
-      call qerror('algaesgr ifehl > 0')
-   end if
    778 continue
    
    ! ==========================================================================

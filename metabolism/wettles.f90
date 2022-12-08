@@ -114,13 +114,14 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
                
             enddo
             
-            !...Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
-            if (hcTmx2 == (-1.)) then
-               ifehl = 4
-               ifhStr = IWETT
-               goto 989
+            ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
+            if (hcTmx2 == -1.) then
+               write(message, "(a,i0)"), "No minimum temperature given for weather station ", iwett
+               call qerror(message)
             endif
-         else             ! Messwerte auf Stundenbasis
+            
+         else
+            ! Messwerte auf Stundenbasis
             do mWett = 1,mWetts(iwett)
                read(86,2023,iostat = read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett),jahrw(iWSta(iwett),mwett)       &
                     ,uhrzw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)

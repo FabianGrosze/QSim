@@ -30,7 +30,7 @@
 !! @date 30.08.1994
 subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq,&
-                    bHmq, jsed, w2, w2b, ifehl,                               &
+                    bHmq, jsed, w2, w2b,                                      &
                     kontroll, jjj)
 
    integer                         :: azStr, azStrs
@@ -40,7 +40,7 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
    real, dimension(azStrs,1000)    :: dKorn, SedOM, raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
-   
+   character(1000)                 :: message
    
    ! fOM_OC Verhältnis organisches Material zu organischem Kohlenstoff
    fOM_OC = 1./0.378
@@ -81,10 +81,8 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
          
          ! Fehlermeldung
          if (Hmq(mstr,mSta) <= 0.0) then
-            write(199,1999)Stakm(mstr,mSta)
-            1999 format(2x,'Es fehlt die Zuordnung von MQ-Werten am Profil: ',F8.3)
-            ifehl = 26
-            goto 999
+            write(message, "(a,f8.3)"), "Missing MQ values at profile ", Stakm(mstr,mSta)
+            call qerror(message)
          endif
          
          ns = 2
