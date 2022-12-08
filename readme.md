@@ -2,6 +2,11 @@
 
 ## 14.09
 
+### 14.09.14
+Improvement of Errormessaging in QSim1D. `subroutine qerror` is now available to both QSim1D and QSim3D. 
+Thisway errormessages can be sent from any part of the program. The former mechanism of using errorcodes (`ifehl`) and defining
+messages in file `fehlermeldungen.txt` becomes obsolete and is removed entirely from QSim.
+
 ### 14.09.13
 * QSim3D: initialise tracers with 0; write actual mean age to ganglinien files
 * QSim1D: Remove xml-definitions for deactivated modules
