@@ -127,7 +127,8 @@ module modell
    integer min_rand, max_rand, min_zone, max_zone
    real :: modell_geob, modell_geol, modell_flaeche
    real :: mittelflaech, mittelvolumen
-   integer , allocatable , dimension (:) :: knot_ele ! Anzahl der Elemente an einem Knoten (nur untrim)
+   integer , allocatable , dimension (:) :: knot_ele ! Anzahl der Elemente an einem Knoten 
+   integer , allocatable , dimension (:) :: knot_kant ! Anzahl der kanten an einem Knoten
    !> Strings bis zu 2000 Zeichen lang
    character (len = 2000) :: ctext
    !> \anchor rechenzeit aktuelle rechenzeit in ganzen Sekunden

@@ -180,10 +180,9 @@ subroutine screen_schism()
       n = dlength(dimids(1))
       !print*,'screen_schism: node number in stack',meinrang,' =',n
       call mpi_barrier (mpi_komm_welt, ierr)!#!
-      call MPI_Allreduce(n, maxstack, 1, MPI_INT, MPI_MAX, mpi_komm_welt, iret)
       if(meinrang==0)then
          print*,i,'-th stack; screen_schism Zeiten,delta',zeit_min, zeit_max,zeit_delta  &
-               ,' transinfo_anzahl=',transinfo_anzahl,' maxstack=',maxstack
+               ,' transinfo_anzahl=',transinfo_anzahl
       endif
 
       !iret = nf_inq_varid(ncid,'dahv', varid)

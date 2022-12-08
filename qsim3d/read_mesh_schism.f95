@@ -61,12 +61,12 @@ subroutine read_mesh_schism() !meinrang.eq.0
    character (len = longname)        :: dateiname,systemaufruf
    character(len = 72)               :: fgb,fgb2  ! Processor specific global output file name
    character(len = 400)              :: textline
-   integer                           :: ne_l, np_l, ns_l ! numbers on each process
+   integer                           :: ne_l,nea_l,nea2_l, np_l,npa_l, ns_l,nsa_l ! numbers on each process
    integer                           :: irank
    integer                           :: nmax, nmin, tn, bn
    real                              :: dtout
    !real,allocatable,dimension (:)    :: manni
-   integer,allocatable,dimension(:,:):: nm2
+   integer,allocatable,dimension(:,:):: nm2,nm3
    integer,allocatable,dimension(:)  :: kbp00_global , i34_global, rrr
    real                              :: xmax, xmin, ymax, ymin, zmax, zmin, xmaxi, xmini, ymaxi, ymini, zmaxi, zmini
    real                              :: rzone, distmax, distmin, sum_area, totalarea, dx,dy
@@ -293,12 +293,20 @@ subroutine read_mesh_schism() !meinrang.eq.0
 
 !#### allocate mesh properties QSim ###########################################################################!
       if (meinrang == 0) then !! nur prozessor 0
-         allocate (knoten_x(knotenanzahl2D),knoten_y(knotenanzahl2D),knoten_z(knotenanzahl2D),   &
-                  knoten_zone(knotenanzahl2D),knoten_rang(knotenanzahl2D),    &
-                  knoten_rand(knotenanzahl2D),knoten_flaeche(knotenanzahl2D), stat = istat )
-         knoten_z(:)=-777777.7
-         knoten_rang(:)=0
-         knoten_rand(:)=0
+         allocate(ne_sc(proz_anz), np_sc(proz_anz), ns_sc(proz_anz),stat = istat)
+         if (istat /= 0) call qerror('Allocation error: np')
+         ! nodes knoten
+         allocate( iplg_sc(proz_anz,knotenanzahl2D) )
+         allocate (knoten_x(knotenanzahl2D),knoten_y(knotenanzahl2D),knoten_z(knotenanzahl2D),        &
+                  knoten_zone(knotenanzahl2D),knoten_rang(knotenanzahl2D),knot_ele(knotenanzahl2D),   &
+                  knoten_rand(knotenanzahl2D),knoten_flaeche(knotenanzahl2D),                         &
+                  knoten_trocken(knotenanzahl2D),knot_kant(knotenanzahl2D),stat = istat )
+         knoten_z=-777777.7 ; knoten_flaeche=0.0
+         knoten_zone=0; knoten_rang=0; knoten_rand=0; knot_ele=0; knoten_trocken=0 ; knot_kant=0
+         allocate( kbp00_global(knotenanzahl2D) ,stat = istat)
+         if (istat /= 0) call qerror('Allocation error: kbp00_global')
+         ! elements
+         allocate( ielg_sc(proz_anz,number_plankt_point) ) !! too large, who cares?
          allocate (element_x(number_plankt_point), element_y(number_plankt_point), stat = istat )
          if (istat /= 0) call qerror('allocate (element_x failed')
          allocate (element_rand(number_plankt_point), stat = istat )
@@ -318,29 +326,37 @@ subroutine read_mesh_schism() !meinrang.eq.0
          allocate (elementnodes(number_plankt_point,4), stat = istat )
          if (istat /= 0) call qerror('allocate (elementnodes( failed')
          elementnodes(:,:)=-1
-         allocate(ne_sc(proz_anz), np_sc(proz_anz), ns_sc(proz_anz),stat = istat)
-         if (istat /= 0) call qerror('Allocation error: np')
-         allocate( kbp00_global(knotenanzahl2D) ,stat = istat)
-         if (istat /= 0) call qerror('Allocation error: kbp00_global')
-         allocate( ielg_sc(proz_anz,number_plankt_point) ) !! too large, who cares?
-         allocate( iplg_sc(proz_anz,knotenanzahl2D) )
+         allocate (elementedges(number_plankt_point,4), stat = istat )
+         if (istat /= 0) call qerror('allocate (elementedges( failed')
+         elementedges(:,:)=-1
+         allocate(element_trocken(number_plankt_point),stat=istat);
+         if (istat /= 0) call qerror('allocate element_trocken( failed')
+         element_trocken=0
+
+         ! edges kanten
          allocate( islg_sc(proz_anz,kantenanzahl) )
-         allocate( nm2(4,number_plankt_point), stat = istat)
+         allocate( nm2(4,number_plankt_point),nm3(4,number_plankt_point), stat = istat)
          allocate( top_node(kantenanzahl), bottom_node(kantenanzahl), stat = istat)
          top_node(:) = -1; bottom_node(:) = -1
+         allocate( left_element(kantenanzahl),right_element(kantenanzahl), stat = istat)
+         left_element(:) = -1; right_element(:) = -1
          allocate( edge_normal_x(kantenanzahl), edge_normal_y(kantenanzahl), &
                    cell_bound_length(kantenanzahl), stat = istat)
          edge_normal_x(:) = -77.7; edge_normal_y(:) = -77.7; cell_bound_length(:) = -77.7
-         print*,"read_mesh_schism: allocate 0 3"
+         allocate(ed_vel_x(kantenanzahl),ed_vel_y(kantenanzahl),stat=istat)
+         if (istat /= 0) call qerror('allocate ed_vel_( failed')
+         ed_vel_x=0.0; ed_vel_y=0.0
+
+         print*,'read_mesh_schism: allocated QSim arrays'
       endif
       
 !#### Reconstruct connectivity table ###########################################################################!
    call mpi_barrier (mpi_komm_welt, ierr)
+   maxstack = 0
    if (meinrang == 0) then !! prozessor 0 only
       ! reread on process 0
       write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_000000'
       lfdb = len_trim(dateiname)
-      maxstack = 0
       do irank = 1,proz_anz,1 ! all ranks
          write(dateiname(lfdb-5:lfdb),'(i6.6)') irank-1
          open(10, file = dateiname, status = 'old', iostat = istat)
@@ -348,26 +364,26 @@ subroutine read_mesh_schism() !meinrang.eq.0
          if (istat /= 0) call qerror('read_mesh_schism reread: open 10 failed')
          if ( .not. zeile(10))call qerror('Lesefehler 1')
          if ( .not. zeile(10))call qerror('Lesefehler 2')
-         read(10,*)ne_l
+         read(10,*)ne_l,nea_l,nea2_l
          do k = 1,ne_l
             read(10,*)j,ielg_sc(irank,k)
             element_rang(ielg_sc(irank,k)) = irank-1 ! element_rang(ielg_sc(irank,k))+1  !
          enddo !k
-         read(10,*)np_l
+         read(10,*)np_l,npa_l
          !print*,'irank,np_l=',irank,np_l,trim(adjustl(dateiname))
          do k = 1,np_l
             read(10,*)j,iplg_sc(irank,k)
             knoten_rang(iplg_sc(irank,k)) = irank-1 ! knoten_rang(iplg_sc(irank,k))+1 ! 
          enddo !k
-         read(10,*)ns_l
+         read(10,*)ns_l,nsa_l
          do k = 1,ns_l
             read(10,*)j,islg_sc(irank,k)
          enddo !k
          ! print*,irank,"read_mesh_schism: np_l,ne_l,ns_l=",np_l,ne_l,ns_l
-         ! take care that maxstack is large enough for everything
-         if (maxstack < ne_l)maxstack = ne_l
-         if (maxstack < np_l)maxstack = np_l
-         if (maxstack < ns_l)maxstack = ns_l
+         ! take care that maxstack is large enough for everything !ne_l,nea_l,nea2_l, np_l,npa_l, ns_l,nsa_l
+         if (maxstack < nea_l)maxstack = nea_l
+         if (maxstack < npa_l)maxstack = npa_l
+         if (maxstack < nsa_l)maxstack = nsa_l
          ! Header:
          if ( .not. zeile(10))call qerror('get_local_to_global Header missing')!read(10+meinrang,*) !'Header:'
          read(10,*)start_year,start_month,start_day,start_hour,utc_start
@@ -401,17 +417,22 @@ subroutine read_mesh_schism() !meinrang.eq.0
          enddo !m points
          
          ! Reconstruct connectivity table
-         do m=1,ne_sc(irank)
+         do m=1,ne_sc(irank)  !m elemente
             j=ielg_sc(irank,m)
+!           read(10+meinrang,*)i34(m),(elnode(mm,m),mm=1,i34(m))
             read(10,*,iostat = istat)cornernumber(j),(nm2(mm,m),mm = 1,cornernumber(j))
             if (istat /= 0)call qerror('read(10,*) ( cornernumber... failed')
-            read(10,'(A)',iostat = istat)textline
-            read(10,'(A)',iostat = istat)textline
-!           read(10+meinrang,*)i34(m),(elnode(mm,m),mm=1,i34(m))
 !           read(10+meinrang,*)kbe(m),area(m),ic3(1,m),ic3(2,m),ic3(3,m),ic3(4,m)
+            read(10,'(A)',iostat = istat)textline
 !           read(10+meinrang,*)elside(1,m),elside(2,m),elside(3,m),elside(4,m),ssign(1,m),ssign(2,m),ssign(3,m),ssign(4,m)
+            read(10,*,iostat = istat)nm3(1,m),nm3(2,m),nm3(3,m),nm3(4,m)
+            if (istat /= 0)call qerror('read_mesh_schism: elside nm3 elementedges ... failed')
+!           #!  integer,save,allocatable :: elnode(:,:)      ! Element-node tables
+!           #!  integer,save,allocatable :: elside(:,:)             ! Element-side tables
+!           #!   integer , allocatable , dimension (:,:) :: elementnodes, elementedges
             do mm = 1,cornernumber(j)
                i = nm2(mm,m) ! local node number
+               k = nm3(mm,m) ! local side number
                if (i > np_sc(irank) .or. i <= 0) then
                   print*,',nm2(1....4,',m,')) = ',nm2(1,m),nm2(2,m),nm2(3,m),nm2(4,m)
                   print*,',i,np(irank),irank,nm2(mm,m),mm,m,j,cornernumber(j) = ',  &
@@ -419,11 +440,10 @@ subroutine read_mesh_schism() !meinrang.eq.0
                   call qerror('cornernumber error in read_mesh_schism')
                endif
                elementnodes(j,mm) = iplg_sc(irank,i)
+               elementedges(j,mm) = islg_sc(irank,k)
             enddo ! all mm element corners
          enddo !m elemente
-         !print*,'ne_sc|',trim(textline)
-         
-         do i=1,ns_sc(irank)
+         do i=1,ns_sc(irank) !i edges/sides
             read(10,*,iostat = istat)nummy,tn,bn
 !###        read(10+meinrang,*)j,isidenode(1:2,j)
             if(istat /= 0)call qerror('read_mesh_schism: read(10,*)nummy,tn,bn... failed')
@@ -431,20 +451,25 @@ subroutine read_mesh_schism() !meinrang.eq.0
                print*,'read_mesh_schism: wrong edge/side',i,nummy,tn,bn
                call qerror('read_mesh_schism: wrong edge/side number')
             endif
-            read(10,'(A)',iostat = istat)textline
-!###        read(10+meinrang,*)distj(i),delj(i),snx(i),sny(i),isbs(i),kbs(i),isdel(1,i),isdel(2,i)
             if (istat /= 0)call qerror('read(10,*) ( distj(i),delj(i)... failed')
             if ((tn <= 0) .or. (tn > np_sc(irank)))print*,irank,tn,np_sc(irank)," tn wrong"
             if ((bn <= 0) .or. (bn > np_sc(irank)))print*,irank,bn,np_sc(irank)," bn wrong"
             top_node(   islg_sc(irank,i)) = iplg_sc(irank,tn)
             bottom_node(islg_sc(irank,i)) = iplg_sc(irank,bn)
+            read(10,*,iostat = istat)dummy,dummy,dummy,dummy,dummy,dummy,tn,bn
+            left_element( islg_sc(irank,i)) = ielg_sc(irank,tn)
+            right_element(islg_sc(irank,i)) = ielg_sc(irank,tn)
+            !#!###        read(10+meinrang,*)distj(i),delj(i),snx(i),sny(i),isbs(i),kbs(i),isdel(1,i),isdel(2,i)
+            !#!  integer,save,allocatable :: isdel(:,:)             ! Side-element tables
+            !#!  integer,save,allocatable :: isidenode(:,:)      ! Side-node tables
+            !#!   integer , allocatable , dimension (:) :: top_node,bottom_node,  left_element,right_element
             !!! vnor1=su2(k,j)*snx(j)+sv2(k,j)*sny(j)
             !!! vnor2=su2(k-1,j)*snx(j)+sv2(k-1,j)*sny(j)
             !!! flux_adv_hface(k,j)=(zs(k,j)-zs(k-1,j))*distj(j)*(vnor1+vnor2)/2 !normal * area = flux (in local x-direction)
          enddo !i edges/sides
          close(10)
       enddo ! all irank
-      deallocate( nm2 )
+      deallocate( nm2 ); deallocate( nm3 )
       
       do n = 1,knotenanzahl2D !! check if all nodes are read
          if(knoten_z(n)<-15000.0)then
@@ -452,15 +477,19 @@ subroutine read_mesh_schism() !meinrang.eq.0
             call qerror('point error in read_mesh_schism')
          endif
       enddo ! all n points
-      
       do n = 1,kantenanzahl !! check integrity of side-node connectivity
          if ((top_node(n) <= 0) .or. (top_node(n) > knotenanzahl2D))print*,"top_node(",n,")wrong",top_node(n)
          if ((bottom_node(n) <= 0) .or. (bottom_node(n) > knotenanzahl2D))print*,"bottom_node(",n,")wrong",bottom_node(n)
+         knot_kant(top_node(n))=knot_kant(top_node(n))+1
+         knot_kant(bottom_node(n))=knot_kant(bottom_node(n))+1
       end do ! all n sides=edges
       summ_ne = 0 ! needed by vtk output
-      do n = 1,number_plankt_point
+      do n = 1,number_plankt_point! all n elements
          summ_ne = summ_ne+cornernumber(n)+1
-      end do ! all Elements
+         do j=1,cornernumber(n)
+            knot_ele(elementnodes(n,j))=knot_ele(elementnodes(n,j))+1
+         end do ! all j corners
+      end do ! all n elements
       
       !distmax = -999999999999.9
       !distmin = 999999999999.9
@@ -468,28 +497,15 @@ subroutine read_mesh_schism() !meinrang.eq.0
       !   if (distmax <= cell_bound_length(n))distmax = cell_bound_length(n)
       !   if (distmin >= cell_bound_length(n))distmin = cell_bound_length(n)
       !end do ! all n edges/sides
-      xmax = -999999999999.9
-      xmin = 999999999999.9
-      ymax = -999999999999.9
-      ymin = 999999999999.9
-      zmax = -999999999999.9
-      zmin = 999999999999.9
-      do n = 1,knotenanzahl2D
-         if (xmax <= knoten_x(n))xmax = knoten_x(n)
-         if (xmin >= knoten_x(n))xmin = knoten_x(n)
-         if (ymax <= knoten_y(n))ymax = knoten_y(n)
-         if (ymin >= knoten_y(n))ymin = knoten_y(n)
-         knoten_z(n) = knoten_z(n)*(-1.0) ! bathymety elevation upwards
-         if (zmax <= knoten_z(n))zmax = knoten_z(n)
-         if (zmin >= knoten_z(n))zmin = knoten_z(n)
-      end do ! alle Knoten
       print*,'local_to_global_0000:'
-      print*,'x-koordinate max+min', xmax, xmin
-      print*,'y-koordinate max+min', ymax, ymin
-      print*,'Sohlhöhe max+min', zmax, zmin
+      print*,'x-koordinate max+min', maxval(knoten_x),minval(knoten_x)
+      print*,'y-koordinate max+min', maxval(knoten_y),minval(knoten_y)
+      print*,'Sohlhöhe max+min', maxval(knoten_z),minval(knoten_z)
       print*,'maxstack = ',maxstack
+      print*,'elements at nodes max+min', maxval(knot_ele),minval(knot_ele)
       !print*,'edge length distmax+distmin', distmax, distmin
    end if !! prozess 0 only
+   call MPI_Bcast(maxstack,1,MPI_INT,0,mpi_komm_welt,ierr)
    
 !#### do aquire_hgrid ################################################################################!
       if (meinrang == 0)then
@@ -501,7 +517,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
             call qerror(fehler)
          endif
          close(14)
-      endif
+      endif !meinrang == 0
       call mpi_barrier (mpi_komm_welt, ierr)
       ! nxq Cyclic index of nodes in an element (tri/quads) from schism_init
       do k=3,4 !elem. type

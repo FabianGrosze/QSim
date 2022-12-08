@@ -66,6 +66,11 @@ subroutine ausgeben_schism(itime)
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') p(n)
    end do
+   write(ion,'(A)')'SCALARS vel float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,knotenanzahl2D
+      write(ion,'(f27.6)') u(n)
+   end do
    write(ion,'(A)')'SCALARS bathymetry float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
@@ -93,7 +98,7 @@ subroutine ausgeben_schism(itime)
       call qerror(fehler)
    end if ! open_error.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
-   write(ion,'(A)')'Simlation QSim3D untrim'
+   write(ion,'(A)')'Simlation QSim3D SCHISM'
    write(ion,'(A)')'ASCII'
    write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
    write(ion,'(A)')' '
@@ -139,15 +144,68 @@ subroutine ausgeben_schism(itime)
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
    end do ! all elements
+   write(ion,'(A)')'SCALARS vel_rb1 float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,number_plankt_point
+      write(ion,'(f27.6)') rb_hydraul(1+(n-1)*number_rb_hydraul)
+   end do ! all elements
    write(ion,'(A)')'SCALARS dry float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') real(element_trocken(n))
    end do ! all elements
-
-
    close (ion)
    print*,meinrang,myrank,'elements output ausgeben_schism done'
+   
+   
+   return !!!##### prematurely ####
+
+!####### kanten edges sides ##########################################################################################   
+   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
+   if (errcode /= 0)call qerror('ausgeben_untrim writing filename kanten_ failed')
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+   if (errcode /= 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname kanten_ failed')
+   call system(systemaufruf)
+   ion = 106
+   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
+   if (open_error /= 0) then
+      write(fehler,*)'open_error kanten_.vtk'
+      call qerror(fehler)
+   end if ! open_error.ne.0
+   write(ion,'(A)')'# vtk DataFile Version 3.0'
+   write(ion,'(A)')'Simlation QSim3D SCHISM'
+   write(ion,'(A)')'ASCII'
+   write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12,2x,A)')'POINTS ',kantenanzahl, ' float'
+   do n = 1,kantenanzahl
+      write(ion,'(f17.5,2x,f17.5,2x,f8.3)') 0.5*(knoten_x(top_node(n))+knoten_x(bottom_node(n)))  &
+                                           , 0.5*(knoten_y(top_node(n))+knoten_y(bottom_node(n))), 0.0
+   end do ! alle kanten
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*2
+   do n = 1,kantenanzahl
+      write(ion,'(A,2x,I12)')'1',n
+   end do ! alle kanten
+   write(ion,'(A)')' ' ! vtk-vertex
+   write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
+   do n = 1,kantenanzahl
+      write(ion,'(A)')'1'
+   end do ! alle kanten
+   write(ion,'(A)')' '
+   write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl
+   write(ion,'(A)')'SCALARS vel_mag float 1'
+   write(ion,'(A)')'LOOKUP_TABLE default'
+   do n = 1,kantenanzahl
+      write(ion,'(f27.6)') sqrt(ed_vel_x(n)**2 + ed_vel_y(n)**2)
+   end do ! alle kanten
+   write(ion,'(A)')'VECTORS vel float'
+   !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
+   do n = 1,kantenanzahl
+      write(ion,'(6x, f11.6, 2x, f11.6, A)') ed_vel_x(n), ed_vel_y(n),'   0.0'
+   end do ! alle Knoten
+   close (ion)
+   print*,meinrang,myrank,'kanten output ausgeben_schism done'
 
    return !!!#########
 
