@@ -8779,147 +8779,36 @@ program qsim
       enddo              ! Ende Knotenschleife
       
       do iior = 1,mStas(mstr)      ! Beginn Stationenschleife
+         
          ! --------------------------------------------------------------------
          ! Ausschreiben der stündlichen Werte, falls imitt = 1
          ! --------------------------------------------------------------------
-         if (imitt == 0) goto 618
-         if (iwsim /= 4)tracer = -1.
-         if (iwsim == 4) then
-            vbsby(iior)  = -1.
-            vcsby(iior)  = -1.
-            vnh4y(iior)  = -1.
-            vno2y(iior)  = -1.
-            vno3y(iior)  = -1.
-            gsNy(iior)   = -1.
-            gelpy(iior)  = -.1
-            gsPy(iior)   = -1.
-            Siy(iior)    = -1.
-            chlay(iior)  = -1.
-            zooiny(iior) = -1.
-            vphy(iior)   = -1.
-            mwy(iior)    = -1.
-            cay(iior)    = -1.
-            lfy(iior)    = -1.
-            ssalgy(iior) = -1.
-            vo2y(iior)   = -1.
-            CHNFy(iior)  = -1.
-            coliy(iior)  = -1.
-            tempwy(iior) = -1.
-         endif
+         if (imitt == 1) then
          
-         ! Umrechnung der Uhrz in h.mm
-         Stunde = int(Uhrz)
-         hcmin = (Uhrz-Stunde)*60.
-         minute = nint(hcmin)
-         if (minute == 60) then
-            minute = 0
-            Stunde = Stunde+1
-         endif
-         rmin = minute/100.
-         Uhrhm = Stunde+rmin
-         
-         write(155,5103)itags,monats,jahrs,uhrhm,mstr,Stakm(mstr,iior),STRID(mstr)
-         
-         write(155,5105)vbsby(iior),vcsby(iior)                                           &
-                        ,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
-                        ,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
-                        ,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
-                        ,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
-                        ,tracer(iior)
-                 
-         ! Write results to csv-files for debugging
-         if (write_csv_output) then 
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
-                               ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
-                               ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
-                               ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
-                               ,';',dsedH(mstr,iior),';',tracer(iior)
-            write(156,'(a)')adjustl(trim(langezeile))
-            
-            
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
-                               ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
-                               ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
-                               ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
-                               ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
-                               ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
-            write(157,'(a)')adjustl(trim(langezeile))
-            write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
-                               ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
-                               ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
-            write(158,'(a)')adjustl(trim(langezeile))
-         endif
-         
-         ! Umrechnung von Zeitschrittweite auf pro Stunde
-         hcUmt = 60./(tflie*1440.)
-         
-         write(155,5205)(bsbty(iior)*hcUmt),(susNOy(iior)*hcUmt),(O2ei1y(iior)*hcUmt)                           &
-                        ,(dalgoy(iior)*hcUmt),(cchlky(iior)*hcUmt),(cchlgy(iior)*hcUmt),(cchlby(iior)*hcUmt)    &
-                        ,(zoro2y(iior)*hcUmt),(schlry(iior)*hcUmt),(bettny(iior)*hcUmt)
-         
-         if (nbuhn(mstr) /= 1 .or. iwsim == 4) then
-            btempy(iior) = -1.
-            bvbsby(iior) = -1.
-            bvcsby(iior) = -1
-            bnh4y(iior)  = -1.
-            bno2y(iior)  = -.1
-            bno3y(iior)  = -1.
-            bgsNy(iior)  = -1.
-            bgelpy(iior) = -.1
-            bgsPy(iior)  = -1.
-            bsiy(iior)   = -1.
-            bchlay(iior) = -1.
-            bzooiy(iior) = -1.
-            bphy(iior)   = -1.
-            bmwy(iior)   = -1.
-            bcay(iior)   = -1.
-            blfy(iior)   = -1.
-            bssaly(iior) = -1.
-            btempy(iior) = -1.
-            bo2y(iior)   = -1.
-            if (nbuhn(mstr) == 0)tau2y(iior) = -1.
-         endif
-         
-         bcoliy = -1.
-         bHNFy = -1.
-         if (nbuhn(mstr) == 1 .and. iwsim == 4)goto 620
-         btracer(iior) = -1.
-         
-         620 continue
-         write(155,5115)bvbsby(iior),bvcsby(iior),bnh4y(iior)                          &
-                        ,bno2y(iior),bno3y(iior),bgsNy(iior),bgelpy(iior),bgsPy(iior)  &
-                        ,bsiy(iior),bchlay(iior),bzooiy(iior),bphy(iior),bmwy(iior)    &
-                        ,bcay(iior),blfy(iior),bssaly(iior),btempy(iior),bo2y(iior)    &
-                        ,bHNFy,bcoliy(iior),tau2y(iior),btracer(iior)
-         
-         5103 format(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I5)
-         
-         5104 format(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I2,2x,I2,2x,I5)
-         
-         5105 format(f6.2,2x,f6.2,2x,f6.2,2x,f6.3,2x,f9.6,2x,f5.2,2x,f6.3      &
-                     ,2x,f5.2,2x,f5.2,2x,f6.2,2x,f7.1,2x,f5.2,2x,f5.2,2x,f5.1  &
-                     ,2x,f8.1,2x,f6.2,2x,f5.2,2x,f5.2,2x,f8.1,2x,E9.2,2x,f7.2  &
-                     ,2x,f12.6,2x,f7.3)
-                     
-         5115 format(f6.2,2x,f6.2,2x,f6.2,2x,f6.3,2x,f9.6,2x,f5.2,2x,f5.3      &
-                     ,2x,f5.2,2x,f5.2,2x,f6.2,2x,f7.1,2x,f5.2,2x,f5.2,2x,f5.1  &
-                     ,2x,f6.1,2x,f6.2,2x,f5.2,2x,f5.2,2x,f8.1,2x,E9.3,2x,f7.3  &
-                     ,2x,f9.3)
-         
-         5205 format(f8.6,2x,f8.6,2x,f8.6,2x,f8.6,2x,f6.2,2x,f6.2,2x,f6.2,2x,F8.6,2x,f10.8,2x,f8.6)
-         
-         5207 format(F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F6.2,2x,F6.2,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2      &
-                     ,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F7.3,2x,F7.3,2x,F8.1,2x,F8.1  &
-                     ,2x,F5.1,2x,F5.1)
-         
-         
-         ! --------------------------------------------------------------------
-         ! Ausgabe der Ergebnisse der 2D-Modellierung
-         ! --------------------------------------------------------------------
-         618 continue
-         if (i2Daus == 1 .and. iwsim /= 4) then
-            ztiefa = 0.0
-            zPara0 = -.1
+            if (iwsim == 4) then
+               vbsby(iior)  = -1.
+               vcsby(iior)  = -1.
+               vnh4y(iior)  = -1.
+               vno2y(iior)  = -1.
+               vno3y(iior)  = -1.
+               gsNy(iior)   = -1.
+               gelpy(iior)  = -.1
+               gsPy(iior)   = -1.
+               Siy(iior)    = -1.
+               chlay(iior)  = -1.
+               zooiny(iior) = -1.
+               vphy(iior)   = -1.
+               mwy(iior)    = -1.
+               cay(iior)    = -1.
+               lfy(iior)    = -1.
+               ssalgy(iior) = -1.
+               vo2y(iior)   = -1.
+               CHNFy(iior)  = -1.
+               coliy(iior)  = -1.
+               tempwy(iior) = -1.
+            else
+               tracer = -1.
+            endif
             
             ! Umrechnung der Uhrz in h.mm
             Stunde = int(Uhrz)
@@ -8932,57 +8821,101 @@ program qsim
             rmin = minute/100.
             Uhrhm = Stunde+rmin
             
-            write(255,5104)itags,monats,jahrs,Uhrhm,mstr,Stakm(mstr,iior), &
-                           nkzmx(mstr,iior),nkzsy(iior),STRID(mstr)
+            write(155,5103)itags,monats,jahrs,uhrhm,mstr,Stakm(mstr,iior),STRID(mstr)
             
-            do nkz = 1,nkzsy(iior)
-               if (vNO2zy(nkz,iior) <= 0.0)vNO2zy(nkz,iior) = 0.001
-               if (gelPzy(nkz,iior) < 0.0)gelPzy(nkz,iior) = -.10
-               if (ztiefa > tiefey(iior))ztiefa = tiefey(iior)
-               write(255,5107)ztiefa,vNH4zy(nkz,iior),vNO2zy(nkz,iior),vNO3zy(nkz,iior),gelPzy(nkz,iior),Sizy(nkz,iior)    &
-                              ,tempzy(nkz,iior),vO2zy(nkz,iior),chlazy(nkz,iior),CChlakzy(nkz,iior),CChlabzy(nkz,iior)     &
-                              ,CChlagzy(nkz,iior),hgesPz(mstr,nkz,iior),hgesNz(mstr,nkz,iior)
-               ztiefa = ztiefa+dH2D
+            write(155,5105)vbsby(iior),vcsby(iior)                                           &
+                           ,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
+                           ,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
+                           ,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
+                           ,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
+                           ,tracer(iior)
+                    
+            ! Write results to csv-files for debugging
+            if (write_csv_output) then 
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
+                                  ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
+                                  ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
+                                  ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
+                                  ,';',dsedH(mstr,iior),';',tracer(iior)
+               write(156,'(a)')adjustl(trim(langezeile))
                
                
-               ! Ermittlung der min- und max-Werte der einzelnen Parameter für die
-               if (vNH4zy(nkz,iior) > Ymax(mstr,161)) Ymax(mstr,161) = vNH4zy(nkz,iior)
-               if (vNH4zy(nkz,iior) < Ymin(mstr,161)) Ymin(mstr,161) = vNH4zy(nkz,iior)
-               if (vNO2zy(nkz,iior) > Ymax(mstr,162)) Ymax(mstr,162) = vNO2zy(nkz,iior)
-               if (vNO2zy(nkz,iior) < Ymin(mstr,162)) Ymin(mstr,162) = vNO2zy(nkz,iior)
-               if (vNO3zy(nkz,iior) > Ymax(mstr,163)) Ymax(mstr,163) = vNO3zy(nkz,iior)
-               if (vNO3zy(nkz,iior) < Ymin(mstr,163)) Ymin(mstr,163) = vNO3zy(nkz,iior)
-               if (gelPzy(nkz,iior) > Ymax(mstr,164)) Ymax(mstr,164) = gelPzy(nkz,iior)
-               if (gelPzy(nkz,iior) < Ymin(mstr,164)) Ymin(mstr,164) = gelPzy(nkz,iior)
-               if (Sizy(nkz,iior) > Ymax(mstr,165))   Ymax(mstr,165) = Sizy(nkz,iior)
-               if (Sizy(nkz,iior) < Ymin(mstr,165))   Ymin(mstr,165) = Sizy(nkz,iior)
-               if (tempzy(nkz,iior) > Ymax(mstr,166)) Ymax(mstr,166) = tempzy(nkz,iior)
-               if (tempzy(nkz,iior) < Ymin(mstr,166)) Ymin(mstr,166) = tempzy(nkz,iior)
-               if (vO2zy(nkz,iior) > Ymax(mstr,167))  Ymax(mstr,167) = vO2zy(nkz,iior)
-               if (vO2zy(nkz,iior) < Ymin(mstr,167))  Ymin(mstr,167) = vO2zy(nkz,iior)
-               if (chlazy(nkz,iior) > Ymax(mstr,172)) Ymax(mstr,172) = chlazy(nkz,iior)
-               if (chlazy(nkz,iior) < Ymin(mstr,172)) Ymin(mstr,172) = chlazy(nkz,iior)
-               if (hgesPz(mstr,nkz,iior) > Ymax(mstr,183))Ymax(mstr,183) = hgesPz(mstr,nkz,iior)
-               if (hgesPz(mstr,nkz,iior) < Ymin(mstr,183))Ymin(mstr,183) = hgesPz(mstr,nkz,iior)
-               if (hgesNz(mstr,nkz,iior) > Ymax(mstr,184))Ymax(mstr,184) = hgesNz(mstr,nkz,iior)
-               if (hgesNz(mstr,nkz,iior) < Ymin(mstr,184))Ymin(mstr,184) = hgesNz(mstr,nkz,iior)
-               if (CChlakzy(nkz,iior) > Ymax(mstr,190)) Ymax(mstr,190) = CChlakzy(nkz,iior)
-               if (CChlakzy(nkz,iior) < Ymin(mstr,190)) Ymin(mstr,190) = CChlakzy(nkz,iior)
-               if (CChlabzy(nkz,iior) > Ymax(mstr,191)) Ymax(mstr,191) = CChlabzy(nkz,iior)
-               if (CChlabzy(nkz,iior) < Ymin(mstr,191)) Ymin(mstr,191) = CChlabzy(nkz,iior)
-               if (CChlagzy(nkz,iior) > Ymax(mstr,192)) Ymax(mstr,192) = CChlagzy(nkz,iior)
-               if (CChlagzy(nkz,iior) < Ymin(mstr,192)) Ymin(mstr,192) = CChlagzy(nkz,iior)
-               
-            enddo
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
+                                  ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
+                                  ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
+                                  ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
+                                  ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
+                                  ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
+               write(157,'(a)')adjustl(trim(langezeile))
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
+                                  ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
+                                  ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
+               write(158,'(a)')adjustl(trim(langezeile))
+            endif
             
-            do nkz = nkzsy(iior)+1,nkzmx(mstr,iior)
-               write(255,5107)zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0,zPara0
-            enddo
+            ! Umrechnung von Zeitschrittweite auf pro Stunde
+            hcUmt = 60./(tflie*1440.)
             
-            5107 format(f5.2,2x,f6.2,2x,f5.3,2x,f9.6,2x,f5.3,2x,f5.2,2x,f5.2       &
-                        ,2x,f5.2,2x,f6.2,2x,f6.2,2x,f6.2,2x,f6.2,2x,f7.3,2x,f7.3)
+            write(155,5205)(bsbty(iior)*hcUmt),(susNOy(iior)*hcUmt),(O2ei1y(iior)*hcUmt)                           &
+                           ,(dalgoy(iior)*hcUmt),(cchlky(iior)*hcUmt),(cchlgy(iior)*hcUmt),(cchlby(iior)*hcUmt)    &
+                           ,(zoro2y(iior)*hcUmt),(schlry(iior)*hcUmt),(bettny(iior)*hcUmt)
             
-         endif
+            if (nbuhn(mstr) /= 1 .or. iwsim == 4) then
+               btempy(iior) = -1.
+               bvbsby(iior) = -1.
+               bvcsby(iior) = -1
+               bnh4y(iior)  = -1.
+               bno2y(iior)  = -.1
+               bno3y(iior)  = -1.
+               bgsNy(iior)  = -1.
+               bgelpy(iior) = -.1
+               bgsPy(iior)  = -1.
+               bsiy(iior)   = -1.
+               bchlay(iior) = -1.
+               bzooiy(iior) = -1.
+               bphy(iior)   = -1.
+               bmwy(iior)   = -1.
+               bcay(iior)   = -1.
+               blfy(iior)   = -1.
+               bssaly(iior) = -1.
+               btempy(iior) = -1.
+               bo2y(iior)   = -1.
+               if (nbuhn(mstr) == 0)tau2y(iior) = -1.
+            endif
+            
+            bcoliy = -1.
+            bHNFy = -1.
+            if (nbuhn(mstr) == 1 .and. iwsim == 4)goto 620
+            btracer(iior) = -1.
+            
+            620 continue
+            write(155,5115)bvbsby(iior),bvcsby(iior),bnh4y(iior)                          &
+                           ,bno2y(iior),bno3y(iior),bgsNy(iior),bgelpy(iior),bgsPy(iior)  &
+                           ,bsiy(iior),bchlay(iior),bzooiy(iior),bphy(iior),bmwy(iior)    &
+                           ,bcay(iior),blfy(iior),bssaly(iior),btempy(iior),bo2y(iior)    &
+                           ,bHNFy,bcoliy(iior),tau2y(iior),btracer(iior)
+            
+            5103 format(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I5)
+            
+            5104 format(i2,2X,i2,2x,i4,2x,f5.2,2x,i5,2x,f8.3,2x,I2,2x,I2,2x,I5)
+            
+            5105 format(f6.2,2x,f6.2,2x,f6.2,2x,f6.3,2x,f9.6,2x,f5.2,2x,f6.3      &
+                        ,2x,f5.2,2x,f5.2,2x,f6.2,2x,f7.1,2x,f5.2,2x,f5.2,2x,f5.1  &
+                        ,2x,f8.1,2x,f6.2,2x,f5.2,2x,f5.2,2x,f8.1,2x,E9.2,2x,f7.2  &
+                        ,2x,f12.6,2x,f7.3)
+                        
+            5115 format(f6.2,2x,f6.2,2x,f6.2,2x,f6.3,2x,f9.6,2x,f5.2,2x,f5.3      &
+                        ,2x,f5.2,2x,f5.2,2x,f6.2,2x,f7.1,2x,f5.2,2x,f5.2,2x,f5.1  &
+                        ,2x,f6.1,2x,f6.2,2x,f5.2,2x,f5.2,2x,f8.1,2x,E9.3,2x,f7.3  &
+                        ,2x,f9.3)
+            
+            5205 format(f8.6,2x,f8.6,2x,f8.6,2x,f8.6,2x,f6.2,2x,f6.2,2x,f6.2,2x,F8.6,2x,f10.8,2x,f8.6)
+            
+            5207 format(F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F6.2,2x,F6.2,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2      &
+                        ,2x,F8.1,2x,F8.1,2x,F6.2,2x,F6.2,2x,F7.3,2x,F7.3,2x,F7.3,2x,F7.3,2x,F8.1,2x,F8.1  &
+                        ,2x,F5.1,2x,F5.1)
+            
+         endif         
          
          ! --------------------------------------------------------------------
          ! Summenbildung fuer Ausgabe
@@ -11037,48 +10970,6 @@ program qsim
    enddo
    
    ! --------------------------------------------------------------------------
-   ! Ausgabe der min/max-Werte bei 2D-Modellierung
-   ! --------------------------------------------------------------------------
-   if (i2Daus == 1) then
-      ztiefa = -1.
-      
-      ! maximum
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         
-         do iior = 1,mStas(mstr)
-            write(255,'(a7,14x,I5,2x,f8.3,2x,I2,2x,I2,2x,i5)')                &
-                  cmin,mstr,Stakm(mstr,iior),nkzmx(mstr,iior),nkzmx(mstr,iior),STRID(mstr)
-            do nkz = 1,nkzmx(mstr,iior)
-               write(255,5107)ztiefa,Ymin(mstr,161),Ymin(mstr,162),           &
-                              Ymin(mstr,163),Ymin(mstr,164),Ymin(mstr,165),   &
-                              Ymin(mstr,166),Ymin(mstr,167),Ymin(mstr,172),   &
-                              Ymin(mstr,190),Ymin(mstr,191),Ymin(mstr,192),   &
-                              Ymin(mstr,183),Ymin(mstr,184)
-            enddo
-            
-         enddo
-      enddo
-      
-      ! minimum
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         
-         do iior = 1,mStas(mstr)
-            write(255,'(a7,14x,I5,2x,f8.3,2x,I2,2x,I2,2x,I5)')                &
-                 cmax,mstr,Stakm(mstr,iior),nkzmx(mstr,iior),nkzmx(mstr,iior),STRID(mstr)
-            do nkz = 1,nkzmx(mstr,iior)
-               write(255,5107)ztiefa,Ymax(mstr,161),Ymax(mstr,162),           &
-                              Ymax(mstr,163),Ymax(mstr,164),Ymax(mstr,165),   &
-                              Ymax(mstr,166),Ymax(mstr,167),Ymax(mstr,172),   &
-                              Ymax(mstr,190),Ymax(mstr,191),Ymax(mstr,192),   &
-                              Ymax(mstr,183),Ymax(mstr,184)
-            enddo
-         enddo
-      enddo
-   endif
-   
-   ! --------------------------------------------------------------------------
    ! End of Program
    ! --------------------------------------------------------------------------
    close (45)     ! ErgebM.txt
@@ -11086,7 +10977,7 @@ program qsim
    close (156)    !
    close (157)    !
    close (158)    !
-   close (255)    ! Ergeb2D.txt
+   
    
    if (iRHKW == 1) close (177)   ! Red_HKW.txt
    
