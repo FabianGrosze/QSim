@@ -10910,12 +10910,14 @@ program qsim
    ! --------------------------------------------------------------------------
    ! End of Program
    ! --------------------------------------------------------------------------
-   
-   close (45)     ! ErgebM.txt
-   close (155)    ! ErgebT.txt
-   close (156)    !
-   close (157)    !
-   close (158)    !
+   pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
+   open(unit = 11, file = pfadstring)
+   close(11, status = "delete")
+   close(45)     ! ErgebM.txt
+   close(155)    ! ErgebT.txt
+   close(156)    !
+   close(157)    !
+   close(158)    !
    
    
    if (iRHKW == 1) close (177)   ! Red_HKW.txt
