@@ -7209,80 +7209,30 @@ program qsim
             enddo
          endif
          
-         ! if(iwsim.eq.4)goto 53
-         
-         ! vertikaler Transport
-         if (I2Ds(mstr) == 0 .or. iwsim == 4) then
-         else
-            ! courmx = 0.0
-            do ior = 1,anze+1
-               if (nkzs(ior) == 1) cycle
-               i_windP = 1
-               
-               call van_Veen(rau,tiefe,hvmitt,nkzs,dH2D,zf,xU,dvdz,WGe,IDWe,mstr,ior,hconus,hconub,Uvert,Wlage,hWS,i_windP  &
-                             ,azStrs)
-            enddo
-         endif
-         
-         if (I2Ds(mstr) == 0 .or. iwsim == 4) then
-            do ior = 1,anze+1
-               tempwz(1,ior) = tempw(ior)
-               vnh4z(1,ior) = vnh4(ior)
-               vno2z(1,ior) = vno2(ior)
-               vno3z(1,ior) = vno3(ior)
-               vo2z(1,ior) = vo2(ior)
-               gelPz(1,ior) = gelp(ior)
-               Siz(1,ior) = Si(ior)
-               akiz(1,ior) = aki(ior)
-               agrz(1,ior) = agr(ior)
-               ablz(1,ior) = abl(ior)
-               chlaz(1,ior) = chla(ior)
-               hchlkz(mstr,1,ior) = chlaki(ior)
-               hchlgz(mstr,1,ior) = chlagr(ior)
-               hchlbz(mstr,1,ior) = chlabl(ior)
-               hgesPz(mstr,1,ior) = gesP(ior)
-               hgesNz(mstr,1,ior) = gesN(ior)
-               hQ_NKz(mstr,1,ior) = Q_NK(ior)
-               hQ_NBz(mstr,1,ior) = Q_NB(ior)
-               hQ_NGz(mstr,1,ior) = Q_NG(ior)
-               hCChlkz(mstr,1,ior) = akbcm(ior)
-               hCChlbz(mstr,1,ior) = abbcm(ior)
-               hCChlgz(mstr,1,ior) = agbcm(ior)
-            enddo
-         else
-            call Transportz(anze, deltat, izeits, isub_dt, isub_dt_Mac, dtmin_Mac,  &
-                            hvmitt, elen, flag, tempwz, vnh4z, vno2z, vno3z, vo2z,  &
-                            gelPz, Siz, akiz, agrz, ablz, chlaz, hgesPz, hgesNz,    &
-                            nkzs, dH2D, i2Ds, iwsim, mstr, htempz, ho2z, hnh4z,     &
-                            hno2z, hno3z, hgelPz, hSiz, hQ_NKz, hQ_NBz, hQ_NGz,     &
-                            hakiz, hagrz, hablz, hchlaz, hchlkz, hchlgz, hchlbz,    &
-                            hCChlkz, hCChlbz, hCChlgz, iflRi, dl, iMAC, Uvert,      &
-                            tflie, jpoin1, itags, monats, iwied, uhrz, iverfahren,  &
-                            azStrs, ianze_max, nkztot_max, Qmx_NK, Qmx_NB, Qmx_NG,  &
-                            mtracer)
-         endif
-         
-         ! k_eps 
-         if (I2Ds(mstr) == 0 .or. iwsim == 4) then
-         else
-            do ior = 1,anze+1
-               if (nkzs(ior) == 1) cycle
-               
-               call k_eps(tempwz,tiefe,hvmitt,rau,dH2D,nkzs,tflie,dtemp,IDWe,WGe,mstr,Dz2D,ior,vo2z,hJO2      &
-                          ,dO2o2D,vz1,vNH4z,vNO2z,vNO3z,hJPO4,hJSi,hJNH4,hJNO3,vx02,gelPz,Siz,iwied,uhrz      &
-                          ,FluxT1,akiz,agrz,ablz,chlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz,orgCsd0,pl0,nl0     &
-                          ,gesP,gesN,sedalk0,sedalb0,sedalg0,aki,abl,agr,Q_PK,Q_PB,Q_PG,hQ_NKz,hQ_NBz,hQ_NGz  &
-                          ,hCChlkz,hCChlbz,hCChlgz,Q_NK,Q_NB,Q_NG,Qmx_NK,Qmx_NB,Qmx_NG,akbcm,abbcm,agbcm,fkm  &
-                          ,Wlage,hWS,itags, monats,azStrs)
-               
-               call masse_neu_qsim(ior,nkzs,akiz,aki,ablz,abl,agrz,agr,vo2z,vo2,vnh4z,vnh4,vno2z,vno2,vno3z,vno3,gelPz,gelP,Siz,Si              &
-                                   ,chlaz,chla,hchlkz,chlaki,hchlbz,chlabl,hchlgz,chlagr,hgesPz,gesP,hgesNz,gesN,dH2D,hCChlkz,akbcm              &
-                                   ,hCChlbz,abbcm,hCChlgz,agbcm,mstr,azStrs,Caki,Cabl,Cagr)
-               
-               hDz2D(mstr,ior) = Dz2D(ior)
-            enddo
-            
-         endif
+         do ior = 1,anze+1
+            tempwz(1,ior) = tempw(ior)
+            vnh4z(1,ior) = vnh4(ior)
+            vno2z(1,ior) = vno2(ior)
+            vno3z(1,ior) = vno3(ior)
+            vo2z(1,ior) = vo2(ior)
+            gelPz(1,ior) = gelp(ior)
+            Siz(1,ior) = Si(ior)
+            akiz(1,ior) = aki(ior)
+            agrz(1,ior) = agr(ior)
+            ablz(1,ior) = abl(ior)
+            chlaz(1,ior) = chla(ior)
+            hchlkz(mstr,1,ior) = chlaki(ior)
+            hchlgz(mstr,1,ior) = chlagr(ior)
+            hchlbz(mstr,1,ior) = chlabl(ior)
+            hgesPz(mstr,1,ior) = gesP(ior)
+            hgesNz(mstr,1,ior) = gesN(ior)
+            hQ_NKz(mstr,1,ior) = Q_NK(ior)
+            hQ_NBz(mstr,1,ior) = Q_NB(ior)
+            hQ_NGz(mstr,1,ior) = Q_NG(ior)
+            hCChlkz(mstr,1,ior) = akbcm(ior)
+            hCChlbz(mstr,1,ior) = abbcm(ior)
+            hCChlgz(mstr,1,ior) = agbcm(ior)
+         enddo
       endif
       
       itracer_vor = 0
@@ -7320,18 +7270,6 @@ program qsim
             sSi = sSi+((Siz(nkz,ior)+Siz(nkz+1,ior))/2.)*dH2D
             sumH = sumH+dH2D
          enddo
-         ! tempw(ior) = sT/sumH
-         ! vo2(ior) = so2/sumH
-         ! aki(ior) = ski/sumH
-         ! agr(ior) = sgr/sumH
-         ! abl(ior) = sbl/sumH
-         ! chla(ior) = schl/sumH
-         ! vNH4(ior) = sN4/sumH
-         ! vNO2(ior) = sN2/sumH
-         ! vNO3(ior) = sN3/sumH
-         ! gelP(ior) = sP/sumH
-         ! gesP(ior) = sPges/sumH
-         ! Si(ior) = sSi/sumH
       enddo
       
       ! Belegung des letzten Knoten bei nicht transportierten Groessen bzw
@@ -10972,6 +10910,7 @@ program qsim
    ! --------------------------------------------------------------------------
    ! End of Program
    ! --------------------------------------------------------------------------
+   
    close (45)     ! ErgebM.txt
    close (155)    ! ErgebT.txt
    close (156)    !
