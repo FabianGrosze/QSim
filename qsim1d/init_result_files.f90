@@ -92,15 +92,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    print*, '> Ergeb2D.txt'
    pfadstring =  trim(adjustl(cpfad)) // 'ERGEB2D.txt'
    open(unit = 255, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 255 open_error ERGEB2D.txt ',cpfad,pfadstring
-      stop 2
-   end if
-   
-   write(255,'(a,a)') '*V  QSim  ERGEB2D  ', versionstext
-   call ergeb2DFormat()
-   write(255,'(a50)')modell
-   write(255,'(a255)')cEreig
+   close(255)
    
    if (write_csv_files) then 
       ! --- Ausgabe 156 ---

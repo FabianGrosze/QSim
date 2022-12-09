@@ -142,7 +142,6 @@
 		<File RelativePath=".\E_extnctParam.f90"/>
 		<File RelativePath=".\EreigGParam.f90"/>
 		<File RelativePath=".\EreigHParam.f90"/>
-		<File RelativePath=".\ergeb2DFormat.f90"/>
 		<File RelativePath=".\Ergeb2DParam.f90"/>
 		<File RelativePath=".\ergebMFormat.f90"/>
 		<File RelativePath=".\ErgebMParam.f90"/>
