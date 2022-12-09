@@ -39,7 +39,7 @@ program qsim
    character (len = 200)                   :: ctext
    character (len = 255)                   :: filestring
    character (len = 275)                   :: pfadstring
-   character (len = 6000)                  :: langezeile
+   character (len = 6000)                  :: langezeile, message
    logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
    integer                                 :: iglob, open_error, jjj
    character (len = 120)                   :: cfehlr
@@ -397,10 +397,7 @@ program qsim
    ! --------------------------------------------------------------------------
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLA.txt'
    open(unit = 10, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'qsim.f90 read error MODELLA.txt ',trim(adjustl(pfadstring))
-      stop 2
-   end if
+   if (open_error /= 0) call qerror("Could not open ModellA.txt")
    rewind (10)
    jStr = 0
    read(10,'(2a)')ckenn_vers
@@ -1020,12 +1017,10 @@ program qsim
       ! wird ERGEB2D.txt erzeugt
       i2Daus = 0
       if (i2Ds(mstr) > 0) then
-         print*, "You are trying to run a 2D simulation."
-         print*, "This is not supported by QSim anymore"
-         print*, "Please use an older version."
-         stop
-      endif
-   
+         call qerror ("You are trying to run a 2D simulation. &
+                       This is not supported by QSim anymore. &
+                       Please use an older version.")
+      endif   
    endif
    
    6 continue
@@ -1154,17 +1149,13 @@ program qsim
    if (ckenn == 'E') then
       mE = mE+1
       if (mE > ialloc3) then
-         print*,'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
-         stop 231
+         write(message,*) 'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
+         call qerror(message)
       endif
+      
       read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-      if (open_error /= 0) then
-         print*,' read error erosion parameters ',ckenn,' : ',trim(adjustl(ctext))
-         print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-         stop 2
-      else
-         print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-      end if
+      if (open_error /= 0) call qerror("read error erosion parameters")
+      print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
       rewind (77)
       goto 231
    endif
@@ -1662,10 +1653,8 @@ program qsim
    ! ==========================================================================
    write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'EREIGH.txt'
    open(unit = 110, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'open_error EREIGH.txt ',cpfad1
-      stop 2
-   end if
+   if (open_error /= 0) call qerror("Could not open EreigH.txt")
+   
    rewind (110)
    read(110,'(A2)')ckenn_vers1
    if (ckenn_vers1 /= '*V') then
@@ -1796,11 +1785,7 @@ program qsim
    ! Vorspulen auf Simulationsbeginn
    do while (.true.)
       read(97,9705,iostat = read_error)SCHRNR,jkenn,itags_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr
-      
-      if (read_error /= 0) then   
-         print *, 'Error while reading Ablauf.txt'
-         stop
-      endif
+      if (read_error /= 0) call qerror('Error while reading Ablauf.txt')
       
       if (jkenn /= 99) cycle
       
@@ -3543,13 +3528,14 @@ program qsim
                        *hnh4(ESTRNR(istr,nstr),kanz)
                if (isnan(hcs40)) then
                   print*,"ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta) = "&
-                                                                                      ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
+                         ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
                   print*,"ESTRNR(istr,nstr),istr,nstr,kanz,iSt",ESTRNR(istr,nstr),istr,nstr,kanz,iSta
-                  stop 12
+                  call qerror("qsim.f90: Variable 'hcs40' became NaN.")
                endif
+               
                if (isnan(ho2(ESTRNR(istr,nstr),kanz))) then
                   print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
-                  stop 13
+                  call qerror("qsim.f90: Variable 'ho2' became NaN.")
                endif
                hcs40 = hcs40+abs(hQaus(ESTRNR(istr,nstr),iSta)) * ho2(ESTRNR(istr,nstr),kanz)
                hcs41 = hcs41+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hno3(ESTRNR(istr,nstr),kanz)
@@ -4074,11 +4060,12 @@ program qsim
                
             else !  Abfluss hcq <= 0.0
                if (ilang == 0 ) then ! Vorlauf
-                  print*, "Strang ",mstr, " ",trim(strnumm(mstr)),"  ",trim(strname(mstr))
-                  print*, "hat weder eine Randbedingung, noch einen zu ihm gerichteten Zufluss."
-                  print*, "Abbruch"
-                  stop 11 !
-               endif ! Vorlauf
+                  write(message,*)  "Strang ",mstr, " ",trim(strnumm(mstr)),  &
+                     "  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
+                     noch einen zu ihm gerichteten Zufluss."
+                  call qerror(message)
+               endif
+               
             endif ! Abfluss >0.0
       end select Rand_Wahl
       

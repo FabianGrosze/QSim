@@ -99,17 +99,17 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
          read(86,'(A40)')ERENAME
       endif
       read(86,*,iostat = read_error)IWETTs,IMET
-      if (read_error < 0)stop 122
+      if (read_error < 0) call qerror("Error while reading Wetter.txt")
       do iWETT = 1,iWETTs
          read(86,'(I8,2x,I5)',iostat = read_error)IWSta(iwett),mWetts(iwett)
-         if (read_error < 0)stop 123
+         if (read_error < 0) call qerror("Error while reading Wetter.txt")
          
          if (imet == 0) then
             hcTmx2 = -999.
             do mWett = 1,mWetts(iwett)
                read(86,2013,iostat = read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett)                    &
                     ,jahrw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
-               if (read_error < 0)stop 124
+               if (read_error < 0) call qerror("Error while reading Wetter.txt")
                if (wertw(iWSta(iwett),mwett,3) > hcTmx2)hcTmx2 = wertw(iWSta(iwett),mwett,3)
                
             enddo
@@ -125,7 +125,7 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
             do mWett = 1,mWetts(iwett)
                read(86,2023,iostat = read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett),jahrw(iWSta(iwett),mwett)       &
                     ,uhrzw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
-               if (read_error < 0)stop 125
+               if (read_error < 0) call qerror("Error while reading Wetter.txt")
             enddo
          endif
       enddo
