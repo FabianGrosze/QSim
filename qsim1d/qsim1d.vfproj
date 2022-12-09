@@ -93,7 +93,6 @@
 		<File RelativePath="..\metabolism\anztag.f90"/>
 		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
 		<File RelativePath="..\metabolism\C_Chla.f90"/>
-		<File RelativePath="..\metabolism\cbsb5.f90"/>
 		<File RelativePath="..\metabolism\coliform.f90"/>
 		<File RelativePath="..\metabolism\coroph.f90"/>
 		<File RelativePath="..\metabolism\Dichte.f90"/>

@@ -17,7 +17,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \
       ../metabolism/algaeski.o \
-      ../metabolism/cbsb5.o \
       ../metabolism/C_Chla.o \
       ../metabolism/coliform.o \
       ../metabolism/coroph.o \
