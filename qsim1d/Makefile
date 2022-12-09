@@ -47,7 +47,8 @@ Q1 = module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
 	ph_inflow_1d.o \
 	phosphate_inflow_1d.o \
 	nitrogen_inflow_1d.o \
-	qerror.o
+	qerror.o \
+	write_e_extnct.o
 
 -include ../metabolism/metabol.mk
 

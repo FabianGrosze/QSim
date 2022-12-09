@@ -33,32 +33,35 @@ subroutine write_gerris_definitions(cpfad1)
    
    print*,' Writing definitions:'
    
-   print *, '  > AParamParam.xml'
+   print *, '  * AParamParam.xml'
    call AParamParam(cpfad1)
    
-   print *, '  > EreigGParam.xml'
+   print *, '  * EreigGParam.xml'
    call EreigGParam(cpfad1)
    
-   print *, '  > ModellGParam.xml'
+   print *, '  * ModellGParam.xml'
    call ModellGParam(cpfad1)
    
-   print *, '  > E_extnctParam.xml'
+   print *, '  * E_extnctParam.xml'
    call E_extnctParam(cpfad1)
    
-   print *, '  > EreigHParam.xml'
+   print *, '  * EreigHParam.xml'
    call EreigHParam(cpfad1)
    
-   print *, '  > Ergeb2DParam.xml'
+   print *, '  * Ergeb2DParam.xml'
    call Ergeb2DParam(cpfad1)
    
-   print *, '  > ErgebMParam.xml'
+   print *, '  * ErgebMParam.xml'
    call ErgebMParam(cpfad1)
    
-   print *, '  > ErgebTParam.xml'
+   print *, '  * ErgebTParam.xml'
    call ErgebTParam(cpfad1)
    
-   print *, '  > WetterParam.xml'
+   print *, '  * WetterParam.xml'
    call WetterParam(cpfad1)
+   
+   print *, '  * e_extnct.dat'
+   call write_e_extnct(cpfad1)
    
    print*, 'Definitions completed.'
 end subroutine write_gerris_definitions
