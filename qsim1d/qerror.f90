@@ -28,8 +28,9 @@ subroutine qerror(message)
    ! --- write to file1.err (needed for Gerris) ---
    ! Gerris needs this file. It reads the error message from there
    ! and displays it to the user.
-   open(newunit = file1,                           &
-        file    = trim(adjustl(cpfad)) // 'file1.err')
+   open(newunit  = file1,                               &
+        file     = trim(adjustl(cpfad)) // 'file1.err', &
+        encoding = 'UTF-8')
    rewind(file1)
    write(file1,*) trim(message)
    close(file1)
