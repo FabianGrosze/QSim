@@ -49,7 +49,7 @@ program qsim
    integer, dimension(ialloc2)             :: flag, jiein, zwjiein, ischif, zwnkzs, nkzsy, nkzs
    integer, dimension(:), allocatable      :: hanze,ianze, STRiz,isub_dt,imac,isub_dt_Mac, mstr_ist, strNr, mstra
    integer, dimension(:), allocatable      :: ieinsh, ieinLs, nbuhn, iFlRi, isegs, STRID, janzWt, janzWs, jlwo2, iRB_K1, izufluss
-   integer, dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, i2Ds, mWes, mVs, mZs, mAs, mEs
+   integer, dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, mWes, mVs, mZs, mAs, mEs
    integer, dimension(:), allocatable      :: itsts, msts, itmaxs, mmaxs, itends, mends, laits, laims, laids, mStas
    integer, dimension(:), allocatable      :: abfr, mwehr, mRBs, nstrs, nnstrs, iFlRi_l
    
@@ -412,7 +412,7 @@ program qsim
    allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs), hte_z(azStrs), izufluss(azStrs))
    allocate(hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
    allocate(strname(azStrs),strnumm(azStrs))
-   allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs), i2Ds(azStrs))
+   allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs))
    allocate(mWes(azStrs), mVs(azStrs), mZs(azStrs), mAs(azStrs), itsts(azStrs), msts(azStrs), itmaxs(azStrs))
    allocate(mEs(azStrs))
    allocate(mmaxs(azStrs), itends(azStrs), mends(azStrs), laits(azStrs), laims(azStrs), laids(azStrs), mStas(azStrs))
@@ -948,6 +948,7 @@ program qsim
          read(103,"(a201)",iostat = read_error) ctext
          if (read_error /= 0) exit
          
+         ! identifier
          ckenn = ctext(1:1)
          
          select case(ckenn)
@@ -1002,9 +1003,9 @@ program qsim
             
             case('O') ! vegetation
                mV = mV+1
-               read(ctext,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
-                 ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
-                 ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
+               read(ctext,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)   &
+                 ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                     &
+                 ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV) &
                  ,(VTYPA(mstr,mV,iV),iV = 13,14)
             
             case('Z') ! sediment
@@ -1039,7 +1040,6 @@ program qsim
       mCs(mstr)  = mC
       mBs(mstr)  = mB
       mUs(mstr)  = mU
-      i2Ds(mstr) = 0
       mWes(mstr) = mWe
       mVs(mstr)  = mV
       mZs(mstr)  = mZ
@@ -2345,56 +2345,14 @@ program qsim
    nkzsmx = 0
    do azStr = 1,azStrs
       mstr = mstra(azStr)
-      i2D = 1
-      
       read(11,1000)hanze(mstr)
       
       do ior = 1,hanze(mstr)
          read(11,'(f8.3,28x,f5.2)') fkm(ior),tiefe(ior)
-         
          ! Ruecksetzen
          hnkzs(mstr,ior) = 1
          hdH2De(mstr,ior) = 0.0
-         
-         if (i2Ds(mstr) == 0 .or. i2D > i2Ds(mstr)) then
-            hnkzs(mstr,ior) = 1
-            cycle
-         endif
-         
-         if (abfr(mstr) == 0) then
-            if (fkm(ior) < efkm2D(mstr,i2D)) i2D = i2D+1
-            if (i2D > i2Ds(mstr)) cycle
-            
-            if (fkm(ior) <= afkm2D(mstr,i2D) .and. fkm(ior) >= efkm2D(mstr,i2D)) then
-               hnkzs(mstr,ior) = int(tiefe(ior)/dH2D)
-               testH = tiefe(ior)-hnkzs(mstr,ior)*dH2D
-               hdH2De(mstr,ior) = 0.0
-               
-               if (testH > 0.001) then
-                  hdH2De(mstr,ior) = testH
-                  hnkzs(mstr,ior) = hnkzs(mstr,ior)+1
-               endif
-               
-               hnkzs(mstr,ior) = hnkzs(mstr,ior)+1
-            endif
-            
-         else
-            if (fkm(ior) > efkm2D(mstr,i2D)) i2D = i2D+1
-            if (i2D > i2Ds(mstr)) cycle
-            
-            if (fkm(ior) >= afkm2D(mstr,i2D) .and. fkm(ior) <= efkm2D(mstr,i2D)) then
-               hnkzs(mstr,ior) = int(tiefe(ior)/dH2D)
-               testH = tiefe(ior)-hnkzs(mstr,ior)*dH2D
-               hdH2De(mstr,ior) = 0.0
-               
-               if (testH > 0.001) then
-                  hnkzs(mstr,ior) = hnkzs(mstr,ior)+1
-                  hdH2De(mstr,ior) = testH
-               endif
-               
-               hnkzs(mstr,ior) = hnkzs(mstr,ior)+1
-            endif
-         endif
+         hnkzs(mstr,ior) = 1
       enddo
       
       hnkzs(mstr,hanze(mstr)+1) = hnkzs(mstr,hanze(mstr))
@@ -2408,7 +2366,7 @@ program qsim
    close (11)
    
    ! ==========================================================================
-   ! Bestimmen von Sonnenauf- und untergang
+   ! get time for sunrise and sunset
    ! ==========================================================================
    call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj)
    
@@ -2427,30 +2385,6 @@ program qsim
    if (iwsim /= 4 .and. iwsim /= 5) then
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
                    cloud, typw, imet, iwied, cpfad, ckenn_vers1)
-   endif
-   
-   ! ==========================================================================
-   ! Neubelegung des vertikalen Rechengitters am ersten und letzten 
-   ! Gitterpunkts eines Strangs
-   ! ==========================================================================
-   if (ilang == 1) then
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         if (I2Ds(mstr) > 0 .and. iwsim /= 4) then
-            do jnkz = 1, 2
-               if (jnkz == 1)nkzs_hc = hnkzs(mstr,1)
-               if (jnkz == 2)nkzs_hc = hnkzs(mstr,hanze(mstr)+1)
-               if (jnkz == 1)nkzs_hc1 = znkzs(mstr,1)
-               if (jnkz == 2)nkzs_hc1 = znkzs(mstr,hanze(mstr)+1)
-               i_EstRNR = mstr
-               if (nkzs_hc /= nkzs_hc1) then
-                  call sys_gitterStrang(mstr,nkzs_hc,nkzs_hc1,dH2D,tzt,o2zt,NH4zt                                              &
-                                        ,no2zt,no3zt,Pzt,gSizt,akizt,agrzt,ablzt,chlazt,chlkzt,chlgzt,chlbzt,gesPzt,gesNzt     &
-                                        ,Q_NKzt, Q_NBzt, Q_NGzt,CChlkzt,CChlbzt,CChlgzt,jnkz,i_EstRNR,itags,monats,uhrz,azStrs)
-               endif
-            enddo
-         endif
-      enddo
    endif
    
    ! ==========================================================================
