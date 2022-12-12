@@ -33,6 +33,7 @@
          plankt_vari_vert_name(12)= "            hchlkz"
          plankt_vari_vert_name(13)= "            hchlgz"
          plankt_vari_vert_name(14)= "            hchlbz"
+         !-----------------------------------------------------------------------------------------------oben wie tiefenintegriert
          plankt_vari_vert_name(15)= "            hgesPz" !auch tiefen-integriert, aber andere Nummer 
          plankt_vari_vert_name(16)= "            hgesNz" !auch tiefen-integriert, aber andere Nummer
          plankt_vari_vert_name(17)= "            hQ_NKz" ! sticktoff-Sattheit der Kieselalgen

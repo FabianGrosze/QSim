@@ -380,7 +380,7 @@ module modell
    integer , allocatable , dimension (:) :: transinfo_zuord
    !> (SCHISM) stack in which the timestep is stored
    integer , allocatable , dimension (:) :: transinfo_stack, transinfo_instack
-   integer transinfo_anzahl, maxstack
+   integer transinfo_anzahl, maxstack, maxel
    integer,allocatable :: ne_sc(:),np_sc(:),ns_sc(:) ! all numbers on process 0
    integer,allocatable :: ielg_sc(:,:),iplg_sc(:,:),islg_sc(:,:) ! global numbers all ranks on process 0
    integer :: nst_prev ! stack number of preveously read timestep

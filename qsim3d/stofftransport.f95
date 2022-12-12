@@ -59,8 +59,22 @@ subroutine stofftransport()
                 planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
          end if !! nur prozessor 0
          call scatter_planktkon()
+         
       case(3) ! SCHISM netCDF
+         !call gather_planktkon()
+         call schism_tracer_fields(1)
+         
          call stofftransport_schism() !parallel and 3D
+         
+         call schism_tracer_fields(2)
+         !call scatter_planktkon()
+         
+         if (meinrang==control_proc)
+            print*,'nach stofftransport_schism: lf,ph = ',           &
+                  planktonic_variable_p(65+(control_elem-1)*maxel),  &
+                  planktonic_variable_p(66+(control_elem-1)*maxel)
+         endif ! Kontrollknoten
+
       case default
          call qerror('stofftransport: Hydraulischer Antrieb unbekannt')
    end select

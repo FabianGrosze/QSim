@@ -27,7 +27,7 @@
 subroutine stoffumsatz()
    use modell
    implicit none
-   integer :: i, j , i1, i2, i3, n,k,nk
+   integer :: i, j , i1, i2, i3, n,k,nk, party
    logical :: printi, nix, fehler_nan
    integer :: ilast, i1last
    real :: rlast,rcount
@@ -36,7 +36,9 @@ subroutine stoffumsatz()
    real , allocatable , dimension (:) :: tempsed_k, tempw_k
    if (meinrang == 0)print*,'stoffumsatz start'
    !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
-   do i = 1,part ! Alle Knoten auf diesem Prozessor
+   party=part
+   if(hydro_trieb==3)party=ne ! schism partition
+   do i = 1,party ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
@@ -153,6 +155,9 @@ subroutine stoffumsatz()
                ! erosion
             end if ! .not. nur_temp
          end if ! Knoten nass
+      else ! 
+         print*,'Stoffumsatz: i,part,party,iglob,number_plankt_point,nk=',i,part,party,iglob,number_plankt_point,nk
+         call qerror('Stoffumsatz: node number non existing')
       end if ! Knotennummer existiert(letzter Prozess)
    end do ! Alle Knoten auf diesem Prozess
    !print*,'Stoffumsatz erledigt ',meinrang

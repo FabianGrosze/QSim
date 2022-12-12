@@ -33,7 +33,8 @@ subroutine ausgeben()
    call mpi_barrier (mpi_komm_welt, ierr)
    call gather_benthic()
    call gather_ueber()
-   !! Aufruf immer nach stofftransport() daher ist gather_planktkon() immer schon gemacht
+   if(hydro_trieb==3)call gather_planktkon()
+   !! Aufruf nach stofftransport() daher ist gather_planktkon() bei casu und untrim schon gemacht
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       select case (hydro_trieb)
          case(1) ! casu-transinfo

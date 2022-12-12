@@ -34,6 +34,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    use QSimDatenfelder
    use aparam
    use schism_msgp
+   use schism_glbl, only:ne,nea,nea2
       
    implicit none
    integer :: i, j, n, n_cal
@@ -55,6 +56,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          end if ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+         ! evenly partitioning of variable arrays
+         part= n_cal/proz_anz
+         n = part*proz_anz
+         if (n < n_cal)part= part+1
       case(2) ! Untrim² netCDF
          if (meinrang == 0) then ! prozess 0 only
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
@@ -66,6 +71,10 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          end if ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+         ! evenly partitioning of variable arrays
+         part= n_cal/proz_anz
+         n= part*proz_anz
+         if (n < n_cal)part= part+1
       case(3) ! SCHISM netCDF
          call read_mesh_schism()
          n_cal = n_elemente !!??
@@ -91,16 +100,17 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          call msgp_init
          if(meinrang==0)print*,meinrang,'--- done msgp_tables and msgp_init ---',comm,mpi_komm_welt, ierr
          call mpi_barrier (mpi_komm_welt, ierr)
+         ! take over partitioning of variable arrays from SCHISM driver
+         ??? part= nea2
+         ??? part=maxel
+         !tracer concentration @ prism center; used as temp. storage. tr_el(ntracers,nvrt,nea2) but last index usually
+         !is valid up to nea only except for TVD
+         !!! real(rkind),save,allocatable,target :: tr_el(:,:,:) 
+
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
-   call mpi_barrier (mpi_komm_welt, ierr)
-   ! partitioning of variable arrays
-   part = n_cal/proz_anz
-   n = part*proz_anz
-   !print*,meinrang,' ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
-   if (n < n_cal)part = part+1
-   if(meinrang==0)print*,'0 part =',part,' part*proz_anz=',part*proz_anz,' n_cal = ', n_cal
+   print*,meinrang,' part =',part,' part*proz_anz=',part*proz_anz,' n_cal = ', n_cal
    call mpi_barrier (mpi_komm_welt, ierr)
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)

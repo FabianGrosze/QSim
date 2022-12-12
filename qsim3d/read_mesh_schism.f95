@@ -163,8 +163,9 @@ subroutine read_mesh_schism() !meinrang.eq.0
       number_plankt_point=n_elemente
       knotenanzahl2D = np_global
       kantenanzahl   = ns_global
-      if (meinrang == 0)print*,"read_mesh_schism: local_to_global ns_global,ne_global,np_global= "  &
-                             ,ns_global,ne_global,np_global
+      num_lev=nvrt
+      if (meinrang == 0)print*,'read_mesh_schism: local_to_global ns_global,ne_global,np_global,num_lev= '  &
+                             ,ns_global,ne_global,np_global,num_lev
       if(proz_anz .ne. nproc )then
          print*,trim(dateiname)
          print*,meinrang,' proz_anz .ne. nproc ',proz_anz,nproc
@@ -242,6 +243,10 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_reduce(sum_area,totalarea,1,MPI_FLOAT,mpi_sum,0,mpi_komm_welt,ierr)
       call mpi_barrier (mpi_komm_welt, ierr)
       if (meinrang==0)print*,'area[km²]=',totalarea,' bottom left=',xmini,ymini,' top right=',xmaxi,ymaxi
+      
+      call mpi_allreduce(nea2,maxel,1,MPI_DOUBLE_PRECISION,mpi_max,0,mpi_komm_welt,ierr)
+      if (meinrang==0)print*,'read_mesh_schism: max number Elements on one proc. maxel=',maxel
+
 
  !#### read global_to_local.prop #################################################################!
       !integer,save,allocatable :: iegl2(:,:)      ! Global-to-local element index table (2-tier augmented)
@@ -352,7 +357,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       
 !#### Reconstruct connectivity table ###########################################################################!
    call mpi_barrier (mpi_komm_welt, ierr)
-   maxstack = 0
+   maxstack=0 ; maxel=0
    if (meinrang == 0) then !! prozessor 0 only
       ! reread on process 0
       write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_000000'
@@ -740,6 +745,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       enddo ! i
 
       ! set boundary properties itrtype=1 - time series uniform along boundary ; trobc=1.0 - no nudging
+      ! so tr_nd0 is not used, as needed only for itrtype=3 and intenionally left unallocated
       ntracers=number_plankt_vari ! number of concentrations , ntr !# of tracers (=ntracers)
       if(allocated(itrtype)) deallocate(itrtype); allocate(itrtype(natrm,max_rand),stat=istat);
       if(istat/=0) call qerror('read_mesh_schism: itrtype allocation failure')
@@ -769,14 +775,14 @@ subroutine read_mesh_schism() !meinrang.eq.0
       tempmax=35.0
       tempmin=0.0
       
-      if(allocated(tr_nd0)) deallocate(tr_nd0); allocate(tr_nd0(ntracers,nvrt,npa),stat=istat);
-      if(istat/=0) call qerror('read_mesh_schism: tr_nd0 allocation failure')
-      tr_nd0=0.0 ! initialize all concentrations to zero
-      if(allocated(tr_nd)) deallocate(tr_nd); allocate(tr_nd(ntracers,nvrt,npa),stat=istat);
+      !if(allocated(tr_nd0)) deallocate(tr_nd0); allocate(tr_nd0(ntracers,nvrt,npa),stat=istat);
+      !if(istat/=0) call qerror('read_mesh_schism: tr_nd0 allocation failure')
+      !tr_nd0=0.0 ! initialize all concentrations to zero
+      ??? if(allocated(tr_nd)) deallocate(tr_nd); allocate(tr_nd(ntracers,nvrt,npa),stat=istat);
       if(istat/=0) call qerror('read_mesh_schism: tr_nd allocation failure')
       tr_nd=0.0 ! initialize all concentrations to zero
       !Hydro/schism_init.F90:      allocate(tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa),tr_nd(ntracers,nvrt,npa),stat=istat)
-      if(allocated(tr_el)) deallocate(tr_el); allocate(tr_el(ntracers,nvrt,nea2),stat=istat);
+      ??? if(allocated(tr_el)) deallocate(tr_el); allocate(tr_el(ntracers,nvrt,nea2),stat=istat);
       if(istat/=0) call qerror('read_mesh_schism: tr_el allocation failure')
       tr_el=0.0 ! initialize all concentrations to zero
       

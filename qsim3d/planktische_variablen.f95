@@ -71,6 +71,25 @@ subroutine planktkon_parallel()
       if (meinrang == 0)print*,'0 planktkon_parallel finish GlMn = (',kontrollknoten,') = '   &
           ,planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
    endif ! kontrollknoten
+   
+   
+   if (hydro_trieb==3)then ! schism
+      ! ntracers=number_plankt_vari ; nvrt=num_lev !! set in read_mesh_schism
+
+      ??? allocate(tr_el(ntracers,nvrt,nea2), stat = as )
+      if (as /= 0) then
+         write(fehler,*)' return value allocate tr_el :', as
+         call qerror(fehler)
+      end if
+      allocate(tr_nd(ntracers,nvrt,npa), stat = as )
+      if (as /= 0) then
+         write(fehler,*)' return value allocate tr_nd :', as
+         call qerror(fehler)
+      end if
+
+   end if ! schism
+
+   
    return
 end subroutine planktkon_parallel
 !----+-----+----
@@ -215,7 +234,37 @@ subroutine ini_planktkon0(nk)
             !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
          case default
             call qerror('ini_planktkon0: unknown hydraulic driver')
+            
       end select
-      
    end if !! nur prozessor 0
+   
 end subroutine ini_planktkon0
+
+!----+-----+----
+!> harmonize QSim and schism tracer fields
+!! \n\n
+subroutine schism_tracer_fields(hin_her)
+      use modell
+      use schism_glbl, only:tr_el
+      implicit none
+      integer hin_her
+      
+!   allocate (planktonic_variable_p(number_plankt_vari*part), stat = as )
+!   allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
+  !tracer concentration @ prism center; used as temp. storage. tr_el(ntracers,nvrt,nea2) but last index usually
+  !is valid up to nea only except for TVD
+  !real(rkind),save,allocatable,target :: tr_el(:,:,:) 
+  !    allocate(tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa),tr_nd(ntracers,nvrt,npa),stat=istat)
+
+      select case (hin_her)
+         case(1) ! hin / into
+            plankt_vari_vert_p()=planktonic_variable_p
+            tr_el(,,)=plankt_vari_vert_p()nea2
+         case(2) ! her / out of
+            plankt_vari_vert_p()=tr_el(,,)
+            planktonic_variable_p=plankt_vari_vert_p()
+         case default
+            call qerror('schism_tracer_fields: unknown hin_her')
+      end select ! hin_her
+
+end subroutine schism_tracer_fields

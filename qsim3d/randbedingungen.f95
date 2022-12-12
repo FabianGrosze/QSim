@@ -60,6 +60,9 @@ subroutine randbedingungen_setzen()
                RB_zaehl = element_rand(j)
             case(3) ! SCHISM
                RB_zaehl = element_rand(j)
+               
+               trth(ntracers,nvrt,mnond_global,max(1,nope_global))
+
             case default
                call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
@@ -648,6 +651,12 @@ end function randwert_gueltig
 !! \n\n aus randbedingungen.f95
 subroutine ereigg_Randbedingungen_lesen()
    use modell
+   use schism_glbl, only:trth
+   
+   !real(rkind),save,allocatable :: trth(:,:,:,:) !time series of b.c. for T,S, tracers
+??? allocate(trth(ntracers,nvrt,mnond_global,max(1,nope_global)),stat=istat)
+
+
    implicit none
    character(500) dateiname, text
    integer :: open_error, ion, read_error, alloc_status, ini,ierr
@@ -962,6 +971,9 @@ subroutine ereigg_Randbedingungen_lesen()
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
       case(3) ! SCHISM
+      
+trth(ntracers,nvrt,mnond_global,max(1,nope_global))
+
          maxrandnr = 0
          do j = 1,knotenanzahl2D !! max Randnummer ermitteln:
             if (knoten_rand(j) > 0) then !! Randknoten
