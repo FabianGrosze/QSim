@@ -154,7 +154,7 @@ program qsim
    real, dimension(ialloc2)                :: bgsAsy, bglAsy, bgsPby, bglPby, bgsCry, bglCry, bgsFey, bglFey
    real, dimension(ialloc2)                :: bgsHgy, bglHgy, bgsMny, bglMny, bgsUy, bglUy, bSSeros
    real, dimension(ialloc2)                :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs
-   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, SSeros
+   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, saett, SSeros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
    real, dimension(ialloc2,5)              :: coro, coros
@@ -357,9 +357,6 @@ program qsim
    print*, 'cPfad1:'
    print*, '   ', trim(cpfad1)
    
-   ! Schalter für "Regeln bei Kraftwerksbetrieb"
-   ! iRHKW = 1 > Betrieb der HKW's unterliegt gewissen Regeln
-   iRHKW = 0
    
    ! Vorbelegungen
    maus = 0
@@ -379,12 +376,7 @@ program qsim
    cmax = 'Maximum'
    cpoint = '.'
    
-   if (iRHKW == 1) then
-      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'Red_HKW.txt'
-      open(unit = 177, file = pfadstring, iostat = open_error)
-   endif
-   
-   
+  
    ! --------------------------------------------------------------------------
    ! reading from ModellA.txt (unit 10)
    ! --------------------------------------------------------------------------
@@ -5728,11 +5720,13 @@ program qsim
          call ctracer(tempw,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs)
          
       else
-         call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl               &
-                   ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL &
-                   ,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW,htempw,htempz                    &
-                   ,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR                                                &
-                   ,.false.,0)
+         call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze, &
+                      etemp,ewaerm,typ,qeinl,vabfl,jiein,cloud,typw,iwied,uhrz,&
+                      ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,   &
+                      flae,qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,     &
+                      monats,Tsed,Wlage,hWS,htempw,htempz,WUEBKS,SPEWKSS,      &
+                      PSREFSS,extkS,azStrs,iwsim,iform_VerdR,                  &
+                      .false.,0)
       endif
       
       if (nbuhn(mstr) == 0)goto 413
@@ -10340,8 +10334,6 @@ program qsim
    close(156)
    close(157)
    close(158)   
-   
-   if (iRHKW == 1) close (177)   ! Red_HKW.txt
    
    write(*,*) 'Success.'
    write(*,*) 'End of Simulation'

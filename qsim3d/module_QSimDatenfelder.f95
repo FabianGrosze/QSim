@@ -625,7 +625,6 @@ module QSimDatenfelder
    !!<tr><td>    Wlage   </td><td>   real, Dimension(50,1000)</td><td>   Höhenlage der zuständigen Wetterstation mü.NHN         </td></tr>
    !!<tr><td>    hWS   </td><td>   real, Dimension(50,1000)</td><td>   Höhenlage des Wasserspiegels mü.NHN            </td></tr>
    !!
-   !!<tr><td>    iRHKW   </td><td>   integer (implizit?)   </td><td>   %%% hier unbenutzt                  </td></tr>
    !!<tr><td>    htempw   </td><td>   real, Dimension(50,1000)    </td><td>   ?   </td></tr>
    !!<tr><td>    htempz   </td><td>   real, Dimension(50,50,1000)    </td><td>   ?   </td></tr>
    !!<tr><td>    dH2De   </td><td>   real, Dimension(1000)    </td><td>   ?                      </td></tr>

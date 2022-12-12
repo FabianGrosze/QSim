@@ -50,12 +50,7 @@
 !         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
 !         &,VALTBR,EDUFBR,breite,anze)                          
 !4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
-!5803      call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
-!         &,vmitt,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl            &
-!         &,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs               &
-!         &,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL                &
-!         &,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed              &
-!         &,Wlage,hWS,iRHKW)                                                 
+!5803      call temperw()                                                
 
 
 !---------------------------------------------------------------------------------------------------------------
