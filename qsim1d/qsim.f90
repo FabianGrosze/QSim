@@ -10907,6 +10907,8 @@ program qsim
    pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
    open(unit = 11, file = pfadstring)
    close(11, status = "delete")
+   
+   close(192, status = "delete")
    close(45)     ! ErgebM.txt
    close(155)    ! ErgebT.txt
    close(156)    !
