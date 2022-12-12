@@ -6312,7 +6312,7 @@ program qsim
       113 continue
       
       if (iwsim == 4) then
-         call CTracer(TEMPW,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs,itags,uhrz,mstr)
+         call ctracer(tempw,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs)
          
       else
          call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl               &
@@ -10908,13 +10908,12 @@ program qsim
    open(unit = 11, file = pfadstring)
    close(11, status = "delete")
    
-   close(192, status = "delete")
-   close(45)     ! ErgebM.txt
-   close(155)    ! ErgebT.txt
-   close(156)    !
-   close(157)    !
-   close(158)    !
-   
+   close(192, status = "delete") ! aparamt.txt
+   close(45)                     ! ErgebM.txt
+   close(155)                    ! ErgebT.txt
+   close(156)
+   close(157)
+   close(158)   
    
    if (iRHKW == 1) close (177)   ! Red_HKW.txt
    
