@@ -199,7 +199,6 @@
 		<File RelativePath=".\wehr.f90"/>
 		<File RelativePath=".\wehrles.f90"/>
 		<File RelativePath=".\WetterParam.f90"/>
-		<File RelativePath=".\wind_stroemung.f90"/>
 		<File RelativePath=".\write_e_extnct.f90"/>
 		<File RelativePath=".\write_gerris_definitions.f90"/>
 		<File RelativePath=".\z_gitter_einl.f90"/></Filter></Filter></Files>

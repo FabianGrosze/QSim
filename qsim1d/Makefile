@@ -40,7 +40,7 @@ Q1 = module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
 	ErgebTParam.o k_eps.o km_sys.o ModellGParam.o  qsim.o  \
 	randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o  \
 	sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-	van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o wind_stroemung.o  \
+	van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o  \
 	z_gitter_einl.o Masse_neu_QSim.o lax_wen.o lin_interpolation.o  \
 	write_gerris_definitions.o \
 	organic_carbon_inflow_1d.o \
