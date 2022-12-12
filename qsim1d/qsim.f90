@@ -4119,7 +4119,7 @@ program qsim
          call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP         &
                      ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,it_h,ij,jahrs,itage,monate,jahre,uhren        &
                      ,isim_end,azStr,azStrs)
-         call temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
+         call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
       endif
       
       

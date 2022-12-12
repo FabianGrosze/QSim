@@ -25,36 +25,6 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-! QSIM.f90:
-!~~~~~~~~~~~~~~ Weg der Ufervegetationsparameter von Eingabe MODELLG bis TEMPERW
-!1190      open(unit=103, DEFAULTFILE=cpfad, file='MODELLG.txt') 
-!1309      if(ckenn.eq.'O')then ... read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
-!         &,iV=1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
-!         &,(VTYPA(mstr,mV,iV),iV=7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
-!         &,(VTYPA(mstr,mV,iV),iV=13,14)                                     
-!1542      EDUFLH(mstr,mSta) = EDUFAL(mstr,mV) 
-!3932      EDUFBL(jR) = EDUFLH(mstr,ior) 
-!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
-!         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze)  
-!                        
-!~~~~~~~~~~~~~~ Alle an der Wärmebilanz beteiligten Subroutinen ??
-!1074  740 open(unit=86, DEFAULTFILE=cpfad, file='WETTER.txt') 
-!1759      9999 CONTINUE ! Beginn eines neuen Zeitschritts
-!2527      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj) 
-!2546      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
-!         &,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
-!         &,imet,iWSta,iwetts)                                               
-!3689      do 8888 azStr = 1,azStrs.... !Strangschleife                                   
-!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
-!         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze)                          
-!4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
-!5803      call temperw()                                                
-
-
-!---------------------------------------------------------------------------------------------------------------
-
 !> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen.
 subroutine wetter_parallel()  ! called from all processes randbedingungen_parallel()
    use modell
@@ -744,7 +714,7 @@ subroutine temperl_wetter()
       mstr = 1
       TLMAX(1) = tlmax_T(i)
       TLMIN(1) = tlmin_T(i)
-      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
+      call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
       tlmed_T(i) = TEMPL(1)
       if ((kontrollknoten > 0) .and. (meinrang == 0))      &
           print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
