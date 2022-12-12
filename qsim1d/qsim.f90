@@ -847,7 +847,7 @@ program qsim
    call km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs             &
                ,mWehr,mStas,iorLah,iorLeh,mstrLe,abfr,cpfad)
    
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'km_sys.dat'
+   pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring, iostat = open_error)
    rewind (391)
    do azStr = 1,azStrs
@@ -10316,13 +10316,25 @@ program qsim
    enddo
    
    ! --------------------------------------------------------------------------
-   ! End of Program
+   ! end of program
    ! --------------------------------------------------------------------------
+   ! --- delete temporary files ---
    pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
    open(unit = 11, file = pfadstring)
    close(11, status = "delete")
    
-   close(192, status = "delete") ! aparamt.txt
+   pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
+   open(unit = 391, file = pfadstring)
+   close(391, status = "delete")
+   
+   pfadstring = trim(adjustl(cpfad)) // 'wehro2.txt'
+   open(unit = 301, file = pfadstring)
+   close(301, status = "delete")
+   
+   ! aparamt.txt
+   close(192, status = "delete") 
+   
+   ! --- close output files --- 
    close(45)                     ! ErgebM.txt
    close(155)                    ! ErgebT.txt
    close(156)

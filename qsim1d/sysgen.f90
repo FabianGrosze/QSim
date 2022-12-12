@@ -131,7 +131,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    ! rewind (44)
    
    ! Einlesen der Datei km_sys.dat
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'km_sys.dat'
+   pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring)
    rewind (391)
    
