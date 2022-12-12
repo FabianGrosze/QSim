@@ -911,6 +911,11 @@ program qsim
    dlmax4 = 0.0
    coro1 = 0.0
    
+   print *, ''
+   print *, repeat('=', 78)
+   print *, repeat(' ', 33), 'ModellG.txt'
+   print *, repeat('=', 78)
+   
    pfadstring = trim(adjustl(cpfad)) // 'MODELLG.txt'
    open(unit = 103, file = pfadstring, iostat = open_error)
    if (open_error /= 0) call qerror ("Could not open ModellG.txt")
