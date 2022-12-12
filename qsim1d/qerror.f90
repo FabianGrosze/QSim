@@ -5,6 +5,8 @@
 !!
 !! The errormessage is both displayed in the console and written to `file1.err`
 !! (Gerris uses this file)
+!!
+!! @author Michael Schönung
 subroutine qerror(message)
    use iso_fortran_env,       only: error_unit, output_unit
    use module_model_settings, only: cpfad

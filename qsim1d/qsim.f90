@@ -829,9 +829,6 @@ program qsim
          mstr, trim(strnumm(mstr)), startkm(mstr), endkm(mstr), mStas(mstr),              &
          mwehr(mstr), mRBs(mstr), trim(strname(mstr))
    enddo
-   print *, repeat('-',78)
-   
-   
    
    ! --------------------------------------------------------------------------
    ! Ermittlung der Berechnungsgitterpunkte
@@ -1700,8 +1697,6 @@ program qsim
       print *, repeat('=', 78)
       
       call randbedingungen(cpfad, i_Rands, iw_max)
-      
-      print *, repeat('-', 78)
    endif
    
    istr = 0

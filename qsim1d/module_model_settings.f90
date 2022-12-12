@@ -199,7 +199,6 @@ contains
       print '(a,i1)',   '  iFormVert   = ', iformVert
       print '(a,i1)',   '  iForm_VerdR = ', iform_VerdR
       print '(a,i1)',   '  iWSim       = ', iwsim
-      print *, repeat('-', 78)
       
    end subroutine read_ereigg_settings
 
