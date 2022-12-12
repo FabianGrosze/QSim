@@ -913,18 +913,16 @@ program qsim
    coro1 = 0.0
    i2Daus = 0
    
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLG.txt'
+   pfadstring = trim(adjustl(cpfad)) // 'MODELLG.txt'
    open(unit = 103, file = pfadstring, iostat = open_error)
+   if (open_error /= 0) call qerror ("Could not open ModellG.txt")
    rewind(103)
    
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'temp.dat'
    open(unit = 77, file = pfadstring, iostat = open_error)
    rewind(77)
    read(103,'(A2)')ckenn_vers1
-   if (ckenn_vers1 /= '*V') then
-   else
-      read(103,'(2x)')
-   endif
+   if (ckenn_vers1 == '*V') read(103,'(2x)')
    
    mstr = 0
    read(103,2305,err = 232) lait1, laim1, laid1
@@ -982,117 +980,87 @@ program qsim
    write(77,1030)ckenn,ctext
    rewind (77)
    
-   if (ckenn == 'L') then
-      read(77,2306)laits(mstr),laims(mstr),laids(mstr)
-      rewind (77)
-      goto 231
-   endif
-   
-   if (ckenn == 'M') then
-      read(77,1031)itsts(mstr),msts(mstr)                               &
-           ,itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'P') then
-      mPf = mPf+1
-      read(77,1032)apfl(mstr,mPf),epfl(mstr,mPf)                        &
+   select case(ckenn)
+      case('L')
+         read(77,2306)laits(mstr),laims(mstr),laids(mstr)
+      
+      case('M')
+         read(77,1031)itsts(mstr),msts(mstr),itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
+      
+      case('P')
+         mPf = mPf+1
+         read(77,1032)apfl(mstr,mPf),epfl(mstr,mPf)                        &
            ,Pflmis(mstr,mPf),Pflmxs(mstr,mPf)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'F') then
-      mS = mS+1
-      read(77,1033)aschif(mstr,mS),eschif(mstr,mS)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'D') then
-      mD = mD+1
-      read(77,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
-           ,(zdrs(mstr,mD,ndr),zdrss(mstr,mD,ndr)                            &
-           ,gwdrs(mstr,mD,ndr),ndr = 1,nndr)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'C') then
-      mC = mC+1
-      read(77,1035)acoro(mstr,mC),ecoro(mstr,mC)                        &
+      
+      case('F')
+         mS = mS+1
+         read(77,1033)aschif(mstr,mS),eschif(mstr,mS)
+      
+      case('D')
+         mD = mD+1
+         read(77,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
+            ,(zdrs(mstr,mD,ndr),zdrss(mstr,mD,ndr)                            &
+            ,gwdrs(mstr,mD,ndr),ndr = 1,nndr)
+      
+      case('C')
+         mC = mC+1
+         read(77,1035)acoro(mstr,mC),ecoro(mstr,mC)                        &
            ,coro1s(mstr,mC),coross(mstr,mC)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'B') then
-      mB = mB+1
-      read(77,1036)abal(mstr,mB),ebal(mstr,mB)                          &
-           ,ggbal(mstr,mB),gkbal(mstr,mB)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'V') then
-      mD2 = mD2+1
-      read(77,1037)afkm2D(mstr,mD2),efkm2D(mstr,mD2)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'U') then
-      mU = mU+1
-      read(77,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU)             &
+      
+      case('B')
+         mB = mB+1
+         read(77,1036)abal(mstr,mB),ebal(mstr,mB)                          &
+            ,ggbal(mstr,mB),gkbal(mstr,mB)
+      
+      case('V')
+         mD2 = mD2+1
+         read(77,1037)afkm2D(mstr,mD2),efkm2D(mstr,mD2)
+         
+      case('U')
+         nbuhn(mstr) = 1
+         mU = mU+1
+         read(77,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU)             &
            ,tau2B(mstr,mU),alphaB(mstr,mU),POMzb(mstr,mU)
-      nbuhn(mstr) = 1
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'T') then
-      mWe = mWe+1
-      read(77,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe)     &
+      
+      case('T')
+         mWe = mWe+1
+         read(77,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe)     &
            ,YWlage(mstr,mWe)
-      rewind (77)
-      goto 231
-   endif
-   !
-   if (ckenn == 'O') then
-      mV = mV+1
-      read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
+      
+      case('O')
+         mV = mV+1
+         read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
            ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
            ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
            ,(VTYPA(mstr,mV,iV),iV = 13,14)
-      rewind (77)
-      goto 231
-   endif
-   if (ckenn == 'Z') then
-      mZ = mZ+1
-      read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
-      rewind (77)
-      goto 231
-   endif
-   if (ckenn == 'S') then
-      mA = mA+1
-      read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
-      rewind (77)
-      goto 231
-   endif
-   if (ckenn == 'E') then
-      mE = mE+1
-      if (mE > ialloc3) then
-         write(message,*) 'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
-         call qerror(message)
-      endif
       
-      read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-      if (open_error /= 0) call qerror("read error erosion parameters")
-      print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-      rewind (77)
-      goto 231
-   endif
+      case('Z')
+         mZ = mZ+1
+         read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
+         rewind (77)
+         goto 231
+      
+      case('S')
+         mA = mA+1
+         read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
+      
+      case('E')
+         mE = mE+1
+         if (mE > ialloc3) then
+            write(message,*) 'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
+            call qerror(message)
+         endif
+      
+         read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+         if (open_error /= 0) call qerror("read error erosion parameters")
+         print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+      
+      case default
+         call qerror("Unkown identifier in ModellG: " // ckenn)
+   end select
+   
+   rewind (77)
+   goto 231
    
    339 continue
    close (77)
