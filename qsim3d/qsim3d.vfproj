@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Application" Version="11.0" ProjectIdGuid="{1EC26908-B08C-414D-95AD-50936F67BC1E}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd;h;inc">
+		<File RelativePath=".\code_source.h"/>
+		<File RelativePath=".\plankt_vari_vert_name.h"/>
+		<File RelativePath=".\planktonic_variable_name.h"/>
+		<File RelativePath=".\qsim_sc_input.h"/>
+		<File RelativePath=".\readin_nc.h"/>
+		<File RelativePath=".\sc_qsim_output.h"/></Filter>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<File RelativePath=".\trans_read.c"/>
+		<File RelativePath=".\version.c"/></Filter>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="metabolism">
+		<Filter Name="silicate">
+		<File RelativePath="..\metabolism\silicate\module_silicate.f90"/>
+		<File RelativePath="..\metabolism\silicate\silicate.f90"/></Filter>
+		<Filter Name="phosphate">
+		<File RelativePath="..\metabolism\phosphate\module_phosphate.f90"/>
+		<File RelativePath="..\metabolism\phosphate\phosphate.f90"/></Filter>
+		<Filter Name="ph">
+		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
+		<File RelativePath="..\metabolism\ph\ph.f90"/>
+		<File RelativePath="..\metabolism\ph\pwert.f90"/></Filter>
+		<Filter Name="oxygen">
+		<File RelativePath="..\metabolism\oxygen\module_oxygen.f90"/>
+		<File RelativePath="..\metabolism\oxygen\oxygen.f90"/>
+		<File RelativePath="..\metabolism\oxygen\oxygen_saturation_concentration.f90"/></Filter>
+		<Filter Name="organic_carbon">
+		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
+		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90"/></Filter>
+		<Filter Name="nitrogen">
+		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
+		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90"/>
+		<File RelativePath="..\metabolism\nitrogen\nitrogen.f90"/></Filter>
+		<File RelativePath="..\metabolism\albenth.f90"/>
+		<File RelativePath="..\metabolism\algaesbl.f90"/>
+		<File RelativePath="..\metabolism\algaesgr.f90"/>
+		<File RelativePath="..\metabolism\algaeski.f90"/>
+		<File RelativePath="..\metabolism\anztag.f90"/>
+		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
+		<File RelativePath="..\metabolism\C_Chla.f90"/>
+		<File RelativePath="..\metabolism\cbsb5.f90"/>
+		<File RelativePath="..\metabolism\coliform.f90"/>
+		<File RelativePath="..\metabolism\coroph.f90"/>
+		<File RelativePath="..\metabolism\dichte.f90"/>
+		<File RelativePath="..\metabolism\dreissen.f90"/>
+		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
+		<File RelativePath="..\metabolism\einleiter_misch.f90"/>
+		<File RelativePath="..\metabolism\erosion.f90"/>
+		<File RelativePath="..\metabolism\erosion_kern.f90"/>
+		<File RelativePath="..\metabolism\funkstar.f90"/>
+		<File RelativePath="..\metabolism\hnf.f90"/>
+		<File RelativePath="..\metabolism\konsum.f90"/>
+		<File RelativePath="..\metabolism\lichthemmung.f90"/>
+		<File RelativePath="..\metabolism\lin_spline.f90"/>
+		<File RelativePath="..\metabolism\lin_sys.f90"/>
+		<File RelativePath="..\metabolism\metabol.mk"/>
+		<File RelativePath="..\metabolism\module_allodim.f90"/>
+		<File RelativePath="..\metabolism\module_aparam.f90"/>
+		<File RelativePath="..\metabolism\module_metabolism.f90"/>
+		<File RelativePath="..\metabolism\mphyt.f90"/>
+		<File RelativePath="..\metabolism\runge_kutta.f90"/>
+		<File RelativePath="..\metabolism\sasu.f90"/>
+		<File RelativePath="..\metabolism\schiff.f90"/>
+		<File RelativePath="..\metabolism\schweb.f90"/>
+		<File RelativePath="..\metabolism\schweb_kern.f90"/>
+		<File RelativePath="..\metabolism\schwermetalle.f90"/>
+		<File RelativePath="..\metabolism\schwermetalle_kern.f90"/>
+		<File RelativePath="..\metabolism\Sed_DiffK.f90"/>
+		<File RelativePath="..\metabolism\sed_pom.f90"/>
+		<File RelativePath="..\metabolism\SedFlux.f90"/>
+		<File RelativePath="..\metabolism\sediment.f90"/>
+		<File RelativePath="..\metabolism\Sedimentation.f90"/>
+		<File RelativePath="..\metabolism\Sedimentbelastung.f90"/>
+		<File RelativePath="..\metabolism\strahlg.f90"/>
+		<File RelativePath="..\metabolism\tage.f90"/>
+		<File RelativePath="..\metabolism\temperl.f90"/>
+		<File RelativePath="..\metabolism\temperw.f90"/>
+		<File RelativePath="..\metabolism\temperw_kern.f90"/>
+		<File RelativePath="..\metabolism\uptake.f90"/>
+		<File RelativePath="..\metabolism\version_string.f90"/>
+		<File RelativePath="..\metabolism\verteilungskoeff.f90"/>
+		<File RelativePath="..\metabolism\wettles.f90"/>
+		<File RelativePath="..\metabolism\zuflussrand.f90"/></Filter>
+		<Filter Name="qsim3d">
+		<File RelativePath=".\albenth_huelle.f95"/>
+		<File RelativePath=".\algae_huelle.f95"/>
+		<File RelativePath=".\alter.f95"/>
+		<File RelativePath=".\ausgabe.f95"/>
+		<File RelativePath=".\ausgeben_casu.f95"/>
+		<File RelativePath=".\ausgeben_schism.f95"/>
+		<File RelativePath=".\ausgeben_untrim.f95"/>
+		<File RelativePath=".\benthische_verteilungen.f95"/>
+		<File RelativePath=".\coliform_huelle.f95"/>
+		<File RelativePath=".\coroph_huelle.f95"/>
+		<File RelativePath=".\dreissen_huelle.f95"/>
+		<File RelativePath=".\eingabe.f95"/>
+		<File RelativePath=".\erosion_huelle.f95"/>
+		<File RelativePath=".\ganglinien.f95"/>
+		<File RelativePath=".\get_schism_step.f95"/>
+		<File RelativePath=".\hnf_huelle.f95"/>
+		<File RelativePath=".\initialisieren.f95"/>
+		<File RelativePath=".\kombitransi.f95"/>
+		<File RelativePath=".\konsum_huelle.f95"/>
+		<File RelativePath=".\modellg.f95"/>
+		<File RelativePath=".\module_isotope.f95"/>
+		<File RelativePath=".\module_modell.f95"/>
+		<File RelativePath=".\module_QSimDatenfelder.f95"/>
+		<File RelativePath=".\module_suspendedMatter.f90"/>
+		<File RelativePath=".\mphyt_huelle.f95"/>
+		<File RelativePath=".\nachricht.f95"/>
+		<File RelativePath=".\nitrogen_wrapper_3d.f95"/>
+		<File RelativePath=".\organic_carbon_wrapper_3d.f95"/>
+		<File RelativePath=".\oxygen_wrapper_3d.f95"/>
+		<File RelativePath=".\parallel.f95"/>
+		<File RelativePath=".\ph_wrapper_3d.f90"/>
+		<File RelativePath=".\phosphate_wrapper_3d.f95"/>
+		<File RelativePath=".\planktische_variablen.f95"/>
+		<File RelativePath=".\QSim3D.f95"/>
+		<File RelativePath=".\randbedingungen.f95"/>
+		<File RelativePath=".\read_mesh_nc_sc.f95"/>
+		<File RelativePath=".\schnitt.f95"/>
+		<File RelativePath=".\schweb_huelle.f95"/>
+		<File RelativePath=".\schwebstoff_salz.f95"/>
+		<File RelativePath=".\schwermetalle_huelle.f95"/>
+		<File RelativePath=".\screen_schism_nc.f95"/>
+		<File RelativePath=".\sedflux_huelle.f95"/>
+		<File RelativePath=".\silicate_wrapper_3d.f95"/>
+		<File RelativePath=".\stofftransport.f95"/>
+		<File RelativePath=".\stofftransport_casu.f95"/>
+		<File RelativePath=".\stofftransport_schism.f95"/>
+		<File RelativePath=".\stofftransport_untrim.f95"/>
+		<File RelativePath=".\stoffumsatz.f95"/>
+		<File RelativePath=".\temperw_huelle.f95"/>
+		<File RelativePath=".\uebergabe_werte.f95"/>
+		<File RelativePath=".\wetter.f95"/>
+		<File RelativePath=".\zonen.f95"/></Filter></Filter></Files>
+	<Globals/></VisualStudioProject>
