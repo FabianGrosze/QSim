@@ -917,152 +917,144 @@ program qsim
    open(unit = 103, file = pfadstring, iostat = open_error)
    if (open_error /= 0) call qerror ("Could not open ModellG.txt")
    rewind(103)
+
+   
    
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'temp.dat'
    open(unit = 77, file = pfadstring, iostat = open_error)
    rewind(77)
+      
+   ! file header
    read(103,'(A2)')ckenn_vers1
    if (ckenn_vers1 == '*V') read(103,'(2x)')
+   read(103,2305) lait1, laim1, laid1
+   read(103,*)
+   read(103,*)
    
-   mstr = 0
-   read(103,2305,err = 232) lait1, laim1, laid1
-   read(103,'(I5)')ihcStr
-   read(103,'(2x)')
-   
-   232 continue
-   if (mstr > 0) then
-      mPfs(mstr) = mPf
-      mSs(mstr) = mS
-      mDs(mstr) = mD
-      mCs(mstr) = mC
-      mBs(mstr) = mB
-      mUs(mstr) = mU
-      i2Ds(mstr) = mD2
-      mWes(mstr) = mWe
-      mVs(mstr) = mV
-      mZs(mstr) = mZ
-      mAs(mstr) = mA
-      mEs(mstr) = mE
-   
-      ! i2Daus steuert die Ausgabe in ERGEB2D.txt
-      ! nur wenn mindestens in einem Strang 2D gerechnet wird,
-      ! wird ERGEB2D.txt erzeugt
-      i2Daus = 0
-      if (i2Ds(mstr) > 0) then
-         call qerror ("You are trying to run a 2D simulation. &
-                       This is not supported by QSim anymore. &
-                       Please use an older version.")
-      endif   
-   endif
-   
-   6 continue
-   mPf = 0
-   mS  = 0
-   mD  = 0
-   mC  = 0
-   mB  = 0
-   mD2 = 0
-   mU  = 0
-   mWe = 0
-   mV  = 0
-   mZ  = 0
-   mA  = 0
-   mE  = 0
-   read(103,'(a1,2x,I5)',iostat = read_error)ckenn,mstr
-   if (read_error /= 0)goto 339
-   nbuhn(mstr) = 0
-   
-   231 continue 
-   read(103,1030,iostat = read_error) ckenn, ctext
-   if (read_error /= 0)goto 232
-   
-   if (ckenn == ' ')goto 232
-   write(77,1030)ckenn,ctext
-   rewind (77)
-   
-   select case(ckenn)
-      case('L')
-         read(77,2306)laits(mstr),laims(mstr),laids(mstr)
+   do while (.true.)
       
-      case('M')
-         read(77,1031)itsts(mstr),msts(mstr),itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
+      ! stretch header
+      read(103,'(a1,2x,I5)',iostat = read_error) ckenn, mstr
+      if (read_error /= 0) exit 
+      nbuhn(mstr) = 0
       
-      case('P')
-         mPf = mPf+1
-         read(77,1032)apfl(mstr,mPf),epfl(mstr,mPf)                        &
-           ,Pflmis(mstr,mPf),Pflmxs(mstr,mPf)
+      ! initialise counters
+      mPf = 0
+      mS  = 0
+      mD  = 0
+      mC  = 0
+      mB  = 0
+      mU  = 0
+      mWe = 0
+      mV  = 0
+      mZ  = 0
+      mA  = 0
+      mE  = 0
       
-      case('F')
-         mS = mS+1
-         read(77,1033)aschif(mstr,mS),eschif(mstr,mS)
-      
-      case('D')
-         mD = mD+1
-         read(77,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
-            ,(zdrs(mstr,mD,ndr),zdrss(mstr,mD,ndr)                            &
-            ,gwdrs(mstr,mD,ndr),ndr = 1,nndr)
-      
-      case('C')
-         mC = mC+1
-         read(77,1035)acoro(mstr,mC),ecoro(mstr,mC)                        &
-           ,coro1s(mstr,mC),coross(mstr,mC)
-      
-      case('B')
-         mB = mB+1
-         read(77,1036)abal(mstr,mB),ebal(mstr,mB)                          &
-            ,ggbal(mstr,mB),gkbal(mstr,mB)
-      
-      case('V')
-         mD2 = mD2+1
-         read(77,1037)afkm2D(mstr,mD2),efkm2D(mstr,mD2)
+      ! read data
+      do while (.true.)
          
-      case('U')
-         nbuhn(mstr) = 1
-         mU = mU+1
-         read(77,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU)             &
-           ,tau2B(mstr,mU),alphaB(mstr,mU),POMzb(mstr,mU)
-      
-      case('T')
-         mWe = mWe+1
-         read(77,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe)     &
-           ,YWlage(mstr,mWe)
-      
-      case('O')
-         mV = mV+1
-         read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
-           ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
-           ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
-           ,(VTYPA(mstr,mV,iV),iV = 13,14)
-      
-      case('Z')
-         mZ = mZ+1
-         read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
+         read(103,1030,iostat = read_error) ckenn, ctext
+         if (read_error /= 0 .or. ckenn == ' ') exit
+         
          rewind (77)
-         goto 231
+         write(77,1030)ckenn,ctext
+         rewind (77)
+         
+         select case(ckenn)
+            case('L') ! Laichperiode
+               read(77,2306)laits(mstr),laims(mstr),laids(mstr)
+            
+            case('M') ! macrophytes
+               read(77,1031)itsts(mstr),msts(mstr),itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
+            
+            case('P') ! macrophytes
+               mPf = mPf+1
+               read(77,1032)apfl(mstr,mPf),epfl(mstr,mPf),Pflmis(mstr,mPf),Pflmxs(mstr,mPf)
+            
+            case('F') ! shipping
+               mS = mS+1
+               read(77,1033)aschif(mstr,mS),eschif(mstr,mS)
+            
+            case('D') ! dreissena
+               mD = mD+1
+               read(77,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
+                  ,(zdrs(mstr,mD,ndr),zdrss(mstr,mD,ndr)                            &
+                  ,gwdrs(mstr,mD,ndr),ndr = 1,nndr)
+            
+            case('C') ! corophium
+               call qerror ("You are trying to run a simulation with corophium. &
+                           & This is currently not supported by QSim.")
+               ! mC = mC+1
+               ! read(77,1035)acoro(mstr,mC),ecoro(mstr,mC),coro1s(mstr,mC),coross(mstr,mC)
+            
+            case('B') ! benthic algae
+               call qerror ("You are trying to run a simulation with benthic algae. &
+                           & This is currently not supported by QSim.")
+               ! mB = mB+1
+               ! read(77,1036)abal(mstr,mB),ebal(mstr,mB),ggbal(mstr,mB),gkbal(mstr,mB)
+            
+            case('V') ! 2D
+               call qerror ("You are trying to run a 2D simulation. &
+                           & This is not supported by QSim anymore. &
+                           & Please use an older version.")
+               
+            case('U') ! groyne field
+               nbuhn(mstr) = 1
+               mU = mU+1
+               read(77,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU),tau2B(mstr,mU),alphaB(mstr,mU),POMzb(mstr,mU)
+            
+            case('T') ! wetter station
+               mWe = mWe+1
+               read(77,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe),YWlage(mstr,mWe)
+            
+            case('O') ! vegetation
+               mV = mV+1
+               read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
+                 ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
+                 ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
+                 ,(VTYPA(mstr,mV,iV),iV = 13,14)
+            
+            case('Z') ! sediment
+               mZ = mZ+1
+               read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
+               
+            case('S') ! sediment temperature
+               mA = mA+1
+               read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
+            
+            case('E') ! erosion
+               mE = mE+1
+               if (mE > ialloc3) then
+                  write(message,*) 'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
+                  call qerror(message)
+               endif
+            
+               read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+               if (open_error /= 0) call qerror("read error erosion parameters")
+               print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+            
+            case default
+               call qerror("Unkown identifier in ModellG: " // ckenn)
+         end select
+         
+      enddo
       
-      case('S')
-         mA = mA+1
-         read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
       
-      case('E')
-         mE = mE+1
-         if (mE > ialloc3) then
-            write(message,*) 'mE > ialloc3 zu viele ',mE,' Abschnitte in Strang ',mstr
-            call qerror(message)
-         endif
-      
-         read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-         if (open_error /= 0) call qerror("read error erosion parameters")
-         print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
-      
-      case default
-         call qerror("Unkown identifier in ModellG: " // ckenn)
-   end select
+      mPfs(mstr) = mPf
+      mSs(mstr)  = mS
+      mDs(mstr)  = mD
+      mCs(mstr)  = mC
+      mBs(mstr)  = mB
+      mUs(mstr)  = mU
+      i2Ds(mstr) = 0
+      mWes(mstr) = mWe
+      mVs(mstr)  = mV
+      mZs(mstr)  = mZ
+      mAs(mstr)  = mA
+      mEs(mstr)  = mE
    
-   rewind (77)
-   goto 231
-   
-   339 continue
+   enddo
    close (77)
    !
    1030 format(a1,a200)
