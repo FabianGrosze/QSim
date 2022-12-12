@@ -34,7 +34,7 @@ subroutine km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, 
    
    character (len = 255)             :: cpfad
    character (len = 275)             :: pfadstring
-   integer                           :: azStrs, azStr, flag
+   integer                           :: azStrs, azStr
    integer, dimension(1000)          :: flaga, jieina
    
    integer, dimension(azStrs)        :: mwehr, mRBs, mStas, mStra, abfr
