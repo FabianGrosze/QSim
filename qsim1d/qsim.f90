@@ -61,7 +61,6 @@ program qsim
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge
-   real, dimension(24)                     :: astand
    real, dimension(ialloc5)                :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
    real, dimension(ialloc5)                :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94
    real, dimension(ialloc5)                :: hcs96, hcs97, hcs98
@@ -900,65 +899,6 @@ program qsim
    hcUhrz = int(uhrz)+hcmin
    Uhrz = hcUhrz
    ij = 1
-   
-   
-   ! --------------------------------------------------------------------------
-   ! reading from EreigG2.txt
-   ! --------------------------------------------------------------------------
-   ! skip if simulating tracer
-   if (iwsim == 4)goto 681
-   
-   if (ischwa == 1) then
-      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'eingenhr.dat'
-      open(unit = 421, file = pfadstring, iostat = open_error)
-      rewind(421)
-      
-      read(421,'(A2)')ckenn_vers1
-      if (ckenn_vers1 /= '*V') then
-         read(421,'(A40)')ERENAME
-      else
-         read(421,'(A40)')MODNAME
-         read(421,'(A40)')ERENAME
-      endif
-      
-      643 continue
-      read(421,'(I5,2x,I5)',iostat = read_error)mstr,RBNR
-      if (read_error < 0)goto 455
-      read(421,'(f4.1,26(2x,f4.1))') RBNR,(wstand(mstr,RBNR,nstpa),nstpa = 1,27)
-      goto 643
-
-      
-      455 close (421)
-      
-      ! Eingangsgenerator-Stundenwerte
-      ! Einlesen der Werte der Standard-Normalverteilung
-      ! TODO (schoenung, june 2022): What is happening here? This is not a 
-      ! standart distribution.
-      astand(1) = 0.0
-      astand(2) = -0.2
-      astand(3) = -0.5
-      astand(4) = -0.7
-      astand(5) = -1.1
-      astand(6) = -1.6
-      astand(7) = -2.0
-      astand(8) = -1.3
-      astand(9) = -0.9
-      astand(10) = -0.6
-      astand(11) = -0.3
-      astand(12) = -0.1
-      astand(13) = 0.1
-      astand(14) = 0.3
-      astand(15) = 0.6
-      astand(16) = 0.9
-      astand(17) = 1.3
-      astand(18) = 2.0
-      astand(19) = 1.6
-      astand(20) = 1.1
-      astand(21) = 0.7
-      astand(22) = 0.5
-      astand(23) = 0.2
-      astand(24) = 0.0
-   endif
    
    
    ! -------------------------------------------------------------------------
@@ -2304,143 +2244,22 @@ program qsim
    
    
    ! --------------------------------------------------------------------------
-   ! not sure what's happening here?
+   !  Umrechnung der Zellzahlen von HNF in mgC
    ! --------------------------------------------------------------------------
    do  azStr = 1,azStrs
       mstr = mstra(azStr)
       do  mRB = 1,mRBs(mstr)
-         
-         ista = ij
-         if (ista == 0) ista = 1
-         if (ista > 24) ista = 1
-         if (istund(mstr,mRB) /= 1 .and. ischwa /= 0) then
-         
-            if (vbsbs(mstr,mRB) >= 0.0 .and. wstand(mstr,mRB,1) > 0.0) then
-               vbsbs(mstr,mRB) = vbsbs(mstr,mRB) + astand(ista) * wstand(mstr,mRB,1)*vbsbs(mstr,mRB)/100.
-            endif
-            
-            if (vcsbs(mstr,mRB) < 0.0 .or. wstand(mstr,mRB,2) <= 0.0) goto 1311
-            vcsbs(mstr,mRB) = vcsbs(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,2)*vcsbs(mstr,mRB)/100.
-            1311 if (vnh4s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,3) <= 0.0)goto 1312
-            vnh4s(mstr,mRB) = vnh4s(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,3)*vnh4s(mstr,mRB)/100.
-            1312 if (vno2s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,4) <= 0.0)goto 1313
-            vno2s(mstr,mRB) = vno2s(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,4)*vno2s(mstr,mRB)/100.
-            1313 if (vno3s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,5) <= 0.0)goto 1314
-            vno3s(mstr,mRB) = vno3s(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,5)*vno3s(mstr,mRB)/100.
-            1314 if (gesNs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,6) <= 0.0)goto 1315
-            gesNs(mstr,mRB) = gesNs(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,6)*gesNs(mstr,mRB)/100.
-            1315 if (vx0s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,7) <= 0.0)goto 1316
-            vx0s(mstr,mRB) = vx0s(mstr,mRB)+astand(ista)                      &
-                             *wstand(mstr,mRB,7)*vx0s(mstr,mRB)/100.
-            1316 if (vx02s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,8) <= 0.0)goto 1317
-            vx02s(mstr,mRB) = vx02s(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,8)*vx02s(mstr,mRB)/100.
-            1317 if (gelPs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,9) <= 0.0)goto 1318
-            gelPs(mstr,mRB) = gelPs(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,9)*gelPs(mstr,mRB)/100.
-            1318 if (gesPs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,10) <= 0.0)goto 1319
-            gesPs(mstr,mRB) = gesPs(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,10)*gesPs(mstr,mRB)/100.
-            1319 if (sis(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,11) <= 0.0)goto 1320
-            sis(mstr,mRB) = sis(mstr,mRB)+astand(ista)                        &
-                            *wstand(mstr,mRB,11)*sis(mstr,mRB)/100.
-            1320 if (chlas(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,12) <= 0.0)goto 1321
-            chlas(mstr,mRB) = chlas(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,12)*chlas(mstr,mRB)/100.
-            1321 if (vkigrs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,13) <= 0.0)goto 1322
-            vkigrs(mstr,mRB) = vkigrs(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,13)*vkigrs(mstr,mRB)/100.
-            1322 if (antbls(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,14) <= 0.0)goto 1323
-            antbls(mstr,mRB) = antbls(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,14)*antbls(mstr,mRB)/100.
-            1323 if (zooins(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,15) <= 0.0)goto 1324
-            zooins(mstr,mRB) = zooins(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,15)*zooins(mstr,mRB)/100.
-            1324 if (lfs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,19) <= 0.0)goto 1325
-            lfs(mstr,mRB) = lfs(mstr,mRB)+astand(ista)                        &
-                            *wstand(mstr,mRB,19)*lfs(mstr,mRB)/100.
-            !
-            1325 if (vphs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,16) <= 0.0)goto 1326
-            if (lfs(mstr,mRB) < 0.0)lfs(mstr,mRB) = 0.0
-            mues = 1.7e-5*lfs(mstr,mRB)
-            hk = (0.5*sqrt(mues))/(1.+1.4*sqrt(mues))
-            lgh = vphs(mstr,mRB)-hk
-            hs = 10**(-lgh)
-            hs = hs+astand(ista)*wstand(mstr,mRB,16)*hs/100.
-            vphs(mstr,mRB) = -1.*alog10(hs)+hk
-            !
-            1326 if (mws(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,17) <= 0.0)goto 1327
-            mws(mstr,mRB) = mws(mstr,mRB)+astand(ista)                        &
-                            *wstand(mstr,mRB,17)*mws(mstr,mRB)/100.
-            1327 if (cas(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,18) <= 0.0)goto 1328
-            cas(mstr,mRB) = cas(mstr,mRB)+astand(ista)                        &
-                            *wstand(mstr,mRB,18)*cas(mstr,mRB)/100.
-            1328 if (ssalgs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,20) <= 0.0)goto 1329
-            ssalgs(mstr,mRB) = ssalgs(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,20)*ssalgs(mstr,mRB)/100.
-            1329 if (tempws(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,21) <= 0.0)goto 1330
-            tempws(mstr,mRB) = tempws(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,21)*tempws(mstr,mRB)/100.
-            1330 if (vo2s(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,22) <= 0.0)goto 1331
-            vo2s(mstr,mRB) = vo2s(mstr,mRB)+astand(ista)                      &
-                             *wstand(mstr,mRB,22)*vo2s(mstr,mRB)/100.
-            1331 if (CHNFs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,23) <= 0.0)goto 1332
-            CHNFs(mstr,mRB) = CHNFs(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,23)*CHNFs(mstr,mRB)/100.
-            1332 if (BVHNFs(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,24) <= 0.0)goto 1333
-            BVHNFs(mstr,mRB) = BVHNFs(mstr,mRB)+astand(ista)                  &
-                               *wstand(mstr,mRB,24)*BVHNFs(mstr,mRB)/100.
-            1333 if (colis(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,25) <= 0.0)goto 1334
-            colis(mstr,mRB) = colis(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,25)*colis(mstr,mRB)/100.
-            1334 if (waers(mstr,mRB) < 0.0 .or. &
-                     wstand(mstr,mRB,26) <= 0.0)goto 1335
-            waers(mstr,mRB) = waers(mstr,mRB)+astand(ista)                    &
-                              *wstand(mstr,mRB,26)*waers(mstr,mRB)/100.
-         
-         endif
-         
-         ! Umrechnung der Zellzahlen von HNF in mgC
-         1335 continue
+       
          if (CHNFs(mstr,mRB) < 0.0) then
             CHNFs(mstr,mRB) = 0.0
             BVHNFs(mstr,mRB) = 0.0
          else
-            if (CHNFs(mstr,mRB) > 0.0 .and. BVHNFs(mstr,mRB) <= 0.0)BVHNFs(mstr,mRB) = 25.      ! in µm3
+            if (CHNFs(mstr,mRB) > 0.0 .and. BVHNFs(mstr,mRB) <= 0.0) BVHNFs(mstr,mRB) = 25. ! in µm3
             CHNFs(mstr,mRB) = CHNFs(mstr,mRB)*BVHNFs(mstr,mRB)*0.22
-            ! Umrechnung von pg in mg /1.e9; Angabe CHNFs pro ml ergibt /1.e6
-            ! bezogen auf ein Liter
+            
+            ! Umrechnung von pg in mg /1.e9; Angabe CHNFs pro ml ergibt /1.e6 bezogen auf ein Liter
             CHNFs(mstr,mRB) = CHNFs(mstr,mRB)/1.e6
          endif
-         
       enddo
    enddo
    
@@ -2486,14 +2305,13 @@ program qsim
          if (antbls(mstr,mRB) < 0.0)antbls(mstr,mRB) = 0.0
          
          ! Fehlerausgabe falls AnteilGR+AnteilKI+AnteilBL >1
-         hconFe = 1.-vkigrs(mstr,mRB)-antbls(mstr,mRB)
-         if (hconFe < 0.0) then
+         if (vkigrs(mstr,mRB) + antbls(mstr,mRB) > 1.0) then
             write(message, "(a,i0)") 'Die Anteile der Kiesel- und Blaualgen sind zusammen größer 1 (Strang):', mstr
             call qerror(message)
          endif
          
-         if (RBtyp(mstr,mRB) == 0)TGZoo(mstr,1) = GROT
-         if (RBtyp(mstr,mRB) == 2)TGZoo(mstr,hanze(mstr)+1) = GROT
+         if (RBtyp(mstr,mRB) == 0) TGZoo(mstr,1) = GROT
+         if (RBtyp(mstr,mRB) == 2) TGZoo(mstr,hanze(mstr)+1) = GROT
          
          ! Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
          ! Angabe in mgChla/mgC
