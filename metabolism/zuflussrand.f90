@@ -135,7 +135,7 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    real :: algb5,algcs,alphlP,ant_CrefP
    real :: zoobsb,zoocsb
    real :: vcb,antBAC,BTOC5s,BTOCs,alphaD,alphlD !,alphaD1
-   real :: hc_CPg,fak_aCref,hc_CP
+   real :: hc_CPg,fak_aCref
    ! Berechnung der "BSB-Komponenten" am oberen Rand
    ! (auch bei Stundenwert-Generierung)
    TOC_CSB = 3.1
@@ -252,16 +252,16 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    real :: sss , ssalgs
    integer :: itags,monats,mstr,mRB
    real :: hcsum, hcsumP
-   real :: orgN, akiNmx,agrNmx, ablNmx, algNmx, g7sN, orgN1, orgN2, gsN
+   real :: orgN, akiNmx,agrNmx, ablNmx, algNmx, orgN1, orgN2, gsN
    real :: hcon1, hcon2, dgsN, dalgN, faNneu
    real :: orgP, akiPmx,agrPmx, ablPmx, algPmx, orgP1, orgP2, GsP
-   real :: dgsP, g7sP, faPneu, dalgP
+   real :: dgsP, faPneu, dalgP
    integer :: m
    real :: Sum_N, f_NK
    real :: hcQ_NK, hcQ_NG, hcQ_NB
    real :: hcQ_PK, hcQ_PG, hcQ_PB
    
-   !....zelluläre Nährstoffgehalte
+   ! zelluläre Nährstoffgehalte
    Sum_N = vnh4s+vNO3s
    f_NK = 0.582*(Sum_N/(Sum_N+0.011))
    f_NK = 1.
