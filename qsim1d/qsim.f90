@@ -31,26 +31,22 @@ program qsim
    use module_metabolism
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
-   character                               :: ckenn,cpoint,CST_end
-   character (len = 2)                     :: ctest1,chcon,ckenn_vers,ckenn_vers1
-   character (len = 1)                     :: ctaste
+   character                               :: ckenn,cpoint
+   character (len = 2)                     :: chcon,ckenn_vers,ckenn_vers1
    character (len = 7)                     :: cmin,cmax
    character (len = 40)                    :: ERENAME, MODNAME
    character (len = 200)                   :: ctext
-   character (len = 255)                   :: filestring
    character (len = 275)                   :: pfadstring
    character (len = 6000)                  :: langezeile, message
    logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
-   integer                                 :: iglob, open_error, jjj
-   character (len = 120)                   :: cfehlr
+   integer                                 :: open_error, jjj
    character(len=50),dimension(ialloc5,ialloc1) :: cEname
    character(len=40),dimension(:),allocatable   :: strname,strnumm
-   integer                                 :: maus, read_error, anze, azstr, anzej, Stunde,STRiz_2D, anzema
-   integer                                 :: tdj, SCHRNR, zabfr, RBNR
+   integer                                 :: maus, read_error, anze, azstr, anzej, Stunde, anzema
+   integer                                 :: tdj, SCHRNR, RBNR
    integer, dimension(2)                   :: ikanz
-   integer, dimension(20)                  :: iWSta, mwetts
-   integer, dimension(ialloc1)             :: typ, iorLa, iorle, mWO2
-   integer, dimension(ialloc2)             :: flag, jiein, zwjiein, ischif, ischic, zwnkzs, nkzsy, nkzs, hnkzsz
+   integer, dimension(ialloc1)             :: typ, iorLa, iorle
+   integer, dimension(ialloc2)             :: flag, jiein, zwjiein, ischif, zwnkzs, nkzsy, nkzs
    integer, dimension(:), allocatable      :: hanze,ianze, STRiz,isub_dt,imac,isub_dt_Mac, mstr_ist, strNr, mstra
    integer, dimension(:), allocatable      :: ieinsh, ieinLs, nbuhn, iFlRi, isegs, STRID, janzWt, janzWs, jlwo2, iRB_K1, izufluss
    integer, dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, i2Ds, mWes, mVs, mZs, mAs, mEs
@@ -60,16 +56,15 @@ program qsim
    integer, dimension(:,:), allocatable    :: it_h, it_hy, iorLah, iorLeh, typh, ischig, ikWSta, idWe, mstrLe, istund
    integer, dimension(:,:), allocatable    :: RBtyp, Weinl, NRSchr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, ESTRNR
-   real                                    :: N4end, N2end, N3end, Kiend, lat_k, mues,lgh
-   real                                    :: nbiogr, o2ein
+   real                                    :: lat_k, mues,lgh, o2ein
    real                                    :: mikonsS, mxkonsS
-   real, dimension(2)                      :: xCD, xCP, xdrakr, xdrbar, xdrmor, xidras, xdrmas
+   real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge
    real, dimension(24)                     :: astand
    real, dimension(ialloc5)                :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
-   real, dimension(ialloc5)                :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94, dvdz, xU
-   real, dimension(ialloc5)                :: hcs96, hcs97, hcs98, akiz_vor, akiz_vor1
+   real, dimension(ialloc5)                :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94
+   real, dimension(ialloc5)                :: hcs96, hcs97, hcs98
    real, dimension(ialloc5)                :: hc212, hc262, hc32, hc42, hc52, hc62, hc92, hc102, hc112, hc122, hc222
    real, dimension(ialloc1)                :: einlk, qeinl, ebsb, ecsb, enh4, ex0, eo2, etemp, echla, ep
    real, dimension(ialloc1)                :: elf, eph, emw, eca, ex02, eno2, ess, ewaerm, esi, ezind, eno3
@@ -83,17 +78,17 @@ program qsim
    real, dimension(ialloc2)                :: agrey, rakr, rakry, figaus, figy, rbar, rbary, dorgSS, HNFmua, BACmua
    real, dimension(ialloc2)                :: HNFmuy, BACmuy, HNFBAy,HNFrey, HNFupy, HNFmoy, HNFexy, HNFdry, HNFzy
    real, dimension(ialloc2)                :: HNFrea, HNFupa, HNFmoa, HNFexa, HNFdra, HNFza, akmuey, ftay, fiy, fhey
-   real, dimension(ialloc2)                :: akry, sgefpm, dl, resdr, exdrvg, exdrvk, dlarvd, dlarvR, dlarvn
+   real, dimension(ialloc2)                :: akry, dl, resdr, exdrvg, exdrvk, dlarvn
    real, dimension(ialloc2)                :: dlarny, pflmin, pflmax, po2p, po2r, pfl, VALTBL, EDUFBL, VALTBR, EDUFBR
    real, dimension(ialloc2)                :: drpfey, drpfec, ssdr, drfaek, drfaeg, drfaes, volfdr, Tsed, tempw, zexki
    real, dimension(ialloc2)                :: templ, zexgr, dzres1, dzres2, obsb, vcsb, vbsb, CM, BAC, ocsb, vnh4, vno3
    real, dimension(ialloc2)                :: vno2, si, chla, ssalg, zooind, gelp, vco2, aki, agr, ro2dr, zooro2, akitbr
    real, dimension(ialloc2)                :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesN, gesP, sdbsb, abszo, bsbt, bsbct, bsbctP
-   real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, SiRuek, svkh1, sised
-   real, dimension(ialloc2)                :: SKmor, schwi, Dz2D, dC_DenW, fkm, dO2o2D
+   real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, sised
+   real, dimension(ialloc2)                :: SKmor, schwi, Dz2D, dC_DenW, fkm
    real, dimension(ialloc2)                :: CHNF, HNFBAC, BSBHNF, drHNF, BVHNF, coli, zHNF, zBAC, rO2HNF, tpki, tpgr
-   real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, nbiobl, dblmor, tpbl, dalgbl, dalgab
+   real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
    real, dimension(ialloc2)                :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb
    real, dimension(ialloc2)                :: ably, abln4y, sedaby, algzby, algdby, algcby, dalgby, dalaby, dbmory
@@ -101,25 +96,24 @@ program qsim
    real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwTsed, zwtemp, zwvm, zwtief,zwextk
    real, dimension(ialloc2)                :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk
    real, dimension(ialloc2)                :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr
-   real, dimension(ialloc2)                :: zwkiiv, zwgriv, zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau, zwbsct
+   real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
    real, dimension(ialloc2)                :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
-   real, dimension(ialloc2)                :: zwrbar, zwno2, zwx0, zwgo2n, zwbsbt, zwschr, zwpfl, zwsgon, zwsdx0
-   real, dimension(ialloc2)                :: zwdon, zwsusn, zwbetn, zwsuso, zwagn4, zwakn4, zwagn3, zwabn4, zwabn3
-   real, dimension(ialloc2)                :: zwakn3, zwph, zwx02, zwgesN, zwgesP, zwexdb, zwCsed_abb, zwrdr
-   real, dimension(ialloc2)                :: zwexdk, zwexdg, zwzexb, zwobsb, zwocsb, zwvbsb, zwvcsb, zwsbsb, zwbsbe
-   real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed, zwcm, zwBAC, zwHNFB
-   real, dimension(ialloc2)                :: zwBSBH, zwHNF, zwfbgr, zwfrgr, zwnl0, zwpl0, zwpo2p, zwpo2r, zwso2e
-   real, dimension(ialloc2)                :: zwsalo,zwdalo, zwdago, zwo2ei, zwabwg, zwabwk, zwabrg, zwabrk, zwrodr
-   real, dimension(ialloc2)                :: zwrzo, zwrHNF, zworgS, zwss, zwfssg, zwsedS, zwmw, zwpw, zwca, zwlf
-   real, dimension(ialloc2)                :: zwstin, zwtpki, zwtpgr, zwchlk, zwchlg, zwbsP, zwbsN, zwchlb
-   real, dimension(ialloc2)                :: zwn4z, zwn2z, zwn3z, zwPz, zwgN4z, zwkN4z, zwbN4z, zwbn3z, zwgN3z
-   real, dimension(ialloc2)                :: zwkN3z, zwsiz, zup_PK, zup_NK, zup_Si, zQ_PK, zQ_NK, zQ_SK, zaktbr
+   real, dimension(ialloc2)                :: zwrbar
+   real, dimension(ialloc2)                :: zwph, zwCsed_abb
+   real, dimension(ialloc2)                :: zwexdg, zwzexb, zwobsb, zwocsb
+   real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed
+   real, dimension(ialloc2)                :: zwnl0, zwpl0
+   real, dimension(ialloc2)                :: zwabwg, zwabwk, zwabrg, zwabrk
+   real, dimension(ialloc2)                :: zworgS, zwss, zwfssg, zwsedS
+   real, dimension(ialloc2)                :: zwtpki, zwtpgr, zwchlk, zwchlg, zwchlb
+   real, dimension(ialloc2)                :: zwn4z, zwn3z, zwPz
+   real, dimension(ialloc2)                :: zwsiz, zup_PK, zup_NK, zup_Si, zQ_PK, zQ_NK, zQ_SK, zaktbr
    real, dimension(ialloc2)                :: zup_PG, zup_NG, zagtbr, zQ_PG, zQ_NG, zwakz, zwaakz, zwagz, zwaagz
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
    real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_PB, zup_NB, zQ_PB, zQ_NB
-   real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz, zwCoIs, zwflae, zwlboe, zwSKmo, zww2, zwSdOM
+   real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwSKmo, zww2, zwSdOM
    real, dimension(ialloc2)                :: zwbso, zwJN2,zwTGZoo, zwColi, zwDOSCF, zwakmor_1, zwagmor_1, zwabmor_1
    real, dimension(ialloc2)                :: zwgsZn, zwglZn, zwgsCad, zwglCad, zwgsCu, zwglCu, zwgsNi, zwglNi
    real, dimension(ialloc2)                :: zwgsAs, zwglAs, zwgsPb, zwglPb, zwgsCr, zwglCr, zwgsFe, zwglFe
@@ -132,15 +126,15 @@ program qsim
    real, dimension(ialloc2)                :: susn2, pfln1, pfln2
    real, dimension(ialloc2)                :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr
    real, dimension(ialloc2)                :: mw, pw,lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1
-   real, dimension(ialloc2)                :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm, akbcmz, pfldalg
-   real, dimension(ialloc2)                :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss, r
+   real, dimension(ialloc2)                :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm
+   real, dimension(ialloc2)                :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss
    real, dimension(ialloc2)                :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
    real, dimension(ialloc2)                :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, CMy, BACy, CHNFy, BVHNFy, dly
    real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gsPy
    real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsNy, orgCsd0, susny, bettny, dony
    real, dimension(ialloc2)                :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
    real, dimension(ialloc2)                :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy
-   real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby, so2eiy
+   real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby
    real, dimension(ialloc2)                :: bsbty, dalgoy, dalaoy, schlry, bsbbey, o2ei1y, ro2dry, zoro2y, po2py
    real, dimension(ialloc2)                :: po2ry, nl0y, pl0y, extky, JNO3y, JNH4y, JPO4y, JO2y, JSiy, Q_NKy, Q_PKy
    real, dimension(ialloc2)                :: Q_SKy, Q_NGy, Q_PGy, Q_NBy, Q_PBy, coroy, corosy, ffoody, pfly
@@ -151,7 +145,7 @@ program qsim
    real, dimension(ialloc2)                :: btempy, bno3y, bnh4y, bgelpy, bchlay, bssaly, bsiy, bakiy, bagry, bno2y
    real, dimension(ialloc2)                :: bvbsby, bvcsby, bo2y, bphy, bcay, bmwy, blfy, bably, bnl0y, bpl0y, bgsPy
    real, dimension(ialloc2)                :: bgsNy, bCMy, bBACy, bchlky, bchlgy, bdakiy, bdaaky, bsedky, bazoky, bkmory
-   real, dimension(ialloc2)                :: bkigry, bkbcmy, biry, bkiivy, bsisdy, bkmuay, bftkay, bfikay, bfhkay
+   real, dimension(ialloc2)                :: bkigry, bkbcmy, biry, bsisdy, bkmuay, bftkay, bfikay, bfhkay
    real, dimension(ialloc2)                :: bkray, btpkiy, btpgry, btpbly, bdagry, bdaagy, bsedgy, bazogy, bgmory
    real, dimension(ialloc2)                :: badrky, badrgy, bacoky, bacogy, bgmuay, bfigay, bfhgay, bgray, bzooiy
    real, dimension(ialloc2)                :: bfibay, bantby, bextky, bdably, bdaaby, bsedby, bazoby, bbmory, badrby
@@ -160,17 +154,17 @@ program qsim
    real, dimension(ialloc2)                :: bgsZny, bglZny, bgsCady, bglCady, bgsCuy, bglCuy, bgsNiy, bglNiy
    real, dimension(ialloc2)                :: bgsAsy, bglAsy, bgsPby, bglPby, bgsCry, bglCry, bgsFey, bglFey
    real, dimension(ialloc2)                :: bgsHgy, bglHgy, bgsMny, bglMny, bgsUy, bglUy, bSSeros
-   real, dimension(ialloc2)                :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs, corol, corosl
-   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, abeow, susO2N, SSeros
+   real, dimension(ialloc2)                :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs
+   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, FluxT1, saett, SSeros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
-   real, dimension(ialloc2,5)              :: coro, coros, hcoro, hcoros, coro2, coros2
-   real, dimension(2,ialloc2)              ::  bCDy, bCPy
+   real, dimension(ialloc2,5)              :: coro, coros
+   real, dimension(2,ialloc2)              :: bCDy, bCPy
    real, dimension(ialloc5,ialloc2)        :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelPzy, sizy, chlazy
    real, dimension(ialloc5,ialloc2)        :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelPz, siz
-   real, dimension(ialloc5,ialloc2)        :: vz1, akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz
-   real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, Uvert, dalgkz, dalgbz, dalggz, akNH4z
-   real, dimension(ialloc5,ialloc2)        :: abNH4z, agNH4z, akNO3z, abNO3z, agNO3z,CChlakzy,CChlabzy,CChlagzy
+   real, dimension(ialloc5,ialloc2)        :: akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz
+   real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, Uvert, dalgkz, dalgbz, dalggz
+   real, dimension(ialloc5,ialloc2)        :: CChlakzy,CChlabzy,CChlagzy
    real, dimension(ialloc5,ialloc2)        :: up_NKz, up_PKz, up_Siz, up_N2z, up_NGz, up_PGz, up_NBz, up_PBz
    real, dimension(:,:), allocatable       :: tausc, M_eros, n_eros, sedroh, aEros, eEros, dsedH, zwdsedH ,btausc
    real, dimension(:), allocatable         :: t1e,m1e,n1e,r1e
