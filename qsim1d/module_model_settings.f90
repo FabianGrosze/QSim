@@ -72,7 +72,6 @@ contains
    subroutine get_paths(linux)
       logical, intent(in)  :: linux    !< Should paths adapt to linux?
       
-      integer              :: i
       character(len=1)     :: sep 
       character(2)         :: bckslsh = '\\'
       

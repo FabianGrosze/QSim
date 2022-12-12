@@ -34,191 +34,189 @@ program qsim
    character                               :: ckenn,cpoint
    character (len = 2)                     :: chcon,ckenn_vers,ckenn_vers1
    character (len = 7)                     :: cmin,cmax
-   character (len = 40)                    :: ERENAME, MODNAME
+   character (len = 40)                    :: erename, modname
    character (len = 201)                   :: ctext
    character (len = 275)                   :: pfadstring
    character (len = 6000)                  :: langezeile, message
    logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
    integer                                 :: open_error, jjj
-   character(len=50),dimension(ialloc5,ialloc1) :: cEname
+   character(len=50),dimension(ialloc5,ialloc1) :: cename
    character(len=40),dimension(:),allocatable   :: strname,strnumm
-   integer                                 :: maus, read_error, anze, azstr, anzej, Stunde, anzema
-   integer                                 :: tdj, SCHRNR, RBNR
+   integer                                 :: maus, read_error, anze, azstr, anzej, stunde, anzema
+   integer                                 :: tdj, schrnr, rbnr
    integer, dimension(2)                   :: ikanz
-   integer, dimension(ialloc1)             :: typ, iorLa, iorle
+   integer, dimension(ialloc1)             :: typ, iorla, iorle
    integer, dimension(ialloc2)             :: flag, jiein, zwjiein, ischif, zwnkzs, nkzsy, nkzs
-   integer, dimension(:), allocatable      :: hanze,ianze, STRiz,isub_dt,imac,isub_dt_Mac, mstr_ist, strNr, mstra
-   integer, dimension(:), allocatable      :: ieinsh, ieinLs, nbuhn, iFlRi, isegs, STRID, janzWt, janzWs, jlwo2, iRB_K1, izufluss
-   integer, dimension(:), allocatable      :: imRB_K1, mPfs, mSs, mDs, mCs, mBs, mUs, mWes, mVs, mZs, mAs, mEs
-   integer, dimension(:), allocatable      :: itsts, msts, itmaxs, mmaxs, itends, mends, laits, laims, laids, mStas
-   integer, dimension(:), allocatable      :: abfr, mwehr, mRBs, nstrs, nnstrs, iFlRi_l
+   integer, dimension(:), allocatable      :: hanze,ianze, striz,isub_dt,imac,isub_dt_mac, mstr_ist, strnr, mstra
+   integer, dimension(:), allocatable      :: ieinsh, ieinls, nbuhn, iflri, isegs, strid, janzwt, janzws, jlwo2, irb_k1, izufluss
+   integer, dimension(:), allocatable      :: imrb_k1, mpfs, mss, mds, mcs, mbs, mus, mwes, mvs, mzs, mas, mes
+   integer, dimension(:), allocatable      :: itsts, msts, itmaxs, mmaxs, itends, mends, laits, laims, laids, mstas
+   integer, dimension(:), allocatable      :: abfr, mwehr, mrbs, nstrs, nnstrs, iflri_l
    
-   integer, dimension(:,:), allocatable    :: it_h, it_hy, iorLah, iorLeh, typh, ischig, ikWSta, idWe, mstrLe, istund
-   integer, dimension(:,:), allocatable    :: RBtyp, Weinl, NRSchr, hnkzs, nkzmx, znkzs, inkzs, ibschi
-   integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, ESTRNR
-   real                                    :: lat_k, mues,lgh, o2ein
-   real                                    :: mikonsS, mxkonsS
+   integer, dimension(:,:), allocatable    :: it_h, it_hy, iorlah, iorleh, typh, ischig, ikwsta, idwe, mstrle, istund
+   integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
+   integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
+   real                                    :: lat_k, lgh, o2ein
+   real                                    :: mikonss, mxkonss
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge
    real, dimension(ialloc5)                :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
    real, dimension(ialloc5)                :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94
    real, dimension(ialloc5)                :: hcs96, hcs97, hcs98
-   real, dimension(ialloc5)                :: hc212, hc262, hc32, hc42, hc52, hc62, hc92, hc102, hc112, hc122, hc222
    real, dimension(ialloc1)                :: einlk, qeinl, ebsb, ecsb, enh4, ex0, eo2, etemp, echla, ep
    real, dimension(ialloc1)                :: elf, eph, emw, eca, ex02, eno2, ess, ewaerm, esi, ezind, eno3
-   real, dimension(ialloc1)                :: eCHNF, eBVHNF, egesN, egesP, ecoli, evkigr,eantbl, enl0, epl0
-   real, dimension(ialloc1)                :: qeinlL, bsbL, csbL, enh4L, x0L, x02L, o2L, etempL, gpL, siL
-   real, dimension(ialloc1)                :: eno2L, eno3L, gesNL, gesPL, ssL, phL, elfL, caL, coliL, enl0L
-   real, dimension(ialloc1)                :: pl0L, chlaL
+   real, dimension(ialloc1)                :: echnf, ebvhnf, egesn, egesp, ecoli, evkigr,eantbl, enl0, epl0
+   real, dimension(ialloc1)                :: qeinll, bsbl, csbl, enh4l, x0l, x02l, o2l, etempl, gpl, sil
+   real, dimension(ialloc1)                :: eno2l, eno3l, gesnl, gespl, ssl, phl, elfl, cal, colil, enl0l
+   real, dimension(ialloc1)                :: pl0l, chlal
    real, dimension(ialloc2)                :: elen, vmitt, tiefe, flae, breite, rau, rhyd, vabfl, stind, nl0, pl0
-   real, dimension(ialloc2)                :: Q_NK, Q_PK, Q_SK, Q_NG, Q_PG, Q_NB, Q_PB, akmuea, ftaaus, fiaus
+   real, dimension(ialloc2)                :: q_nk, q_pk, q_sk, q_ng, q_pg, q_nb, q_pb, akmuea, ftaaus, fiaus
    real, dimension(ialloc2)                :: fheaus, fhegas, fhegy, agmuea, agmuey, akraus, rmuas, rmuasy, agreau
-   real, dimension(ialloc2)                :: agrey, rakr, rakry, figaus, figy, rbar, rbary, dorgSS, HNFmua, BACmua
-   real, dimension(ialloc2)                :: HNFmuy, BACmuy, HNFBAy,HNFrey, HNFupy, HNFmoy, HNFexy, HNFdry, HNFzy
-   real, dimension(ialloc2)                :: HNFrea, HNFupa, HNFmoa, HNFexa, HNFdra, HNFza, akmuey, ftay, fiy, fhey
+   real, dimension(ialloc2)                :: agrey, rakr, rakry, figaus, figy, rbar, rbary, dorgss, hnfmua, bacmua
+   real, dimension(ialloc2)                :: hnfmuy, bacmuy, hnfbay,hnfrey, hnfupy, hnfmoy, hnfexy, hnfdry, hnfzy
+   real, dimension(ialloc2)                :: hnfrea, hnfupa, hnfmoa, hnfexa, hnfdra, hnfza, akmuey, ftay, fiy, fhey
    real, dimension(ialloc2)                :: akry, dl, resdr, exdrvg, exdrvk, dlarvn
-   real, dimension(ialloc2)                :: dlarny, pflmin, pflmax, po2p, po2r, pfl, VALTBL, EDUFBL, VALTBR, EDUFBR
-   real, dimension(ialloc2)                :: drpfey, drpfec, ssdr, drfaek, drfaeg, drfaes, volfdr, Tsed, tempw, zexki
-   real, dimension(ialloc2)                :: templ, zexgr, dzres1, dzres2, obsb, vcsb, vbsb, CM, BAC, ocsb, vnh4, vno3
+   real, dimension(ialloc2)                :: dlarny, pflmin, pflmax, po2p, po2r, pfl, valtbl, edufbl, valtbr, edufbr
+   real, dimension(ialloc2)                :: drpfey, drpfec, ssdr, drfaek, drfaeg, drfaes, volfdr, tsed, tempw, zexki
+   real, dimension(ialloc2)                :: templ, zexgr, dzres1, dzres2, obsb, vcsb, vbsb, cm, bac, ocsb, vnh4, vno3
    real, dimension(ialloc2)                :: vno2, si, chla, ssalg, zooind, gelp, vco2, aki, agr, ro2dr, zooro2, akitbr
    real, dimension(ialloc2)                :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
-   real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesN, gesP, sdbsb, abszo, bsbt, bsbct, bsbctP
-   real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, DOSCF, extk, sised
-   real, dimension(ialloc2)                :: SKmor, schwi, Dz2D, dC_DenW, fkm
-   real, dimension(ialloc2)                :: CHNF, HNFBAC, BSBHNF, drHNF, BVHNF, coli, zHNF, zBAC, rO2HNF, tpki, tpgr
+   real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesn, gesp, sdbsb, abszo, bsbt, bsbct, bsbctp
+   real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, doscf, extk, sised
+   real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, fkm
+   real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zhnf, zbac, ro2hnf, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
    real, dimension(ialloc2)                :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb
    real, dimension(ialloc2)                :: ably, abln4y, sedaby, algzby, algdby, algcby, dalgby, dalaby, dbmory
    real, dimension(ialloc2)                :: abmuey, fiby, fheby, abrey, antbly, tpbly
-   real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwTsed, zwtemp, zwvm, zwtief,zwextk
+   real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwtsed, zwtemp, zwvm, zwtief,zwextk
    real, dimension(ialloc2)                :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk
    real, dimension(ialloc2)                :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr
    real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
    real, dimension(ialloc2)                :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
-   real, dimension(ialloc2)                :: zwrbar
-   real, dimension(ialloc2)                :: zwph, zwCsed_abb
-   real, dimension(ialloc2)                :: zwexdg, zwzexb, zwobsb, zwocsb
-   real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwCsed
+   real, dimension(ialloc2)                :: zwrbar, zwph, zwcsed_abb
+   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb
+   real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwcsed
    real, dimension(ialloc2)                :: zwnl0, zwpl0
    real, dimension(ialloc2)                :: zwabwg, zwabwk, zwabrg, zwabrk
-   real, dimension(ialloc2)                :: zworgS, zwss, zwfssg, zwsedS
+   real, dimension(ialloc2)                :: zworgs, zwss, zwfssg, zwseds
    real, dimension(ialloc2)                :: zwtpki, zwtpgr, zwchlk, zwchlg, zwchlb
-   real, dimension(ialloc2)                :: zwn4z, zwn3z, zwPz
-   real, dimension(ialloc2)                :: zwsiz, zup_PK, zup_NK, zup_Si, zQ_PK, zQ_NK, zQ_SK, zaktbr
-   real, dimension(ialloc2)                :: zup_PG, zup_NG, zagtbr, zQ_PG, zQ_NG, zwakz, zwaakz, zwagz, zwaagz
+   real, dimension(ialloc2)                :: zwn4z, zwn3z, zwpz
+   real, dimension(ialloc2)                :: zwsiz, zup_pk, zup_nk, zup_si, zq_pk, zq_nk, zq_sk, zaktbr
+   real, dimension(ialloc2)                :: zup_pg, zup_ng, zagtbr, zq_pg, zq_ng, zwakz, zwaakz, zwagz, zwaagz
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
-   real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_PB, zup_NB, zQ_PB, zQ_NB
-   real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwSKmo, zww2, zwSdOM
-   real, dimension(ialloc2)                :: zwbso, zwJN2,zwTGZoo, zwColi, zwDOSCF, zwakmor_1, zwagmor_1, zwabmor_1
-   real, dimension(ialloc2)                :: zwgsZn, zwglZn, zwgsCad, zwglCad, zwgsCu, zwglCu, zwgsNi, zwglNi
-   real, dimension(ialloc2)                :: zwgsAs, zwglAs, zwgsPb, zwglPb, zwgsCr, zwglCr, zwgsFe, zwglFe
-   real, dimension(ialloc2)                :: zwgsHg, zwglHg, zwgsMn, zwglMn, zwgsU, zwglU, zwSSeros
-   real, dimension(ialloc2)                :: zwZnSed,zwCadSed,zwCuSed,zwNiSed,zwAsSed,zwPbSed
-   real, dimension(ialloc2)                :: zwCrSed,zwFeSed,zwHgSed,zwMnSed,zwUSed
-   real, dimension(ialloc2)                :: zwKorn, zwFlN3, zwJNO3, zwJNH4, zwJPO4, zwJO2, zwJSi, zwJDOC1, zwJDOC2
-   real, dimension(ialloc2)                :: zwsedAlg_MQ, zwsedSS_MQ, ss, vol, ir, gwdmax, sedx0, don, susn
+   real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_pb, zup_nb, zq_pb, zq_nb
+   real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwskmo, zww2, zwsdom
+   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwcoli, zwdoscf, zwakmor_1, zwagmor_1, zwabmor_1
+   real, dimension(ialloc2)                :: zwgszn, zwglzn, zwgscad, zwglcad, zwgscu, zwglcu, zwgsni, zwglni
+   real, dimension(ialloc2)                :: zwgsas, zwglas, zwgspb, zwglpb, zwgscr, zwglcr, zwgsfe, zwglfe
+   real, dimension(ialloc2)                :: zwgshg, zwglhg, zwgsmn, zwglmn, zwgsu, zwglu, zwsseros
+   real, dimension(ialloc2)                :: zwznsed,zwcadsed,zwcused,zwnised,zwassed,zwpbsed
+   real, dimension(ialloc2)                :: zwcrsed,zwfesed,zwhgsed,zwmnsed,zwused
+   real, dimension(ialloc2)                :: zwkorn, zwfln3, zwjno3, zwjnh4, zwjpo4, zwjo2, zwjsi, zwjdoc1, zwjdoc2
+   real, dimension(ialloc2)                :: zwsedalg_mq, zwsedss_mq, ss, vol, ir, gwdmax, sedx0, don, susn
    real, dimension(ialloc2)                :: bettn, agrnh4, akinh4, susno, akino3, agrno3, iras, sedalg, sedalk
    real, dimension(ialloc2)                :: susn2, pfln1, pfln2
-   real, dimension(ialloc2)                :: sedAlk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr
+   real, dimension(ialloc2)                :: sedalk0, sedalg0, algzog, algzok, abrzo1, algdrg, algdrk, vkigr, chlagr
    real, dimension(ialloc2)                :: mw, pw,lf, ca, vph, dgrmor, dkimor, dalgo, dalgao, bsbbet, o2ein1
    real, dimension(ialloc2)                :: chlaki, abeowg, abeorg, abeowk, abeork, akbcm, agbcm
    real, dimension(ialloc2)                :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss
    real, dimension(ialloc2)                :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
-   real, dimension(ialloc2)                :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, CMy, BACy, CHNFy, BVHNFy, dly
-   real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gsPy
-   real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsNy, orgCsd0, susny, bettny, dony
-   real, dimension(ialloc2)                :: agrn4y, akin4y, FluN3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alNO3y
+   real, dimension(ialloc2)                :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, cmy, bacy, chnfy, bvhnfy, dly
+   real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gspy
+   real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsny, orgcsd0, susny, bettny, dony
+   real, dimension(ialloc2)                :: agrn4y, akin4y, flun3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alno3y
    real, dimension(ialloc2)                :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy
    real, dimension(ialloc2)                :: dalgky, dalagy, dalaky, dgmory, dkmory, sgo2ny, sdbsby
    real, dimension(ialloc2)                :: bsbty, dalgoy, dalaoy, schlry, bsbbey, o2ei1y, ro2dry, zoro2y, po2py
-   real, dimension(ialloc2)                :: po2ry, nl0y, pl0y, extky, JNO3y, JNH4y, JPO4y, JO2y, JSiy, Q_NKy, Q_PKy
-   real, dimension(ialloc2)                :: Q_SKy, Q_NGy, Q_PGy, Q_NBy, Q_PBy, coroy, corosy, ffoody, pfly
-   real, dimension(ialloc2)                :: alby, CChlky, CChlgy, CChlby
-   real, dimension(ialloc2)                :: gsZny, glZny, gsCady, glCady, gsCuy, glCuy, gsNiy, glNiy
-   real, dimension(ialloc2)                :: gsAsy, glAsy, gsPby, glPby, gsCry, glCry, gsFey, glFey
-   real, dimension(ialloc2)                :: gsHgy, glHgy, gsMny, glMny, gsUy, glUy
+   real, dimension(ialloc2)                :: po2ry, nl0y, pl0y, extky, jno3y, jnh4y, jpo4y, jo2y, jsiy, q_nky, q_pky
+   real, dimension(ialloc2)                :: q_sky, q_ngy, q_pgy, q_nby, q_pby, coroy, corosy, ffoody, pfly
+   real, dimension(ialloc2)                :: alby, cchlky, cchlgy, cchlby
+   real, dimension(ialloc2)                :: gszny, glzny, gscady, glcady, gscuy, glcuy, gsniy, glniy
+   real, dimension(ialloc2)                :: gsasy, glasy, gspby, glpby, gscry, glcry, gsfey, glfey
+   real, dimension(ialloc2)                :: gshgy, glhgy, gsmny, glmny, gsuy, gluy
    real, dimension(ialloc2)                :: btempy, bno3y, bnh4y, bgelpy, bchlay, bssaly, bsiy, bakiy, bagry, bno2y
-   real, dimension(ialloc2)                :: bvbsby, bvcsby, bo2y, bphy, bcay, bmwy, blfy, bably, bnl0y, bpl0y, bgsPy
-   real, dimension(ialloc2)                :: bgsNy, bCMy, bBACy, bchlky, bchlgy, bdakiy, bdaaky, bsedky, bazoky, bkmory
+   real, dimension(ialloc2)                :: bvbsby, bvcsby, bo2y, bphy, bcay, bmwy, blfy, bably, bnl0y, bpl0y, bgspy
+   real, dimension(ialloc2)                :: bgsny, bcmy, bbacy, bchlky, bchlgy, bdakiy, bdaaky, bsedky, bazoky, bkmory
    real, dimension(ialloc2)                :: bkigry, bkbcmy, biry, bsisdy, bkmuay, bftkay, bfikay, bfhkay
    real, dimension(ialloc2)                :: bkray, btpkiy, btpgry, btpbly, bdagry, bdaagy, bsedgy, bazogy, bgmory
    real, dimension(ialloc2)                :: badrky, badrgy, bacoky, bacogy, bgmuay, bfigay, bfhgay, bgray, bzooiy
    real, dimension(ialloc2)                :: bfibay, bantby, bextky, bdably, bdaaby, bsedby, bazoby, bbmory, badrby
-   real, dimension(ialloc2)                :: bacoby, bbmuay, bfhbay, bbray, bchlby, bFlN3y, bbetNy, bJNO3y, bJNH4y
-   real, dimension(ialloc2)                :: bJPO4y, bJSiy, bJO2y, bcoliy, volfco, algcok, algcog, algcky, algcgy
-   real, dimension(ialloc2)                :: bgsZny, bglZny, bgsCady, bglCady, bgsCuy, bglCuy, bgsNiy, bglNiy
-   real, dimension(ialloc2)                :: bgsAsy, bglAsy, bgsPby, bglPby, bgsCry, bglCry, bgsFey, bglFey
-   real, dimension(ialloc2)                :: bgsHgy, bglHgy, bgsMny, bglMny, bgsUy, bglUy, bSSeros
-   real, dimension(ialloc2)                :: bJDOC1, bJDOC2, btracer, abegm2, abekm2, coroI, coroIs
-   real, dimension(ialloc2)                :: JDOC1, JDOC2, sgwmue, dH2De, saett, SSeros
+   real, dimension(ialloc2)                :: bacoby, bbmuay, bfhbay, bbray, bchlby, bfln3y, bbetny, bjno3y, bjnh4y
+   real, dimension(ialloc2)                :: bjpo4y, bjsiy, bjo2y, bcoliy, volfco, algcok, algcog, algcky, algcgy
+   real, dimension(ialloc2)                :: bgszny, bglzny, bgscady, bglcady, bgscuy, bglcuy, bgsniy, bglniy
+   real, dimension(ialloc2)                :: bgsasy, bglasy, bgspby, bglpby, bgscry, bglcry, bgsfey, bglfey
+   real, dimension(ialloc2)                :: bgshgy, bglhgy, bgsmny, bglmny, bgsuy, bgluy, bsseros
+   real, dimension(ialloc2)                :: bjdoc1, bjdoc2, btracer, abegm2, abekm2, coroi, corois
+   real, dimension(ialloc2)                :: jdoc1, jdoc2, sgwmue, dh2de, saett, sseros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
    real, dimension(ialloc2,5)              :: coro, coros
-   real, dimension(2,ialloc2)              :: bCDy, bCPy
-   real, dimension(ialloc5,ialloc2)        :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelPzy, sizy, chlazy
-   real, dimension(ialloc5,ialloc2)        :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelPz, siz
+   real, dimension(2,ialloc2)              :: bcdy, bcpy
+   real, dimension(ialloc5,ialloc2)        :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelpzy, sizy, chlazy
+   real, dimension(ialloc5,ialloc2)        :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelpz, siz
    real, dimension(ialloc5,ialloc2)        :: akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz
-   real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, Uvert, dalgkz, dalgbz, dalggz
-   real, dimension(ialloc5,ialloc2)        :: CChlakzy,CChlabzy,CChlagzy
-   real, dimension(ialloc5,ialloc2)        :: up_NKz, up_PKz, up_Siz, up_N2z, up_NGz, up_PGz, up_NBz, up_PBz
-   real, dimension(:,:), allocatable       :: tausc, M_eros, n_eros, sedroh, aEros, eEros, dsedH, zwdsedH ,btausc
-   real, dimension(:), allocatable         :: t1e,m1e,n1e,r1e
-   real, dimension(:), allocatable         :: STRdt, FZeit, ho2_z, hte_z, hph_z, wsp_UW, WSP_OW, wehrh, wehrb
-   real, dimension(:), allocatable         :: QStrang_1, startkm, endkm
-   real, dimension(:,:), allocatable       :: yWlage, Wlage, ymax, Ymin, vmq, Hmq, boeamq, segkm, clado
-   real, dimension(:,:,:), allocatable     :: hClado, bclado, hidras, hdrmas, hdrakr, hdrbar, hRzuwd, hdrmor
-   real, dimension(:,:,:), allocatable     :: sCD, sCP
-   real, dimension(:,:), allocatable       :: hsusn, hbettN, hdon, hagnh4, haknh4, habnh4, halNO3, hsedx0, hsusno
+   real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, uvert, dalgkz, dalgbz, dalggz
+   real, dimension(ialloc5,ialloc2)        :: cchlakzy,cchlabzy,cchlagzy
+   real, dimension(ialloc5,ialloc2)        :: up_nkz, up_pkz, up_siz, up_n2z, up_ngz, up_pgz, up_nbz, up_pbz
+   real, dimension(:,:),  allocatable      :: tausc, m_eros, n_eros, sedroh, aeros, eeros, dsedh, zwdsedh ,btausc
+   real, dimension(:),    allocatable      :: t1e,m1e,n1e,r1e
+   real, dimension(:),    allocatable      :: strdt, fzeit, ho2_z, hte_z, hph_z, wsp_uw, wsp_ow, wehrh, wehrb
+   real, dimension(:),    allocatable      :: qstrang_1, startkm, endkm
+   real, dimension(:,:),  allocatable      :: ywlage, wlage, ymax, ymin, vmq, hmq, boeamq, segkm, clado
+   real, dimension(:,:,:), allocatable     :: hclado, bclado, hidras, hdrmas, hdrakr, hdrbar, hrzuwd, hdrmor
+   real, dimension(:,:,:), allocatable     :: scd, scp
+   real, dimension(:,:), allocatable       :: hsusn, hbettn, hdon, hagnh4, haknh4, habnh4, halno3, hsedx0, hsusno
    real, dimension(:,:), allocatable       :: hsedag, hsedak, hsedab, halgzg, halgzk, halgzb, halgdg, halgdk
    real, dimension(:,:), allocatable       :: halgdb, halgcg, halgck, halgcb, habowg, habowk, hvolfd, hdrpfe
    real, dimension(:,:), allocatable       :: haborg, habork, hdalgg, hdalgk, hdalgb, hdalag, hdalak, hdalab, hdgmor
    real, dimension(:,:), allocatable       :: hdkmor, hdbmor, hsgo2n, hsdbsb, hbsbt, hdalgo, hdalao
-   real, dimension(:,:), allocatable       :: hSedOM, hBedGS, hsedvvert, hdKorn, dkorn, hbsbbe, hoein1, hro2dr, hzoro2, hpo2p
+   real, dimension(:,:), allocatable       :: hsedom, hbedgs, hsedvvert, hdkorn, dkorn, hbsbbe, hoein1, hro2dr, hzoro2, hpo2p
    real, dimension(:,:), allocatable       :: hpo2r, hiras, hrmuas, hrakr, hrbar, hkmuea, hgmuea, hbmuea, hftaau
    real, dimension(:,:), allocatable       :: hfiaus, hfigau, hfibau, hfheau, hfhega, hfheba, hakrau, hagrau, habrau
-   real, dimension(:,:), allocatable       :: hschlr, hDz2D
-   real, dimension(:,:), allocatable       :: hHNFmu, hHNFre, hHNFup, hHNFmo, hHNFex, hHNFdr, hHNFza, hBAmua
+   real, dimension(:,:), allocatable       :: hschlr, hdz2d
+   real, dimension(:,:), allocatable       :: hhnfmu, hhnfre, hhnfup, hhnfmo, hhnfex, hhnfdr, hhnfza, hbamua
    real, dimension(:,:), allocatable       :: dlalph, dlbeta, dlgamm, hdlarn, midlan, mxdlan
-   real, dimension(:,:), allocatable       :: zdrei, hpfl, zdrel, zdresl, gewdr, hgewdr, VTYP, Rzuwdr, Rzuwdy
-   real, dimension(:,:), allocatable       :: zdreis, CD, CP, migsP, mxgsP, migsN, mxgsN, miaki, mxaki, miagr, mxagr
+   real, dimension(:,:), allocatable       :: zdrei, hpfl, zdrel, zdresl, gewdr, hgewdr, vtyp, rzuwdr, rzuwdy
+   real, dimension(:,:), allocatable       :: zdreis, cd, cp, migsp, mxgsp, migsn, mxgsn, miaki, mxaki, miagr, mxagr
    integer                                 :: ilamda
-   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al !!wy Extinktionskoeffizienten von e_extnct.dat gelesen
-   real, dimension(:,:), allocatable       :: extk_lamda, hsised, hSKmor, mxtemp, mitemp, mxb5, mib5, mxcs, mics, mxnh4
+   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al !!wy extinktionskoeffizienten von e_extnct.dat gelesen
+   real, dimension(:,:), allocatable       :: extk_lamda, hsised, hskmor, mxtemp, mitemp, mxb5, mib5, mxcs, mics, mxnh4
    real, dimension(:,:), allocatable       :: minh4, mxchla,  michla, mxo2, mio2, mizo, mxzo, misi, mxsi, mivph, mxvph
    real, dimension(:,:), allocatable       :: micoli, mxcoli, mica, mxca, mimw, mxmw, mivno3, mxvno3, migp, mxgp, mxvno2
-   real, dimension(:,:), allocatable       :: mivno2, milf, mxlf, miabl, mxabl, miSS, mxSS, sumte, sumb5, sumcs, sumn4
-   real, dimension(:,:), allocatable       :: migsZn, mxgsZn, miglZn, mxglZn, migsCad, mxgsCad, miglCad, mxglCad
-   real, dimension(:,:), allocatable       :: migsCu, mxgsCu, miglCu, mxglCu, migsNi, mxgsNi, miglNi, mxglNi
-   real, dimension(:,:), allocatable       :: migsAs, mxgsAs, miglAs, mxglAs, migsPb, mxgsPb, miglPb, mxglPb
-   real, dimension(:,:), allocatable       :: migsCr, mxgsCr, miglCr, mxglCr, migsFe, mxgsFe, miglFe, mxglFe
-   real, dimension(:,:), allocatable       :: migsHg, mxgsHg, miglHg, mxglHg, migsMn, mxgsMn, miglMn, mxglMn
-   real, dimension(:,:), allocatable       :: migsU, mxgsU, miglU, mxglU
-   real, dimension(:,:), allocatable       :: sumgsZn, sumglZn, sumgsCad, sumglCad, sumgsCu, sumglCu, sumgsNi, sumglNi
-   real, dimension(:,:), allocatable       :: sumgsAs, sumglAs, sumgsPb, sumglPb, sumgsCr, sumglCr, sumgsFe, sumglFe
-   real, dimension(:,:), allocatable       :: sumgsHg, sumglHg, sumgsMn, sumglMn, sumgsU, sumglU
-   real, dimension(:,:), allocatable       :: sumsi, sCM, sBAC, sCHNF, sBVHNF, sumcak, sumcag, sumcab, summw, sumlf
-   real, dimension(:,:), allocatable       :: sumca, sumo2, sumzo, sumss, sumpfl, sumbal, sgsP, sgsN, scoli, sumvph
+   real, dimension(:,:), allocatable       :: mivno2, milf, mxlf, miabl, mxabl, miss, mxss, sumte, sumb5, sumcs, sumn4
+   real, dimension(:,:), allocatable       :: migszn, mxgszn, miglzn, mxglzn, migscad, mxgscad, miglcad, mxglcad
+   real, dimension(:,:), allocatable       :: migscu, mxgscu, miglcu, mxglcu, migsni, mxgsni, miglni, mxglni
+   real, dimension(:,:), allocatable       :: migsas, mxgsas, miglas, mxglas, migspb, mxgspb, miglpb, mxglpb
+   real, dimension(:,:), allocatable       :: migscr, mxgscr, miglcr, mxglcr, migsfe, mxgsfe, miglfe, mxglfe
+   real, dimension(:,:), allocatable       :: migshg, mxgshg, miglhg, mxglhg, migsmn, mxgsmn, miglmn, mxglmn
+   real, dimension(:,:), allocatable       :: migsu, mxgsu, miglu, mxglu
+   real, dimension(:,:), allocatable       :: sumgszn, sumglzn, sumgscad, sumglcad, sumgscu, sumglcu, sumgsni, sumglni
+   real, dimension(:,:), allocatable       :: sumgsas, sumglas, sumgspb, sumglpb, sumgscr, sumglcr, sumgsfe, sumglfe
+   real, dimension(:,:), allocatable       :: sumgshg, sumglhg, sumgsmn, sumglmn, sumgsu, sumglu
+   real, dimension(:,:), allocatable       :: sumsi, scm, sbac, schnf, sbvhnf, sumcak, sumcag, sumcab, summw, sumlf
+   real, dimension(:,:), allocatable       :: sumca, sumo2, sumzo, sumss, sumpfl, sumbal, sgsp, sgsn, scoli, sumvph
    real, dimension(:,:), allocatable       :: sumno3, sumgp, szooro, sumno2, svkigr, santbl, sumabl, snaehr
-   real, dimension(:,:), allocatable       :: sabmua, svx02, sumaki, sumagr, zwcd, zwcp, zwo2z, zwgPz, zwakiz, zwCors
-   real, dimension(:,:), allocatable       :: zwcoro, akmB, ekmB, DlB, zwagrz, zwablz, zwchlz, tau2B, alphaB, POMzb
-   real, dimension(:,:), allocatable       :: zwtez, sedAlg_MQ, sedSS_MQ, svx0, CDy, CPy, orgCsd, orgCsd_abb
-   real, dimension(:,:), allocatable       :: summsl, sumcal, sumdln, scorIg, scoIsg, ssedal, ssedx0, sdon, sFluN3
-   real, dimension(:,:), allocatable       :: ssusn, sbettn, salgzo, salgn, salNO3, ssusno, salgdr, salmor, salgco
+   real, dimension(:,:), allocatable       :: sabmua, svx02, sumaki, sumagr, zwcd, zwcp, zwo2z, zwgpz, zwakiz, zwcors
+   real, dimension(:,:), allocatable       :: zwcoro, akmb, ekmb, dlb, zwagrz, zwablz, zwchlz, tau2b, alphab, pomzb
+   real, dimension(:,:), allocatable       :: zwtez, sedalg_mq, sedss_mq, svx0, cdy, cpy, orgcsd, orgcsd_abb
+   real, dimension(:,:), allocatable       :: summsl, sumcal, sumdln, scorig, scoisg, ssedal, ssedx0, sdon, sflun3
+   real, dimension(:,:), allocatable       :: ssusn, sbettn, salgzo, salgn, salno3, ssusno, salgdr, salmor, salgco
    real, dimension(:,:), allocatable       :: svoldr, sdrpfe, sabeow, sabeor, sdalg, sdalga, sblmor, ssgo2n, ssdbsb
    real, dimension(:,:), allocatable       :: ssoein, ssalgo, s2algo, sbsbt, sschlr, sbsbbe, s2algao, so2phy, sro2dr
    real, dimension(:,:), allocatable       :: spo2p, spo2r, sir, srmue, srakr, srbar, sffood, sfik, sfig, sfib, sakmua
-   real, dimension(:,:), allocatable       :: sagmua, sfheka, sfhega, sfheba, sakrau, sagrea, sabrea, sHNFmu, sHNFre
-   real, dimension(:,:), allocatable       :: sHNFup, sHNFmo, sHNFex, sHNFdr, sHNFz, sBACmu, sHNFBA, snl0, spl0, sJNO3
-   real, dimension(:,:), allocatable       :: sJNH4, sJPO4, sJSi, sJO2
-   real, dimension(:,:), allocatable       :: sumCChlk, sumCChlg, sumCChlb
-   real, dimension(:,:), allocatable       :: bh, bf, vbm, bvmq, bHmq, bw2, w2b, bSedOM, bdKorn, SedOMb, dkornb, w2, hw2
-   real, dimension(:,:), allocatable       :: btempw, bTsed, bso, blb, bleb, bno3, bnh4, bgelp, bsvhek, bgesN, bgesP
+   real, dimension(:,:), allocatable       :: sagmua, sfheka, sfhega, sfheba, sakrau, sagrea, sabrea, shnfmu, shnfre
+   real, dimension(:,:), allocatable       :: shnfup, shnfmo, shnfex, shnfdr, shnfz, sbacmu, shnfba, snl0, spl0, sjno3
+   real, dimension(:,:), allocatable       :: sjnh4, sjpo4, sjsi, sjo2
+   real, dimension(:,:), allocatable       :: sumcchlk, sumcchlg, sumcchlb
+   real, dimension(:,:), allocatable       :: bh, bf, vbm, bvmq, bhmq, bw2, w2b, bsedom, bdkorn, sedomb, dkornb, w2, hw2
+   real, dimension(:,:), allocatable       :: btempw, btsed, bso, blb, bleb, bno3, bnh4, bgelp, bsvhek, bgesn, bgesp
    real, dimension(:,:), allocatable       :: bsvheg, bagbcm, bchla, bir, bssalg, bsi, bdaki, bdaak, bsedak, bazok
-   real, dimension(:,:), allocatable       :: bdkmor, bvkigr, bakbcm, baki, bagr, bsised,bSKmor, bfheau, bpfl, bakmua
+   real, dimension(:,:), allocatable       :: bdkmor, bvkigr, bakbcm, baki, bagr, bsised,bskmor, bfheau, bpfl, bakmua
    real, dimension(:,:), allocatable       :: bftaau, bfiaus, bakrau, bbsbt, bschlr, bbsb, bcsb, bo2, bno2, bx0, bchlak
    real, dimension(:,:), allocatable       :: bchlag, babrz1, bss, bzooi, bmw, bpw, bvcsb, bca, blf, bph, bvbsb, babewk
    real, dimension(:,:), allocatable       :: bdlarn, bx02, bstind, bdagr, bdaag, bsedag, bazog, bdgmor, babewg, baberg
@@ -228,98 +226,98 @@ program qsim
    real, dimension(:,:), allocatable       :: bexdvb, bdon, bsusn, bbettn, bsuso, bagn4, bakn4, bagn3, babn4, babn3
    real, dimension(:,:), allocatable       :: bdalgo, bdalgao,babeowg, babeowk, babeorg, babeork, bzooro2, bo2ein, bo2ein1, balgo
    real, dimension(:,:), allocatable       :: bsusn2, bpfln1, bpfln2
-   real, dimension(:,:), allocatable       :: bakn3, bsedn, bBVHNF, bsdbsb, bbsbbe, bdfaek, bdfaeg, bdfaeb, bdfaes
-   real, dimension(:,:), allocatable       :: bssdr, borgCs, borgCs_abb, bbsbct, bbsbcP, bcm, bBAC, bHNFBS, bBSBHN
-   real, dimension(:,:), allocatable       :: bCHNF, bnl0, bpl0, bgo2n, bpo2p, bpo2r, bro2dr, bro2HF, borgSS, bJNO3, bJN2
-   real, dimension(:,:), allocatable       :: bJNH4, bJSi, bJPO4, bJO2, bsedSS, babbcm, babl, bchlab, bantbl, bsvheb
-   real, dimension(:,:), allocatable       :: btpki, btpgr, bextk, bQ_PK, bQ_NK, bQ_SK, bQ_PG, bQ_NG, bQ_PB
-   real, dimension(:,:), allocatable       :: bQ_NB, bFluN3, bdabl, bdaab, bsedab, bazob, bdbmor, babmua, bfibas, bfhbau
-   real, dimension(:,:), allocatable       :: babrau, btpbl, bup_PB, bup_NB, babtbr, balgbz, balabz, bup_PK, bup_NK
-   real, dimension(:,:), allocatable       :: bup_Si, baktbr, bup_PG, bup_NG, bagtbr, balgkz, balakz, balggz, balagz
-   real, dimension(:,:), allocatable       :: bkN4z, bkN3z, bgN4z, bgN3z, bbN4z, bbN3z, bsedAlg_MQ, bsedSS_MQ, bTGZoo
+   real, dimension(:,:), allocatable       :: bakn3, bsedn, bbvhnf, bsdbsb, bbsbbe, bdfaek, bdfaeg, bdfaeb, bdfaes
+   real, dimension(:,:), allocatable       :: bssdr, borgcs, borgcs_abb, bbsbct, bbsbcp, bcm, bbac, bhnfbs, bbsbhn
+   real, dimension(:,:), allocatable       :: bchnf, bnl0, bpl0, bgo2n, bpo2p, bpo2r, bro2dr, bro2hf, borgss, bjno3, bjn2
+   real, dimension(:,:), allocatable       :: bjnh4, bjsi, bjpo4, bjo2, bsedss, babbcm, babl, bchlab, bantbl, bsvheb
+   real, dimension(:,:), allocatable       :: btpki, btpgr, bextk, bq_pk, bq_nk, bq_sk, bq_pg, bq_ng, bq_pb
+   real, dimension(:,:), allocatable       :: bq_nb, bflun3, bdabl, bdaab, bsedab, bazob, bdbmor, babmua, bfibas, bfhbau
+   real, dimension(:,:), allocatable       :: babrau, btpbl, bup_pb, bup_nb, babtbr, balgbz, balabz, bup_pk, bup_nk
+   real, dimension(:,:), allocatable       :: bup_si, baktbr, bup_pg, bup_ng, bagtbr, balgkz, balakz, balggz, balagz
+   real, dimension(:,:), allocatable       :: bkn4z, bkn3z, bgn4z, bgn3z, bbn4z, bbn3z, bsedalg_mq, bsedss_mq, btgzoo
    real, dimension(:,:), allocatable       :: bste, bsno3, bsn4, bsgelp, bsno2, bschla, bsssal, bssi, bszooi, bsvbsb
-   real, dimension(:,:), allocatable       :: bsvcsb, bsgsP, bsgsN, bsaki, bsagr, bsabl, bsFlN3, bso2, bsmw, bslf
+   real, dimension(:,:), allocatable       :: bsvcsb, bsgsp, bsgsn, bsaki, bsagr, bsabl, bsfln3, bso2, bsmw, bslf
    real, dimension(:,:), allocatable       :: bsca, bsph, bsnl0, bspl0, bsdalg, bsvkg, bsdaa, bsseda,bsalgz, bsamor
    real, dimension(:,:), allocatable       :: bsadr, bsalco, bsfik, bsfig, bskmue, bsgmue, bshek, bsheg, bskre
-   real, dimension(:,:), allocatable       :: bsgre, bschlk, bschlg, bsbmue, bsheb, bsbre, bschlb, bsantb, bsbetN
-   real, dimension(:,:), allocatable       :: bsJNO3, bsJNH4, bsJPO4, bsJO2, bsJSi, bscoli
-   real, dimension(:,:), allocatable       :: bsgsZn, bsglZn, bsgsCad, bsglCad, bsgsCu, bsglCu, bsgsNi, bsglNi
-   real, dimension(:,:), allocatable       :: bsgsAs, bsglAs, bsgsPb, bsglPb, bsgsCr, bsglCr, bsgsFe, bsglFe
-   real, dimension(:,:), allocatable       :: bsgsHg, bsglHg, bsgsMn, bsglMn, bsgsU, bsglU
+   real, dimension(:,:), allocatable       :: bsgre, bschlk, bschlg, bsbmue, bsheb, bsbre, bschlb, bsantb, bsbetn
+   real, dimension(:,:), allocatable       :: bsjno3, bsjnh4, bsjpo4, bsjo2, bsjsi, bscoli
+   real, dimension(:,:), allocatable       :: bsgszn, bsglzn, bsgscad, bsglcad, bsgscu, bsglcu, bsgsni, bsglni
+   real, dimension(:,:), allocatable       :: bsgsas, bsglas, bsgspb, bsglpb, bsgscr, bsglcr, bsgsfe, bsglfe
+   real, dimension(:,:), allocatable       :: bsgshg, bsglhg, bsgsmn, bsglmn, bsgsu, bsglu
    real, dimension(:,:), allocatable       :: bmxtem, bmitem, bmxno3, bmino3, bmxnh4, bminh4, bmxglp, bmiglp, bmxchl
    real, dimension(:,:), allocatable       :: bmichl, bmxssa, bmissa, bmxsi, bmisi, bmxzoo, bmizoo, bmxno2, bmino2
-   real, dimension(:,:), allocatable       :: bmibsb, bmxbsb, bmicsb, bmxcsb, bmxgsP, bmigsP, bmxgsN, bmigsN, bmxaki
+   real, dimension(:,:), allocatable       :: bmibsb, bmxbsb, bmicsb, bmxcsb, bmxgsp, bmigsp, bmxgsn, bmigsn, bmxaki
    real, dimension(:,:), allocatable       :: bmiaki, bmxagr, bmiagr, bmio2, bmxo2, bmxmw, bmimw, bmxlf, bmilf
-   real, dimension(:,:), allocatable       :: bmxca, bmica, bmxph, bmiph, bnaehr, bcoli, bDOSCF, bakmor_1, bagmor_1, babmor_1
-   real, dimension(:,:), allocatable       :: bmxgsZn, bmigsZn, bmxglZn, bmiglZn, bmxgsCad, bmigsCad, bmxglCad, bmiglCad
-   real, dimension(:,:), allocatable       :: bmxgsCu, bmigsCu, bmxglCu, bmiglCu, bmxgsNi, bmigsNi, bmxglNi, bmiglNi
-   real, dimension(:,:), allocatable       :: bmxgsAs, bmigsAs, bmxglAs, bmiglAs, bmxgsPb, bmigsPb, bmxglPb, bmiglPb
-   real, dimension(:,:), allocatable       :: bmxgsCr, bmigsCr, bmxglCr, bmiglCr, bmxgsFe, bmigsFe, bmxglFe, bmiglFe
-   real, dimension(:,:), allocatable       :: bmxgsHg, bmigsHg, bmxglHg, bmiglHg, bmxgsMn, bmigsMn, bmxglMn, bmiglMn
-   real, dimension(:,:), allocatable       :: bmxgsU, bmigsU, bmxglU, bmiglU
-   real, dimension(:,:), allocatable       :: bgsZn, bglZn, bgsCad, bglCad, bgsCu, bglCu, bgsNi, bglNi
-   real, dimension(:,:), allocatable       :: bgsAs, bglAs, bgsPb, bglPb, bgsCr, bglCr, bgsFe, bglFe
-   real, dimension(:,:), allocatable       :: bgsHg, bglHg, bgsMn, bglMn, bgsU, bglU
-   real, dimension(:,:), allocatable       :: bZnSed,bCadSed,bCuSed,bNiSed,bAsSed,bPbSed
-   real, dimension(:,:), allocatable       :: bCrSed,bFeSed,bHgSed,bMnSed,bUSed
-   real, dimension(:,:), allocatable       :: hfkm, hqaus, hsvhk, hsvhg, hDOSCF, hsvhb, habbcm, habl, hchlab, hantbl
-   real, dimension(:,:), allocatable       :: htempw, hTsed, hbsb, hcsb, hnh4, hCM, hBAC, ho2, hno3, hno2, hx0, hsi
+   real, dimension(:,:), allocatable       :: bmxca, bmica, bmxph, bmiph, bnaehr, bcoli, bdoscf, bakmor_1, bagmor_1, babmor_1
+   real, dimension(:,:), allocatable       :: bmxgszn, bmigszn, bmxglzn, bmiglzn, bmxgscad, bmigscad, bmxglcad, bmiglcad
+   real, dimension(:,:), allocatable       :: bmxgscu, bmigscu, bmxglcu, bmiglcu, bmxgsni, bmigsni, bmxglni, bmiglni
+   real, dimension(:,:), allocatable       :: bmxgsas, bmigsas, bmxglas, bmiglas, bmxgspb, bmigspb, bmxglpb, bmiglpb
+   real, dimension(:,:), allocatable       :: bmxgscr, bmigscr, bmxglcr, bmiglcr, bmxgsfe, bmigsfe, bmxglfe, bmiglfe
+   real, dimension(:,:), allocatable       :: bmxgshg, bmigshg, bmxglhg, bmiglhg, bmxgsmn, bmigsmn, bmxglmn, bmiglmn
+   real, dimension(:,:), allocatable       :: bmxgsu, bmigsu, bmxglu, bmiglu
+   real, dimension(:,:), allocatable       :: bgszn, bglzn, bgscad, bglcad, bgscu, bglcu, bgsni, bglni
+   real, dimension(:,:), allocatable       :: bgsas, bglas, bgspb, bglpb, bgscr, bglcr, bgsfe, bglfe
+   real, dimension(:,:), allocatable       :: bgshg, bglhg, bgsmn, bglmn, bgsu, bglu
+   real, dimension(:,:), allocatable       :: bznsed,bcadsed,bcused,bnised,bassed,bpbsed
+   real, dimension(:,:), allocatable       :: bcrsed,bfesed,bhgsed,bmnsed,bused
+   real, dimension(:,:), allocatable       :: hfkm, hqaus, hsvhk, hsvhg, hdoscf, hsvhb, habbcm, habl, hchlab, hantbl
+   real, dimension(:,:), allocatable       :: htempw, htsed, hbsb, hcsb, hnh4, hcm, hbac, ho2, hno3, hno2, hx0, hsi
    real, dimension(:,:), allocatable       :: hx02, hcoli, hchla, hchlak, hchlag, hvkigr, htpki, htpgr, htpbl, hzooi
    real, dimension(:,:), allocatable       :: habrz1, hssalg, hss, hgelp, hmw, hpw, hca, hlf, hph, hvbsb, hvcsb, haki
-   real, dimension(:,:), allocatable       :: hstind, hagr, hakbcm, hagbcm, hCHNF, hBVHNF, hHNFBA, hfssgr, hfbsgr, hnl0
-   real, dimension(:,:), allocatable       :: hQ_NK, hQ_PK, hQ_SK, hQ_NG, hQ_PG, hQ_NB, hQ_PB, hpl0, hfrfgr, hffood
-   real, dimension(:,:), allocatable       :: hdl, htau2, hgesP, hgesN, hCD1, hCD2, hCP1, hCP2, hvo2, hextk, hJNO3
-   real, dimension(:,:), allocatable       :: hJNH4, hJPO4, hJSi, hJO2, hFluN3,hJN2, TGZoo, akmor_1, agmor_1, abmor_1
-   integer, dimension(:,:), allocatable    :: anzZeit, banzZeit, zwanzZeit
-   real, dimension(:,:), allocatable       :: hglZn, hgsZn, hglCad, hgsCad, hglCu, hgsCu, hglNi, hgsNi
-   real, dimension(:,:), allocatable       :: hglAs, hgsAs, hglPb, hgsPb, hglCr, hgsCr, hglFe, hgsFe
-   real, dimension(:,:), allocatable       :: hglHg, hgsHg, hglMn, hgsMn, hglU, hgsU
-   real, dimension(:,:), allocatable       :: hSSeros,hsedalk,hsedalg,hsedalb,hsedss
-   real, dimension(:,:), allocatable       :: ZnSed,CadSed,CuSed,NiSed,AsSed
-   real, dimension(:,:), allocatable       :: PbSed,CrSed,FeSed,HgSed,MnSed,USed
+   real, dimension(:,:), allocatable       :: hstind, hagr, hakbcm, hagbcm, hchnf, hbvhnf, hhnfba, hfssgr, hfbsgr, hnl0
+   real, dimension(:,:), allocatable       :: hq_nk, hq_pk, hq_sk, hq_ng, hq_pg, hq_nb, hq_pb, hpl0, hfrfgr, hffood
+   real, dimension(:,:), allocatable       :: hdl, htau2, hgesp, hgesn, hcd1, hcd2, hcp1, hcp2, hvo2, hextk, hjno3
+   real, dimension(:,:), allocatable       :: hjnh4, hjpo4, hjsi, hjo2, hflun3,hjn2, tgzoo, akmor_1, agmor_1, abmor_1
+   integer, dimension(:,:), allocatable    :: anzzeit, banzzeit, zwanzzeit
+   real, dimension(:,:), allocatable       :: hglzn, hgszn, hglcad, hgscad, hglcu, hgscu, hglni, hgsni
+   real, dimension(:,:), allocatable       :: hglas, hgsas, hglpb, hgspb, hglcr, hgscr, hglfe, hgsfe
+   real, dimension(:,:), allocatable       :: hglhg, hgshg, hglmn, hgsmn, hglu, hgsu
+   real, dimension(:,:), allocatable       :: hsseros,hsedalk,hsedalg,hsedalb,hsedss
+   real, dimension(:,:), allocatable       :: znsed,cadsed,cused,nised,assed
+   real, dimension(:,:), allocatable       :: pbsed,crsed,fesed,hgsed,mnsed,used
    real, dimension(:,:), allocatable       :: apfl, epfl, pflmxs, pflmis, aschif, eschif, awett, ewett, abal, ebal
-   real, dimension(:,:), allocatable       :: ggbal, gkbal, akdrei, ekdrei, aPOM, ePOM, POMz, BedGSz, sedvvertz, acoro, ecoro
-   real, dimension(:,:), allocatable       :: coro1s, aKSED, eKSED, SPEWKSx, WUEBKx, PSREFSx, extkx, coross, aVEG, eVEG
-   real, dimension(:,:), allocatable       :: VALTAL, EDUFAL, VALTAR, EDUFAR
-   real, dimension(:,:), allocatable       :: SedOM, BedGSed, sedvvert, SPEWKSuS, WUEBKuS, PSREFSuS, SPEWKSS, WUEBKS, PSREFSS
-   real, dimension(:,:), allocatable       :: extkuS, extkS, Stakm, Raua, bsohla, hlboea, hflaea, htiefa, hvF, hWS
+   real, dimension(:,:), allocatable       :: ggbal, gkbal, akdrei, ekdrei, apom, epom, pomz, bedgsz, sedvvertz, acoro, ecoro
+   real, dimension(:,:), allocatable       :: coro1s, aksed, eksed, spewksx, wuebkx, psrefsx, extkx, coross, aveg, eveg
+   real, dimension(:,:), allocatable       :: valtal, edufal, valtar, edufar
+   real, dimension(:,:), allocatable       :: sedom, bedgsed, sedvvert, spewksus, wuebkus, psrefsus, spewkss, wuebks, psrefss
+   real, dimension(:,:), allocatable       :: extkus, extks, stakm, raua, bsohla, hlboea, hflaea, htiefa, hvf, hws
    real, dimension(:,:), allocatable       :: helen, hvmitt, htiefe, hrau, hrhyd, hflae, hpfmnl, hpfmxl, habgml
-   real, dimension(:,:), allocatable       :: hlboem, hbsohl, hvabfl, VALTLH, EDUFLH, VALTRH, EDUFRH, habkml
+   real, dimension(:,:), allocatable       :: hlboem, hbsohl, hvabfl, valtlh, eduflh, valtrh, edufrh, habkml
    real, dimension(:,:), allocatable       :: hdlmx, hdlmxs, hgwdmx, hsgwmu
-   real, dimension(:,:), allocatable       :: hdH2De, Hmax2D
-   real, dimension(:,:), allocatable       :: RBkm, RBkmLe, RBkm1, WirkLL, abfls, obsbs, ocsbs, vnh4s, vno2s
-   real, dimension(:,:), allocatable       :: vno3s, gesNs, vx0s, vx02s, gelps, gesPs, sis, chlas, vkigrs, antbls
-   real, dimension(:,:), allocatable       :: zooins, vphs, mws, pws, cas, lfs, ssalgs, tempws, vo2s, CHNFs, BVHNFs
-   real, dimension(:,:), allocatable       :: colis, waers, akis, agrs, abls, agbcms, akbcms, abbcms, frfgrs,DOSCFs
-   real, dimension(:,:), allocatable       :: CMS, BACs, nl0s, pl0s, sss, Chlaks, chlabs, chlags, vbsbs, vcsbs
-   real, dimension(:,:), allocatable       :: Q_NKs, Q_PKs, Q_SKs, Q_NGs, Q_PGs, Q_NBs, Q_PBs
-   real, dimension(:,:), allocatable       :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis
-   real, dimension(:,:), allocatable       :: glAss, gsAss, glPbs, gsPbs, glCrs, gsCrs, glFes, gsFes
-   real, dimension(:,:), allocatable       :: glHgs, gsHgs, glMns, gsMns, glUs, gsUs
+   real, dimension(:,:), allocatable       :: hdh2de, hmax2d
+   real, dimension(:,:), allocatable       :: rbkm, rbkmle, rbkm1, wirkll, abfls, obsbs, ocsbs, vnh4s, vno2s
+   real, dimension(:,:), allocatable       :: vno3s, gesns, vx0s, vx02s, gelps, gesps, sis, chlas, vkigrs, antbls
+   real, dimension(:,:), allocatable       :: zooins, vphs, mws, pws, cas, lfs, ssalgs, tempws, vo2s, chnfs, bvhnfs
+   real, dimension(:,:), allocatable       :: colis, waers, akis, agrs, abls, agbcms, akbcms, abbcms, frfgrs,doscfs
+   real, dimension(:,:), allocatable       :: cms, bacs, nl0s, pl0s, sss, chlaks, chlabs, chlags, vbsbs, vcsbs
+   real, dimension(:,:), allocatable       :: q_nks, q_pks, q_sks, q_ngs, q_pgs, q_nbs, q_pbs
+   real, dimension(:,:), allocatable       :: glzns, gszns, glcads, gscads, glcus, gscus, glnis, gsnis
+   real, dimension(:,:), allocatable       :: glass, gsass, glpbs, gspbs, glcrs, gscrs, glfes, gsfes
+   real, dimension(:,:), allocatable       :: glhgs, gshgs, glmns, gsmns, glus, gsus
    real, dimension(:,:), allocatable       :: einlkh, qeinlh, ebsbh, ecsbh, enh4h, ex0h, eo2h, etemph, echlah
    real, dimension(:,:), allocatable       :: ezindh, egph, esih, eno3h, essh, ewaerh, enl0h, epl0h, ephh, emwh
-   real, dimension(:,:), allocatable       :: elfh, ecah, ex02h, eno2h, eCHNFh, eBVHNh, egesNh, egesPh, ecolih
-   real, dimension(:,:), allocatable       :: evkgh, eantbh, eCM, eBAC
-   real, dimension(:,:), allocatable       :: egsZn, eglZn, egsCad, eglCad, egsCu, eglCu, egsNi, eglNi
-   real, dimension(:,:), allocatable       :: egsAs, eglAs, egsPb, eglPb, egsCr, eglCr, egsFe, eglFe
-   real, dimension(:,:), allocatable       :: egsHg, eglHg, egsMn, eglMn, egsU, eglU
-   real, dimension(:,:), allocatable       :: qLh, bsbLh, csbLh, enh4Lh, eno2Lh, eno3Lh, gesNLh, x0Lh, x02Lh
-   real, dimension(:,:), allocatable       :: gpLh, gesPLh, siLh, phLh, caLh, elfLh, ssLh, tempLh, o2Lh, coliLh
-   real, dimension(:,:), allocatable       :: enl0Lh, pl0Lh, chlaLh, CML, BACL
-   real, dimension(:,:), allocatable       :: afkm2D, efkm2D
-   real, dimension(:,:), allocatable       :: ho2z_z, htez_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hNh4z_z, hNO2z_z
-   real, dimension(:,:), allocatable       :: hNO3z_z, hPz_z, hSiz_z, hchlkz_z, hchlgz_z, hchlbz_z, hgesPz_z, hgesNz_z
-   real, dimension(:,:), allocatable       :: hQ_NKz_z, hQ_NBz_z, hQ_NGz_z, hCChlkz_z, hCChlbz_z, hCChlgz_z
-   real, dimension(:,:,:), allocatable     :: bcd, bcp, hCD, hCP, CDL, CPL, zdrs, zdrss, gwdrs, VTYPA
+   real, dimension(:,:), allocatable       :: elfh, ecah, ex02h, eno2h, echnfh, ebvhnh, egesnh, egesph, ecolih
+   real, dimension(:,:), allocatable       :: evkgh, eantbh, ecm, ebac
+   real, dimension(:,:), allocatable       :: egszn, eglzn, egscad, eglcad, egscu, eglcu, egsni, eglni
+   real, dimension(:,:), allocatable       :: egsas, eglas, egspb, eglpb, egscr, eglcr, egsfe, eglfe
+   real, dimension(:,:), allocatable       :: egshg, eglhg, egsmn, eglmn, egsu, eglu
+   real, dimension(:,:), allocatable       :: qlh, bsblh, csblh, enh4lh, eno2lh, eno3lh, gesnlh, x0lh, x02lh
+   real, dimension(:,:), allocatable       :: gplh, gesplh, silh, phlh, calh, elflh, sslh, templh, o2lh, colilh
+   real, dimension(:,:), allocatable       :: enl0lh, pl0lh, chlalh, cml, bacl
+   real, dimension(:,:), allocatable       :: afkm2d, efkm2d
+   real, dimension(:,:), allocatable       :: ho2z_z, htez_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hnh4z_z, hno2z_z
+   real, dimension(:,:), allocatable       :: hno3z_z, hpz_z, hsiz_z, hchlkz_z, hchlgz_z, hchlbz_z, hgespz_z, hgesnz_z
+   real, dimension(:,:), allocatable       :: hq_nkz_z, hq_nbz_z, hq_ngz_z, hcchlkz_z, hcchlbz_z, hcchlgz_z
+   real, dimension(:,:,:), allocatable     :: bcd, bcp, hcd, hcp, cdl, cpl, zdrs, zdrss, gwdrs, vtypa
    real, dimension(:,:,:), allocatable     :: sidras, sdrmas, sdrakr, sdrbar, sdrmor, szdrg, szdrsg, sgwdrg, wstand
-   real, dimension(:,:,:), allocatable     :: hzdrel, hzdrsl, hgwdrl, VTYPH
-   real, dimension(:,:,:), allocatable     :: CDs, CPs, eCD, eCP, hcoro2, hcos2
-   real, dimension(:,:,:), allocatable     :: hnh4z, hno2z, hno3z, ho2z, hgelPz, hgesPz, hgesNz, hsiz
+   real, dimension(:,:,:), allocatable     :: hzdrel, hzdrsl, hgwdrl, vtyph
+   real, dimension(:,:,:), allocatable     :: cds, cps, ecd, ecp, hcoro2, hcos2
+   real, dimension(:,:,:), allocatable     :: hnh4z, hno2z, hno3z, ho2z, hgelpz, hgespz, hgesnz, hsiz
    real, dimension(:,:,:), allocatable     :: hakiz, hagrz, hablz, hchlaz, hchlkz, hchlgz, hchlbz, htempz
-   real, dimension(:,:,:), allocatable     :: hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz, hCChlbz, hCChlgz
-   real, dimension(:,:,:), allocatable     :: Tzt, o2zt, NH4zt, NO2zt, NO3zt, Pzt, gSizt, akizt, agrzt, ablzt
-   real, dimension(:,:,:), allocatable     :: chlazt, chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt
-   real, dimension(:,:,:), allocatable     :: CChlkzt, CChlbzt, CChlgzt
+   real, dimension(:,:,:), allocatable     :: hq_nkz, hq_nbz, hq_ngz, hcchlkz, hcchlbz, hcchlgz
+   real, dimension(:,:,:), allocatable     :: tzt, o2zt, nh4zt, no2zt, no3zt, pzt, gsizt, akizt, agrzt, ablzt
+   real, dimension(:,:,:), allocatable     :: chlazt, chlkzt, chlgzt, chlbzt, gespzt, gesnzt, q_nkzt, q_nbzt, q_ngzt
+   real, dimension(:,:,:), allocatable     :: cchlkzt, cchlbzt, cchlgzt
    character (len = 8)                     :: versionstext, dummy
    
    ! --- settings ---
@@ -2562,1114 +2560,1113 @@ program qsim
       
       ieinsh(mstr) = iein
       ieinLs(mstr) = ieinL
-      iwahl = 1
-      ! if(nstrs(istr)==0)iwahl = 1
+      
       
       ! j_ist: gilt nur bei iwied=0. Zufließende Straenge sind bereits mit
       ! Randedingungen belegt
-      if (nstrs(istr) > 0 .and. j_ist == 1) iwahl = 2
-      
-      Rand_Wahl: select case (iwahl)
-         case (1)
-            inkzmx = nkzsmx
-            mRB = mRB_1
-            mstr1 = mstr
-            !if(iwied==0.and.iwsim/=4)then
-            if (iwied == 0) then
-               ianze(mstr) = hanze(mstr)+1
-               iB = 1
-               anzej = hanze(mstr)+1
-               if (iwsim == 4)anzej = 1                       ! Tracer
-               if (mRand == 0 .and. iwsim /= 4)mstr1 = mstrRB   ! Falls keine Randbedingung fuer diesen Strang vorhanden, wird
-               ! dieser Strang mit der Randbedingung eines anderen
-               ! Strangs belegt (nicht bei Tracer)
-               ! else if(iwied==1.and.iwsim/=4)then
-               if (mRand == 0 .and. iwsim == 4) then
-                  mstr1 = mstr
-                  tempws(mstr1,mRB) = 0.0
-               endif
-            else if (iwied == 1) then
-               iB = 1
-               anzej = 1
+      if (nstrs(istr) <= 0 .or. j_ist /= 1) then
+         inkzmx = nkzsmx
+         mRB = mRB_1
+         mstr1 = mstr
+         !if(iwied==0.and.iwsim/=4)then
+         if (iwied == 0) then
+            ianze(mstr) = hanze(mstr)+1
+            iB = 1
+            anzej = hanze(mstr)+1
+            if (iwsim == 4)anzej = 1                       ! Tracer
+            if (mRand == 0 .and. iwsim /= 4)mstr1 = mstrRB   ! Falls keine Randbedingung fuer diesen Strang vorhanden, wird
+            ! dieser Strang mit der Randbedingung eines anderen
+            ! Strangs belegt (nicht bei Tracer)
+            ! else if(iwied==1.and.iwsim/=4)then
+            if (mRand == 0 .and. iwsim == 4) then
                mstr1 = mstr
-               if (mRand /= 1)anzej = 0     ! keine Belegung des 1. Ortspunkts, da keine Randbedigung vorhanden
-               if (iflRi(mstr) == -1) then
-                  IB = hanze(mstr)+1
-                  anzej = hanze(mstr)+1
-                  if (mRand /= 2)anzej = hanze(mstr) ! keine Belegung des 1. Ortspunkts, da keine Randbedigung vorhanden
-               endif
+               tempws(mstr1,mRB) = 0.0
             endif
-            do ior = iB,anzej ! Schleife ueber die Ortspunkte, Beginn
-               hsvhk(mstr,ior) = 0.0
-               hsvhg(mstr,ior) = 0.0
-               hsvhb(mstr,ior) = 0.0
-               hfssgr(mstr,ior) = fssgrs
-               hfbsgr(mstr,ior) = fbsgrs
-               hfrfgr(mstr,ior) = frfgrs(mstr1,mRB)
-               hsised(mstr,ior) = 0.0
-               hdlarn(mstr,ior) = 0.0
-               hstind(mstr,ior) = 0.0
-               if (RBtyp(mstr,mRB) == 0) then
-                  Wtst = -1.0
-                  Wtst_T = -9.99
-               else
-                  Wtst = 0.0
-                  Wtst_T = -9.99
-               endif
-               if (tempws(mstr1,mRB) > Wtst_T) then
-                  hakbcm(mstr,ior) = akbcms(mstr1,mRB)
-                  hagbcm(mstr,ior) = agbcms(mstr1,mRB)
-                  habbcm(mstr,ior) = abbcms(mstr1,mRB)
-               endif
-               
-               if (nl0s(mstr1,mRB)   > 0.0) hnl0(mstr,ior)  = nl0s(mstr1,mRB)
-               if (pl0s(mstr1,mRB)   > 0.0) hpl0(mstr,ior)  = pl0s(mstr1,mRB)
-               if (gesNs(mstr1,mRB)  >=0.0) hgesN(mstr,ior) = gesNs(mstr1,mRB)
-               if (gesPs(mstr1,mRB)  >=0.0) hgesP(mstr,ior) = gesPs(mstr1,mRB)
-               if (Q_NKs(mstr1,mRB)  > 0.0) hQ_NK(mstr,ior) = Q_NKs(mstr1,mRB)
-               if (Q_PKs(mstr1,mRB)  > 0.0) hQ_PK(mstr,ior) = Q_PKs(mstr1,mRB)
-               if (Q_SKs(mstr1,mRB)  > 0.0) hQ_SK(mstr,ior) = Q_SKs(mstr1,mRB)
-               if (Q_NGs(mstr1,mRB)  > 0.0) hQ_NG(mstr,ior) = Q_NGs(mstr1,mRB)
-               if (Q_PGs(mstr1,mRB)  > 0.0) hQ_PG(mstr,ior) = Q_PGs(mstr1,mRB)
-               if (Q_NBs(mstr1,mRB)  > 0.0) hQ_NB(mstr,ior) = Q_NBs(mstr1,mRB)
-               if (Q_PBs(mstr1,mRB)  > 0.0) hQ_PB(mstr,ior) = Q_PBs(mstr1,mRB)
-               if (tempws(mstr1,mRB) > Wtst_T) htempw(mstr,ior) = tempws(mstr1,mRB)
-               
-               ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-               if (iwied == 0)hTsed(mstr,ior) = htempw(mstr,ior)
-               if (obsbs(mstr1,mRB) >= Wtst) hbsb(mstr,ior)   = obsbs(mstr1,mRB)
-               if (ocsbs(mstr1,mRB) >= Wtst) hcsb(mstr,ior)   = ocsbs(mstr1,mRB)
-               if (CHNFs(mstr1,mRB) >= Wtst) hCHNF(mstr,ior)  = CHNFs(mstr1,mRB)
-               if (BVHNFs(mstr1,mRB)>= Wtst) hBVHNF(mstr,ior) = BVHNFs(mstr1,mRB)
-               if (CDs(mstr1,1,mRB) >= Wtst) hCD(mstr,1,ior)  = CDs(mstr1,1,mRB)
-               if (CDs(mstr1,2,mRB) >= Wtst) hCD(mstr,2,ior)  = CDs(mstr1,2,mRB)
-               if (CPs(mstr1,1,mRB) >= Wtst) hCP(mstr,1,ior)  = CPs(mstr1,1,mRB)
-               if (CPs(mstr1,2,mRB) >= Wtst) hCP(mstr,2,ior)  = CPs(mstr1,2,mRB)
-               if (CMs(mstr1,mRB)   >= Wtst) hCM(mstr,ior)    = CMs(mstr1,mRB)
-               if (BACs(mstr1,mRB)  >= Wtst) hBAC(mstr,ior)   = BACs(mstr1,mRB)
-               if (vnh4s(mstr1,mRB) >= Wtst) hnh4(mstr,ior)   = vnh4s(mstr1,mRB)
-               if (vo2s(mstr1,mRB)  >= Wtst) ho2(mstr,ior)    = vo2s(mstr1,mRB)
-               if (isnan(ho2(mstr,ior))) print*,"ho2(mstr,ior) = vo2s(mstr1,mRB)",ho2(mstr,ior),mstr,ior,vo2s(mstr1,mRB),mstr1,mRB
-               if (vno3s(mstr1,mRB) >= Wtst) hno3(mstr,ior)   = vno3s(mstr1,mRB)
-               if (vno2s(mstr1,mRB) >= Wtst) hno2(mstr,ior)   = vno2s(mstr1,mRB)
-               if (vx0s(mstr1,mRB)  >= Wtst) hx0(mstr,ior)    = vx0s(mstr1,mRB)
-               if (vx02s(mstr1,mRB) >= Wtst) hx02(mstr,ior)   = vx02s(mstr1,mRB)
-               if (sis(mstr1,mRB)   >= Wtst) hsi(mstr,ior)    = sis(mstr1,mRB)
-               if (chlas(mstr1,mRB) >= Wtst) hchla(mstr,ior)  = chlas(mstr1,mRB)
-               if (akis(mstr1,mRB)  >= Wtst) haki(mstr,ior)   = akis(mstr1,mRB)
-               if (agrs(mstr1,mRB)  >= Wtst) hagr(mstr,ior)   = agrs(mstr1,mRB)
-               if (abls(mstr1,mRB)  >= Wtst) habl(mstr,ior)   = abls(mstr1,mRB)
-               if (chlaks(mstr1,mRB)>= Wtst) hchlak(mstr,ior) = chlaks(mstr1,mRB)
-               if (chlags(mstr1,mRB)>= Wtst) hchlag(mstr,ior) = chlags(mstr1,mRB)
-               if (chlabs(mstr1,mRB)>= Wtst) hchlab(mstr,ior) = chlabs(mstr1,mRB)
-               if (vkigrs(mstr1,mRB)>= Wtst) hvkigr(mstr,ior) = vkigrs(mstr1,mRB)
-               if (antbls(mstr1,mRB)>= Wtst) hantbl(mstr,ior) = antbls(mstr1,mRB)
-               habrz1(mstr,ior) = 0.0
-               if (ssalgs(mstr1,mRB)>= Wtst) hssalg(mstr,ior) = ssalgs(mstr1,mRB)
-               if (sss(mstr1,mRB)   >= Wtst) hss(mstr,ior)    = sss(mstr1,mRB)
-               if (zooins(mstr1,mRB)>= Wtst) hzooi(mstr,ior)  = zooins(mstr1,mRB)
-               if (gelps(mstr1,mRB) >= Wtst) hgelp(mstr,ior)  = gelps(mstr1,mRB)
-               if (mws(mstr1,mRB)   >= Wtst) hmw(mstr,ior)    = mws(mstr1,mRB)
-               if (mws(mstr1,mRB)   >= Wtst) hpw(mstr,ior)    = pws(mstr1,mRB)
-               if (cas(mstr1,mRB)   >= Wtst) hca(mstr,ior)    = cas(mstr1,mRB)
-               if (lfs(mstr1,mRB)   >= Wtst) hlf(mstr,ior)    = lfs(mstr1,mRB)
-               if (vphs(mstr1,mRB)  >= Wtst) hph(mstr,ior)    = vphs(mstr1,mRB)
-               if (colis(mstr1,mRB) >= Wtst) then
-                  hcoli(mstr,ior)  = colis(mstr1,mRB)
-                  hDOSCF(mstr,ior) = DOSCFs(mstr1,mRB)
-               endif
-               if (gesPs(mstr1,mRB) >= Wtst) hgesP(mstr,ior)  = gesPs(mstr1,mRB)
-               if (gesNs(mstr1,mRB) >= Wtst) hgesN(mstr,ior)  = gesNs(mstr1,mRB)
-               if (gsZns(mstr1,mRB) >= Wtst) hgsZn(mstr,ior)  = gsZns(mstr1,mRB)
-               if (glZns(mstr1,mRB) >= Wtst) hglZn(mstr,ior)  = glZns(mstr1,mRB)
-               if (gsCads(mstr1,mRB)>= Wtst) hgsCad(mstr,ior) = gsCads(mstr1,mRB)
-               if (glCads(mstr1,mRB)>= Wtst) hglCad(mstr,ior) = glCads(mstr1,mRB)
-               if (gsCus(mstr1,mRB) >= Wtst) hgsCu(mstr,ior)  = gsCus(mstr1,mRB)
-               if (glCus(mstr1,mRB) >= Wtst) hglCu(mstr,ior)  = glCus(mstr1,mRB)
-               if (gsNis(mstr1,mRB) >= Wtst) hgsNi(mstr,ior)  = gsNis(mstr1,mRB)
-               if (glNis(mstr1,mRB) >= Wtst) hglNi(mstr,ior)  = glNis(mstr1,mRB)
-               if (gsAss(mstr1,mRB) >= Wtst) hgsAs(mstr,ior)  = gsAss(mstr1,mRB)
-               if (glAss(mstr1,mRB) >= Wtst) hglAs(mstr,ior)  = glAss(mstr1,mRB)
-               if (gsPbs(mstr1,mRB) >= Wtst) hgsPb(mstr,ior)  = gsPbs(mstr1,mRB)
-               if (glPbs(mstr1,mRB) >= Wtst) hglPb(mstr,ior)  = glPbs(mstr1,mRB)
-               if (gsCrs(mstr1,mRB) >= Wtst) hgsCr(mstr,ior)  = gsCrs(mstr1,mRB)
-               if (glCrs(mstr1,mRB) >= Wtst) hglCr(mstr,ior)  = glCrs(mstr1,mRB)
-               if (gsFes(mstr1,mRB) >= Wtst) hgsFe(mstr,ior)  = gsFes(mstr1,mRB)
-               if (glFes(mstr1,mRB) >= Wtst) hglFe(mstr,ior)  = glFes(mstr1,mRB)
-               if (gsHgs(mstr1,mRB) >= Wtst) hgsHg(mstr,ior)  = gsHgs(mstr1,mRB)
-               if (glHgs(mstr1,mRB) >= Wtst) hglHg(mstr,ior)  = glHgs(mstr1,mRB)
-               if (gsMns(mstr1,mRB) >= Wtst) hgsMn(mstr,ior)  = gsMns(mstr1,mRB)
-               if (glMns(mstr1,mRB) >= Wtst) hglMn(mstr,ior)  = glMns(mstr1,mRB)
-               if (gsUs(mstr1,mRB)  >= Wtst) hgsU(mstr,ior)   = gsUs(mstr1,mRB)
-               if (glUs(mstr1,mRB)  >= Wtst) hglU(mstr,ior)   = glUs(mstr1,mRB)
-               if (iwsim == 4) cycle  ! bei Tracer wird dieser Programmteil nicht ausgeführt!
-               
-               algb5 = haki(mstr,ior) * Caki * bsbki  &
-                     + hagr(mstr,ior) * Cagr * bsbgr  &
-                     + habl(mstr,ior) * Cabl * bsbbl
-                     
-               hvbsb(mstr,ior) = hbsb(mstr,ior) + algb5
-               zoobsb = (hzooi(mstr,ior)*GRot/1000.) * bsbZoo
-               hvbsb(mstr,ior) = hvbsb(mstr,ior) + zoobsb
-               
-               algcs = haki(mstr,ior) * Caki * csbki  &
-                     + habl(mstr,ior) * Cabl * csbbl  &
-                     + hagr(mstr,ior) * Cagr * csbgr
-               hvcsb(mstr,ior) = hcsb(mstr,ior)+algcs
-               zoocsb = hzooi(mstr,ior)*(GROT*CZoo/1000.)*TOC_BSB
-               hvcsb(mstr,ior) = hvcsb(mstr,ior)+zoocsb
-               hFluN3(mstr,ior) = 0.0
-               
-               do nkz = 1,hnkzs(mstr,ior)   ! Belegung des Gitters bei 2D-Modellierung, Schleifenanfang
+         else if (iwied == 1) then
+            iB = 1
+            anzej = 1
+            mstr1 = mstr
+            if (mRand /= 1)anzej = 0     ! keine Belegung des 1. Ortspunkts, da keine Randbedigung vorhanden
+            if (iflRi(mstr) == -1) then
+               IB = hanze(mstr)+1
+               anzej = hanze(mstr)+1
+               if (mRand /= 2)anzej = hanze(mstr) ! keine Belegung des 1. Ortspunkts, da keine Randbedigung vorhanden
+            endif
+         endif
+         
+         do ior = iB,anzej ! Schleife ueber die Ortspunkte, Beginn
+            hsvhk(mstr,ior) = 0.0
+            hsvhg(mstr,ior) = 0.0
+            hsvhb(mstr,ior) = 0.0
+            hfssgr(mstr,ior) = fssgrs
+            hfbsgr(mstr,ior) = fbsgrs
+            hfrfgr(mstr,ior) = frfgrs(mstr1,mRB)
+            hsised(mstr,ior) = 0.0
+            hdlarn(mstr,ior) = 0.0
+            hstind(mstr,ior) = 0.0
+            if (RBtyp(mstr,mRB) == 0) then
+               Wtst = -1.0
+               Wtst_T = -9.99
+            else
+               Wtst = 0.0
+               Wtst_T = -9.99
+            endif
+            if (tempws(mstr1,mRB) > Wtst_T) then
+               hakbcm(mstr,ior) = akbcms(mstr1,mRB)
+               hagbcm(mstr,ior) = agbcms(mstr1,mRB)
+               habbcm(mstr,ior) = abbcms(mstr1,mRB)
+            endif
+            
+            if (nl0s(mstr1,mRB)   > 0.0) hnl0(mstr,ior)  = nl0s(mstr1,mRB)
+            if (pl0s(mstr1,mRB)   > 0.0) hpl0(mstr,ior)  = pl0s(mstr1,mRB)
+            if (gesNs(mstr1,mRB)  >=0.0) hgesN(mstr,ior) = gesNs(mstr1,mRB)
+            if (gesPs(mstr1,mRB)  >=0.0) hgesP(mstr,ior) = gesPs(mstr1,mRB)
+            if (Q_NKs(mstr1,mRB)  > 0.0) hQ_NK(mstr,ior) = Q_NKs(mstr1,mRB)
+            if (Q_PKs(mstr1,mRB)  > 0.0) hQ_PK(mstr,ior) = Q_PKs(mstr1,mRB)
+            if (Q_SKs(mstr1,mRB)  > 0.0) hQ_SK(mstr,ior) = Q_SKs(mstr1,mRB)
+            if (Q_NGs(mstr1,mRB)  > 0.0) hQ_NG(mstr,ior) = Q_NGs(mstr1,mRB)
+            if (Q_PGs(mstr1,mRB)  > 0.0) hQ_PG(mstr,ior) = Q_PGs(mstr1,mRB)
+            if (Q_NBs(mstr1,mRB)  > 0.0) hQ_NB(mstr,ior) = Q_NBs(mstr1,mRB)
+            if (Q_PBs(mstr1,mRB)  > 0.0) hQ_PB(mstr,ior) = Q_PBs(mstr1,mRB)
+            if (tempws(mstr1,mRB) > Wtst_T) htempw(mstr,ior) = tempws(mstr1,mRB)
+            
+            ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
+            if (iwied == 0)hTsed(mstr,ior) = htempw(mstr,ior)
+            if (obsbs(mstr1,mRB) >= Wtst) hbsb(mstr,ior)   = obsbs(mstr1,mRB)
+            if (ocsbs(mstr1,mRB) >= Wtst) hcsb(mstr,ior)   = ocsbs(mstr1,mRB)
+            if (CHNFs(mstr1,mRB) >= Wtst) hCHNF(mstr,ior)  = CHNFs(mstr1,mRB)
+            if (BVHNFs(mstr1,mRB)>= Wtst) hBVHNF(mstr,ior) = BVHNFs(mstr1,mRB)
+            if (CDs(mstr1,1,mRB) >= Wtst) hCD(mstr,1,ior)  = CDs(mstr1,1,mRB)
+            if (CDs(mstr1,2,mRB) >= Wtst) hCD(mstr,2,ior)  = CDs(mstr1,2,mRB)
+            if (CPs(mstr1,1,mRB) >= Wtst) hCP(mstr,1,ior)  = CPs(mstr1,1,mRB)
+            if (CPs(mstr1,2,mRB) >= Wtst) hCP(mstr,2,ior)  = CPs(mstr1,2,mRB)
+            if (CMs(mstr1,mRB)   >= Wtst) hCM(mstr,ior)    = CMs(mstr1,mRB)
+            if (BACs(mstr1,mRB)  >= Wtst) hBAC(mstr,ior)   = BACs(mstr1,mRB)
+            if (vnh4s(mstr1,mRB) >= Wtst) hnh4(mstr,ior)   = vnh4s(mstr1,mRB)
+            if (vo2s(mstr1,mRB)  >= Wtst) ho2(mstr,ior)    = vo2s(mstr1,mRB)
+            if (isnan(ho2(mstr,ior))) print*,"ho2(mstr,ior) = vo2s(mstr1,mRB)",ho2(mstr,ior),mstr,ior,vo2s(mstr1,mRB),mstr1,mRB
+            if (vno3s(mstr1,mRB) >= Wtst) hno3(mstr,ior)   = vno3s(mstr1,mRB)
+            if (vno2s(mstr1,mRB) >= Wtst) hno2(mstr,ior)   = vno2s(mstr1,mRB)
+            if (vx0s(mstr1,mRB)  >= Wtst) hx0(mstr,ior)    = vx0s(mstr1,mRB)
+            if (vx02s(mstr1,mRB) >= Wtst) hx02(mstr,ior)   = vx02s(mstr1,mRB)
+            if (sis(mstr1,mRB)   >= Wtst) hsi(mstr,ior)    = sis(mstr1,mRB)
+            if (chlas(mstr1,mRB) >= Wtst) hchla(mstr,ior)  = chlas(mstr1,mRB)
+            if (akis(mstr1,mRB)  >= Wtst) haki(mstr,ior)   = akis(mstr1,mRB)
+            if (agrs(mstr1,mRB)  >= Wtst) hagr(mstr,ior)   = agrs(mstr1,mRB)
+            if (abls(mstr1,mRB)  >= Wtst) habl(mstr,ior)   = abls(mstr1,mRB)
+            if (chlaks(mstr1,mRB)>= Wtst) hchlak(mstr,ior) = chlaks(mstr1,mRB)
+            if (chlags(mstr1,mRB)>= Wtst) hchlag(mstr,ior) = chlags(mstr1,mRB)
+            if (chlabs(mstr1,mRB)>= Wtst) hchlab(mstr,ior) = chlabs(mstr1,mRB)
+            if (vkigrs(mstr1,mRB)>= Wtst) hvkigr(mstr,ior) = vkigrs(mstr1,mRB)
+            if (antbls(mstr1,mRB)>= Wtst) hantbl(mstr,ior) = antbls(mstr1,mRB)
+            habrz1(mstr,ior) = 0.0
+            if (ssalgs(mstr1,mRB)>= Wtst) hssalg(mstr,ior) = ssalgs(mstr1,mRB)
+            if (sss(mstr1,mRB)   >= Wtst) hss(mstr,ior)    = sss(mstr1,mRB)
+            if (zooins(mstr1,mRB)>= Wtst) hzooi(mstr,ior)  = zooins(mstr1,mRB)
+            if (gelps(mstr1,mRB) >= Wtst) hgelp(mstr,ior)  = gelps(mstr1,mRB)
+            if (mws(mstr1,mRB)   >= Wtst) hmw(mstr,ior)    = mws(mstr1,mRB)
+            if (mws(mstr1,mRB)   >= Wtst) hpw(mstr,ior)    = pws(mstr1,mRB)
+            if (cas(mstr1,mRB)   >= Wtst) hca(mstr,ior)    = cas(mstr1,mRB)
+            if (lfs(mstr1,mRB)   >= Wtst) hlf(mstr,ior)    = lfs(mstr1,mRB)
+            if (vphs(mstr1,mRB)  >= Wtst) hph(mstr,ior)    = vphs(mstr1,mRB)
+            if (colis(mstr1,mRB) >= Wtst) then
+               hcoli(mstr,ior)  = colis(mstr1,mRB)
+               hDOSCF(mstr,ior) = DOSCFs(mstr1,mRB)
+            endif
+            if (gesPs(mstr1,mRB) >= Wtst) hgesP(mstr,ior)  = gesPs(mstr1,mRB)
+            if (gesNs(mstr1,mRB) >= Wtst) hgesN(mstr,ior)  = gesNs(mstr1,mRB)
+            if (gsZns(mstr1,mRB) >= Wtst) hgsZn(mstr,ior)  = gsZns(mstr1,mRB)
+            if (glZns(mstr1,mRB) >= Wtst) hglZn(mstr,ior)  = glZns(mstr1,mRB)
+            if (gsCads(mstr1,mRB)>= Wtst) hgsCad(mstr,ior) = gsCads(mstr1,mRB)
+            if (glCads(mstr1,mRB)>= Wtst) hglCad(mstr,ior) = glCads(mstr1,mRB)
+            if (gsCus(mstr1,mRB) >= Wtst) hgsCu(mstr,ior)  = gsCus(mstr1,mRB)
+            if (glCus(mstr1,mRB) >= Wtst) hglCu(mstr,ior)  = glCus(mstr1,mRB)
+            if (gsNis(mstr1,mRB) >= Wtst) hgsNi(mstr,ior)  = gsNis(mstr1,mRB)
+            if (glNis(mstr1,mRB) >= Wtst) hglNi(mstr,ior)  = glNis(mstr1,mRB)
+            if (gsAss(mstr1,mRB) >= Wtst) hgsAs(mstr,ior)  = gsAss(mstr1,mRB)
+            if (glAss(mstr1,mRB) >= Wtst) hglAs(mstr,ior)  = glAss(mstr1,mRB)
+            if (gsPbs(mstr1,mRB) >= Wtst) hgsPb(mstr,ior)  = gsPbs(mstr1,mRB)
+            if (glPbs(mstr1,mRB) >= Wtst) hglPb(mstr,ior)  = glPbs(mstr1,mRB)
+            if (gsCrs(mstr1,mRB) >= Wtst) hgsCr(mstr,ior)  = gsCrs(mstr1,mRB)
+            if (glCrs(mstr1,mRB) >= Wtst) hglCr(mstr,ior)  = glCrs(mstr1,mRB)
+            if (gsFes(mstr1,mRB) >= Wtst) hgsFe(mstr,ior)  = gsFes(mstr1,mRB)
+            if (glFes(mstr1,mRB) >= Wtst) hglFe(mstr,ior)  = glFes(mstr1,mRB)
+            if (gsHgs(mstr1,mRB) >= Wtst) hgsHg(mstr,ior)  = gsHgs(mstr1,mRB)
+            if (glHgs(mstr1,mRB) >= Wtst) hglHg(mstr,ior)  = glHgs(mstr1,mRB)
+            if (gsMns(mstr1,mRB) >= Wtst) hgsMn(mstr,ior)  = gsMns(mstr1,mRB)
+            if (glMns(mstr1,mRB) >= Wtst) hglMn(mstr,ior)  = glMns(mstr1,mRB)
+            if (gsUs(mstr1,mRB)  >= Wtst) hgsU(mstr,ior)   = gsUs(mstr1,mRB)
+            if (glUs(mstr1,mRB)  >= Wtst) hglU(mstr,ior)   = glUs(mstr1,mRB)
+            if (iwsim == 4) cycle  ! bei Tracer wird dieser Programmteil nicht ausgeführt!
+            
+            algb5 = haki(mstr,ior) * Caki * bsbki  &
+                  + hagr(mstr,ior) * Cagr * bsbgr  &
+                  + habl(mstr,ior) * Cabl * bsbbl
                   
-                  if (tempws(mstr1,mRB) > (-99.99)) htempz(mstr,nkz,ior) = tempws(mstr1,mRB)
-                  if (vnh4s(mstr1,mRB) >= Wtst)hnh4z(mstr,nkz,ior) = vnh4s(mstr1,mRB)
-                  if (vno2s(mstr1,mRB) >= Wtst)hno2z(mstr,nkz,ior) = vno2s(mstr1,mRB)
-                  if (vno3s(mstr1,mRB) >= Wtst)hno3z(mstr,nkz,ior) = vno3s(mstr1,mRB)
-                  if (vo2s(mstr1,mRB) >= Wtst)ho2z(mstr,nkz,ior) = vo2s(mstr1,mRB)
-                  if (gelPs(mstr1,mRB) >= Wtst)hgelPz(mstr,nkz,ior) = gelPs(mstr1,mRB)
-                  if (Sis(mstr1,mRB) >= Wtst)hsiz(mstr,nkz,ior) = Sis(mstr1,mRB)
-                  if (akis(mstr1,mRB) >= Wtst)hakiz(mstr,nkz,ior) = akis(mstr1,mRB)
-                  if (agrs(mstr1,mRB) >= Wtst)hagrz(mstr,nkz,ior) = agrs(mstr1,mRB)
-                  if (abls(mstr1,mRB) >= Wtst)hablz(mstr,nkz,ior) = abls(mstr1,mRB)
-                  if (chlas(mstr1,mRB) >= Wtst)hchlaz(mstr,nkz,ior) = chlas(mstr1,mRB)
-                  if (chlaks(mstr1,mRB) >= Wtst)hchlkz(mstr,nkz,ior) = chlaks(mstr1,mRB)
-                  if (chlags(mstr1,mRB) >= Wtst)hchlgz(mstr,nkz,ior) = chlags(mstr1,mRB)
-                  if (chlabs(mstr1,mRB) >= Wtst)hchlbz(mstr,nkz,ior) = chlabs(mstr1,mRB)
-                  if (gesPs(mstr1,mRB) >= Wtst)hgesPz(mstr,nkz,ior) = gesPs(mstr1,mRB)
-                  if (gesNs(mstr1,mRB) >= Wtst)hgesNz(mstr,nkz,ior) = gesNs(mstr1,mRB)
-                  if (Q_NKs(mstr1,mRB) >= Wtst)hQ_NKz(mstr,nkz,ior) = Q_NKs(mstr1,mRB)
-                  if (Q_NBs(mstr1,mRB) >= Wtst)hQ_NBz(mstr,nkz,ior) = Q_NBs(mstr1,mRB)
-                  if (Q_NGs(mstr1,mRB) >= Wtst)hQ_NGz(mstr,nkz,ior) = Q_NGs(mstr1,mRB)
-                  if (tempws(mstr1,mRB) > Wtst_T) then
-                     hCChlkz(mstr,nkz,ior) = akbcms(mstr1,mRB)
-                     hCChlbz(mstr,nkz,ior) = abbcms(mstr1,mRB)
-                     hCChlgz(mstr,nkz,ior) = agbcms(mstr1,mRB)
-                  endif
-               enddo   ! Schleifenende nkz
-              
-               ! Buhnenfelder
-               if (nbuhn(mstr) > 0 .and. iwied == 0 ) then
-                  bsvhek(mstr,ior) = hsvhk(mstr,ior)
-                  bsvheg(mstr,ior) = hsvhg(mstr,ior)
-                  bsvheb(mstr,ior) = hsvhb(mstr,ior)
-                  bakbcm(mstr,ior) = hakbcm(mstr,ior)
-                  babbcm(mstr,ior) = habbcm(mstr,ior)
-                  bagbcm(mstr,ior) = hagbcm(mstr,ior)
-                  bnl0(mstr,ior) = hnl0(mstr,ior)
-                  bpl0(mstr,ior) = hpl0(mstr,ior)
-                  bgesN(mstr,ior) = hgesN(mstr,ior)
-                  bgesP(mstr,ior) = hgesP(mstr,ior)
-                  bstind(mstr,ior) = hstind(mstr,ior)
-                  btempw(mstr,ior) = htempw(mstr,ior)
-                  ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-                  if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
-                  bbsb(mstr,ior) = hbsb(mstr,ior)
-                  bcsb(mstr,ior) = hcsb(mstr,ior)
-                  bnh4(mstr,ior) = hnh4(mstr,ior)
-                  bo2(mstr,ior) = ho2(mstr,ior)
-                  bno3(mstr,ior) = hno3(mstr,ior)
-                  bno2(mstr,ior) = hno2(mstr,ior)
-                  bx0(mstr,ior) = hx0(mstr,ior)
-                  bx02(mstr,ior) = hx02(mstr,ior)
-                  bsi(mstr,ior) = hsi(mstr,ior)
-                  bsised(mstr,ior) = hsised(mstr,ior)
-                  bSKmor(mstr,ior) = hSKmor(mstr,ior)
-                  bchla(mstr,ior) = hchla(mstr,ior)
-                  baki(mstr,ior) = haki(mstr,ior)
-                  bagr(mstr,ior) = hagr(mstr,ior)
-                  babl(mstr,ior) = habl(mstr,ior)
-                  bchlak(mstr,ior) = hchlak(mstr,ior)
-                  bchlag(mstr,ior) = hchlag(mstr,ior)
-                  bchlab(mstr,ior) = hchlab(mstr,ior)
-                  bvkigr(mstr,ior) = hvkigr(mstr,ior)
-                  bantbl(mstr,ior) = hantbl(mstr,ior)
-                  babrz1(mstr,ior) = habrz1(mstr,ior)
-                  bssalg(mstr,ior) = hssalg(mstr,ior)
-                  bfssgr(mstr,ior) = hfssgr(mstr,ior)
-                  bfbsgr(mstr,ior) = hfbsgr(mstr,ior)
-                  bfrfgr(mstr,ior) = hfrfgr(mstr,ior)
-                  bss(mstr,ior) = hss(mstr,ior)
-                  bzooi(mstr,ior) = hzooi(mstr,ior)
-                  bgelp(mstr,ior) = hgelp(mstr,ior)
-                  bmw(mstr,ior) = hmw(mstr,ior)
-                  bpw(mstr,ior) = hpw(mstr,ior)
-                  bca(mstr,ior) = hca(mstr,ior)
-                  blf(mstr,ior) = hlf(mstr,ior)
-                  bdlarn(mstr,ior) = hdlarn(mstr,ior)
-                  bph(mstr,ior) = hph(mstr,ior)
-                  bvbsb(mstr,ior) = hvbsb(mstr,ior)
-                  bvcsb(mstr,ior) = hvcsb(mstr,ior)
-                  bCD(mstr,1,ior) = hCD(mstr,1,ior)
-                  bCD(mstr,2,ior) = hCD(mstr,2,ior)
-                  bCP(mstr,1,ior) = hCP(mstr,1,ior)
-                  bCP(mstr,2,ior) = hCP(mstr,2,ior)
-                  bCM(mstr,ior) = hCM(mstr,ior)
-                  bBAC(mstr,ior) = hBAC(mstr,ior)
-                  bCHNF(mstr,ior) = hCHNF(mstr,ior)
-                  bQ_PK(mstr,ior) = hQ_PK(mstr,ior)
-                  bQ_NK(mstr,ior) = hQ_NK(mstr,ior)
-                  bQ_SK(mstr,ior) = hQ_SK(mstr,ior)
-                  bQ_PG(mstr,ior) = hQ_PG(mstr,ior)
-                  bQ_NG(mstr,ior) = hQ_NG(mstr,ior)
-                  bQ_PB(mstr,ior) = hQ_PB(mstr,ior)
-                  bQ_NB(mstr,ior) = hQ_NB(mstr,ior)
-                  bFluN3(mstr,ior) = hFluN3(mstr,ior)
-                  bcoli(mstr,ior) = hcoli(mstr,ior)
-                  bDOSCF(mstr,ior) = hDOSCF(mstr,ior)
-                  bgsZn(mstr,ior) = hgsZn(mstr,ior)
-                  bglZn(mstr,ior) = hglZn(mstr,ior)
-                  bgsCad(mstr,ior) = hgsCad(mstr,ior)
-                  bglCad(mstr,ior) = hglCad(mstr,ior)
-                  bgsCu(mstr,ior) = hgsCu(mstr,ior)
-                  bglCu(mstr,ior) = hglCu(mstr,ior)
-                  bgsNi(mstr,ior) = hgsNi(mstr,ior)
-                  bglNi(mstr,ior) = hglNi(mstr,ior)
-                  bgsAs(mstr,ior) = hgsAs(mstr,ior)
-                  bglAs(mstr,ior) = hglAs(mstr,ior)
-                  bgsPb(mstr,ior) = hgsPb(mstr,ior)
-                  bglPb(mstr,ior) = hglPb(mstr,ior)
-                  bgsCr(mstr,ior) = hgsCr(mstr,ior)
-                  bglCr(mstr,ior) = hglCr(mstr,ior)
-                  bgsFe(mstr,ior) = hgsFe(mstr,ior)
-                  bglFe(mstr,ior) = hglFe(mstr,ior)
-                  bgsHg(mstr,ior) = hgsHg(mstr,ior)
-                  bglHg(mstr,ior) = hglHg(mstr,ior)
-                  bgsMn(mstr,ior) = hgsMn(mstr,ior)
-                  bglMn(mstr,ior) = hglMn(mstr,ior)
-                  bgsU(mstr,ior) = hgsU(mstr,ior)
-                  bglU(mstr,ior) = hglU(mstr,ior)
+            hvbsb(mstr,ior) = hbsb(mstr,ior) + algb5
+            zoobsb = (hzooi(mstr,ior)*GRot/1000.) * bsbZoo
+            hvbsb(mstr,ior) = hvbsb(mstr,ior) + zoobsb
+            
+            algcs = haki(mstr,ior) * Caki * csbki  &
+                  + habl(mstr,ior) * Cabl * csbbl  &
+                  + hagr(mstr,ior) * Cagr * csbgr
+            hvcsb(mstr,ior) = hcsb(mstr,ior)+algcs
+            zoocsb = hzooi(mstr,ior)*(GROT*CZoo/1000.)*TOC_BSB
+            hvcsb(mstr,ior) = hvcsb(mstr,ior)+zoocsb
+            hFluN3(mstr,ior) = 0.0
+            
+            do nkz = 1,hnkzs(mstr,ior)   ! Belegung des Gitters bei 2D-Modellierung, Schleifenanfang
+               
+               if (tempws(mstr1,mRB) > (-99.99)) htempz(mstr,nkz,ior) = tempws(mstr1,mRB)
+               if (vnh4s(mstr1,mRB) >= Wtst)hnh4z(mstr,nkz,ior) = vnh4s(mstr1,mRB)
+               if (vno2s(mstr1,mRB) >= Wtst)hno2z(mstr,nkz,ior) = vno2s(mstr1,mRB)
+               if (vno3s(mstr1,mRB) >= Wtst)hno3z(mstr,nkz,ior) = vno3s(mstr1,mRB)
+               if (vo2s(mstr1,mRB) >= Wtst)ho2z(mstr,nkz,ior) = vo2s(mstr1,mRB)
+               if (gelPs(mstr1,mRB) >= Wtst)hgelPz(mstr,nkz,ior) = gelPs(mstr1,mRB)
+               if (Sis(mstr1,mRB) >= Wtst)hsiz(mstr,nkz,ior) = Sis(mstr1,mRB)
+               if (akis(mstr1,mRB) >= Wtst)hakiz(mstr,nkz,ior) = akis(mstr1,mRB)
+               if (agrs(mstr1,mRB) >= Wtst)hagrz(mstr,nkz,ior) = agrs(mstr1,mRB)
+               if (abls(mstr1,mRB) >= Wtst)hablz(mstr,nkz,ior) = abls(mstr1,mRB)
+               if (chlas(mstr1,mRB) >= Wtst)hchlaz(mstr,nkz,ior) = chlas(mstr1,mRB)
+               if (chlaks(mstr1,mRB) >= Wtst)hchlkz(mstr,nkz,ior) = chlaks(mstr1,mRB)
+               if (chlags(mstr1,mRB) >= Wtst)hchlgz(mstr,nkz,ior) = chlags(mstr1,mRB)
+               if (chlabs(mstr1,mRB) >= Wtst)hchlbz(mstr,nkz,ior) = chlabs(mstr1,mRB)
+               if (gesPs(mstr1,mRB) >= Wtst)hgesPz(mstr,nkz,ior) = gesPs(mstr1,mRB)
+               if (gesNs(mstr1,mRB) >= Wtst)hgesNz(mstr,nkz,ior) = gesNs(mstr1,mRB)
+               if (Q_NKs(mstr1,mRB) >= Wtst)hQ_NKz(mstr,nkz,ior) = Q_NKs(mstr1,mRB)
+               if (Q_NBs(mstr1,mRB) >= Wtst)hQ_NBz(mstr,nkz,ior) = Q_NBs(mstr1,mRB)
+               if (Q_NGs(mstr1,mRB) >= Wtst)hQ_NGz(mstr,nkz,ior) = Q_NGs(mstr1,mRB)
+               if (tempws(mstr1,mRB) > Wtst_T) then
+                  hCChlkz(mstr,nkz,ior) = akbcms(mstr1,mRB)
+                  hCChlbz(mstr,nkz,ior) = abbcms(mstr1,mRB)
+                  hCChlgz(mstr,nkz,ior) = agbcms(mstr1,mRB)
                endif
-               
-            enddo ! Ende Schleife über die Ortspunkte ior
+            enddo   ! Schleifenende nkz
+           
+            ! Buhnenfelder
+            if (nbuhn(mstr) > 0 .and. iwied == 0 ) then
+               bsvhek(mstr,ior) = hsvhk(mstr,ior)
+               bsvheg(mstr,ior) = hsvhg(mstr,ior)
+               bsvheb(mstr,ior) = hsvhb(mstr,ior)
+               bakbcm(mstr,ior) = hakbcm(mstr,ior)
+               babbcm(mstr,ior) = habbcm(mstr,ior)
+               bagbcm(mstr,ior) = hagbcm(mstr,ior)
+               bnl0(mstr,ior) = hnl0(mstr,ior)
+               bpl0(mstr,ior) = hpl0(mstr,ior)
+               bgesN(mstr,ior) = hgesN(mstr,ior)
+               bgesP(mstr,ior) = hgesP(mstr,ior)
+               bstind(mstr,ior) = hstind(mstr,ior)
+               btempw(mstr,ior) = htempw(mstr,ior)
+               ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
+               if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
+               bbsb(mstr,ior) = hbsb(mstr,ior)
+               bcsb(mstr,ior) = hcsb(mstr,ior)
+               bnh4(mstr,ior) = hnh4(mstr,ior)
+               bo2(mstr,ior) = ho2(mstr,ior)
+               bno3(mstr,ior) = hno3(mstr,ior)
+               bno2(mstr,ior) = hno2(mstr,ior)
+               bx0(mstr,ior) = hx0(mstr,ior)
+               bx02(mstr,ior) = hx02(mstr,ior)
+               bsi(mstr,ior) = hsi(mstr,ior)
+               bsised(mstr,ior) = hsised(mstr,ior)
+               bSKmor(mstr,ior) = hSKmor(mstr,ior)
+               bchla(mstr,ior) = hchla(mstr,ior)
+               baki(mstr,ior) = haki(mstr,ior)
+               bagr(mstr,ior) = hagr(mstr,ior)
+               babl(mstr,ior) = habl(mstr,ior)
+               bchlak(mstr,ior) = hchlak(mstr,ior)
+               bchlag(mstr,ior) = hchlag(mstr,ior)
+               bchlab(mstr,ior) = hchlab(mstr,ior)
+               bvkigr(mstr,ior) = hvkigr(mstr,ior)
+               bantbl(mstr,ior) = hantbl(mstr,ior)
+               babrz1(mstr,ior) = habrz1(mstr,ior)
+               bssalg(mstr,ior) = hssalg(mstr,ior)
+               bfssgr(mstr,ior) = hfssgr(mstr,ior)
+               bfbsgr(mstr,ior) = hfbsgr(mstr,ior)
+               bfrfgr(mstr,ior) = hfrfgr(mstr,ior)
+               bss(mstr,ior) = hss(mstr,ior)
+               bzooi(mstr,ior) = hzooi(mstr,ior)
+               bgelp(mstr,ior) = hgelp(mstr,ior)
+               bmw(mstr,ior) = hmw(mstr,ior)
+               bpw(mstr,ior) = hpw(mstr,ior)
+               bca(mstr,ior) = hca(mstr,ior)
+               blf(mstr,ior) = hlf(mstr,ior)
+               bdlarn(mstr,ior) = hdlarn(mstr,ior)
+               bph(mstr,ior) = hph(mstr,ior)
+               bvbsb(mstr,ior) = hvbsb(mstr,ior)
+               bvcsb(mstr,ior) = hvcsb(mstr,ior)
+               bCD(mstr,1,ior) = hCD(mstr,1,ior)
+               bCD(mstr,2,ior) = hCD(mstr,2,ior)
+               bCP(mstr,1,ior) = hCP(mstr,1,ior)
+               bCP(mstr,2,ior) = hCP(mstr,2,ior)
+               bCM(mstr,ior) = hCM(mstr,ior)
+               bBAC(mstr,ior) = hBAC(mstr,ior)
+               bCHNF(mstr,ior) = hCHNF(mstr,ior)
+               bQ_PK(mstr,ior) = hQ_PK(mstr,ior)
+               bQ_NK(mstr,ior) = hQ_NK(mstr,ior)
+               bQ_SK(mstr,ior) = hQ_SK(mstr,ior)
+               bQ_PG(mstr,ior) = hQ_PG(mstr,ior)
+               bQ_NG(mstr,ior) = hQ_NG(mstr,ior)
+               bQ_PB(mstr,ior) = hQ_PB(mstr,ior)
+               bQ_NB(mstr,ior) = hQ_NB(mstr,ior)
+               bFluN3(mstr,ior) = hFluN3(mstr,ior)
+               bcoli(mstr,ior) = hcoli(mstr,ior)
+               bDOSCF(mstr,ior) = hDOSCF(mstr,ior)
+               bgsZn(mstr,ior) = hgsZn(mstr,ior)
+               bglZn(mstr,ior) = hglZn(mstr,ior)
+               bgsCad(mstr,ior) = hgsCad(mstr,ior)
+               bglCad(mstr,ior) = hglCad(mstr,ior)
+               bgsCu(mstr,ior) = hgsCu(mstr,ior)
+               bglCu(mstr,ior) = hglCu(mstr,ior)
+               bgsNi(mstr,ior) = hgsNi(mstr,ior)
+               bglNi(mstr,ior) = hglNi(mstr,ior)
+               bgsAs(mstr,ior) = hgsAs(mstr,ior)
+               bglAs(mstr,ior) = hglAs(mstr,ior)
+               bgsPb(mstr,ior) = hgsPb(mstr,ior)
+               bglPb(mstr,ior) = hglPb(mstr,ior)
+               bgsCr(mstr,ior) = hgsCr(mstr,ior)
+               bglCr(mstr,ior) = hglCr(mstr,ior)
+               bgsFe(mstr,ior) = hgsFe(mstr,ior)
+               bglFe(mstr,ior) = hglFe(mstr,ior)
+               bgsHg(mstr,ior) = hgsHg(mstr,ior)
+               bglHg(mstr,ior) = hglHg(mstr,ior)
+               bgsMn(mstr,ior) = hgsMn(mstr,ior)
+               bglMn(mstr,ior) = hglMn(mstr,ior)
+               bgsU(mstr,ior) = hgsU(mstr,ior)
+               bglU(mstr,ior) = hglU(mstr,ior)
+            endif
             
-            cycle
-         case(2) ! Strang hat Vor- bzw. Nachstränge
-            if (iwied == 0)ianze(mstr) = hanze(mstr)+1
+         enddo ! Ende Schleife über die Ortspunkte ior
+         
+         cycle
+      
+      else
+         ! Strang hat Vor- bzw. Nachstränge
+         if (iwied == 0)ianze(mstr) = hanze(mstr)+1
+         
+         hcs1 = 0.0
+         hcs2 = 0.0
+         hcs3 = 0.0
+         hcs6 = 0.0
+         hcs7 = 0.0
+         hcs8 = 0.0
+         hcs9 = 0.0
+         hcs10 = 0.0
+         hcs20 = 0.0
+         hcs21 = 0.0
+         hcs22 = 0.0
+         hcs23 = 0.0
+         hcs24 = 0.0
+         hcs25 = 0.0
+         hcs26 = 0.0
+         hcs27 = 0.0
+         hcs28 = 0.0
+         hcs29 = 0.0
+         hcs30 = 0.0
+         hcs31 = 0.0
+         hcs32 = 0.0
+         hcs33 = 0.0
+         hcs34 = 0.0
+         hcs35 = 0.0
+         hcs36 = 0.0
+         hcs37 = 0.0
+         hcs38 = 0.0
+         hcs39 = 0.0
+         hcs40 = 0.0
+         hcs41 = 0.0
+         hcs42 = 0.0
+         hcs43 = 0.0
+         hcs44 = 0.0
+         hcs45 = 0.0
+         hcs46 = 0.0
+         hcs47 = 0.0
+         hcs48 = 0.0
+         hcs49 = 0.0
+         hcs50 = 0.0
+         hcs51 = 0.0
+         hcs52 = 0.0
+         hcs53 = 0.0
+         hcs54 = 0.0
+         hcs55 = 0.0
+         hcs56 = 0.0
+         hcs57 = 0.0
+         hcs58 = 0.0
+         hcs59 = 0.0
+         hcs60 = 0.0
+         hcs61 = 0.0
+         hcs62 = 0.0
+         hcs63 = 0.0
+         hcs64 = 0.0
+         hcs65 = 0.0
+         hcs66 = 0.0
+         
+         do nkz = 1,inkzmx  ! 2D
+            hcs67(nkz) = 0.0
+            hcs68(nkz) = 0.0
+            hcs69(nkz) = 0.0
+            hcs70(nkz) = 0.0
+            hcs71(nkz) = 0.0
+            hcs72(nkz) = 0.0
+            hcs73(nkz) = 0.0
+            hcs74(nkz) = 0.0
+            hcs75(nkz) = 0.0
+            hcs76(nkz) = 0.0
+            hcs84(nkz) = 0.0
+            hcs87(nkz) = 0.0
+            hcs88(nkz) = 0.0
+            hcs89(nkz) = 0.0
+            hcs90(nkz) = 0.0
+            hcs91(nkz) = 0.0
+            hcs92(nkz) = 0.0
+            hcs93(nkz) = 0.0
+            hcs94(nkz) = 0.0
+         enddo
+         
+         hcs77 = 0.0
+         hcs78 = 0.0
+         hcs79 = 0.0
+         hcs80 = 0.0
+         hcs81 = 0.0
+         hcs82 = 0.0
+         hcs83 = 0.0
+         hcs85 = 0.0
+         hcs86 = 0.0
+         hcs95 = 0.0
+         hcs96 = 0.0
+         hcs97 = 0.0
+         hcs98 = 0.0
+         hcs99 = 0.0
+         hcs100 = 0.0
+         hcs101 = 0.0
+         hcs102 = 0.0
+         hcs103 = 0.0
+         hcs104 = 0.0
+         hcs105 = 0.0
+         hcs106 = 0.0
+         hcs107 = 0.0
+         hcs108 = 0.0
+         hcs110 = 0.0
+         hcs111 = 0.0
+         hcs112 = 0.0
+         hcs113 = 0.0
+         hcs114 = 0.0
+         hcs115 = 0.0
+         hcs116 = 0.0
+         hcs117 = 0.0
+         hcs118 = 0.0
+         hcs119 = 0.0
+         hcs120 = 0.0
+         hcs121 = 0.0
+         hcs122 = 0.0
+         hcs123 = 0.0
+         hcs124 = 0.0
+         hcs125 = 0.0
+         hcs126 = 0.0
+         
+         hcq = 0.0
+         
+         do nstr = 1,nstrs(istr)  !Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge
             
-            hcs1 = 0.0
-            hcs2 = 0.0
-            hcs3 = 0.0
-            hcs6 = 0.0
-            hcs7 = 0.0
-            hcs8 = 0.0
-            hcs9 = 0.0
-            hcs10 = 0.0
-            hcs20 = 0.0
-            hcs21 = 0.0
-            hcs22 = 0.0
-            hcs23 = 0.0
-            hcs24 = 0.0
-            hcs25 = 0.0
-            hcs26 = 0.0
-            hcs27 = 0.0
-            hcs28 = 0.0
-            hcs29 = 0.0
-            hcs30 = 0.0
-            hcs31 = 0.0
-            hcs32 = 0.0
-            hcs33 = 0.0
-            hcs34 = 0.0
-            hcs35 = 0.0
-            hcs36 = 0.0
-            hcs37 = 0.0
-            hcs38 = 0.0
-            hcs39 = 0.0
-            hcs40 = 0.0
-            hcs41 = 0.0
-            hcs42 = 0.0
-            hcs43 = 0.0
-            hcs44 = 0.0
-            hcs45 = 0.0
-            hcs46 = 0.0
-            hcs47 = 0.0
-            hcs48 = 0.0
-            hcs49 = 0.0
-            hcs50 = 0.0
-            hcs51 = 0.0
-            hcs52 = 0.0
-            hcs53 = 0.0
-            hcs54 = 0.0
-            hcs55 = 0.0
-            hcs56 = 0.0
-            hcs57 = 0.0
-            hcs58 = 0.0
-            hcs59 = 0.0
-            hcs60 = 0.0
-            hcs61 = 0.0
-            hcs62 = 0.0
-            hcs63 = 0.0
-            hcs64 = 0.0
-            hcs65 = 0.0
-            hcs66 = 0.0
+            ! jnkz = 1 > Werte am ersten Knoten im Strang
+            ! jnkz = 2 > Werte am letzten Knoten im Strang
+            if (iflRi(mstr) == 0 .and. iwied == 1)cycle
+            if (iflRi(ESTRNR(istr,nstr)) == 0 .and. iwied == 1)cycle
             
-            do nkz = 1,inkzmx  ! 2D
-               hcs67(nkz) = 0.0
-               hcs68(nkz) = 0.0
-               hcs69(nkz) = 0.0
-               hcs70(nkz) = 0.0
-               hcs71(nkz) = 0.0
-               hcs72(nkz) = 0.0
-               hcs73(nkz) = 0.0
-               hcs74(nkz) = 0.0
-               hcs75(nkz) = 0.0
-               hcs76(nkz) = 0.0
-               hcs84(nkz) = 0.0
-               hcs87(nkz) = 0.0
-               hcs88(nkz) = 0.0
-               hcs89(nkz) = 0.0
-               hcs90(nkz) = 0.0
-               hcs91(nkz) = 0.0
-               hcs92(nkz) = 0.0
-               hcs93(nkz) = 0.0
-               hcs94(nkz) = 0.0
-            enddo
+            kanz = ianze(ESTRNR(istr,nstr))
+            iSta = mStas(ESTRNR(istr,nstr))
+            iB = 1
+            anzej = 1
+            if (iwied == 0)anzej = hanze(mstr)+1
+            jnkz = 2
+            if (iFlRi(mstr) == -1 .and. iflRi(ESTRNR(istr,nstr)) == -1) then
+               kanz = 1
+               ista = 1
+               iB = hanze(mstr)+1
+               if (iwied == 0)iB = 1
+               anzej = hanze(mstr)+1
+               jnkz = 1
+            endif
             
-            hcs77 = 0.0
-            hcs78 = 0.0
-            hcs79 = 0.0
-            hcs80 = 0.0
-            hcs81 = 0.0
-            hcs82 = 0.0
-            hcs83 = 0.0
-            hcs85 = 0.0
-            hcs86 = 0.0
-            hcs95 = 0.0
-            hcs96 = 0.0
-            hcs97 = 0.0
-            hcs98 = 0.0
-            hcs99 = 0.0
-            hcs100 = 0.0
-            hcs101 = 0.0
-            hcs102 = 0.0
-            hcs103 = 0.0
-            hcs104 = 0.0
-            hcs105 = 0.0
-            hcs106 = 0.0
-            hcs107 = 0.0
-            hcs108 = 0.0
-            hcs110 = 0.0
-            hcs111 = 0.0
-            hcs112 = 0.0
-            hcs113 = 0.0
-            hcs114 = 0.0
-            hcs115 = 0.0
-            hcs116 = 0.0
-            hcs117 = 0.0
-            hcs118 = 0.0
-            hcs119 = 0.0
-            hcs120 = 0.0
-            hcs121 = 0.0
-            hcs122 = 0.0
-            hcs123 = 0.0
-            hcs124 = 0.0
-            hcs125 = 0.0
-            hcs126 = 0.0
-            
-            hcq = 0.0
-            
-            do nstr = 1,nstrs(istr)  !Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge
-               
-               ! jnkz = 1 > Werte am ersten Knoten im Strang
-               ! jnkz = 2 > Werte am letzten Knoten im Strang
-               if (iflRi(mstr) == 0 .and. iwied == 1)cycle
-               if (iflRi(ESTRNR(istr,nstr)) == 0 .and. iwied == 1)cycle
-               
-               kanz = ianze(ESTRNR(istr,nstr))
-               iSta = mStas(ESTRNR(istr,nstr))
+            if (iFlRi(mstr) == 1 .and. iflRi(ESTRNR(istr,nstr)) == -1) then
+               kanz = 1
+               ista = 1
                iB = 1
                anzej = 1
                if (iwied == 0)anzej = hanze(mstr)+1
-               jnkz = 2
-               if (iFlRi(mstr) == -1 .and. iflRi(ESTRNR(istr,nstr)) == -1) then
-                  kanz = 1
-                  ista = 1
-                  iB = hanze(mstr)+1
-                  if (iwied == 0)iB = 1
-                  anzej = hanze(mstr)+1
-                  jnkz = 1
-               endif
-               
-               if (iFlRi(mstr) == 1 .and. iflRi(ESTRNR(istr,nstr)) == -1) then
-                  kanz = 1
-                  ista = 1
-                  iB = 1
-                  anzej = 1
-                  if (iwied == 0)anzej = hanze(mstr)+1
-                  jnkz = 1
-               endif
-               
-               if (iFlRi(mstr) == -1 .and. iflRi(ESTRNR(istr,nstr)) == 1) then
-                  kanz = ianze(ESTRNR(istr,nstr))
-                  ista = mStas(ESTRNR(istr,nstr))
-                  iB = hanze(mstr)+1
-                  anzej = hanze(mstr)+1
-                  if (iwied == 0)iB = 1
-                  jnkz = 2
-               endif
-               
-               if (iwied == 0 .and. iwsim /= 4) then
-                  ! 2D-Modellierung (Gitterbelegung zu Beginn der Simulation)
-                  ! wird sonst übersprungen, ebenso bei Tracer
-                  
-                  kanz2 = 1
-                  jnkz2 = 1
-                  do kanz1 = 1,2
-                     do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz) ! Schleife ueber die vertikalen Schichten am Stranganfang und -Ende
-                        
-                        Tzt(ESTRNR(istr,nstr),nkz,jnkz2) = htempz(ESTRNR(istr,nstr),1      &
-                                                           ,kanz2)
-                        o2zt(ESTRNR(istr,nstr),nkz,jnkz2) = ho2z(ESTRNR(istr,nstr),1       &
-                                                            ,kanz2)
-                        NH4zt(ESTRNR(istr,nstr),nkz,jnkz2) = hnh4z(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        NO2zt(ESTRNR(istr,nstr),nkz,jnkz2) = hno2z(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        NO3zt(ESTRNR(istr,nstr),nkz,jnkz2) = hno3z(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        Pzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgelpz(ESTRNR(istr,nstr),1      &
-                                                           ,kanz2)
-                        gSizt(ESTRNR(istr,nstr),nkz,jnkz2) = hsiz(ESTRNR(istr,nstr),1      &
-                                                             ,kanz2)
-                        akizt(ESTRNR(istr,nstr),nkz,jnkz2) = hakiz(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        agrzt(ESTRNR(istr,nstr),nkz,jnkz2) = hagrz(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        ablzt(ESTRNR(istr,nstr),nkz,jnkz2) = hablz(ESTRNR(istr,nstr),1     &
-                                                             ,kanz2)
-                        chlazt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlaz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        chlkzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlkz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        chlgzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlgz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        chlbzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlbz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        gesPzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgesPz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        gesNzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgesNz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NKz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NBz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NGz(ESTRNR(istr,nstr),1   &
-                                                              ,kanz2)
-                        CChlkzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlkz(ESTRNR(istr,nstr),1   &
-                                                               ,kanz2)
-                        CChlbzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlbz(ESTRNR(istr,nstr),1   &
-                                                               ,kanz2)
-                        CChlgzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlgz(ESTRNR(istr,nstr),1   &
-                                                               ,kanz2)
-                     enddo  ! Schleifenende
-                     jnkz2 = 2
-                     kanz2 = ianze(ESTRNR(istr,nstr))
-                  enddo
-               endif
-               
-               if (iwsim /= 4) then
-                  ! Einfluss der Wehre auf O2,pH und Temperatur,Chla,Algen,Stickstoff und Phosphor
-                  call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                   &
-                            ,tzt,hte_z,htez_z,chlazt,hchlaz_z,akizt,hakiz_z,agrzt,hagrz_z,ablzt,hablz_z                      &
-                            ,NH4zt,hNH4z_z,NO2zt,hNO2z_z,NO3zt,hNO3z_z,Pzt,hPz_z,gSizt,hsiz_z,chlkzt,hchlkz_z                &
-                            ,chlgzt,hchlgz_z,chlbzt,hchlbz_z,gesPzt,hgesPz_z,gesNzt,hgesNz_z,Q_NKzt,hQ_NKz_z                 &
-                            ,Q_NBzt,hQ_NBz_z,Q_NGzt,hQ_NGz_z,dH2D,ESTRNR,kanz,inkzmx,iSta,nstr,istr,jnkz,iflRi,jlWO2         &
-                            ,CChlkzt,hCChlkz_z,CChlbzt,hCChlbz_z,CChlgzt,hCChlgz_z,janzWS,janzWt,hnkzs,mwehr,mstr            &
-                            ,WSP_UW,WSP_OW,iB,azStrs)
-               endif
-               hcs1 = hcs1+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hsvhk(ESTRNR(istr,nstr),kanz)
-               hcs2 = hcs2+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hsvhg(ESTRNR(istr,nstr),kanz)
-               hcs3 = hcs3+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hsvhb(ESTRNR(istr,nstr),kanz)
-               hcs6 = hcs6+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hakbcm(ESTRNR(istr,nstr),kanz)
-               hcs7 = hcs7+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hagbcm(ESTRNR(istr,nstr),kanz)
-               hcs8 = hcs8+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *habbcm(ESTRNR(istr,nstr),kanz)
-               hcs9 = hcs9+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
-                      *hgesN(ESTRNR(istr,nstr),kanz)
-               hcs10 = hcs10+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hgesP(ESTRNR(istr,nstr),kanz)
-               hcs20 = hcs20+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hfssgr(ESTRNR(istr,nstr),kanz)
-               hcs21 = hcs21+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hfbsgr(ESTRNR(istr,nstr),kanz)
-               hcs22 = hcs22+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hfrfgr(ESTRNR(istr,nstr),kanz)
-               hcs23 = hcs23+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hnl0(ESTRNR(istr,nstr),kanz)
-               hcs24 = hcs24+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hpl0(ESTRNR(istr,nstr),kanz)
-               hcs25 = hcs25+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *htempw(ESTRNR(istr,nstr),kanz)
-               hcs26 = hcs26+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hbsb(ESTRNR(istr,nstr),kanz)
-               hcs27 = hcs27+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hcsb(ESTRNR(istr,nstr),kanz)
-               hcs28 = hcs28+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCHNF(ESTRNR(istr,nstr),kanz)
-               hcs29 = hcs29+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hBVHNF(ESTRNR(istr,nstr),kanz)
-               hcs30 = hcs30+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCD(ESTRNR(istr,nstr),1,kanz)
-               hcs31 = hcs31+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCD(ESTRNR(istr,nstr),2,kanz)
-               hcs32 = hcs32+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCP(ESTRNR(istr,nstr),1,kanz)
-               hcs33 = hcs33+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCP(ESTRNR(istr,nstr),2,kanz)
-               hcs34 = hcs34+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hCM(ESTRNR(istr,nstr),kanz)
-               hcs35 = hcs35+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hBAC(ESTRNR(istr,nstr),kanz)
-               hcs39 = hcs39+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
-                       *hnh4(ESTRNR(istr,nstr),kanz)
-               if (isnan(hcs40)) then
-                  print*,"ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta) = "&
-                         ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
-                  print*,"ESTRNR(istr,nstr),istr,nstr,kanz,iSt",ESTRNR(istr,nstr),istr,nstr,kanz,iSta
-                  call qerror("qsim.f90: Variable 'hcs40' became NaN.")
-               endif
-               
-               if (isnan(ho2(ESTRNR(istr,nstr),kanz))) then
-                  print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
-                  call qerror("qsim.f90: Variable 'ho2' became NaN.")
-               endif
-               hcs40 = hcs40+abs(hQaus(ESTRNR(istr,nstr),iSta)) * ho2(ESTRNR(istr,nstr),kanz)
-               hcs41 = hcs41+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hno3(ESTRNR(istr,nstr),kanz)
-               hcs42 = hcs42+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hno2(ESTRNR(istr,nstr),kanz)
-               hcs43 = hcs43+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hx0(ESTRNR(istr,nstr),kanz)
-               hcs44 = hcs44+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hx02(ESTRNR(istr,nstr),kanz)
-               hcs45 = hcs45+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hsi(ESTRNR(istr,nstr),kanz)
-               hcs46 = hcs46+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchla(ESTRNR(istr,nstr),kanz)
-               hcs47 = hcs47+abs(hQaus(ESTRNR(istr,nstr),iSta)) * haki(ESTRNR(istr,nstr),kanz)
-               hcs48 = hcs48+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hagr(ESTRNR(istr,nstr),kanz)
-               hcs49 = hcs49+abs(hQaus(ESTRNR(istr,nstr),iSta)) * habl(ESTRNR(istr,nstr),kanz)
-               hcs50 = hcs50+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlak(ESTRNR(istr,nstr),kanz)
-               hcs51 = hcs51+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlag(ESTRNR(istr,nstr),kanz)
-               hcs52 = hcs52+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlab(ESTRNR(istr,nstr),kanz)
-               hcs53 = hcs53+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvkigr(ESTRNR(istr,nstr),kanz)
-               hcs54 = hcs54+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hantbl(ESTRNR(istr,nstr),kanz)
-               hcs55 = hcs55+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hssalg(ESTRNR(istr,nstr),kanz)
-               hcs56 = hcs56+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hss(ESTRNR(istr,nstr),kanz)
-               hcs57 = hcs57+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hzooi(ESTRNR(istr,nstr),kanz)
-               hcs58 = hcs58+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgelp(ESTRNR(istr,nstr),kanz)
-               hcs59 = hcs59+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hmw(ESTRNR(istr,nstr),kanz)
-               hcs60 = hcs60+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hpw(ESTRNR(istr,nstr),kanz)
-               hcs61 = hcs61+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hca(ESTRNR(istr,nstr),kanz)
-               hcs62 = hcs62+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hlf(ESTRNR(istr,nstr),kanz)
-               
-               ! pH-Wert in H+-umrechnen
-               hmue = 1.7e-5*hlf(ESTRNR(istr,nstr),kanz)
-               if (hmue < 0.0)hmue = 0.0
-               hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
-               lgh = hph(ESTRNR(istr,nstr),kanz)-hk
-               vhplus = 10**(-lgh)
-               
-               hcs63 = hcs63+abs(hQaus(ESTRNR(istr,nstr),iSta)) * vhplus
-               hcs64 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hcoli(ESTRNR(istr,nstr),kanz)
-               hcs100 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta))* hDOSCF(ESTRNR(istr,nstr),kanz)
-               hcs65 = hcs65+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvbsb(ESTRNR(istr,nstr),kanz)
-               hcs66 = hcs66+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvcsb(ESTRNR(istr,nstr),kanz)
-               hcs77 = hcs77+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NK(ESTRNR(istr,nstr),kanz)
-               hcs78 = hcs78+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PK(ESTRNR(istr,nstr),kanz)
-               hcs79 = hcs79+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_SK(ESTRNR(istr,nstr),kanz)
-               hcs80 = hcs80+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NG(ESTRNR(istr,nstr),kanz)
-               hcs81 = hcs81+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PG(ESTRNR(istr,nstr),kanz)
-               hcs82 = hcs82+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NB(ESTRNR(istr,nstr),kanz)
-               hcs83 = hcs83+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PB(ESTRNR(istr,nstr),kanz)
-               hcs85 = hcs85+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hSKmor(ESTRNR(istr,nstr),kanz)
-               hcs86 = hcs86+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
-               hcs95 = hcs95+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hFluN3(ESTRNR(istr,nstr),kanz)
-               hcs99 = hcs99+abs(hQaus(ESTRNR(istr,nstr),iSta)) * TGZoo(ESTRNR(istr,nstr),kanz)
-               hcs110 = hcs110+abs(hQaus(ESTRNR(istr,nstr),iSta)) * akmor_1(ESTRNR(istr,nstr),kanz)
-               hcs111 = hcs111+abs(hQaus(ESTRNR(istr,nstr),iSta)) * agmor_1(ESTRNR(istr,nstr),kanz)
-               hcs112 = hcs112+abs(hQaus(ESTRNR(istr,nstr),iSta)) * abmor_1(ESTRNR(istr,nstr),kanz)
-               
-               hcs101 = hcs101+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsZn(ESTRNR(istr,nstr),kanz)
-               hcs102 = hcs102+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglZn(ESTRNR(istr,nstr),kanz)
-               hcs103 = hcs103+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCad(ESTRNR(istr,nstr),kanz)
-               hcs104 = hcs104+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCad(ESTRNR(istr,nstr),kanz)
-               hcs105 = hcs105+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCu(ESTRNR(istr,nstr),kanz)
-               hcs106 = hcs106+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCu(ESTRNR(istr,nstr),kanz)
-               hcs107 = hcs107+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsNi(ESTRNR(istr,nstr),kanz)
-               hcs108 = hcs108+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglNi(ESTRNR(istr,nstr),kanz)
-               hcs113 = hcs113+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsAs(ESTRNR(istr,nstr),kanz)
-               hcs114 = hcs114+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglAs(ESTRNR(istr,nstr),kanz)
-               hcs115 = hcs115+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsPb(ESTRNR(istr,nstr),kanz)
-               hcs116 = hcs116+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglPb(ESTRNR(istr,nstr),kanz)
-               hcs117 = hcs117+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCr(ESTRNR(istr,nstr),kanz)
-               hcs118 = hcs118+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCr(ESTRNR(istr,nstr),kanz)
-               hcs119 = hcs119+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsFe(ESTRNR(istr,nstr),kanz)
-               hcs120 = hcs120+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglFe(ESTRNR(istr,nstr),kanz)
-               hcs121 = hcs121+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsHg(ESTRNR(istr,nstr),kanz)
-               hcs122 = hcs122+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglHg(ESTRNR(istr,nstr),kanz)
-               hcs123 = hcs123+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsMn(ESTRNR(istr,nstr),kanz)
-               hcs124 = hcs124+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglMn(ESTRNR(istr,nstr),kanz)
-               hcs125 = hcs125+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsU(ESTRNR(istr,nstr),kanz)
-               hcs126 = hcs126+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglU(ESTRNR(istr,nstr),kanz)
-               
-               ! 2D-Modellierung
-               ! 2D-Gitterbelegung des Strangs mit Werten der Vor- bzw. Nachsträngen
-               nkzs_hc = hnkzs(mstr,iB)
-               nkzs_hc1 = hnkzs(ESTRNR(istr,nstr),kanz)
-               if (nkzs_hc > 1 .and. nkzs_hc1 > 1) then
-                  i_EstRNR = ESTRNR(istr,nstr)
-                  call sys_gitterStrang(mstr,nkzs_hc,nkzs_hc1,dH2D,tzt,o2zt,NH4zt                                              &
-                                        ,no2zt,no3zt,Pzt,gSizt,akizt,agrzt,ablzt,chlazt,chlkzt,chlgzt,chlbzt,gesPzt,gesNzt             &
-                                        ,Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt,CChlbzt,CChlgzt, jnkz,i_EstRNR,itags,monats,uhrz,azStrs)
-               endif
-               do nkz = 1,nkzs_hc  ! 2D_modellierung, Schleifenbeginn
-                  hcs67(nkz) = hcs67(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Tzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs68(nkz) = hcs68(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*O2zt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs69(nkz) = hcs69(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NH4zt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs70(nkz) = hcs70(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO2zt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs71(nkz) = hcs71(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO3zt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs72(nkz) = hcs72(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Pzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs73(nkz) = hcs73(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gSizt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs74(nkz) = hcs74(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*akizt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs75(nkz) = hcs75(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*agrzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs76(nkz) = hcs76(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*ablzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs84(nkz) = hcs84(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlazt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs87(nkz) = hcs87(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlkzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs88(nkz) = hcs88(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlgzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs89(nkz) = hcs89(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlbzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs90(nkz) = hcs90(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesPzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs91(nkz) = hcs91(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesNzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs92(nkz) = hcs92(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs93(nkz) = hcs93(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs94(nkz) = hcs94(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs96(nkz) = hcs96(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlkzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs97(nkz) = hcs97(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlbzt(ESTRNR(istr,nstr),nkz,jnkz)
-                  hcs98(nkz) = hcs98(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlgzt(ESTRNR(istr,nstr),nkz,jnkz)
-               enddo  ! Schleifenende
-               
-               hcq = hcq+abs(hqaus(ESTRNR(istr,nstr),iSta))
-               
-               ! Umspeichern der Daten am Ende des Wehrstrangs
-               ! Wehrbelüftung wird am letzten Knoten des oberstromigen Strangs (OW)
-               ! Berechnung erfolgt in der Subroutine <WEHR>
-               ! nach Übergabe an den unterstromigen Strang (UW) müssen die Werte ohne
-               ! Wehrüberfall wieder am letzten Knoten im oberstromigen Strang gesetzt werden
-               ! ho2_z in hO2
-               ! Bei Tracer-Berechnung werden die Wehre nicht berücksichtigt
-               if (iwsim == 4)cycle
-               
-               htempw(ESTRNR(istr,nstr),kanz) = hte_z(ESTRNR(istr,nstr))
-               ho2(ESTRNR(istr,nstr),kanz) = ho2_z(ESTRNR(istr,nstr))
-               hph(ESTRNR(istr,nstr),kanz) = hph_z(ESTRNR(istr,nstr))
-               
-               do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz)  ! Schleifenbeginn; falls ein Strang in mehrere Stränge mündet
-                  Tzt(ESTRNR(istr,nstr),nkz,jnkz) = htez_z(ESTRNR(istr,nstr),nkz)
-                  o2zt(ESTRNR(istr,nstr),nkz,jnkz) = ho2z_z(ESTRNR(istr,nstr),nkz)
-                  chlazt(ESTRNR(istr,nstr),nkz,jnkz) = hchlaz_z(ESTRNR(istr,nstr),nkz)
-                  akizt(ESTRNR(istr,nstr),nkz,jnkz) = hakiz_z(ESTRNR(istr,nstr),nkz)
-                  agrzt(ESTRNR(istr,nstr),nkz,jnkz) = hagrz_z(ESTRNR(istr,nstr),nkz)
-                  ablzt(ESTRNR(istr,nstr),nkz,jnkz) = hablz_z(ESTRNR(istr,nstr),nkz)
-                  NH4zt(ESTRNR(istr,nstr),nkz,jnkz) = hNH4z_z(ESTRNR(istr,nstr),nkz)
-                  NO2zt(ESTRNR(istr,nstr),nkz,jnkz) = hNO2z_z(ESTRNR(istr,nstr),nkz)
-                  NO3zt(ESTRNR(istr,nstr),nkz,jnkz) = hNO3z_z(ESTRNR(istr,nstr),nkz)
-                  Pzt(ESTRNR(istr,nstr),nkz,jnkz) = hPz_z(ESTRNR(istr,nstr),nkz)
-                  gSizt(ESTRNR(istr,nstr),nkz,jnkz) = hSiz_z(ESTRNR(istr,nstr),nkz)
-                  chlkzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlkz_z(ESTRNR(istr,nstr),nkz)
-                  chlgzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlgz_z(ESTRNR(istr,nstr),nkz)
-                  chlbzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlbz_z(ESTRNR(istr,nstr),nkz)
-                  gesPzt(ESTRNR(istr,nstr),nkz,jnkz) = hgesPz_z(ESTRNR(istr,nstr),nkz)
-                  gesNzt(ESTRNR(istr,nstr),nkz,jnkz) = hgesNz_z(ESTRNR(istr,nstr),nkz)
-                  Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NKz_z(ESTRNR(istr,nstr),nkz)
-                  Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NBz_z(ESTRNR(istr,nstr),nkz)
-                  Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NGz_z(ESTRNR(istr,nstr),nkz)
-                  CChlkzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlkz_z(ESTRNR(istr,nstr),nkz)
-                  CChlbzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlbz_z(ESTRNR(istr,nstr),nkz)
-                  CChlgzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlgz_z(ESTRNR(istr,nstr),nkz)
-               enddo  ! Schleifenende
-               
-            enddo  ! Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge
+               jnkz = 1
+            endif
             
-            if (hcq > 0.0) then
-               hcs1 = hcs1/hcq
-               hcs2 = hcs2/hcq
-               hcs3 = hcs3/hcq
-               hcs6 = hcs6/hcq
-               hcs7 = hcs7/hcq
-               hcs8 = hcs8/hcq
-               hcs9 = hcs9/hcq
-               hcs10 = hcs10/hcq
-               hcs20 = hcs20/hcq
-               hcs21 = hcs21/hcq
-               hcs22 = hcs22/hcq
-               hcs23 = hcs23/hcq
-               hcs24 = hcs24/hcq
-               hcs25 = hcs25/hcq
-               hcs26 = hcs26/hcq
-               hcs27 = hcs27/hcq
-               hcs28 = hcs28/hcq
-               hcs29 = hcs29/hcq
-               hcs30 = hcs30/hcq
-               hcs31 = hcs31/hcq
-               hcs32 = hcs32/hcq
-               hcs33 = hcs33/hcq
-               hcs34 = hcs34/hcq
-               hcs35 = hcs35/hcq
-               hcs36 = hcs36/hcq
-               hcs37 = hcs37/hcq
-               hcs38 = hcs38/hcq
-               hcs39 = hcs39/hcq
-               hcs40 = hcs40/hcq
-               hcs41 = hcs41/hcq
-               hcs42 = hcs42/hcq
-               hcs43 = hcs43/hcq
-               hcs44 = hcs44/hcq
-               hcs45 = hcs45/hcq
-               hcs46 = hcs46/hcq
-               hcs47 = hcs47/hcq
-               hcs48 = hcs48/hcq
-               hcs49 = hcs49/hcq
-               hcs50 = hcs50/hcq
-               hcs51 = hcs51/hcq
-               hcs52 = hcs52/hcq
-               hcs53 = hcs53/hcq
-               hcs54 = hcs54/hcq
-               hcs55 = hcs55/hcq
-               hcs56 = hcs56/hcq
-               hcs57 = hcs57/hcq
-               hcs58 = hcs58/hcq
-               hcs59 = hcs59/hcq
-               hcs60 = hcs60/hcq
-               hcs61 = hcs61/hcq
-               hcs62 = hcs62/hcq
-               hcs63 = hcs63/hcq
+            if (iFlRi(mstr) == -1 .and. iflRi(ESTRNR(istr,nstr)) == 1) then
+               kanz = ianze(ESTRNR(istr,nstr))
+               ista = mStas(ESTRNR(istr,nstr))
+               iB = hanze(mstr)+1
+               anzej = hanze(mstr)+1
+               if (iwied == 0)iB = 1
+               jnkz = 2
+            endif
+            
+            if (iwied == 0 .and. iwsim /= 4) then
+               ! 2D-Modellierung (Gitterbelegung zu Beginn der Simulation)
+               ! wird sonst übersprungen, ebenso bei Tracer
                
-               ! Umrechnung von H+ in pH-Wert
-               hmue = 1.7e-5*hcs62
-               if (hmue < 0.0)hmue = 0.0
-               hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
-               hcs63 = log10(hcs63)
-               hcs63 = (-1.*hcs63)+hk
+               kanz2 = 1
+               jnkz2 = 1
+               do kanz1 = 1,2
+                  do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz) ! Schleife ueber die vertikalen Schichten am Stranganfang und -Ende
+                     
+                     Tzt(ESTRNR(istr,nstr),nkz,jnkz2) = htempz(ESTRNR(istr,nstr),1      &
+                                                        ,kanz2)
+                     o2zt(ESTRNR(istr,nstr),nkz,jnkz2) = ho2z(ESTRNR(istr,nstr),1       &
+                                                         ,kanz2)
+                     NH4zt(ESTRNR(istr,nstr),nkz,jnkz2) = hnh4z(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     NO2zt(ESTRNR(istr,nstr),nkz,jnkz2) = hno2z(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     NO3zt(ESTRNR(istr,nstr),nkz,jnkz2) = hno3z(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     Pzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgelpz(ESTRNR(istr,nstr),1      &
+                                                        ,kanz2)
+                     gSizt(ESTRNR(istr,nstr),nkz,jnkz2) = hsiz(ESTRNR(istr,nstr),1      &
+                                                          ,kanz2)
+                     akizt(ESTRNR(istr,nstr),nkz,jnkz2) = hakiz(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     agrzt(ESTRNR(istr,nstr),nkz,jnkz2) = hagrz(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     ablzt(ESTRNR(istr,nstr),nkz,jnkz2) = hablz(ESTRNR(istr,nstr),1     &
+                                                          ,kanz2)
+                     chlazt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlaz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     chlkzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlkz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     chlgzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlgz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     chlbzt(ESTRNR(istr,nstr),nkz,jnkz2) = hchlbz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     gesPzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgesPz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     gesNzt(ESTRNR(istr,nstr),nkz,jnkz2) = hgesNz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NKz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NBz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz2) = hQ_NGz(ESTRNR(istr,nstr),1   &
+                                                           ,kanz2)
+                     CChlkzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlkz(ESTRNR(istr,nstr),1   &
+                                                            ,kanz2)
+                     CChlbzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlbz(ESTRNR(istr,nstr),1   &
+                                                            ,kanz2)
+                     CChlgzt(ESTRNR(istr,nstr),nkz,jnkz2) = hCChlgz(ESTRNR(istr,nstr),1   &
+                                                            ,kanz2)
+                  enddo  ! Schleifenende
+                  jnkz2 = 2
+                  kanz2 = ianze(ESTRNR(istr,nstr))
+               enddo
+            endif
+            
+            if (iwsim /= 4) then
+               ! Einfluss der Wehre auf O2,pH und Temperatur,Chla,Algen,Stickstoff und Phosphor
+               call WEHR(wehrh,wehrb,ho2,hQaus,O2zt,htempw,ho2_z,ho2z_z,hlf,hpw,hmw,hph,hph_z,iph                   &
+                         ,tzt,hte_z,htez_z,chlazt,hchlaz_z,akizt,hakiz_z,agrzt,hagrz_z,ablzt,hablz_z                      &
+                         ,NH4zt,hNH4z_z,NO2zt,hNO2z_z,NO3zt,hNO3z_z,Pzt,hPz_z,gSizt,hsiz_z,chlkzt,hchlkz_z                &
+                         ,chlgzt,hchlgz_z,chlbzt,hchlbz_z,gesPzt,hgesPz_z,gesNzt,hgesNz_z,Q_NKzt,hQ_NKz_z                 &
+                         ,Q_NBzt,hQ_NBz_z,Q_NGzt,hQ_NGz_z,dH2D,ESTRNR,kanz,inkzmx,iSta,nstr,istr,jnkz,iflRi,jlWO2         &
+                         ,CChlkzt,hCChlkz_z,CChlbzt,hCChlbz_z,CChlgzt,hCChlgz_z,janzWS,janzWt,hnkzs,mwehr,mstr            &
+                         ,WSP_UW,WSP_OW,iB,azStrs)
+            endif
+            hcs1 = hcs1+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hsvhk(ESTRNR(istr,nstr),kanz)
+            hcs2 = hcs2+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hsvhg(ESTRNR(istr,nstr),kanz)
+            hcs3 = hcs3+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hsvhb(ESTRNR(istr,nstr),kanz)
+            hcs6 = hcs6+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hakbcm(ESTRNR(istr,nstr),kanz)
+            hcs7 = hcs7+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hagbcm(ESTRNR(istr,nstr),kanz)
+            hcs8 = hcs8+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *habbcm(ESTRNR(istr,nstr),kanz)
+            hcs9 = hcs9+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
+                   *hgesN(ESTRNR(istr,nstr),kanz)
+            hcs10 = hcs10+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hgesP(ESTRNR(istr,nstr),kanz)
+            hcs20 = hcs20+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hfssgr(ESTRNR(istr,nstr),kanz)
+            hcs21 = hcs21+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hfbsgr(ESTRNR(istr,nstr),kanz)
+            hcs22 = hcs22+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hfrfgr(ESTRNR(istr,nstr),kanz)
+            hcs23 = hcs23+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hnl0(ESTRNR(istr,nstr),kanz)
+            hcs24 = hcs24+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hpl0(ESTRNR(istr,nstr),kanz)
+            hcs25 = hcs25+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *htempw(ESTRNR(istr,nstr),kanz)
+            hcs26 = hcs26+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hbsb(ESTRNR(istr,nstr),kanz)
+            hcs27 = hcs27+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hcsb(ESTRNR(istr,nstr),kanz)
+            hcs28 = hcs28+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCHNF(ESTRNR(istr,nstr),kanz)
+            hcs29 = hcs29+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hBVHNF(ESTRNR(istr,nstr),kanz)
+            hcs30 = hcs30+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCD(ESTRNR(istr,nstr),1,kanz)
+            hcs31 = hcs31+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCD(ESTRNR(istr,nstr),2,kanz)
+            hcs32 = hcs32+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCP(ESTRNR(istr,nstr),1,kanz)
+            hcs33 = hcs33+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCP(ESTRNR(istr,nstr),2,kanz)
+            hcs34 = hcs34+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hCM(ESTRNR(istr,nstr),kanz)
+            hcs35 = hcs35+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hBAC(ESTRNR(istr,nstr),kanz)
+            hcs39 = hcs39+abs(hQaus(ESTRNR(istr,nstr),iSta))                  &
+                    *hnh4(ESTRNR(istr,nstr),kanz)
+            if (isnan(hcs40)) then
+               print*,"ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta) = "&
+                      ,ho2(ESTRNR(istr,nstr),kanz),hQaus(ESTRNR(istr,nstr),iSta)
+               print*,"ESTRNR(istr,nstr),istr,nstr,kanz,iSt",ESTRNR(istr,nstr),istr,nstr,kanz,iSta
+               call qerror("qsim.f90: Variable 'hcs40' became NaN.")
+            endif
+            
+            if (isnan(ho2(ESTRNR(istr,nstr),kanz))) then
+               print*,"isnanho2",ESTRNR(istr,nstr),istr,nstr,kanz,ho2(ESTRNR(istr,nstr),kanz)
+               call qerror("qsim.f90: Variable 'ho2' became NaN.")
+            endif
+            hcs40 = hcs40+abs(hQaus(ESTRNR(istr,nstr),iSta)) * ho2(ESTRNR(istr,nstr),kanz)
+            hcs41 = hcs41+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hno3(ESTRNR(istr,nstr),kanz)
+            hcs42 = hcs42+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hno2(ESTRNR(istr,nstr),kanz)
+            hcs43 = hcs43+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hx0(ESTRNR(istr,nstr),kanz)
+            hcs44 = hcs44+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hx02(ESTRNR(istr,nstr),kanz)
+            hcs45 = hcs45+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hsi(ESTRNR(istr,nstr),kanz)
+            hcs46 = hcs46+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchla(ESTRNR(istr,nstr),kanz)
+            hcs47 = hcs47+abs(hQaus(ESTRNR(istr,nstr),iSta)) * haki(ESTRNR(istr,nstr),kanz)
+            hcs48 = hcs48+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hagr(ESTRNR(istr,nstr),kanz)
+            hcs49 = hcs49+abs(hQaus(ESTRNR(istr,nstr),iSta)) * habl(ESTRNR(istr,nstr),kanz)
+            hcs50 = hcs50+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlak(ESTRNR(istr,nstr),kanz)
+            hcs51 = hcs51+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlag(ESTRNR(istr,nstr),kanz)
+            hcs52 = hcs52+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hchlab(ESTRNR(istr,nstr),kanz)
+            hcs53 = hcs53+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvkigr(ESTRNR(istr,nstr),kanz)
+            hcs54 = hcs54+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hantbl(ESTRNR(istr,nstr),kanz)
+            hcs55 = hcs55+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hssalg(ESTRNR(istr,nstr),kanz)
+            hcs56 = hcs56+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hss(ESTRNR(istr,nstr),kanz)
+            hcs57 = hcs57+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hzooi(ESTRNR(istr,nstr),kanz)
+            hcs58 = hcs58+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgelp(ESTRNR(istr,nstr),kanz)
+            hcs59 = hcs59+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hmw(ESTRNR(istr,nstr),kanz)
+            hcs60 = hcs60+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hpw(ESTRNR(istr,nstr),kanz)
+            hcs61 = hcs61+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hca(ESTRNR(istr,nstr),kanz)
+            hcs62 = hcs62+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hlf(ESTRNR(istr,nstr),kanz)
+            
+            ! pH-Wert in H+-umrechnen
+            hmue = 1.7e-5*hlf(ESTRNR(istr,nstr),kanz)
+            if (hmue < 0.0)hmue = 0.0
+            hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
+            lgh = hph(ESTRNR(istr,nstr),kanz)-hk
+            vhplus = 10**(-lgh)
+            
+            hcs63 = hcs63+abs(hQaus(ESTRNR(istr,nstr),iSta)) * vhplus
+            hcs64 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hcoli(ESTRNR(istr,nstr),kanz)
+            hcs100 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta))* hDOSCF(ESTRNR(istr,nstr),kanz)
+            hcs65 = hcs65+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvbsb(ESTRNR(istr,nstr),kanz)
+            hcs66 = hcs66+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvcsb(ESTRNR(istr,nstr),kanz)
+            hcs77 = hcs77+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NK(ESTRNR(istr,nstr),kanz)
+            hcs78 = hcs78+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PK(ESTRNR(istr,nstr),kanz)
+            hcs79 = hcs79+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_SK(ESTRNR(istr,nstr),kanz)
+            hcs80 = hcs80+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NG(ESTRNR(istr,nstr),kanz)
+            hcs81 = hcs81+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PG(ESTRNR(istr,nstr),kanz)
+            hcs82 = hcs82+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NB(ESTRNR(istr,nstr),kanz)
+            hcs83 = hcs83+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PB(ESTRNR(istr,nstr),kanz)
+            hcs85 = hcs85+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hSKmor(ESTRNR(istr,nstr),kanz)
+            hcs86 = hcs86+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
+            hcs95 = hcs95+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hFluN3(ESTRNR(istr,nstr),kanz)
+            hcs99 = hcs99+abs(hQaus(ESTRNR(istr,nstr),iSta)) * TGZoo(ESTRNR(istr,nstr),kanz)
+            hcs110 = hcs110+abs(hQaus(ESTRNR(istr,nstr),iSta)) * akmor_1(ESTRNR(istr,nstr),kanz)
+            hcs111 = hcs111+abs(hQaus(ESTRNR(istr,nstr),iSta)) * agmor_1(ESTRNR(istr,nstr),kanz)
+            hcs112 = hcs112+abs(hQaus(ESTRNR(istr,nstr),iSta)) * abmor_1(ESTRNR(istr,nstr),kanz)
+            
+            hcs101 = hcs101+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsZn(ESTRNR(istr,nstr),kanz)
+            hcs102 = hcs102+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglZn(ESTRNR(istr,nstr),kanz)
+            hcs103 = hcs103+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCad(ESTRNR(istr,nstr),kanz)
+            hcs104 = hcs104+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCad(ESTRNR(istr,nstr),kanz)
+            hcs105 = hcs105+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCu(ESTRNR(istr,nstr),kanz)
+            hcs106 = hcs106+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCu(ESTRNR(istr,nstr),kanz)
+            hcs107 = hcs107+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsNi(ESTRNR(istr,nstr),kanz)
+            hcs108 = hcs108+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglNi(ESTRNR(istr,nstr),kanz)
+            hcs113 = hcs113+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsAs(ESTRNR(istr,nstr),kanz)
+            hcs114 = hcs114+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglAs(ESTRNR(istr,nstr),kanz)
+            hcs115 = hcs115+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsPb(ESTRNR(istr,nstr),kanz)
+            hcs116 = hcs116+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglPb(ESTRNR(istr,nstr),kanz)
+            hcs117 = hcs117+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCr(ESTRNR(istr,nstr),kanz)
+            hcs118 = hcs118+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCr(ESTRNR(istr,nstr),kanz)
+            hcs119 = hcs119+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsFe(ESTRNR(istr,nstr),kanz)
+            hcs120 = hcs120+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglFe(ESTRNR(istr,nstr),kanz)
+            hcs121 = hcs121+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsHg(ESTRNR(istr,nstr),kanz)
+            hcs122 = hcs122+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglHg(ESTRNR(istr,nstr),kanz)
+            hcs123 = hcs123+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsMn(ESTRNR(istr,nstr),kanz)
+            hcs124 = hcs124+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglMn(ESTRNR(istr,nstr),kanz)
+            hcs125 = hcs125+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsU(ESTRNR(istr,nstr),kanz)
+            hcs126 = hcs126+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglU(ESTRNR(istr,nstr),kanz)
+            
+            ! 2D-Modellierung
+            ! 2D-Gitterbelegung des Strangs mit Werten der Vor- bzw. Nachsträngen
+            nkzs_hc = hnkzs(mstr,iB)
+            nkzs_hc1 = hnkzs(ESTRNR(istr,nstr),kanz)
+            if (nkzs_hc > 1 .and. nkzs_hc1 > 1) then
+               i_EstRNR = ESTRNR(istr,nstr)
+               call sys_gitterStrang(mstr,nkzs_hc,nkzs_hc1,dH2D,tzt,o2zt,NH4zt                                              &
+                                     ,no2zt,no3zt,Pzt,gSizt,akizt,agrzt,ablzt,chlazt,chlkzt,chlgzt,chlbzt,gesPzt,gesNzt             &
+                                     ,Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt,CChlbzt,CChlgzt, jnkz,i_EstRNR,itags,monats,uhrz,azStrs)
+            endif
+            do nkz = 1,nkzs_hc  ! 2D_modellierung, Schleifenbeginn
+               hcs67(nkz) = hcs67(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Tzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs68(nkz) = hcs68(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*O2zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs69(nkz) = hcs69(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NH4zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs70(nkz) = hcs70(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO2zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs71(nkz) = hcs71(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO3zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs72(nkz) = hcs72(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Pzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs73(nkz) = hcs73(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gSizt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs74(nkz) = hcs74(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*akizt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs75(nkz) = hcs75(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*agrzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs76(nkz) = hcs76(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*ablzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs84(nkz) = hcs84(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlazt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs87(nkz) = hcs87(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlkzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs88(nkz) = hcs88(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlgzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs89(nkz) = hcs89(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlbzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs90(nkz) = hcs90(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesPzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs91(nkz) = hcs91(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesNzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs92(nkz) = hcs92(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs93(nkz) = hcs93(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs94(nkz) = hcs94(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs96(nkz) = hcs96(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlkzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs97(nkz) = hcs97(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlbzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs98(nkz) = hcs98(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlgzt(ESTRNR(istr,nstr),nkz,jnkz)
+            enddo  ! Schleifenende
+            
+            hcq = hcq+abs(hqaus(ESTRNR(istr,nstr),iSta))
+            
+            ! Umspeichern der Daten am Ende des Wehrstrangs
+            ! Wehrbelüftung wird am letzten Knoten des oberstromigen Strangs (OW)
+            ! Berechnung erfolgt in der Subroutine <WEHR>
+            ! nach Übergabe an den unterstromigen Strang (UW) müssen die Werte ohne
+            ! Wehrüberfall wieder am letzten Knoten im oberstromigen Strang gesetzt werden
+            ! ho2_z in hO2
+            ! Bei Tracer-Berechnung werden die Wehre nicht berücksichtigt
+            if (iwsim == 4)cycle
+            
+            htempw(ESTRNR(istr,nstr),kanz) = hte_z(ESTRNR(istr,nstr))
+            ho2(ESTRNR(istr,nstr),kanz) = ho2_z(ESTRNR(istr,nstr))
+            hph(ESTRNR(istr,nstr),kanz) = hph_z(ESTRNR(istr,nstr))
+            
+            do nkz = 1,hnkzs(ESTRNR(istr,nstr),kanz)  ! Schleifenbeginn; falls ein Strang in mehrere Stränge mündet
+               Tzt(ESTRNR(istr,nstr),nkz,jnkz) = htez_z(ESTRNR(istr,nstr),nkz)
+               o2zt(ESTRNR(istr,nstr),nkz,jnkz) = ho2z_z(ESTRNR(istr,nstr),nkz)
+               chlazt(ESTRNR(istr,nstr),nkz,jnkz) = hchlaz_z(ESTRNR(istr,nstr),nkz)
+               akizt(ESTRNR(istr,nstr),nkz,jnkz) = hakiz_z(ESTRNR(istr,nstr),nkz)
+               agrzt(ESTRNR(istr,nstr),nkz,jnkz) = hagrz_z(ESTRNR(istr,nstr),nkz)
+               ablzt(ESTRNR(istr,nstr),nkz,jnkz) = hablz_z(ESTRNR(istr,nstr),nkz)
+               NH4zt(ESTRNR(istr,nstr),nkz,jnkz) = hNH4z_z(ESTRNR(istr,nstr),nkz)
+               NO2zt(ESTRNR(istr,nstr),nkz,jnkz) = hNO2z_z(ESTRNR(istr,nstr),nkz)
+               NO3zt(ESTRNR(istr,nstr),nkz,jnkz) = hNO3z_z(ESTRNR(istr,nstr),nkz)
+               Pzt(ESTRNR(istr,nstr),nkz,jnkz) = hPz_z(ESTRNR(istr,nstr),nkz)
+               gSizt(ESTRNR(istr,nstr),nkz,jnkz) = hSiz_z(ESTRNR(istr,nstr),nkz)
+               chlkzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlkz_z(ESTRNR(istr,nstr),nkz)
+               chlgzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlgz_z(ESTRNR(istr,nstr),nkz)
+               chlbzt(ESTRNR(istr,nstr),nkz,jnkz) = hchlbz_z(ESTRNR(istr,nstr),nkz)
+               gesPzt(ESTRNR(istr,nstr),nkz,jnkz) = hgesPz_z(ESTRNR(istr,nstr),nkz)
+               gesNzt(ESTRNR(istr,nstr),nkz,jnkz) = hgesNz_z(ESTRNR(istr,nstr),nkz)
+               Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NKz_z(ESTRNR(istr,nstr),nkz)
+               Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NBz_z(ESTRNR(istr,nstr),nkz)
+               Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz) = hQ_NGz_z(ESTRNR(istr,nstr),nkz)
+               CChlkzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlkz_z(ESTRNR(istr,nstr),nkz)
+               CChlbzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlbz_z(ESTRNR(istr,nstr),nkz)
+               CChlgzt(ESTRNR(istr,nstr),nkz,jnkz) = hCChlgz_z(ESTRNR(istr,nstr),nkz)
+            enddo  ! Schleifenende
+            
+         enddo  ! Schleife ueber die Anzahl der Vor-, bzw. Nachstraenge
+         
+         if (hcq > 0.0) then
+            hcs1 = hcs1/hcq
+            hcs2 = hcs2/hcq
+            hcs3 = hcs3/hcq
+            hcs6 = hcs6/hcq
+            hcs7 = hcs7/hcq
+            hcs8 = hcs8/hcq
+            hcs9 = hcs9/hcq
+            hcs10 = hcs10/hcq
+            hcs20 = hcs20/hcq
+            hcs21 = hcs21/hcq
+            hcs22 = hcs22/hcq
+            hcs23 = hcs23/hcq
+            hcs24 = hcs24/hcq
+            hcs25 = hcs25/hcq
+            hcs26 = hcs26/hcq
+            hcs27 = hcs27/hcq
+            hcs28 = hcs28/hcq
+            hcs29 = hcs29/hcq
+            hcs30 = hcs30/hcq
+            hcs31 = hcs31/hcq
+            hcs32 = hcs32/hcq
+            hcs33 = hcs33/hcq
+            hcs34 = hcs34/hcq
+            hcs35 = hcs35/hcq
+            hcs36 = hcs36/hcq
+            hcs37 = hcs37/hcq
+            hcs38 = hcs38/hcq
+            hcs39 = hcs39/hcq
+            hcs40 = hcs40/hcq
+            hcs41 = hcs41/hcq
+            hcs42 = hcs42/hcq
+            hcs43 = hcs43/hcq
+            hcs44 = hcs44/hcq
+            hcs45 = hcs45/hcq
+            hcs46 = hcs46/hcq
+            hcs47 = hcs47/hcq
+            hcs48 = hcs48/hcq
+            hcs49 = hcs49/hcq
+            hcs50 = hcs50/hcq
+            hcs51 = hcs51/hcq
+            hcs52 = hcs52/hcq
+            hcs53 = hcs53/hcq
+            hcs54 = hcs54/hcq
+            hcs55 = hcs55/hcq
+            hcs56 = hcs56/hcq
+            hcs57 = hcs57/hcq
+            hcs58 = hcs58/hcq
+            hcs59 = hcs59/hcq
+            hcs60 = hcs60/hcq
+            hcs61 = hcs61/hcq
+            hcs62 = hcs62/hcq
+            hcs63 = hcs63/hcq
+            
+            ! Umrechnung von H+ in pH-Wert
+            hmue = 1.7e-5*hcs62
+            if (hmue < 0.0)hmue = 0.0
+            hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
+            hcs63 = log10(hcs63)
+            hcs63 = (-1.*hcs63)+hk
+            
+            hcs64 = hcs64/hcq
+            hcs100 = hcs100/hcq
+            hcs65 = hcs65/hcq
+            hcs66 = hcs66/hcq
+            
+            do nkz = 1,nkzs_hc !2D-Modellierung, Schleifenanfang
+               hcs67(nkz) = hcs67(nkz)/hcq
+               hcs68(nkz) = hcs68(nkz)/hcq
+               hcs69(nkz) = hcs69(nkz)/hcq
+               hcs70(nkz) = hcs70(nkz)/hcq
+               hcs71(nkz) = hcs71(nkz)/hcq
+               hcs72(nkz) = hcs72(nkz)/hcq
+               hcs73(nkz) = hcs73(nkz)/hcq
+               hcs74(nkz) = hcs74(nkz)/hcq
+               hcs75(nkz) = hcs75(nkz)/hcq
+               hcs76(nkz) = hcs76(nkz)/hcq
+               hcs84(nkz) = hcs84(nkz)/hcq
+               hcs87(nkz) = hcs87(nkz)/hcq
+               hcs88(nkz) = hcs88(nkz)/hcq
+               hcs89(nkz) = hcs89(nkz)/hcq
+               hcs90(nkz) = hcs90(nkz)/hcq
+               hcs91(nkz) = hcs91(nkz)/hcq
+               hcs92(nkz) = hcs92(nkz)/hcq
+               hcs93(nkz) = hcs93(nkz)/hcq
+               hcs94(nkz) = hcs94(nkz)/hcq
+               hcs96(nkz) = hcs96(nkz)/hcq
+               hcs97(nkz) = hcs97(nkz)/hcq
+               hcs98(nkz) = hcs98(nkz)/hcq
+            enddo ! Schleifenende 2D
+            
+            hcs77 = hcs77/hcq
+            hcs78 = hcs78/hcq
+            hcs79 = hcs79/hcq
+            hcs80 = hcs80/hcq
+            hcs81 = hcs81/hcq
+            hcs82 = hcs82/hcq
+            hcs83 = hcs83/hcq
+            hcs85 = hcs85/hcq
+            hcs86 = hcs86/hcq
+            hcs95 = hcs95/hcq
+            hcs99 = hcs99/hcq
+            hcs110 = hcs110/hcq
+            hcs111 = hcs111/hcq
+            hcs112 = hcs112/hcq
+            hcs101 = hcs101/hcq
+            hcs102 = hcs102/hcq
+            hcs103 = hcs103/hcq
+            hcs104 = hcs104/hcq
+            hcs105 = hcs105/hcq
+            hcs106 = hcs106/hcq
+            hcs107 = hcs107/hcq
+            hcs108 = hcs108/hcq
+            hcs113 = hcs113/hcq
+            hcs114 = hcs114/hcq
+            hcs115 = hcs115/hcq
+            hcs116 = hcs116/hcq
+            hcs117 = hcs117/hcq
+            hcs118 = hcs118/hcq
+            hcs119 = hcs119/hcq
+            hcs120 = hcs120/hcq
+            hcs121 = hcs121/hcq
+            hcs122 = hcs122/hcq
+            hcs123 = hcs123/hcq
+            hcs124 = hcs124/hcq
+            hcs125 = hcs125/hcq
+            hcs126 = hcs126/hcq
+            do ior = iB,anzej ! Beginn Schleife Belegung des 1. oder letzten Ortspunkts eines Strangs
+               hsvhk(mstr,ior) = hcs1
+               hsvhg(mstr,ior) = hcs2
+               hsvhb(mstr,ior) = hcs3
+               hgesN(mstr,ior) = hcs9
+               hgesP(mstr,ior) = hcs10
+               hfssgr(mstr,ior) = hcs20
+               hfbsgr(mstr,ior) = hcs21
+               hfrfgr(mstr,ior) = hcs22
+               hnl0(mstr,ior) = hcs23
+               hpl0(mstr,ior) = hcs24
+               htempw(mstr,ior) = hcs25
+               ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
+               if (iwied == 0)hTsed(mstr,ior) = htempw(mstr,ior)
+               hbsb(mstr,ior) = hcs26
+               hcsb(mstr,ior) = hcs27
+               hCHNF(mstr,ior) = hcs28
+               hBVHNF(mstr,ior) = hcs29
+               hCD(mstr,1,ior) = hcs30
+               hCD(mstr,2,ior) = hcs31
+               hCP(mstr,1,ior) = hcs32
+               hCP(mstr,2,ior) = hcs33
+               hCM(mstr,ior) = hcs34
+               hBAC(mstr,ior) = hcs35
+               hnh4(mstr,ior) = hcs39
+               ho2(mstr,ior) = hcs40
+               hno3(mstr,ior) = hcs41
+               hno2(mstr,ior) = hcs42
+               hx0(mstr,ior) = hcs43
+               hx02(mstr,ior) = hcs44
+               hsi(mstr,ior) = hcs45
+               ! hsised(mstr,ior) = 0.0
+               ! hSKmor(mstr,ior) = 0.0
+               hchla(mstr,ior) = hcs46
+               haki(mstr,ior) = hcs47
+               hagr(mstr,ior) = hcs48
+               habl(mstr,ior) = hcs49
+               hchlak(mstr,ior) = hcs50
+               hchlag(mstr,ior) = hcs51
+               hchlab(mstr,ior) = hcs52
+               hakbcm(mstr,ior) = hcs6
+               hagbcm(mstr,ior) = hcs7
+               habbcm(mstr,ior) = hcs8
+               hvkigr(mstr,ior) = hcs53
+               hantbl(mstr,ior) = hcs54
+               habrz1(mstr,ior) = 0.0
+               hssalg(mstr,ior) = hcs55
+               hss(mstr,ior) = hcs56
+               hzooi(mstr,ior) = hcs57
+               hgelp(mstr,ior) = hcs58
+               hmw(mstr,ior) = hcs59
+               hpw(mstr,ior) = hcs60
+               hca(mstr,ior) = hcs61
+               hlf(mstr,ior) = hcs62
+               hph(mstr,ior) = hcs63
+               hdlarn(mstr,ior) = 0.0
+               hstind(mstr,ior) = 0.0
+               hcoli(mstr,ior) = hcs64
+               hDOSCF(mstr,ior) = hcs100
+               hvbsb(mstr,ior) = hcs65
+               hvcsb(mstr,ior) = hcs66
+               hQ_NK(mstr,ior) = min(Qmx_NK,hcs77)
+               hQ_PK(mstr,ior) = min(Qmx_PK,hcs78)
+               hQ_SK(mstr,ior) = min(Qmx_SK,hcs79)
+               hQ_NG(mstr,ior) = min(Qmx_NG,hcs80)
+               hQ_PG(mstr,ior) = min(Qmx_PG,hcs81)
+               hQ_NB(mstr,ior) = min(Qmx_NB,hcs82)
+               hQ_PB(mstr,ior) = min(Qmx_PB,hcs83)
+               hSKmor(mstr,ior) = hcs85
+               hDOSCF(mstr,ior) = hcs86
+               hFluN3(mstr,ior) = hcs95
+               TGZoo(mstr,ior) = hcs99
+               akmor_1(mstr,ior) = hcs110
+               agmor_1(mstr,ior) = hcs111
+               abmor_1(mstr,ior) = hcs112
+               hgsZn(mstr,ior) = hcs101
+               hglZn(mstr,ior) = hcs102
+               hgsCad(mstr,ior) = hcs103
+               hglCad(mstr,ior) = hcs104
+               hgsCu(mstr,ior) = hcs105
+               hglCu(mstr,ior) = hcs106
+               hgsNi(mstr,ior) = hcs107
+               hglNi(mstr,ior) = hcs108
+               hgsAs(mstr,ior) = hcs113
+               hglAs(mstr,ior) = hcs114
+               hgsPb(mstr,ior) = hcs115
+               hglPb(mstr,ior) = hcs116
+               hgsCr(mstr,ior) = hcs117
+               hglCr(mstr,ior) = hcs118
+               hgsFe(mstr,ior) = hcs119
+               hglFe(mstr,ior) = hcs120
+               hgsHg(mstr,ior) = hcs121
+               hglHg(mstr,ior) = hcs122
+               hgsMn(mstr,ior) = hcs123
+               hglMn(mstr,ior) = hcs124
+               hgsU(mstr,ior) = hcs125
+               hglU(mstr,ior) = hcs126
                
-               hcs64 = hcs64/hcq
-               hcs100 = hcs100/hcq
-               hcs65 = hcs65/hcq
-               hcs66 = hcs66/hcq
+               ! nur Tracer
+               if (iwsim == 4)cycle
+               do nkz = 1,hnkzs(mstr,ior)              ! Gitterbelegung 2D
+                  if (nkz > nkzs_hc) then
+                     hcs67(nkz) = hcs67(nkz-1)
+                     hcs68(nkz) = hcs68(nkz-1)
+                     hcs69(nkz) = hcs69(nkz-1)
+                     hcs70(nkz) = hcs70(nkz-1)
+                     hcs71(nkz) = hcs71(nkz-1)
+                     hcs72(nkz) = hcs72(nkz-1)
+                     hcs73(nkz) = hcs73(nkz-1)
+                     hcs74(nkz) = hcs74(nkz-1)
+                     hcs75(nkz) = hcs75(nkz-1)
+                     hcs76(nkz) = hcs76(nkz-1)
+                     hcs84(nkz) = hcs84(nkz-1)
+                     hcs87(nkz) = hcs87(nkz-1)
+                     hcs88(nkz) = hcs88(nkz-1)
+                     hcs89(nkz) = hcs89(nkz-1)
+                     hcs90(nkz) = hcs90(nkz-1)
+                     hcs91(nkz) = hcs91(nkz-1)
+                     hcs92(nkz) = hcs92(nkz-1)
+                     hcs93(nkz) = hcs93(nkz-1)
+                     hcs94(nkz) = hcs94(nkz-1)
+                     hcs96(nkz) = hcs96(nkz-1)
+                     hcs97(nkz) = hcs97(nkz-1)
+                     hcs98(nkz) = hcs98(nkz-1)
+                  endif
+                  htempz(mstr,nkz,ior) = hcs67(nkz)
+                  ho2z(mstr,nkz,ior) = hcs68(nkz)
+                  hnh4z(mstr,nkz,ior) = hcs69(nkz)
+                  hno2z(mstr,nkz,ior) = hcs70(nkz)
+                  hno3z(mstr,nkz,ior) = hcs71(nkz)
+                  hgelPz(mstr,nkz,ior) = hcs72(nkz)
+                  hSiz(mstr,nkz,ior) = hcs73(nkz)
+                  gSizt(mstr,nkz,jnkz) = hcs73(nkz)
+                  hakiz(mstr,nkz,ior) = hcs74(nkz)
+                  hagrz(mstr,nkz,ior) = hcs75(nkz)
+                  hablz(mstr,nkz,ior) = hcs76(nkz)
+                  hchlaz(mstr,nkz,ior) = hcs84(nkz)
+                  hchlkz(mstr,nkz,ior) = hcs87(nkz)
+                  hchlgz(mstr,nkz,ior) = hcs88(nkz)
+                  hchlbz(mstr,nkz,ior) = hcs89(nkz)
+                  hgesPz(mstr,nkz,ior) = hcs90(nkz)
+                  hgesNz(mstr,nkz,ior) = hcs91(nkz)
+                  hQ_NKz(mstr,nkz,ior) = hcs92(nkz)
+                  hQ_NBz(mstr,nkz,ior) = hcs93(nkz)
+                  hQ_NGz(mstr,nkz,ior) = hcs94(nkz)
+                  hCChlkz(mstr,nkz,ior) = hcs96(nkz)
+                  hCChlbz(mstr,nkz,ior) = hcs97(nkz)
+                  hCChlgz(mstr,nkz,ior) = hcs98(nkz)
+               enddo
                
-               do nkz = 1,nkzs_hc !2D-Modellierung, Schleifenanfang
-                  hcs67(nkz) = hcs67(nkz)/hcq
-                  hcs68(nkz) = hcs68(nkz)/hcq
-                  hcs69(nkz) = hcs69(nkz)/hcq
-                  hcs70(nkz) = hcs70(nkz)/hcq
-                  hcs71(nkz) = hcs71(nkz)/hcq
-                  hcs72(nkz) = hcs72(nkz)/hcq
-                  hcs73(nkz) = hcs73(nkz)/hcq
-                  hcs74(nkz) = hcs74(nkz)/hcq
-                  hcs75(nkz) = hcs75(nkz)/hcq
-                  hcs76(nkz) = hcs76(nkz)/hcq
-                  hcs84(nkz) = hcs84(nkz)/hcq
-                  hcs87(nkz) = hcs87(nkz)/hcq
-                  hcs88(nkz) = hcs88(nkz)/hcq
-                  hcs89(nkz) = hcs89(nkz)/hcq
-                  hcs90(nkz) = hcs90(nkz)/hcq
-                  hcs91(nkz) = hcs91(nkz)/hcq
-                  hcs92(nkz) = hcs92(nkz)/hcq
-                  hcs93(nkz) = hcs93(nkz)/hcq
-                  hcs94(nkz) = hcs94(nkz)/hcq
-                  hcs96(nkz) = hcs96(nkz)/hcq
-                  hcs97(nkz) = hcs97(nkz)/hcq
-                  hcs98(nkz) = hcs98(nkz)/hcq
-               enddo ! Schleifenende 2D
-               
-               hcs77 = hcs77/hcq
-               hcs78 = hcs78/hcq
-               hcs79 = hcs79/hcq
-               hcs80 = hcs80/hcq
-               hcs81 = hcs81/hcq
-               hcs82 = hcs82/hcq
-               hcs83 = hcs83/hcq
-               hcs85 = hcs85/hcq
-               hcs86 = hcs86/hcq
-               hcs95 = hcs95/hcq
-               hcs99 = hcs99/hcq
-               hcs110 = hcs110/hcq
-               hcs111 = hcs111/hcq
-               hcs112 = hcs112/hcq
-               hcs101 = hcs101/hcq
-               hcs102 = hcs102/hcq
-               hcs103 = hcs103/hcq
-               hcs104 = hcs104/hcq
-               hcs105 = hcs105/hcq
-               hcs106 = hcs106/hcq
-               hcs107 = hcs107/hcq
-               hcs108 = hcs108/hcq
-               hcs113 = hcs113/hcq
-               hcs114 = hcs114/hcq
-               hcs115 = hcs115/hcq
-               hcs116 = hcs116/hcq
-               hcs117 = hcs117/hcq
-               hcs118 = hcs118/hcq
-               hcs119 = hcs119/hcq
-               hcs120 = hcs120/hcq
-               hcs121 = hcs121/hcq
-               hcs122 = hcs122/hcq
-               hcs123 = hcs123/hcq
-               hcs124 = hcs124/hcq
-               hcs125 = hcs125/hcq
-               hcs126 = hcs126/hcq
-               do ior = iB,anzej ! Beginn Schleife Belegung des 1. oder letzten Ortspunkts eines Strangs
-                  hsvhk(mstr,ior) = hcs1
-                  hsvhg(mstr,ior) = hcs2
-                  hsvhb(mstr,ior) = hcs3
-                  hgesN(mstr,ior) = hcs9
-                  hgesP(mstr,ior) = hcs10
-                  hfssgr(mstr,ior) = hcs20
-                  hfbsgr(mstr,ior) = hcs21
-                  hfrfgr(mstr,ior) = hcs22
-                  hnl0(mstr,ior) = hcs23
-                  hpl0(mstr,ior) = hcs24
-                  htempw(mstr,ior) = hcs25
-                  ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-                  if (iwied == 0)hTsed(mstr,ior) = htempw(mstr,ior)
-                  hbsb(mstr,ior) = hcs26
-                  hcsb(mstr,ior) = hcs27
-                  hCHNF(mstr,ior) = hcs28
-                  hBVHNF(mstr,ior) = hcs29
-                  hCD(mstr,1,ior) = hcs30
-                  hCD(mstr,2,ior) = hcs31
-                  hCP(mstr,1,ior) = hcs32
-                  hCP(mstr,2,ior) = hcs33
-                  hCM(mstr,ior) = hcs34
-                  hBAC(mstr,ior) = hcs35
-                  hnh4(mstr,ior) = hcs39
-                  ho2(mstr,ior) = hcs40
-                  hno3(mstr,ior) = hcs41
-                  hno2(mstr,ior) = hcs42
-                  hx0(mstr,ior) = hcs43
-                  hx02(mstr,ior) = hcs44
-                  hsi(mstr,ior) = hcs45
-                  ! hsised(mstr,ior) = 0.0
-                  ! hSKmor(mstr,ior) = 0.0
-                  hchla(mstr,ior) = hcs46
-                  haki(mstr,ior) = hcs47
-                  hagr(mstr,ior) = hcs48
-                  habl(mstr,ior) = hcs49
-                  hchlak(mstr,ior) = hcs50
-                  hchlag(mstr,ior) = hcs51
-                  hchlab(mstr,ior) = hcs52
-                  hakbcm(mstr,ior) = hcs6
-                  hagbcm(mstr,ior) = hcs7
-                  habbcm(mstr,ior) = hcs8
-                  hvkigr(mstr,ior) = hcs53
-                  hantbl(mstr,ior) = hcs54
-                  habrz1(mstr,ior) = 0.0
-                  hssalg(mstr,ior) = hcs55
-                  hss(mstr,ior) = hcs56
-                  hzooi(mstr,ior) = hcs57
-                  hgelp(mstr,ior) = hcs58
-                  hmw(mstr,ior) = hcs59
-                  hpw(mstr,ior) = hcs60
-                  hca(mstr,ior) = hcs61
-                  hlf(mstr,ior) = hcs62
-                  hph(mstr,ior) = hcs63
-                  hdlarn(mstr,ior) = 0.0
-                  hstind(mstr,ior) = 0.0
-                  hcoli(mstr,ior) = hcs64
-                  hDOSCF(mstr,ior) = hcs100
-                  hvbsb(mstr,ior) = hcs65
-                  hvcsb(mstr,ior) = hcs66
-                  hQ_NK(mstr,ior) = min(Qmx_NK,hcs77)
-                  hQ_PK(mstr,ior) = min(Qmx_PK,hcs78)
-                  hQ_SK(mstr,ior) = min(Qmx_SK,hcs79)
-                  hQ_NG(mstr,ior) = min(Qmx_NG,hcs80)
-                  hQ_PG(mstr,ior) = min(Qmx_PG,hcs81)
-                  hQ_NB(mstr,ior) = min(Qmx_NB,hcs82)
-                  hQ_PB(mstr,ior) = min(Qmx_PB,hcs83)
-                  hSKmor(mstr,ior) = hcs85
-                  hDOSCF(mstr,ior) = hcs86
-                  hFluN3(mstr,ior) = hcs95
-                  TGZoo(mstr,ior) = hcs99
-                  akmor_1(mstr,ior) = hcs110
-                  agmor_1(mstr,ior) = hcs111
-                  abmor_1(mstr,ior) = hcs112
-                  hgsZn(mstr,ior) = hcs101
-                  hglZn(mstr,ior) = hcs102
-                  hgsCad(mstr,ior) = hcs103
-                  hglCad(mstr,ior) = hcs104
-                  hgsCu(mstr,ior) = hcs105
-                  hglCu(mstr,ior) = hcs106
-                  hgsNi(mstr,ior) = hcs107
-                  hglNi(mstr,ior) = hcs108
-                  hgsAs(mstr,ior) = hcs113
-                  hglAs(mstr,ior) = hcs114
-                  hgsPb(mstr,ior) = hcs115
-                  hglPb(mstr,ior) = hcs116
-                  hgsCr(mstr,ior) = hcs117
-                  hglCr(mstr,ior) = hcs118
-                  hgsFe(mstr,ior) = hcs119
-                  hglFe(mstr,ior) = hcs120
-                  hgsHg(mstr,ior) = hcs121
-                  hglHg(mstr,ior) = hcs122
-                  hgsMn(mstr,ior) = hcs123
-                  hglMn(mstr,ior) = hcs124
-                  hgsU(mstr,ior) = hcs125
-                  hglU(mstr,ior) = hcs126
-                  
-                  ! nur Tracer
-                  if (iwsim == 4)cycle
-                  do nkz = 1,hnkzs(mstr,ior)              ! Gitterbelegung 2D
-                     if (nkz > nkzs_hc) then
-                        hcs67(nkz) = hcs67(nkz-1)
-                        hcs68(nkz) = hcs68(nkz-1)
-                        hcs69(nkz) = hcs69(nkz-1)
-                        hcs70(nkz) = hcs70(nkz-1)
-                        hcs71(nkz) = hcs71(nkz-1)
-                        hcs72(nkz) = hcs72(nkz-1)
-                        hcs73(nkz) = hcs73(nkz-1)
-                        hcs74(nkz) = hcs74(nkz-1)
-                        hcs75(nkz) = hcs75(nkz-1)
-                        hcs76(nkz) = hcs76(nkz-1)
-                        hcs84(nkz) = hcs84(nkz-1)
-                        hcs87(nkz) = hcs87(nkz-1)
-                        hcs88(nkz) = hcs88(nkz-1)
-                        hcs89(nkz) = hcs89(nkz-1)
-                        hcs90(nkz) = hcs90(nkz-1)
-                        hcs91(nkz) = hcs91(nkz-1)
-                        hcs92(nkz) = hcs92(nkz-1)
-                        hcs93(nkz) = hcs93(nkz-1)
-                        hcs94(nkz) = hcs94(nkz-1)
-                        hcs96(nkz) = hcs96(nkz-1)
-                        hcs97(nkz) = hcs97(nkz-1)
-                        hcs98(nkz) = hcs98(nkz-1)
-                     endif
-                     htempz(mstr,nkz,ior) = hcs67(nkz)
-                     ho2z(mstr,nkz,ior) = hcs68(nkz)
-                     hnh4z(mstr,nkz,ior) = hcs69(nkz)
-                     hno2z(mstr,nkz,ior) = hcs70(nkz)
-                     hno3z(mstr,nkz,ior) = hcs71(nkz)
-                     hgelPz(mstr,nkz,ior) = hcs72(nkz)
-                     hSiz(mstr,nkz,ior) = hcs73(nkz)
-                     gSizt(mstr,nkz,jnkz) = hcs73(nkz)
-                     hakiz(mstr,nkz,ior) = hcs74(nkz)
-                     hagrz(mstr,nkz,ior) = hcs75(nkz)
-                     hablz(mstr,nkz,ior) = hcs76(nkz)
-                     hchlaz(mstr,nkz,ior) = hcs84(nkz)
-                     hchlkz(mstr,nkz,ior) = hcs87(nkz)
-                     hchlgz(mstr,nkz,ior) = hcs88(nkz)
-                     hchlbz(mstr,nkz,ior) = hcs89(nkz)
-                     hgesPz(mstr,nkz,ior) = hcs90(nkz)
-                     hgesNz(mstr,nkz,ior) = hcs91(nkz)
-                     hQ_NKz(mstr,nkz,ior) = hcs92(nkz)
-                     hQ_NBz(mstr,nkz,ior) = hcs93(nkz)
-                     hQ_NGz(mstr,nkz,ior) = hcs94(nkz)
-                     hCChlkz(mstr,nkz,ior) = hcs96(nkz)
-                     hCChlbz(mstr,nkz,ior) = hcs97(nkz)
-                     hCChlgz(mstr,nkz,ior) = hcs98(nkz)
-                  enddo
-                  
-                  ! Buhnenfelder
-                  if (nbuhn(mstr) == 0 .or. iwied == 1) cycle
-                  bsvhek(mstr,ior) = hsvhk(mstr,ior)
-                  bsvheg(mstr,ior) = hsvhg(mstr,ior)
-                  bsvheb(mstr,ior) = hsvhb(mstr,ior)
-                  bakbcm(mstr,ior) = hakbcm(mstr,ior)
-                  babbcm(mstr,ior) = habbcm(mstr,ior)
-                  bagbcm(mstr,ior) = hagbcm(mstr,ior)
-                  bnl0(mstr,ior) = hnl0(mstr,ior)
-                  bpl0(mstr,ior) = hpl0(mstr,ior)
-                  bgesN(mstr,ior) = hgesN(mstr,ior)
-                  bgesP(mstr,ior) = hgesP(mstr,ior)
-                  bstind(mstr,ior) = hstind(mstr,ior)
-                  btempw(mstr,ior) = htempw(mstr,ior)
-                  ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-                  if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
-                  bbsb(mstr,ior) = hbsb(mstr,ior)
-                  bcsb(mstr,ior) = hcsb(mstr,ior)
-                  bnh4(mstr,ior) = hnh4(mstr,ior)
-                  bo2(mstr,ior) = ho2(mstr,ior)
-                  bno3(mstr,ior) = hno3(mstr,ior)
-                  bno2(mstr,ior) = hno2(mstr,ior)
-                  bx0(mstr,ior) = hx0(mstr,ior)
-                  bx02(mstr,ior) = hx02(mstr,ior)
-                  bsi(mstr,ior) = hsi(mstr,ior)
-                  bsised(mstr,ior) = hsised(mstr,ior)
-                  bSKmor(mstr,ior) = hSKmor(mstr,ior)
-                  bchla(mstr,ior) = hchla(mstr,ior)
-                  baki(mstr,ior) = haki(mstr,ior)
-                  bagr(mstr,ior) = hagr(mstr,ior)
-                  babl(mstr,ior) = habl(mstr,ior)
-                  bchlak(mstr,ior) = hchlak(mstr,ior)
-                  bchlag(mstr,ior) = hchlag(mstr,ior)
-                  bchlab(mstr,ior) = hchlab(mstr,ior)
-                  bvkigr(mstr,ior) = hvkigr(mstr,ior)
-                  bantbl(mstr,ior) = hantbl(mstr,ior)
-                  babrz1(mstr,ior) = habrz1(mstr,ior)
-                  bssalg(mstr,ior) = hssalg(mstr,ior)
-                  bfssgr(mstr,ior) = hfssgr(mstr,ior)
-                  bfbsgr(mstr,ior) = hfbsgr(mstr,ior)
-                  bfrfgr(mstr,ior) = hfrfgr(mstr,ior)
-                  bss(mstr,ior) = hss(mstr,ior)
-                  bzooi(mstr,ior) = hzooi(mstr,ior)
-                  bgelp(mstr,ior) = hgelp(mstr,ior)
-                  bmw(mstr,ior) = hmw(mstr,ior)
-                  bpw(mstr,ior) = hpw(mstr,ior)
-                  bca(mstr,ior) = hca(mstr,ior)
-                  blf(mstr,ior) = hlf(mstr,ior)
-                  bdlarn(mstr,ior) = hdlarn(mstr,ior)
-                  bph(mstr,ior) = hph(mstr,ior)
-                  bvbsb(mstr,ior) = hvbsb(mstr,ior)
-                  bvcsb(mstr,ior) = hvcsb(mstr,ior)
-                  bCD(mstr,1,ior) = hCD(mstr,1,ior)
-                  bCD(mstr,2,ior) = hCD(mstr,2,ior)
-                  bCP(mstr,1,ior) = hCP(mstr,1,ior)
-                  bCP(mstr,2,ior) = hCP(mstr,2,ior)
-                  bCM(mstr,ior) = hCM(mstr,ior)
-                  bBAC(mstr,ior) = hBAC(mstr,ior)
-                  bCHNF(mstr,ior) = hCHNF(mstr,ior)
-                  bQ_PK(mstr,ior) = hQ_PK(mstr,ior)
-                  bQ_NK(mstr,ior) = hQ_NK(mstr,ior)
-                  bQ_SK(mstr,ior) = hQ_SK(mstr,ior)
-                  bQ_PG(mstr,ior) = hQ_PG(mstr,ior)
-                  bQ_NG(mstr,ior) = hQ_NG(mstr,ior)
-                  bQ_PB(mstr,ior) = hQ_PB(mstr,ior)
-                  bQ_NB(mstr,ior) = hQ_NB(mstr,ior)
-                  bFluN3(mstr,ior) = hfluN3(mstr,ior)
-                  bcoli(mstr,ior) = hcoli(mstr,ior)
-                  bDOSCF(mstr,ior) = hDOSCF(mstr,ior)
-                  bgsZn(mstr,ior) = hgsZn(mstr,ior)
-                  bglZn(mstr,ior) = hglZn(mstr,ior)
-                  bgsCad(mstr,ior) = hgsCad(mstr,ior)
-                  bglCad(mstr,ior) = hglCad(mstr,ior)
-                  bgsCu(mstr,ior) = hgsCu(mstr,ior)
-                  bglCu(mstr,ior) = hglCu(mstr,ior)
-                  bgsNi(mstr,ior) = hgsNi(mstr,ior)
-                  bglNi(mstr,ior) = hglNi(mstr,ior)
-                  bgsAs(mstr,ior) = hgsAs(mstr,ior)
-                  bglAs(mstr,ior) = hglAs(mstr,ior)
-                  bgsPb(mstr,ior) = hgsPb(mstr,ior)
-                  bglPb(mstr,ior) = hglPb(mstr,ior)
-                  bgsCr(mstr,ior) = hgsCr(mstr,ior)
-                  bglCr(mstr,ior) = hglCr(mstr,ior)
-                  bgsFe(mstr,ior) = hgsFe(mstr,ior)
-                  bglFe(mstr,ior) = hglFe(mstr,ior)
-                  bgsHg(mstr,ior) = hgsHg(mstr,ior)
-                  bglHg(mstr,ior) = hglHg(mstr,ior)
-                  bgsMn(mstr,ior) = hgsMn(mstr,ior)
-                  bglMn(mstr,ior) = hglMn(mstr,ior)
-                  bgsU(mstr,ior) = hgsU(mstr,ior)
-                  bglU(mstr,ior) = hglU(mstr,ior)
-               enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs
-               
-            else !  Abfluss hcq <= 0.0
-               if (ilang == 0 ) then ! Vorlauf
-                  write(message,*)  "Strang ",mstr, " ",trim(strnumm(mstr)),  &
-                     "  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
-                     noch einen zu ihm gerichteten Zufluss."
-                  call qerror(message)
-               endif
-               
-            endif ! Abfluss >0.0
-      end select Rand_Wahl
-      
+               ! Buhnenfelder
+               if (nbuhn(mstr) == 0 .or. iwied == 1) cycle
+               bsvhek(mstr,ior) = hsvhk(mstr,ior)
+               bsvheg(mstr,ior) = hsvhg(mstr,ior)
+               bsvheb(mstr,ior) = hsvhb(mstr,ior)
+               bakbcm(mstr,ior) = hakbcm(mstr,ior)
+               babbcm(mstr,ior) = habbcm(mstr,ior)
+               bagbcm(mstr,ior) = hagbcm(mstr,ior)
+               bnl0(mstr,ior) = hnl0(mstr,ior)
+               bpl0(mstr,ior) = hpl0(mstr,ior)
+               bgesN(mstr,ior) = hgesN(mstr,ior)
+               bgesP(mstr,ior) = hgesP(mstr,ior)
+               bstind(mstr,ior) = hstind(mstr,ior)
+               btempw(mstr,ior) = htempw(mstr,ior)
+               ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
+               if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
+               bbsb(mstr,ior) = hbsb(mstr,ior)
+               bcsb(mstr,ior) = hcsb(mstr,ior)
+               bnh4(mstr,ior) = hnh4(mstr,ior)
+               bo2(mstr,ior) = ho2(mstr,ior)
+               bno3(mstr,ior) = hno3(mstr,ior)
+               bno2(mstr,ior) = hno2(mstr,ior)
+               bx0(mstr,ior) = hx0(mstr,ior)
+               bx02(mstr,ior) = hx02(mstr,ior)
+               bsi(mstr,ior) = hsi(mstr,ior)
+               bsised(mstr,ior) = hsised(mstr,ior)
+               bSKmor(mstr,ior) = hSKmor(mstr,ior)
+               bchla(mstr,ior) = hchla(mstr,ior)
+               baki(mstr,ior) = haki(mstr,ior)
+               bagr(mstr,ior) = hagr(mstr,ior)
+               babl(mstr,ior) = habl(mstr,ior)
+               bchlak(mstr,ior) = hchlak(mstr,ior)
+               bchlag(mstr,ior) = hchlag(mstr,ior)
+               bchlab(mstr,ior) = hchlab(mstr,ior)
+               bvkigr(mstr,ior) = hvkigr(mstr,ior)
+               bantbl(mstr,ior) = hantbl(mstr,ior)
+               babrz1(mstr,ior) = habrz1(mstr,ior)
+               bssalg(mstr,ior) = hssalg(mstr,ior)
+               bfssgr(mstr,ior) = hfssgr(mstr,ior)
+               bfbsgr(mstr,ior) = hfbsgr(mstr,ior)
+               bfrfgr(mstr,ior) = hfrfgr(mstr,ior)
+               bss(mstr,ior) = hss(mstr,ior)
+               bzooi(mstr,ior) = hzooi(mstr,ior)
+               bgelp(mstr,ior) = hgelp(mstr,ior)
+               bmw(mstr,ior) = hmw(mstr,ior)
+               bpw(mstr,ior) = hpw(mstr,ior)
+               bca(mstr,ior) = hca(mstr,ior)
+               blf(mstr,ior) = hlf(mstr,ior)
+               bdlarn(mstr,ior) = hdlarn(mstr,ior)
+               bph(mstr,ior) = hph(mstr,ior)
+               bvbsb(mstr,ior) = hvbsb(mstr,ior)
+               bvcsb(mstr,ior) = hvcsb(mstr,ior)
+               bCD(mstr,1,ior) = hCD(mstr,1,ior)
+               bCD(mstr,2,ior) = hCD(mstr,2,ior)
+               bCP(mstr,1,ior) = hCP(mstr,1,ior)
+               bCP(mstr,2,ior) = hCP(mstr,2,ior)
+               bCM(mstr,ior) = hCM(mstr,ior)
+               bBAC(mstr,ior) = hBAC(mstr,ior)
+               bCHNF(mstr,ior) = hCHNF(mstr,ior)
+               bQ_PK(mstr,ior) = hQ_PK(mstr,ior)
+               bQ_NK(mstr,ior) = hQ_NK(mstr,ior)
+               bQ_SK(mstr,ior) = hQ_SK(mstr,ior)
+               bQ_PG(mstr,ior) = hQ_PG(mstr,ior)
+               bQ_NG(mstr,ior) = hQ_NG(mstr,ior)
+               bQ_PB(mstr,ior) = hQ_PB(mstr,ior)
+               bQ_NB(mstr,ior) = hQ_NB(mstr,ior)
+               bFluN3(mstr,ior) = hfluN3(mstr,ior)
+               bcoli(mstr,ior) = hcoli(mstr,ior)
+               bDOSCF(mstr,ior) = hDOSCF(mstr,ior)
+               bgsZn(mstr,ior) = hgsZn(mstr,ior)
+               bglZn(mstr,ior) = hglZn(mstr,ior)
+               bgsCad(mstr,ior) = hgsCad(mstr,ior)
+               bglCad(mstr,ior) = hglCad(mstr,ior)
+               bgsCu(mstr,ior) = hgsCu(mstr,ior)
+               bglCu(mstr,ior) = hglCu(mstr,ior)
+               bgsNi(mstr,ior) = hgsNi(mstr,ior)
+               bglNi(mstr,ior) = hglNi(mstr,ior)
+               bgsAs(mstr,ior) = hgsAs(mstr,ior)
+               bglAs(mstr,ior) = hglAs(mstr,ior)
+               bgsPb(mstr,ior) = hgsPb(mstr,ior)
+               bglPb(mstr,ior) = hglPb(mstr,ior)
+               bgsCr(mstr,ior) = hgsCr(mstr,ior)
+               bglCr(mstr,ior) = hglCr(mstr,ior)
+               bgsFe(mstr,ior) = hgsFe(mstr,ior)
+               bglFe(mstr,ior) = hglFe(mstr,ior)
+               bgsHg(mstr,ior) = hgsHg(mstr,ior)
+               bglHg(mstr,ior) = hglHg(mstr,ior)
+               bgsMn(mstr,ior) = hgsMn(mstr,ior)
+               bglMn(mstr,ior) = hglMn(mstr,ior)
+               bgsU(mstr,ior) = hgsU(mstr,ior)
+               bglU(mstr,ior) = hglU(mstr,ior)
+            enddo ! Ende Schleife Neubelegung des erten oder letzten Ortspunkts eines Strangs
+            
+         else !  Abfluss hcq <= 0.0
+            if (ilang == 0 ) then ! Vorlauf
+               write(message,*)  "Strang ",mstr, " ",trim(strnumm(mstr)),  &
+                  "  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
+                  noch einen zu ihm gerichteten Zufluss."
+               call qerror(message)
+            endif
+            
+         endif ! Abfluss >0.0
+      endif
+   
    enddo ! Ende Schleife ueber alle Straenge
    
    
