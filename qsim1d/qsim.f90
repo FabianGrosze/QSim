@@ -35,7 +35,7 @@ program qsim
    character (len = 2)                     :: chcon,ckenn_vers,ckenn_vers1
    character (len = 7)                     :: cmin,cmax
    character (len = 40)                    :: ERENAME, MODNAME
-   character (len = 200)                   :: ctext
+   character (len = 201)                   :: ctext
    character (len = 275)                   :: pfadstring
    character (len = 6000)                  :: langezeile, message
    logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
@@ -918,12 +918,6 @@ program qsim
    if (open_error /= 0) call qerror ("Could not open ModellG.txt")
    rewind(103)
 
-   
-   
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'temp.dat'
-   open(unit = 77, file = pfadstring, iostat = open_error)
-   rewind(77)
-      
    ! file header
    read(103,'(A2)')ckenn_vers1
    if (ckenn_vers1 == '*V') read(103,'(2x)')
@@ -953,32 +947,32 @@ program qsim
       
       ! read data
       do while (.true.)
+         read(103,"(a201)",iostat = read_error) ctext
+         if (read_error /= 0) exit
          
-         read(103,1030,iostat = read_error) ckenn, ctext
-         if (read_error /= 0 .or. ckenn == ' ') exit
-         
-         rewind (77)
-         write(77,1030)ckenn,ctext
-         rewind (77)
+         ckenn = ctext(1:1)
          
          select case(ckenn)
+            case(' ') ! end of data block
+               exit
+               
             case('L') ! Laichperiode
-               read(77,2306)laits(mstr),laims(mstr),laids(mstr)
+               read(ctext,2306)laits(mstr),laims(mstr),laids(mstr)
             
             case('M') ! macrophytes
-               read(77,1031)itsts(mstr),msts(mstr),itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
+               read(ctext,1031)itsts(mstr),msts(mstr),itmaxs(mstr),mmaxs(mstr),itends(mstr),mends(mstr)
             
             case('P') ! macrophytes
                mPf = mPf+1
-               read(77,1032)apfl(mstr,mPf),epfl(mstr,mPf),Pflmis(mstr,mPf),Pflmxs(mstr,mPf)
+               read(ctext,1032)apfl(mstr,mPf),epfl(mstr,mPf),Pflmis(mstr,mPf),Pflmxs(mstr,mPf)
             
             case('F') ! shipping
                mS = mS+1
-               read(77,1033)aschif(mstr,mS),eschif(mstr,mS)
+               read(ctext,1033)aschif(mstr,mS),eschif(mstr,mS)
             
             case('D') ! dreissena
                mD = mD+1
-               read(77,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
+               read(ctext,1034)akdrei(mstr,mD),ekdrei(mstr,mD)                      &
                   ,(zdrs(mstr,mD,ndr),zdrss(mstr,mD,ndr)                            &
                   ,gwdrs(mstr,mD,ndr),ndr = 1,nndr)
             
@@ -986,13 +980,13 @@ program qsim
                call qerror ("You are trying to run a simulation with corophium. &
                            & This is currently not supported by QSim.")
                ! mC = mC+1
-               ! read(77,1035)acoro(mstr,mC),ecoro(mstr,mC),coro1s(mstr,mC),coross(mstr,mC)
+               ! read(ctext,1035)acoro(mstr,mC),ecoro(mstr,mC),coro1s(mstr,mC),coross(mstr,mC)
             
             case('B') ! benthic algae
                call qerror ("You are trying to run a simulation with benthic algae. &
                            & This is currently not supported by QSim.")
                ! mB = mB+1
-               ! read(77,1036)abal(mstr,mB),ebal(mstr,mB),ggbal(mstr,mB),gkbal(mstr,mB)
+               ! read(ctext,1036)abal(mstr,mB),ebal(mstr,mB),ggbal(mstr,mB),gkbal(mstr,mB)
             
             case('V') ! 2D
                call qerror ("You are trying to run a 2D simulation. &
@@ -1002,26 +996,26 @@ program qsim
             case('U') ! groyne field
                nbuhn(mstr) = 1
                mU = mU+1
-               read(77,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU),tau2B(mstr,mU),alphaB(mstr,mU),POMzb(mstr,mU)
+               read(ctext,1038)akmB(mstr,mU),ekmB(mstr,mU),DlB(mstr,mU),tau2B(mstr,mU),alphaB(mstr,mU),POMzb(mstr,mU)
             
             case('T') ! wetter station
                mWe = mWe+1
-               read(77,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe),YWlage(mstr,mWe)
+               read(ctext,1033)aWett(mstr,mWe),eWett(mstr,mWe),ikWSta(mstr,mWe),YWlage(mstr,mWe)
             
             case('O') ! vegetation
                mV = mV+1
-               read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
+               read(ctext,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
                  ,iV = 1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
                  ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
                  ,(VTYPA(mstr,mV,iV),iV = 13,14)
             
             case('Z') ! sediment
                mZ = mZ+1
-               read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
+               read(ctext,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
                
             case('S') ! sediment temperature
                mA = mA+1
-               read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
+               read(ctext,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
             
             case('E') ! erosion
                mE = mE+1
@@ -1055,9 +1049,7 @@ program qsim
       mEs(mstr)  = mE
    
    enddo
-   close (77)
-   !
-   1030 format(a1,a200)
+   
    1031 format(1x,6(2x,i2))
    1032 format(3x,f8.3,2x,f8.3,2x,f7.2,2x,f7.2)
    1033 format(3x,f8.3,2x,f8.3,2x,I4,2x,F6.2,2x,F7.1)
