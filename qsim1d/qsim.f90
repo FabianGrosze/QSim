@@ -905,13 +905,11 @@ program qsim
    ! Erstellung des Gitters für ortsfeste Kenngrößen und Organismen
    ! Lesen aus der Datei MODELLG.txt
    ! -------------------------------------------------------------------------
-   681 continue
    dlmax1 = 0.0
    dlmax2 = 0.0
    dlmax3 = 0.0
    dlmax4 = 0.0
    coro1 = 0.0
-   i2Daus = 0
    
    pfadstring = trim(adjustl(cpfad)) // 'MODELLG.txt'
    open(unit = 103, file = pfadstring, iostat = open_error)
@@ -1537,7 +1535,7 @@ program qsim
    ! ==========================================================================
    ! reading EREIGH.txt
    ! ==========================================================================
-   write(pfadstring,'(2A)')trim(adjustl(cpfad1)),'EREIGH.txt'
+   pfadstring = trim(adjustl(cpfad1)) // 'EREIGH.txt'
    open(unit = 110, file = pfadstring, iostat = open_error)
    if (open_error /= 0) call qerror("Could not open EreigH.txt")
    
@@ -1557,95 +1555,8 @@ program qsim
    endif
    
    ! Festlegung der max. Tiefenschichtenanzahl für jeden Ortspunkt bei 2D
-   if (I2Daus == 0 .or. ilang == 1) then
-      nkztot_max = 1
+   nkztot_max = 1
    
-   else
-      print*, 'Calculation maximum number of vertical layers.'
-      print*, 'This may take a while'
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         do mSta = 1,mStas(mstr)
-            Hmax2D(mstr,mSta) = 0.0
-            nkzmx(mstr,mSta) = 1
-         enddo
-      enddo
-      
-      do while (.true.)
-         read(110,'(2x)',iostat = read_error)
-         if (read_error < 0) exit
-         
-         do  azStr = 1,azStrs
-            mstr = mstra(azStr)
-            i2D = 1
-            do mSta = 1,mStas(mstr)
-               read(110,'(7x,f8.3,57x,f7.4)')Stakmh,Tief2D
-               
-               if (abfr(mstr) == 1) then
-                  if (Stakmh > efkm2D(mstr,i2D) .and. i2Ds(mstr) >= i2D) i2D = i2D+1
-                  if (i2D > i2Ds(mstr)) cycle
-                  if (Stakmh < afkm2D(mstr,i2D) .or. Stakmh > efkm2D(mstr,i2D)) cycle
-               
-               else
-                  if (Stakmh < efkm2D(mstr,i2D) .and. i2Ds(mstr) >= i2D) i2D = i2D+1
-                  if (i2D > i2Ds(mstr)) cycle
-                  if (Stakmh > afkm2D(mstr,i2D) .or. Stakmh < efkm2D(mstr,i2D)) cycle
-               endif
-               
-               if (Tief2D > Hmax2D(mstr,mSta))Hmax2D(mstr,mSta) = Tief2D
-               nkzmx(mstr,mSta) = int(Hmax2D(mstr,mSta)/dH2D)+2
-               if (nkzmx(mstr,mSta) > nkztot_max)nkztot_max = nkzmx(mstr,mSta)
-
-            enddo
-            nkzmx(mstr,mStas(mstr)) = nkzmx(mstr,mStas(mstr)-1)
-         enddo
-      enddo
-      
-      rewind (110)
-      read(110,'(A2)')ckenn_vers1
-      if (ckenn_vers1 /= '*V') then
-         read(110,'(A40)')ERENAME
-      else
-         rewind(110)
-         read(110,'(2x)')
-         read(110,'(2x)')
-         read(110,'(2x)')
-         read(110,'(A40)')MODNAME
-         read(110,'(A40)')ERENAME
-         read(110,'(2x)')
-         read(110,'(2x)')
-      endif
-      
-      
-      do  ! Suchen des Ereignisbeginns in ereigh.txt
-         ! Lesen der Zeitschritt-Nummer
-         read(110,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr
-         
-         if (itags == itag_Schr .and. monats == monat_Schr.and.Jahrs == Jahr_Schr.and.uhrs == Uhrz_Schr) then
-            backspace(unit = 110)
-            exit
-         endif
-         
-         do i = 1,isumAnzSta
-            read(110,'(2x)')
-         enddo
-         cycle
-      enddo
-      9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
-   endif
-  
-  ! Test ob an einem Ortspunkt der vertikale Schichtenanzahl größer als 50 ist
-   if (nkztot_max > 50) then
-      Hmaxtot2D = nkztot_max * dH2D
-      dH2D = Hmaxtot2D/48.
-      
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         do mSta = 1,mStas(mstr)
-            if (Hmax2D(mstr,mSta) > 0.0)nkzmx(mstr,mSta) = int(Hmax2D(mstr,mSta)/dH2D) + 2
-         enddo
-      enddo
-   endif
    
    ! =========================================================================
    ! initialize result files
@@ -3842,8 +3753,7 @@ program qsim
    ! ==========================================================================
    9998 continue  ! Sprungziel nach Ablegen der Werte für jeden Ortspunkt
    ! ==========================================================================
-   ! Vorlauf ilang = 0
-   ! if(iwied.eq.1.and.ilang.eq.0)goto 5555
+   
    
    ! Einlesen der hydraulischen Daten aus sysgenou
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou'
@@ -3924,224 +3834,18 @@ program qsim
    close (11)
    
    
-   if (ilang == 0)goto 5555
-   
    ! ==========================================================================
    ! Neubelegung des vertikalen Rechengitters an jedem Gitterpunkt
    ! ==========================================================================
-   call sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z        &
-                     ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
-                     ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
-   
+   if (ilang == 1) then
+      call sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z        &
+                        ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
+                        ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
+   endif
    
    ! ==========================================================================
    ! Zeitschleife
    ! ==========================================================================
-   5555 continue
-   
-   ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen (2D-Fall)
-   do azStr = 1,azStrs  ! Strangschleife ANFANG
-      if (iwied == 0 .or. i2Daus == 0)exit
-      mstr = mstra(azStr)
-      if (iRB_K1(mstr) == 0 .or. nnStrs(mstr) == 0)cycle
-      sum_QEinl = 0.0
-      hcq1 = 0.0
-      hcq2 = 0.0
-      hcq3 = 0.0
-      hcq4 = 0.0
-      hcq5 = 0.0
-      hcq6 = 0.0
-      hcq7 = 0.0
-      hcq8 = 0.0
-      hcq9 = 0.0
-      hcq10 = 0.0
-      hcq11 = 0.0
-      do iRB = 1,iRB_K1(mstr)
-         sum_QEinl = sum_QEinl + abfls(mstr,imRB_K1(iRB))
-      enddo
-      hcQ1 = max(1.e-10,(QStrang_1(mstr) - sum_QEinl))
-      do nkz = 1, hnkzs(mstr,1)  ! 2D
-         hc32(nkz) = hNh4z(mstr,nkz,1) * hcq1
-         i_K13 = 0
-         hc42(nkz) = hNO2z(mstr,nkz,1) * hcq1
-         i_K14 = 0
-         hc52(nkz) = hNO3z(mstr,nkz,1) * hcq1
-         i_K15 = 0
-         hc62(nkz) = hgesNz(mstr,nkz,1) * hcq1
-         i_K16 = 0
-         hc92(nkz) = hgelPz(mstr,nkz,1) * hcq1
-         i_K19 = 0
-         hc102(nkz) = hgesPz(mstr,nkz,1) * hcq1
-         i_K110 = 0
-         hc112(nkz) = hSiz(mstr,nkz,1) * hcq1
-         i_K111 = 0
-         hc122(nkz) = hChlaz(mstr,nkz,1) * hcq1
-         i_K112 = 0
-         hc212(nkz) = htempz(mstr,nkz,1) * hcq1
-         i_K121 = 0
-         hc222(nkz) = hO2z(mstr,nkz,1) * hcq1
-         i_K122 = 0
-         hc262(nkz) = htempz(mstr,nkz,1)
-         i_K126 = 0
-      enddo
-      hcq1 = hcq1
-      hcq2 = hcq1
-      hcq3 = hcq1
-      hcq4 = hcq1
-      hcq5 = hcq1
-      hcq6 = hcq1
-      hcq7 = hcq1
-      hcq8 = hcq1
-      hcq9 = hcq1
-      hcq10 = hcq1
-      hcq11 = hcq1
-      do iRB = 1,iRB_K1(mstr)
-         abfls(mstr,imRB_K1(iRB)) = max(1.e-10,abfls(mstr,imRB_K1(iRB)))
-         if (vNH4s(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)
-               hc32(nkz) = hc32(nkz) + vNH4s(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq1 = hcq1 + abfls(mstr,imRB_K1(iRB))
-            i_K13 = 1
-         endif
-         if (vNO2s(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)
-               hc42(nkz) = hc42(nkz) + vNO2s(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq2 = hcq2 + abfls(mstr,imRB_K1(iRB))
-            i_K14 = 1
-         endif
-         if (vNO3s(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1) ! 2D
-               hc52(nkz) = hc52(nkz) + vNO3s(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq3 = hcq3 + abfls(mstr,imRB_K1(iRB))
-            i_K15 = 1
-         endif
-         if (gesNs(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)  ! 2D
-               hc62(nkz) = hc62(nkz) + gesNs(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq4 = hcq4 + abfls(mstr,imRB_K1(iRB))
-            i_K16 = 1
-         endif
-         if (gelps(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)  ! 2D
-               hc92(nkz) = hc92(nkz) + gelPs(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq5 = hcq5 + abfls(mstr,imRB_K1(iRB))
-            i_K19 = 1
-         endif
-         if (gesPs(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)  ! 2D
-               hc102(nkz) = hc102(nkz) + gesPs(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq6 = hcq6 + abfls(mstr,imRB_K1(iRB))
-            i_K110 = 1
-         endif
-         if (Sis(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)  ! 2D
-               hc112(nkz) = hc112(nkz) + Sis(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq7 = hcq7 + abfls(mstr,imRB_K1(iRB))
-            i_K111 = 1
-         endif
-         if (chlas(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)  ! 2D
-               hc122(nkz) = hc122(nkz) + chlas(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq8 = hcq8 + abfls(mstr,imRB_K1(iRB))
-            i_K112 = 1
-         endif
-         if (iwsim /= 4 .and. tempws(mstr,imRB_K1(iRB)) > -9.99) then
-            do nkz = 1,hnkzs(mstr,1)
-               hc212(nkz) = hc212(nkz) + tempws(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq9 = hcq9 + abfls(mstr,imRB_K1(iRB))
-            i_K121 = 1
-         endif
-         if (vo2s(mstr,imRB_K1(iRB))>=0.0) then
-            do nkz = 1,hnkzs(mstr,1)
-               hc222(nkz) = hc222(nkz) + vo2s(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            enddo
-            hcq10 = hcq10 + abfls(mstr,imRB_K1(iRB))
-            i_K122 = 1
-         endif
-         if (waers(mstr,imRB_K1(iRB)) > -99.9 .and. abfls(mstr,imRB_K1(iRB)) <= 2.e-10) then
-            hcq11 = hcq11 + abfls(mstr,imRB_K1(iRB))
-            do nkz = 1, hnkzs(mstr,1)
-               hc262(nkz) = hc262(nkz) + waers(mstr,imRB_K1(iRB))/4.2/hcq11
-            enddo
-            i_K126 = 1
-         else if (waers(mstr,imRB_K1(iRB)) > -99.9 .and. abfls(mstr,imRB_K1(iRB)) > 2.e-10) then
-            do nkz = 1, hnkzs(mstr,1)
-               hc262(nkz) = hc262(nkz) + waers(mstr,imRB_K1(iRB))/4.2/(hcq11 + abfls(mstr,imRB_K1(iRB)))
-            enddo
-            i_K126 = 1
-            hcq11 = hcq11 + abfls(mstr,imRB_K1(iRB))
-         endif
-      enddo
-      if (i_K13 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hNH4z(mstr,nkz,1) = hc32(nkz)/hcq1
-         enddo
-      endif
-      if (i_K14 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hNO2z(mstr,nkz,1) = hc42(nkz)/hcq2
-         enddo
-      endif
-      if (i_K15 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hNO3z(mstr,nkz,1) = hc52(nkz)/hcq3
-         enddo
-      endif
-      if (i_K16 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hgesNz(mstr,nkz,1) = hc62(nkz)/hcq4
-         enddo
-      endif
-      if (i_K19 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hgelPz(mstr,nkz,1) = hc92(nkz)/hcq5
-         enddo
-      endif
-      if (i_K110 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hgesPz(mstr,nkz,1) = hc102(nkz)/hcq6
-         enddo
-      endif
-      if (i_K111 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hSiz(mstr,nkz,1) = hc112(nkz)/hcq7
-         enddo
-      endif
-      if (i_K112 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hchlaz(mstr,nkz,1) = hc122(nkz)/hcq8
-            hakiz(mstr,nkz,1) = (hchlaz(mstr,nkz,1)*hvkigr(mstr,1)/1000.) * (hakbcm(mstr,1)/Caki)
-            hagrz(mstr,nkz,1) = (hchlaz(mstr,nkz,1)*(1.-hvkigr(mstr,1)-hantbl(mstr,1))/1000.) * (hagbcm(mstr,1)/Cagr)
-            hablz(mstr,nkz,1) = (hChlaz(mstr,nkz,1)*hantbl(mstr,1)/1000.) * (habbcm(mstr,1)/Cabl)
-         enddo
-      endif
-      if (i_K121 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            htempz(mstr,nkz,1) = hc212(nkz)/hcq9
-         enddo
-      endif
-      
-      if (i_K122 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            hO2z(mstr,nkz,1) = hc222(nkz)/hcq10
-         enddo
-      endif
-      if (i_K126 > 0) then
-         do nkz = 1, hnkzs(mstr,1)
-            htempz(mstr,nkz,1) = hc262(nkz)
-         enddo
-      endif
-   enddo ! Strangschleife ENDE
-   
    
    ! Umrechnung der Uhrzeit in das Format <h.mm>
    Stunde = int(Uhrz)
@@ -7587,6 +7291,7 @@ program qsim
          enddo
          cycle
       enddo
+      9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
       
       rewind (97)
       read(97,'(A2)')ckenn_vers1
