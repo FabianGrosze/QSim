@@ -25,26 +25,39 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine lax_wen(ior,nkzs,U,xws,hcdt,dH2D)
-   integer, dimension (1000)  :: nkzs
-   real, dimension(50)        :: U, U_neu
-   save U_neu
+subroutine lax_wen(ior, nkzs, u, xws, hcdt, dh2d)
+   implicit none
+   
+   ! --- dummy arguments ---
+   integer, intent(in)                      :: ior
+   integer, intent(in),    dimension (1000) :: nkzs
+   real,    intent(inout), dimension(50)    :: u
+   real,    intent(in)                      :: xws
+   real,    intent(in)                      :: hcdt
+   real,    intent(in)                      :: dh2d
+   
+   ! --- local variables ---
+   real, dimension(50) :: u_new
+   integer             :: nkz
+   save u_new
    
    do nkz = 1, nkzs(ior)
       if (nkz == 1) then
-         U_neu(nkz) = U(nkz)-(hcdt*xws/(2.*dH2D))*(U(nkz+1)-U(nkz))                  &
-                      +(hcdt**2*xws**2/(2.*dH2D**2))*(U(nkz)-2.*U(nkz)+U(nkz+1))
+         u_new(nkz) = u(nkz)-(hcdt*xws/(2.*dh2d))*(u(nkz+1)-u(nkz))                  &
+                      +(hcdt**2*xws**2/(2.*dh2d**2))*(u(nkz)-2.*u(nkz)+u(nkz+1))
       endif
+      
       if (nkz == nkzs(ior)) then
-         U_neu(nkz) = U(nkz)-(hcdt*xws/(2.*dH2D))*(U(nkz)-U(nkz-1))                  &
-                      +(hcdt**2*xws**2/(2.*dH2D**2))*(U(nkz-1)-2.*U(nkz)+U(nkz))
+         u_new(nkz) = u(nkz)-(hcdt*xws/(2.*dh2d))*(u(nkz)-u(nkz-1))                  &
+                      +(hcdt**2*xws**2/(2.*dh2d**2))*(u(nkz-1)-2.*u(nkz)+u(nkz))
       endif
       
       if (nkz > 1 .and. nkz < nkzs(ior)) then
-         U_neu(nkz) = U(nkz)-(hcdt*xws/(2.*dH2D))*(U(nkz+1)-U(nkz-1))                  &
-                      +(hcdt**2*xws**2/(2.*dH2D**2))*(U(nkz-1)-2.*U(nkz)+U(nkz+1))
+         u_new(nkz) = u(nkz)-(hcdt*xws/(2.*dh2d))*(u(nkz+1)-u(nkz-1))                  &
+                      +(hcdt**2*xws**2/(2.*dh2d**2))*(u(nkz-1)-2.*u(nkz)+u(nkz+1))
       endif
    enddo
-   U(1:nkzs(ior)) = U_neu(1:nkzs(ior))
+   
+   u(1:nkzs(ior)) = u_new(1:nkzs(ior))
 
 end subroutine lax_wen
