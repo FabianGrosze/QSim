@@ -27,8 +27,9 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Interesse ist dabei besonders die Dynamik von Cyanobakterienblüten (auch
   Blaualgen genannt) im Zusammenhang mit dem Klimawandel.
   <a href="https://www.bmvi-expertennetzwerk.de/DE/Home/home_node.html"> 
-  BMDV Expertennetzwerk </a>   
-  Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de), NA
+  BMDV Expertennetzwerk </a>  \n 
+  Ansprechpartnerin: Mayra Ishikawa (Ishikawa[at]bafg.de); 
+  Marieke Frassl (frassl[at]bafg.de)
   
   \n
 
@@ -43,11 +44,27 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Hilfe von QSim werden Indikatoren zur Gewässergüte für die Zukunft 
   prognostiziert. Die Daten werden auf dem 
   <a href="https://ws-klimaportal.bafg.de"> WS-Klimaportal </a> 
-  der BfG zur Verfügung gestellt.
+  der BfG zur Verfügung gestellt. \n
   Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de); Benjamin Schima 
   (schima[at]bafg.de)
   
   \n
+  
+* __EG STEMP__ (2023-2024) \n
+  Zeitlich befristete Expertengruppe der IKSR (Internationalen Kommission zum 
+  Schutz des Rheins) zum Thema Wassertemperatur des Rheins. Bis 2024 sollen die 
+  Projektionen für die Wassertemperaturen im Rhein aktualisiert werden, die 2014 
+  in Bericht [IKSR-214](https://www.iksr.org/de/oeffentliches/dokumente/archiv/fachberichte/fachberichte-einzeldarstellung/214-estimation-of-the-effects-of-climate-change-scenarios-on-future-rhine-water-temperature-development-extensive-version) 
+  veröffentlicht wurden. Weiterer Teil des Arbeitsauftrags sind die 
+  Aktualisierung der langjährigen Entwicklung der Wassertemperaturen auf der 
+  Basis der kontinuierlichen Überwachung und des regelmäßigen Datenaustausches 
+  sowie kontinuierliche Beobachtung und Dokumentation der Auswirkungen des 
+  Temperaturanstiegs und ggf. Sauerstoffmangels anhand gemeinsam erarbeiteter 
+  Kennwerte.  \n
+  Ansprechpartnerinnen: Tanja Bergfeld-Wiedemann (Bergfeld-Wiedemann[at]bafg.de); 
+  Marieke Frassl (frassl[at]bafg.de)
+   
+  \n 
 
 * __Fluxam__ - Dynamik der Wasser- und Stoffströme in Flüssen – Re-Analyse und 
   Vorhersage (2022 - 2024) \n
@@ -62,9 +79,9 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   (Ton/Schluff) und ausgewählter Schad-, Nähr- und Spurenstoffe erfolgen. 
   Daraus ergeben sich Hinweise auf Adsorption, Desorption, Umsetzung oder 
   Remobilisierung im Einzugsgebiet. Modellgestützt wird auch eine Vorhersage 
-  von Stoffkonzentrationen angestrebt.
-  Ansprechpartnerin: Daniel Schwandt (schwandt[at]bafg.de), Rike Völpel, 
-  Gerd Hübner, Tanja Bergfeld-Wiedemann, Mayra Ishikawa, Annika Linkhorst
+  von Stoffkonzentrationen angestrebt. \n
+  Ansprechpartner/-innen: Daniel Schwandt (schwandt[at]bafg.de), Rike Völpel, 
+  Gerd Hübner, Tanja Bergfeld-Wiedemann, Annika Linkhorst
   
   \n
   
@@ -80,13 +97,9 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   ermittelt wird und das der Unterstützung von Managementmaßnahmen dient.
   <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021/2021_11_15_schoenung.html?nn=169148">  
   Vortrag: Verwendung von simulierten Gewässergütedaten in der  
-  Habitatmodellierung </a>
-  Ansprechpartner: Michael Schönung (schoenung[at]bafg.de)
-  <!-- #mf: MIchael und Nele bitte überarbeiten -->
-  <!-- #mf: hatte ich erst geschrieben, dann die Text von der U2-Website 
-  hervorgeholt: Im Rahmen des Projektes wird QSim im Elbe- und Weser-Ästuar 
-  angewandt. Ziel ist eine Kopplung von QSim und einem Nahrungsnetzmodell, um 
-  Aussagen über das Habitat der Finte treffen zu können. -->
+  Habitatmodellierung </a> \n
+  Ansprechpartner/-in: Michael Schönung (schoenung[at]bafg.de), 
+  Nele Oncken (Oncken[at]bafg.de)
 
   \n
   
@@ -107,6 +120,21 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Ansprechpartnerin: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
   \n\n
 
+## Externe Projekte ##
+
+* __KLIWA Sensitivitätsstudie Main__ (seit 2020) \n
+  Die Kooperation [KLIWA](https://www.kliwa.de/) „Klimaveränderung und 
+  Konsequenzen für die Wasserwirtschaft“ besteht bereits seit Ende der 1990er 
+  Jahre. Die Bundesländer Baden-Württemberg, Bayern und Rheinland-Pfalz 
+  untersuchen gemeinsam mit dem Deutschen Wetterdienst die bereits erfolgten und 
+  zukünftigen Veränderungen im Wasserhaushalt durch den Klimawandel. Das 
+  bayerische Landesamt für Umwelt bearbeitet die Auswirkungen eines möglichen 
+  Klimawandels auf die Gewässergüte im Rahmen einer Sensitivitätsstudie für den 
+  bayerischen Abschnitt des Mains. Dabei wird das Gewässergütemodell QSim 
+  eingesetzt und von U2 fachlich begleitet. \n
+  Ansprechpersonen im LfU: Maria Foltyn und Ulrich Kaul
+
+  
 ## Vergangene Projekte ##
 * Expertennetzwerk 1.0 \n
 ...
