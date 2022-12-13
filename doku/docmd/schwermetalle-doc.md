@@ -34,7 +34,8 @@ implementierten Prozesse
 
 Diese Dokumentation der Schwermetalle basiert auf einer
 <a href="./pdf/Doku_Schwermetall30Jan2020.pdf" target="_blank">früheren Version</a>, 
-die durch das Ingenieurbüro für Wasser und Umwelt, Dr. Schumacher erstellt wurde.
+die im Auftrag der BfG durch das Ingenieurbüro für Wasser und Umwelt, Dr. Schumacher 
+(Bearbeiter: Volker Kirchesch und Dr. Frank Schumacher) erstellt wurde.
 
 
 aus Datei schwermetalle-doc.md , 
