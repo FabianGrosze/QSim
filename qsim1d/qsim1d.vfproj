@@ -176,7 +176,6 @@
 		<File RelativePath=".\ErgebTParam.f90"/>
 		<File RelativePath=".\init_result_files.f90"/>
 		<File RelativePath=".\km_sys.f90"/>
-		<File RelativePath=".\lax_wen.f90"/>
 		<File RelativePath=".\lin_interpolation.f90"/>
 		<File RelativePath=".\ModellGParam.f90"/>
 		<File RelativePath=".\module_model_settings.f90"/>
@@ -194,8 +193,6 @@
 		<File RelativePath=".\sys_z_gitter.f90"/>
 		<File RelativePath=".\sysgen.f90"/>
 		<File RelativePath=".\transport.f90"/>
-		<File RelativePath=".\trimat_z.f90"/>
-		<File RelativePath=".\v_konz.f90"/>
 		<File RelativePath=".\wehr.f90"/>
 		<File RelativePath=".\wehrles.f90"/>
 		<File RelativePath=".\WetterParam.f90"/>

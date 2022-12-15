@@ -34,21 +34,40 @@ PV= qsim1d_14.09.14_dev
 #compiler:
 FC = gfortran
 
-Q1 = module_model_settings.o AdvDiff.o ALBEDO.o aparamles.o ctracer.o \
-	E_extnctParam.o EreigGParam.o EreigHParam.o ergeb2DFormat.o  \
-	Ergeb2DParam.o ergebMFormat.o ErgebMParam.o ergebTFormat.o  \
-	ErgebTParam.o k_eps.o km_sys.o ModellGParam.o  qsim.o  \
-	randbedingungen.o sysgen.o sys_gitterStrang.o sys_gitterTrans.o  \
-	sys_z_gitter.o transport.o transportz.o trimat_z.o  \
-	van_veen.o v_konz.o wehr.o wehrles.o WetterParam.o  \
-	z_gitter_einl.o Masse_neu_QSim.o lax_wen.o lin_interpolation.o  \
-	write_gerris_definitions.o \
-	organic_carbon_inflow_1d.o \
-	ph_inflow_1d.o \
-	phosphate_inflow_1d.o \
+Q1 = module_model_settings.o \
+	AdvDiff.o \
+	ALBEDO.o \
+	aparamles.o \
+	ctracer.o \
+	EreigGParam.o \
+	EreigHParam.o \
+	Ergeb2DParam.o \
+	ergebMFormat.o \
+	ErgebMParam.o \
+	ergebTFormat.o \
+	ErgebTParam.o \
+	E_extnctParam.o \
+	km_sys.o \
+	lin_interpolation.o \
+	ModellGParam.o \
 	nitrogen_inflow_1d.o \
+	organic_carbon_inflow_1d.o \
+	phosphate_inflow_1d.o \
+	ph_inflow_1d.o \
 	qerror.o \
-	write_e_extnct.o
+	qsim.o \
+	randbedingungen.o \
+	sysgen.o \
+	sys_gitterStrang.o \
+	sys_gitterTrans.o \
+	sys_z_gitter.o \
+	transport.o \
+	wehr.o \
+	wehrles.o \
+	WetterParam.o \
+	write_e_extnct.o \
+	write_gerris_definitions.o \
+	z_gitter_einl.o
 
 -include ../metabolism/metabol.mk
 
