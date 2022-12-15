@@ -31,7 +31,7 @@ subroutine E_extnctParam(cpfad1)
    
    character(255), intent(in)  :: cpfad1
    character (len=275)         :: pfadstring
-   character (len = 8)         :: versionstext
+   character (len=8)           :: versionstext
    
    call version_string(versionstext)
    

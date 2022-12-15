@@ -28,48 +28,62 @@
 !> Interpolation der Randbedingungen
 !! @author Volker Kirchesch
 !! @date 03.01.2013
-subroutine aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
+subroutine aparamles(cpfad, itags, monats, jahrs, aggmax, akgmax, abgmax)
    
-   character (len = 255)      :: cpfad
-   character (len = 275)      :: pfadstring
+   implicit none
    
-   integer                    :: anzDatum,  R_NR,  R_NRS, read_error
+   character(len=255), intent(in) :: cpfad
+   integer, intent(in)            :: itags
+   integer, intent(in)            :: monats
+   integer, intent(in)            :: jahrs
+   real, intent(out)              :: aggmax
+   real, intent(out)              :: akgmax
+   real, intent(out)              :: abgmax
+   
+   character(len=275)         :: pfadstring
+   integer                    :: anzDatum, nrs, nrsj, R_NR,  R_NRS, r__nrs, read_error
+   integer                    :: i_datum, ip
    integer, dimension(1000)   :: itagp, monatp, jahrp
-   real, dimension(1000,3)    :: wertp
+   real,    dimension(1000,3) :: wertp
+   
    
    ! Einlesen aus aparamt.txt
    close (192)
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'aparamt.txt'
+   pfadstring = trim(adjustl(cpfad)) // 'aparamt.txt'
    open(unit = 192, file = pfadstring)
    rewind (192)
+   
    if (monats > 2) then
-      NRS = (ITAGS+31*(MONATS-1)-INT(0.4*MONATS+2.3))
+      nrs = (itags+31*(monats-1)-int(0.4*monats+2.3))
    else
-      NRS = ITAGS+31*(MONATS-1)
+      nrs = itags+31*(monats-1)
    endif
    
-   NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4) !Tage seit 1900 (Berücksichtigung der Schaltjahre
    
-   R_NRS = NRS + NRSJ
-   read(192,'(i4)',iostat = read_error)anzDatum
-   if (read_error < 0.0)anzDatum = 0
+   ! Tage seit 1900 (Berücksichtigung der Schaltjahre
+   ! TODO (Schönung): Not all leap years are divisible by 4. So this calculation
+   !                  is wrong for some years
+   nrsj = (jahrs-1900)*365+int((jahrs-1900)/4) 
    
-   if (anzDatum == 0) then
-   else
-      do i_Datum = 1, anzDatum
-         read(192,9245)itagp(i_Datum),monatp(i_Datum),jahrp(i_Datum),(wertp(i_Datum,ip),ip = 1,3)
-         if (monatp(i_Datum) > 2) then
-            NRS = (itagp(i_Datum)+31*(monatp(i_Datum)-1)-INT(0.4*monatp(i_Datum)+2.3))
+   r_nrs = nrs + nrsj
+   read(192,'(i4)',iostat = read_error)anzdatum
+   if (read_error < 0.0)anzdatum = 0
+   
+   if (anzdatum /= 0) then
+      do i_datum = 1, anzdatum
+         read(192,9245)itagp(i_datum),monatp(i_datum),jahrp(i_datum),(wertp(i_datum,ip),ip = 1,3)
+         if (monatp(i_datum) > 2) then
+            nrs = (itagp(i_datum)+31*(monatp(i_datum)-1)-int(0.4*monatp(i_datum)+2.3))
          else
-            NRS = itagp(i_Datum)+31*(monatp(i_Datum)-1)
+            nrs = itagp(i_datum)+31*(monatp(i_datum)-1)
          endif
-         NRSJ = (jahrp(i_Datum) - 1900)*365+int((jahrp(i_Datum)-1900)/4)
-         R_NR = NRS + NRSJ
-         write(89,*)itags,monats,jahrs,R__NRS
-         if (R_NR <= R_NRS) then
-            if (wertp(i_Datum,1) > 0.0)aggmax = wertp(i_Datum,1)
-            if (wertp(i_Datum,2) > 0.0)akgmax = wertp(i_Datum,2)
-            if (wertp(i_Datum,3) > 0.0)abgmax = wertp(i_Datum,3)
+         nrsj = (jahrp(i_datum) - 1900)*365+int((jahrp(i_datum)-1900)/4)
+         r_nr = nrs + nrsj
+         write(89,*)itags,monats,jahrs,r__nrs
+         if (r_nr <= r_nrs) then
+            if (wertp(i_datum,1) > 0.0)aggmax = wertp(i_datum,1)
+            if (wertp(i_datum,2) > 0.0)akgmax = wertp(i_datum,2)
+            if (wertp(i_datum,3) > 0.0)abgmax = wertp(i_datum,3)
          endif
       enddo
    endif

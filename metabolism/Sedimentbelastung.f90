@@ -79,7 +79,7 @@ subroutine sedimentbelastung(SSalgs,                     &
       HgSeds = 1000 * (hgsHgs-hglHgs)/SSalgs
       MnSeds = 1000 * (hgsMns-hglMns)/SSalgs
       USeds = 1000 * (hgsUs-hglUs)  /SSalgs
-      !stop
+   
    else
       ! compute sedimentcontent from median of water content in erosionfree timesteps
       ZnSeds = ( ZnSeds*(anzZeits-1)+(1000 * (hgsZns-hglZns)/SSalgs) )/real(anzZeits)

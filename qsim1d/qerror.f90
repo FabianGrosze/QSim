@@ -5,6 +5,8 @@
 !!
 !! The errormessage is both displayed in the console and written to `file1.err`
 !! (Gerris uses this file)
+!!
+!! @author Michael Schönung
 subroutine qerror(message)
    use iso_fortran_env,       only: error_unit, output_unit
    use module_model_settings, only: cpfad
@@ -28,8 +30,9 @@ subroutine qerror(message)
    ! --- write to file1.err (needed for Gerris) ---
    ! Gerris needs this file. It reads the error message from there
    ! and displays it to the user.
-   open(newunit = file1,                           &
-        file    = trim(adjustl(cpfad)) // 'file1.err')
+   open(newunit  = file1,                               &
+        file     = trim(adjustl(cpfad)) // 'file1.err', &
+        encoding = 'UTF-8')
    rewind(file1)
    write(file1,*) trim(message)
    close(file1)

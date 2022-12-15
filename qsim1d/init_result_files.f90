@@ -54,34 +54,27 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    print *, repeat('=', 78)
    print *, repeat(' ', 33), 'init output'
    print *, repeat('=', 78)
-   print *, 'creating files for results:'
+   print *, 'Creating files for results:'
    
    ! get current version number
    call version_string(versionstext)
    
    !--- ErgebM.txt ---
-   print*, '> ErgebM.txt'
+   print*, '   * ErgebM.txt'
    pfadstring = trim(adjustl(cpfad)) // 'ERGEBM.txt'
    open(unit = 45, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 45 open_error ERGEBM.txt ',cpfad,pfadstring
-      stop 2
-   end if
-   
-   
+   if (open_error /= 0) call qerror("Could not open ERGEBM.txt")
+      
    write(45,'(a,a)')'*V  QSim  ERGEBM  ', versionstext
    call ergebMFormat()
    write(45,'(a50)')  modell
    write(45,'(a255)') cEreig
    
    ! --- ErgebT.txt ---
-   print*, '> ErgebT.txt'
+   print*, '   * ErgebT.txt'
    pfadstring =  trim(adjustl(cpfad)) // 'ERGEBT.txt'
    open(unit = 155, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 155 open_error ERGEBT.txt ',cpfad,pfadstring
-      stop 2
-   end if
+   if (open_error /= 0) call qerror("Could not open ERGEBT.txt")
    
    write(155,'(a,a)') '*V  QSim  ERGEBT  ', versionstext
    call ergebTFormat()
@@ -89,18 +82,10 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    write(155,'(a255)')cEreig
    
    ! --- Ergeb2D.txt ---
-   print*, '> Ergeb2D.txt'
+   print*, '   * Ergeb2D.txt'
    pfadstring =  trim(adjustl(cpfad)) // 'ERGEB2D.txt'
    open(unit = 255, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 255 open_error ERGEB2D.txt ',cpfad,pfadstring
-      stop 2
-   end if
-   
-   write(255,'(a,a)') '*V  QSim  ERGEB2D  ', versionstext
-   call ergeb2DFormat()
-   write(255,'(a50)')modell
-   write(255,'(a255)')cEreig
+   close(255)
    
    if (write_csv_files) then 
       ! --- Ausgabe 156 ---
@@ -127,6 +112,5 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ; aki ; agr ; abl ; chlak ; chlag ; chlab ; &
                        ssalg ; ss'
    endif
-   
-   print*, repeat('-', 78)
+      
 end subroutine init_result_files

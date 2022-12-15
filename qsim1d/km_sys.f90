@@ -26,15 +26,13 @@
 ! --------------------------------------------------------------------------- !
 
 !> km_sys
-!! @author Volker Kirchesch
-!! @date 21.03.2003
 subroutine km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, &
                   iorLeh,mstrLe,abfr,cpfad)
    
    
    character (len = 255)             :: cpfad
    character (len = 275)             :: pfadstring
-   integer                           :: azStrs, azStr, flag
+   integer                           :: azStrs, azStr
    integer, dimension(1000)          :: flaga, jieina
    
    integer, dimension(azStrs)        :: mwehr, mRBs, mStas, mStra, abfr
@@ -44,7 +42,7 @@ subroutine km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, 
    real, dimension(azStrs,1000)      :: StaKm
    
    
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'km_sys.dat'
+   pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring)
    rewind (391)
    

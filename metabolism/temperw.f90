@@ -28,19 +28,17 @@
 !> Berechnung der Wassertemperatur
 !!
 !! @author Volker Kirchesch
-subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl      &
-                   ,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae   &
-                   ,qeinlL,etempL,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed,Wlage,hWS,iRHKW        &
-                   ,htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR                      &
-                   ,kontroll,jjj)
+subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl,    &
+                   jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,  &
+                   qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,monats,Tsed,Wlage,hWS,                    &
+                   htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR,                     &
+                   kontroll,jjj)
    implicit none
 
    ! TODO (frassl) 
    ! die folgenden Variablen von oben, werden nicht im Code verwendet:
-   ! elen, iwied, nwaerm, ilang, monats, iRHKW
+   ! elen, iwied, nwaerm, ilang, monats
    !     
-   !
-   !
    !     Liste der von QSim übergebenen Parameter
    !     ----------------------------------------
   
@@ -77,7 +75,6 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     IORLE  : EndKnoten der Linienquelle im Strang [-]
    !     IEINLS : Anzahl der Linienquellen im Strang [-]
    !     FLAE   : Querschnittsfläche [m2]
-   !     FLUXT1 : wird nicht mehr benutzt
    !     QEINLL : Einleitmenge der linienförmigen Zuflüsse [m3/m]
    !   #mf: Einheit überprüfen -> [m3/s]?
    !     ETEMPL : Temperatur der linienförmigen Zuflüsse [°C]
@@ -90,7 +87,6 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     TSED   : Sedimenttemperatur [°C]
    !     WLAGE  : Lage der Wetterstation, Höhe ü. NN [m]
    !     HWS    : Wasserspiegellage am Querprofil ior, Höhe ü. NN [m]
-   !     IRHKW  : wird nicht mehr benutzt
    !     HTEMPW : mittlere Wassertemperatur im Querschnitt, wird nicht benutzt
    !     HTEMPZ : vertikale Wassertemperatur am Tiefenpunkt z [°C]
    !     WUEBKS : Eingabewert für den Wärmeübergangskoeffizient zwischen Wasser und Sediment [KJ/(K*m2*h)]
@@ -126,24 +122,24 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     rohS   : Dichte des Sediments [Kg/m3]
    !     WUEBK  : Wärmeübergangskoeffizient [KJ/(K*m2*h)]
    !     APARS  : Anteil PARS an der Globalstrahlung [-]
-   !
-   !....Bei der Simulation eines Tracer-Durchgangs wird automatisch die Einleiterkonz.
-   !....auf 0 gesetzt.
+   
+   
+   ! Bei der Simulation eines Tracer-Durchgangs wird automatisch die Einleiterkonz.
+   ! auf 0 gesetzt.
 
    integer                         :: ior, anze, mstr, nkz, azStrs, iein, ieinL, j, ior_flag, ilbuhn, m, ihcQ
-   integer                         :: ji, iwsim, itags, iwied, nwaerm, ilang, monats, iRHKW
+   integer                         :: ji, iwsim, itags, iwied, nwaerm, ilang, monats
    integer                         :: iform_VerdR
-   real                            :: tflie, WUEBK0, WUEBK, speWKS0, speWKS, PSREFS0, PSREFS, hctemp
+   real                            :: tflie, WUEBK, speWKS,PSREFS, hctemp
    real                            :: hctemp1, hcQ, hcWE, hcQE, deltTW, hcTE, rohE, tempmt, tempwt
-   real                            :: btiefe, Uhrz, Dichte_1D, dH2D
+   real                            :: btiefe, Uhrz, dH2D
    integer, dimension(100)         :: iorLa, iorLe, typ
    integer, dimension(azStrs)      :: ieinls
    integer, dimension(1000)        :: flag, jiein, nkzs
    integer, dimension(azStrs,1000) :: IDWe
-   real                            :: LageM
    real, dimension(20)             :: RO, WGE, typw, cloud
-   real, dimension(50)             :: D, Cpart, hctemp_2d, hctemp1z, xtempwz, xdtemp
-   real, dimension(1000)           :: tempw, vabfl, fkm, flae, tiefe, elen, schwi, Templ, extk, Tsed, FluxT1
+   real, dimension(50)             :: D, Cpart, hctemp1z, xtempwz, xdtemp
+   real, dimension(1000)           :: tempw, vabfl, fkm, flae, tiefe, elen, schwi, Templ, extk, Tsed
    real, dimension(100)            :: qeinlL, etempL, etemp, qeinl, ewaerm
    real, dimension(50,1000)        :: tempwz, hctemz, dtemp
    real, dimension(azStrs,1000)    :: Wlage, hWS, htempw, WUEBKS, SPEWKSS, PSREFSS, extkS
@@ -151,58 +147,75 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
    character(1000)                 :: message
+   
+   real                            :: density_1d
    save hctemp1,hctemp1z
    
    ! Konstanten
-   WUEBK = 0.0
-   speWKS = 0.0
-   PSREFS = 0.0
+   WUEBK   = 0.0
+   speWKS  = 0.0
+   PSREFS  = 0.0
    hctemp1 = 0.0
-   hctemp = 0.0
-   hcQ = 0.0
-   hcQE = 0.0
-   deltTW = 0.0
-   hcWE = 0.0
-   hcTE = 0.0
-   rohE = 0.0
+   hctemp  = 0.0
+   hcQ     = 0.0
+   hcQE    = 0.0
+   deltTW  = 0.0
+   hcWE    = 0.0
+   hcTE    = 0.0
+   rohE    = 0.0
    
-   PSREFS0 = 0.8  ! ändern auf 0.2 ? Ki
-   speWKS0 = 0.8
-   WUEBK0 = 350.
-   iein = 1
-   
-   ! Berücksichtigung der Linienquelle
+   ! -------------------------------------------------------------------------
+   ! diffuse sources
+   ! -------------------------------------------------------------------------
    do ieinL = 1, ieinLs(mstr)
-      if (qeinlL(ieinL)>=0.0 .and. etempL(ieinL) == -9.99)cycle
+      if (qeinlL(ieinL)>=0.0 .and. etempL(ieinL) == -9.99) cycle
       do ior = 1,anze+1
          if (iorLe(ieinL) < ior)cycle
          if (iorLa(ieinL) <= ior .and. iorLe(ieinL)>=ior) then
             if (qeinlL(ieinL) <= 0.0)qeinlL(ieinL) = 0.0
+            
             do nkz = 1,nkzs(ior)  ! 2D
                if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0)tempwz(nkz,ior) = tempwz(nkz,ior)+((etempL(ieinL)-tempwz(nkz,ior))*qeinlL(ieinL)/flae(ior))*tflie*86400. ! Ki
             enddo
             if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0)tempw(ior) = tempw(ior)+((etempL(ieinL)-tempw(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.  ! 1D            ! Ki
-         else
          endif
-      enddo ! Ende Knotenschleife
-   enddo   ! Ende Schleife Linienquellen
-   do j = 1,anze+1 ! Beginn Knotenschleife
+      enddo
+   enddo
+   
+   
+   ! -------------------------------------------------------------------------
+   ! point sources
+   ! -------------------------------------------------------------------------
+   iein = 1
+   do j = 1, anze+1
       ior_flag = 0
       ior = j
-      FluxT1(ior) = 0.0   ! wird nicht mehr benutzt Ki
       btiefe = tiefe(ior)
       if (btiefe < 0.01)btiefe = 0.01
-      !   if(ilbuhn==1.and.btiefe<0.2)btiefe = 0.2
-      WUEBK = WUEBK0
-      speWKS = speWKS0
-      PSREFS = PSREFS0
-      if (WUEBKS(mstr,ior) > 0.0)WUEBK = WUEBKS(mstr,ior)
-      if (SPEWKSS(mstr,ior) > 0.0)SPEWKS = SPEWKSS(mstr,ior)
-      if (PSREFSS(mstr,ior) > 0.0)PSREFS = PSREFSS(mstr,ior)
+      
+      if (WUEBKS(mstr,ior) > 0.0) then
+         WUEBK = WUEBKS(mstr,ior)
+      else 
+         WUEBK = 350.
+      endif
+      
+      if (SPEWKSS(mstr,ior) > 0.0) then
+         SPEWKS = SPEWKSS(mstr,ior)
+      else
+         speWKS = 0.8
+      endif
+         
+      if (PSREFSS(mstr,ior) > 0.0) then
+         PSREFS = PSREFSS(mstr,ior)
+      else
+         PSREFS = 0.8
+      endif
+      
       if (extk(ior) <= 0.0 .and. extkS(mstr,ior) > 0.0)extk(ior) = extkS(mstr,ior)
       if (extk(ior) <= 0.0 .and. extkS(mstr,ior) <= 0.0)extk(ior) = 1.5  ! 0.17 reines Wasser; 0.13 Schwebstoffe; 0.094 Ki; 0.0145 Gr
-      !### hctemp1 wird bei der Berechnung der Temperatur nach Wärmeeinleitung benutzt, falls sich
-      !    die Temperatur an der Einleitstelle auch nach Oberstrom ausdehnt.
+      
+      ! hctemp1 wird bei der Berechnung der Temperatur nach Wärmeeinleitung benutzt, falls sich
+      ! die Temperatur an der Einleitstelle auch nach Oberstrom ausdehnt.
       if (vabfl(ior)>=0.0 .and. vabfl(ior+1) < 0.0) then
          hctemp1 = tempw(ior)
          do nkz = 1,nkzs(ior)
@@ -216,6 +229,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
          ior = ior+1
          ior_flag = 1
       endif
+      
       if (ilbuhn == 1) then    ! Buhnen sind vorhanden, keine Einleitung in ein Buhnenfeld
          nkzs(ior) = 1
       else if (flag(ior) == 4 .and. ilbuhn == 0) then  ! Berücksichtigung der Einleitungen
@@ -236,29 +250,40 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
                hctemz(nkz,ior) = hctemp1z(nkz)
             enddo
          endif
+         
          do ji = 1,jiein(ior) ! Beginn Einleiterschleife
             hcWE = 0.0
             hcQE = max(0.0,qeinl(iein))
-            if (iwsim == 5)ewaerm(iein) = -9999.9
-            if (ewaerm(iein) > -9999.9) then  ! Waermeeinleitung
+            if (iwsim == 5) ewaerm(iein) = -9999.9
+            
+            ! Waermeeinleitung
+            if (ewaerm(iein) > -9999.9) then 
                
                hcWE = ewaerm(iein)/4.2
                if (hcQE == 0.0) then
-                  if (hcQ > 1.e-10)tempw(ior) = hctemp+hcWE/hcQ           ! 1D
-                  do nkz = 1,nkzs(ior)                   ! 2D
+                  ! 1D
+                  if (hcQ > 1.e-10)tempw(ior) = hctemp+hcWE/hcQ
+                  
+                  ! 2D
+                  do nkz = 1,nkzs(ior)
                      if (hcQ > 1.e-10)tempwz(nkz,ior) = hctemz(nkz,ior)+hcWE/hcQ
                   enddo
-               else  ! Wärmeienleitung hat ein Q
+                  
+               else  
+                  ! Wärmeienleitung hat ein Q
                   deltTW = hcWE/(hcQ+hcQE)
                   tempw(ior) = hctemp+deltTW  ! 1D
                   hcTE = (tempw(ior)*(hcQ+hcQE)-hcQ*hctemp)/hcQE
-                  rohE = Dichte_1D(hcTE) ! Dichte im Wärmeeinleiter
+                  rohE = density_1D(hcTE) ! Dichte im Wärmeeinleiter
                   call Dichte(hctemz,nkzs,D) ! Dichte im Vorfluter
                   
                   call Einleiter_Misch(nkzs,ior,hctemz,Cpart,hcQ,hcQE,hcTE,rohE,D,dH2D)  ! Berechnung der vertikalen Einmischung
                   tempwz(1:nkzs(ior),ior) = Cpart(1:nkzs(ior))
                endif
-            else    ! Temperatureinleitung
+            
+            
+            else    
+               ! Temperatureinleitung
                hcTE = etemp(iein)
                if (iwsim == 5 .and. etemp(iein) < 0.0)hcTE = hctemp
                if (iwsim /= 5) then
@@ -268,7 +293,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
                         tempwz(nkz,ior) = hctemz(nkz,ior)
                      enddo
                   else
-                     rohE = Dichte_1D(hcTE) ! Dichte im Einleiter
+                     rohE = density_1D(hcTE) ! Dichte im Einleiter
                      call Dichte(hctemz,nkzs,D,ior,itags,uhrz,fkm) ! Dichte im Vorfluter
                      call Einleiter_Misch(nkzs,ior,hctemz,Cpart,hcQ,hcQE,hcTE,rohE,D,dH2D)  ! Berechnung der vertikalen Einmischung
                      tempwz(1:nkzs(ior),ior) = Cpart(1:nkzs(ior))
@@ -284,7 +309,8 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
             hctemp = tempw(ior)
             
          enddo  ! Ende Einleiterschleife
-         if (ior_Flag == 1) then
+        
+        if (ior_Flag == 1) then
             iein = iein - jiein(ior)
             ior = ior-1
             tempw(ior) = tempw(ior+1)
@@ -293,14 +319,14 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
             enddo
          endif
       endif   ! Ende Einleiter-flag
+      
       if (ior > 1) then
          tempw(ior-1) = tempmt
          tempwz(1,ior-1) = tempwt
       endif
       
-      !####################################
+      
       ! konservative Substanzen (iwsim=5)
-      !####################################
       if (iwsim == 5) then
          tempmt = tempw(ior)
          cycle
@@ -309,9 +335,9 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
       xtempwz(1:nkzs(ior)) = tempwz(1:nkzs(ior),ior)
       xdtemp(1:nkzs(ior)) = 0.0
       
-      call temperw_quer(nkzs(ior),typw(IDWe(mstr,ior)),schwi(ior),extk(ior),hWS(mstr,ior),templ(ior)                     &
-                        ,ro(IDWe(mstr,ior)),wge(IDWe(mstr,ior)),cloud(IDWe(mstr,ior)),Wlage(mstr,ior),dH2D               &
-                        ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz,tempwt,tempmt,tempw(ior),btiefe,Tsed(ior)                     &
+      call temperw_quer(nkzs(ior),typw(IDWe(mstr,ior)),schwi(ior),extk(ior),hWS(mstr,ior),templ(ior)        &
+                        ,ro(IDWe(mstr,ior)),wge(IDWe(mstr,ior)),cloud(IDWe(mstr,ior)),Wlage(mstr,ior),dH2D  &
+                        ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz,tempwt,tempmt,tempw(ior),btiefe,Tsed(ior)        &
                         ,xdtemp,iform_VerdR,itags,uhrz,ior,kontroll ,jjj )
       dtemp(1:nkzs(ior),ior) = xdtemp(1:nkzs(ior))
       tempwz(1:nkzs(ior),ior) = xtempwz(1:nkzs(ior))
@@ -333,16 +359,18 @@ end subroutine temperw
 
 
 !> Berechnung der Dichte im 1-dimensionalen Fall
-real function Dichte_1D(hcTE)
-   a0 = 999.842594
-   a1 = 6.793952e-2
-   a2 = -9.095290e-3
-   a3 = 1.001685e-4
-   a4 = -1.120083e-6
-   a5 = 6.536332e-9
-   dichte_1d = a0+a1*hcTE+a2*hcTE**2+a3*hcTE**3+a4*hcTE**4+a5*hcTE**5
+pure real function density_1d(tempw)
+   implicit none
+   real, intent(in)  :: tempw !< water temperature [°C]
+   
+   density_1d = 999.842594             &
+             + 6.793952e-2 * tempw     &
+             - 9.095290e-3 * tempw**2  &
+             + 1.001685e-4 * tempw**3  &
+             - 1.120083e-6 * tempw**4  &
+             + 6.536332e-9 * tempw**5
    return
-end
+end function density_1d
 
 
 subroutine temperw_quer(xnkzs, xtypw, xschwi, xextk, xhWS, xtempl, xro, xwge,  &

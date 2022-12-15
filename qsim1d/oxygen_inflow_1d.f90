@@ -30,9 +30,12 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
    
    ! --- local variables ---
    integer                           :: iein, ieinL, ior, j, ior_flag, m, ihcQ, ji, nkz, vo2vor
-   real                              :: hcvo2, hco2E, hcq, hcQE, rohe, hcte, dichte_1d
+   real                              :: hcvo2, hco2E, hcq, hcQE, rohe, hcte
    real, dimension(ialloc5, ialloc2) :: hcvo2z
    real, dimension(ialloc5)          :: hco2Ez, d, cpart
+   
+   ! functions
+   real                              :: density_1d
    
    ! --------------------------------------------------------------------------
    ! diffuse sources
@@ -106,7 +109,7 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
             if (etemp(iein) > -9.9) then
                hcTE = etemp(iein)
                ! Dichte im Einleiter
-               rohE = Dichte_1D(hcTE)
+               rohE = density_1d(hcTE)
                
                ! Dichte im Vorfluter
                call dichte(tempwz, nkzs, D)

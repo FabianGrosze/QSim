@@ -25,7 +25,7 @@
 				<Tool Name="VFPostBuildEventTool"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Debug|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" StandardWarnings="standardWarningsF18" WarnDeclarations="true" WarnUndeclaredExternals="true" WarnUnusedVariables="true" WarnTruncateSource="true" WarnUncalled="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" UninitializedVariablesCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" StandardWarnings="standardWarningsF18" DebugParameter="debugParameterUsed" WarnDeclarations="true" WarnUndeclaredExternals="true" WarnUnusedVariables="true" WarnTruncateSource="true" WarnUncalled="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" UninitializedVariablesCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
 				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
@@ -36,6 +36,26 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" LocalSavedScalarsZero="true" InitArrays="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="unused_parameters|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="unused_parameters|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" WarnUnusedVariables="true" LocalSavedScalarsZero="true" InitArrays="true" RuntimeLibrary="rtMultiThreadedDebug"/>
 				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
@@ -55,10 +75,12 @@
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\nitrogen\nitrogen.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="organic_carbon">
 		<File RelativePath="..\metabolism\organic_carbon\module_organic_carbon.f90"/>
 		<File RelativePath="..\metabolism\organic_carbon\organic_carbon.f90">
@@ -66,17 +88,21 @@
 		<Filter Name="oxygen">
 		<File RelativePath="..\metabolism\oxygen\module_oxygen.f90"/>
 		<File RelativePath="..\metabolism\oxygen\oxygen.f90">
-			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\oxygen\oxygen_saturation_concentration.f90">
-			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="ph">
 		<File RelativePath="..\metabolism\ph\module_ph.f90"/>
 		<File RelativePath="..\metabolism\ph\ph.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\ph\pwert.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="phosphate">
 		<File RelativePath="..\metabolism\phosphate\module_phosphate.f90"/>
 		<File RelativePath="..\metabolism\phosphate\phosphate.f90">
@@ -85,7 +111,8 @@
 		<File RelativePath="..\metabolism\silicate\module_silicate.f90"/>
 		<File RelativePath="..\metabolism\silicate\silicate.f90">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
 		<File RelativePath="..\metabolism\albenth.f90"/>
 		<File RelativePath="..\metabolism\algaesbl.f90"/>
 		<File RelativePath="..\metabolism\algaesgr.f90"/>
@@ -93,7 +120,6 @@
 		<File RelativePath="..\metabolism\anztag.f90"/>
 		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
 		<File RelativePath="..\metabolism\C_Chla.f90"/>
-		<File RelativePath="..\metabolism\cbsb5.f90"/>
 		<File RelativePath="..\metabolism\coliform.f90"/>
 		<File RelativePath="..\metabolism\coroph.f90"/>
 		<File RelativePath="..\metabolism\Dichte.f90"/>
@@ -143,18 +169,14 @@
 		<File RelativePath=".\E_extnctParam.f90"/>
 		<File RelativePath=".\EreigGParam.f90"/>
 		<File RelativePath=".\EreigHParam.f90"/>
-		<File RelativePath=".\ergeb2DFormat.f90"/>
 		<File RelativePath=".\Ergeb2DParam.f90"/>
 		<File RelativePath=".\ergebMFormat.f90"/>
 		<File RelativePath=".\ErgebMParam.f90"/>
 		<File RelativePath=".\ergebTFormat.f90"/>
 		<File RelativePath=".\ErgebTParam.f90"/>
 		<File RelativePath=".\init_result_files.f90"/>
-		<File RelativePath=".\k_eps.f90"/>
 		<File RelativePath=".\km_sys.f90"/>
-		<File RelativePath=".\lax_wen.f90"/>
 		<File RelativePath=".\lin_interpolation.f90"/>
-		<File RelativePath=".\Masse_neu_QSim.f90"/>
 		<File RelativePath=".\ModellGParam.f90"/>
 		<File RelativePath=".\module_model_settings.f90"/>
 		<File RelativePath=".\nitrogen_inflow_1d.f90"/>
@@ -171,14 +193,10 @@
 		<File RelativePath=".\sys_z_gitter.f90"/>
 		<File RelativePath=".\sysgen.f90"/>
 		<File RelativePath=".\transport.f90"/>
-		<File RelativePath=".\transportz.f90"/>
-		<File RelativePath=".\trimat_z.f90"/>
-		<File RelativePath=".\v_konz.f90"/>
-		<File RelativePath=".\van_veen.f90"/>
 		<File RelativePath=".\wehr.f90"/>
 		<File RelativePath=".\wehrles.f90"/>
 		<File RelativePath=".\WetterParam.f90"/>
-		<File RelativePath=".\wind_stroemung.f90"/>
+		<File RelativePath=".\write_e_extnct.f90"/>
 		<File RelativePath=".\write_gerris_definitions.f90"/>
 		<File RelativePath=".\z_gitter_einl.f90"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>

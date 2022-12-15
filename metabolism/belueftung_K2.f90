@@ -36,7 +36,7 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
    
    real                  :: FN,G,UST,Slope,Breite,zw10,fkWind,zWmess,wge10,&
                             SC,Wind_Kl,bbeiw
-   
+   character(1000)       :: message
    
    FN = 1./raus
    G = 9.81
@@ -55,8 +55,19 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
    if (SC < 1.0) SC = 1.0
    Wind_Kl = (40.94*SC**(-0.5)) * wge10**1.81 * ((1.2/998.)**0.5)
    ! Wind_Kl = 40.94*SC**(-0.5) * wge10**1.81 * (1.2/998.)**0.5  ! original
-   if (isnan(Wind_Kl)) print*,"Belueftung_K2: Wind_Kl,SC,wge10,zWmess,fkwind,WLage,hWS,wge = ",   &
-       Wind_Kl,SC,wge10,zWmess,fkwind,WLages,hWSs,wges
+   if (isnan(Wind_Kl)) then
+      print*, "subroutine belueftung_k2: Variable 'wind_kl' became NaN."
+      print*, "   wind_kl  = ", wind_kl
+      print*, "   sc       = ", sc
+      print*, "   wge10    = ", wge10
+      print*, "   fkwind   = ", fkwind
+      print*, "   wlage    = ", wlages
+      print*, "   hws      = ", hwss
+      print*, "   wge      = ", wges  
+      
+      call qerror("subroutine belueftung_k2: Variable 'wind_kl' became NaN.")
+   endif
+
    
    ! verschiedene Belüftungsformeln </AerFormulas>
    select case (iphys) 
@@ -85,14 +96,12 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
          bbeis = 142.*(abs(vmitts)*Slope)**0.333*tiefes**(-0.66)*Breite**(-0.243)
       
       case default
-         print*,'Belueftung_K2: Belueftungsformel iphy = ',iphys,' nicht vorhanden.'
-         stop 234
+         write(message, "(a,i0)") "subroutine belueftung_k2: Given value for iphy is invalid: ", iphys
+         call qerror(message)
+
    end select
    
-   if (isnan(bbeis)) then
-      print '(a,i0)', "Error: Belueftung_K2 caused nan for bbeis with iphys = ", iphys
-      stop 234
-   endif
+   if (isnan(bbeis)) call qerror("subroutine belueftung_k2: Variable 'bbei' became NaN.")
    
    if (bbeis > 20.) bbeis = 20.
    

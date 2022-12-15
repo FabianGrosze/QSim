@@ -26,27 +26,42 @@
 ! --------------------------------------------------------------------------- !
 
 !> Berechnung der Einleitungen bei Tracerberechnungen
-!! @author Volker Kirchesch
-!! @date 02.07.2012
-subroutine CTracer(TEMPW,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs,itags,uhrz,mstr)
+
+subroutine ctracer(tempw, flag, anze, qeinl, etemp, vabfl, jiein, ilbuhn, nkzs)
+                   
+   implicit none
    
-   integer                          :: anze
-   real, dimension(100)             :: qeinl, etemp
-   integer, dimension(1000)         :: flag, jiein, nkzs
-   real, dimension(1000)            :: tempw, vabfl
+   ! --- dummy arguments ---
+   real,    intent(inout), dimension(1000) :: tempw
+   integer, intent(in),    dimension(1000) :: flag
+   integer, intent(in)                     :: anze
+   real,    intent(in),    dimension(100)  :: qeinl
+   real,    intent(in),    dimension(100)  :: etemp
+   real,    intent(in),    dimension(1000) :: vabfl
+   integer, intent(in),    dimension(1000) :: jiein
+   integer, intent(in)                     :: ilbuhn
+   integer, intent(out),   dimension(1000) :: nkzs 
+   
+   ! TODO (Schönung) This subroutine must not be allowed to alter 'nkzs'
+   
+   ! --- local variables
+   integer :: iein, j, ji, ior, ior_flag, m, ihcq
+   real    :: hctemp, hcq, hcqe, hcte
    
    iein = 1
    do j = 1,anze+1
       nkzs(j) = 1
       ior = j
       ior_flag = 0
-      if (flag(ior) == 6 .and. vabfl(ior) < 0.0.and.vabfl(ior+1) > 0.0.and.flag(ior+1) == 4) then
+      if (flag(ior) == 6 .and. vabfl(ior) < 0.0 .and. &
+          vabfl(ior+1) > 0.0 .and. flag(ior+1) == 4) then
          ior = ior+1
          ior_flag = 1
       endif
+      
       if (ilbuhn == 1) then
-      else if (flag(ior) /= 4) then
-      else  ! Einleitung
+      
+      else if (flag(ior) == 4) then
          m = 1
          ihcQ = 0
          if (vabfl(ior) < 0.0)m = -1            ! if(vabfl(ior-1)<0.0.and.vabfl(ior)<0.0)m = -1

@@ -72,7 +72,6 @@ contains
    subroutine get_paths(linux)
       logical, intent(in)  :: linux    !< Should paths adapt to linux?
       
-      integer              :: i
       character(len=1)     :: sep 
       character(2)         :: bckslsh = '\\'
       
@@ -100,6 +99,7 @@ contains
    subroutine read_ereigg_settings()
       implicit none
       
+      character(len=1000)  :: message
       character(len=275)   :: pfadstring
       character(len=2)     :: cKenn_vers1
       integer              :: open_error, read_error
@@ -127,12 +127,8 @@ contains
                                        iform_VerdR
       endif
       
-      if (read_error /= 0) then
-         print *, 'Error while reading EreigG.txt.'
-         print *, 'Fileformat may be wrong.'
-         stop 33
-      endif
-      
+      if (read_error /= 0) call qerror("Error while reading EreigG.txt. Fileformat may be wrong.")
+         
       close(92)
       9200 format(I2,2x,I2,2x,I4,2x,f5.2)
       9210 format(I2,2x,I2,2x,I4,2x,f5.2,2x,I3)
@@ -145,10 +141,8 @@ contains
       if (FlongDis == 0.0) FlongDis = 1.
       
       if (iphy < 1 .or. iphy > 4) then
-         print*, 'Error in EreigG.txt:'
-         print*, 'iPhy (number for equation of aeration) is defined incorretly'
-         print '("iphy = ", I0)', iPhy
-         stop 34
+         write(message, "(a,i0,a)") "EreigG.txt: 'iPhy = ", iphy, "' is not a valid option"
+         call qerror(message)
       endif
       
       ! determine iWSim
@@ -199,7 +193,6 @@ contains
       print '(a,i1)',   '  iFormVert   = ', iformVert
       print '(a,i1)',   '  iForm_VerdR = ', iform_VerdR
       print '(a,i1)',   '  iWSim       = ', iwsim
-      print *, repeat('-', 78)
       
    end subroutine read_ereigg_settings
 
