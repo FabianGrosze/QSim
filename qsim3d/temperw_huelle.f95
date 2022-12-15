@@ -140,7 +140,7 @@ subroutine temperw_huelle(i)
    
       if (kontroll) then
          print*,' after temperw_kern:'
-         print*, '   meinrang = ', meinrang,
+         print*, '   meinrang = ', meinrang
          print*, '   i        = ', i
          print*, '   tempw    = ', planktonic_variable_p(1+nk)
       endif
@@ -156,7 +156,7 @@ subroutine temperw_huelle(i)
          call qerror(fehler)
       endif
       
-      ! Temperatur change ...
+      ! Temperatur change 
       if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief) then ! wet nodes
          planktonic_variable_p(1+nk) = tempmt  ! = planktonic_variable_p(1+nk) + xdtemp_mit ! tempw(1)
          !plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =       &
