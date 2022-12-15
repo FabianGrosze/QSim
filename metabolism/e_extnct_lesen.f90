@@ -25,12 +25,14 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> <h2> subroutine e_extnct_lesen </h2>
-!! ließt die \n
+!> e_extnct_lesen
+!!
+!! ließt die 
 !! Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, 
 !! Humin, susp. Schwebstoff,Sonnenlicht\n
 !! aus <a href="../../exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
-!! \n\n
+!! 
+!!
 !! Quelle: e_extnct_lesen.f90 , zu: Stoffumsatz ; algae_huelle(), 
 !! \ref lnk_randbedingungen , \ref lnk_extnct_rb
 
@@ -52,11 +54,7 @@ subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
    
    write(dateiname,'(2A)')trim(cpfad),'e_extnct.dat'
    open(unit = 101 , file = dateiname, status = 'old', action = 'read ', iostat = io_error)
-   if (io_error /= 0) then
-      print*,'io_error open e_extnct.dat'
-      print*, 'Does this file exist?'
-      stop 100
-   end if
+   if (io_error /= 0) call qerror("Could not open e_extnct.dat")
    
    rewind (101)
    ! read(101,'(A2)')ckenn_vers1
@@ -71,27 +69,16 @@ subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
    
    ! Anzahl der Wellenlängen
    read(101,*, iostat = io_error) ilamda
-   if (io_error /= 0) then
-      print*,'io_error ilamda aus e_extnct.dat nicht gelesen'
-      stop 101
-   end if
+   if (io_error /= 0) call qerror("Could not read ilamda from e_extnct.dat")
    
-   if (ilamda > 40) then
-      print*,'Fehler: Mehr als 40 Wellenlängen in e_extnct.dat angegeben. ilamda = ',ilamda
-      stop 102
-   endif
+   if (ilamda > 40) call qerror("Number of wavelengths in e_extnct.dat exceeds 40")
    
    do i = 1,ilamda
       ! Wellenlängenabhängige Extinctionskoeffizienten
       read(101,*, iostat = io_error) eta(i),aw(i),ack(i),acg(i),acb(i),ah(i),as(i),al(i) 
       
-      if (io_error /= 0) then
-         print*,'io_error beim Lesen von eta(i),aw(i),ack(i),acg... aus e_extnct.dat'
-         stop 103
-      end if
+      if (io_error /= 0) call qerror("Error while reading from e_extnct.dat")
       
-      ! if(i == 1) print*,'e_extnct.dat: Wellenlänge eta(1)=',eta(1),' Nano-Meter'
-      ! if(i == ilamda) print*,'e_extnct.dat: Wellenlänge eta(',ilamda,')=',eta(ilamda),' Nano-Meter'
    enddo
    !! print*,'e_extnct.dat: ',ilamda,' Zeilen gelesen'
    return

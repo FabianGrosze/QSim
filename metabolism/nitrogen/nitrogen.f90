@@ -152,8 +152,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       print*, "   agr    = ", agr_s
       print*, "   abl    = ", abl_s
       
-      print *, "Variable 'dzn' became NaN in subroutine nitrogen."
-      stop
+      call qerror("Variable 'dzn' became NaN in subroutine nitrogen.")
    end if
 
    
@@ -214,8 +213,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
             write(message,"(a,i0)"), "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
                                      new_line('a') //                                                 &
                                      "j_up = ", j_up
-            print*, message
-            stop
+            call qerror(message)
       end select
       
       alpha_upN4k = min(1.,alpha_upN4k)
@@ -261,8 +259,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       print*, "   ablnh4 = ", ablnh4_s
       print*, "   doN    = ", doN_s
       
-      print*, "Variable 'vNH4t' became NaN in subroutine nitrogen."
-      stop
+      call qerror("Variable 'vNH4t' became NaN in subroutine nitrogen.")
    end if
    
    if (vNH4t < 0.0) then
@@ -330,8 +327,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
          print*, "   pfln1   = ", pfln1_s
       endif
       
-      print*, "Variable 'vNO3t' became NaN in subroutine nitrogen."
-      stop
+      call qerror("Variable 'vNO3t' became NaN in subroutine nitrogen.")
    end if
    
    if (vNO3t < 0.0) then

@@ -63,12 +63,8 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    print*, '   * ErgebM.txt'
    pfadstring = trim(adjustl(cpfad)) // 'ERGEBM.txt'
    open(unit = 45, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 45 open_error ERGEBM.txt ',cpfad,pfadstring
-      stop 2
-   end if
-   
-   
+   if (open_error /= 0) call qerror("Could not open ERGEBM.txt")
+      
    write(45,'(a,a)')'*V  QSim  ERGEBM  ', versionstext
    call ergebMFormat()
    write(45,'(a50)')  modell
@@ -78,10 +74,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    print*, '   * ErgebT.txt'
    pfadstring =  trim(adjustl(cpfad)) // 'ERGEBT.txt'
    open(unit = 155, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'unit = 155 open_error ERGEBT.txt ',cpfad,pfadstring
-      stop 2
-   end if
+   if (open_error /= 0) call qerror("Could not open ERGEBT.txt")
    
    write(155,'(a,a)') '*V  QSim  ERGEBT  ', versionstext
    call ergebTFormat()
