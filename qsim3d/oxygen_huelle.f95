@@ -171,7 +171,7 @@ subroutine oxygen_huelle(i)
    ilbuhn = 0          ! keine Buhnen
    iwied = 0      ! unbenutzte Variable
    do j = 1,num_lev ! Sauerstoffgehalt tiefenaufgelöst
-      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vo2z(j,2) = vo2z(j,1)
    end do ! alle j tiefenlevels
    susO2N(1) = 0.0     ! unbenutzte Variable
@@ -216,7 +216,7 @@ subroutine oxygen_huelle(i)
       algabz(j,2) = algabz(j,1)
       vz1(j,1) = trans_quant_vert_p(j+(21-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! lokale Sauerstoffzehrung/produktion tiefenaufgelöst  !
       vz1(j,2) = vz1(j,1)
-      tempwz(j,1) = plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! wassertemperatur tiefenaufgelöst
+      tempwz(j,1) = plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! wassertemperatur tiefenaufgelöst
       tempwz(j,2) = tempwz(j,1)
    end do ! alle j tiefenlevels
    saett(1) = transfer_quantity_p(45+(i-1)*number_trans_quant) ! Sauerstoff Sättigungs-Konzentration in mgO2/l
@@ -297,7 +297,7 @@ subroutine oxygen_huelle(i)
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Daten-rückgabe:
    planktonic_variable_p(2+nk) = vo2(1) ! Sauerstoffgehalt tiefengemittelt
    do j = 1,num_lev ! Sauerstoffgehalt tiefenaufgelöst
-      plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = vo2z(j,1)
+      plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = vo2z(j,1)
    end do ! alle j tiefenlevels
    benthic_distribution_p(16+(i-1)*number_benth_distr) = hSchlr(1,1) ! Sauerstoffzehrung durch das Sediments, Ausgabe in mgO2/(l*h)
    benthic_distribution_p(17+(i-1)*number_benth_distr) = so2ein(1) ! max. Sauerstoffeintrag aus der Luft ? , Ausgabe in mgO2/(l*h)
@@ -352,7 +352,7 @@ subroutine ini_oxygen()
       nk = (i-1)*number_plankt_vari
       planktonic_variable(2+nk) = sauerstoffsaettigung(planktonic_variable(1+nk)) !! vO2_saett(T)
       do j = 1,num_lev
-         plankt_vari_vert(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(2+nk) ! Sauerstoffgehalt tiefenaufgelöst
+         plankt_vari_vert(j+(2-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable(2+nk) ! Sauerstoffgehalt tiefenaufgelöst
       end do ! alle j tiefenlevels
    end do
    print*,'Anfangsbedingung: 100% Sauerstoffsättigung vO2(1) = ',planktonic_variable(2+(1-1)*number_plankt_vari)

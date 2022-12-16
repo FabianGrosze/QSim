@@ -138,14 +138,14 @@ subroutine sedflux_huelle(i)
    monats = monat        ! Monat im Jahr module::modell zeitsekunde()
    uhrz = uhrzeit_stunde ! Uhrzeit module::modell zeitsekunde()
    do j = 1,num_lev
-      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vo2z(j,2) = vo2z(j,1)
-      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vNH4z(j,2) = vNH4z(j,1) ! Ammonium-Stickstoffkonzentration g/m³ tiefenaufgelöst
-      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vno3z(j,2) = vno3z(j,1) ! Nitrat-Stickstoffkonzentration g/m³ tiefenaufgelöst
       !!\ref gelpz,\ref nkzs,\ref sorpcape,\ref klange                                &\n
-      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       gelpz(j,2) = gelpz(j,1)
    end do ! alle tiefenlevels
    nkzs(1) = 1         ! nur eine Tiefenschicht

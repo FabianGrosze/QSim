@@ -41,7 +41,7 @@ subroutine ausgeben_schism(itime)
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
    real , allocatable , dimension (:) :: output
    
-   if (meinrang /= 0)call qerror('ausgeben_schism() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
+if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    write(zahl,*)itime
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
@@ -157,8 +157,11 @@ subroutine ausgeben_schism(itime)
    close (ion)
    print*,meinrang,myrank,'elements output ausgeben_schism done'
    
-   
+end if ! meinrang==0
    return !!!##### prematurely ####
+   
+   
+if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
 
 !####### kanten edges sides ##########################################################################################   
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
@@ -321,9 +324,11 @@ subroutine ausgeben_schism(itime)
    do n = 1,kantenanzahl
       write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') ed_vel_x(n),ed_vel_y(n),vz
    end do ! alle kanten
-   
    close (ion)
+
    print*,meinrang,myrank,'edge output ausgeben_schism not yet done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
-   return
+
+end if ! meinrang==0
+
+return
 end subroutine ausgeben_schism

@@ -42,12 +42,13 @@ subroutine ausgeben()
          case(2) ! Untrim² netCDF
             call ausgeben_untrim(rechenzeit)
          case(3) ! SCHISM
-            call ausgeben_schism(rechenzeit)
+            print*,'ausgeben: SCHISM ausgabe nicht nur auf meinrang==0; rechenzeit',rechenzeit
          case default
             print*,'hydro_trieb = ',hydro_trieb
             call qerror('ausgeben: Hydraulischer Antrieb unbekannt')
       end select
    end if ! nur Prozessor 0
+   if(hydro_trieb==3)call ausgeben_schism(rechenzeit)
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine ausgeben
@@ -215,11 +216,11 @@ subroutine ausgabekonzentrationen()
    !>integer :: k_ausgabe
    !>integer , allocatable , dimension (:) :: ausgabe_konz
    output_plankt(:) = .false.
-   output_plankt_vert(:) = .false.
+   !output_plankt_vert(:) = .false.
    output_benth_distr(:) = .false.
    output_trans_val(:) = .false.
    output_trans_quant(:) = .false.
-   output_trans_quant_vert(:) = .false.
+   !output_trans_quant_vert(:) = .false.
    write(dateiname,'(2A)')trim(modellverzeichnis),'ausgabekonzentrationen.txt'
    ion = 103
    open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
@@ -244,16 +245,16 @@ subroutine ausgabekonzentrationen()
                found = .true.
             end if !! in string ctext
          end do ! done all planktic con.
-         do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
-            write(text,'(A18)')trim(plankt_vari_vert_name(j))
-            iscan = index(trim(ctext),trim(text))
-            if (iscan > 0) then ! found
-               if (meinrang == 0)print*,'output only for level 1; plankt_vari_vert j = ',j,' parameter: ',trim(text)
-               !print*,trim(ctext)
-               output_plankt_vert(j) = .true.
-               found = .true.
-            end if !! in string ctext
-         end do ! done all plankt_vari_vert
+         !do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
+         !   write(text,'(A18)')trim(plankt_vari_vert_name(j))
+         !   iscan = index(trim(ctext),trim(text))
+         !   if (iscan > 0) then ! found
+         !      if (meinrang == 0)print*,'output only for level 1; plankt_vari_vert j = ',j,' parameter: ',trim(text)
+         !      !print*,trim(ctext)
+         !      output_plankt_vert(j) = .true.
+         !      found = .true.
+         !  end if !! in string ctext
+         !end do ! done all plankt_vari_vert
          do j = 1,number_benth_distr ! all benthic distributions
             write(text,'(A)')ADJUSTL(trim(benth_distr_name(j)))
             iscan = index(trim(ctext),trim(text))
@@ -316,9 +317,9 @@ subroutine ausgabekonzentrationen()
    do j = 1,number_plankt_vari
       if (output_plankt(j))n_pl = n_pl+1
    end do
-   do j = 1,number_plankt_vari_vert
-      if (output_plankt_vert(j))n_pl = n_pl+1
-   end do
+   !do j = 1,number_plankt_vari_vert
+   !   if (output_plankt_vert(j))n_pl = n_pl+1
+   !end do
    n_bn = 0
    do j = 1,number_benth_distr
       if (output_benth_distr(j))n_bn = n_bn+1
@@ -359,14 +360,14 @@ subroutine ausgabekonzentrationen_beispiel()
    else
       print*,'ausgabekonzentrationen_beispiel.txt opened for write ...'
    end if ! open_error.ne.0
-   write(104,'(A)')"# depth averaged, planctonic, transported concentrations"
+   write(104,'(A)')"# planctonic, transported concentrations"  ! formerly depth averaged 
    do j = 1,number_plankt_vari ! all depth averaged planktic con.
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(planktonic_variable_name(j))
    end do ! done all planktic con.
-   write(104,'(A)')"# depth resolving, planctonic, transported concentrations"
-   do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
-      write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(plankt_vari_vert_name(j))
-   end do ! done all plankt_vari_vert
+   !write(104,'(A)')"# depth resolving, planctonic, transported concentrations"
+   !do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
+   !   write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(plankt_vari_vert_name(j))
+   !end do ! done all plankt_vari_vert
    write(104,'(A)')"# bentic distributions"
    do j = 1,number_benth_distr ! all benthic distributions
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(benth_distr_name(j))

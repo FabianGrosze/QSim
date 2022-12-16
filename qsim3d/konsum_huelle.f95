@@ -126,11 +126,11 @@ subroutine konsum_huelle(i)
    !algzob(1) = transfer_quantity_p(73+(i-1)*number_trans_quant) ! blau-Algen-Konsum Zoo-Plankton in mg/l
    !algzob(2) = algzob(1)
    do j = 1,num_lev
-      akiz(j,1) = plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse kiesel-Algen tiefenaufgelöst
+      akiz(j,1) = plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse kiesel-Algen tiefenaufgelöst
       akiz(j,2) = akiz(j,1)
-      agrz(j,1) = plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse gruen-Algen tiefenaufgelöst
+      agrz(j,1) = plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse gruen-Algen tiefenaufgelöst
       agrz(j,2) = agrz(j,1)
-      ablz(j,1) = plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse blau-Algen tiefenaufgelöst
+      ablz(j,1) = plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse blau-Algen tiefenaufgelöst
       ablz(j,2) = ablz(j,1)
       !algzkz(j,1) = trans_quant_vert_p(j+(26-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! Kiesel-Algen-Konsum durch Zoo-Plankton in mg/l
       !algzkz(j,2) = algzkz(j,1)

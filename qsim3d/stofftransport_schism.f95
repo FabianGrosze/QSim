@@ -50,18 +50,22 @@ subroutine stofftransport_schism()
       call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
       call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
       
-      num_sub=1 !6?
-      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
-?? alle subschritte ???
+!      num_sub=1 !6?
+!      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
+!?? alle subschritte ???
+
          call get_schism_step(na_transinfo) !!****
 
          ! do_transport_tvd_imp(it,ntr,difnum_max_l)
          ! integer, intent(in) :: it !time stepping #; info only
          ! ntr=ntracers=number_plankt_vari
          ! real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
-         call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+         
+         if (meinrang == 0)print*,  &
+            '### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
+         !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
-      end do ! all sub timesteps
+!      end do ! all sub timesteps
       
       !print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
 

@@ -564,9 +564,9 @@ subroutine update_weather()
           tlmed_T(i2),ro_T(i2),schwi_T(i2),wge_T(i2),cloud_T(i2),typw_T(i2)
    end do ! i Schleife über alle Wetterstationen
    ! transfer to nodes via transfer_quantity_p array
-   do i = 1,part ! Alle Knoten auf diesem Prozessor
-      iglob = (i+meinrang*part)
-      if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
+   do i = 1,party ! Alle Knoten auf diesem Prozessor
+      call iglobal(iglob,i)  !iglob=(i+meinrang*part));if(hydro_trieb==3)iglob=ielg(i)
+      if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess casu+Untrim)
          i2 = zone(point_zone(iglob))%wettstat%wetterstations_nummer !! ist parallel !!!
          transfer_quantity_p(62+(i-1)*number_trans_quant) = tlmed_T(i2) ! air temp.
          transfer_quantity_p(63+(i-1)*number_trans_quant) = ro_T(i2)    ! humidity at node from weather station

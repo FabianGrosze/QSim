@@ -156,7 +156,7 @@ subroutine po4s_huelle(i)
    end do
    epl0(1) = 0.0        ! keine Einleitung
    do j = 1,num_lev ! geloester ortho-Phosphat-P, tiefenaufgelöst
-      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       gelpz(j,2) = gelpz(j,1)
    end do
    ! do j=1,num_lev_trans ! ???
@@ -211,8 +211,9 @@ subroutine po4s_huelle(i)
    gesPL(1) = 0.0            ! Phosphatgehalt Linienquelle; nicht verwendet
    ! neu in 13_3
    ! hgesPz(1,1,1) = gesp(1)  ! hgesPz(mstr,1,ior) = gesP(ior)
-   do j = 1,num_lev_trans !  Respirierte Algenbiomasse kiesel, grün, blau, tiefenaufgelöst
-      hgesPz(1,j,1) = plankt_vari_vert_p(j+(15-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+   do j = 1,num_lev_trans
+      hgesPz(1,j,1) = gesp(1)
+      !hgesPz(1,j,1) = plankt_vari_vert_p(j+(15-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
       hgesPz(1,j,2) = hgesPz(1,1,1)
    end do
    algdrk(1) = benthic_distribution_p(38+(i-1)*number_benth_distr) ! Kiesel-Algen-Konsum-bentisch (Muscheln) in mg/l
@@ -272,9 +273,9 @@ subroutine po4s_huelle(i)
    !planktonic_variable_p(34+nk) = Q_PG(1) ! Rückgabewert nur bei Einmischung durch Einleitung (in QSim3D nicht verwendet)
    !planktonic_variable_p(36+nk) = Q_PB(1) ! Rückgabewert nur bei Einmischung durch Einleitung (in QSim3D nicht verwendet)
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
+      plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = &
                                                                                   gelpz(j,1) ! gelöster Phosphor tiefenaufgelöst
-      plankt_vari_vert_p(j+(15-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
+      plankt_vari_vert_p(j+(68-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = &
                                                                                    hgesPz(1,j,1) ! gesamt Phosphor ?? tiefenaufgelöst
    end do ! alle j tiefenlevels
    return

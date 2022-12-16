@@ -34,7 +34,7 @@ subroutine get_schism_step(nt)
       use schism_glbl, only:su2,sv2,tr_el,eta2                       &
       ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global         &
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
-      ,idry_s,nea2
+      ,idry_s,nea2,dfh
       
       use schism_msgp, only: myrank,nproc,parallel_abort
       implicit none
@@ -53,7 +53,7 @@ subroutine get_schism_step(nt)
       integer, dimension(nf90_max_var_dims) :: dimids
       integer , allocatable , dimension (:) :: vxtype, vndims
       character(256) , allocatable , dimension (:) :: vname
-      real vel_norm, vel_dir, vel_sum, minwert, maxwert, tempi, sump
+      real vel_norm, vel_dir, vel_sum, minwert, maxwert, tempi, sump, mindfh, maxdfh
       !> arrays to read stored variables from .nc files, each process its part
       real , allocatable , dimension (:) :: var_p
       real , allocatable , dimension (:) :: var1_p
@@ -156,6 +156,7 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### elev eta2 p rb_hydraul(3 ################################################
+      !        if(iof_hydro(1)==1) call writeout_nc(id_out_var(5),'elev',1,1,npa,swild(1:npa))
       ! find elev
       call check_err( nf_inq_varid(ncid,"elev", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
@@ -281,9 +282,41 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
       
       !######################### diffusivity(time, nSCHISM_hgrid_node, ################################################
-      
+      !        if(iof_hydro(21)==1) call writeout_nc(id_out_var(25),'diffusivity',2,nvrt,npa,dfh)
+      call check_err( nf_inq_varid(ncid,"diffusivity", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("diffusivity:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      !print*,meinrang,' get_schism_step diffusivity dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(.not.allocated(dfh))allocate(dfh(nvrt,npa),stat = istat)
+      if (istat /= 0) call qerror("allocate dfh( failed")
+      !! get data
+      minwert=0.0; maxwert=0.0
+      do i = 1,nvrt
+         start3 = (/i, 1, nin /)
+         count3 = (/1, npa, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var diffusivity failed iret = ",iret,i
+         dfh(i,1:npa) = var_p(1:npa)
+         mindfh=minval(dfh(i,1:np))
+         maxdfh=maxval(dfh(i,1:np))
+         call mpi_barrier (mpi_komm_welt, ierr)
+         minwert=min(minwert,mindfh)
+         maxwert=max(maxwert,maxdfh)
+      end do ! all i levels
+      call mpi_reduce(minwert,mindfh,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxdfh,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'diffusivity dfh at nodes  from...until ',mindfh,maxdfh
+
       !######################### hdif(time, nSCHISM_hgrid_node ################################################
-      
+      !        call writeout_nc(id_out_var(noutput+3),'hdif',2,nvrt,npa,hdif)  ! horizontal diffusivity
+
 
 
       !######################### wetdry_elem ################################################

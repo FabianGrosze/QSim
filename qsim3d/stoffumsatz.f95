@@ -26,9 +26,10 @@
 ! --------------------------------------------------------------------------- !
 subroutine stoffumsatz()
    use modell
+   use schism_glbl, only:ne,ielg
    implicit none
-   integer :: i, j , i1, i2, i3, n,k,nk, party
-   logical :: printi, nix, fehler_nan
+   integer :: i, j , i1, i2, i3, n,k,nk
+   logical :: printi, nix, fehler_nan, n_exist
    integer :: ilast, i1last
    real :: rlast,rcount
    real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
@@ -40,8 +41,10 @@ subroutine stoffumsatz()
    if(hydro_trieb==3)party=ne ! schism partition
    do i = 1,party ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
+      if(hydro_trieb==3)iglob=ielg(i)
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
-      if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
+      n_exist= (iglob <= number_plankt_point)
+      if (n_exist) then ! Knotennummer existiert (letzter Prozess)
          if (iglob == kontrollknoten) print*,'stoffumsatz kontrollknoten lokal #',i,' auf Prozess #',meinrang,nur_temp,nur_alter
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             

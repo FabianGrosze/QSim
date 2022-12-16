@@ -48,7 +48,6 @@ subroutine screen_schism()
    integer attnum, alen, varid
    logical weiter
    real , allocatable , dimension (:) :: zeiten
-   real zeit_min, zeit_max
    real zeit_delta
    integer :: nnd, nnv, sumtra, nnt, sumstack
    
@@ -93,8 +92,6 @@ subroutine screen_schism()
 
    ! screen available files ...
    transinfo_anzahl = 0
-   zeit_min = 3153600000.0
-   zeit_max = -3153600000.0
    do i = 1,n_stacks
       !do i=1,10
       write(chari,*),i
@@ -152,21 +149,23 @@ subroutine screen_schism()
 
       if (n > 0) then
          transinfo_anzahl = transinfo_anzahl+n ! total number of timesteps
-         allocate (zeiten(n), stat = istat )
+         if(allocated(zeiten))deallocate(zeiten);allocate (zeiten(n), stat = istat )
+         zeiten=0.0
          iret = nf90_get_var(ncid, varid, zeiten)
          call check_err(iret)
          if (iret /= 0) then
             print*,meinrang,i,' screen_schism: nf90_get_var  varid = ',varid,iret,ncid
             call qerror('screen_schism: nf90_get_var failed')
          endif !
-         if ( zeit_min >= zeiten(1) ) zeit_min = zeiten(1)
-         if ( zeit_max <= zeiten(n) ) zeit_max = zeiten(n)
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
          end if ! more than one timestep
-         deallocate(zeiten)
       end if ! dlength ok
       call mpi_barrier (mpi_komm_welt, ierr)
+      if(meinrang==0)then
+         print*,i,'-th stack; screen_schism Zeiten von...bis,delta',zeiten(1),zeiten(n),zeit_delta  &
+               ,' transinfo_anzahl=',transinfo_anzahl
+      endif
       
       !! checking necessary variables
       iret = nf_inq_varid(ncid,'elev', varid)
@@ -180,10 +179,6 @@ subroutine screen_schism()
       n = dlength(dimids(1))
       !print*,'screen_schism: node number in stack',meinrang,' =',n
       call mpi_barrier (mpi_komm_welt, ierr)!#!
-      if(meinrang==0)then
-         print*,i,'-th stack; screen_schism Zeiten,delta',zeit_min, zeit_max,zeit_delta  &
-               ,' transinfo_anzahl=',transinfo_anzahl
-      endif
 
       !iret = nf_inq_varid(ncid,'dahv', varid)
       !if (iret /= 0) then

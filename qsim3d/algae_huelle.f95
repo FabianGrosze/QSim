@@ -69,7 +69,7 @@ subroutine algae_huelle(i)
    tempw(1) = planktonic_variable_p(1+nk)    ! Wasser-Temperatur
    tempw(2) = tempw(1)
    do j = 1,num_lev
-      tempwz(j,1) = plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Wassertemperatur tiefenaufgelöst
+      tempwz(j,1) = plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Wassertemperatur tiefenaufgelöst
       tempwz(j,2) = tempwz(j,1)
    end do
    tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
@@ -269,13 +269,13 @@ subroutine algae_huelle(i)
    Q_PB(1) = planktonic_variable_p(36+nk) ! Phosphoranteil der blau-Algenbiomasse
    Q_PB(2) = Q_PB(1)
    do j = 1,num_lev
-      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Ammonium-Stickstoffkonzentration g/m³ tiefenaufgelöst
+      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Ammonium-Stickstoffkonzentration g/m³ tiefenaufgelöst
       vNH4z(j,2) = vNH4z(j,1)
-      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Nitrat-Stickstoffkonzentration g/m³ tiefenaufgelöst
+      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Nitrat-Stickstoffkonzentration g/m³ tiefenaufgelöst
       vno3z(j,2) = vno3z(j,1)
-      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! gelöster Phosphor tiefenaufgelöst
+      gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! gelöster Phosphor tiefenaufgelöst
       gelpz(j,2) = gelpz(j,1)
-      siz(j,1) = plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Silizium-Konzentration (tiefenaufgelöst)
+      siz(j,1) = plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Silizium-Konzentration (tiefenaufgelöst)
       siz(j,2) = siz(j,1)
       dalgkz(j,1) = trans_quant_vert_p(j+(12-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! Zuwachs Kieselalgen tiefenaufgelöst
       dalgkz(j,2) = dalgkz(j,1)
@@ -331,7 +331,7 @@ subroutine algae_huelle(i)
    abltbr(1) = transfer_quantity_p(50+(i-1)*number_trans_quant) ! Zwischengröße Algenbiomasse ???
    abltbr(2) = abltbr(1)
    do j = 1,num_lev
-      chlaz(j,1) = plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Chlorophyl-A tiefenaufgelöst
+      chlaz(j,1) = plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Chlorophyl-A tiefenaufgelöst
       chlaz(j,2) = chlaz(j,1)
    end do
    do j = 1,num_lev_trans
@@ -345,11 +345,11 @@ subroutine algae_huelle(i)
       up_N2z(j,2) = up_N2z(j,1)
    end do
    do j = 1,num_lev
-      akiz(j,1) = plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse kiesel-Algen tiefenaufgelöst
+      akiz(j,1) = plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse kiesel-Algen tiefenaufgelöst
       akiz(j,2) = akiz(j,1)
-      agrz(j,1) = plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse gruen-Algen tiefenaufgelöst
+      agrz(j,1) = plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse gruen-Algen tiefenaufgelöst
       agrz(j,2) = agrz(j,1)
-      ablz(j,1) = plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse blau-Algen tiefenaufgelöst
+      ablz(j,1) = plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Biomasse blau-Algen tiefenaufgelöst
       ablz(j,2) = ablz(j,1)
    end do
    chlaL(1) = 0.0            ! für Linienquelle; nicht verwendet
@@ -378,17 +378,17 @@ subroutine algae_huelle(i)
    chlabl(1) = planktonic_variable_p(14+nk)  ! Chlorophyl in Blaualgen muegchla/l
    chlabl(2) = chlabl(1)
    do j = 1,num_lev ! wohl nur Rückgabeparameter ???
-      hchlkz(1,j,1) = plankt_vari_vert_p(j+(12-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Chlorophylgehalt der Kieselalgen
+      hchlkz(1,j,1) = plankt_vari_vert_p(j+(12-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Chlorophylgehalt der Kieselalgen
       hchlkz(1,j,2) = hchlkz(1,j,1)
-      hchlgz(1,j,1) = plankt_vari_vert_p(j+(13-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Chlorophylgehalt der Gruenalgen
+      hchlgz(1,j,1) = plankt_vari_vert_p(j+(13-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Chlorophylgehalt der Gruenalgen
       hchlgz(1,j,2) = hchlgz(1,j,1)
-      hchlbz(1,j,1) = plankt_vari_vert_p(j+(14-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Chlorophylgehalt der Blaualgen
+      hchlbz(1,j,1) = plankt_vari_vert_p(j+(14-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Chlorophylgehalt der Blaualgen
       hchlbz(1,j,2) = hchlbz(1,j,1)
-      hCChlkz(1,j,1) = plankt_vari_vert_p(j+(20-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! c-chla Verhältnis Kiesel
+      hCChlkz(1,j,1) = plankt_vari_vert_p(j+(24-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! c-chla Verhältnis Kiesel
       hCChlkz(1,j,2) = hCChlkz(1,j,1)
-      hCChlgz(1,j,1) = plankt_vari_vert_p(j+(21-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! c-chla Verhältnis grün
+      hCChlgz(1,j,1) = plankt_vari_vert_p(j+(25-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! c-chla Verhältnis grün
       hCChlgz(1,j,2) = hCChlgz(1,j,1)
-      hCChlbz(1,j,1) = plankt_vari_vert_p(j+(22-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! c-chla Verhältnis blau
+      hCChlbz(1,j,1) = plankt_vari_vert_p(j+(26-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! c-chla Verhältnis blau
       hCChlbz(1,j,2) = hCChlbz(1,j,1)
    end do
    ! in tiefengemittelten Berechnungen eigentlich inaktiv
@@ -403,11 +403,11 @@ subroutine algae_huelle(i)
    sedAlg_MQ(1,2) = sedAlg_MQ(1,1)
    if (kontroll) print*,'vor algaeski: sedAlg_MQ = ', sedAlg_MQ(1,1)
    do j = 1,num_lev !
-      hQ_NKz(1,j,1) = plankt_vari_vert_p(j+(17-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Stickstoffanteil der Algenbiomasse kiesel
+      hQ_NKz(1,j,1) = plankt_vari_vert_p(j+(30-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! Stickstoffanteil der Algenbiomasse kiesel
       hQ_NKz(1,j,2) = hQ_NKz(1,j,1)
-      hQ_NGz(1,j,1) = plankt_vari_vert_p(j+(18-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! grün
+      hQ_NGz(1,j,1) = plankt_vari_vert_p(j+(33-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! grün
       hQ_NGz(1,j,2) = hQ_NGz(1,j,1)
-      hQ_NBz(1,j,1) = plankt_vari_vert_p(j+(19-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! blau
+      hQ_NBz(1,j,1) = plankt_vari_vert_p(j+(35-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! blau
       hQ_NBz(1,j,2) = hQ_NBz(1,j,1)
    end do
    !     Für die Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
@@ -616,7 +616,7 @@ subroutine algae_huelle(i)
    transfer_quantity_p(49+(i-1)*number_trans_quant) = agrtbr(1) !
    transfer_quantity_p(50+(i-1)*number_trans_quant) = abltbr(1) ! Zwischengröße Algenbiomasse ???
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = chlaz(j,1) ! Chlorophyl-A tiefenaufgelöst
+      plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = chlaz(j,1) ! Chlorophyl-A tiefenaufgelöst
    end do
    do j = 1,num_lev_trans
       trans_quant_vert_p(j+(23-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = akibrz(j,1) ! Kiesel-Algen-Biomasse? Wachstum? tiefenaufgelöst
@@ -625,9 +625,9 @@ subroutine algae_huelle(i)
       trans_quant_vert_p(j+(8-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_N2z(j,1) !  Aufnahmerate von Luftstickstoff durch Blaualgen
    end do
    do j = 1,num_lev
-      plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = akiz(j,1) ! Biomasse kiesel-Algen tiefenaufgelöst
-      plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = agrz(j,1) ! Biomasse gruen-Algen tiefenaufgelöst
-      plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = ablz(j,1) ! Biomasse blau-Algen tiefenaufgelöst
+      plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = akiz(j,1) ! Biomasse kiesel-Algen tiefenaufgelöst
+      plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = agrz(j,1) ! Biomasse gruen-Algen tiefenaufgelöst
+      plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = ablz(j,1) ! Biomasse blau-Algen tiefenaufgelöst
    end do
    do j = 1,num_lev_trans
       trans_quant_vert_p(j+(18-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algakz(j,1) !  Respirierte Kiesel-Algenbiomasse, tiefenaufgelöst
@@ -638,18 +638,18 @@ subroutine algae_huelle(i)
       trans_quant_vert_p(j+(28-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algzbz(j,1) ! blau-Algen-Konsum durch Zoo-Plankton in mg/l
    end do
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(12-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hchlkz(1,j,1) ! Chlorophylgehalt der Kieselalgen
-      plankt_vari_vert_p(j+(13-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hchlgz(1,j,1) ! Chlorophylgehalt der Gruenalgen
-      plankt_vari_vert_p(j+(14-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hchlbz(1,j,1) ! Chlorophylgehalt der Blaualgen
-      plankt_vari_vert_p(j+(20-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlkz(1,j,1) ! c-chla Verhältnis Kiesel
-      plankt_vari_vert_p(j+(21-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlgz(1,j,1) ! c-chla Verhältnis grün
-      plankt_vari_vert_p(j+(22-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlbz(1,j,1) ! c-chla Verhältnis blau
+      plankt_vari_vert_p(j+(12-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hchlkz(1,j,1) ! Chlorophylgehalt der Kieselalgen
+      plankt_vari_vert_p(j+(13-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hchlgz(1,j,1) ! Chlorophylgehalt der Gruenalgen
+      plankt_vari_vert_p(j+(14-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hchlbz(1,j,1) ! Chlorophylgehalt der Blaualgen
+      plankt_vari_vert_p(j+(24-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hCChlkz(1,j,1) ! c-chla Verhältnis Kiesel
+      plankt_vari_vert_p(j+(25-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hCChlgz(1,j,1) ! c-chla Verhältnis grün
+      plankt_vari_vert_p(j+(26-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hCChlbz(1,j,1) ! c-chla Verhältnis blau
    end do
    benthic_distribution_p(52+(i-1)*number_benth_distr) = sedAlg_MQ(1,1) ! ??
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(17-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NKz(1,j,1) ! Stickstoffanteil der Algenbiomasse kiesel
-      plankt_vari_vert_p(j+(18-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NGz(1,j,1) ! grün
-      plankt_vari_vert_p(j+(19-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NBz(1,j,1) ! blau
+      plankt_vari_vert_p(j+(30-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hQ_NKz(1,j,1) ! Stickstoffanteil der Algenbiomasse kiesel
+      plankt_vari_vert_p(j+(33-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hQ_NGz(1,j,1) ! grün
+      plankt_vari_vert_p(j+(35-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hQ_NBz(1,j,1) ! blau
    end do
    benthic_distribution_p(53+(i-1)*number_benth_distr) = sedAlk0(1) ! !sedAlk0 wird nur an k_eps() übergeben.
    
@@ -657,7 +657,11 @@ subroutine algae_huelle(i)
    ! ==========================================================================
    ! Kontrolle und Prüfung auf NaN
    ! ==========================================================================
-   if (num_lev_trans > nkzs(1)) call qerror('algae_huelle Tiefenschichtung trans_quant_vert passt nicht')
+   if((meinrang==0).and.(i==1).and.(num_lev_trans > nkzs(1)))then
+      print*,'### warning ###'                                               &
+            ,' algae_huelle Tiefenschichtung trans_quant_vert passt nicht '  &
+            ,'num_lev,num_lev_trans,nkzs(1)=',num_lev,num_lev_trans,nkzs(1)
+   endif
    !if(kontroll) print*,'aki(1),chla(1),akiz(1,1),up_NKz(1,1)',aki(1),chla(1),akiz(1,1),up_NKz(1,1)
    !call ini_algae() !! ### algae_huelle zu Testzwecken überbrückt
    do k = 1,number_plankt_vari
@@ -667,10 +671,10 @@ subroutine algae_huelle(i)
       endif
    end do
    do j = 1,num_lev
-      do k = 1,number_plankt_vari_vert
-         if (isnan(plankt_vari_vert_p(j+(k-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev))) then
+      do k = 1,number_plankt_vari
+         if (isnan(plankt_vari_vert_p(j+(k-1)*num_lev+(i-1)*number_plankt_vari*num_lev))) then
             print*,'nach algaes**: isnan(plankt_vari_vert_p  node#',iglob,' level#', j,' variable# ',k
-            if (meinrang == 0)print*,'plankt_vari_vert_name:',plankt_vari_vert_name(k)
+            if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
          endif
       end do
    end do
@@ -738,14 +742,14 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   planktonic_variable(11+nk)*planktonic_variable(19+nk)     & ! aki = (chla*VKIGR)/(1000*akbcm*Caki)
    !     &   /(1000.*planktonic_variable(24+nk)*Caki)
    do l = 1,num_lev ! akiz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(8+nk)
+      plankt_vari_vert(l+(8-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable(8+nk)
    end do ! alle l levels
    !      agrs(mstr,mRB) = (chlas(mstr,mRB)*(1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))/1000.)*(agbcms(mstr,mRB)/Cagr)
    planktonic_variable(9+nk) = ( planktonic_variable(13+nk)*planktonic_variable(25+nk) ) / (1000.0*Cagr)
    !     &   planktonic_variable(11+nk)*(1.-planktonic_variable(19+nk)-planktonic_variable(20+nk)) &
    !     &   /(1000.*planktonic_variable(25+nk)*Cagr) ! agr = (chla*(1-VKIGR-ANTBL))/(1000*agbcm*Cagr)
    do l = 1,num_lev ! ablz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(9+nk)
+      plankt_vari_vert(l+(9-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable(9+nk)
    end do ! alle l levels
    
    !      abls(mstr,mRB) = (chlas(mstr,mRB)*antbls(mstr,mRB)/1000.)*(abbcms(mstr,mRB)/Cabl)
@@ -753,7 +757,7 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   planktonic_variable(11+nk)*planktonic_variable(20+nk) &
    !     &   /(1000.*planktonic_variable(26+nk)*Cabl)  ! abl = (chla*ANTBL)/(1000*abbcm*Cabl)
    do l = 1,num_lev ! agrz konstante Verteilung in der Vertikalen
-      plankt_vari_vert(l+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(10+nk)
+      plankt_vari_vert(l+(10-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable(10+nk)
    end do ! alle l levels
    !....zelluläre Nährstoffgehalte in den Algen
    !      Sum_N = vnh4s(mstr,mRB)+vNO3s(mstr,mRB)

@@ -30,6 +30,7 @@ subroutine temperw_huelle(i)
    !&                          temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp, delta_zeit)
    use modell
    use QSimDatenfelder
+   use schism_glbl, only: ielg
    implicit none
    !real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
    real :: xdtemp_nkz ! delte_temp_3D
@@ -75,15 +76,16 @@ subroutine temperw_huelle(i)
    
    !> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
    iglob = (i+meinrang*part)
+   if(hydro_trieb==3)iglob=ielg(i) ! global elementnumber SCHISM
    kontroll = (iglob == kontrollknoten)
    !if (kontroll) print*,'temperw_huelle meinrang,i,iglob,wetterstations_nummer,tlmed_T'
    nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
    
-   if (num_lev > 1)call qerror("temperw_huelle not ready for 3D")
+   if((num_lev>1).and.(meinrang==0).and.(i==1))print*,"### caution ###, temperw_huelle ready for 3D ???"
    if (kontroll) print*,'temperw vorher: temperw, extk, tiefe, temperwz1',planktonic_variable_p(1+nk)  &
        ,transfer_quantity_p(54+(i-1)*number_trans_quant),rb_hydraul_p(2+(i-1)*number_rb_hydraul)  &
-       ,plankt_vari_vert_p(1+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+       ,plankt_vari_vert_p(1+(1-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
    !########################################################################################
    !  das Abarbeiten der einzelnen Schichten erfolgt von
    !  der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
@@ -116,7 +118,7 @@ subroutine temperw_huelle(i)
                         ,zone(point_zone(iglob))%seditemp%wuebk               &
                         ,zone(point_zone(iglob))%seditemp%spewks              &
                         ,zone(point_zone(iglob))%seditemp%psrefs              &
-                        ,plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)       &
+                        ,plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari*num_lev)       &
                         ,tempmt                                               &
                         ,planktonic_variable_p(1+nk)                          &
                         ,btiefe                                               &
@@ -147,7 +149,7 @@ subroutine temperw_huelle(i)
          planktonic_variable_p(1+nk) = transfer_quantity_p(62+(i-1)*number_trans_quant) ! water temperature equals air temp.
       endif ! wet nodes
       !keine extra Tiefenauflösung im 3D
-      plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable_p(1+nk)
+      plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable_p(1+nk)
    end do ! all j num_lev
    return
 end subroutine temperw_huelle

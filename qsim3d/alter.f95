@@ -207,14 +207,16 @@ subroutine alter_ini()
                   nura = knoten_rand(i)
                case(2) ! Untrim² netCDF
                   nura = element_rand(i)
-                  case default
+               case(3) ! SCHISM
+                  nura = element_rand(i)
+               case default
                   call qerror('Hydraulischer Antrieb unbekannt alter_ini nura')
             end select
             if (nura == alter_nummer) then
                planktonic_variable(71+(i-1)*number_plankt_vari) = 1.0 ! Tracer = 1.0
             end if !
          end do ! alle i berechnungsstützstellen
-         case default
+      case default
          call qerror("wie_altern muss vor alter_ini() geklärt werden")
    end select
    print*,'alter_ini() geschafft'
@@ -313,7 +315,9 @@ subroutine alter_rand(j)
          nura = knoten_rand(j)
       case(2) ! Untrim² netCDF
          nura = element_rand(j)
-         case default
+      case(3) ! SCHSIM
+         nura = element_rand(j)
+      case default
          call qerror('Hydraulischer Antrieb unbekannt alter_rand(')
    end select
    if (j == kontrollknoten) then ! Ausgabe kontrollknoten

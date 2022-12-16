@@ -54,7 +54,11 @@ module modell
    !-------------------------------------------------------------------------------parallel_datenfelder
    ! Beschreibung in parallel.f95
    !> nummer und Gesamtzahl prozessoren (MPI)
-   integer :: meinrang, part, proz_anz ! , ierr
+   !! part/party auf casu+untrim sowohl die Anzahl der Berechnungsstützstellen des jeweiligen Prozesses 
+   !! als auch die Feldlängendimension auf die planctonic, bentic etc. Felder dimensioniert werden.
+   !! Bei SCHISM ist part die Feldlängendimension, die auf allen Prozessen gleich der Maximalanzahl maxel ist
+   !! party =ne ist die Anzahl der Berechnungsstützstellen, die vom jeweiligen Prozess bearbeitet werden.
+   integer :: meinrang, part, proz_anz, party ! , ierr
    integer :: mpi_komm_welt
    !-------------------------------------------------------------------------------Modell+Netz
    !> modellverzeichnis etc.
@@ -63,12 +67,19 @@ module modell
    !character (len=4000) :: progressfile
    logical :: send_email
    integer strlaeng
-   !> \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer)
+   
+   !> \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer) (SCHISM element number)
    integer  :: kontrollknoten
+   !> \anchor control_proc in parallel, processor on which control_elem is located
+   integer  :: control_proc
+   !> \anchor control_elem in parallel, dicretisation point (element in SCHISM) for which control outputs are requested. 
+   !! local number of kontrollknoten
+   integer  :: control_elem
    !> \anchor kontroll Schalter ob Kontrollausgabe aus Stoffumsatzroutinen heraus erfolgen soll
    logical  :: kontroll
    !> \anchor iglob globale Knotennummer, Übergabe an Stoffumsatzroutinen aus parallel laufenden Hüll-routinen
    integer  :: iglob
+   
    !! Simulations-otionen ! Berechnungs- und Ausgabeflags
    !aus EREIGG.txt:  read(92,9220)imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy
    !> \anchor imitt Tagesmittelwertausgabe=1 Zeitwerte=0 | nicht aktiv in 3D
@@ -427,19 +438,24 @@ module modell
    !!    die vom jeweiligen Prozess bearbeitet werden. \n
    !!    Details in: \ref lnk_var_planktisch siehe auch \ref lnk_parallelisierung
    real , allocatable , dimension (:) :: planktonic_variable_p
+   
+   !!! all concentrations now in 3D !!!
    !>    Number of vertically distributed planctonic, i.e. transported variables | depth-profiles
-   integer, parameter :: number_plankt_vari_vert = 22
+   !integer, parameter :: number_plankt_vari_vert = 22
    !>    Names and Descriptions of vertically distributed planktonic_variables
-   character(18) :: plankt_vari_vert_name(number_plankt_vari_vert)
+   !character(18) :: plankt_vari_vert_name(number_plankt_vari_vert)
    !>    output-flag
-   logical ::  output_plankt_vert(number_plankt_vari_vert)
+   !logical ::  output_plankt_vert(number_plankt_vari_vert)
+   
    !>    Data array for all vertically distributed planctonic, transported variables.
    !!    Connection with QSim-variable-names through plankt_vari_vert_name
    !!    to start with a fixed number of levels at overall same elevation
-   integer, parameter :: num_lev = 1
-   real :: z_plankt_lev(num_lev)
-   real, allocatable , dimension (:) :: plankt_vari_vert, plankt_vari_vert_p
-   
+   real, allocatable , dimension (:) :: plankt_vari_vert
+   real, allocatable , dimension (:) :: plankt_vari_vert_p
+
+   integer :: num_lev
+   real, allocatable , dimension (:) :: z_plankt_lev
+
    !> \anchor point_zone Zonen-nummer am Berechnungspunkt (je nachdem ob an Elementzentren oder an Knoten gerechnet wird)
    integer , allocatable , dimension (:) :: point_zone
    !-------------------------------------------------------------------------------uebergabe_werte_datenfelder
@@ -480,8 +496,7 @@ module modell
    !>    output-flag
    logical  ::  output_trans_quant_vert(number_trans_quant_vert)
    !>    Data array for all vertically distributed transfer quantities.
-   integer, parameter :: num_lev_trans = 1
-   real :: z_trans_lev(num_lev_trans)
+   integer :: num_lev_trans
    real, allocatable , dimension (:) :: trans_quant_vert, trans_quant_vert_p
    !>    creating an "objekt" for depth profiles with an individual depth discretisation (difficult in parallel)
    !      type :: vert_point

@@ -188,11 +188,11 @@ subroutine ncyc_huelle(i)
    nkzs(1) = 1         ! bisher nur eine Tiefenschicht
    nkzs(2) = nkzs(1)
    do j = 1,num_lev
-      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vNH4z(j,1) = plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vNH4z(j,2) = vNH4z(j,1) ! Ammonium-Stickstoffkonzentration g/m³ tiefenaufgelöst
-      vno2z(j,1) = plankt_vari_vert_p(j+(4-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vno2z(j,1) = plankt_vari_vert_p(j+(4-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vno2z(j,2) = vno2z(j,1) ! Nitrit-Stickstoffkonzentration g/m³ tiefenaufgelöst
-      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vno3z(j,1) = plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vno3z(j,2) = vno3z(j,1) ! Nitrat-Stickstoffkonzentration g/m³ tiefenaufgelöst
    end do ! alle tiefenlevels
    dH2D = 0.25 ! Dicke Tiefenschicht ??? Übergabe an Einleiter_Misch() | qsim.f90: dH2D = 0.25
@@ -256,7 +256,7 @@ subroutine ncyc_huelle(i)
       abno3z(j,2) = abno3z(j,1) ! Nitrataufnahme Blau-Algen
    end do
    do j = 1,num_lev ! Sauerstoffgehalt tiefenaufgelöst
-      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      vo2z(j,1) = plankt_vari_vert_p(j+(2-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       vo2z(j,2) = vo2z(j,1)
    end do
    abltbr(1) = transfer_quantity_p(50+(i-1)*number_trans_quant) ! ??? Blaualgen ???
@@ -302,7 +302,7 @@ subroutine ncyc_huelle(i)
    eNO3L(1) = 0.0       ! hier keine Linienquelle
    gesNL(1) = 0.0       ! hier keine Linienquelle
    do j = 1,num_lev_trans
-      hgesNz(1,j,1) = plankt_vari_vert_p(j+(16-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+      hgesNz(1,j,1) = plankt_vari_vert_p(j+(67-1)*num_lev+(i-1)*number_plankt_vari*num_lev) ! wie gesN
       hgesNz(1,j,2) = hgesNz(1,j,1)
    end do ! alle j tiefenlevels
    !if(kontroll)then
@@ -347,10 +347,10 @@ subroutine ncyc_huelle(i)
    transfer_quantity_p(37+(i-1)*number_trans_quant) = agrno3(1) ! Nitrataufnahme der gruen-Algen
    transfer_quantity_p(36+(i-1)*number_trans_quant) = akino3(1) ! Nitrataufnahme der kiesel-Algen
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = vNH4z(j,1)
-      plankt_vari_vert_p(j+(4-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = vno2z(j,1)
-      plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = vno3z(j,1)
-      plankt_vari_vert_p(j+(16-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hgesNz(1,j,1)
+      plankt_vari_vert_p(j+(3-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = vNH4z(j,1)
+      plankt_vari_vert_p(j+(4-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = vno2z(j,1)
+      plankt_vari_vert_p(j+(5-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = vno3z(j,1)
+      plankt_vari_vert_p(j+(67-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = hgesNz(1,j,1) ! wie gesN
    end do ! alle j tiefenlevels
    benthic_distribution_p(37+(i-1)*number_benth_distr) = hFluN3(1,1) ! Ausgabe NitratFlux Wasser/Sediment in mgN/(l*h)
    !!    Isotope:

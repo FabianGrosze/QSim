@@ -55,7 +55,7 @@ subroutine parallel_vorbereiten()
    use mod_suspendedMatter, only: init_suspendedMatter
    !!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
    implicit none
-   integer kontroll_lokal,ierr
+   integer ierr
    ! prepare for parallel
    call modell_parallel()
    !print*,meinrang," modell_parallel() ... danach"
@@ -91,14 +91,15 @@ subroutine parallel_vorbereiten()
    call alter_parallel()
    !print*,meinrang," alter_parallel() ... danach"
    call mpi_barrier (mpi_komm_welt, ierr)
-   kontroll_lokal = kontrollknoten-(meinrang*part)
-   if ((kontroll_lokal > 0) .and. (kontroll_lokal <= part)) then
-      print*,'meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal = '  &
-            , meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal
+
+   print*,meinrang,'control_proc,part,number_plankt_vari,kontrollknoten,control_elem = '  &
+         , control_proc,part,number_plankt_vari,kontrollknoten,control_elem
+   if(meinrang==control_proc)then
       print*,'parallel_vorbereiten(): tempw,chla = ',  &
-            planktonic_variable_p( 1+(kontroll_lokal-1)*number_plankt_vari),  &
-            planktonic_variable_p(11+(kontroll_lokal-1)*number_plankt_vari)
+           planktonic_variable_p( 1+(control_elem-1)*number_plankt_vari),  &
+           planktonic_variable_p(11+(control_elem-1)*number_plankt_vari)
    endif
+   
    call ganglinien_parallel()
    call ausgeben_parallel()
    
@@ -184,3 +185,12 @@ subroutine modell_parallel()
    !print*,"modell_parallel fertig ",meinrang
    return
 end subroutine modell_parallel
+
+subroutine iglobal(igel,i)
+      use modell
+      use schism_glbl
+      implicit none
+      integer igel,i
+      igel = (i+meinrang*part)
+      if(hydro_trieb==3)igel=ielg(i)
+end subroutine iglobal

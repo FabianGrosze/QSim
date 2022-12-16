@@ -38,11 +38,7 @@ subroutine benthic_parallel()
       write(fehler,*)' Rueckgabewert von benthic_distribution_p :', as
       call qerror(fehler)
    end if
-   do i = 1,part ! i
-      do j = 1,number_benth_distr ! initialisierung aller konzentrationen zunächt auf 0.0 minus 1
-         benthic_distribution_p(j+(i-1)*number_benth_distr) = 0.0 !!!####!-1.0
-      end do
-   end do
+   benthic_distribution_p=0.0
    !if(meinrang.eq.0)then ! prozess 0 only
    !         do i=1,number_benthic_points ! all i verticals
    !            do j=1,number_benth_distr ! initialise

@@ -29,6 +29,7 @@
 !! und anschließend verteilen \n\n
 subroutine planktkon_parallel()
    use modell
+   use schism_glbl, only:tr_el,tr_nd,nea2,ntracers,nvrt,npa
    implicit none
    integer as,j,k,i,iloka,ierr
    !print*,meinrang, ' planktkon_parallel starting'
@@ -41,25 +42,17 @@ subroutine planktkon_parallel()
       write(fehler,*)' return value allocate planktonic_variable_p :', as
       call qerror(fehler)
    end if
-   do k = 1,part ! i
-      do j = 1,number_plankt_vari ! initialise all concentrations to -1
-         planktonic_variable_p(j+(k-1)*number_plankt_vari) = -2.0
-      end do
-   end do
+   planktonic_variable_p=0.0
    !planktonic_variable_p(:)=-2.0
+   
    ! vertical profiles i.e. full 3D
-   allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
+   allocate (plankt_vari_vert_p(num_lev*number_plankt_vari*part), stat = as )
    if (as /= 0) then
       write(fehler,*)' return value  plankt_vari_vert_p :', as
       call qerror(fehler)
    end if
-   do k = 1,part
-      do j = 1,number_plankt_vari_vert !
-         do i = 1,num_lev ! initialise all concentrations to -1
-            plankt_vari_vert_p(i+(j-1)*num_lev+(k-1)*number_plankt_vari_vert*num_lev) = -1.0
-         end do ! all i levels
-      end do !all j variables
-   end do ! all k nodes in subdomain
+   plankt_vari_vert_p=0.0
+   
    !call mpi_barrier (mpi_komm_welt, ierr)
    call scatter_planktkon()
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -76,16 +69,20 @@ subroutine planktkon_parallel()
    if (hydro_trieb==3)then ! schism
       ! ntracers=number_plankt_vari ; nvrt=num_lev !! set in read_mesh_schism
 
-      ??? allocate(tr_el(ntracers,nvrt,nea2), stat = as )
+      allocate(tr_el(ntracers,nvrt,nea2), stat = as )
       if (as /= 0) then
          write(fehler,*)' return value allocate tr_el :', as
          call qerror(fehler)
+      else
+         print*,meinrang,'planktkon_parallel allocate(tr_el',ntracers,nvrt,nea2
       end if
+      tr_el=0.0
       allocate(tr_nd(ntracers,nvrt,npa), stat = as )
       if (as /= 0) then
          write(fehler,*)' return value allocate tr_nd :', as
          call qerror(fehler)
       end if
+      tr_nd=0.0
 
    end if ! schism
 
@@ -114,8 +111,8 @@ subroutine scatter_planktkon()
       write(fehler,*)' 13 MPI_Scatter(planktonic_variable failed :', ierr
       call qerror(fehler)
    end if
-   call MPI_Scatter(plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
-                    plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
+   call MPI_Scatter(plankt_vari_vert, part*number_plankt_vari*num_lev, MPI_FLOAT,  &
+                    plankt_vari_vert_p, part*number_plankt_vari*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' 14 MPI_Scatter(plankt_vari_vert failed :', ierr
       call qerror(fehler)
@@ -137,8 +134,8 @@ subroutine gather_planktkon()
       write(fehler,*)' 15 MPI_Gather(planktonic_variable failed :', ierr
       call qerror(fehler)
    end if
-   call MPI_Gather(plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
-                   plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
+   call MPI_Gather(plankt_vari_vert_p, part*number_plankt_vari*num_lev, MPI_FLOAT,  &
+                   plankt_vari_vert, part*number_plankt_vari*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' 16 MPI_Gather(plankt_vari_vert failed :', ierr
       call qerror(fehler)
@@ -187,29 +184,30 @@ subroutine ini_planktkon0(nk)
          end do
       end do
       ! ------- tiefenaufgelöst, planktonic variables
-      do j = 1,number_plankt_vari_vert ! initialise
-         write(plankt_vari_vert_name(j),'(18x)')
-      end do
-      include "plankt_vari_vert_name.h"
+      !do j = 1,number_plankt_vari_vert ! initialise
+      !   write(plankt_vari_vert_name(j),'(18x)')
+      !end do
+      !include "plankt_vari_vert_name.h"
       ! allocate and initialize plankt_vari_vert
-      allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*part*proz_anz), stat = as )
+      allocate (plankt_vari_vert(num_lev*number_plankt_vari*part*proz_anz), stat = as )
       !allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*number_plankt_point), stat = as )
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   plankt_vari_vert :', as
          call qerror(fehler)
       end if
+      plankt_vari_vert=0.0
       do k = 1,number_plankt_point ! initialisierung aller konzentrationen zunächt auf Null
-         do j = 1,number_plankt_vari_vert !
+         do j = 1,number_plankt_vari !
             do l = 1,num_lev
-               plankt_vari_vert(l+(j-1)*num_lev+(k-1)*number_plankt_vari_vert*num_lev) = 0.0 !!!####! 0.0
+               plankt_vari_vert(l+(j-1)*num_lev+(k-1)*number_plankt_vari*num_lev) = 0.0 !!!####! 0.0
                !plankt_vari_vert(i,j,k)=0.0
                !plankt_vari_vert(k)%level(j)%value(i)=0.0
             end do ! i alle
          end do ! j alle levels
       end do
-      do j = 1,number_plankt_vari_vert ! zunächst nix ausgeben
-         output_plankt_vert(j) = .false.
-      end do
+      !do j = 1,number_plankt_vari_vert ! zunächst nix ausgeben
+      !   output_plankt_vert(j) = .false.
+      !end do
       allocate (point_zone(number_plankt_point), stat = as )
       if (as /= 0) then
          print*,' allocate failed in zonen_parallel point_zone :', as
@@ -245,9 +243,11 @@ end subroutine ini_planktkon0
 !! \n\n
 subroutine schism_tracer_fields(hin_her)
       use modell
-      use schism_glbl, only:tr_el
+      use schism_glbl, only:tr_el,nea2
       implicit none
-      integer hin_her
+      integer hin_her, i,j,k
+      
+      if(num_lev<=0)call qerror('schism_tracer_fields: num_lev<=0')
       
 !   allocate (planktonic_variable_p(number_plankt_vari*part), stat = as )
 !   allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
@@ -258,13 +258,33 @@ subroutine schism_tracer_fields(hin_her)
 
       select case (hin_her)
          case(1) ! hin / into
-            plankt_vari_vert_p()=planktonic_variable_p
-            tr_el(,,)=plankt_vari_vert_p()nea2
+            do i=1,nea2
+               do j=1,number_plankt_vari
+                  do k=1,num_lev
+                     plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)=  &
+                     planktonic_variable_p(j + (i-1) * number_plankt_vari)
+                     tr_el(j,k,i)=plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
+                  end do ! all k levels
+               end do ! all j concentrations
+            end do ! all i elements (discretized points)
+            
          case(2) ! her / out of
-            plankt_vari_vert_p()=tr_el(,,)
-            planktonic_variable_p=plankt_vari_vert_p()
+            do i=1,nea2
+               do j=1,number_plankt_vari
+                  planktonic_variable_p=0
+                  do k=1,num_lev
+                     plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = tr_el(j,k,i)
+                     planktonic_variable_p(j + (i-1) * number_plankt_vari) =  &
+                     planktonic_variable_p(j + (i-1) * number_plankt_vari) + tr_el(j,k,i)
+                  end do ! all k levels
+                  planktonic_variable_p(j + (i-1) * number_plankt_vari) =   &
+                  planktonic_variable_p(j + (i-1) * number_plankt_vari)/real(num_lev)
+               end do ! all j concentrations
+            end do ! all i elements (discretized points)
+
          case default
             call qerror('schism_tracer_fields: unknown hin_her')
       end select ! hin_her
 
+      if(meinrang==0)print*,'### warning #### schism_tracer_fields: averaging needs to take layer thickness into account'
 end subroutine schism_tracer_fields

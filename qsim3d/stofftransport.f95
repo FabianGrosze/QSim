@@ -27,11 +27,13 @@
 
 subroutine stofftransport()
    use modell
+   use schism_glbl, only:ne
    implicit none
    integer :: i, n, j,ierr
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = i + meinrang * part
-      if (kontrollknoten == iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph = ",  &
+   
+   do i = 1,party ! all i elements/nodes on this process
+      call iglobal(iglob,i)
+      if (kontrollknoten == iglob)print*,iglob,meinrang,i,party," vor ph2hplus lf,ph = ",  &
           planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
    end do
    call ph2hplus()
@@ -69,10 +71,12 @@ subroutine stofftransport()
          call schism_tracer_fields(2)
          !call scatter_planktkon()
          
-         if (meinrang==control_proc)
-            print*,'nach stofftransport_schism: lf,ph = ',           &
-                  planktonic_variable_p(65+(control_elem-1)*maxel),  &
-                  planktonic_variable_p(66+(control_elem-1)*maxel)
+         if (meinrang==control_proc)then
+            print*,'stofftransport SCHISM: control_proc,control_elem,kontrollknoten='  &
+                  ,control_proc,control_elem,kontrollknoten
+            !print*,'nach stofftransport_schism: lf,ph = ',           &
+            !      planktonic_variable_p(65+(control_elem-1)*maxel),  &
+            !      planktonic_variable_p(66+(control_elem-1)*maxel)
          endif ! Kontrollknoten
 
       case default
@@ -82,9 +86,9 @@ subroutine stofftransport()
    call hplus2ph()
    call mpi_barrier (mpi_komm_welt, ierr)
    call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = (i+meinrang*part)
-      if (kontrollknoten == iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph = ",  &
+   do i = 1,party ! all i elements/nodes on this process
+      call iglobal(iglob,i)
+      if (kontrollknoten == iglob)print*,iglob,meinrang,i,party," nach hplus2ph lf,ph = ",  &
           planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
    end do
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -105,16 +109,16 @@ subroutine ph2hplus()
    real*8 mue,ph,lf,hplus,hk,lgh
    integer i
    
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = i + meinrang * part
+   do i = 1,party ! all i elements/nodes on this process
+      call iglobal(iglob,i)
       lf = planktonic_variable_p(65 + (i-1) * number_plankt_vari)
       ph = planktonic_variable_p(66 + (i-1) * number_plankt_vari)
       mue = sqrt(max(0.0, 1.7e-5 * lf))
       hk = mue / (2. + 2.8 * mue)
       hplus = 10**(hk - ph)
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = hplus
-      if (iglob == kontrollknoten) print*, meinrang, i, ' ph2hplus: ph, hplus, part, number_plankt_vari = ',  &
-          ph, hplus, part, number_plankt_vari
+      if (iglob == kontrollknoten) print*, meinrang, i, ' ph2hplus: ph, hplus, party, number_plankt_vari = ',  &
+          ph, hplus, party, number_plankt_vari
    end do ! all i elements/nodes on this process
    
    return
@@ -128,16 +132,16 @@ subroutine hplus2ph()
    real(8) :: mue, ph, lf, hplus, hk
    integer :: i
    
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = i + meinrang * part
+   do i = 1,party ! all i elements/nodes on this process
+      call iglobal(iglob,i)
       lf = planktonic_variable_p(65 + (i-1) * number_plankt_vari)
       hplus = planktonic_variable_p(66 + (i-1) * number_plankt_vari)
       mue = sqrt(max(0.0, 1.7e-5 * lf))
       hk = mue / (2. + 2.8 * mue)
       ph = hk - log10(hplus)
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = ph
-      if (iglob == kontrollknoten) print*, meinrang, i, ' hplus2ph: ph, hplus, part, number_plankt_vari = ',  &
-          ph, hplus, part, number_plankt_vari
+      if (iglob == kontrollknoten) print*, meinrang, i, ' hplus2ph: ph, hplus, party, number_plankt_vari = ',  &
+          ph, hplus, party, number_plankt_vari
    end do ! alle j elements/nodes
    
    return

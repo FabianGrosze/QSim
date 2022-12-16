@@ -73,7 +73,7 @@ subroutine silikat_huelle(i)
    end do
    do j = 1,num_lev
       siz(j,1) = & !plankt_vari_vert_p(7,j,i) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
-                 plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+                 plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
       siz(j,2) = siz(j,1)
    end do
    do j = 1,num_lev_trans ! ?? unbenutzt
@@ -123,7 +123,7 @@ subroutine silikat_huelle(i)
    benthic_distribution_p(2+(i-1)*number_benth_distr) = sised(1)
    planktonic_variable_p(32+nk) = Q_SK(1)
    do j = 1,num_lev
-      plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = &
+      plankt_vari_vert_p(j+(7-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = &
                                                                                   siz(j,1) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
    end do
    benthic_distribution_p(25+(i-1)*number_benth_distr) = SiRuek(1) ! Siliziumgehalt im Sediment
@@ -150,7 +150,7 @@ subroutine ini_silikat()
       nk = ((i-1)*number_plankt_vari)
       planktonic_variable( 7+nk) = 10 ! si
       do j = 1,num_lev
-         plankt_vari_vert(j+(7-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable( 7+nk) ! siz(j,1) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
+         plankt_vari_vert(j+(7-1)*num_lev+(i-1)*number_plankt_vari*num_lev) = planktonic_variable( 7+nk) ! siz(j,1) ! silikat(7)-Silizium-Konzentration (tiefenaufgelöst)
       end do
       planktonic_variable(32+nk) = 0.004 ! Q_SK
       planktonic_variable(69+nk) = 0.0 ! Skmor

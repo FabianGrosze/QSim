@@ -51,7 +51,7 @@ subroutine ganglinien_parallel()
    
    ! planktonic variables
    call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
+   !call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_pl,1,MPI_INT,0,mpi_komm_welt,ierr)
    if(meinrang==0)print*,'ganglinien_parallel:', n_pl,' planktische Variablen für ganglinienausgabe (n_pl)'
    allocate (pl_gang(anz_gangl,zeitschrittanzahl+1,n_pl), stat = alloc_status )
@@ -203,18 +203,18 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari)
             endif ! planktic output conc.
          end do ! alle k planktonic_variable
-         do k = 1,number_plankt_vari_vert
-            if (output_plankt_vert(k)) then ! planktic_vert output conc.
-               n = n+1
-               if (n > n_pl) then
-                  write(fehler,*)'ganglinien_zeitschritt output_plankt_vert(k) (n > n_pl)'  &
-                        ,k,n,n_pl, trim(plankt_vari_vert_name(k))
-                  call qerror(fehler)
-               endif
-               pl_gang(i,izeit_gang,n) = &
-                  plankt_vari_vert_p(gangl_level+(k-1)*num_lev+(nk-1)*number_plankt_vari_vert*num_lev)
-            endif ! planktic output conc.
-         end do ! alle k planktonic_variable
+         !do k = 1,number_plankt_vari_vert
+         !   if (output_plankt_vert(k)) then ! planktic_vert output conc.
+         !      n = n+1
+         !      if (n > n_pl) then
+         !         write(fehler,*)'ganglinien_zeitschritt output_plankt_vert(k) (n > n_pl)'  &
+         !               ,k,n,n_pl, trim(plankt_vari_vert_name(k))
+         !         call qerror(fehler)
+         !      endif
+         !      pl_gang(i,izeit_gang,n) = &
+         !         plankt_vari_vert_p(gangl_level+(k-1)*num_lev+(nk-1)*number_plankt_vari_vert*num_lev)
+         !   endif ! planktic output conc.
+         !end do ! alle k planktonic_variable
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
          n = 0
          do k = 1,number_benth_distr
@@ -345,14 +345,14 @@ subroutine ganglinien_schliessen()
             !print*,"output_plankt:",i,ngnu,trim(beschriftung)
          end if
       end do
-      do i = 1,number_plankt_vari_vert
-         if (output_plankt_vert(i)) then ! planktic_vert output conc.
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//plankt_vari_vert_name(i)//spalte//"|"
-            !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+      !do i = 1,number_plankt_vari_vert
+      !   if (output_plankt_vert(i)) then ! planktic_vert output conc.
+      !      ngnu = ngnu+1
+      !      write(spalte,'(I3.3)')ngnu
+      !      beschriftung = trim(beschriftung)//plankt_vari_vert_name(i)//spalte//"|"
+      !      !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
+      !   end if
+      !end do
       !! benthic distributions are not gathered. therefore process 0 can do no time-series output
       do i = 1,number_benth_distr
          if (output_benth_distr(i)) then ! benth. distr. output

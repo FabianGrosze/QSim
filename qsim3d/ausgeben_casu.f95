@@ -252,16 +252,18 @@ subroutine ausgeben_casu()
          end do ! alle Knoten
       end if ! zur ausgabe vorgesehen
    end do ! alle planktonic_variable
-   do j = 1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
-      if (output_plankt_vert(j)) then ! zur ausgabe vorgesehen
-         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
-         write(ion,'(A)')'LOOKUP_TABLE default'
-         do n = 1,knotenanzahl2D ! alle Knoten
-            aus = plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
-            write(ion,'(f27.6)') aus
-         end do ! alle Knoten
-      end if ! zur ausgabe vorgesehen
-   end do ! done all plankt_vari_vert
+   
+   !do j = 1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
+   !   if (output_plankt_vert(j)) then ! zur ausgabe vorgesehen
+   !      write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
+   !      write(ion,'(A)')'LOOKUP_TABLE default'
+   !      do n = 1,knotenanzahl2D ! alle Knoten
+   !         aus = plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
+   !         write(ion,'(f27.6)') aus
+   !      end do ! alle Knoten
+   !   end if ! zur ausgabe vorgesehen
+   !end do ! done all plankt_vari_vert
+   
    ! Übergabe_Konzentrationen entsprechend ausgabeflag
    do j = 1,number_trans_quant ! alle tiefengemittelten
       if (output_trans_quant(j)) then ! zur ausgabe vorgesehen

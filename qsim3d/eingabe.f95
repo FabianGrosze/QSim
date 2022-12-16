@@ -28,13 +28,13 @@
 !! bewerkstelligt das Einlesen vom \ref lnk_datenmodell. \n
 !! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellerstellung
 
-subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
+subroutine eingabe()
    !
    use modell
    use QSimDatenfelder
    use aparam
    use schism_msgp
-   use schism_glbl, only:ne,nea,nea2
+   use schism_glbl, only:ne,nea,nea2,ielg
       
    implicit none
    integer :: i, j, n, n_cal
@@ -47,6 +47,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
 
    !print*,'eingabe() startet'
    only = .false.
+   num_lev=1 ; num_lev_trans=1
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          if (meinrang == 0) then ! prozess 0 only
@@ -60,6 +61,22 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          part= n_cal/proz_anz
          n = part*proz_anz
          if (n < n_cal)part= part+1
+         num_lev = 1 !! preliminary 2D depth averaged
+         party=part
+         !local kontrollknoten
+         if (meinrang == 0) then ! prozess 0 only
+            do i=1,proz_anz
+               j = kontrollknoten-(i*part)
+               if((j>0).and.(j<=part))then
+                  control_proc=i
+                  control_elem=j
+               endif
+            end do
+         end if ! only prozessor 0
+         call mpi_barrier (mpi_komm_welt, ierr)
+         call MPI_Bcast(control_proc,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(control_elem,1,MPI_INT,0,mpi_komm_welt,ierr)
+
       case(2) ! Untrim² netCDF
          if (meinrang == 0) then ! prozess 0 only
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
@@ -75,6 +92,22 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          part= n_cal/proz_anz
          n= part*proz_anz
          if (n < n_cal)part= part+1
+         num_lev = 1 !! preliminary 2D depth averaged
+         party=part
+         !local kontrollknoten
+         if (meinrang == 0) then ! prozess 0 only
+            do i=1,proz_anz
+               j = kontrollknoten-(i*part)
+               if((j>0).and.(j<=part))then
+                  control_proc=i
+                  control_elem=j
+               endif
+            end do
+         end if ! only prozessor 0
+         call mpi_barrier (mpi_komm_welt, ierr)
+         call MPI_Bcast(control_proc,1,MPI_INT,0,mpi_komm_welt,ierr)
+         call MPI_Bcast(control_elem,1,MPI_INT,0,mpi_komm_welt,ierr)
+
       case(3) ! SCHISM netCDF
          call read_mesh_schism()
          n_cal = n_elemente !!??
@@ -101,11 +134,21 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          if(meinrang==0)print*,meinrang,'--- done msgp_tables and msgp_init ---',comm,mpi_komm_welt, ierr
          call mpi_barrier (mpi_komm_welt, ierr)
          ! take over partitioning of variable arrays from SCHISM driver
-         ??? part= nea2
-         ??? part=maxel
+         ! part= nea2
+         part=maxel !!!### check !!!
+         party=ne
+         num_lev_trans=num_lev
          !tracer concentration @ prism center; used as temp. storage. tr_el(ntracers,nvrt,nea2) but last index usually
          !is valid up to nea only except for TVD
          !!! real(rkind),save,allocatable,target :: tr_el(:,:,:) 
+         control_proc=-1
+         control_elem=-1
+         do i=1,party
+            if(kontrollknoten==ielg(i))then
+               control_proc=meinrang
+               control_elem=i
+            endif
+         end do
 
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')

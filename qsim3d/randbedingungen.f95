@@ -60,9 +60,7 @@ subroutine randbedingungen_setzen()
                RB_zaehl = element_rand(j)
             case(3) ! SCHISM
                RB_zaehl = element_rand(j)
-               
-               trth(ntracers,nvrt,mnond_global,max(1,nope_global))
-
+               !trth(ntracers,nvrt,mnond_global,max(1,nope_global))
             case default
                call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
@@ -103,8 +101,16 @@ subroutine randbedingungen_setzen()
    call mpi_barrier (mpi_komm_welt, ierr)
    call scatter_BC()
    call scatter_planktkon()
-   j = kontrollknoten-(meinrang*part)
-   if ((j >= 1) .and. (j <= part)) then
+   if(hydro_trieb==3)then
+      call schism_boundaries()
+      if(meinrang==0)print*,'schism_boundaries called by randbedingungen_setzen: ',  &
+                            '### warning ### trth=0.0 not properly set yet'
+   endif
+   
+   !j = kontrollknoten-(meinrang*part)
+   !if ((j >= 1) .and. (j <= part)) then
+   if(meinrang==control_proc)then
+      j=control_elem
       print*,'nach randbedingungen_setzen am Kontrollknoten:',kontrollknoten,meinrang,part,j
       print*,'Tiefe = ', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
       print*,'tempw = ', planktonic_variable_p(1+(j-1)*number_plankt_vari),1+(j-1)*number_plankt_vari
@@ -312,18 +318,18 @@ subroutine tiefenprofil(jjj)
    ! konstante Verteilung in der Vertikalen
    do i = 1,14 ! tiefenprofile der ersten 14 konzentrationen
       do l = 1,num_lev
-         plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(i+nk)
+         plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(i+nk)
       end do ! alle l levels
    end do ! alle ersten 14 konzentrationen
    do l = 1,num_lev
-      plankt_vari_vert(l+(16-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(67+nk) !  hgesNz = GESN
-      plankt_vari_vert(l+(15-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(68+nk) !  hgesPz = GESP
-      plankt_vari_vert(l+(17-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(30+nk) !  hQ_NKz = Q_NK
-      plankt_vari_vert(l+(18-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(33+nk) !  hQ_NGz = Q_NG
-      plankt_vari_vert(l+(19-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(35+nk) !  hQ_NBz = Q_NB
-      plankt_vari_vert(l+(20-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(24+nk) !  hCChlkz = akbcm
-      plankt_vari_vert(l+(21-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(25+nk) !  hCChlgz = agbcm
-      plankt_vari_vert(l+(22-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(26+nk) !  hCChlbz = abbcm
+      plankt_vari_vert(l+(67-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(67+nk) !  hgesNz = GESN
+      plankt_vari_vert(l+(68-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(68+nk) !  hgesPz = GESP
+      plankt_vari_vert(l+(30-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(30+nk) !  hQ_NKz = Q_NK
+      plankt_vari_vert(l+(33-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(33+nk) !  hQ_NGz = Q_NG
+      plankt_vari_vert(l+(35-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(35+nk) !  hQ_NBz = Q_NB
+      plankt_vari_vert(l+(24-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(24+nk) !  hCChlkz = akbcm
+      plankt_vari_vert(l+(25-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(25+nk) !  hCChlgz = agbcm
+      plankt_vari_vert(l+(26-1)*num_lev+(jjj-1)*number_plankt_vari*num_lev) = planktonic_variable(26+nk) !  hCChlbz = abbcm
    end do ! alle l levels
    return
 end subroutine tiefenprofil
@@ -450,6 +456,7 @@ end subroutine randbedingungen_ergaenzen
 !!
 subroutine randbedingungen_parallel()
    use modell
+   use schism_glbl, only:trth
    implicit none
    integer :: as, ini,ierr
    
@@ -508,8 +515,31 @@ subroutine randbedingungen_parallel()
    !print*,'eta(ilamda)=rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang'  &
    !      ,rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang
    !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierr
+   
+   if(hydro_trieb==3)then ! SCHISM
+      !real(rkind),save,allocatable :: trth(:,:,:,:) !time series of b.c. for T,S, tracers
+      !trth(ntracers,nvrt,mnond_global,max(1,nope_global))
+      if(.not.allocated(trth))allocate(trth(number_plankt_vari,num_lev,1,1),stat=as)
+      print*,'randbedingungen_parallel: allocated(trth(ntracers,nvrt,mnond_global,max(1,nope_global)) '
+   endif
+   
    return
 end subroutine randbedingungen_parallel
+!----+-----+----
+
+!> harmonize QSim and schism tracer fields
+!! \n\n
+subroutine schism_boundaries()
+      use modell
+      use schism_glbl, only:trth
+      implicit none
+      integer i,j,k
+      
+      trth=0.0
+
+   return
+end subroutine schism_boundaries
+
 !----+-----+----
 !> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
 !! .... to be done PARALLEL\n
@@ -652,10 +682,6 @@ end function randwert_gueltig
 subroutine ereigg_Randbedingungen_lesen()
    use modell
    use schism_glbl, only:trth
-   
-   !real(rkind),save,allocatable :: trth(:,:,:,:) !time series of b.c. for T,S, tracers
-??? allocate(trth(ntracers,nvrt,mnond_global,max(1,nope_global)),stat=istat)
-
 
    implicit none
    character(500) dateiname, text
@@ -666,7 +692,7 @@ subroutine ereigg_Randbedingungen_lesen()
    integer , allocatable , dimension (:) :: nr_vorhanden, rb_vorkommen
    type(rb_zeile) , allocatable , dimension (:) :: lesezeil
    print*,'ereigg_Randbedingungen_lesen() startet:'
-   
+
    n_active_concentrations = anzrawe
    if (ischwer == 0 .and. ikonss == 0)n_active_concentrations = 28
    write(dateiname,'(2A)')trim(modellverzeichnis),'EREIGG.txt'
@@ -971,9 +997,6 @@ subroutine ereigg_Randbedingungen_lesen()
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
       case(3) ! SCHISM
-      
-trth(ntracers,nvrt,mnond_global,max(1,nope_global))
-
          maxrandnr = 0
          do j = 1,knotenanzahl2D !! max Randnummer ermitteln:
             if (knoten_rand(j) > 0) then !! Randknoten
