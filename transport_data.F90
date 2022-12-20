@@ -1,4 +1,28 @@
 
+to do List 20dez22:
+   
+ - Übernahme: flux_adv_vface , idry_e_2t , hdif , (temp + salt später)
+   
+ - zs, ze vertikale Diskretisierung übernehmen ... woher?
+   aus .nc Dateien oder mittels levels0, levels1, zcoor berechnen?
+   
+ - Randbedingungen und trth
+
+ - tr_nd aus tr_el interpolieren wie in schism_steps.f90 7680 bis 7766 
+   in subroutine schism_tracer_fields ()planktisch_variablen.f95 aufrufen.
+   subroutine in SCHISM auslagern?
+ 
+ - Entscheidung ob tr_el als Feld für Konzentrationen oder plankt_vari_vert_p oder beides ? 
+   Untrim in 2D weiter, planktonic_variable_p ??
+
+ - mit alter testen
+ 
+ - Kern-routinen anbinden
+ 
+ - Stoffumsatz testen
+
+
+-------------------------------------------------------------------------------------------------------------------------
 misc_subs_QSIM.F90
 
 !############################################################################################################

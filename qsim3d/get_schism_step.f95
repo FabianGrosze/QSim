@@ -32,9 +32,9 @@ subroutine get_schism_step(nt)
       use netcdf
       use modell
       use schism_glbl, only:su2,sv2,tr_el,eta2                       &
-      ,npa,np, nsa, nea, nvrt, ns_global,ne_global,np_global         &
+      ,npa,np, nsa,ne, nea, nvrt, ns_global,ne_global,np_global      &
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
-      ,idry_s,nea2,dfh
+      ,idry_s,nea2,dfh,hdif,flux_adv_vface,ntracers
       
       use schism_msgp, only: myrank,nproc,parallel_abort
       implicit none
@@ -53,7 +53,7 @@ subroutine get_schism_step(nt)
       integer, dimension(nf90_max_var_dims) :: dimids
       integer , allocatable , dimension (:) :: vxtype, vndims
       character(256) , allocatable , dimension (:) :: vname
-      real vel_norm, vel_dir, vel_sum, minwert, maxwert, tempi, sump, mindfh, maxdfh
+      real vel_norm, vel_dir, vel_sum, minwert, maxwert, tempi, sump, minima, maxima
       !> arrays to read stored variables from .nc files, each process its part
       real , allocatable , dimension (:) :: var_p
       real , allocatable , dimension (:) :: var1_p
@@ -69,6 +69,10 @@ subroutine get_schism_step(nt)
       endif
       if(maxstack.lt.nea)then
          write(fehler,*)meinrang,' get_schism_step: maxstack.lt.nea',maxstack,nea
+         call qerror(fehler)
+      endif
+      if(maxstack.lt.nsa)then
+         write(fehler,*)meinrang,' get_schism_step: maxstack.lt.nsa',maxstack,nsa
          call qerror(fehler)
       endif
       if (meinrang == 0) then
@@ -87,6 +91,18 @@ subroutine get_schism_step(nt)
          print*,'get_schism_step: nt,zuord,zeit = ',nt,transinfo_zuord(nt),transinfo_zeit(transinfo_zuord(nt))   &
                ,'|',transinfo_instack(nt),'-th timestep in stack=',transinfo_stack(nt)
       endif
+      istat=0
+      if(.not.allocated(tr_el))then
+         allocate(tr_el(ntracers,nvrt,nea2), stat = istat )
+         if (istat /= 0) then
+            write(fehler,*)'get_schism_step:  return value allocate tr_el :', istat
+            call qerror(fehler)
+         else
+            print*,meinrang,'get_schism_step: allocate(tr_el',ntracers,nvrt,nea2
+         end if
+         tr_el=0.0
+      endif !tr_el allocated
+ 
       call mpi_barrier (mpi_komm_welt, ierr)
    
       !######################### open stack schout_******_*.nc ################################################
@@ -304,20 +320,50 @@ subroutine get_schism_step(nt)
          call check_err(iret)
          if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var diffusivity failed iret = ",iret,i
          dfh(i,1:npa) = var_p(1:npa)
-         mindfh=minval(dfh(i,1:np))
-         maxdfh=maxval(dfh(i,1:np))
+         minima=minval(dfh(i,1:np))
+         maxima=maxval(dfh(i,1:np))
          call mpi_barrier (mpi_komm_welt, ierr)
-         minwert=min(minwert,mindfh)
-         maxwert=max(maxwert,maxdfh)
+         minwert=min(minwert,minima)
+         maxwert=max(maxwert,maxima)
       end do ! all i levels
-      call mpi_reduce(minwert,mindfh,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
-      call mpi_reduce(maxwert,maxdfh,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
-      if(meinrang==0)print*,'diffusivity dfh at nodes  from...until ',mindfh,maxdfh
+      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'diffusivity dfh at nodes  from...until ',minima,maxima
 
       !######################### hdif(time, nSCHISM_hgrid_node ################################################
       !        call writeout_nc(id_out_var(noutput+3),'hdif',2,nvrt,npa,hdif)  ! horizontal diffusivity
-
-
+      !  real(rkind),save,allocatable :: hdif(:,:) !horizontal diffusivity
+      !allocate hdif(nvrt,npa)
+      call check_err( nf_inq_varid(ncid,"hdif", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("hdif:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
+      !print*,meinrang,' get_schism_step hdif dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(.not.allocated(hdif))allocate(hdif(nvrt,npa),stat = istat)
+      if (istat /= 0) call qerror("allocate hdif( failed")
+      !! get data
+      minwert=0.0; maxwert=0.0
+      do i = 1,nvrt
+         start3 = (/i, 1, nin /)
+         count3 = (/1, npa, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var hdif failed iret = ",iret,i
+         hdif(i,1:npa) = var_p(1:npa)
+         minima=minval(hdif(i,1:np))
+         maxima=maxval(hdif(i,1:np))
+         call mpi_barrier (mpi_komm_welt, ierr)
+         minwert=min(minwert,minima)
+         maxwert=max(maxwert,maxima)
+      end do ! all i levels
+      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'hor.diff. hdif at nodes  from...until ',minima,maxima
 
       !######################### wetdry_elem ################################################
       call check_err( nf_inq_varid(ncid,"wetdry_elem", varid) )
@@ -359,12 +405,94 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
-      
-      !######################### salt_elem(time, nSCHISM_hgrid_face ################################################
-      
-      !######################### flux_adv_vface(time, nSCHISM_hgrid_face ################################################
-      
+      !        if(iof_hydro(29)==1) call writeout_nc(id_out_var(32),'temp_elem',6,nvrt,nea,tr_el(1,:,:))
+      ! planktische_variablen.f95:      allocate( tr_el(ntracers,nvrt,nea2), stat = as )
+      call check_err( nf_inq_varid(ncid,"temp_elem", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("temp_elem:dlength(dimids(1)) > maxstack")
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      minwert=0.0; maxwert=0.0
+      do i = 1,nvrt
+         start3 = (/i, 1, nin /)
+         count3 = (/1, nea, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:nea), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var temp_elem failed iret = ",iret,i
+         tr_el(1,i,1:nea) = var_p(1:nea)
+         minima=minval(tr_el(1,i,1:ne))
+         maxima=maxval(tr_el(1,i,1:ne))
+         call mpi_barrier (mpi_komm_welt, ierr)
+         minwert=min(minwert,minima)
+         maxwert=max(maxwert,maxima)
+      end do ! all i levels
+      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'temp_elem  from...until ',minima,maxima
+      call mpi_barrier (mpi_komm_welt, ierr)
 
+      !######################### salt_elem(time, nSCHISM_hgrid_face ################################################
+      !        if(iof_hydro(30)==1) call writeout_nc(id_out_var(33),'salt_elem',6,nvrt,nea,tr_el(2,:,:))
+      call check_err( nf_inq_varid(ncid,"salt_elem", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("salt_elem:dlength(dimids(1)) > maxstack")
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      minwert=0.0; maxwert=0.0
+      do i = 1,nvrt
+         start3 = (/i, 1, nin /)
+         count3 = (/1, nea, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:nea), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var salt_elem failed iret = ",iret,i
+         tr_el(2,i,1:nea) = var_p(1:nea)
+         minima=minval(tr_el(2,i,1:ne))
+         maxima=maxval(tr_el(2,i,1:ne))
+         call mpi_barrier (mpi_komm_welt, ierr)
+         minwert=min(minwert,minima)
+         maxwert=max(maxwert,maxima)
+      end do ! all i levels
+      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'salt_elem  from...until ',minima,maxima
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+      !######################### flux_adv_vface(time, nSCHISM_hgrid_face ################################################
+      ! call writeout_nc(id_out_var(noutput+1),'flux_adv_vface',6,nvrt,nea,flux_adv_vface(:,1,:))
+      ! allocate   flux_adv_vface(nvrt,ntracers,nea)
+      if(.not.allocated(flux_adv_vface))allocate(flux_adv_vface(nvrt,ntracers,nea))
+      call check_err( nf_inq_varid(ncid,"flux_adv_vface", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("flux_adv_vface:dlength(dimids(1)) > maxstack")
+      !! initialize
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      minwert=0.0; maxwert=0.0
+      do i = 1,nvrt
+         start3 = (/i, 1, nin /)
+         count3 = (/1, nea, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:nea), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var salt_elem failed iret = ",iret,i
+         flux_adv_vface(i,1,1:nea) = var_p(1:nea)
+         minima=minval(flux_adv_vface(i,1,1:ne))
+         maxima=maxval(flux_adv_vface(i,1,1:ne))
+         call mpi_barrier (mpi_komm_welt, ierr)
+         minwert=min(minwert,minima)
+         maxwert=max(maxwert,maxima)
+      end do ! all i levels
+      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
+      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'flux_adv_vface  from...until ',minima,maxima
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### wetdry_side ################################################
       call check_err( nf_inq_varid(ncid,"wetdry_side", varid) )

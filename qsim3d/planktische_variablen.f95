@@ -69,14 +69,16 @@ subroutine planktkon_parallel()
    if (hydro_trieb==3)then ! schism
       ! ntracers=number_plankt_vari ; nvrt=num_lev !! set in read_mesh_schism
 
-      allocate(tr_el(ntracers,nvrt,nea2), stat = as )
-      if (as /= 0) then
-         write(fehler,*)' return value allocate tr_el :', as
-         call qerror(fehler)
-      else
-         print*,meinrang,'planktkon_parallel allocate(tr_el',ntracers,nvrt,nea2
-      end if
-      tr_el=0.0
+      if(.not.allocated(tr_el))then
+         allocate(tr_el(ntracers,nvrt,nea2), stat = as )
+         if (as /= 0) then
+            write(fehler,*)' return value allocate tr_el :', as
+            call qerror(fehler)
+         else
+            print*,meinrang,'planktkon_parallel allocate(tr_el',ntracers,nvrt,nea2
+         end if
+         tr_el=0.0
+      endif ! tr_el allocated
       allocate(tr_nd(ntracers,nvrt,npa), stat = as )
       if (as /= 0) then
          write(fehler,*)' return value allocate tr_nd :', as
@@ -247,9 +249,14 @@ subroutine schism_tracer_fields(hin_her)
       use modell
       use schism_glbl, only:tr_el,nea2
       implicit none
-      integer hin_her, i,ii,j,k,kk
+      integer hin_her, i,ii,j,k,kk,nk
+      real realnumlev
       
-      if(num_lev<=0)call qerror('schism_tracer_fields: num_lev<=0')
+      if(num_lev<=0)then
+         call qerror('schism_tracer_fields: num_lev<=0')
+      else
+         realnumlev=real(num_lev)
+      endif
       
 !   allocate (planktonic_variable_p(number_plankt_vari*part), stat = as )
 !   allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
@@ -258,19 +265,39 @@ subroutine schism_tracer_fields(hin_her)
   !real(rkind),save,allocatable,target :: tr_el(:,:,:) 
   !    allocate(tr_el(ntracers,nvrt,nea2),tr_nd0(ntracers,nvrt,npa),tr_nd(ntracers,nvrt,npa),stat=istat)
 
-      do i=1,nea2
-         ii=(i-1)*number_plankt_vari*num_lev
-         do k=1,num_lev
-            kk=(k-1)*number_plankt_vari+ii
-            do j=1,number_plankt_vari
-               !plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)=  &
-               !planktonic_variable_p(j + (i-1) * number_plankt_vari)
-               !! richtig: tr_el(j,k,i)=plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
-               if(hin_her==1)tr_el(j,k,i)=plankt_vari_vert_p(j+kk) !! plankt_vari_vert_p falsch
-               if(hin_her==2)plankt_vari_vert_p(j+kk) = tr_el(j,k,i)
-            end do ! all k levels
-         end do ! all j concentrations
-      end do ! all i elements (discretized points)
+      ! 3D
+      !!!###do i=1,nea2
+      !!!###   ii=(i-1)*number_plankt_vari*num_lev
+      !!!###   do k=1,num_lev
+      !!!###      kk=(k-1)*number_plankt_vari+ii
+      !!!###      do j=1,number_plankt_vari
+      !!!###         !plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)=  &
+      !!!###         !planktonic_variable_p(j + (i-1) * number_plankt_vari)
+      !!!###         !! richtig: tr_el(j,k,i)=plankt_vari_vert_p(k+(j-1)*num_lev+(i-1)*number_plankt_vari*num_lev)
+      !!!###         if(hin_her==1)tr_el(j,k,i)=plankt_vari_vert_p(j+kk) !! plankt_vari_vert_p falsch
+      !!!###         if(hin_her==2)plankt_vari_vert_p(j+kk) = tr_el(j,k,i)
+      !!!###      end do ! all k levels
+      !!!###   end do ! all j concentrations
+      !!!###end do ! all i elements (discretized points)
 
-      if(meinrang==0)print*,'### warning #### schism_tracer_fields: averaging needs to take layer thickness into account'
+      ! 2D
+      if(hin_her==1)then
+         do i=1,nea2
+            nk=(i-1) * number_plankt_vari
+            do j=1,number_plankt_vari
+               tr_el(j,1:num_lev,i)=planktonic_variable_p(j + nk)
+            end do ! all j concentrations
+         end do ! all i elements (discretized points)
+      endif ! hin
+      if(hin_her==2)then
+         do i=1,nea2
+            nk=(i-1) * number_plankt_vari
+            do j=1,number_plankt_vari
+               planktonic_variable_p(j + nk)=sum(tr_el(j,1:num_lev,i))/realnumlev
+            end do ! all j concentrations
+         end do ! all i elements (discretized points)
+      endif ! her
+
+      if(meinrang==0)print*,hin_her,  &
+      'schism_tracer_fields:  ### warning #### full 3D + averaging needs to take layer thickness into account'
 end subroutine schism_tracer_fields
