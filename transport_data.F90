@@ -119,6 +119,10 @@ misc_subs_QSIM.F90
                               ,                                      &
                               ! timestep in
                               zs,ze,                                       &   levels1 or levels0 calling zcoor
+                              real(rkind),save,allocatable :: ze(:,:)         ! z-coord (local frame - vertical up)
+                              allocate( ze(nvrt,nea)
+                              real(rkind),save,allocatable :: zs(:,:)         ! z-coord. (local frame - vertical up)
+                              allocate( zs(nvrt,nsa)
                               ! ELM
                               sdbt,                                        &   avoid by ielm_transport=0
                               !  writeout_nc

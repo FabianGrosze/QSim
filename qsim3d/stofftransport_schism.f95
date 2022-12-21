@@ -61,9 +61,9 @@ subroutine stofftransport_schism()
          ! ntr=ntracers=number_plankt_vari
          ! real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
          
-         if (meinrang == 0)print*,  &
-            '### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
-         !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+         !if (meinrang == 0)print*,  &
+         !   '### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
+         call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
 !      end do ! all sub timesteps
       

@@ -92,7 +92,7 @@ Q3 = version.co trans_read.co \
 #CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
 #compiler-flags:
-CFLAGS2         = -O -g -fbounds-check -DMPIVERSION=2 ## -Wuninitialized ## -fbounds-check ## develop ##  -fcheck=all
+CFLAGS2         = -O -g -fbounds-check -DMPIVERSION=2 -DTVD_VL ## -Wuninitialized ## -fbounds-check ## develop ##  -fcheck=all
 #CFLAGS2             = -O3 ## run fast ## 
 FFLAGS          =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
 

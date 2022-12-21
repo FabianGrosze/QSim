@@ -142,9 +142,9 @@ subroutine screen_schism()
       iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
       call check_err(iret)
       n = dlength(dimids(1))
-      if((meinrang ==0).and.(i==1).and.(kontrollknoten>0))then
+      !if((meinrang ==0).and.(i==1).and.(kontrollknoten>0))then
          print*,meinrang,'screen_schism: time varid=',varid,' dlength=',n,iret,ncid
-      end if
+      !end if
       call mpi_barrier (mpi_komm_welt, ierr)
 
       if (n > 0) then
@@ -162,10 +162,10 @@ subroutine screen_schism()
          end if ! more than one timestep
       end if ! dlength ok
       call mpi_barrier (mpi_komm_welt, ierr)
-      if(meinrang==0)then
-         print*,i,'-th stack; screen_schism Zeiten von...bis,delta',zeiten(1),zeiten(n),zeit_delta  &
+      !if(meinrang==0)then
+         print*,meinrang,i,'-th stack; screen_schism Zeiten von...bis,delta',zeiten(1),zeiten(n),zeit_delta  &
                ,' transinfo_anzahl=',transinfo_anzahl
-      endif
+      !endif
       
       !! checking necessary variables
       iret = nf_inq_varid(ncid,'elev', varid)
