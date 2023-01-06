@@ -29,7 +29,7 @@ subroutine stofftransport_schism()
       use netcdf
       use modell
       use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
-      use schism_msgp, only: myrank,parallel_abort !,nproc
+      use schism_msgp, only: myrank,parallel_abort, comm !,nproc
    
       implicit none
       include 'netcdf.inc'
@@ -54,7 +54,9 @@ subroutine stofftransport_schism()
 !      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
 !?? alle subschritte ???
 
-         call get_schism_step(na_transinfo) !!****
+      call get_schism_step(na_transinfo) !!****
+      !print*,meinrang,'stofftransport_schism: did get_schism_step()'
+      call mpi_barrier (mpi_komm_welt, ierr)
 
          ! do_transport_tvd_imp(it,ntr,difnum_max_l)
          ! integer, intent(in) :: it !time stepping #; info only
@@ -63,7 +65,11 @@ subroutine stofftransport_schism()
          
          !if (meinrang == 0)print*,  &
          !   '### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
-         call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+      !print*,meinrang,myrank,'=meinrang,myrank'
+      !print*,'mpi_komm_welt,comm,MPI_COMM_WORLD=',mpi_komm_welt,comm,MPI_COMM_WORLD 
+      !myrank=meinrang
+      !comm=mpi_komm_welt 
+      call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
 !      end do ! all sub timesteps
       

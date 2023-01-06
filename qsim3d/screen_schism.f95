@@ -149,7 +149,8 @@ subroutine screen_schism()
 
       if (n > 0) then
          transinfo_anzahl = transinfo_anzahl+n ! total number of timesteps
-         if(allocated(zeiten))deallocate(zeiten);allocate (zeiten(n), stat = istat )
+         if(allocated(zeiten))deallocate(zeiten)
+         allocate (zeiten(n), stat = istat )
          zeiten=0.0
          iret = nf90_get_var(ncid, varid, zeiten)
          call check_err(iret)
@@ -166,7 +167,8 @@ subroutine screen_schism()
          print*,meinrang,i,'-th stack; screen_schism Zeiten von...bis,delta',zeiten(1),zeiten(n),zeit_delta  &
                ,' transinfo_anzahl=',transinfo_anzahl
       !endif
-      
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       !! checking necessary variables
       iret = nf_inq_varid(ncid,'elev', varid)
       if (iret /= 0) then
@@ -237,6 +239,7 @@ subroutine screen_schism()
          iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
          call check_err(iret)
          n = dlength(dimids(1))
+         if(allocated(zeiten))deallocate(zeiten)
          allocate (zeiten(n), stat = istat )
          iret = nf90_get_var(ncid, varid, zeiten)
          call check_err(iret)

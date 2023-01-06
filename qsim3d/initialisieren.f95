@@ -210,8 +210,12 @@ subroutine initialisieren()
    
    if (hydro_trieb == 3) then
       call get_schism_step(na_transinfo)
+      !print*,meinrang,'initialisieren: did get_schism_step()'
+      call mpi_barrier (mpi_komm_welt, ierr)
       ! set schism transport parameters:
       call schism_transport_parameters()
+      !print*,meinrang,'initialisieren: did schism_transport_parameters()'
+      call mpi_barrier (mpi_komm_welt, ierr)
    end if ! hydro_trieb=SCHISM,3
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &

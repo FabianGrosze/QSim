@@ -72,6 +72,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    real                              :: rzone, distmax, distmin, sum_area, totalarea, dx,dy
    real    dummy,xummy,yummy
    integer nummy, rank_min,rank_max,id_min,id_max, kkk,nnn, lfdb,ll,lll,jsj,ndo
+   integer total_edge_number,total_element_number,total_node_number
    integer  :: eck(4)
    
    character(len=2),save :: mid,stab
@@ -187,6 +188,14 @@ subroutine read_mesh_schism() !meinrang.eq.0
          read(10+meinrang,*)j,islg(j)
       enddo
       print*,meinrang,'local_to_global: elements',ne,nea,nea2,' points',np,npa,' sides/edges',ns,nsa
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_reduce(ns,total_edge_number,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      call mpi_reduce(ne,total_element_number,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      call mpi_reduce(np,total_node_number,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
+      if(meinrang==0)print*,'total_edge_number,total_element_number,total_node_number='  &
+                            ,total_edge_number,total_element_number,total_node_number
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       read(10+meinrang,'(A)')textline ! ; print*,meinrang,trim(textline)  !write(10+meinrang,*)'Header:'
       read(10+meinrang,*)start_year,start_month,start_day,start_hour,utc_start
       read(10+meinrang,*)nrec,dummy,nspool,nvrt,kz, &
@@ -220,11 +229,14 @@ subroutine read_mesh_schism() !meinrang.eq.0
       allocate(i34(nea),elnode(4,nea))
       allocate(kbe(nea),area(nea),ic3(4,nea),elside(4,nea),ssign(4,nea))
       sum_area=0.0
+      kbe=0
+      area=0.0
       do m=1,ne
          read(10+meinrang,*)i34(m),(elnode(mm,m),mm=1,i34(m))
          read(10+meinrang,*)kbe(m),area(m),ic3(1,m),ic3(2,m),ic3(3,m),ic3(4,m)
          sum_area=sum_area+area(m)
          read(10+meinrang,*)elside(1,m),elside(2,m),elside(3,m),elside(4,m),ssign(1,m),ssign(2,m),ssign(3,m),ssign(4,m)
+         !if(kbe(m)<1)print*,meinrang,m,' read_mesh_schism local_to_global: kbe(m)<1',kbe(m)
       enddo !m
       sum_area=sum_area/1000000 ! km²
       allocate(isidenode(2,nsa),isdel(2,nsa))
@@ -244,11 +256,10 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_barrier (mpi_komm_welt, ierr)
       if (meinrang==0)print*,'area[km²]=',totalarea,' bottom left=',xmini,ymini,' top right=',xmaxi,ymaxi
       
-      print*,meinrang,'read_mesh_schism: nea2,maxel=',nea2,maxel
       call mpi_barrier (mpi_komm_welt, ierr)
       call MPI_reduce(nea2,maxel,1,MPI_INT,mpi_max,0,mpi_komm_welt,ierr)
       call MPI_Bcast(maxel,1,MPI_INT,0,mpi_komm_welt,ierr)
-      if (meinrang==1)print*,'1 read_mesh_schism: max number Elements on one proc. maxel=',maxel
+      if (meinrang==0)print*,'0 read_mesh_schism: max number Elements on one proc. maxel=',maxel
 
 
  !#### read global_to_local.prop #################################################################!
@@ -293,11 +304,15 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_reduce(npa,n,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
       if(meinrang==0)print*,'mpi_sum=',k,m,n,'np_global',np_global
 
+      !check partition consitency
       j=0
-      do i=1,np
-         if(ipgl_id(iplg(i)).ne.i) j=j+1
+      do i=1,ne
+         if(iegrpv(ielg(i)).ne.meinrang)then
+            j=j+1
+            print*,meinrang,' element rank mismatch local=',i,' global=',ielg(i),' iegrpv=',iegrpv(ielg(i))
+         endif
       enddo
-      print*,meinrang,' global-local node-number missmatch ',j,' of ',np
+      print*,meinrang,' global-local element-rank missmatch ',j,' of ',ne
 
 !#### allocate mesh properties QSim ###########################################################################!
       if (meinrang == 0) then !! nur prozessor 0
@@ -356,7 +371,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
          ed_vel_x=0.0; ed_vel_y=0.0
 
          print*,'read_mesh_schism: allocated QSim arrays'
-      endif
+      endif ! meinrang==0
       
 !#### Reconstruct connectivity table ###########################################################################!
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -546,7 +561,9 @@ subroutine read_mesh_schism() !meinrang.eq.0
       myrank=meinrang
       write(dateiname,"(2A)")trim(modellverzeichnis),"aquire_hgrid_output.txt"
       open(16,file = trim(dateiname))
+      
       call aquire_hgrid(.true.)
+      
       close(16)
       call mpi_barrier (mpi_komm_welt, ierr)
       if (meinrang == 0) print*,'aquire_hgrid finished in read_mesh_schism'

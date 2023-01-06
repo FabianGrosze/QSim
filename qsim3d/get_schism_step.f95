@@ -239,48 +239,48 @@ subroutine get_schism_step(nt)
       
       !######################### dp tiefe depth rb_hydraul(2  ################################################
       ! find depth
-      call check_err( nf_inq_varid(ncid,"depth", varid) )
-      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
-      call mpi_barrier (mpi_komm_welt, ierr)!#!
-      if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
-      n=dlength(dimids(1))
-      !print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
-      !! initialize
-      var_p = 666.666
-      if (meinrang == 0) var_g = 777.777
-      call mpi_barrier (mpi_komm_welt, ierr)
-      if(.not.allocated(dp)) allocate(dp(npa),stat=istat);
-      if (istat /= 0) call qerror("allocate dp( failed")
-      !! get data
-      start2 = (/ 1, nin /)
-      count2 = (/ npa, 1 /) ! nodenumber first dimension
-      iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
-      call check_err(iret)
-      dp(1:npa) = var_p(1:npa)
+      !call check_err( nf_inq_varid(ncid,"depth", varid) )
+      !call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      !call mpi_barrier (mpi_komm_welt, ierr)!#!
+      !if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
+      !n=dlength(dimids(1))
+      !!print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
+      !!! initialize
+      !var_p = 666.666
+      !if (meinrang == 0) var_g = 777.777
+      !call mpi_barrier (mpi_komm_welt, ierr)
+      !if(.not.allocated(dp)) allocate(dp(npa),stat=istat);
+      !if (istat /= 0) call qerror("allocate dp( failed")
+      !!! get data
+      !start2 = (/ 1, nin /)
+      !count2 = (/ npa, 1 /) ! nodenumber first dimension
+      !iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
+      !if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
+      !call check_err(iret)
+      !dp(1:npa) = var_p(1:npa)
       !print*,meinrang,' dp np  from...until ',minval(dp(1:np)),maxval(dp(1:np))
-      call mpi_barrier (mpi_komm_welt, ierr)
-      ! gather var_p into var_g
-      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      if (ierr /= 0) then
-         write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
-         call qerror(fehler)
-      end if
-      call mpi_barrier (mpi_komm_welt, ierr)
-      !! recombine into global numbers
+      !call mpi_barrier (mpi_komm_welt, ierr)
+      !! gather var_p into var_g
+      !call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      !if (ierr /= 0) then
+      !   write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
+      !   call qerror(fehler)
+      !end if
+      !call mpi_barrier (mpi_komm_welt, ierr)
+      !!! recombine into global numbers
       if (meinrang == 0) then
          if(.not.allocated(knoten_z))then
             call qerror('get_schism_step .not. allocated(knoten_z)')
          endif
          knoten_z = -555.555 ! init
-         do j = 1,proz_anz ! all processes/ranks
-            do k = 1,np_sc(j) ! all nodes at this rank
-               knoten_z(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
-            end do
-         end do
-         do k=1,knotenanzahl2D
-            if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
-         enddo
+      !   do j = 1,proz_anz ! all processes/ranks
+      !      do k = 1,np_sc(j) ! all nodes at this rank
+      !         knoten_z(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
+      !      end do
+      !   end do
+      !   do k=1,knotenanzahl2D
+      !      if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
+      !   enddo
         ! set water depth at elements
          do j = 1,number_plankt_point ! all j elements
             sump=0.0
@@ -294,7 +294,8 @@ subroutine get_schism_step(nt)
          !do k=1,knotenanzahl2D
          !   knoten_z(k)=p(k)-knoten_z(k)
          !enddo
-         print*,'get_schism_step bathymetry, knoten_z minwert, maxwert = ',minval(knoten_z),maxval(knoten_z)
+         print*,'### get_schism_step bathymetry ###, knoten_z minwert, maxwert = '  &
+               ,minval(knoten_z),maxval(knoten_z)
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
       
@@ -420,12 +421,17 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
       minwert=0.0; maxwert=0.0
       do i = 1,nvrt
-      
+         start3 = (/i, 1, nin /)
+         count3 = (/1, nea, 1 /) ! nodenumber first dimension
+         iret = nf90_get_var(ncid, varid, var_p(1:nea), start3, count3 )
+         call check_err(iret)
+         if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var temp_elem failed iret = ",iret,i
+         ze(i,1:nea) = var_p(1:nea)
+         print*,meinrang,' level i=',i,' ze(nea)  from...until '  &
+               ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+               ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
       end do ! all i levels
-      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
-      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
-      if(meinrang==0)print*,'levels ze  from...until ',minima,maxima
-      call mpi_barrier (mpi_komm_welt, ierr)
+     call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
       !        if(iof_hydro(29)==1) call writeout_nc(id_out_var(32),'temp_elem',6,nvrt,nea,tr_el(1,:,:))
@@ -492,7 +498,8 @@ subroutine get_schism_step(nt)
       ! real(rkind),save,allocatable :: flux_adv_vface(:,:,:) !unmodified vertical fluxes (positive upward)
       ! real(rkind),save,allocatable :: total_mass_error(:) !(ntracers) Total mass error after advection step for mass correction
       if(.not.allocated(flux_adv_vface))allocate(flux_adv_vface(nvrt,ntracers,nea))
-      flux_adv_vface=-1.d34 !used in transport; init. as flags
+      !flux_adv_vface=-1.d34 !used in transport; init. as flags
+      flux_adv_vface=0.0
       call check_err( nf_inq_varid(ncid,"flux_adv_vface", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
       call mpi_barrier (mpi_komm_welt, ierr)!#!
@@ -644,9 +651,9 @@ subroutine get_schism_step(nt)
       end do ! all i levels
 
       !######################### close clean return
-      call mpi_barrier (mpi_komm_welt, ierr)
-      call check_err( nf_close(ncid) )
-      call mpi_barrier (mpi_komm_welt, ierr)
+      iret = nf_close(ncid)
+      if (iret /= 0) print*,meinrang,' get_schism_step: nf_close(ncid) failed iret,ncid = ',iret,ncid
+      call check_err(iret)
       if (meinrang == 0) then
          deallocate(var_g,var1_g,var2_g,stat = istat)
          if (istat /= 0) call qerror("deallocate var_g( failed")
@@ -655,6 +662,8 @@ subroutine get_schism_step(nt)
       if (istat /= 0) call qerror("deallocate var_p( failed")
       deallocate (dlength,dname, stat = istat)
       deallocate (vxtype,vndims,vname,  stat = istat )
+      !print*,meinrang,'leaving get_schism_step'
+      call mpi_barrier (mpi_komm_welt, ierr)
       return
 end subroutine get_schism_step
       
