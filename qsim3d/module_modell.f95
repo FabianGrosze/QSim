@@ -620,7 +620,7 @@ module modell
    integer, parameter :: gangl_level = 1
    !----------------------------------------------------------------------------------------------------------
    public :: modeverz, zeile, zeitschritt_halb, ini_zeit, sekundenzeit, zeitsekunde, &
-   modell_vollstaendig, strickler, lambda,  &
+   modell_vollstaendig, strickler, lambda, schaltjahr,  &
    antriebsart
    !                points, netz_lesen, netz_gr3,
    !!  modell_parallel in parallel.f95
@@ -813,7 +813,7 @@ contains
       uhrzeit_stunde = uhrzeit_stunde+(real((deltat/2))/3600.0)
       if (uhrzeit_stunde >= 24.0)uhrzeit_stunde = uhrzeit_stunde-24.0
       zeitpunkt = rechenzeit
-      !call zeitsekunde()
+      call zeitsekunde()
       if (vorher) then ! vor dem Zeitschritt
          startzeitpunkt = rechenzeit-(deltat/2)
          endzeitpunkt = startzeitpunkt+deltat
@@ -843,12 +843,9 @@ contains
    !! \n\n
    subroutine sekundenzeit(opt)
       implicit none
-      integer vormonatstage, jahrestage, jahre, maxjahre,opt
-      logical schaltjahr
+      integer vormonatstage, jahrestage, jahre, maxjahre,opt, i
+      !logical schaltjahr
       real ustunde, uminute
-      schaltjahr = .false.
-      if (mod(jahr,4) == 0)schaltjahr = .true.
-      !write (*,*) tag, monat, jahr, schaltjahr
       jahre = jahr-referenzjahr
       if (jahre > 25)call qerror('sekundenzeit: Berechnungsjahr zu lange nach Referenzjahr')
       if (jahre < 0 )call qerror('sekundenzeit: Berechnungsjahr vor Referenzjahr')
@@ -858,13 +855,15 @@ contains
          ,maxjahre,jahre,jahr,referenzjahr
          call qerror(fehler)
       end if
-      jahrestage = int(jahre/4)*1461 ! Schaltjahperioden als ganzes abziehen
-      jahre = jahre - (int(jahre/4)*4)
-      if (jahre > 0) then ! Referenzjahr immer Schaltjahr !!!
-         jahrestage = jahrestage+366
-         jahre = jahre-1
-      end if
-      jahrestage = jahrestage+jahre*365 ! 0 ... 2 verbleibende jahre in Schaltjahperiode nach Schaltjahr
+      jahrestage=0
+      do i=referenzjahr,jahr-1
+         if(schaltjahr(i))then
+            jahrestage=jahrestage+366
+         else
+            jahrestage=jahrestage+365
+         endif ! leap year
+      end do ! all years
+
       select case (monat)
          case (1) !Januar
             vormonatstage = 0
@@ -895,7 +894,7 @@ contains
             write(fehler,*)'tag = ',tag,' monat = ',monat,' jahr = ',jahr,' Uhrzeit = ',uhrzeit_stunde
             call qerror(fehler)
       end select
-      if (schaltjahr .and. (monat > 2))vormonatstage = vormonatstage+1
+      if (schaltjahr(jahr) .and. (monat > 2))vormonatstage = vormonatstage+1
       
       zeitpunkt = 0
       zeitpunkt = zeitpunkt+(jahrestage*86400)
@@ -932,120 +931,90 @@ contains
    !! \n\n
    subroutine zeitsekunde()
       implicit none
-      integer schaltjahre, monatstage, tage
-      logical schaltjahr
+      integer schaltjahre, monatstage, jt
+      real realtag
+      !logical schaltjahr
       uhrzeit_stunde = 0.0
       monat = 0
-      tag = 0
+      !print*,'zeitsekunde: zeitpunkt,time_offset,referenzjahr=',zeitpunkt,time_offset,referenzjahr
       zeitpunkt = zeitpunkt+time_offset
-      tage = int(zeitpunkt/86400)
-      if ((tage >= 7*1461) .or. (tage < 0)) then
+      realtag = real(zeitpunkt)/86400.0
+      tag=int(realtag)      ! needs to be an integer division
+      if ((tag >= 7*1461) .or. (tag < 0)) then
          write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
-              ,zeitpunkt,tage,referenzjahr
+              ,zeitpunkt,realtag,referenzjahr
          call qerror(fehler)
       end if
-      uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
-      stunde = (zeitpunkt-(tage*86400))/3600
-      minute = (zeitpunkt-(tage*86400)-(stunde*3600))/60
-      sekunde = (zeitpunkt-(tage*86400)-(stunde*3600)-(minute*60))
-      schaltjahre = tage/1461 !(3*365+366)
-      tage = tage-(schaltjahre*1461)
-      jahr = schaltjahre*4
-      if (tage >= 366) then ! 4-Jahresperode beginnt mit schaltjahr
+      !print*,'zeitsekunde: zeitpunkt,realtag,tag=',zeitpunkt,realtag,tag
+
+      uhrzeit_stunde = real(zeitpunkt-(tag*86400))/3600.0
+      stunde = (zeitpunkt-(tag*86400))/3600
+      minute = (zeitpunkt-(tag*86400)-(stunde*3600))/60
+      sekunde = (zeitpunkt-(tag*86400)-(stunde*3600)-(minute*60))
+      !print*,'zeitsekunde: zeitpunkt-(tag*86400),stunde,minute,sekunde=',zeitpunkt-(tag*86400),stunde,minute,sekunde
+
+      jahr = referenzjahr
+      jt=365; if(schaltjahr(jahr))jt=366
+      do while (tag >= jt) ! another year
          jahr = jahr+1
-         tage = tage-366
-         do while (tage >= 365) ! weitere Jahre
-            jahr = jahr+1
-            tage = tage-365
-         end do !while
-      end if
-      jahr = jahr+referenzjahr
-      schaltjahr = .false.
-      if ( mod(jahr,4) == 0 ) then
-         schaltjahr = .true.
-         !print*,'zeitsekunde: schaltjahr'
-      end if
+         tag = tag-jt
+         jt=365; if(schaltjahr(jahr))jt=366
+      end do !while
+      !print*,'zeitsekunde: jahr,tag=',jahr,tag
+
       !print*,'zeitsekunde: tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)',  &
       !          tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)
-      tag = tage+1 ! erster tag nach 0 tagen im Jahr
-      tagdesjahres = tag ! für Wetter und Licht
+      tagdesjahres = tag+1 ! für Wetter und Licht
       monat = 1 ! im Januar (oder später im Jahr)
       monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im Februar (oder später im Jahr)
+      do while (tag >= monatstage) ! another month
          monat = monat+1
          tag = tag-monatstage
-      end if
-      monatstage = 28
-      if (schaltjahr)monatstage = 29
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im März (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im april (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im mai (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juni (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juli (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im august (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im september (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im oktober (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im november (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im dezember (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      end if
-      monatstage = 31
+         if((monat==3).or.(monat==5).or.(monat==7).or.(monat==8).or.(monat==10).or.(monat==12))monatstage = 31
+         if((monat==4).or.(monat==6).or.(monat==9).or.(monat==11))monatstage = 30
+         if(monat==2)then
+            if(schaltjahr(jahr))then
+               monatstage = 29
+            else
+               monatstage = 28
+            end if ! leap year
+         endif ! february
+      end do !while
+      !print*,'zeitsekunde: monat,tag=',monat,tag
+
+      tag=tag+1 ! Tagesanzahl in Datum umwandeln z.B. der nullte Tag im April ist der 1. April
+      
       if (tag > monatstage) then ! Jahr rum
          write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
                zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
          call qerror(fehler)
       end if
-      111    continue
+
       zeitpunkt = zeitpunkt-time_offset
    end subroutine zeitsekunde
+
+   !-----+-----+-----+-----+
+   !> Schaltjahr, leap year 
+   !! \n\n
+   logical function schaltjahr (year)
+      ! 1.) Die durch 4 ganzzahlig teilbaren Jahre sind, abgesehen von den folgenden Ausnahmen, Schaltjahre.
+      ! 2.) Säkularjahre, also die Jahre, die ein Jahrhundert abschließen (z. B. 1800, 1900, 2100 und 2200), 
+      !     sind, abgesehen von der folgenden Ausnahme, keine Schaltjahre.
+      ! 3.) Die durch 400 ganzzahlig teilbaren Säkularjahre, zum Beispiel das Jahr 2000, sind jedoch Schaltjahre.
+      integer year
+      
+      schaltjahr = .false.
+      if ( mod(year,4) == 0 ) then
+         schaltjahr = .true.
+      end if
+      if ( mod(year,100) == 0 ) then
+         schaltjahr = .false.
+      end if
+      if ( mod(year,400) == 0 ) then
+         schaltjahr = .true.
+      end if
+   end function schaltjahr
+
    !-----+-----+-----+-----+
    !> Wenn die Nachkommastelle in lesezeit die Minuten angibt, in dezimaldarstellung rückrechnen
    !! \n\n

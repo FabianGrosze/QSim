@@ -304,7 +304,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call mpi_reduce(npa,n,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)
       if(meinrang==0)print*,'mpi_sum=',k,m,n,'np_global',np_global
 
-      !check partition consitency
+      !check partition consistency
       j=0
       do i=1,ne
          if(iegrpv(ielg(i)).ne.meinrang)then

@@ -36,7 +36,7 @@ subroutine get_schism_step(nt)
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
       ,idry_s,nea2,dfh,hdif,flux_adv_vface,ntracers,ze,zs
       
-      use schism_msgp, only: myrank,nproc,parallel_abort
+      use schism_msgp, only: myrank,nproc,parallel_abort,exchange_s3dw
       implicit none
       
       include "netcdf.inc"
@@ -427,11 +427,14 @@ subroutine get_schism_step(nt)
          call check_err(iret)
          if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var temp_elem failed iret = ",iret,i
          ze(i,1:nea) = var_p(1:nea)
+      end do ! all i levels
+      !#call exchange_s3dw(ze)
+      do i = 1,nvrt
          print*,meinrang,' level i=',i,' ze(nea)  from...until '  &
                ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
                ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
       end do ! all i levels
-     call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
       !        if(iof_hydro(29)==1) call writeout_nc(id_out_var(32),'temp_elem',6,nvrt,nea,tr_el(1,:,:))
