@@ -34,7 +34,7 @@ subroutine nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
    real,    intent(in),    dimension(ialloc1)        :: enl0   !<
    integer, intent(in),    dimension(azStrs)         :: ieinLs !< number of diffuse sources per stretch
    real,    intent(in),    dimension(ialloc1)        :: qeinlL !<
-   real,    intent(in),    dimension(ialloc2)        :: qeinl  !<
+   real,    intent(in),    dimension(ialloc1)        :: qeinl  !<
    real,    intent(in),    dimension(ialloc2)        :: vabfl  !<
    integer, intent(in),    dimension(ialloc1)        :: iorLe  !< 
    integer, intent(in),    dimension(ialloc1)        :: iorLa  !<

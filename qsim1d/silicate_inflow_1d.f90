@@ -17,8 +17,8 @@ subroutine silicate_inflow_1d(si, q_sk, siL, esi, mstr, ieinLs,   &
    real,    intent(in),    dimension(ialloc1) :: qeinlL
    real,    intent(in),    dimension(ialloc1) :: qeinl
    real,    intent(in),    dimension(ialloc2) :: vabfl
-   real,    intent(in),    dimension(ialloc1) :: iorLe
-   real,    intent(in),    dimension(ialloc1) :: iorLa
+   integer, intent(in),    dimension(ialloc1) :: iorLe
+   integer, intent(in),    dimension(ialloc1) :: iorLa
    integer, intent(in),    dimension(ialloc2) :: jiein
    real,    intent(in),    dimension(ialloc2) :: flae
    integer, intent(in)                        :: anze
