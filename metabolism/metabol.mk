@@ -60,4 +60,5 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/erosion.o \
       ../metabolism/erosion_kern.o \
       ../metabolism/schweb.o \
-      ../metabolism/schweb_kern.o
+      ../metabolism/schweb_kern.o \
+      ../metabolism/schaltjahr.o

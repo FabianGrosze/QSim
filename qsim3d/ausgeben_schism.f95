@@ -34,7 +34,8 @@ subroutine ausgeben_schism(itime)
    ,ielg,iplg,islg
    use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
-   character(len = longname) :: dateiname, systemaufruf, zahl
+   character(len = longname) :: dateiname, systemaufruf, zahl, beschriftung
+   character(4) level
    integer :: i,j,k,n, istat, ion, errcode, open_error
    integer :: sysa, itime
    real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy, vx, vy, vz
@@ -119,42 +120,58 @@ if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', number_plankt_point
    
-   write(ion,'(A)')'SCALARS Rang float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') real(element_rang(n))
-   end do ! all elements
-   write(ion,'(A)')'SCALARS zone float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') real(element_zone(n))
-   end do ! all elements
-   write(ion,'(A)')'SCALARS Rand float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') real(element_rand(n))
-   end do ! all elements
+   !write(ion,'(A)')'SCALARS Rang float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') real(element_rang(n))
+   !end do ! all elements
+   !write(ion,'(A)')'SCALARS zone float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') real(element_zone(n))
+   !end do ! all elements
+   
+   !write(ion,'(A)')'SCALARS Rand float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') real(element_rand(n))
+   !end do ! all elements
+   
+   do i=1,nvrt
+      write(level,'(I4.4)')i
+      beschriftung = 'ze'//level
+      beschriftung = 'SCALARS '//trim(beschriftung)//' float 1'
+      write(ion,'(A)')trim(beschriftung)
+      write(ion,'(A)')'LOOKUP_TABLE default'
+      do n = 1,number_plankt_point
+         write(ion,'(f27.6)') element_z(i,n)
+      end do ! all n elements
+   end do ! all i levelselements
+
    write(ion,'(A)')'SCALARS WSP_rb3 float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
    end do ! all elements
-   write(ion,'(A)')'SCALARS depth_rb2 float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-   end do ! all elements
-   write(ion,'(A)')'SCALARS vel_rb1 float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') rb_hydraul(1+(n-1)*number_rb_hydraul)
-   end do ! all elements
-   write(ion,'(A)')'SCALARS dry float 1'
-   write(ion,'(A)')'LOOKUP_TABLE default'
-   do n = 1,number_plankt_point
-      write(ion,'(f27.6)') real(element_trocken(n))
-   end do ! all elements
-   close (ion)
+   
+   !write(ion,'(A)')'SCALARS depth_rb2 float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
+   !end do ! all elements
+   
+   !write(ion,'(A)')'SCALARS vel_rb1 float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') rb_hydraul(1+(n-1)*number_rb_hydraul)
+   !end do ! all elements
+   
+   !write(ion,'(A)')'SCALARS dry float 1'
+   !write(ion,'(A)')'LOOKUP_TABLE default'
+   !do n = 1,number_plankt_point
+   !   write(ion,'(f27.6)') real(element_trocken(n))
+   !end do ! all elements
+   !close (ion)
    print*,meinrang,myrank,'elements output ausgeben_schism done'
    
 end if ! meinrang==0

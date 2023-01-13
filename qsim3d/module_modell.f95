@@ -195,6 +195,7 @@ module modell
    integer , allocatable , dimension (:) :: element_rang , element_trocken
    integer , allocatable , dimension (:,:) :: elementnodes, elementedges
    real , allocatable , dimension (:) :: element_x, element_y
+   real , allocatable , dimension (:,:) :: element_z ! depth levels (SCHISM)
    !> Vermaschung Kanten
    logical :: kanten_vorhanden
    integer :: kantenanzahl
@@ -620,7 +621,7 @@ module modell
    integer, parameter :: gangl_level = 1
    !----------------------------------------------------------------------------------------------------------
    public :: modeverz, zeile, zeitschritt_halb, ini_zeit, sekundenzeit, zeitsekunde, &
-   modell_vollstaendig, strickler, lambda, schaltjahr,  &
+   modell_vollstaendig, strickler, lambda,   &
    antriebsart
    !                points, netz_lesen, netz_gr3,
    !!  modell_parallel in parallel.f95
@@ -844,7 +845,7 @@ contains
    subroutine sekundenzeit(opt)
       implicit none
       integer vormonatstage, jahrestage, jahre, maxjahre,opt, i
-      !logical schaltjahr
+      logical schaltjahr
       real ustunde, uminute
       jahre = jahr-referenzjahr
       if (jahre > 25)call qerror('sekundenzeit: Berechnungsjahr zu lange nach Referenzjahr')
@@ -931,9 +932,9 @@ contains
    !! \n\n
    subroutine zeitsekunde()
       implicit none
-      integer schaltjahre, monatstage, jt
+      integer monatstage, jt
       real realtag
-      !logical schaltjahr
+      logical schaltjahr
       uhrzeit_stunde = 0.0
       monat = 0
       !print*,'zeitsekunde: zeitpunkt,time_offset,referenzjahr=',zeitpunkt,time_offset,referenzjahr
@@ -962,8 +963,6 @@ contains
       end do !while
       !print*,'zeitsekunde: jahr,tag=',jahr,tag
 
-      !print*,'zeitsekunde: tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)',  &
-      !          tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)
       tagdesjahres = tag+1 ! für Wetter und Licht
       monat = 1 ! im Januar (oder später im Jahr)
       monatstage = 31
@@ -992,28 +991,6 @@ contains
 
       zeitpunkt = zeitpunkt-time_offset
    end subroutine zeitsekunde
-
-   !-----+-----+-----+-----+
-   !> Schaltjahr, leap year 
-   !! \n\n
-   logical function schaltjahr (year)
-      ! 1.) Die durch 4 ganzzahlig teilbaren Jahre sind, abgesehen von den folgenden Ausnahmen, Schaltjahre.
-      ! 2.) Säkularjahre, also die Jahre, die ein Jahrhundert abschließen (z. B. 1800, 1900, 2100 und 2200), 
-      !     sind, abgesehen von der folgenden Ausnahme, keine Schaltjahre.
-      ! 3.) Die durch 400 ganzzahlig teilbaren Säkularjahre, zum Beispiel das Jahr 2000, sind jedoch Schaltjahre.
-      integer year
-      
-      schaltjahr = .false.
-      if ( mod(year,4) == 0 ) then
-         schaltjahr = .true.
-      end if
-      if ( mod(year,100) == 0 ) then
-         schaltjahr = .false.
-      end if
-      if ( mod(year,400) == 0 ) then
-         schaltjahr = .true.
-      end if
-   end function schaltjahr
 
    !-----+-----+-----+-----+
    !> Wenn die Nachkommastelle in lesezeit die Minuten angibt, in dezimaldarstellung rückrechnen

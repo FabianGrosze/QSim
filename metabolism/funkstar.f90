@@ -49,7 +49,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    character (len = 255)                       :: cpfad
    character (len = 275)                       :: pfadstring
    
-   integer                                     :: azStrs,RBNR, read_error
+   integer                                     :: azStrs,RBNR, read_error, jjj
    integer, dimension(40000)                   :: imstr, iRBNR, ianzW
    integer, dimension(azStrs,100)              :: istund, RBtyp, NRSchr
    integer, dimension(200,40000)               :: itagl, monatl, jahrl
@@ -68,6 +68,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    real, dimension(200,40000)                  :: uhrl
    real, dimension(:,:,:), allocatable         :: werts
    double precision                            :: R_NRS, R_NRS2, R_NRS1
+   logical schaltjahr
    
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
    save R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
@@ -172,7 +173,12 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    endif
    
    !Tage seit 1900 (Berücksichtigung der Schaltjahre
-   NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4)
+   !NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4)
+   NRSJ = 0
+   do jjj = 1900, Jahrs-1
+      NRSJ=NRSJ+365
+      if(schaltjahr(jjj))NRSJ=NRSJ+1
+   end do !years sind 19000
    
    R_NRS = NRS + NRSJ + Uhrz/24.
    ! Schleife über alle Randbedingungen hier: Beginn

@@ -238,6 +238,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
          read(10+meinrang,*)elside(1,m),elside(2,m),elside(3,m),elside(4,m),ssign(1,m),ssign(2,m),ssign(3,m),ssign(4,m)
          !if(kbe(m)<1)print*,meinrang,m,' read_mesh_schism local_to_global: kbe(m)<1',kbe(m)
       enddo !m
+      print*,meinrang,'kbe min...max=',minval(kbe(1:ne)),maxval(kbe(1:ne))
       sum_area=sum_area/1000000 ! km²
       allocate(isidenode(2,nsa),isdel(2,nsa))
       allocate(distj(nsa),delj(nsa),snx(nsa),sny(nsa),isbs(nsa),kbs(nsa))

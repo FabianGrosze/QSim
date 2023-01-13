@@ -42,6 +42,8 @@ subroutine wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, azStrs, mStra,   &
    real,dimension(azStrs)                  :: wehrb, wehrh
    real, dimension(:,:,:), allocatable     :: wertwe
    real, dimension(:,:), allocatable       :: uhrzr
+   logical schaltjahr
+
    save uhrzr, itagr, monatr, jahrr, wertwe
    
    
@@ -144,9 +146,14 @@ subroutine wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, azStrs, mStra,   &
    
    ! Tage seit 1900 (Berücksichtigung der Schaltjahre
    ! TODO (schoenung): Diese Formel ist falsch. Nicht jedes durch 4 teilbare Jahr
-   !                   ist ein Schaltjahr.
-   NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4) 
-   
+   !                   ist ein Schaltjahr. Korrektur !!wy
+   !NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4) 
+   NRSJ = 0
+   do jjj = 1900, Jahrs-1
+      NRSJ=NRSJ+365
+      if(schaltjahr(jjj))NRSJ=NRSJ+1
+   end do !years sind 19000
+
    R_NRS = NRS + NRSJ + Uhrz/24.
    do azStr = 1,azStrs       ! Beginn Strangschleife
       mstr = mstra(azStr)

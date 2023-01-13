@@ -426,15 +426,42 @@ subroutine get_schism_step(nt)
          iret = nf90_get_var(ncid, varid, var_p(1:nea), start3, count3 )
          call check_err(iret)
          if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var temp_elem failed iret = ",iret,i
-         ze(i,1:nea) = var_p(1:nea)
+         ze(i,1:ne) = var_p(1:ne)
+         
+          !! recombine into global numbers
+         call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+         if (meinrang == 0) then
+            if(.not.allocated(element_z)) allocate(element_z(nvrt,ne_global),stat=istat);
+            element_z(i,:)=0.0 !initialize
+            do j = 1,proz_anz ! all j processes/ranks
+               do k = 1,ne_sc(j) ! all elements at this rank
+                  element_z(i,ielg_sc(j,k)) = var_g((j-1)*maxstack+k)
+               end do ! all k elements on this processor
+            end do ! all j processes
+         end if ! proc. 0 only
+         call mpi_barrier (mpi_komm_welt, ierr)
+         
       end do ! all i levels
+      
+      ! fill ghost elements ne:nea
       !#call exchange_s3dw(ze)
+      
       do i = 1,nvrt
-         print*,meinrang,' level i=',i,' ze(nea)  from...until '  &
+         print*,meinrang,' level from .nc i=',i,' ze(nea)  from...until '  &
                ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
                ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
       end do ! all i levels
       call mpi_barrier (mpi_komm_welt, ierr)
+      
+      !other way round
+      !call levels0(0,0)
+      !do i = 1,nvrt
+      !   print*,meinrang,' level by levels0 i=',i,' ze(nea)  from...until '  &
+      !         ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+      !         ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+      !end do ! all i levels
+      !call mpi_barrier (mpi_komm_welt, ierr)
+
 
       !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
       !        if(iof_hydro(29)==1) call writeout_nc(id_out_var(32),'temp_elem',6,nvrt,nea,tr_el(1,:,:))

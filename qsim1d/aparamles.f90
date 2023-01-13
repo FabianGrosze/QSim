@@ -36,7 +36,8 @@ subroutine aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
    integer                    :: anzDatum,  R_NR,  R_NRS, read_error
    integer, dimension(1000)   :: itagp, monatp, jahrp
    real, dimension(1000,3)    :: wertp
-   
+   logical schaltjahr
+
    ! Einlesen aus aparamt.txt
    close (192)
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'aparamt.txt'
@@ -48,7 +49,12 @@ subroutine aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
       NRS = ITAGS+31*(MONATS-1)
    endif
    
-   NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4) !Tage seit 1900 (Berücksichtigung der Schaltjahre
+   !NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4) !Tage seit 1900 (Berücksichtigung der Schaltjahre
+   NRSJ = 0
+   do jjj = 1900, Jahrs-1
+      NRSJ=NRSJ+365
+      if(schaltjahr(jjj))NRSJ=NRSJ+1
+   end do !years since 19000
    
    R_NRS = NRS + NRSJ
    read(192,'(i4)',iostat = read_error)anzDatum

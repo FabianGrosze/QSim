@@ -69,6 +69,7 @@ subroutine stofftransport_schism()
       !print*,'mpi_komm_welt,comm,MPI_COMM_WORLD=',mpi_komm_welt,comm,MPI_COMM_WORLD 
       !myrank=meinrang
       !comm=mpi_komm_welt 
+      
       call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
 !      end do ! all sub timesteps

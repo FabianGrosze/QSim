@@ -43,6 +43,8 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
    real, dimension(:,:), allocatable     :: uhrzw
    real, dimension(:,:,:), allocatable   :: wertw
    double precision                      :: R_NRS2, R_NRS1, R_NRS
+   logical schaltjahr
+
    save itagw, monatw, jahrw, uhrzw, wertw, iwetts,R_NRS2, R_NRS1, R_NRS, IWSta, mWetts
    
    ! Parameter
@@ -139,8 +141,13 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
       NRS = ITAGS+31*(MONATS-1)
    endif
    
-   NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4)            !Tage seit 1900 (Berücksichtigung der Schaltjahre
-   
+   !NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4)            !Tage seit 1900 (Berücksichtigung der Schaltjahre
+   NRSJ = 0
+   do jjj = 1900, Jahrs-1
+      NRSJ=NRSJ+365
+      if(schaltjahr(jjj))NRSJ=NRSJ+1
+   end do !years sind 19000
+
    if (imet == 0) then
       R_NRS = NRS + NRSJ
    else

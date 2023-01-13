@@ -36,20 +36,22 @@ subroutine anzTag(monat, jahr, tage)
    integer, intent(out)    :: tage  !< Anzahl der Tage
    
    integer                 :: schalttag
+   logical schaltjahr
    
    ! --- auf Schaltjahr prüfen ---
    ! Ein Jahr ist ein Schaltjahr, wenn es durch 4 teilbar ist.
    ! Falls sich die Jahrzahl durch 100 teilen lässt, ist es kein Schaltjahr.
    ! Falls auch eine Teilung durch 400 möglich ist, dann ist es ein Schaltjahr.
-   if (mod(jahr, 400) == 0) then
-     schalttag = 1
-   else if (mod(jahr,100) == 0) then
-     schalttag = 0
-   elseif (mod(jahr, 4) == 0) then
-     schalttag = 1
-   else
-     schalttag = 0
-   endif
+   ! if (mod(jahr, 400) == 0) then
+   !   schalttag = 1
+   ! else if (mod(jahr,100) == 0) then
+   !   schalttag = 0
+   ! elseif (mod(jahr, 4) == 0) then
+   !   schalttag = 1
+   ! else
+   !   schalttag = 0
+   ! endif
+   schalttag = 0 ; if(schaltjahr(jahr))schalttag = 1
    
    ! --- Anzahl der Tage bestimmen ---
    select case (monat)
