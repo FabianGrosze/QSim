@@ -28,21 +28,28 @@
 !! Beschreibung siehe:\ref index \n
 program QSim3D
    
+   use allodim
    use netcdf
    use modell
    use QSimDatenfelder
    use mod_suspendedMatter, only: step_suspendedMatter
    !use netcdf
    !use mpi
+   
    implicit none
+   
    include 'netcdf.inc'
+   
    integer :: i,ni,j,k,n, system_error
    character(300) systemaufruf
-   logical :: raus, jetzt_ausgeben, only
+   logical :: raus, jetzt_ausgeben
+   
    !----initialize parallel computing:
    call parallel_ini()
    ! ----- write start message, find model directory, start progess display (file "fortschritt") which blocks concurrent runs in the same directory
    call fortschritt(1,0.0) ! also gets type of hydraulic driver
+   ! ----- set number of stretches
+   call set_azstrs(1)    
    !------- reading input, allocation, initialisation etc.
    call eingabe()        ! --- input
    call initialisieren() ! --- initialize

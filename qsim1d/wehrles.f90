@@ -28,14 +28,16 @@
 !> Ermittlung der Wehrhöhen und Wehrbreiten für eine Zeitschritt
 !! @author Volker Kirchesch
 !! @date 13.06.2013
-subroutine wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, azStrs, mStra,   &
+subroutine wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, mStra,   &
                    jlWO2, janzWt, janzWs, cpfad, iwied)
+   
+   use allodim
    
    character (len = 1)                     :: cwert
    character (len = 40)                    :: MODNAME, ERENAME
    character (len = 255)                   :: cpfad
    character (len = 275)                   :: pfadstring
-   integer                                 :: azStr, azStrs, read_error
+   integer                                 :: azStr, read_error
    integer,dimension(azStrs)               :: io2Ws, ISWEHR, janzWs, janzWt, mstra, jlwo2
    integer,dimension(:,:), allocatable     :: itagr, monatr, jahrr
    

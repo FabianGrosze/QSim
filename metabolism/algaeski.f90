@@ -35,7 +35,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
                     ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL            &
                     ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki              &
                     ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB                        &
-                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1,azStrs                                                &
+                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                                       &
                     ,kontroll ,jjj )              !!wy
    
    
@@ -46,6 +46,8 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    
    !     STAND: 08.09.2015
    
+   use allodim
+   
    logical kontroll !!wy
    integer jjj !!wy
    
@@ -53,7 +55,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    character (len = 255)                      :: cpfad
    character (len = 275)                      :: pfadstring
    character (len = 2)                        :: ckenn_vers1
-   integer                                    :: anze, azStrs
+   integer                                    :: anze
    integer, dimension(1000)                   :: flag, jiein, ischif, nkzs
    integer, dimension(azStrs)                 :: ieinLs
    integer, dimension(azStrs,1000)            :: it_h

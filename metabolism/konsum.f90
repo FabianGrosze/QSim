@@ -32,7 +32,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
                   ,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                      &
                   ,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
-                  ,itags,uhrz,mstr,azStrs                                           &
+                  ,itags,uhrz,mstr                                                  &
                   ,kontroll ,jjj ) !!wy
    
    
@@ -49,9 +49,11 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    
    !   irmax  - max. Filtrierate in mueg Chl-a/(100 Ind*d)
    
+   use allodim
+   
    logical kontroll !!wy
    integer jjj !!wy
-   integer                        :: anze, azStrs
+   integer                        :: anze
    integer, dimension(1000)       :: jiein, nkzs, flag
    real                           :: irmaxK, irmaxG, irmaxB, irmaxn, irmax, irmaxe, mueRot, mormax, mormin, morRot
    real                           :: irmax_Ind, ir_F

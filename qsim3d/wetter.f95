@@ -728,8 +728,11 @@ end subroutine temperl_wetter
 !!
 !! Umstellung von profilweise auf wetterstationsweise (Zuordnung über Zonen)
 subroutine strahlg_wetter()
+   
+   use allodim
    use modell
    use qsimdatenfelder
+   
    implicit none
    
    integer, dimension(8)      :: NRV
@@ -798,8 +801,7 @@ subroutine strahlg_wetter()
       call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
                    cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
                    EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
-                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr,    &
-                   azStrs)
+                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr)
       schwi_T(i) = schwi(1)    ! global radiation at weather station
       
       !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)

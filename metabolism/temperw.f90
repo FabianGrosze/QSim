@@ -31,8 +31,11 @@
 subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl,    &
                    jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,  &
                    qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,monats,Tsed,Wlage,hWS,                    &
-                   htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,azStrs,iwsim,iform_VerdR,                     &
+                   htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,iwsim,iform_VerdR,                            &
                    kontroll,jjj)
+                   
+   use allodim
+                   
    implicit none
 
    ! TODO (frassl) 
@@ -94,7 +97,6 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     PSREFSS: Eingabewert für den Reflextionsanteils der Strahlung am Sediment [%/100]
    !   #mf d.h. PSREFSS hat Werte zwischen 0-1? Einheit hat mich verwirrt
    !     EXTKS  : Eingabewert für die Lichtextinktion [1/m]
-   !     AZSTRS : Anzahl der Stränge [-]
    !     IWSIM  : Schalter für die Auswahl der zu simulierenden Parameter [-]
    !     IFORM_VERDR: Schalter für die Auswahl der Verdunstungsformeln [-]
    ! wichtige Parameter, die für die Berechnung benutzt werden
@@ -127,7 +129,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    ! Bei der Simulation eines Tracer-Durchgangs wird automatisch die Einleiterkonz.
    ! auf 0 gesetzt.
 
-   integer                         :: ior, anze, mstr, nkz, azStrs, iein, ieinL, j, ior_flag, ilbuhn, m, ihcQ
+   integer                         :: ior, anze, mstr, nkz, iein, ieinL, j, ior_flag, ilbuhn, m, ihcQ
    integer                         :: ji, iwsim, itags, iwied, nwaerm, ilang, monats
    integer                         :: iform_VerdR
    real                            :: tflie, WUEBK, speWKS,PSREFS, hctemp

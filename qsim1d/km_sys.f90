@@ -26,13 +26,14 @@
 ! --------------------------------------------------------------------------- !
 
 !> km_sys
-subroutine km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, &
+subroutine km_sys(mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, &
                   iorLeh,mstrLe,abfr,cpfad)
    
+   use allodim
    
    character (len = 255)             :: cpfad
    character (len = 275)             :: pfadstring
-   integer                           :: azStrs, azStr
+   integer                           :: azStr
    integer, dimension(1000)          :: flaga, jieina
    
    integer, dimension(azStrs)        :: mwehr, mRBs, mStas, mStra, abfr

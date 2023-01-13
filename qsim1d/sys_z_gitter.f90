@@ -24,13 +24,16 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z, &
+subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,        &
                         hno2z,hno3z,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,     &
                         hchlgz,hchlbz,hgesPz,hgesNz,hQ_NKz,hQ_NBz,hQ_NGz,hCChlkz,    &
                         hCChlbz,hCChlgz,itags,monats)
    ! znkzs:  Anzahl der Gitterpunkte des alten Gitters
    ! hnkzs:  Anzahl Gitterpunkte des neuen Gitters
-   integer                                :: azStrs,azStr, nkzs, nkzs_neu, nkz_alt,mstr
+   
+   use allodim
+   
+   integer                                :: azStr, nkzs, nkzs_neu, nkz_alt,mstr
    integer, dimension(azStrs)             :: mstra, hanze, iFlRi
    integer, dimension(azStrs,1000)        :: znkzs, hnkzs
    real, dimension(azStrs,50,1000)        :: htempz, ho2z, hnh4z, hno2z, hno3z, hgelPz, hSiz, hakiz, hagrz, hablz, hchlaz

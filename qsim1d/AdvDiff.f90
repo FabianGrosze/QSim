@@ -28,8 +28,8 @@
 !> advDiff
 !! @author Volker Kirchesch
 !! @date 27.01.2009
-subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sumdet,itime,izeits,mstr,iwied           &
-                   ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,azStrs,kktrans,nkztot_max   &
+subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sumdet,itime,izeits,mstr,iwied         &
+                   ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max     &
                    ,ianze_max,mtracer,iwsim,uhrz)
    
    ! Lösungsverfahren RCIP nach: F. Xiao et al., Constructing oscillation preventing
@@ -39,7 +39,9 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    !                             Lax_Wendroff: High Resolution Shock-Capturing Numerical Methods
    !                             S. 100, Formel (6.20)
    
-   integer                                :: azStrs, anze, nkz, ior
+   use allodim
+   
+   integer                                :: anze, nkz, ior
    integer, dimension(azStrs)             :: iFlRi, imac
    integer, dimension(1000)               :: flag, nkzs
    integer, dimension(1000,50)            :: m, isgn
@@ -134,7 +136,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
          
          call basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint,m,iwied,itime,izeits  &
                          ,jpoin1,sumdet,tfliesec,nkz,nkzs,iwahlD,ipo,mstr,itags,monats,ktrans             &
-                         ,isgn,vx_Cr,azStrs,nkztot_max,ianze_max,uhrz)
+                         ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
       endif
    endif
    if (iverfahren == 1) then
@@ -146,7 +148,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    endif
    if (iverfahren == 1) then
       call CIP(U, CUx, elen, DeltaT, anze, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,mstr    &
-               ,iwahld,azSTrs, nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
+               ,iwahld, nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
       if (iwahlD == 1) then
          CU(ktrans,mstr,1:anze+1) = CUx(1:anze+1)
       else
@@ -170,10 +172,10 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    ! if(ktrans/=44)then
    if (iMac(mstr) == 0) then
       call Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
-                          ,itags,monats,itime,isub_dtx,isgn,uhrz,azStrs)
+                          ,itags,monats,itime,isub_dtx,isgn,uhrz)
    else
       call MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,itags,monats,itime            &
-                   ,isub_dtx,isgn,uhrz,azStrs)
+                   ,isub_dtx,isgn,uhrz)
    endif
    ! endif
    ! **Ende Zeitschleife**
@@ -208,11 +210,13 @@ end subroutine AdvDiff
 
 subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint,m,iwied,itime,izeits  &
                       ,jpoin1,sumdet,tfliesec,nkz,nkzs,iwahlD,ipo,mstr,itags,monats,ktrans              &
-                      ,isgn,vx_Cr,azStrs,nkztot_max,ianze_max,uhrz)
+                      ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
+                      
+   use allodim
    
    integer, dimension(1000)         :: flag, nkzs
    integer, dimension(1000,50)      :: m, isgn
-   integer                          :: anze, azStrs
+   integer                          :: anze
    real, dimension(1000)            :: elen, vmitt
    real, dimension(50,1000)         :: vmittt_1, Uvert
    real, dimension(1000,50)         :: xpoint
@@ -316,8 +320,11 @@ end subroutine BasisPoint
 
 
 subroutine Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
-                          ,itags,monats,itime,isub_dtx,isgn,uhrz,azStrs)
-   integer                            :: anze,azStrs
+                          ,itags,monats,itime,isub_dtx,isgn,uhrz)
+   
+   use allodim
+   
+   integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs, imarker
    integer, dimension(1000,50)        :: isgn
    real, dimension(1000)              :: r1, r2, r3, dl, elen, U
@@ -530,8 +537,11 @@ end subroutine thomas
 
 
 subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,itags,monats,itime           &
-                   ,isub_dtx,isgn,uhrz,azStrs)
-   integer                            :: anze, azStrs
+                   ,isub_dtx,isgn,uhrz)
+   
+   use allodim
+   
+   integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs
    integer, dimension(1000,50)        :: isgn
    real, dimension(1000)              :: dl, elen, nenner
@@ -680,9 +690,11 @@ end subroutine MacCorm
 
 !> Calculating 1D Advection equation based on an cubic Interpolation
 subroutine CIP(U, CUx, DX, DT, NX, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,mstr    &
-               ,iwahld,azStrs,nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
+               ,iwahld,nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
 
-   integer :: NX, I, azStrs
+   use allodim
+   
+   integer :: NX, I
    integer, dimension(1000) :: nkzs, flag
    integer, dimension(1000,50) :: m, isgn
    real, dimension(1000) :: DX, U,CUx, CU_neu,U_neu, Ulin

@@ -30,13 +30,15 @@
 !! @author Volker Kirchesch
 !! @date 15.08.2017
 subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,grote,chla,tempw,jiein,ecoli,    &
-                    qeinl,colil,qeinll,anze,iorla,iorle,ieinls,ilbuhn,coli,doscf,extks,mstr,azstrs,             &
+                    qeinl,colil,qeinll,anze,iorla,iorle,ieinls,ilbuhn,coli,doscf,extks,mstr,                    &
                     ratecde,etacde,ratecie,xnuece,ratecge,ratecse,                                              &
                     kontroll,jjj)
    
+   use allodim
+   
    logical                       :: kontroll    !< debugging
    integer                       :: jjj         !< debugging
-   integer                       :: anze,azStrs
+   integer                       :: anze
    integer, dimension(100)       :: iorLa, iorLe
    integer, dimension(1000)      :: flag, jiein
    integer, dimension(azStrs)    :: ieinLs

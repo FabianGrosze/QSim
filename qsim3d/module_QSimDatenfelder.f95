@@ -35,13 +35,16 @@
 !!\n\n
 !! zurück zu: \ref lnk_huellen
 module QSimDatenfelder
+
+   use allodim, only: ialloc2
+   
    implicit none
    save
    
-   !> \ref azstrs Stranganzahl Felddimensionierungs-Parameter
-   integer , parameter :: azStrs = 1
-   !> \anchor ialloc2 Querprofile im Strang Felddimensionierungs-Parameter
-   integer , parameter :: ialloc2 = 1000  !!!##### do not change !!!!
+   ! awful hack so that it works ...
+   ! is also defined as variable in module_allodim
+   integer, parameter, private :: azstrs = 1
+   
    ! Zeitpunkt Berechnungs-Start
    !> \anchor itags Tag Berechnungs-Start
    integer itags

@@ -31,16 +31,18 @@
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
 subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
-                  ,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
+                  ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                   ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                   ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
                   ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
                   ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
    
+   use allodim
+   
    character (len = 2)                    :: cwertv
    character (len = 255)                  :: cpfad
    character (len = 275)                  :: pfadstring
-   integer                                :: anze, SCHRNR, azStr, azStrs, read_error
+   integer                                :: anze, SCHRNR, azStr, read_error
    integer, dimension(azStrs)             :: STRiz, nbuhn, mSs, mStra, isegs, mUs, abfr, mStas, mRBs
    integer, dimension(1000)               :: flag, jiein
    integer, dimension(azStrs,100)         :: RBtyp

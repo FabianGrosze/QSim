@@ -26,13 +26,16 @@
 ! --------------------------------------------------------------------------- !
 
 subroutine initialisieren()
+
    use modell
    use QSimDatenfelder
    use aparam
    
    implicit none
+   
    integer i,j,k,nini,nuzo, nt, irn
    logical vorhanden, einmal
+   
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
       print*,'initialisieren mit rechenzeit = ',rechenzeit
       !     Initialisierung aller transportierten planktischen Variablen (Konzentrationen) zunächt auf Null

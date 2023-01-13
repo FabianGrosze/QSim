@@ -146,7 +146,7 @@ subroutine konsum_huelle(i)
    itags = tag     ! Tag im Monat module::modell zeitsekunde()
    uhrz = uhrzeit_stunde ! Uhrzeit
    mstr = 1        ! Strangzähler | nur ein Profil in einem Strang
-   ! azStrs=1 parameter in 3D
+   
    TGZoo(1,1) = planktonic_variable_p(76+(i-1)*number_plankt_vari) ! Zooplanktongewicht
    TGZoo(1,2) = TGZoo(1,1)
    BAC(1) = planktonic_variable_p(42+(i-1)*number_plankt_vari) ! Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
@@ -170,7 +170,7 @@ subroutine konsum_huelle(i)
                ,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                   &
                ,rakr,rbar,CHNF,zHNF,ilbuhn,ZAKI,ZAGR,ZABL,HNFza,algzok        &
                ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
-               ,itags,uhrz,mstr,azStrs                                        &
+               ,itags,uhrz,mstr                                               &
                ,kontroll,iglob)
    ! vkigr,TEMPW,VO2,TFLIE
    ! ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl

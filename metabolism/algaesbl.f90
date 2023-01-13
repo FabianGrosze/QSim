@@ -36,15 +36,17 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
                     vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB,                   &
                     upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz,            &
                     chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ,         &
-                    sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs,                                     &
+                    sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,                                            &
                     kontroll, jjj)
+                    
+   use allodim
    
    logical                                   :: kontroll
    integer                                   :: jjj
    character (len = 255)                     :: cpfad
    character (len = 275)                     :: pfadstring
    character (len = 2)                       :: ckenn_Vers1
-   integer                                   :: anze, azStrs
+   integer                                   :: anze
    integer, dimension(1000)                  :: ischif, jiein, flag, nkzs
    real                                      :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp
    real, dimension(1000)                     :: tempw, chla, vno3, elen, vnh4, gelp, ir, vco2, svhemb, dalgbl

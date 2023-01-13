@@ -33,7 +33,7 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
                    cloud, schwia, imet, mstr, IDWe, itags, monats, VTYP,    &
                    VALTBL, EDUFBL, VALTBR, EDUFBR, breite, anze,            &
                    it_h, ij, jahrs, itage, monate, jahre, uhren,            &
-                   isim_end, azStr, azStrs)
+                   isim_end, azStr)
    
    ! Parameter:
    ! SCHWI  - Globalstrahlung an der Wasseroberflaeche unter Berücksichtigung
@@ -41,7 +41,10 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    ! SH     - Sonnenhoehe im Bogenmass
    ! SHGR   - Sonnenhoehe im Gradmass
    ! CLOUD  - Bewoelkungsgrad
-   integer                                       :: tdj, anze, azStr, azStrs
+   
+   use allodim
+   
+   integer                                       :: tdj, anze, azStr
    integer, dimension(8)                         :: NRV
    integer, dimension(azStrs,1000)               :: IDWe, it_h
    real                                          :: maxi,lt

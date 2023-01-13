@@ -42,7 +42,7 @@ program qsim
    integer                                 :: open_error, jjj
    character(len=50),dimension(ialloc5,ialloc1) :: cename
    character(len=40),dimension(:),allocatable   :: strname,strnumm
-   integer                                 :: maus, read_error, anze, azstr, anzej, stunde, anzema
+   integer                                 :: maus, read_error, anze, azstr, azstr_read, anzej, stunde, anzema
    integer                                 :: tdj, schrnr, rbnr
    integer, dimension(2)                   :: ikanz
    integer, dimension(ialloc1)             :: typ, iorla, iorle
@@ -391,11 +391,15 @@ program qsim
       read(10,'(a2)')chcon
    endif
    read(10,'(f5.2,2x,f5.2)')GeoB,GeoL
-   read(10,'(I5)')azStrs
+   read(10,'(I5)')azstr_read
+   
+   ! set number of stretches
+   call set_azstrs(azstr_read)
    
    ! ==========================================================================
    !  allocieren der Variablen
    ! ==========================================================================
+
    nazStrs = 2 * azStrs
    allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(azStrs*2))
    allocate(strNr(nazStrs), mstra(azStrs), ieinsh(azStrs), ieinLs(azStrs), nbuhn(azStrs), iFlRi(nazStrs), isegs(azStrs))
@@ -831,7 +835,7 @@ program qsim
    ! --------------------------------------------------------------------------
    ! Ermittlung der Berechnungsgitterpunkte
    ! --------------------------------------------------------------------------
-   call km_sys(azStrs,mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs             &
+   call km_sys(mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs             &
                ,mWehr,mStas,iorLah,iorLeh,mstrLe,abfr,cpfad)
    
    pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
@@ -1517,7 +1521,7 @@ program qsim
    ! ==========================================================================
    if (iwsim /= 4 .and. iwsim /= 2 .and. iwsim /= 5) then
       jsed = 0
-      call sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,    &
+      call sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,            &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq, &
                     bHmq, jsed, w2, w2b,                                       &
                     kontroll, 0)
@@ -1617,7 +1621,7 @@ program qsim
    dt = tflie*86400.
    
    call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
-               ,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
+               ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
                ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
@@ -1714,7 +1718,7 @@ program qsim
                  ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                   &
                  ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &
                  ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &
-                 ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
+                 ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands               &
                  ,iw_max,iformVert)
    
    ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
@@ -2362,7 +2366,7 @@ program qsim
    ! Ermittlung der Kenngrößen zur Berücksichtigung des Wehrüberfalls
    ! ==========================================================================
    if (iwsim /= 2 .and. iwsim /= 5) then
-      call wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, azStrs, mStra, &
+      call wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, mStra, &
                    jlWO2, janzWt, janzWs, cpfad, iwied)
    endif
    
@@ -3070,7 +3074,7 @@ program qsim
                          ,chlgzt,hchlgz_z,chlbzt,hchlbz_z,gesPzt,hgesPz_z,gesNzt,hgesNz_z,Q_NKzt,hQ_NKz_z                 &
                          ,Q_NBzt,hQ_NBz_z,Q_NGzt,hQ_NGz_z,dH2D,ESTRNR,kanz,inkzmx,iSta,nstr,istr,jnkz,iflRi,jlWO2         &
                          ,CChlkzt,hCChlkz_z,CChlbzt,hCChlbz_z,CChlgzt,hCChlgz_z,janzWS,janzWt,hnkzs,mwehr,mstr            &
-                         ,WSP_UW,WSP_OW,iB,azStrs)
+                         ,WSP_UW,WSP_OW,iB)
             endif
             hcs1 = hcs1+abs(hQaus(ESTRNR(istr,nstr),iSta))                    &
                    *hsvhk(ESTRNR(istr,nstr),kanz)
@@ -3215,7 +3219,7 @@ program qsim
                i_EstRNR = ESTRNR(istr,nstr)
                call sys_gitterStrang(mstr,nkzs_hc,nkzs_hc1,dH2D,tzt,o2zt,NH4zt                                              &
                                      ,no2zt,no3zt,Pzt,gSizt,akizt,agrzt,ablzt,chlazt,chlkzt,chlgzt,chlbzt,gesPzt,gesNzt             &
-                                     ,Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt,CChlbzt,CChlgzt, jnkz,i_EstRNR,itags,monats,uhrz,azStrs)
+                                     ,Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt,CChlbzt,CChlgzt, jnkz,i_EstRNR,itags,monats,uhrz)
             endif
             do nkz = 1,nkzs_hc  ! 2D_modellierung, Schleifenbeginn
                hcs67(nkz) = hcs67(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Tzt(ESTRNR(istr,nstr),nkz,jnkz)
@@ -3759,7 +3763,7 @@ program qsim
    ! Neubelegung des vertikalen Rechengitters an jedem Gitterpunkt
    ! ==========================================================================
    if (ilang == 1) then
-      call sys_z_Gitter(azStrs,mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z        &
+      call sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z               &
                         ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
                         ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
    endif
@@ -4110,7 +4114,7 @@ program qsim
       if (iwsim /= 4 .and. iwsim /= 5) then
          call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP         &
                      ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,it_h,ij,jahrs,itage,monate,jahre,uhren        &
-                     ,isim_end,azStr,azStrs)
+                     ,isim_end,azStr)
          call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
       endif
       
@@ -4144,7 +4148,7 @@ program qsim
                       ,sedalb,sedSS_MQ,KNH4,KapN3,tflie,ilbuhn,itags,monats,uhrz,vo2z                      &
                       ,vnh4z,vno3z,gelpz,nkzs,SorpCap,Klang,KdNh3,fPOC1,fPOC2                              &
                       ,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB,Q_PB,pl0,nl0,Si,hSised,hJSi     &
-                      ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,YNMAX1,STKS1,obsb,ocsb   &
+                      ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,YNMAX1,STKS1,obsb,ocsb   &
                       ,.false., 0)
       else 
          ! without sedflux(), fluxes need to be set zero
@@ -4315,7 +4319,7 @@ program qsim
                   ,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                   &
                   ,rakr,rbar,CHNF,zHNF,ilbuhn,ZAKI,ZAGR,ZABL,HNFza,algzok        &
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
-                  ,itags,uhrz,mstr,azStrs , .false., 0)
+                  ,itags,uhrz,mstr, .false., 0)
       
       if (nbuhn(mstr) == 0)goto 1415
       if (ilbuhn == 0) then
@@ -4450,7 +4454,7 @@ program qsim
       ! 1440 continue
       ! call coroph(coro,coros,tempw,flae,elen,anze,ior                                  &
       !            ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
-      !            ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs, &
+      !            ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,        &
       !            .false., 0)
       !
       coro(:,:)  = 0.0
@@ -4653,7 +4657,7 @@ program qsim
                     ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL &
                     ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki   &
                     ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB             &
-                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1,azStrs                                     &
+                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                            &
                     ,.false.,0)
       isinisi = 0
       do ior = 1,anze+1
@@ -4887,7 +4891,7 @@ program qsim
                     ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                     &
                     ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz              &
                     ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ           &
-                    ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                       &
+                    ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                              &
                     ,.false.,0)
       
       do ior = 1,anze+1
@@ -5076,7 +5080,7 @@ program qsim
                     ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
                     ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
                     ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
-                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1,azStrs                                                                 &
+                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1                                                                        &
                     ,.false.,0)
       do ior = 1,anze+1
          if (isnan(agr(ior))) call qerror("Division by zero in subroutine algaesgr")
@@ -5717,7 +5721,7 @@ program qsim
                       ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,   &
                       flae,qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,     &
                       monats,Tsed,Wlage,hWS,htempw,htempz,WUEBKS,SPEWKSS,      &
-                      PSREFSS,extkS,azStrs,iwsim,iform_VerdR,                  &
+                      PSREFSS,extkS,iwsim,iform_VerdR,                         &
                       .false.,0)
       endif
       
@@ -6128,7 +6132,7 @@ program qsim
       if (hcoli(mstr,1) < 0.0 .and. iwsim == 2)goto 118
       1522 continue
       call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli &
-                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs         &
+                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
                    ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
                    ,.false.,0)
       

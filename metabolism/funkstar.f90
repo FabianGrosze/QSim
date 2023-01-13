@@ -43,13 +43,15 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                   &
                     ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &
                     ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &
-                    ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
+                    ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands               &
                     ,iw_max,iformVert)
+   
+   use allodim
    
    character (len = 255)                       :: cpfad
    character (len = 275)                       :: pfadstring
    
-   integer                                     :: azStrs,RBNR, read_error
+   integer                                     :: RBNR, read_error
    integer, dimension(40000)                   :: imstr, iRBNR, ianzW
    integer, dimension(azStrs,100)              :: istund, RBtyp, NRSchr
    integer, dimension(200,40000)               :: itagl, monatl, jahrl
