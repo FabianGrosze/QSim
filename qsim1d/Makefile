@@ -27,7 +27,7 @@
 
 # Makefile for QSim1D
 
-PV= qsim1d_14.09.14_dev
+PV= qsim1d_14.09.15_dev
 
 #====================================================================
 
@@ -37,7 +37,6 @@ FC = gfortran
 Q1 = module_model_settings.o \
 	AdvDiff.o \
 	ALBEDO.o \
-	aparamles.o \
 	ctracer.o \
 	EreigGParam.o \
 	EreigHParam.o \

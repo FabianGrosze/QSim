@@ -1717,8 +1717,6 @@ program qsim
                  ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,azStrs,i_Rands        &
                  ,iw_max,iformVert)
    
-   call aparamles(cpfad,itags,monats,Jahrs,aggmax,akgmax,abgmax)
-   
    ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
    do azStr = 1,azStrs !Strangschleife ANFANG
       mstr = mstra(azStr)
@@ -10318,9 +10316,6 @@ program qsim
    pfadstring = trim(adjustl(cpfad)) // 'wehro2.txt'
    open(unit = 301, file = pfadstring)
    close(301, status = "delete")
-   
-   ! aparamt.txt
-   close(192, status = "delete") 
    
    ! --- close output files --- 
    close(45)                     ! ErgebM.txt

@@ -164,7 +164,6 @@
 		<Filter Name="qsim1d">
 		<File RelativePath=".\AdvDiff.f90"/>
 		<File RelativePath=".\ALBEDO.f90"/>
-		<File RelativePath=".\aparamles.f90"/>
 		<File RelativePath=".\ctracer.f90"/>
 		<File RelativePath=".\E_extnctParam.f90"/>
 		<File RelativePath=".\EreigGParam.f90"/>
