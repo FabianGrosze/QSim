@@ -2,6 +2,9 @@
 
 ## 14.09
 
+### 14.09.15
+Fixed some bugs that remained from previous versions and entirely removed (unused) `aparamles.f90` from code base.
+
 ### 14.09.14
 Improvement of Errormessaging in QSim1D. `subroutine qerror` is now available to both QSim1D and QSim3D. 
 Thisway errormessages can be sent from any part of the program. The former mechanism of using errorcodes (`ifehl`) and defining
