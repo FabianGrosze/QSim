@@ -92,7 +92,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       
       call AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                  &
                    ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                  &
-                   ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,azStrs,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)
+                   ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)
       
       911 goto (600,602,604,606,608,610,612,614,616,618,620             &
       ,622,624,626,628,630,632,634,636,638,640,642,644                  &

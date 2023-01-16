@@ -30,18 +30,18 @@
 subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        &
                        ,raus,tflie,VMITTs                                       &
                        ,dkimors,dgrmors,abszos,zexkis,zexgrs                    &
-                       ,abls,zexbls,dblmor,drfaebs,akis,agrs,ssdrs,drfaeks      &
+                       ,abls,zexbls,dblmors,drfaebs,akis,agrs,ssdrs,drfaeks      &
                        ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs                 &
                        ,tauscs,ischifs,ieros                                    &
                        ,kontroll,jjj)
    
    use aparam
    implicit none
-   real                 :: sss      !< organische und anorganischer Schwebstoffe (ohen Algen und Zooplankton)
+   real                 :: sss      !< organische und anorganischer Schwebstoffe (ohne Algen und Zooplankton)
    real                 :: ssalgs   !< Gesamtschwebstoffe
    integer              :: ischifs,ieros,ised,jsed
    real                 :: akis,agrs,abls
-   real                 :: zooinds, dorgSSs, dkimors,dgrmors,dblmor, dblmors, drfaebs
+   real                 :: zooinds, dorgSSs, dkimors, dgrmors, dblmors, drfaebs
    real                 :: ssdrs,drfaeks,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs
    real                 :: tflie,TIEFEs,RAUs,VMITTs,tauscs
    real                 :: UST, g, v6, vges,SSSED,ZellV,hc1,hc2,delfss,fssgrv
@@ -78,7 +78,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    
    exzo = zexkis+zexgrs+zexbls
    
-   !...Schwebstoffverluste durch Dreissena werden nicht bercksichtigt
+   !...Schwebstoffverluste durch Dreissena werden nicht beruecksichtigt
    ssdrs = 0.0
    
    SSt = SSs                          &

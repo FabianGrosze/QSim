@@ -25,6 +25,8 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 program qsim
+
+   use iso_fortran_env,       only: output_unit
    use allodim
    use aparam
    use module_model_settings
@@ -394,6 +396,8 @@ program qsim
    read(10,'(I5)')azstr_read
    
    ! set number of stretches
+   print*, 'FG: read azstrs =', azstr_read
+   flush(output_unit)
    call set_azstrs(azstr_read)
    
    ! ==========================================================================
@@ -545,8 +549,8 @@ program qsim
    allocate(bfssgr(azStrs,ialloc2), bfbsgr(azStrs,ialloc2), bfrfgr(azStrs,ialloc2), bexdvk(azStrs,ialloc2))
    allocate(bexdvg(azStrs,ialloc2), bsgon(azStrs,ialloc2), bsedx0(azStrs,ialloc2), bexdvb(azStrs,ialloc2))
    allocate(bdon(azStrs,ialloc2), bsusn(azStrs,ialloc2), bbettn(azStrs,ialloc2), bsuso(azStrs,ialloc2))
-   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(mStrs,iallco2))
-   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(mstr,ialloc2), bo2ein1(azStrs,ialloc2))
+   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
+   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
    allocate(bsusn2(azstrs,ialloc2), bpfln1(azstrs,ialloc2), bpfln2(azstrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
@@ -1058,7 +1062,8 @@ program qsim
    1045 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f5.2,2x,f9.4)
    1047 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f7.2,2x,f5.2,2x,f5.2)
    
-   VTYPH(j,jj,jjj) = 0.0
+   jjj   = 0
+   vtyph = 0.0
    
    
    ! Erosions-Abschnitte
@@ -2375,15 +2380,23 @@ program qsim
    ! ==========================================================================
    9191 continue
    if (iwsim /= 4 .and. iwsim /= 5) then
+      print*, 'FG: wettles, iwim = 4 .or. 5, iwied =', iwied
+      flush(output_unit)
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
                    cloud, typw, imet, iwied, cpfad, ckenn_vers1)
+                   
+      print*, 'FG: wettles, success'
+      flush(output_unit)
    endif
    
    ! ==========================================================================
    ! Strangschleife für alle Straenge
    ! Einlesen der Einleiterdaten und Randbedingungen
    ! ==========================================================================
-   if (iwied == 0) then  
+   if (iwied == 0) then
+   
+      print*, 'FG: iwied = 0'
+      flush(output_unit)
       ! Ermittlung eines Strangs mit Randbedingungen am 1. Ortspunkt
       ! alle Stränge die keine Randbedingung am 1. Ortspunkt  und keine Vor- 
       ! und nachgelagerten Straenge haben, werden mit diesen Randbedingungen belegt.
@@ -2409,6 +2422,8 @@ program qsim
    
    if (iwied == 0) j = 0
    do istr = 1,istrs  ! Beginn Strangschleife
+      print*, 'FG: Strangschleife'
+      flush(output_unit)
       mstr = STRNR(istr)
       ieinsh(mstr) = 0
       iflRi(mstr) = iflRi_l(istr)
@@ -2442,6 +2457,9 @@ program qsim
       ! Schalter zur Überprüfung ob am ersten Ortspunkt eines Strangs
       ! Randbedingungen vorliegen (Datei Ereigg.txt)
       mRand = 0 
+      
+      print*, 'FG: RB-Schleife'
+      flush(output_unit)
       
       do mRB = 1,mRBs(mstr) ! RandbedingungsSchleife fuer Strang mstr
          if (RBtyp(mstr,mRB) /= 0 .and. RBtyp(mstr,mRB) /= 2) then
@@ -2559,6 +2577,9 @@ program qsim
          endif
          
       enddo  ! Randbedingungsschleife
+      
+      print*, 'FG: RB-Schleife, success'
+      flush(output_unit)
       
       ieinsh(mstr) = iein
       ieinLs(mstr) = ieinL
@@ -2713,7 +2734,7 @@ program qsim
                   + habl(mstr,ior) * Cabl * csbbl  &
                   + hagr(mstr,ior) * Cagr * csbgr
             hvcsb(mstr,ior) = hcsb(mstr,ior)+algcs
-            zoocsb = hzooi(mstr,ior)*(GROT*CZoo/1000.)*TOC_BSB
+            zoocsb = hzooi(mstr,ior) * (GROT * CZoo / 1000.) * TOC_CSB
             hvcsb(mstr,ior) = hvcsb(mstr,ior)+zoocsb
             hFluN3(mstr,ior) = 0.0
             
@@ -3671,6 +3692,9 @@ program qsim
    
    enddo ! Ende Schleife ueber alle Straenge
    
+   print*, 'FG: Strangschleife, success, jlauf =', jlauf
+   flush(output_unit)
+   
    
    ! Ablegen der berechneten Werte aus dem Zeitschritt t-1 und den Randbedingungen zum Zeitpunkt
    if (jlauf == 1) goto 7777 
@@ -3681,16 +3705,29 @@ program qsim
    
    
    ! Einlesen der hydraulischen Daten aus sysgenou
+   
+   print*, 'FG: read sysgenou'
+   flush(output_unit)
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou'
-   open(unit = 11, file = pfadstring, iostat = open_error)
+   print*, 'FG: open sysgenou:', pfadstring
+   flush(output_unit)
+   open(unit = 11, file = pfadstring, action = 'read', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open sysgenou")
    rewind (11)
    
+   print*,'sysgenou, success, azstrs =',azstrs
+   flush(output_unit)
+   
    do azStr = 1,azStrs
+      print*,'FG: azstr, azstrs =', azStr,azStrs
+      flush(output_unit)
       mstr = mstra(azStr)
       
       read(11,1000)hanze(mstr)
       1000 format(i4)
       do ior = 1,hanze(mstr)
+         print*,'FG: read sysgenou ... ior, mstr', ior, mstr
+         flush(output_unit)
          read(11,1010)hfkm(mstr,ior),hflag(mstr,ior)                                &
               ,hjiein(mstr,ior),helen(mstr,ior),hvmitt(mstr,ior)                    &
               ,htiefe(mstr,ior),hrau(mstr,ior),hrhyd(mstr,ior)                      &
@@ -3757,6 +3794,8 @@ program qsim
       
    enddo
    close(11)
+   print*, 'FG: read sysgenou, success, ilang =', ilang
+   flush(output_unit)
    
    
    ! ==========================================================================
@@ -3766,6 +3805,8 @@ program qsim
       call sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z               &
                         ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
                         ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
+      print*, 'FG: sys_z_gitter, success'
+      flush(output_unit)
    endif
    
    ! ==========================================================================
@@ -3778,7 +3819,7 @@ program qsim
    minute = nint(hcmin)
    if (minute == 60) then
       minute = 0
-      Stunde = Stunde+1
+      Stunde = Stunde + 1
    endif
    rmin = minute/100.
    Uhrzhm = Stunde+rmin
@@ -3794,6 +3835,9 @@ program qsim
 
    ! Strangschleife für Berechnung
    if (iwsim == 4) sumTracer = 0.0  ! Aufsummierung der "Tracermasse"
+   
+   print*, 'FG: Strangschleife calculations'
+   flush(output_unit)
    
    do azStr = 1,azStrs
       mstr = mstra(azStr)
@@ -7144,6 +7188,10 @@ program qsim
       enddo ! Ende Hauptschleife
       
    enddo ! Ende Strangschleife
+   
+   print*, 'FG: Strangschleife calculations, success'
+   flush(output_unit)
+   
    7777 continue
    
    ! iwied = 0 : allererster Zeitschritt, danach iwied = 1

@@ -132,7 +132,7 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    real :: CMs ,  CDs1,CDs2, CPs1,CPs2
    real :: ssalgs ,frfgrs ,BACs,CHNFs
    real :: CPges,CDges,Cref,TOC
-   real :: algb5,algcs,alphlP,ant_CrefP
+   real :: algb5,algcs,alphlP
    real :: zoobsb,zoocsb
    real :: vcb,antBAC,BTOC5s,BTOCs,alphaD,alphlD !,alphaD1
    real :: hc_CPg,fak_aCref
@@ -184,11 +184,14 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    !  0.4  :
    ! refr. partik. Anteil (ant_CrefP) ergibt sich aus dem Verhältnis von CPges und CDges
    
+   
    if (ssalgs > 0.0) then
       hc_CPg = ssalgs-akis-agrs-abls-(zooins*GRote/1000.)
+      !FG: TODO should only one factor be used?
       hc_CPg = hc_CPg * 0.45 * 0.4
       TOC = max((BTOCs+0.01),ocsbs/TOC_CSB)
-      Cref = TOC - BTOCs      
+      Cref = TOC - BTOCs
+
       fak_aCref = CPges/(CDges+CPges)  ! Anteil ref. am hc_CPg ?????
       
       !##################################################
@@ -217,7 +220,11 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    if (CDs2 <= 0.0)CDs2 = 0.000001
    if (CPs1 <= 0.0)CPs1 = 0.000001
    if (CPs2 <= 0.0)CPs2 = 0.000001
-   frfgrs = min(1.,(hc_CPg * ant_CrefP/Cref))
+   !FG TODO ant_CrefP was not assigned a value.
+   !        Hence, replaced line with line below, assuming that:
+   !        ant_CrefP = Cref / (CPges + CDges)
+   !frfgrs = min(1.,(hc_CPg * ant_CrefP/Cref))
+   frfgrs = min(1.,(hc_CPg / (CPges + CDges)))
    return
 end subroutine orgc_start
 

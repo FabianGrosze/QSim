@@ -614,8 +614,6 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    delbsg = fbsgr_s - fbsgrt
    delfrg = frfgr_s - frfgrt
    delbs  = obsbt   - obsb_s
-   ! TODO (schoenung, june 2022): ocsbt is has no initial value. (issue #30)
-   delcs  = ocsbt   - ocsb_s
    delCD1 = CD1_t   - CD1_s
    delCD2 = CD2_t   - CD2_s
    delCP1 = CP1_t   - CP1_s
@@ -634,10 +632,12 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + CD1_t + CD2_t      &
          + CP1_t + CP2_t      &
          + CMt                &
-         + (1.-famR) * BACt   &
-         + (1.-famR) * chnf_s
+         + (1. - famR) * (BACt + chnf_s)
    ocsbt = ocsbt * TOC_CSB
-   if (ocsbt < 0.0) ocsbt = max(0.0, (ocsb_s/(ocsb_s+abs(delcs)))*ocsb_s)
+   if (ocsbt < 0.0) then
+      delcs = ocsbt - ocsb_s
+      ocsbt = max(0.0, ocsb_s / (ocsb_s + abs(delcs)) *ocsb_s)
+   endif
    
    ! Neuberechnung von pl0 und nl0
    if (ocsbt > 0.0 .and. TOC_CSB > 0.0) then

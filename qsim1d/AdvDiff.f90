@@ -658,6 +658,7 @@ subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,
                S2 = Uneu_1(i)
                S3 = Uneu_1(i-1)
             endif
+            
             if (flag(i) == 6 .or. i == 1) then
                S1 = Uneu_1(i+1)
                S2 = Uneu_1(i)
@@ -668,11 +669,6 @@ subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,
                S1 = Uneu_1(i)
                S2 = Uneu_1(i)
                S3 = Uneu_1(i-1)
-            endif
-            if (i == 1) then
-               S1 = Uneu_1(i+1)
-               S2 = Uneu_1(i)
-               S3 = Uneu_1(i)
             endif
          endif
          SS2(i) = dlmit(i)*(S3-(1.+Calpha(i))*S2+Calpha(i)*S1)/nenner(i)
@@ -858,19 +854,11 @@ subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itim
          endif
       endif
       if (isgn(i,nkz) == -1) then
-         if (i == 1) then
+         if (i == 1 .or. (i > 1 .and. flag(i-1) == 4)) then
             S1 = U(i+1)
             S2 = U(i)
             S3 = U(i)
-         else if (i > 1 .and. flag(i-1) == 4) then
-            S1 = U(i+1)
-            S2 = U(i)
-            S3 = U(i)
-         else if (i == nx+1) then
-            S1 = U(i)
-            S2 = U(i)
-            S3 = U(i-1)
-         else if (flag(i) == 4) then
+         else if (i == nx+1 .or. flag(i) == 4) then
             S1 = U(i)
             S2 = U(i)
             S3 = U(i-1)
@@ -878,7 +866,6 @@ subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itim
             S1 = U(i+1)
             S2 = U(i)
             S3 = U(i-1)
-            
          endif
       endif
       
@@ -964,8 +951,8 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
    endif
    do i = 1,nx+1
       if (iwahlD == 1) then
-         if (i < nx+1)vr(i) = (vmitt(i)+vmitt(i+1))/2.
-         if (i == nx+1)vr(i) = vmitt(i)
+         if (i <  nx+1) vr(i) = (vmitt(i) + vmitt(i+1)) / 2.
+         if (i == nx+1) vr(i) = vmitt(i)
       else
          vr(i) = Uvert(nkz,i)
       endif
@@ -1033,38 +1020,35 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
    enddo
    do i = 1,nx+1        ! ultimate-Limiter
       if (isgn(i,nkz) == 1) then
-         S2 = U(i-1)
-         Crr1 = Crr(i-1)
+         S2   = U(2)
+         S3   = U(i)
+         Crr1 = Crr(i)
+         Crr2 = Crr(i)
+         if (i > 1) then
+            S2   = U(i-1)
+            Crr1 = Crr(i-1)
+         endif
          if (i == 1 .or. flag(i) == 4) then
-            S2 = U(i)
+            S2   = U(i)
             Crr1 = Crr(i)
          endif
-         S3 = U(i)
-         Crr2 = Crr(i)
-         S4 = U(i+1)
-         if (i == nx+1 .or. flag(i+1) == 4) then
-            S4 = U(i)
-         endif
+         S3   = U(i)
+         if (i <  nx + 1) S4 = U(i+1)
+         if (i == nx + 1 .or. flag(i+1) == 4) S4 = U(i)
       else           ! vr ist kleiner 0.0
-         
-         S4 = U(i)
-         if (flag(i) == 4) then
-            S4 = U(i+1)
-         endif
-         
-         S3 = U(i+1)
-         if (i == nx+1) then
-            S3 = U(i)
-         endif
-         S2 = U(i+2)
-         dx_p1 = dx(i+1)
-         if (i == nx .or. flag(i+1) == 4) then
-            S2 = U(i+1)
-            dx_p1 = dx(i)
-         endif
-         if (i == nx+1) then
-            S2 = U(i)
-            dx_p1 = dx(i)
+         S2    = U(i)
+         S3    = U(i)
+         S4    = U(i)
+         dx_p1 = dx(i)
+         if (i < nx + 1) then
+            S3    = U(i+1)
+            if (flag(i) == 4) S4 = U(i+1)
+            if (i == nx .or. flag(i+1) == 4) then
+               S2 = U(i+1)
+            elseif (i < nx) then
+               S2 = U(i+2)
+               dx_p1 = dx(i+1)
+            endif
          endif
       endif
       CRNT = Crr(i)
@@ -1088,35 +1072,25 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
          U_neu(i) = U(i)
          cycle
       endif
+      
       if (i == 1) then
          Crm = Crr(i)
       else
-         Crm = (Crr(i-1)+Crr(i))/2.
+         Crm = (Crr(i-1) + Crr(i)) / 2.
       endif
-      
-      hconr = Crm*F_plus(i)
-      hconl = Crm*F_plus(i-1)
-      if (isgn(i,nkz) == -1) then
-         hconr = -hconr
-         hconl = -hconl
+      if (i == 1) then
+         U_neu(i) = U(i) + real(min(0, isgn(i,nkz))) * Crm * (U(i) - U(i+1))
+      elseif (i == nx+1) then
+         U_neu(i) = U(i) - real(max(0, isgn(i,nkz))) * Crm * (U(i) - U(i-1))
+      else
+         U_neu(i) = U(i) + Crm * isgn(i,nkz) * (F_plus(i-1) - F_plus(i))
       endif
-      
-      U_neu(i) = U(i)-hconr+hconl
-      if (i == 1 .and. isgn(i,nkz) == 1)U_neu(i) = U(i)
-      if (i == 1 .and. isgn(i,nkz) == -1)U_neu(i) = U(i)-crr(i)*(U(i)-U(i+1))
-      if (i == nx+1 .and. isgn(i,nkz) == -1)U_neu(nx+1) = U(nx+1)
-      if (i == nx+1 .and. isgn(i,nkz) == 1)U_neu(nx+1) = U(nx+1)-crr(i-1)*(U(nx+1)-U(nx))
-      if (abs(U_neu(i)) < 1.e-25)U_neu(i) = 0.0
-      if (ktrans /= 1 .and. ktrans /= 57) then
-         if (U_neu(i) < 0.0)U_neu(i) = 0.0
-      endif
-      if (iwsim == 4) then
-         if (U_neu(i) < 0.0)U_neu(i) = 0.0
-      endif
+      if (abs(U_neu(i)) < 1.e-25) U_neu(i) = 0.0
+      if ((iwsim == 4 .or. (ktrans /= 1 .and. ktrans /= 57)) .and. U_neu(i) < 0.0) U_neu(i) = 0.0
    enddo !Ende Knoten-Schleife
-   if (NX == 1) then ! Falls der Strang nur aus einem Knoten besteht
-      U_neu(1) = U(1)
-      U_neu(NX+1) = U_neu(1)
+   if (nx == 1) then ! Falls der Strang nur aus einem Knoten besteht
+      U_neu(1)    = U(1)
+      U_neu(nx+1) = U(1)
    endif
    do i = 1,nx+1
       U(i) = U_neu(i)

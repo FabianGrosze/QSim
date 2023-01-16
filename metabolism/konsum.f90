@@ -132,6 +132,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
          FKs = FopIRe
       endif
    endif
+   
    do j = 1,anze+1  !Beginn Knotenschleife
       ior = j
       if (iTGZoo == 1) then
@@ -234,15 +235,13 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       
       !   Temperaturabhaengigkeit der Ingestionsrate
       fTing = thIng**(Tempw(ior)-20.)
-      !      fTing = exp(-0.0085*(Tempw(ior)-21.)**2)
-      if (tempw(ior)>=tmax) then
+      if (tempw(ior)>=ztmax) then
          !          fTing = 0.01
       else
          LNQ = 0.61519
-         W = LNQ*(TMAX-TOPT)
+         W = LNQ*(ztmax - ztopt)
          X = (W**2*(1+SQRT(1+40/W))**2)/400.
-         FTA = ((TMAX-TEMPW(ior))/(TMAX-TOPT))**X
-         !              fTing = FTA*EXP(X*(1-((TMAX-TEMPW(ior))/(TMAX-TOPT))))
+         FTA = ((ztmax-TEMPW(ior))/(ztmax - ztopt))**X
       endif
       
       !   Umrechnung der Individienzahl in Biomasse (g*m-3)
@@ -319,8 +318,11 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       
       ROTt = ROT * exp((ProdRot-morRot)*tflie) ! Rotatorienzunahme
       !!wy if(mstr==1)write(79,*)ior,ProdRot,zass,respaR,ir_F,fTing,respRg
+      
+      !FG TODO line below added as no value assigned to TGZoot if iTGZoo == 0
+      TGZoot = TGZoo(mstr,ior)
       if (iTGZoo == 1) then
-         TGZoot = TGZoo(mstr,ior)*exp(ProdRot*0.20*tflie)
+         TGZoot = TGZoot * exp(ProdRot*0.20*tflie)
       endif
       dzres1(ior) = ROT*(1.-(exp(-respRg*tflie)))
       ABSZO(ior) = ROTt*(1.-(EXP(-morRot*TFLIE)))
