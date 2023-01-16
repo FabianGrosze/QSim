@@ -26,11 +26,11 @@
 ! --------------------------------------------------------------------------- !
 program qsim
 
-   use iso_fortran_env,       only: output_unit
    use allodim
    use aparam
    use module_model_settings
    use module_metabolism
+   
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
    character                               :: ckenn,cpoint
@@ -59,7 +59,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
    real                                    :: lat_k, lgh, o2ein
-   real                                    :: mikonss, mxkonss
+   real                                    :: mikonss, mxkonss, bxcoli
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge
@@ -1618,11 +1618,15 @@ program qsim
    
    istrs = istr-1
    
+   ! Conversion factor of time step to hour
+   hcUmt = 60./(tflie*1440.)
+            
+   ! Time step in seconds
+   dt = tflie * 86400.
+   
    ! --------------------------------------------------------------------------
    ! Einteilung der Flussstrecke in Segmente
    ! --------------------------------------------------------------------------
-   dt = tflie*86400.
-   
    call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
                ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
@@ -8191,9 +8195,6 @@ program qsim
                write(158,'(a)')adjustl(trim(langezeile))
             endif
             
-            ! Umrechnung von Zeitschrittweite auf pro Stunde
-            hcUmt = 60./(tflie*1440.)
-            
             write(155,5205)(bsbty(iior)*hcUmt),(susNOy(iior)*hcUmt),(O2ei1y(iior)*hcUmt)                           &
                            ,(dalgoy(iior)*hcUmt),(cchlky(iior)*hcUmt),(cchlgy(iior)*hcUmt),(cchlby(iior)*hcUmt)    &
                            ,(zoro2y(iior)*hcUmt),(schlry(iior)*hcUmt),(bettny(iior)*hcUmt)
@@ -8223,10 +8224,8 @@ program qsim
             
             bcoliy = -1.
             bHNFy = -1.
-            if (nbuhn(mstr) == 1 .and. iwsim == 4)goto 620
-            btracer(iior) = -1.
+            if (nbuhn(mstr) /= 1 .or. iwsim /= 4) btracer(iior) = -1.
             
-            620 continue
             write(155,5115)bvbsby(iior),bvcsby(iior),bnh4y(iior)                          &
                            ,bno2y(iior),bno3y(iior),bgsNy(iior),bgelpy(iior),bgsPy(iior)  &
                            ,bsiy(iior),bchlay(iior),bzooiy(iior),bphy(iior),bmwy(iior)    &
@@ -9648,6 +9647,13 @@ program qsim
             bmio2(mstr,iior) = -1.
             bxo2 = -1.
             bmxo2(mstr,iior) = -1.
+            ! Colibacteria
+            bxcoli = -1.
+            ! Conservative substances
+            bmikonss = -1.
+            bxkonss  = -1.
+            bmxkonss = -1.
+            ! Heavy metals
             bmigsZn(mstr,iior) = -1.
             bxgsZn = -1.
             bmxgsZn(mstr,iior) = -1.
@@ -9766,6 +9772,10 @@ program qsim
             mitemp(mstr,iior) = -9.99
             xtempw = -9.99
             mxtemp(mstr,iior) = -9.99
+         else
+            mikonss = 0.
+            xkonss  = 0.
+            mxkonss = 0.
          endif
          
          write(45,4100)itags,monats,Jahrs,mstr,Stakm(mstr,iior),STRID(mstr)

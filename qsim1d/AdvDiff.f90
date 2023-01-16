@@ -315,9 +315,6 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
    return
 end subroutine BasisPoint
 
-
-
-
 subroutine Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
                           ,itags,monats,itime,isub_dtx,isgn,uhrz)
    
@@ -1050,8 +1047,6 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
             endif
          endif
       endif
-      CRNT = Crr(i)
-      !    if(i>1)CRNT = (Crr(i-1)+Crr(i))/2.
       CRNT = abs(Crr(i))
       if (S2>=S3 .and. S3>=S4) then
          Uv = max(S4, S2+(S3-S2)/CRNT)
@@ -1082,7 +1077,7 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
       elseif (i == nx+1) then
          U_neu(i) = U(i) - real(max(0, isgn(i,nkz))) * Crm * (U(i) - U(i-1))
       else
-         U_neu(i) = U(i) + Crm * isgn(i,nkz) * (F_plus(i-1) - F_plus(i))
+         U_neu(i) = U(i) + real(isgn(i,nkz)) * Crm * (F_plus(i-1) - F_plus(i))
       endif
       if (abs(U_neu(i)) < 1.e-25) U_neu(i) = 0.0
       if ((iwsim == 4 .or. (ktrans /= 1 .and. ktrans /= 57)) .and. U_neu(i) < 0.0) U_neu(i) = 0.0
