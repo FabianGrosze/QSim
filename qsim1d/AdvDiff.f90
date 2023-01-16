@@ -88,7 +88,6 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
             dx2 = elen(ior)
          endif
          
-         
          if (iwahlD == 1) then
             CU(ktrans,mstr,ior) = (S2-S1)/(dx1+dx2)
          else

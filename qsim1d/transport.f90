@@ -71,8 +71,11 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    sumdet = 0.0
    isub_dtx = isub_dt(mstr)
    if (imac(mstr) == 1)isub_dtx = isub_dt_Mac(mstr)
+   
+   ! Total number of transport variables
    kktrans = 69
-   if (ischwer == 1)kktrans = 91
+   if (ischwer == 1) kktrans = kktrans + 22
+   
    do 1811 itime = 1,izeits
       ktrans = 1
       jpoin1 = 0
@@ -88,7 +91,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       
       888 continue
       !      if(iflRi(mstr).eq.0)goto 911
-      if (U(1) < 0.0 .and. ktrans /= 1.and.ktrans /= 57)goto 911
+      if (U(1) < 0.0 .and. ktrans /= 1 .and. ktrans /= 57) goto 911
       
       call AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                  &
                    ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                  &
@@ -109,13 +112,11 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       enddo
       ktrans = ktrans+1
       jpoin1 = 1
-      if (iwsim == 5)goto 1811
-      if (iwsim == 4)goto 1811
-      if (iwsim == 2 .and. coli(1)>=0.0) then
+      if (iwsim == 4 .or. iwsim == 5 .or. (iwsim == 2 .and. coli(1) < 0.0)) then
+         goto 1811
+      elseif (iwsim == 2 .and. coli(1)>=0.0) then
          ktrans = 55
          goto 818
-      else if (iwsim == 2 .and. coli(1) < 0.0) then
-         goto 1811
       endif
       goto 700
       
@@ -513,7 +514,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       537 do 247 ior = 1,anze+1
          DOSCF(ior) = U(ior)
       247 continue
-      if (iwsim == 2 .or. iwsi == 5)goto 1811
+      if (iwsim == 2 .or. iwsim == 5)goto 1811
       ktrans = ktrans+1
       goto 837
       539 do ior = 1, anze+1
@@ -539,6 +540,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       570 do ior = 1, anze+1
          abmor_1(mstr,ior) = U(ior)
       enddo
+      if (ischwer == 0)goto 1811
       ktrans = ktrans+1
       goto 842
       

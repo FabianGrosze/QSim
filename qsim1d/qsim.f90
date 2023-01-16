@@ -396,8 +396,6 @@ program qsim
    read(10,'(I5)')azstr_read
    
    ! set number of stretches
-   print*, 'FG: read azstrs =', azstr_read
-   flush(output_unit)
    call set_azstrs(azstr_read)
    
    ! ==========================================================================
@@ -2380,13 +2378,8 @@ program qsim
    ! ==========================================================================
    9191 continue
    if (iwsim /= 4 .and. iwsim /= 5) then
-      print*, 'FG: wettles, iwim = 4 .or. 5, iwied =', iwied
-      flush(output_unit)
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
                    cloud, typw, imet, iwied, cpfad, ckenn_vers1)
-                   
-      print*, 'FG: wettles, success'
-      flush(output_unit)
    endif
    
    ! ==========================================================================
@@ -2394,9 +2387,6 @@ program qsim
    ! Einlesen der Einleiterdaten und Randbedingungen
    ! ==========================================================================
    if (iwied == 0) then
-   
-      print*, 'FG: iwied = 0'
-      flush(output_unit)
       ! Ermittlung eines Strangs mit Randbedingungen am 1. Ortspunkt
       ! alle Stränge die keine Randbedingung am 1. Ortspunkt  und keine Vor- 
       ! und nachgelagerten Straenge haben, werden mit diesen Randbedingungen belegt.
@@ -2422,8 +2412,6 @@ program qsim
    
    if (iwied == 0) j = 0
    do istr = 1,istrs  ! Beginn Strangschleife
-      print*, 'FG: Strangschleife'
-      flush(output_unit)
       mstr = STRNR(istr)
       ieinsh(mstr) = 0
       iflRi(mstr) = iflRi_l(istr)
@@ -2456,10 +2444,7 @@ program qsim
       
       ! Schalter zur Überprüfung ob am ersten Ortspunkt eines Strangs
       ! Randbedingungen vorliegen (Datei Ereigg.txt)
-      mRand = 0 
-      
-      print*, 'FG: RB-Schleife'
-      flush(output_unit)
+      mRand = 0
       
       do mRB = 1,mRBs(mstr) ! RandbedingungsSchleife fuer Strang mstr
          if (RBtyp(mstr,mRB) /= 0 .and. RBtyp(mstr,mRB) /= 2) then
@@ -2578,12 +2563,8 @@ program qsim
          
       enddo  ! Randbedingungsschleife
       
-      print*, 'FG: RB-Schleife, success'
-      flush(output_unit)
-      
       ieinsh(mstr) = iein
       ieinLs(mstr) = ieinL
-      
       
       ! j_ist: gilt nur bei iwied=0. Zufließende Straenge sind bereits mit
       ! Randedingungen belegt
@@ -3692,10 +3673,6 @@ program qsim
    
    enddo ! Ende Schleife ueber alle Straenge
    
-   print*, 'FG: Strangschleife, success, jlauf =', jlauf
-   flush(output_unit)
-   
-   
    ! Ablegen der berechneten Werte aus dem Zeitschritt t-1 und den Randbedingungen zum Zeitpunkt
    if (jlauf == 1) goto 7777 
    
@@ -3705,29 +3682,17 @@ program qsim
    
    
    ! Einlesen der hydraulischen Daten aus sysgenou
-   
-   print*, 'FG: read sysgenou'
-   flush(output_unit)
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou'
-   print*, 'FG: open sysgenou:', pfadstring
-   flush(output_unit)
    open(unit = 11, file = pfadstring, action = 'read', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open sysgenou")
    rewind (11)
    
-   print*,'sysgenou, success, azstrs =',azstrs
-   flush(output_unit)
-   
    do azStr = 1,azStrs
-      print*,'FG: azstr, azstrs =', azStr,azStrs
-      flush(output_unit)
       mstr = mstra(azStr)
       
       read(11,1000)hanze(mstr)
       1000 format(i4)
       do ior = 1,hanze(mstr)
-         print*,'FG: read sysgenou ... ior, mstr', ior, mstr
-         flush(output_unit)
          read(11,1010)hfkm(mstr,ior),hflag(mstr,ior)                                &
               ,hjiein(mstr,ior),helen(mstr,ior),hvmitt(mstr,ior)                    &
               ,htiefe(mstr,ior),hrau(mstr,ior),hrhyd(mstr,ior)                      &
@@ -3794,9 +3759,6 @@ program qsim
       
    enddo
    close(11)
-   print*, 'FG: read sysgenou, success, ilang =', ilang
-   flush(output_unit)
-   
    
    ! ==========================================================================
    ! Neubelegung des vertikalen Rechengitters an jedem Gitterpunkt
@@ -3805,8 +3767,6 @@ program qsim
       call sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z               &
                         ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
                         ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
-      print*, 'FG: sys_z_gitter, success'
-      flush(output_unit)
    endif
    
    ! ==========================================================================
@@ -3835,9 +3795,6 @@ program qsim
 
    ! Strangschleife für Berechnung
    if (iwsim == 4) sumTracer = 0.0  ! Aufsummierung der "Tracermasse"
-   
-   print*, 'FG: Strangschleife calculations'
-   flush(output_unit)
    
    do azStr = 1,azStrs
       mstr = mstra(azStr)
@@ -7188,9 +7145,6 @@ program qsim
       enddo ! Ende Hauptschleife
       
    enddo ! Ende Strangschleife
-   
-   print*, 'FG: Strangschleife calculations, success'
-   flush(output_unit)
    
    7777 continue
    
