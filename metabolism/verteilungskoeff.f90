@@ -35,35 +35,25 @@ subroutine verteilungskoeff(hcSS,hcph  &
                             ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb           &
                             ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U                       &
                             ,iformVert, kontroll)
-                            
+   
    use aparam
+   
    implicit none
-   real                   :: hcSS,hcph
+   
+   real                   :: hcSS, hcph
    real                   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
    real                   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
    integer                :: iformVert
    logical, intent(in)    :: kontroll  !< debugging
-   !real                   :: c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn,VTKoeffDe_Zn               &
-   !real                   :: c1Cu,e1Cu,c2Cu,e2Cu,c3Cu,e3Cu,c4Cu,e4Cu,c5Cu,e5Cu,VTKoeffDe_Cu               &
-   !real                   :: c1Cad,e1Cad,c2Cad,e2Cad,c3Cad,e3Cad,c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad    &
-   !real                   :: c1Ni,e1Ni,c2Ni,e2Ni,c3Ni,e3Ni,c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni               &
-   !real                   :: c1As,e1As,c2As,e2As,c3As,e3As,c4As,e4As,c5As,e5As,VTKoeffDe_As               &
-   !real                   :: c1Pb,e1Pb,c2Pb,e2Pb,c3Pb,e3Pb,c4Pb,e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb               &
-   !real                   :: c1Cr,e1Cr,c2Cr,e2Cr,c3Cr,e3Cr,c4Cr,e4Cr,c5Cr,e5Cr,VTKoeffDe_Cr               &
-   !real                   :: c1Fe,e1Fe,c2Fe,e2Fe,c3Fe,e3Fe,c4Fe,e4Fe,c5Fe,e5Fe,VTKoeffDe_Fe               &
-   !real                   :: c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg               &
-   !real                   :: c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn               &
-   !real                   :: c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
-   if (iformVert == 1) then  
+   if (iformVert == 1) then
       ! --- DWA-Modell ---
       
       ! Berechnung der Verteilungskoeffizienten VTKoeff_Zn, VTKoeff_Cu, VTKoeff_Cad, VTKoeff_Ni
       ! VTKoff [l/g]
       VTKoeff_Zn = (c1Zn/hcSS**e1Zn) + (c2Zn/hcSS**e2Zn)*((hcph/9.)**(c3Zn/hcSS**e3Zn))          &
                    + ((c4Zn/hcSS**e4Zn)+c5Zn)*(((hcph-4.)/5.)**e5Zn-((hcph-4.)/5.)**(e5Zn-1))
-      
       VTKoeff_Cu = (c1Cu/hcSS**e1Cu) + (c2Cu/hcSS**e2Cu)*((hcph/9.)**(c3Cu/hcSS**e3Cu))          &
                    + ((c4Cu/hcSS**e4Cu)+c5Cu)*(((hcph-4.)/5.)**e5Cu-((hcph-4.)/5.)**(e5Cu-1))
       VTKoeff_Cad = (c1Cad/hcSS**e1Cad) + (c2Cad/hcSS**e2Cad)*((hcph/9.)**(c3Cad/hcSS**e3Cad))   &
@@ -86,7 +76,7 @@ subroutine verteilungskoeff(hcSS,hcph  &
                    + ((c4Mn/hcSS**e4Mn)+c5Mn)*(((hcph-4.)/5.)**e5Mn-((hcph-4.)/5.)**(e5Mn-1))
       VTKoeff_U = (c1U/hcSS**e1U) + (c2U/hcSS**e2U)*((hcph/9.)**(c3U/hcSS**e3U))                 &
                   + ((c4U/hcSS**e4U)+c5U)*(((hcph-4.)/5.)**e5U-((hcph-4.)/5.)**(e5U-1))
-   else    
+   else
       ! --- Deltares 2010 ---
       VTKoeff_Zn  = VTkoeffDe_Zn
       VTKoeff_Cu  = VTkoeffDe_Cu

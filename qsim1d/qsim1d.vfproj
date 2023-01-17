@@ -143,7 +143,7 @@
 		<File RelativePath="..\metabolism\schiff.f90"/>
 		<File RelativePath="..\metabolism\schweb.f90"/>
 		<File RelativePath="..\metabolism\schweb_kern.f90"/>
-		<File RelativePath="..\metabolism\Schwermetalle.f90"/>
+		<File RelativePath="..\metabolism\schwermetalle.f90"/>
 		<File RelativePath="..\metabolism\Schwermetalle_kern.f90"/>
 		<File RelativePath="..\metabolism\Sed_DiffK.f90"/>
 		<File RelativePath="..\metabolism\sed_pom.f90"/>
