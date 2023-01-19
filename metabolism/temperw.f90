@@ -277,7 +277,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
                   tempw(ior) = hctemp+deltTW  ! 1D
                   hcTE = (tempw(ior)*(hcQ+hcQE)-hcQ*hctemp)/hcQE
                   rohE = density_1D(hcTE) ! Dichte im Wärmeeinleiter
-                  call Dichte(hctemz,nkzs,D) ! Dichte im Vorfluter
+                  call Dichte(hctemz,nkzs,ior,D) ! Dichte im Vorfluter
                   
                   call Einleiter_Misch(nkzs,ior,hctemz,Cpart,hcQ,hcQE,hcTE,rohE,D,dH2D)  ! Berechnung der vertikalen Einmischung
                   tempwz(1:nkzs(ior),ior) = Cpart(1:nkzs(ior))
@@ -296,7 +296,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
                      enddo
                   else
                      rohE = density_1D(hcTE) ! Dichte im Einleiter
-                     call Dichte(hctemz,nkzs,D) ! Dichte im Vorfluter
+                     call Dichte(hctemz,nkzs,ior,D) ! Dichte im Vorfluter
                      call Einleiter_Misch(nkzs,ior,hctemz,Cpart,hcQ,hcQE,hcTE,rohE,D,dH2D)  ! Berechnung der vertikalen Einmischung
                      tempwz(1:nkzs(ior),ior) = Cpart(1:nkzs(ior))
                   endif

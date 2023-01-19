@@ -176,6 +176,10 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    nwbl = up_NB_s * (ablbr_s - algab_s)                                   ! Blaualgen
    
    ! Ammoniumaufnahme der Algen
+   alpha_upN4k = 0.
+   alpha_upN4g = 0.
+   alpha_upN4b = 0.
+   
    if (nwgr /= 0.0 .or. nwki /= 0.0 .or. nwbl /= 0.0) then
       a_up = 1.
       b_up = 3.
@@ -224,7 +228,6 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       agrNH4_s = nwgr * alpha_upN4g
       ablNH4_s = nwbl * alpha_upN4b
    endif
-  
   
   ! Nitrataufnahme der Algen
   agrNO3_s = (1. - alpha_upN4g) * nwgr

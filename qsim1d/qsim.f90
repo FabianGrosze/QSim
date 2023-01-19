@@ -9350,8 +9350,8 @@ program qsim
          xglHg = sumglHg(mstr,iior)/itime
          xgsMn = sumgsMn(mstr,iior)/itime
          xglMn = sumglMn(mstr,iior)/itime
-         xgsU = sumgsU(mstr,iior)/itime
-         xglU = sumglU(mstr,iior)/itime
+         xgsU  = sumgsU(mstr,iior)/itime
+         xglU  = sumglU(mstr,iior)/itime
          
          xdlarn = sumdln(mstr,iior)/itime
          xss = sumss(mstr,iior)/itime
@@ -9400,7 +9400,6 @@ program qsim
          xsdbsb = ssdbsb(mstr,iior)/itime
          xsoein = ssoein(mstr,iior)/itime
          xsalgo = ssalgo(mstr,iior)/itime
-                  
          xo2nit = xsusn*4.33
          xalgo = s2algo(mstr,iior)/itime
          xalgao = s2algao(mstr,iior)/itime
@@ -9478,7 +9477,6 @@ program qsim
          if (xBVHNF <= 0.0) then
             xCHNFi = -1.
             xCHNF = -1.
-         
          else
             ! Umrechnung in Zellzahlen
             xCHNFi = xCHNF*1.e6/(xBVHNF*0.22)
@@ -9489,6 +9487,7 @@ program qsim
          ! Buhnenfelder
          891 continue
          if (nbuhn(mstr) == 1) then
+            ! river stretch with groins
             bxtemp = bste(mstr,iior)/itime
             bxno3 = bsno3(mstr,iior)/itime
             bxno2 = bsno2(mstr,iior)/itime
@@ -9526,6 +9525,7 @@ program qsim
             bxalco = bsalco(mstr,iior)/itime
             bxfik = bsfik(mstr,iior)/it_hy(mstr,iior)
             bxfig = bsfig(mstr,iior)/itime
+            bxfib = -1.
             xbnaeh = bnaehr(mstr,iior)/it_hy(mstr,iior)
             bxkmue = bskmue(mstr,iior)/itime
             bxgmue = bsgmue(mstr,iior)/itime
@@ -9546,7 +9546,16 @@ program qsim
             bxJPO4 = bsJPO4(mstr,iior)/itime
             bxJO2 = bsJO2(mstr,iior)/itime
             bxJSi = bsJSi(mstr,iior)/itime
+            ! Colibacteria
             bxcoli = bscoli(mstr,iior)/itime
+            ! Conservative substances (overwritten if active)
+            bmikonss = 0.
+            bxkonss  = 0.
+            bmxkonss = 0.
+            ! In case of groins, Dreissena are only present in groin fields
+            bxdrpf = xdrpfe
+            xdrpfe = 0.
+            ! Heavy metals
             bxgsZn = bsgsZn(mstr,iior)/itime
             bxglZn = bsglZn(mstr,iior)/itime
             bxgsCad = bsgsCad(mstr,iior)/itime
@@ -9589,10 +9598,8 @@ program qsim
                bxseda = -.1
                bxakg = -.1
             endif
-            !
-         endif
-         
-         if (nbuhn(mstr) == 0) then
+         elseif (nbuhn(mstr) == 0) then
+            ! river stretch without groins
             bmibsb(mstr,iior) = -1.
             bxbsb5 = -1.
             bmxbsb(mstr,iior) = -1.
