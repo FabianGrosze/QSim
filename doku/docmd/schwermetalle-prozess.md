@@ -340,7 +340,7 @@ Die Schwermetallfreisetzung ist proportional zur Erosionsrate E und zur
 Schadstoffbelastung im Sediment:
 
 \f{equation}{
-  SM_E = \frac{E \cdot Sed_{SM_p}}{H}	(12)
+  SM_E = \frac{E \cdot Sed_{SM_p}}{H}
 \f}
 
 mit
