@@ -49,7 +49,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
                           h_tvd,eps1_tvd_imp,eps2_tvd_imp,                       &
                           ip_weno,courant_weno,ntd_weno,nquad,                   &
                           epsilon1,epsilon2,ielm_transport,                      &
-                          ztot,sigma,in_dir,len_in_dir,nxq
+                          ztot,sigma,in_dir,len_in_dir,nxq,kbp,dp
                           
   use schism_msgp, only:  comm, nproc, myrank
 
@@ -210,6 +210,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       enddo !k
       read(10+meinrang,*)i,j
       if((i.ne.np).or.(j.ne.ne))call qerror('(i.ne.np).or.(j.ne.ne)')
+      allocate(dp(npa),kbp(npa))
       if(ics==1) then
          allocate(xnd(npa),ynd(npa),dp00(npa),kbp00(npa))
          xmin=1.0e9 ; xmax=-1.0*xmin

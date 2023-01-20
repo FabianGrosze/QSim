@@ -55,8 +55,15 @@ subroutine stofftransport_schism()
 !?? alle subschritte ???
 
       call get_schism_step(na_transinfo) !!****
-      !print*,meinrang,'stofftransport_schism: did get_schism_step()'
+      print*,meinrang,'stofftransport_schism: did get_schism_step()'
       call mpi_barrier (mpi_komm_welt, ierr)
+!...  Recompute vgrid and calculate rewetted pts
+      !if(inunfl==0) then
+        call levels0(0,izeit) !(iths_main,it)
+      !else
+      !  call levels1(iths_main,it)
+      !endif
+      if(myrank==0) write(16,*) 'done recomputing levels0...'
 
          ! do_transport_tvd_imp(it,ntr,difnum_max_l)
          ! integer, intent(in) :: it !time stepping #; info only

@@ -557,6 +557,9 @@ module modell
 
    integer, parameter :: number_rb_hydraul = 3
    !> siehe: \ref lnk_hydraul_rb
+   !!         rb_hydraul(1+(j-1)*number_rb_hydraul)    = u(j)
+   !!         rb_hydraul(2+(j-1)*number_rb_hydraul)    = tief(j)
+   !!         rb_hydraul(3+(j-1)*number_rb_hydraul)    = p(j)
    real , allocatable , dimension (:) :: rb_hydraul
    !> siehe: \ref lnk_hydraul_rb
    real , allocatable , dimension (:) :: rb_hydraul_p

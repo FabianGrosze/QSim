@@ -34,9 +34,13 @@ subroutine get_schism_step(nt)
       use schism_glbl, only:su2,sv2,tr_el,eta2                       &
       ,npa,np, nsa,ne, nea, nvrt, ns_global,ne_global,np_global      &
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
-      ,idry_s,nea2,dfh,hdif,flux_adv_vface,ntracers,ze,zs
+      ,idry_s,nea2,dfh,hdif,flux_adv_vface,ntracers,ze,zs,iegrpv,    &
+       npa2, nea2, nsa2
       
-      use schism_msgp, only: myrank,nproc,parallel_abort,exchange_s3dw
+      use schism_msgp, only: myrank,nproc,parallel_abort,            &
+      exchange_s3dw,nnbr,nbrrank,nnbr_2t,nbrrank_2t,                 &
+      exchange_e3d_2t_tr, exchange_p2d
+      
       implicit none
       
       include "netcdf.inc"
@@ -201,6 +205,10 @@ subroutine get_schism_step(nt)
          write(fehler,*)"get_schism_step MPI_Gather(var_p elev failed : ", ierr
          call qerror(fehler)
       end if
+      print*,meinrang,'get_schism_step before eta2 min/max np,npa,npa2 = ',  &
+            minval(eta2(1:np)),maxval(eta2(1:np)),  &
+            minval(eta2(np+1:npa)),maxval(eta2(np+1:npa)),  &
+            minval(eta2(npa+1:npa2)),maxval(eta2(npa+1:npa2))
       call mpi_barrier (mpi_komm_welt, ierr)
       !! recombine into global numbers
       if (meinrang == 0) then
@@ -237,63 +245,79 @@ subroutine get_schism_step(nt)
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
       
+      ! complement ghost element values
+      call exchange_p2d(eta2)
+      
+      print*,meinrang,'get_schism_step after eta2 min/max np,npa,npa2 = ',  &
+            minval(eta2(1:np)),maxval(eta2(1:np)),  &
+            minval(eta2(np+1:npa)),maxval(eta2(np+1:npa)),  &
+            minval(eta2(npa+1:npa2)),maxval(eta2(npa+1:npa2))
+      
       !######################### dp tiefe depth rb_hydraul(2  ################################################
       ! find depth
-      !call check_err( nf_inq_varid(ncid,"depth", varid) )
-      !call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
-      !call mpi_barrier (mpi_komm_welt, ierr)!#!
-      !if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
-      !n=dlength(dimids(1))
+      call check_err( nf_inq_varid(ncid,"depth", varid) )
+      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      if (dlength(dimids(1)) > maxstack)call qerror("depth:dlength(dimids(1)) > maxstack")
+      n=dlength(dimids(1))
       !!print*,meinrang,' get_schism_step depth dlength(dimids(1))=',n,' np,npa,maxstack=', np,npa,maxstack
       !!! initialize
-      !var_p = 666.666
-      !if (meinrang == 0) var_g = 777.777
-      !call mpi_barrier (mpi_komm_welt, ierr)
-      !if(.not.allocated(dp)) allocate(dp(npa),stat=istat);
-      !if (istat /= 0) call qerror("allocate dp( failed")
+      var_p = 666.666
+      if (meinrang == 0) var_g = 777.777
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(.not.allocated(dp)) allocate(dp(npa),stat=istat);
+      if (istat /= 0) call qerror("allocate dp( failed")
       !!! get data
-      !start2 = (/ 1, nin /)
-      !count2 = (/ npa, 1 /) ! nodenumber first dimension
-      !iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
-      !if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
-      !call check_err(iret)
-      !dp(1:npa) = var_p(1:npa)
-      !print*,meinrang,' dp np  from...until ',minval(dp(1:np)),maxval(dp(1:np))
-      !call mpi_barrier (mpi_komm_welt, ierr)
-      !! gather var_p into var_g
-      !call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-      !if (ierr /= 0) then
-      !   write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
-      !   call qerror(fehler)
-      !end if
-      !call mpi_barrier (mpi_komm_welt, ierr)
+      start2 = (/ 1, nin /)
+      count2 = (/ npa, 1 /) ! nodenumber first dimension
+      iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
+      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dp failed iret = ",iret
+      call check_err(iret)
+      dp(1:npa) = var_p(1:npa)
+      print*,meinrang,'get_schism_step dp before min/max np,npa,npa2 = ',  &
+            minval(dp(1:np)),maxval(dp(1:np)),  &
+            minval(dp(np+1:npa)),maxval(dp(np+1:npa)),  &
+            minval(dp(npa+1:npa2)),maxval(dp(npa+1:npa2))
+      
+      ! complement ghost element values
+      call exchange_p2d(dp)
+      
+      print*,meinrang,'get_schism_step dp after min/max np,npa,npa2 = ',  &
+            minval(dp(1:np)),maxval(dp(1:np)),  &
+            minval(dp(np+1:npa)),maxval(dp(np+1:npa)),  &
+            minval(dp(npa+1:npa2)),maxval(dp(npa+1:npa2))
+
+      call mpi_barrier (mpi_komm_welt, ierr)
+      ! gather var_p into var_g
+      call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      if (ierr /= 0) then
+         write(fehler,*)"get_schism_step MPI_Gather(var_p dp failed : ", ierr
+         call qerror(fehler)
+      end if
+      call mpi_barrier (mpi_komm_welt, ierr)
       !!! recombine into global numbers
       if (meinrang == 0) then
          if(.not.allocated(knoten_z))then
             call qerror('get_schism_step .not. allocated(knoten_z)')
          endif
          knoten_z = -555.555 ! init
-      !   do j = 1,proz_anz ! all processes/ranks
-      !      do k = 1,np_sc(j) ! all nodes at this rank
-      !         knoten_z(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
-      !      end do
-      !   end do
-      !   do k=1,knotenanzahl2D
-      !      if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
-      !   enddo
-        ! set water depth at elements
+         do j = 1,proz_anz ! all processes/ranks
+            do k = 1,np_sc(j) ! all nodes at this rank
+               knoten_z(iplg_sc(j,k)) = -1.0 * var_g((j-1)*maxstack+k)
+            end do
+         end do
+         do k=1,knotenanzahl2D
+            if(knoten_z(k) .lt. -100.0)print*,k,' get_schism_step p<100 ',p(k)
+         enddo
+         ! set water depth at elements
          do j = 1,number_plankt_point ! all j elements
             sump=0.0
             do m=1,cornernumber(j)
                sump=sump+knoten_z(elementnodes(j,m))
             end do ! all m corners
             rb_hydraul(2+(j-1)*number_rb_hydraul) = sump/real(cornernumber(j))
-            rb_hydraul(2+(j-1)*number_rb_hydraul) = rb_hydraul(2+(j-1)*number_rb_hydraul)+rb_hydraul(3+(j-1)*number_rb_hydraul)
+            rb_hydraul(2+(j-1)*number_rb_hydraul) = rb_hydraul(3+(j-1)*number_rb_hydraul)-rb_hydraul(2+(j-1)*number_rb_hydraul)
          end do ! all j elements
-         ! write bathymetry into knoten_z
-         !do k=1,knotenanzahl2D
-         !   knoten_z(k)=p(k)-knoten_z(k)
-         !enddo
          print*,'### get_schism_step bathymetry ###, knoten_z minwert, maxwert = '  &
                ,minval(knoten_z),maxval(knoten_z)
       end if ! proc. 0 only
@@ -474,7 +498,6 @@ subroutine get_schism_step(nt)
       var_p = 666.666
       if (meinrang == 0) var_g = 777.777
       call mpi_barrier (mpi_komm_welt, ierr)
-      minwert=0.0; maxwert=0.0
       do i = 1,nvrt
          start3 = (/i, 1, nin /)
          count3 = (/1, nea, 1 /) ! nodenumber first dimension
@@ -482,17 +505,15 @@ subroutine get_schism_step(nt)
          call check_err(iret)
          if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var temp_elem failed iret = ",iret,i
          tr_el(1,i,1:nea) = var_p(1:nea)
-         minima=minval(tr_el(1,i,1:ne))
-         maxima=maxval(tr_el(1,i,1:ne))
-         call mpi_barrier (mpi_komm_welt, ierr)
-         minwert=min(minwert,minima)
-         maxwert=max(maxwert,maxima)
+         !!###tr_el(1,i,1:ne) = 22.22*real(i) !### test exchange_e3d_2t_tr
+         print*,meinrang,i,'temp_elem before from...until ne',  &
+                minval(tr_el(1,i,1:ne)),maxval(tr_el(1,i,1:ne))
       end do ! all i levels
-      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
-      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
-      if(meinrang==0)print*,'temp_elem  from...until ',minima,maxima
+      !print*,meinrang,'nnbr,nbrrank min/max',nnbr,minval(nbrrank(:)),maxval(nbrrank(:))
+      !print*,meinrang,'nnbr_2t,nbrrank_2t min/max',nnbr_2t,minval(nbrrank_2t(:)),maxval(nbrrank_2t(:))
+      
       call mpi_barrier (mpi_komm_welt, ierr)
-
+ 
       !######################### salt_elem(time, nSCHISM_hgrid_face ################################################
       !        if(iof_hydro(30)==1) call writeout_nc(id_out_var(33),'salt_elem',6,nvrt,nea,tr_el(2,:,:))
       call check_err( nf_inq_varid(ncid,"salt_elem", varid) )
@@ -511,16 +532,22 @@ subroutine get_schism_step(nt)
          call check_err(iret)
          if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var salt_elem failed iret = ",iret,i
          tr_el(2,i,1:nea) = var_p(1:nea)
-         minima=minval(tr_el(2,i,1:ne))
-         maxima=maxval(tr_el(2,i,1:ne))
-         call mpi_barrier (mpi_komm_welt, ierr)
-         minwert=min(minwert,minima)
-         maxwert=max(maxwert,maxima)
+         print*,meinrang,i,'salt_elem before from...until ne,nea,nea2 ',  &
+              minval(tr_el(2,i,1:ne)),maxval(tr_el(2,i,1:ne)),  &
+              minval(tr_el(2,i,1+ne:nea)),maxval(tr_el(2,i,1+ne:nea)),  &
+              minval(tr_el(2,i,1+nea:nea2)),maxval(tr_el(2,i,1+nea:nea2))
       end do ! all i levels
-      call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
-      call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
-      if(meinrang==0)print*,'salt_elem  from...until ',minima,maxima
       call mpi_barrier (mpi_komm_welt, ierr)
+      
+      ! complement ghost element values from neighbouring processes/domains
+      call exchange_e3d_2t_tr(tr_el)
+      
+      do i = 1,nvrt
+         print*,meinrang,i,'salt_elem after from...until ne,nea,nea2 ',  &
+              minval(tr_el(2,i,1:ne)),maxval(tr_el(2,i,1:ne)),  &
+              minval(tr_el(2,i,1+ne:nea)),maxval(tr_el(2,i,1+ne:nea)),  &
+              minval(tr_el(2,i,1+nea:nea2)),maxval(tr_el(2,i,1+nea:nea2))
+      end do ! all i levels
 
       !######################### flux_adv_vface(time, nSCHISM_hgrid_face ################################################
       ! call writeout_nc(id_out_var(noutput+1),'flux_adv_vface',6,nvrt,nea,flux_adv_vface(:,1,:))
