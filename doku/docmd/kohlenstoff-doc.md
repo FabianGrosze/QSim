@@ -1,34 +1,35 @@
-Organischer Kohlenstoff {#lnk_orgC}
-=======================
+Organic carbon {#lnk_orgC}
+=================
 
-Der gesamte organische Kohlenstoffgehalt (TOC, Total Organic Carbon) im Wasser 
-setzt sich aus gelösten (dissolved, DOC) und partikulären (POC) Anteilen zusammen. 
-Dabei wird beim POC zusätzlich noch zwischen lebender Biomasse und nicht lebender 
-organischer Materie (= Detritus) unterschieden. 
+The total organic carbon (TOC) content in water consists of dissolved (DOC) 
+and particulate (POC) components. POC is further differentiated into living 
+biomass and non-living organic matter (= detritus). 
 
-Im Modul Organischer Kohlenstoff wird die Aufteilung der organischen Fraktionen 
-und deren Verknüpfung untereinander in QSim umgesetzt. Als Kohlenstofffraktionen 
-gibt es partikuläre schwer und leicht abbaubare, gelöste schwer und leicht abbaubare 
-sowie monomere und refraktäre Kohlenstoff-Verbindungen (BILLEN 1991). Die 
-refraktären Kohlenstoffverbindungen stellen dabei lediglich eine Kohlenstoffsenke 
-dar. Zur Vervollständigung der Gesamtbilanz des POC wird die lebende Biomasse mit 
-einbezogen, die in den Modulen Algen und Rotatorien berechnet wird.
+The division of the organic fractions and their interconnection in QSim is 
+implemented in the organic carbon module. As carbon fractions there are 
+particulate poorly and easily degradable, dissolved poorly and easily degradable 
+and monomeric and refractory carbon compounds (BILLEN 1991). The 
+refractory carbon compounds are only a carbon sink. 
+To complete the overall balance of POC, the living biomass is included, 
+which is calculated in the primary and secondary production modules.
 <!-- #mf: Referenz für Billen fehlt -->
 
-Bei der Berechnung der Konzentrationsänderungen der einzelnen Fraktionen mit 
-Ausnahme der monomeren Fraktion werden nach festgelegten Anteilen die abgestorbene 
-Algen- und Rotatorienbiomasse sowie die Faecesbildung durch Rotatorien und Dreissena 
-als Quellen und die Sedimentation als Senke des Detritus berücksichtigt.
+When calculating concentration changes in the individual fractions,
+excluding monomeric fractions, dead algal and rotifer biomass as well as 
+rotifer and dreissena faeces are sources. They are distributed among the 
+carbon fractions with a fixed ratio.
+Sedimentation is a sink for the detritus.
 
-Durch Hydrolyse der partikulären Fraktionen werden Kohlenstoffe in die gelösten 
-Fraktionen überführt. In einem weiteren Schritt gelangt dann die gelöste Fraktion 
-ebenfalls durch Hydrolyse, aber auch durch exoenzymatische Aktivität in die monomere Fraktion, 
-die das Substrat der heterotrophen Atmung der Bakterien ist. Der Umsatz der 
-monomeren Kohlenstoffe geschieht durch Bakterien, die unter Sauerstoffverbrauch 
-Kohlendioxid und eigene Biomasse bilden. Das bedeutet, dass in diesem Ansatz die 
-Bakterienbiomasse (BM) explizit berechnet wird. Aus dem terminalen Schritt wird 
-der biochemische Sauerstoffbedarf (BSB) abgeleitet. Die exoenzymatische Aktivität 
-im vorherigen Schritt ist an die Konzentration der Bakterienbiomasse gekoppelt. 
+Carbon is transformed to the dissolved fractions by hydrolysis of the 
+particulate fractions. The dissolved fraction is then transformed 
+to the monomeric fraction by hydrolysis and by exoenzymatic activity. 
+The exoenzymatic activity is coupled to the concentration of the 
+bacterial biomass, because monomeric substances are the substrate of 
+heterotrophic bacterial respiration. 
+The conversion of monomeric carbon is carried out by bacteria, which procude 
+biomass and carbon dioxide while consuming oxygen. That is, in this approach, 
+the bacterial biomass (BM) is explicitly calculated. From the terminal step 
+the biochemical oxygen demand (BOD) is derived.  
 
 <center> 
  \image html orgc.klein.png ""
@@ -37,14 +38,16 @@ im vorherigen Schritt ist an die Konzentration der Bakterienbiomasse gekoppelt.
 </center>
 <!-- #mf: Frage an Andreas & Tanja: passt das Bild? Bzw. TExt und Bild gegenchecken -->
 
-Details zum Kohlenstoff-Baustein sind in den folgenden Abschnitten beschrieben:
-- \subpage lnk_orgC_prozesse : Erläuterung der im Kohlenstoff-Baustein 
-implementierten Prozesse 
+Details on the carbon module can be found in the following sections:
 
-- \subpage lnk_orgC_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_orgC_prozesse : Explanation of the processes implemented within 
+   the carbon module 
 
-- \subpage lnk_orgc_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_orgC_vars : List of formula symbols and variables 
+
+- \subpage lnk_orgc_umsetzung : Details on the code and its numeric 
+   implementation 
 
 \n\n
 
-Textquelle: kohlenstoff-doc.md ; Codesource: orgC.f90 
+Text source: kohlenstoff-doc.md ; Code source: orgC.f90 

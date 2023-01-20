@@ -1,42 +1,43 @@
-Phosphor {#lnk_phosphor}
+Phosphorus {#lnk_phosphor}
 =======================
 
-Die Anwendung von Düngemitteln, Einträge über Kläranlagen, Luftverschmutzungen 
-sowie die Degradation entwässerter Feuchtgebiete führen zu überhöhten 
-Phosphor-Emissionen in die Gewässer. Ein Teil dieses Phosphors wird im 
-Gewässer umgesetzt und/oder zurückgehalten (Retention). Unterschiedliche Prozesse 
-können zur Nährstoffretention in Fluss und Aue beitragen. 
+The application of fertilisers, inputs via sewage treatment plants, air 
+pollution as well as the degradation of drained wetlands lead to excessive 
+phosphorus emissions into water bodies. Some of this phosphorus is converted 
+and/or retained in the water body (retention). Different processes 
+can contribute to nutrient retention in rivers and floodplains. 
 
-Der Pflanzennährstoff Phosphor kommt im Gewässer als anorganischer oder 
-organisch gebundener partikulärer oder gelöster Phosphor vor. 
+The plant nutrient phosphorus occurs in the water body as inorganic or 
+organically bound particulate or dissolved phosphorus. 
 
-Im Modell wird zwischen Gesamt-Phosphor (Ges-P, Summe aus gelöstem und 
-partikulärem Phosphor) und gelöstem reaktivem Phosphat (SRP, für „soluble 
-reactive phosphorus“) unterschieden. 
+In the model, a distinction is made between total phosphorus (TP, sum of 
+dissolved and particulate phosphorus) and dissolved reactive phosphate (SRP, 
+for "soluble reactive phosphorus"). 
 
-Ges-P und SRP gelangen über Zuflüsse und Einleitungen an den Modellrändern ins 
-Gewässer.
+TP and SRP enter the watercourse via tributaries and discharges at the model 
+boundaries.
 
-Die Änderung des Gesamt-Phosphors erfolgt durch Sedimentation von partikulärem 
-gebundenem Phosphor (Algen und Detritus). Der Austausch von anorganischem Phosphor 
-(PO4-P) mit dem Sediment ist zurzeit abgeschaltet. 
+The change in total phosphorus takes place via sedimentation of particulate 
+bound phosphorus (algae and detritus). The exchange of inorganic phosphate 
+(PO4-P) with the sediment is currently switched off. 
 
-Während SRP sofort für Algen verfügbar ist, gilt dies für den organisch 
-gebundenen Phosphor erst nach dessen bakteriellem Abbau (Respiration der 
-heterotrophen Bakterien). Im Modell wird bei der Zersetzung der Algen- und der
-Rotatorienbiomasse SRP freigesetzt. Dabei errechnet sich die bei 
-den beschriebenen Prozessen freigesetzte Phosphormenge aus den respirierten 
-Biomassen und dem Phosphor-Gehalt von Algen und Detritus. 
+While SRP immediately is available to algae, this is not the case for 
+organically bound phosphorus, which is only available after bacterial 
+degradation (respiration of heterotrophic bacteria). 
+In the model, decomposition of algal and rotatoria biomass releases SRP. The
+amount of released phosphorus is calculated from the respired biomasses and the
+phosphorus content of algae and detritus.
 
-Details zum Phosphor-Modul sind in den folgenden Abschnitten beschrieben:
+Details on the phosphorus module are given in the following sections:
 
-- \subpage lnk_phosphor_prozesse : Erläuterung der im Phosphor-Baustein 
-implementierten Prozesse 
+- \subpage lnk_phosphor_prozesse : Explanation of the processes implemented 
+   within the phosphorus module
 
-- \subpage lnk_phosphor_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_phosphor_vars : List of formula symbols and variables  
 
-- \subpage lnk_phosphor_umsetzung : Details zum Code und der numerischen Umsetzung
+- \subpage lnk_phosphor_umsetzung : Details on the code and its numeric 
+   implementation
 
 \n\n
 
-Textquelle: phosphor-doc.md ; Codesource: ncyc.f90 
+Text source: phosphor-doc.md ; Code source: ncyc.f90 

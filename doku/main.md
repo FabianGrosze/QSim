@@ -1,23 +1,22 @@
 \mainpage 
 
-<h1>QSim - Das Gewässergütemodell der BfG</h1>
+<h1>QSim - The water quality model of the BfG</h1>
 
-QSim (<strong>Q</strong>ualitäts-<strong>Sim</strong>ulation)
-ist ein deterministisches Gewässergütemodell, das der Simulation und Prognose 
-des Stoffhaushalts und der Planktondynamik von Fließgewässern dient.
+QSim (from the German "<strong>Q</strong>ualitäts-<strong>Sim</strong>ulation")
+is a deterministic water quality model for the simulation and prognosis
+of the balance of matter and the plankton dynamics of running waters.
 
-Vielfach steht die Ermittlung des Sauerstoffgehalts im Zentrum der 
-Untersuchungen.
+In many cases, the determination of the oxygen content is at the center of the
+investigations.
 
-![QSim Modellschema](qsim_prozesse.png "")
+![QSim model schema](qsim_processes.png "")
 
-Die verschiedenen Seiten des Dokumentations-Portals verschaffen 
-einen einführenden Überblick über die Funktionsweise von QSim. 
-Sie liefern wissenschaftliche Ausführungen zu Details einzelner Berechnungsmodule 
-und dokumentieren den Quellcode des Programms.
+This documentation portal provides an overview of the way QSim works.
+The various sub-pages provide detailed scientific explanations of 
+individual calculation modules and they document the source code of the program.
 
-Die einzelnen Kapitel können über die Baumstruktur links oder über die 
-folgende Liste angesprochen werden.
+The individual chapters can be accessed via the tree structure on the left or 
+via the the following list.
 - \subpage lnk_ueberblick
 - \subpage lnk_waerme 
 - \subpage lnk_orgC
@@ -26,7 +25,7 @@ folgende Liste angesprochen werden.
 - \subpage lnk_konsumenten
 - \subpage lnk_sauerstoff
 - \subpage lnk_ph
-- (\subpage lnk_sediment -> _derzeit ausgeschaltet_)
+- (\subpage lnk_sediment -> _currently switched off_)
 - \subpage lnk_weitere_stoffe
 - \subpage lnk_tracer_aufenthalt
 - \subpage lnk_stofftransport
@@ -38,12 +37,12 @@ folgende Liste angesprochen werden.
 - \subpage lnk_literatur
 - \subpage lnk_kontakt
 
-Diese Seiten sollten später wieder weg:
+* The pages will be deleted later*:
 - \subpage lnk_todo
 - \subpage lnk_broken
 
 
-Textquelle: main.md
+Text source: main.md
 
 
 <!-- aus Datei readme.md -->
