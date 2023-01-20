@@ -1,8 +1,7 @@
-Literaturverzeichnis des Dokuportals {#lnk_ext_literatur}
+References documentation portal {#lnk_ext_literatur}
 ==================================== 
 
-Diese Liste ist eine Sammlung aus in der QSim-Dokumentaiton verwendeter
-Referenzen.
+This list is a collection of the references cited within the documentation portal.
 
 - \anchor Droop1973 Droop 1973 Angaben zur Referenz
 
@@ -17,4 +16,4 @@ Referenzen.
 	 
 
 
-Textquelle: literatur_extern.md; zurück: \ref lnk_literatur
+Text source: literatur_extern.md; go back to: \ref lnk_literatur
