@@ -65,7 +65,9 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    real, dimension(50,1000)       :: akiz, agrz, ablz, algzkz, algzgz, algzbz
    real, dimension(azSTrs,1000)   :: TGZoo
    double precision               :: Qquell,QSenk
-   save hczoo1
+   
+   ! TODO FG: added hcTGZoo1 here to avoid runtime error 
+   save hczoo1, hcTGZoo1
    
    !!wy open(unit=79,file='konsum.tst')
    
@@ -109,24 +111,24 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    FOPTR = FopIRe
    GROT = GRote
    irmax = IRmaxe ! in [1/d]
-   RotC = GROT*CRot
+   RotC = GROT * CRot
    if (iTGZoo == 0) then
-      if (IRmaxe < 0.0) then
-         up_CROT = -0.8377*log10(RotC)+0.3131   ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+      if (IRmaxe < 0. .and. RotC > 0.) then
+         ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+         up_CROT = -0.8377 * log10(RotC) + 0.3131
          up_CROT = 10**up_CROT
       else
          up_CROT = IRmaxe
       endif
-      
-      IRmax = up_CROT*RotC**(2./3.)
-      if (FopIRe < 0.0) then
-         ClearRlog = -0.9987*log10(RotC)-0.706
-         ClearR = (10**(ClearRlog)*RotC**(2./3.))*1.e5   ! Filtrierrate in 1/h
-         
-         VolRot = RotC*1.e6/0.12
-         ClearR_Ind = ClearR*VolRot/1.e9
-         
-         IRmax_Ind = IRmax*VolRot*0.00012/24.
+      ! maximum ingestion rate
+      IRmax = up_CROT * RotC**(2./3.)
+      if (FopIRe < 0. .and. RotC > 0.) then
+         ClearRlog = -0.9987 * log10(RotC) - 0.706
+         ! Clearance rate (1/h)
+         ClearR    = 1.e5 * (10**(ClearRlog)*RotC**(2./3.))
+         VolRot = RotC * 1.e6 / 0.12
+         ClearR_Ind = ClearR * VolRot / 1.e9
+         IRmax_Ind = IRmax * VolRot * 0.00012/24.
          FKs = IRmax_Ind/ClearR_Ind
       else
          FKs = FopIRe
@@ -136,59 +138,59 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    do j = 1,anze+1  !Beginn Knotenschleife
       ior = j
       if (iTGZoo == 1) then
-         if (TGZoo(mstr,ior) > 0.0) then
-            RotC = TGZoo(mstr,ior) * CRot
+         up_CROT = IRmaxe
+         FKs     = 0.
+         RotC    = TGZoo(mstr,ior) * CRot
+         if (RotC > 0.0) then
             zagr = min(1.,max(0.0,-0.656*log10(ZellVGr/RotC)+3.27))
             zaki = min(1.,max(0.0,-0.656*log10(ZellVKi/RotC)+3.27))
             zabl = min(1.,max(0.0,-0.656*log10(ZellVBl/RotC)+3.27))
-         endif
-         
-         if (IRmaxe < 0.0) then
-            up_CROT = -0.8377*log10(RotC)+0.3131   ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
-            up_CROT = 10**up_CROT
-         else
-            up_CROT = IRmaxe
-         endif
-         
-         IRmax = up_CROT*RotC**(2./3.)
-         if (FopIRe < 0.0) then
-            ClearRlog = -0.9987*log10(RotC)-0.706
-            ClearR = (10**(ClearRlog)*RotC**(2./3.))*1.e5   ! Filtrierrate in 1/h
+            if (IRmaxe < 0.0) then
+               ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+               up_CROT = -0.8377 * log10(RotC) + 0.3131
+               up_CROT = 10**up_CROT
+            endif
+            ! maximum ingestion rate
+            IRmax = up_CROT * RotC**(2./3.)
+            if (FopIRe < 0.0) then
+               ClearRlog = -0.9987*log10(RotC) - 0.706
+               ClearR = (10**(ClearRlog) * RotC**(2./3.)) * 1.e5   ! Filtrierrate in 1/h
+               
+               VolRot = RotC * 1.e6 / 0.12
+               ClearR_Ind = ClearR*VolRot/1.e9
             
-            VolRot = RotC*1.e6/0.12
-            ClearR_Ind = ClearR*VolRot/1.e9
-            
-            IRmax_Ind = IRmax*VolRot*0.00012/24.
-            FKs = IRmax_Ind/ClearR_Ind
-         else
-            FKs = FopIRe
+               IRmax_Ind = IRmax*VolRot*0.00012/24.
+               FKs = IRmax_Ind/ClearR_Ind
+            else
+               FKs = FopIRe
+            endif
          endif
       endif
-      if (zooind(ior) < 0.0)zooind(ior) = 0.0
-      if (vabfl(ior)>=0.0 .and. vabfl(ior+1) < 0.0) then
-         hczoo1 = zooind(ior)
+      zooind(ior) = max(0., zooind(ior))
+      if (vabfl(ior) >= 0.0 .and. vabfl(ior+1) < 0.0) then
+         hczoo1   = zooind(ior)
          hcTGZoo1 = TGZoo(mstr,ior)
       endif
       ior_flag = 0
-      if (flag(ior) == 6 .and. vabfl(ior) < 0.0.and.vabfl(ior+1) > 0.0) then
-         ior = ior+1
+      if (flag(ior) == 6 .and. vabfl(ior) < 0.0 .and. vabfl(ior+1) > 0.0) then
+         ior = ior + 1
          ior_flag = 1
       endif
       if (ilbuhn == 1) then
          nkzs(ior) = 1
-      else if (flag(ior) /= 4) then
-      else                        ! Berücksichtigung der Einleitungen
+      elseif (flag(ior) == 4) then
+         ! Berücksichtigung der Einleitungen
          m = 1
          ihcQ = 0
-         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0)m = -1
-         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0)ihcQ = 1 ! Konzentration an der Einleitstelle
+         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0) m = -1
+         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcQ = 1 ! Konzentration an der Einleitstelle
          ! ist gleich der Konzentration der Einleitung
          
          hczoo = zooind(ior-m)     ! Umbenennen der benötigten Variablen; 1D
          hcQ = vabfl(ior-m)
          hcTGZoo = TGZoo(mstr,ior-m)
-         if (hcQ < 0.0)hcQ = abs(hcQ)
-         if (hcQ == 0.0 .or. ihcQ == 1)hcQ = 1.e-10
+         if (hcQ < 0.0) hcQ = abs(hcQ)
+         if (hcQ == 0.0 .or. ihcQ == 1) hcQ = 1.e-10
          if (ihcQ == 1) then
             hczoo = hczoo1
             hcTGZoo = hcTGZoo1
@@ -197,7 +199,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
          do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
             hcQE = max(0.0,qeinl(iein))
             hczooE = ezind(iein)
-            if (hczooE < 0.0)hczooE = hczoo
+            if (hczooE < 0.0) hczooE = hczoo
             hcTGZooE = hcTGZoo
             zooind(ior) = (hcQ*hczoo+hcQE*hczooE)/(hcQ+hcQE)
             if (ezind(iein) > 0.0 .and. qeinl(iein) == 0.0) then

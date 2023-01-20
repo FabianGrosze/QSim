@@ -52,6 +52,12 @@ subroutine nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
    real     :: hcQE, hcNH4E, hcNO2E, hcNO3E, hcx0E, hcx02E, hcgesNE, hcnl0E
    real     :: hcq   
    
+   ! TODO FG: removed initialisation with 0 of the following variables and
+   !          added them to save-variables in analogy to other routines
+   save hcvnh41, hcvno21, hcvno31, hcvx01, hcvx021, hcnl01
+   ! TODO FG: added variable as save-variables in analogy to other routines
+   save hcgesN1
+   
    ! --------------------------------------------------------------------------
    ! diffuse sources
    ! --------------------------------------------------------------------------
@@ -98,13 +104,6 @@ subroutine nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
    ! --------------------------------------------------------------------------
    ! point sources
    ! --------------------------------------------------------------------------
-   hcvnh41 = 0.0
-   hcvno21 = 0.0
-   hcvno31 = 0.0
-   hcvx01  = 0.0
-   hcvx021 = 0.0
-   hcnl01  = 0.0
-   
    iein = 1
    do j = 1,anze+1
       
@@ -131,7 +130,6 @@ subroutine nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
          if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0) m = -1
          if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcQ = 1 ! Konzentration an der Einleitstelle
          ! ist gleich der Konzentration der Einleitung
-         
          
          ! Umbenennen der benötigten Variablen
          hcvnh4 = vnh4(ior-m)        
