@@ -8,7 +8,9 @@ AUTOR : VOLKER KIRCHESCH                      \n
 entnommen aus Version qsim14.05\n 
 
 ## Schnittstellenbeschreibung ##
+see phosphate.f90
 
+<!--
 SUBROUTINE po4s()\n
 ( \ref gelp, \ref flag, \ref elen, \ref ior, \ref tiefe                      &\n
 &, \ref dalggr, \ref dalgki, \ref dalgag, \ref dalgak                        &\n
@@ -26,7 +28,7 @@ SUBROUTINE po4s()\n
 &,\ref iorla, \ref iorle, \ref ieinls, \ref flae, *qeinll*, *gpl*, *gespl*   &\n
 &, \ref hgespz, \ref algdrk, \ref algdrg, \ref algdrb, \ref itags            &\n
 &, \ref monats, \ref uhrz, \ref azstrs, \ref kontroll , *jjj* )    \n
-
+-->
 
 po4s() wird von der Hüllroutine po4s_huelle() aufgerufen. 
 
@@ -46,5 +48,5 @@ randwert_planctonic():\n
 
 \n\n
 
-Textquelle: phosphor-umsetzung.md; Code: ncyc.f90 und po4s_huelle.f95; 
-zurück \ref lnk_phosphor oder \ref lnk_randbedingungen_ergaenzen
+Text source: phosphor-umsetzung.md; Code sources: module_phosphate.f90, phosphate.f90
+and phosphate_wrapper_3d.f95; go back to \ref lnk_phosphor oder \ref lnk_randbedingungen_ergaenzen

@@ -355,5 +355,6 @@ berechnet werden; in Code und Kurzdoku recherchieren -->
   filter feeders on phytoplankton</a>\n 
 
 
-Textquelle: sauerstoff-prozess.md; Codesource: oxygen.f90; 
+Textquelle: sauerstoff-prozess.md; Code sources: module_oxygen.f90, oxygen.f90, 
+oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95;  
 zurück: \ref lnk_sauerstoff

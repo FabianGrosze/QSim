@@ -50,4 +50,5 @@ Details on the carbon module can be found in the following sections:
 
 \n\n
 
-Text source: kohlenstoff-doc.md ; Code source: orgC.f90 
+Text source: kohlenstoff-doc.md ; Code sources: module_organic_carbon.f90, 
+organic_carbon.f90 and organic_carbon_wrapper_3d.f95 

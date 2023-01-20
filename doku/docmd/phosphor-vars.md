@@ -30,4 +30,5 @@ Herkunft:
 
 \n\n
 
-Textquelle: phosphor-vars.md; Codesource: ncyc.f90; zurück: \ref lnk_phosphor
+Text source: phosphor-vars.md; Code sources: module_phosphate.f90, phosphate.f90
+and phosphate_wrapper_3d.f95; go back to: \ref lnk_phosphor

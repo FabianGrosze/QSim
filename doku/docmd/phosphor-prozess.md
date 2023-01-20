@@ -109,4 +109,5 @@ der jeweiligen Algenmenge zusammen.
 
 \n\n
 
-Textquelle: phosphor-prozess.md; Codesource: ncyc.f90; zurück: \ref lnk_phosphor
+Text source: phosphor-prozess.md; Code sources: module_phosphate.f90, phosphate.f90
+and phosphate_wrapper_3d.f95; go back to: \ref lnk_phosphor

@@ -40,4 +40,5 @@ Details on the phosphorus module are given in the following sections:
 
 \n\n
 
-Text source: phosphor-doc.md ; Code source: ncyc.f90 
+Text source: phosphor-doc.md ; Code sources: module_phosphate.f90, phosphate.f90
+and phosphate_wrapper_3d.f95; go back to \ref lnk_naehrstoffe 

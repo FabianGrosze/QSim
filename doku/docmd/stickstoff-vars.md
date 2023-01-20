@@ -15,4 +15,6 @@ Herkunft:
 
 \n\n
 
-Textquelle: stickstoff-vars.md; Codesource: ncyc.f90; zurück: \ref lnk_stickstoff
+Text source: stickstoff-vars.md; Code sources: module_nitrogen.f90,
+nitrifiers.f90, nitrogen.f90 und nitrogen_wrapper_3d.f95 ; 
+go back to: \ref lnk_stickstoff

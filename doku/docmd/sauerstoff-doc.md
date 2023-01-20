@@ -50,5 +50,6 @@ implementierten Prozesse
 
 \n\n 
 
-Textquelle: sauerstoff-doc.md; Codesource: oxygen.f90; 
-zurück: \ref index
+Text source: sauerstoff-doc.md; Code sources: module_oxygen.f90, oxygen.f90, 
+oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95; 
+go back to: \ref index

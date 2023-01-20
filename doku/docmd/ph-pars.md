@@ -38,4 +38,6 @@ Herkunft:
 + v - Vorgabe im Quellcode gesetzt
 
 
-Textquelle: ph-pars.md ; zurück: \ref lnk_ph
+Text source: ph-pars.md ; Code sources: module_ph.f90, ph.f90, pwert.f90 
+and  ph_wrapper_3d.f90; 
+go back to:: \ref lnk_ph

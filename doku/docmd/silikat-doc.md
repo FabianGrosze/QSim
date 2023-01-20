@@ -27,4 +27,5 @@ Further details on the module are described in the following sections:
 
 \n\n
 
-Text source: silikat-doc.md ; Code source: silikat.f90
+Text source: silikat-doc.md ; Code sources: module_silicate.f90, silicate.f90 
+and silicate_wrapper_3d.f95; go back to: lnk_naehrstoffe

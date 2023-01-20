@@ -1043,5 +1043,6 @@ Der orgc-Baustein wurde verwendet, um die Zehrung von schwer abbaubarem organisc
 \n\n
 
 
-Textquelle: kohlenstoff-prozess.md; Codesource: orgC.f90; orgc_huelle.f95; 
-zurück: \ref lnk_orgC oder \ref lnk_orgC_prozesse
+Text source: kohlenstoff-prozess.md; Code sources: module_organic_carbon.f90, 
+organic_carbon.f90 and organic_carbon_wrapper_3d.f95 
+go back to: \ref lnk_orgC or \ref lnk_orgC_prozesse

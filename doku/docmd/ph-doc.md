@@ -23,8 +23,9 @@ beschrieben:
 - \subpage lnk_ph_umsetzung : Details zum Code und der numerischen Umsetzung
 
 \n\n
-Textquelle: ph-doc.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90; 
-zurück: \ref lnk_ueberblick
+Text source: ph-doc.md ; Code sources: module_ph.f90, ph.f90, pwert.f90 
+and  ph_wrapper_3d.f90; 
+go back to: \ref lnk_ueberblick
 
 
 

@@ -155,4 +155,5 @@ Textquelle: kohlenstoff-vars.md; Codesource: orgC.f90; orgc_huelle.f95; zurück:
 | \f$ Y \f$   |  Ertragskoeffizient (Ernährungseffizienz)  |  -  |  APARAM.txt YBACe 18/5  |  YBAC *YBACe*  | |
 
  
-Textquelle: kohlenstoff-vars.md ; Codesource: orgC.f90 , orgc_huelle.f95
+Text source: kohlenstoff-vars.md ; Code sources: module_organic_carbon.f90, 
+organic_carbon.f90 and organic_carbon_wrapper_3d.f95;

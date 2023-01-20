@@ -7,8 +7,10 @@ Programm zur Berechnung des biochemischen Sauerstoffbedarfs (BSB)\n
 AUTOR : VOLKER KIRCHESCH      \n                                   
 entnommen aus Version qsim13.301_28mae18\n 
 
-## Schnittstellenbeschreibung ##
+## Interface ##
+see organic_carbon.f90
 
+<!--
 <code>
 call orgc() \ref obsb, \ref ocsb, \ref tiefe, \ref rau, \ref tflie, \ref vmitt
 , \ref flae, \ref zooind, \ref abszo, \ref tempw, \ref vbsb, \ref bsbt, \ref flag, \ref elen, 
@@ -31,6 +33,7 @@ call orgc() \ref obsb, \ref ocsb, \ref tiefe, \ref rau, \ref tflie, \ref vmitt
 , *bsbzoo* &\n
 , \ref kontroll, *i*) wy\n      
 </code> \n
+-->
 
 ## Randbedingungen ergänzen/erschließen ##
 An Rändern kann nur der C-BSB5 und CSB-Wert vorgegeben werden. Intern werden aber
@@ -193,5 +196,6 @@ mit:
 
 \n\n
 
-Textquelle: kohlenstoff-umsetzung.md; Code: orgC.f90; orgc_huelle.f95; 
-zurück \ref lnk_orgC oder \ref lnk_randbedingungen
+Text source: kohlenstoff-umsetzung.md; Code sources: module_organic_carbon.f90, 
+organic_carbon.f90 and organic_carbon_wrapper_3d.f95; 
+go back to: \ref lnk_orgC oder \ref lnk_randbedingungen

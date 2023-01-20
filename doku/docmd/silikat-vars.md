@@ -18,4 +18,5 @@ Herkunft:
 
 \n\n
 
-Textquelle: silikat-vars.md; Codesource: silikat.f90; zurück: \ref lnk_silikat
+Text source: silikat-vars.md; Code sources: module_silicate.f90, silicate.f90 
+and silicate_wrapper_3d.f95; go back to: \ref lnk_silikat

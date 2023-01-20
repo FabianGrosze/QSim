@@ -13,7 +13,9 @@ entnommen aus Version qsim13.301_28mae18
 
 
 ## Schnittstellenbeschreibung ##
+see ph.f90
 
+<!--
 call ph()
 
 ( \ref mw, \ref pw, \ref ca, \ref lf, \ref tempw, \ref tflie, \ref susn, 
@@ -34,13 +36,14 @@ call ph()
 &, \ref mstr, \ref cpfad, \ref rhyd, \ref wlage, \ref hws, \ref itags, 
 \ref monats, \ref uhrz                           &
 &, \ref azstrs, \ref iphy , \ref kontroll , \ref iglob )
+-->
 
 Die QSim3D Subroutine ph_huelle() dient dem Aufruf der QSimD-subroutine ph(). 
 (Zum Hüllroutinen-Konzept siehe: \ref lnk_huellen )
 
 
 
-Textquelle: ph-umsetzung.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90 
-ph_huelle.f95 ; 
-zurück: \ref lnk_ph
+Text source: ph-umsetzung.md ; Code sources: module_ph.f90, ph.f90, pwert.f90 
+and  ph_wrapper_3d.f90; 
+go back to:: \ref lnk_ph
 

@@ -424,5 +424,6 @@ A NON-IDEAL GAS. Marine Chemistry, 2 (1974) 203--215.
 
 
 
-Textquelle: ph-prozess.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90 ; 
-zurück: \ref lnk_ph
+Text source: ph-prozess.md ; Code sources: module_ph.f90, ph.f90, pwert.f90 
+and  ph_wrapper_3d.f90; 
+go back to:: \ref lnk_ph

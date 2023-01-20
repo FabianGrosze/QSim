@@ -54,4 +54,5 @@ Details on the nitrogen module can be found in the following sections:
 
 \n\n
 
-Text source: stickstoff-doc.md ; Code source: nitrogen.f90
+Text source: stickstoff-doc.md ; Code sources: module_nitrogen.f90,
+nitrifiers.f90, nitrogen.f90
