@@ -31,7 +31,7 @@ SUBROUTINE oxygen()\n
  , \ref dalggz, \ref agno3z, \ref akno3z          &\n
  , \ref abno3z, \ref algakz, \ref algagz, \ref algabz, \ref vz1, \ref tempwz, \ref saett, \ref mstr
  , \ref cpfad, \ref ij, \ref itags, \ref monats             &\n
- , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, \ref ifehl, \ref ifhstr
+ , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, *ifehl*,  *ifhstr*
  , \ref azstrs                          &\n 
  , \ref zooind, *grote*, \ref iphy, \ref kontroll, *jjj*)\n
 

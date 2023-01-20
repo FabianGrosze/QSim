@@ -10,18 +10,18 @@ und die Subpages entsprechend anordnen...-->
 QSim uses modules to simulate the individual mass transfer processes that 
 take place in flowing water. These are:
 - The module for the \ref lnk_waerme,
-- 6 bio-chemical modules to describe \ref lnk_oxygen,  
-  \ref lnk_ph and \ref lnk_orgC, and the \ref lnk_nutrients \ref lnk_nitrogen, 
+- 6 bio-chemical modules to describe \ref lnk_sauerstoff,  
+  \ref lnk_ph and \ref lnk_orgC, and the \ref lnk_naehrstoffe \ref lnk_stickstoff, 
   \ref lnk_phosphor und \ref lnk_silikat.
 - 1 biological module for the simulation of \ref lnk_primaer : 
   [pelagic phytoplankton (algae)](\ref lnk_phytoplankton); \n
   [benthic algae](\ref lnk_albenth) and 
   [macrophytes (aquatic plants)](\ref lnk_makrophyt) are currently switched off.
 - 2 biological modules for recording the first trophic level 
-  [\ref lnk_consumers](\ref lnk_consumers) : [zooplankton](\ref lnk_rotatoria) 
+  [consumers](\ref lnk_konsumenten) : [zooplankton](\ref lnk_rotatorien) 
   as well as [benthic filter feeders (mussels)](\ref lnk_dreissena)
-- as well as further modules for: \ref lnk_heavy_metals , 
-  \ref lnk_float and \ref lnk_stay time.
+- as well as further modules for: \ref lnk_schwermetalle , 
+  \ref lnk_schweb und \ref lnk_aufenthaltszeit.
   
 The [sediment module](\ref lnk_sediment), which calculates early diagenetic 
 processes that cause oxygen, carbon and nutrient fluxes, is currently switched 

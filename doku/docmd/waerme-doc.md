@@ -32,7 +32,7 @@ That is, other than the above listed processes are assumed as irrelevant for
 the heat balance.
 
 Input and export of heat into the water is a result of the 
-\ref lnk_wetter_rb and the [inflow boundary data](\ref lnk_boundary conditions).
+\ref lnk_wetter_rb and the [inflow boundary data](\ref lnk_randbedingungen).
 <!-- #mf: check if link to inflow boundary data (inflow RBs) is correct -->
 
 The following subchapters describe the calculation of 

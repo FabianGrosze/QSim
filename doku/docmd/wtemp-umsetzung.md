@@ -25,7 +25,7 @@ call temperw()\n
  , *qeinll*, *etempl*, \ref mstr, *idwe*, \ref ilang, \ref dtemp, \ref fluxt1
  , \ref extk, \ref itags, \ref monats, \ref tsed, \ref wlage, \ref hws, *irhkw*      &\n
  , *htempw*, *htempz*, \ref wuebks, \ref spewkss, \ref psrefss, \ref extks
- , \ref ifehl, \ref ifhstr, \ref azstrs, \ref iwsim, *iform_VerdR*,                  &\n
+ , *ifehl*, *ifhstr*, \ref azstrs, \ref iwsim, *iform_VerdR*,                  &\n
  &, \ref kontroll, *jjj*, \ref iglob, *meinrang*)  \n
  \n
  <!-- check, ob jjj, iglob und meinrang noch dabei sind (sind nicht in Volkers Doku -->
