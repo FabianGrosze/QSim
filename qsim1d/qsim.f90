@@ -59,7 +59,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
    real                                    :: lat_k, lgh, o2ein
-   real                                    :: mikonss, mxkonss, bxcoli
+   real                                    :: mikonss, mxkonss, bxcoli,algae_biomass
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, wtyp, ro, wge
@@ -1054,7 +1054,7 @@ program qsim
    1037 format(3x,f8.3,2x,f8.3)
    1038 format(3x,f8.3,2x,f8.3,2x,f7.2,2x,f7.2,2x,f6.2,2x,f6.2,2x,f6.2,2x,f6.2)
    2305 format(i2,2x,i2,2x,i3)
-   2306 format(3xi2,2x,i2,2x,i3)
+   2306 format(3x,i2,2x,i2,2x,i3)
    1040 format(3x,f8.3,2x,f8.3,18(2x,f6.2))
    1045 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f5.2,2x,f9.4)
    1047 format(3x,f8.3,2x,f8.3,2x,f6.2,2x,f7.2,2x,f5.2,2x,f5.2)
@@ -8943,37 +8943,31 @@ program qsim
          if (salC > Ymax(mstr,44)) Ymax(mstr,44) = salC
          if (salC < Ymin(mstr,44)) Ymin(mstr,44) = salC
          
-         if (akiy(iior)+agry(iior)+ably(iior) > 0.0) then
-             salw = ((dalggy(iior)+dalgky(iior)+dalgby(iior))*24.) &
-                  /(akiy(iior)+agry(iior)+ably(iior))
+         algae_biomass = akiy(iior) + agry(iior) + ably(iior)
+         if (algae_biomass > 0.0) then
+            salw = (dalggy(iior)+dalgky(iior)+dalgby(iior)) * 24. / algae_biomass
+            Ymax(mstr,45) = max(Ymax(mstr,45), salw)
+            Ymin(mstr,45) = min(Ymin(mstr,45), salw)
          endif
-         if (salw > Ymax(mstr,45)) Ymax(mstr,45) = salw
-         if (salw < Ymin(mstr,45)) Ymin(mstr,45) = salw
          
-         salR = ((dalagy(iior)+dalaky(iior)+dalaby(iior))*24.)
+         salR = (dalagy(iior)+dalaky(iior)+dalaby(iior))*24.
          if (salR > Ymax(mstr,46)) Ymax(mstr,46) = salR
          if (salR < Ymin(mstr,46)) Ymin(mstr,46) = salR
          
-         if ((akiy(iior)+agry(iior)+ably(iior)) > 0.0)                     &
-             salM = ((dgmory(iior)+dkmory(iior)+dbmory(iior))*24.)         &
-             /(akiy(iior)+agry(iior)+ably(iior))
-         if (salM > Ymax(mstr,47))Ymax(mstr,47) = salM
-         if (salM < Ymin(mstr,47))Ymin(mstr,47) = salM
-         if ((akiy(iior)+agry(iior)+ably(iior)) > 0.0)                     &
-             salS = ((sedagy(iior)+sedaky(iior)+sedaby(iior))*24.)         &
-             /(akiy(iior)+agry(iior)+ably(iior))
-         if (salS > Ymax(mstr,48))Ymax(mstr,48) = salS
-         if (salS < Ymin(mstr,48))Ymin(mstr,48) = salS
-         if ((akiy(iior)+agry(iior)+ably(iior)) > 0.0)                     &
-             salZ = ((algzgy(iior)+algzky(iior)+algzby(iior))*24.)         &
-             /(akiy(iior)+agry(iior)+ably(iior))
-         if (salZ > Ymax(mstr,49))Ymax(mstr,49) = salZ
-         if (salZ < Ymin(mstr,49))Ymin(mstr,49) = salZ
-         if ((akiy(iior)+agry(iior)+ably(iior)) > 0.0)                     &
-             salD = ((algdgy(iior)+algdky(iior)+algdby(iior))*24.)         &
-             /(akiy(iior)+agry(iior)+ably(iior))
-         if (salD > Ymax(mstr,50))Ymax(mstr,50) = salD
-         if (salD < Ymin(mstr,50))Ymin(mstr,50) = salD
+         if (algae_biomass > 0.0) then
+            salM = (dgmory(iior)+dkmory(iior)+dbmory(iior)) * 24. / algae_biomass
+            if (salM > Ymax(mstr,47))Ymax(mstr,47) = salM
+            if (salM < Ymin(mstr,47))Ymin(mstr,47) = salM
+            salS = (sedagy(iior)+sedaky(iior)+sedaby(iior)) * 24. / algae_biomass
+            if (salS > Ymax(mstr,48))Ymax(mstr,48) = salS
+            if (salS < Ymin(mstr,48))Ymin(mstr,48) = salS
+            salZ = (algzgy(iior)+algzky(iior)+algzby(iior)) * 24. / algae_biomass
+            if (salZ > Ymax(mstr,49))Ymax(mstr,49) = salZ
+            if (salZ < Ymin(mstr,49))Ymin(mstr,49) = salZ
+            salD = (algdgy(iior)+algdky(iior)+algdby(iior)) * 24. / algae_biomass
+            if (salD > Ymax(mstr,50))Ymax(mstr,50) = salD
+            if (salD < Ymin(mstr,50))Ymin(mstr,50) = salD
+         endif
          if (drpfey(iior) > Ymax(mstr,51))Ymax(mstr,51) = drpfey(iior)
          if (drpfey(iior) < Ymin(mstr,51))Ymin(mstr,51) = drpfey(iior)
          ztp = tpkiy(iior) * vkigry(iior)                      &
@@ -8985,12 +8979,11 @@ program qsim
          if (vkigry(iior) < Ymin(mstr,53))Ymin(mstr,53) = vkigry(iior)
          if (antbly(iior) > Ymax(mstr,54))Ymax(mstr,54) = antbly(iior)
          if (antbly(iior) < Ymin(mstr,54))Ymin(mstr,54) = antbly(iior)
-         if (akiy(iior)+agry(iior)+ably(iior) > 0.0) then
-            salco = ((algcgy(iior)+algcky(iior)+algcby(iior))*24.) &
-                  / (akiy(iior)+agry(iior)+ably(iior))
+         if (algae_biomass> 0.0) then
+            salco = (algcgy(iior)+algcky(iior)+algcby(iior)) * 24. / algae_biomass
+            Ymax(mstr,55) = max(Ymax(mstr,55), salco)
+            Ymin(mstr,55) = min(Ymin(mstr,55), salco)
          endif
-         if (salco > Ymax(mstr,55))Ymax(mstr,55) = salco
-         if (salco < Ymin(mstr,55))Ymin(mstr,55) = salco
          if (fiy(iior) > Ymax(mstr,56))Ymax(mstr,56) = fiy(iior)
          if (fiy(iior) < Ymin(mstr,56))Ymin(mstr,56) = fiy(iior)
          if (extky(iior) > Ymax(mstr,57))Ymax(mstr,57) = extky(iior)
@@ -9043,7 +9036,7 @@ program qsim
          if (cbsbab > Ymax(mstr,75))Ymax(mstr,75) = cbsbab
          if (cbsbab < Ymin(mstr,75))Ymin(mstr,75) = cbsbab
          abbau = -.1
-         if (iwsim == 3 .and. vcsby(iior) > 0.0)abbau = vbsby(iior)/vcsby(iior)
+         if (iwsim == 3 .and. vcsby(iior) > 0.0) abbau = vbsby(iior)/vcsby(iior)
          if (abbau > Ymax(mstr,76))Ymax(mstr,76) = abbau
          if (abbau < Ymin(mstr,76))Ymin(mstr,76) = abbau
          if (CMy(iior) > Ymax(mstr,77))Ymax(mstr,77) = CMy(iior)
@@ -9450,29 +9443,31 @@ program qsim
          xJO2 = sJO2(mstr,iior)/itime
          xJSi = sJSi(mstr,iior)/itime
          !
-         if (iwsim == 4 .or. iwsim == 2)goto 891
-         if ((xaki+xagr+xabl) <= 0.0) then
+         if (iwsim == 4 .or. (iwsim == 2 .and. iColi == 0)) goto 891
+         algae_biomass = xaki+xagr+xabl
+         if (algae_biomass <= 0.0) then
             xalgdr = 0.0
             xalgzo = 0.0
-            xdalg = 0.0
+            xdalg  = 0.0
             xdalga = 0.0
             xalmor = 0.0
             xsedal = 0.0
             xalgco = 0.0
+            xakigr = 0.0
          else
-            xalgdr = xalgdr*(1./tflie)/(xaki+xagr+xabl)
-            xalgzo = xalgzo*(1./tflie)/(xaki+xagr+xabl)
-            xdalg = xdalg*(1./tflie)/(xaki+xagr+xabl)
-            if (xdalg < 0.00001)xdalg = 0.0
-            xdalga = xdalga*(1./tflie)/(xaki+xagr+xabl)
+            xalgdr = xalgdr * (1./tflie) / algae_biomass
+            xalgzo = xalgzo * (1./tflie) / algae_biomass
+            xdalg  = xdalg  * (1./tflie) / algae_biomass
+            if (xdalg < 0.00001) xdalg = 0.0
+            xdalga = xdalga * (1./tflie) / algae_biomass
             if (xdalga < 0.00001)xdalga = 0.0
-            xalmor = xalmor*(1./tflie)/(xaki+xagr+xabl)
+            xalmor = xalmor * (1./tflie) / algae_biomass
             if (xalmor < 0.00001)xalmor = 0.0
-            xsedal = xsedal*(1./tflie)/(xaki+xagr+xabl)
-            xalgco = xalgco*(1./tflie)/(xaki+xagr+xabl)
-            xakigr = xagr*Cagr + xaki*Caki+xabl*Cabl
+            xsedal = xsedal * (1./tflie) / algae_biomass
+            xalgco = xalgco * (1./tflie) / algae_biomass
+            xakigr = xagr*Cagr + xaki*Caki + xabl*Cabl
          endif
-         cbsbab = xbsb5-xaki*Caki*bsbki+xabl*Cabl*bsbbl+xagr*Cagr*bsbgr+(xzooind*GROT/1000.)*bsbzoo
+         cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
          
          !     Berechnung der Abbaubarkeit
          abbau = -.1
