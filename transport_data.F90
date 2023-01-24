@@ -1,9 +1,15 @@
 
+24jan23:
+At line 1352 of file ../../Hydro/transport_TVD_imp.F90
+Fortran runtime error: Index '2' of dimension 4 of array 'trth' above upper bound of 1
+-> - Randbedingungen und trth
+
+
 to do List 20dez22:
    
  - Übernahme: flux_adv_vface , idry_e_2t , hdif , (temp + salt später)
    
- - zs, ze vertikale Diskretisierung übernehmen ... woher?
+ - zs, ze vertikale Diskretisierung übernehmen ... woher?   ... aquire_vgrid
    aus .nc Dateien oder mittels levels0, levels1, zcoor berechnen?
    
  - Randbedingungen und trth

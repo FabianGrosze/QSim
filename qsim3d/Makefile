@@ -38,7 +38,7 @@ SHELL=/usr/bin/bash
 # PV='qsim3d_schwer11new'
 # PV='qsim3d_dev06sep22'
 # PV='qsim3d_schwer17'
-PV='qsim3d_schiqu22_21'
+PV='qsim3d_schiqu22_22'
 
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -148,9 +148,9 @@ date:
 
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
-     $(SCHISM_CORE)/schism_io.o  \
+     $(SCHISM_CORE)/schism_io.o \
      $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/aquire_hgrid.o  $(SCHISM_HYDRO)/misc_subs_QSIM.o\
-     $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+     $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o $(SCHISM_HYDRO)/grid_subs_QSIM.o
 
 %.o: %.F90
 	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<

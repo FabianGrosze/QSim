@@ -28,13 +28,13 @@
 subroutine stofftransport_schism()
       use netcdf
       use modell
-      use schism_glbl, only:su2,sv2,tr_el,eta2, npa, nsa, nea, dt
+      use schism_glbl, only:su2,sv2,tr_el,eta2, np, npa, nsa, ne, nea, dt, ze, znl, nvrt
       use schism_msgp, only: myrank,parallel_abort, comm !,nproc
    
       implicit none
       include 'netcdf.inc'
       integer,parameter :: maxsubst = 60      ! max. number of substeps
-      integer nt, n,j,k, subtim, diff, diffprev, alloc_status, ierr
+      integer nt, i,n,j,k, subtim, diff, diffprev, alloc_status, ierr
       real :: laeng, cu_max, cu_min, dt_sub, sumwicht , difnum_max_l
       real , allocatable , dimension (:,:) :: zwischen
       integer :: num_sub
@@ -59,7 +59,20 @@ subroutine stofftransport_schism()
       call mpi_barrier (mpi_komm_welt, ierr)
 !...  Recompute vgrid and calculate rewetted pts
       !if(inunfl==0) then
-        call levels0(0,izeit) !(iths_main,it)
+      call levels0(0,izeit) !(iths_main,it)
+      do i = 1,nvrt
+         print*,meinrang,' after levels0 i=',i,' ze(nea)  from...until '  &
+               ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+               ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+      end do ! all i levels
+      call mpi_barrier (mpi_komm_welt, ierr)
+      do i = 1,nvrt
+         print*,meinrang,' after levels0 i=',i,' znl(npa)  from...until '  &
+               ,minval(znl(i,1:npa)),maxval(znl(i,1:npa))   &
+               ,' ze(np)  from...until',minval(znl(i,1:np)),maxval(znl(i,1:np))
+      end do ! all i levels
+      call mpi_barrier (mpi_komm_welt, ierr)
+
       !else
       !  call levels1(iths_main,it)
       !endif

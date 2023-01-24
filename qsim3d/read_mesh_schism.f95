@@ -49,7 +49,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
                           h_tvd,eps1_tvd_imp,eps2_tvd_imp,                       &
                           ip_weno,courant_weno,ntd_weno,nquad,                   &
                           epsilon1,epsilon2,ielm_transport,                      &
-                          ztot,sigma,in_dir,len_in_dir,nxq,kbp,dp
+                          ztot,sigma,in_dir,len_in_dir,nxq,kbp,dp,znl,ivcor
                           
   use schism_msgp, only:  comm, nproc, myrank
 
@@ -210,7 +210,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       enddo !k
       read(10+meinrang,*)i,j
       if((i.ne.np).or.(j.ne.ne))call qerror('(i.ne.np).or.(j.ne.ne)')
-      allocate(dp(npa),kbp(npa))
+      allocate(kbp(npa)) ! ###
       if(ics==1) then
          allocate(xnd(npa),ynd(npa),dp00(npa),kbp00(npa))
          xmin=1.0e9 ; xmax=-1.0*xmin
@@ -262,7 +262,9 @@ subroutine read_mesh_schism() !meinrang.eq.0
       call MPI_reduce(nea2,maxel,1,MPI_INT,mpi_max,0,mpi_komm_welt,ierr)
       call MPI_Bcast(maxel,1,MPI_INT,0,mpi_komm_welt,ierr)
       if (meinrang==0)print*,'0 read_mesh_schism: max number Elements on one proc. maxel=',maxel
-
+      
+      !######################### allocate for nodes ################################################
+      if(.not.allocated(znl))allocate(znl(nvrt,npa),stat = istat); znl=0.0
 
  !#### read global_to_local.prop #################################################################!
       !integer,save,allocatable :: iegl2(:,:)      ! Global-to-local element index table (2-tier augmented)
@@ -532,7 +534,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
    end if !! prozess 0 only
    call MPI_Bcast(maxstack,1,MPI_INT,0,mpi_komm_welt,ierr)
    
-!#### do aquire_hgrid ################################################################################!
+!#### do aquire_hgrid aquire_vgrid ################################################################################!
       if (meinrang == 0)then
          write(dateiname,"(2A)")trim(modellverzeichnis),"outputs_schism/hgrid.gr3"
          open(14,file = trim(dateiname),status = 'old',iostat = istat)
@@ -557,10 +559,17 @@ subroutine read_mesh_schism() !meinrang.eq.0
           enddo !j
         enddo !i
       enddo !k
+
       write(in_dir,"(2A)")trim(modellverzeichnis),"outputs_schism/"
       len_in_dir=len(in_dir)
       comm=mpi_komm_welt
       myrank=meinrang
+      if (meinrang == 0) print*,'read_mesh_schism: in_dir=',trim(in_dir),' len_in_dir=',len_in_dir
+
+      call aquire_vgrid
+      print*,meinrang,'aquire_vgrid found ivcor=',ivcor
+      !if (meinrang == 0) print*,'aquire_vgrid finished in read_mesh_schism'
+      
       write(dateiname,"(2A)")trim(modellverzeichnis),"aquire_hgrid_output.txt"
       open(16,file = trim(dateiname))
       
