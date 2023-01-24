@@ -7,6 +7,11 @@ References  {#lnk_literatur}
      Kirchesch et al. 2019. </a> QSim - das Gewässergütemodell der BfG: ein 
 	 Instrument zur Simulation und Prognose des Stoffhaushalts und der 
 	 Planktondynamik in Fließgewässern
+	 
+- [Hübner, G., Schwandt, D. und Kirchesch, V. 2017](pdf/Huebner_Schwandt_Kirchesch_2017_DGL_Jahrestagung_Cottbus.pdf) 
+    Transport von Salzen und
+    Schwermetallen beim Niedrigwasser der Elbe im Jahr 2015. Deutsche 
+	Gesellschaft der Limnologie. Ergebnisse der Jahrestagung 2017.
 
  - <a href="https://henry.baw.de/bitstream/20.500.11970/101692/1/k081115.pdf" target="_blank">
      Schöl et al. 2014.</a> Modelling Water Quality in the Elbe and its Estuary 
@@ -33,7 +38,9 @@ References  {#lnk_literatur}
 ...
 
 # QSim posters
-...
+- [Hübner, G., Schwandt, D. und Wyrwa, J. 2022.](pdf/Huebner_Schwandt_Wyrwa_2022_DGL_Jahrestagung_Konstanz_Poster.pdf)
+   Modellierung von Schwermetallen und Arsen in der Elbe bei extremem 
+   Niedrigwasser. DGL Tagung 2022.
 
 # QSim presentations
 ...
