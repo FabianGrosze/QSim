@@ -14,4 +14,8 @@ The model application can be devided into three parts:
 Examples of model applications can be found in the sub-chapter 
 \subpage lnk_validierung .
 
+Sometimes it happens that things don't work the way they should.
+Here is a troubleshoot list that you could check for common errors:
+\subpage lnk_troubleshoot
+
 Text source: modellbedienung-doc.md
