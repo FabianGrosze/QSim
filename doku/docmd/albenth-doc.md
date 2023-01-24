@@ -1,32 +1,30 @@
-Benthische Algen {#lnk_albenth}
+Benthic algae {#lnk_albenth}
 ================
 
-\warning Momentan ist das Modul ausgeschaltet, das heißt, benthische Algen 
-werden nicht simuliert. Es handelt sich um eine alte Dokumentation.
+\warning The module is currently switched off, i.e. benthic algae are not 
+simulated. This is an old documentation.
 
+In QSim, the influence of benthic algae on water quality can be simulated 
+under consideration of light intensity, extinction and water depth, nutrient 
+and temperature conditions. The module seperates two algal groups: benthic 
+diatoms and green algae. It can be switched on/off independently for individual 
+water sections. For each of the sections, algal densities at the sediment 
+[g biomass/m²] can be set for each section if the module is switched on. 
 
-In QSim kann der Einfluss von benthischen Algen auf die Gewässergüte unter 
-Berücksichtigung der Lichtintensität, der Extinktion + Wassertiefe, der 
-Nährstoff- und Temperaturbedingungen abgebildet werden. Es werden dabei zwei 
-Gruppen, benthische Kiesel- und Grünalgen, unterschieden. Das Modul der 
-benthischen Algen kann für einzelne Gewässer-Abschnitte unabhängig aktiv oder 
-inaktiv geschaltet werden. Für diese können jeweils strang- oder abschnittsweise 
-eigene Dichten des Vorkommens [g Biomasse/m²] am Sediment eingegeben werden, wenn 
-die Berechnung aktiv geschaltet ist. 
+Output of the module are oxygen production, oxygen consumption [mg/l] and the 
+total biomass of benthic algae [g/m²].
 
-Ausgegeben werden die Sauerstoffproduktion und der Sauerstoffverbrauch [mg/l] 
-sowie die Biomasse der benthischen Algen insgesamt [g/m²].
+Details of the benthic algae module are described in the following sections
 
+- \subpage lnk_albenth_prozesse : Explanation of the processes implemented 
+   within the benthic algae module
 
-Details zum Benthische Algen-Modul sind in den folgenden Abschnitten beschrieben:
+- \subpage lnk_albenth_vars : List of formula symbols and variables
 
-- \subpage lnk_albenth_prozesse : Erläuterung der im Benthische Algen-Baustein 
-implementierten Prozesse 
-
-- \subpage lnk_albenth_vars : Auflistung der verwendeten Formelzeichen und Variablen 
-
-- \subpage lnk_albenth_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_albenth_umsetzung : Details on the code and its numeric 
+   implementation 
 
 \n\n
 
-Textquelle: albenth-doc.md ; Codesources: albenth.f90
+Text source: albenth-doc.md ; Code sources: albenth.f90;
+go back to: lnk_primaer

@@ -1,51 +1,48 @@
-Makrophyten {#lnk_makrophyt}
+Macrophytes {#lnk_makrophyt}
 ================
 
-\warning Momentan ist das Modul ausgeschaltet, das heißt, Makrophyten werden 
-nicht simuliert. Es handelt sich um eine alte Dokumentation.
+\warning The module is currently switched off, i.e. makrophytes are not
+simulated. This is an old documentation.
 
+The growth of makrophytes is done in a simplified way in QSim.
 
-Das Wachstum der Makrophyten wird in QSim stark vereinfacht abgebildet. 
-Für die Makrophyten als Ganzes (keine Unterscheidung von Wuchsformen) wird ein 
-schematischer Jahresgang des Biomasseverlaufs angenommen. Dabei werden der 
-Saison-Start und das -Ende sowie die maximal unter optimalen Bedingungen 
-erreichbare Biomasse (und die minimale Biomasse außerhalb der Saison) strangweise 
-eingegeben, der ideale saisonale Verlauf selbst folgt jedoch einem einfachen, 
-vorgegebenen Schema (s.u.).
+For the macrophytes as a whole (no differentiation between growth forms), 
+a seasonal cycle of annual biomass progression is assumed. In the settings,
+seasonal start and end as well as the maximum biomass achievable under optimal
+conditions (and the minimum biomass outside of the season) are entered section 
+by section. The ideal seasonal pattern itself follows a simple, predefined 
+scheme.
 
-Relativ zum angenommenen Idealverlauf wird das Wachstum der Makrophyten in 
-Abhängigkeit des zur Verfügung stehenden Lichts berechnet, wobei die 
-Gesamt-Absorption des Wassers nur bedingt eine modifizierende Rolle spielt. 
-Es wird für die Makrophyten eine feste optimale Lichtintensiät als 
-Kompensationslichtintensität angenommen.
+Relative to the assumed ideal course, the growth of the macrophytes is 
+calculated as a function of the available light, whereby the total 
+absorption of the water only has a limited effect. 
+A fixed optimal light intensity is assumed for the macrophytes as a 
+compensatory light intensity.
 
-Im Modell setzen Makrophyten beim Wachstum Sauerstoff frei, wobei die 
-Pflanzenbiomasse und die Lichtintensität sowie bei der Sauerstofffreisetzung 
-auch ein Temperaturfaktor berücksichtigt werden. 
+In the model, makrophytes release oxygen when growing. This oxygen release 
+depends on plant biomass and light intensity as well as a temperature factor. 
 
-Eine direkte Nährstoff- Trübungs- oder Fließgeschwindigeitsabhängigkeit des 
-Makrophytenwachstums wird im Modell derzeit jedoch nicht abgebildet. 
-Es sind auch keine direkten Interaktionen mit Nährstoffpools, der Sedimentation 
-oder anderen Organismen implementiert. 
+A direct nutrient, turbidity or flow velocity dependency of macrophyte growth 
+is not currently represented in the model. There are also no direct interactions 
+with nutrient pools, sedimentation or other organisms. 
 
-Ein derzeit deaktivierter Abschnitt hat früher noch - rudimentär - das 
-Wachstum der Aufwuchsalgen beschrieben (siehe Details).
+In the past it has also been possible to calculate the growth of biofilm on 
+the macrophytes. 
 
-\note Der derzeitige Makrophytenbaustein ist eher rudimentär und bildet 
-hauptsächlich die Sauerstoffproduktion durch Makrophyten dort, wo sie eigegeben 
-wurden, vereinfacht ab.
+\note The current macrophyte module is rudimentary and mainly calculates
+the oxygen production by macrophytes in a simplified approach.
 
+Details on the macrophyte module are given in the following sections:
 
-Details zum Makrophyten-Modul sind in den folgenden Abschnitten beschrieben:
+- \subpage lnk_makrophyt_prozesse : Explanation of the processes implemented 
+   within the macrophyte module
 
-- \subpage lnk_makrophyt_prozesse : Erläuterung der im Makrophyten-Baustein 
-implementierten Prozesse 
+- \subpage lnk_makrophyt_vars : List of formula symbols and variables
 
-- \subpage lnk_makrophyt_vars : Auflistung der verwendeten Formelzeichen und Variablen 
-
-- \subpage lnk_makrophyt_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_makrophyt_umsetzung : Details on the code and its numeric 
+   implementation 
 
 \n\n
 
-Textquelle: makrophyt-doc.md ; Codesources: mphyt.f90;
-zurück zu \ref lnk_ueberblick
+Text source: makrophyt-doc.md ; Code sources: mphyt.f90;
+go back to zu \ref lnk_ueberblick

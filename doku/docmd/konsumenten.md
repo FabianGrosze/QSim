@@ -1,16 +1,17 @@
-Konsumenten {#lnk_konsumenten}
+Consumers {#lnk_konsumenten}
 ===========
 
-Die durch [Primärproduzenten](\ref lnk_primaer) aufgebaute Biomasse wird durch 
-die nächste trophische Ebene, die Konsumenten aufgenommen und verarbeitet.
+Biomass that is produced by [primary producers](\ref lnk_primaer) is consumed 
+by the next trophic level, taken up and processed by the consumers.
 
-In QSim sind verschiedene Konsumenten-Gruppen implementiert.
-Diese sind:
+
+Within QSim different consumers are implemented.
+These are:
 - \subpage lnk_rotatorien
 - \subpage lnk_corophium
 - \subpage lnk_dreissena
-- Das Module der heterotrophen Nanoflagellaten \subpage lnk_hnf ist zur Zeit
-abgeschaltet
+- The module of heterotrophic nanoflagellates \subpage lnk_hnf is currently 
+  switched off
 
 
-aus Datei konsumenten.md 
+Text source: konsumenten.md 
