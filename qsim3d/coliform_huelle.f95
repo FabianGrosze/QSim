@@ -75,7 +75,7 @@ subroutine coliform_huelle(i)
    ! RateCS ! aus APARAM.txt
    !----------------------------------------------------------------------------------
    
-   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli  &
+   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli  &
                  ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
                  ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
                  ,kontroll, iglob)

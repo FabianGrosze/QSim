@@ -29,7 +29,7 @@
 !! Bakterien in Fliessgewässer
 !! @author Volker Kirchesch
 !! @date 15.08.2017
-subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,grote,chla,tempw,jiein,ecoli,    &
+subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli,    &
                     qeinl,colil,qeinll,anze,iorla,iorle,ieinls,ilbuhn,coli,doscf,extks,mstr,                    &
                     ratecde,etacde,ratecie,xnuece,ratecge,ratecse,                                              &
                     kontroll,jjj)
@@ -45,7 +45,7 @@ subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,g
    real                          :: IUV0, IUVH, mRepair, nueI
    real, dimension(13)           :: eta, aw, achl, as, ah
    real, dimension(100)          :: qeinl, ecoli, coliL, qeinlL
-   real, dimension(1000)         :: tiefe, elen, flae, vabfl, ss, zooind, chla, tempw, coli, extk, schwi, DOSCF
+   real, dimension(1000)         :: tiefe, elen, flae, vabfl, tempw, coli, extk, schwi, DOSCF
    real, dimension(1000)         :: rau, vmitt, ausUV
    real, dimension(azStrs,1000)  :: extkS
    

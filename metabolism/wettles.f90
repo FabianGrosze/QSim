@@ -35,15 +35,16 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
    character (len = 2)                   :: ckenn_vers1
    character (len = 40)                  :: MODELL, ERENAME
    character (len = 255)                 :: cpfad
-   character (len = 275)                 :: pfadstring
+   character (len = 275)                 :: pfadstring, message
    integer                               :: read_error
    integer, dimension(20)                :: iWSta, mwetts
    integer,dimension(:,:), allocatable   :: itagw, monatw, jahrw
    real, dimension(20)                   :: glob, tlmax, tlmin, ro, wge, cloud, typw
    real, dimension(:,:), allocatable     :: uhrzw
    real, dimension(:,:,:), allocatable   :: wertw
+   logical                               :: is_set_wert1, is_set_wert2
    double precision                      :: R_NRS2, R_NRS1, R_NRS
-   save itagw, monatw, jahrw, uhrzw, wertw, iwetts,R_NRS2, R_NRS1, R_NRS, IWSta, mWetts
+   save itagw, monatw, jahrw, uhrzw, wertw, iwetts, R_NRS2, R_NRS1, R_NRS, IWSta, mWetts
    
    ! Parameter
    ! IWETTS  : Anzahl der Wetterstationen
@@ -70,10 +71,10 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
       iWSta_mx = 1
       mWetts_mx = 1
       do iWETT = 1,iWETTs
-         read(86,'(I8,2x,I5)',iostat = read_error)IWSta(iwett),mWetts(iwett)
-         if (read_error < 0)exit
-         if (mWetts(iwett) > mWetts_mx)mWetts_mx = mWetts(iwett)
-         if (iWSta(iwett) > iWSta_mx)iWSta_mx = iWSta(iwett)
+         read(86,'(I8,2x,I5)',iostat = read_error) IWSta(iwett), mWetts(iwett)
+         if (read_error < 0) exit
+         if (mWetts(iwett) > mWetts_mx) mWetts_mx = mWetts(iwett)
+         if (iWSta(iwett) > iWSta_mx) iWSta_mx = iWSta(iwett)
          
          if (mWetts(iwett) == 0) then
             write(199,1996)
@@ -85,11 +86,11 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
          enddo
       enddo
       print*,'wettles: mWetts_mx,iWSta_mx,iWETTs,IMET = ',mWetts_mx,iWSta_mx,iWETTs,IMET
-      if ( .not. allocated(wertw))allocate(wertw(1:iWSta_mx,1:mWetts_mx,1:ipws))
-      if ( .not. allocated(itagw))allocate(itagw(1:iWSta_mx,1:mWetts_mx))
-      if ( .not. allocated(monatw))allocate(monatw(1:iWSta_mx,1:mWetts_mx))
-      if ( .not. allocated(jahrw))allocate(jahrw(1:iWSta_mx,1:mWetts_mx))
-      if ( .not. allocated(uhrzw))allocate(uhrzw(1:iWSta_mx,1:mWetts_mx))
+      if ( .not. allocated(wertw))  allocate(wertw(1:iWSta_mx,1:mWetts_mx,1:ipws))
+      if ( .not. allocated(itagw))  allocate(itagw(1:iWSta_mx,1:mWetts_mx))
+      if ( .not. allocated(monatw)) allocate(monatw(1:iWSta_mx,1:mWetts_mx))
+      if ( .not. allocated(jahrw))  allocate(jahrw(1:iWSta_mx,1:mWetts_mx))
+      if ( .not. allocated(uhrzw))  allocate(uhrzw(1:iWSta_mx,1:mWetts_mx))
       rewind (86)
       read(86,'(A2)')ckenn_vers1
       if (ckenn_vers1 /= '*V') then
@@ -98,33 +99,33 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
          read(86,'(A40)')MODELL
          read(86,'(A40)')ERENAME
       endif
-      read(86,*,iostat = read_error)IWETTs,IMET
+      read(86,*,iostat = read_error) IWETTs, IMET
       if (read_error < 0) call qerror("Error while reading Wetter.txt")
       do iWETT = 1,iWETTs
-         read(86,'(I8,2x,I5)',iostat = read_error)IWSta(iwett),mWetts(iwett)
+         read(86,'(I8,2x,I5)',iostat = read_error) IWSta(iwett), mWetts(iwett)
          if (read_error < 0) call qerror("Error while reading Wetter.txt")
          
          if (imet == 0) then
             hcTmx2 = -999.
             do mWett = 1,mWetts(iwett)
-               read(86,2013,iostat = read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett)                    &
-                    ,jahrw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
+               read(86, 2013, iostat = read_error) itagw(iWSta(iwett),mwett), monatw(iWSta(iwett),mwett),                &
+                                                   jahrw(iWSta(iwett),mwett), (wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
                if (read_error < 0) call qerror("Error while reading Wetter.txt")
-               if (wertw(iWSta(iwett),mwett,3) > hcTmx2)hcTmx2 = wertw(iWSta(iwett),mwett,3)
-               
+               hcTmx2 = max(hcTmx2, wertw(iWSta(iwett),mwett,3))
             enddo
             
             ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
             if (hcTmx2 == -1.) then
                write(message, "(a,i0)"), "No minimum temperature given for weather station ", iwett
-               call qerror(message)
+               call qerror(trim(message))
             endif
             
          else
             ! Messwerte auf Stundenbasis
             do mWett = 1,mWetts(iwett)
-               read(86,2023,iostat = read_error)itagw(iWSta(iwett),mwett),monatw(iWSta(iwett),mwett),jahrw(iWSta(iwett),mwett)       &
-                    ,uhrzw(iWSta(iwett),mwett),(wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
+               read(86,2023,iostat = read_error) itagw(iWSta(iwett),mwett), monatw(iWSta(iwett),mwett),        &
+                                                 jahrw(iWSta(iwett),mwett), uhrzw(iWSta(iwett),mwett) ,        &
+                                                 (wertw(iWSta(iwett),mwett,ixw),ixw = 1,7)
                if (read_error < 0) call qerror("Error while reading Wetter.txt")
             enddo
          endif
@@ -141,48 +142,47 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
    endif
    
    NRSJ = (Jahrs-1900)*365+int((Jahrs-1900)/4)            !Tage seit 1900 (Berücksichtigung der Schaltjahre
+   R_NRS = NRS + NRSJ
+   if (imet /= 0) R_NRS = R_NRS + Uhrz/24.
    
-   if (imet == 0) then
-      R_NRS = NRS + NRSJ
-   else
-      R_NRS = NRS + NRSJ + Uhrz/24.
-   endif
    do iwett = 1, iwetts
       do ipw = 1,ipws
          iee1 = -1
          iee2 = -1
+         is_set_wert1 = .false.
+         is_set_wert2 = .false.
          
          do mWett = 1, mWetts(iwett)       ! Beginn der Werteschleife
-            if (imet == 0)uhrzw(iWSta(iwett),mwett) = 0.0
-            !...Umrechnen der "Messwertuhrzeit" in Dezimalschreibweise
-            uhr_Dz = int(uhrzw(iWSta(iwett),mwett))+((uhrzw(iWSta(iwett),mwett)-int(uhrzw(iWSta(iwett),mwett)))/0.6)
-            if (monatw(iWSta(iwett),mwett) > 2) then
-               NRS = (itagw(iWSta(iwett),mwett)+31*(monatW(iWSta(iwett),mwett)-1)-INT(0.4*monatW(iWSta(iwett),mwett)+2.3))
-            else
-               NRS = itagW(iWSta(iwett),mwett)+31*(monatW(iWSta(iwett),mwett)-1)
-            endif
-            NRSJ = (jahrW(iWSta(iwett),mwett) - 1900)*365+int((jahrW(iWSta(iwett),mwett)-1900)/4)
+            NRSJ = (jahrW(iWSta(iwett),mwett) - 1900) * 365 + int((jahrW(iWSta(iwett),mwett)-1900)/4)
+            NRS  =  itagW(iWSta(iwett),mwett) + 31 * (monatW(iWSta(iwett),mwett) - 1)
+            if (monatw(iWSta(iwett),mwett) > 2) NRS = NRS - INT(0.4*monatW(iWSta(iwett),mwett) + 2.3)
             if (imet == 0) then
+               uhrzw(iWSta(iwett),mwett) = 0.0
                R_NRS0 = NRS + NRSJ
             else
+               !...Umrechnen der "Messwertuhrzeit" in Dezimalschreibweise
+               uhr_Dz = int(uhrzw(iWSta(iwett),mwett)) + ((uhrzw(iWSta(iwett),mwett)-int(uhrzw(iWSta(iwett),mwett)))/0.6)
                R_NRS0 = NRS + NRSJ + uhr_Dz/24.
             endif
-            if (iee1 == -1 .and. R_NRS0 <= R_NRS.and.wertw(iWSta(iwett),mwett,ipw) < 0.0) then
+            if (iee1 == -1 .and. R_NRS0 <= R_NRS .and. wertw(iWSta(iwett),mwett,ipw) < 0.0) then
                wert1 = wertw(iWSta(iwett),mwett,ipw)
-            else if (R_NRS0 <= R_NRS .and. wertw(iWSta(iwett),mwett,ipw)>=0.0) then
+               is_set_wert1 = .true.
+            else if (R_NRS0 <= R_NRS .and. wertw(iWSta(iwett),mwett,ipw) >= 0.0) then
                R_NRS1 = R_NRS0
-               iee1 = 1
+               iee1  = 1
                wert1 = wertw(iWSta(iwett),mwett,ipw)
-            else if (R_NRS0 > R_NRS .and. iee2 == -1.and.wertw(iWSta(iwett),mwett,ipw) < 0.0) then
+               is_set_wert1 = .true.
+            else if (iee2 == -1 .and. R_NRS0 > R_NRS .and. wertw(iWSta(iwett),mwett,ipw) < 0.0) then
                wert2 = wertw(iWSta(iwett),mwett,ipw)
-            else if (R_NRS0 > R_NRS .and. wertw(iWSta(iwett),mwett,ipw)>=0.0) then
+               is_set_wert2 = .true.
+            else if (R_NRS0 > R_NRS .and. wertw(iWSta(iwett),mwett,ipw) >= 0.0) then
                R_NRS2 = R_NRS0
                iee2 = 1
                wert2 = wertw(iWSta(iwett),mwett,ipw)
+               is_set_wert2 = .true.
                exit
             endif
          enddo   ! Ende Werteschleife
-         
          
          !+++ Interpolation++++
          if (iee1 == 1 .and. iee2 == -1) then
@@ -190,19 +190,37 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
          else if (iee1 == -1 .and. iee2 == 1) then
             Ywert = wert2
          else if (iee1 == -1 .and. iee2 == -1) then
-            Ywert = wert1
+            ! TODO FG: introduced switches to avoud uninitialised use of wert1
+            if (is_set_wert1) then
+               Ywert = wert1
+            else if (is_set_wert2) then
+               Ywert = wert2
+            else
+               call qerror("wettles.f90: Neither 'wert1' nor 'wert2' set.")
+            endif
          else
             hcon1 = R_NRS2 - R_NRS1
-            hcon2 = R_NRS - R_NRS1
+            hcon2 = R_NRS  - R_NRS1
             Ywert = wert1 + ((wert2 - wert1)/hcon1)*hcon2
          endif
-         if (ipw == 1)glob(iWSta(iwett)) = ywert
-         if (ipw == 2)tlmax(iWSta(iwett)) = ywert
-         if (ipw == 3)tlmin(iWSta(iwett)) = ywert
-         if (ipw == 4)ro(iWSta(iwett)) = ywert
-         if (ipw == 5)wge(iWSta(iwett)) = ywert
-         if (ipw == 6)cloud(iWSta(iwett)) = ywert
-         if (ipw == 7)typw(iWSta(iwett)) = ywert
+         select case (ipw)
+            case (1)
+               glob(iWSta(iwett))  = ywert
+            case (2)
+               tlmax(iWSta(iwett)) = ywert
+            case(3)
+               tlmin(iWSta(iwett)) = ywert
+            case(4)
+               ro(iWSta(iwett))    = ywert
+            case(5)
+               wge(iWSta(iwett))   = ywert
+            case(6)
+               cloud(iWSta(iwett)) = ywert
+            case(7)
+               typw(iWSta(iwett))  = ywert
+            case default
+               call qerror("wettles.f90: Weather parameter number must be in range 1-7.")
+         end select
       enddo   ! Ende Parameterschleife
    enddo      ! Ende Statonenschleife
    989 continue

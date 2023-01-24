@@ -871,10 +871,9 @@ program qsim
    ! --------------------------------------------------------------------------
    ! reading parameters from AParam
    ! -------------------------------------------------------------------------
-   if (iwsim == 4 .or. iwsim == 5)goto 329
-   if (iwsim == 2 .and. icoli == 0)goto 329
-   call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
-   
+   if (iwsim == 4 .or. iwsim == 5)  goto 329
+   if (iwsim == 2 .and. icoli == 0) goto 329
+   call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer)
    
    ! --------------------------------------------------------------------------
    ! reading from e_extnct.dat
@@ -2028,14 +2027,20 @@ program qsim
    ! --------------------------------------------------------------------------
    ! Abfrage ob alle benötigten Eingaben gemacht wurden (nur beim Modellstart)
    ! --------------------------------------------------------------------------
-   if (iwsim == 4)goto 396   !Tracer
    
-   if (iwsim /= 2 .and. iwsim /= 5) then
-      do azStr = 1,azStrs
-         mstr = mstra(azStr)
-         do mRB = 1,mRBs(mstr)
-            if (RBtyp(mstr,mRB) == 1 .or. RBtyp(mstr,mRB) == 2)cycle
-            
+   ! Initialisation of values moved here to prevent uninitaliised use in case of iwsim = 2, 4, 5
+   fssgrs = 0.7
+   fbsgrs = 0.4  !   0.21
+   ! frfgrs = 0.13
+   
+   if (iwsim == 4) goto 396   !Tracer
+   
+   do azStr = 1,azStrs
+      mstr = mstra(azStr)
+      do mRB = 1,mRBs(mstr)
+         if (RBtyp(mstr,mRB) == 1 .or. RBtyp(mstr,mRB) == 2) cycle
+         
+         if (iwsim /= 2 .and. iwsim /= 5) then
             ! Nitrosomonas
             if (vnh4s(mstr,mRB) > 0.0 .and. vx0s(mstr,mRB) < 0.0) then
                call qerror("Missing values for nitrosomonas at boundary.")
@@ -2058,6 +2063,7 @@ program qsim
             
             ! falls der Anteil der Blaualgen = 0 ist
             if (antbls(mstr,mRB) == 0.0) then
+               ! TODO FG: That means one can never run a model without canobacteria ...
                antbls(mstr,mRB) = 0.01
                vkigrs(mstr,mRB) = max(0.01,(vkigrs(mstr,mRB) - antbls(mstr,mRB)))
             endif
@@ -2065,13 +2071,6 @@ program qsim
             ! Silikat
             if (chlas(mstr,mRB) > 0.0 .and. vkigrs(mstr,mRB) > 0.0.and.Sis(mstr,mRB) < 0.0) then
                call qerror("Missing values for silicate at boundary.")
-            endif
-            
-            ! Temperatur
-            if (iwsim == 2 .or. iwsim == 3 .or. iph == 1) then
-               if (tempws(mstr,mRB) == -9.99) then
-                  call qerror("Missing values for temperature at boundary.")
-               endif
             endif
             
             ! ph-Wert
@@ -2099,10 +2098,17 @@ program qsim
             if (ssalgs(mstr,mRB) < 0.0) then
                call qerror("Missing values for suspended matter at boundary.")
             endif
+         endif
             
-         enddo
+         ! Temperatur
+         if (iwsim == 2 .or. iwsim == 3 .or. iph == 1) then
+            if (tempws(mstr,mRB) == -9.99) then
+               call qerror("Missing values for temperature at boundary.")
+            endif
+         endif
+         
       enddo
-   endif
+   enddo
    
    
    ! --------------------------------------------------------------------------
@@ -2129,10 +2135,8 @@ program qsim
    ! ==========================================================================
    ! Setzen von Werten am Startprofil
    ! ==========================================================================
-   if (iwsim == 2 .or. iwsim == 5)goto 396
-   fssgrs = 0.7
-   fbsgrs = 0.4  !   0.21
-   ! frfgrs = 0.13
+   if (iwsim == 2 .or. iwsim == 5) goto 396
+   
    einmalig = .true. ! Fehlermeldung nur einmal
    
    do azStr = 1,azStrs
@@ -2140,7 +2144,9 @@ program qsim
       do  mRB = 1,mRBs(mstr)
          
          if (NRSchr(mstr,mRB) == 0) cycle
-         if (iwsim == 2 .or. iwsim == 5) cycle
+         
+         ! TODO FG: introduced iColi == 0  to prevent initialisation error
+         if ((iwsim == 2 .and. iColi == 0).or. iwsim == 5) cycle
          
          hcchla = chlas(mstr,mRB)
          hczoos = zooins(mstr,mRB)
@@ -6136,7 +6142,7 @@ program qsim
       if (iwsim /= 2)goto 1520
       if (hcoli(mstr,1) < 0.0 .and. iwsim == 2)goto 118
       1522 continue
-      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli &
+      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli                     &
                    ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
                    ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
                    ,.false.,0)
