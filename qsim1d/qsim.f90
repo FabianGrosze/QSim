@@ -62,7 +62,7 @@ program qsim
    real                                    :: mikonss, mxkonss, bxcoli
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
-   real, dimension(20)                     :: glob, tlmax, tlmin, cloud, typw, ro, wge
+   real, dimension(20)                     :: glob, tlmax, tlmin, cloud, wtyp, ro, wge
    real, dimension(ialloc5)                :: hcs67, hcs68, hcs69, hcs70, hcs71, hcs72, hcs73, hcs74, hcs75, hcs76
    real, dimension(ialloc5)                :: hcs84, hcs87, hcs88, hcs89, hcs90, hcs91, hcs92, hcs93, hcs94
    real, dimension(ialloc5)                :: hcs96, hcs97, hcs98
@@ -2135,18 +2135,16 @@ program qsim
    ! ==========================================================================
    ! Setzen von Werten am Startprofil
    ! ==========================================================================
-   if (iwsim == 2 .or. iwsim == 5) goto 396
+   
+   ! TODO FG: introduced iColi == 0  to prevent initialisation error
+   if ((iwsim == 2 .and. iColi == 0) .or. iwsim == 5) goto 396
    
    einmalig = .true. ! Fehlermeldung nur einmal
    
    do azStr = 1,azStrs
       mstr = mstra(azStr)
       do  mRB = 1,mRBs(mstr)
-         
          if (NRSchr(mstr,mRB) == 0) cycle
-         
-         ! TODO FG: introduced iColi == 0  to prevent initialisation error
-         if ((iwsim == 2 .and. iColi == 0).or. iwsim == 5) cycle
          
          hcchla = chlas(mstr,mRB)
          hczoos = zooins(mstr,mRB)
@@ -2389,7 +2387,7 @@ program qsim
    9191 continue
    if (iwsim /= 4 .and. iwsim /= 5) then
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
-                   cloud, typw, imet, iwied, cpfad, ckenn_vers1)
+                   cloud, wtyp, imet, iwied, cpfad, ckenn_vers1)
    endif
    
    ! ==========================================================================
@@ -5728,7 +5726,7 @@ program qsim
          
       else
          call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze, &
-                      etemp,ewaerm,typ,qeinl,vabfl,jiein,cloud,typw,iwied,uhrz,&
+                      etemp,ewaerm,typ,qeinl,vabfl,jiein,cloud,wtyp,iwied,uhrz,&
                       ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,   &
                       flae,qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,     &
                       monats,Tsed,Wlage,hWS,htempw,htempz,WUEBKS,SPEWKSS,      &

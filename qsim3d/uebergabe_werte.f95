@@ -237,7 +237,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(64) = "             SCHWI" ! Globalstrahlung
       trans_quant_name(65) = "               WGE" ! Windgeschwindigkeit
       trans_quant_name(66) = "             cloud" ! Bewölkungsdichte
-      trans_quant_name(67) = "              typw" ! Wolkentyp
+      trans_quant_name(67) = "              wtyp" ! Cloud reflectane(?) derived from cloud type
       trans_quant_name(68) = "  empty_sixtyeight" !
       trans_quant_name(69) = "          empty_69" !
       trans_quant_name(70) = "          empty_70" !

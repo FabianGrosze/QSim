@@ -13,6 +13,7 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/silicate/module_silicate.o \
       ../metabolism/nitrogen/module_nitrogen.o \
       ../metabolism/module_metabolism.o \
+      ../metabolism/set_cloud_reflectance.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \

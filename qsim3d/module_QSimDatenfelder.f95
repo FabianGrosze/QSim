@@ -495,7 +495,7 @@ module QSimDatenfelder
    ! temperw
    !! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten !!
    real                        :: lagem
-   real, dimension(20)         :: ro, typw, cloud, glob
+   real, dimension(20)         :: ro, wtyp, cloud, glob
    real, dimension(1000)       :: templ,fluxT1
    real, dimension(100)        :: etempL, ewaerm
    real, dimension(50,1000)    :: dtemp
@@ -596,7 +596,7 @@ module QSimDatenfelder
    !!<tr><td>    vabfl   </td><td>   real, Dimension(1000)   </td><td>   Abfluss im Vorfluter m3/s               </td></tr>
    !!<tr><td>    jiein   </td><td>   integer, Dimension(1000)</td><td>   Anzahl der Einleitungen                  </td></tr>
    !!<tr><td>    cloud   </td><td>   Real, Dimension(20)   </td><td>   Bewölkungsdichte in Achteln (an einer der 20 möglichen Wetterstationen)      </td></tr>
-   !!<tr><td>    typw   </td><td>   Real, Dimension(20)   </td><td>   Wolkentyp (an einer der 20 möglichen Wetterstationen)      </td></tr>
+   !!<tr><td>    wtyp   </td><td>   Real, Dimension(20)   </td><td>   Cloud reflectance (depending on cloud type; at one of 20 possible weather stations)      </td></tr>
    !!
    !!<tr><td>    iwied   </td><td>   integer (implizit?)   </td><td>   %%% hier unbenutzt                  </td></tr>
    !!<tr><td>    uhrz   </td><td>   real (implizit?)   </td><td>   Uhrzeit ???                     </td></tr>

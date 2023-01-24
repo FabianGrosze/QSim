@@ -29,7 +29,7 @@
 !! @author Volker Kirchesch
 !! @date 15.04.2003
 subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
-                   cloud, typw, imet, iwied, cpfad, ckenn_vers1)
+                   cloud, wtyp, imet, iwied, cpfad, ckenn_vers1)
 
    character (len = 1)                   :: cwert
    character (len = 2)                   :: ckenn_vers1
@@ -39,7 +39,7 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
    integer                               :: read_error
    integer, dimension(20)                :: iWSta, mwetts
    integer,dimension(:,:), allocatable   :: itagw, monatw, jahrw
-   real, dimension(20)                   :: glob, tlmax, tlmin, ro, wge, cloud, typw
+   real, dimension(20)                   :: glob, tlmax, tlmin, ro, wge, cloud, wtyp
    real, dimension(:,:), allocatable     :: uhrzw
    real, dimension(:,:,:), allocatable   :: wertw
    logical                               :: is_set_wert1, is_set_wert2
@@ -184,6 +184,12 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
             endif
          enddo   ! Ende Werteschleife
          
+         ! in case of cloud type (0-9) convert to cloud reflectance(?)
+         if (ipw == 7) then
+            if (is_set_wert1) call set_cloud_reflectance(nint(wert1), wert1)
+            if (is_set_wert2) call set_cloud_reflectance(nint(wert2), wert2)
+         endif
+         
          !+++ Interpolation++++
          if (iee1 == 1 .and. iee2 == -1) then
             Ywert = wert1
@@ -217,9 +223,9 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
             case(6)
                cloud(iWSta(iwett)) = ywert
             case(7)
-               typw(iWSta(iwett))  = ywert
+               wtyp(iWSta(iwett))  = ywert
             case default
-               call qerror("wettles.f90: Weather parameter number must be in range 1-7.")
+               call qerror("wettles.f90: Weather parameter index must be in range 1-7.")
          end select
       enddo   ! Ende Parameterschleife
    enddo      ! Ende Statonenschleife

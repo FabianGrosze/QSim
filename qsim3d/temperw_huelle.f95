@@ -42,7 +42,7 @@ subroutine temperw_huelle(i)
    !    nkz        :   Zähler Tiefenschichten (nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
    !    xnkzs      :   Anzahl der Tiefenschichten am Querprofil
    ! ### Die Tiefenschichten müssen immer von 1 bis xnkzs nacheinander aufgerufen werden ####
-   !    xtypw      :   Wolkentyp (0-6)
+   !    xwtyp      :   Cloud reflectance(?) derived from cloud type (see set_cloud_reflectance.f90) [-]
    !    xschwi     :   Globalstrahlung am Querprofil [cal/(cm2*h)]
    !    xextk      :   Lichtextinktion [1/m]
    !    xhWS       :   Wasserspiegellage am Querprofil, Höhe ü. NN [m]
@@ -112,7 +112,7 @@ subroutine temperw_huelle(i)
       call temperw_kern(                                          &
             j,                                                    & ! nkz
             num_lev,                                              & ! xnkzs
-            transfer_quantity_p(67+(i-1)*number_trans_quant),     & ! xtypw
+            transfer_quantity_p(67+(i-1)*number_trans_quant),     & ! xwtyp
             transfer_quantity_p(64+(i-1)*number_trans_quant),     & ! xschwi
             transfer_quantity_p(54+(i-1)*number_trans_quant),     & ! xextk
             rb_hydraul_p(3+(i-1)*number_rb_hydraul),              & ! xhWS

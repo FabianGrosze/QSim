@@ -29,7 +29,7 @@
 !!
 !! @author Volker Kirchesch
 subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl,    &
-                   jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,  &
+                   jiein,cloud,wtyp,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,  &
                    qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,monats,Tsed,Wlage,hWS,                    &
                    htempw,htempz,WUEBKS,SPEWKSS,PSREFSS,extkS,iwsim,iform_VerdR,                            &
                    kontroll,jjj)
@@ -62,7 +62,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    !     VABFL  : Abfluss im Vorfluter [m3/s]
    !     JIEIN  : Anzahl der Einleitungen am Knoten ior [-]
    !     CLOUD  : Bedeckungsgrad in achtel [-]
-   !     TYPW   : Wolkentyp (0-6) [-]
+   !     WTYP   : Cloud reflectance(?) derived from cloud type (see set_cloud_reflectance.f90) [-]
    !     IWIED  : erster Zeitschritt iwied=0, dann iwied=1
    !     UHRZ   : Uhrzeit, wird nicht benutzt, Kontrollparameter
    !     ILBUHN : ilbuhn=1 Berechnung erfolgt für Buhnenfelder
@@ -139,7 +139,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    integer, dimension(azStrs)      :: ieinls
    integer, dimension(1000)        :: flag, jiein, nkzs
    integer, dimension(azStrs,1000) :: IDWe
-   real, dimension(20)             :: RO, WGE, typw, cloud
+   real, dimension(20)             :: RO, WGE, wtyp, cloud
    real, dimension(50)             :: D, Cpart, hctemp1z, xtempwz, xdtemp
    real, dimension(1000)           :: tempw, vabfl, fkm, flae, tiefe, elen, schwi, Templ, extk, Tsed
    real, dimension(100)            :: qeinlL, etempL, etemp, qeinl, ewaerm
@@ -337,7 +337,7 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
       xtempwz(1:nkzs(ior)) = tempwz(1:nkzs(ior),ior)
       xdtemp(1:nkzs(ior)) = 0.0
       
-      call temperw_quer(nkzs(ior),typw(IDWe(mstr,ior)),schwi(ior),extk(ior),hWS(mstr,ior),templ(ior)        &
+      call temperw_quer(nkzs(ior),wtyp(IDWe(mstr,ior)),schwi(ior),extk(ior),hWS(mstr,ior),templ(ior)        &
                         ,ro(IDWe(mstr,ior)),wge(IDWe(mstr,ior)),cloud(IDWe(mstr,ior)),Wlage(mstr,ior),dH2D  &
                         ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz,tempwt,tempmt,tempw(ior),btiefe,Tsed(ior)        &
                         ,xdtemp,iform_VerdR,itags,uhrz,ior,kontroll ,jjj )
@@ -375,7 +375,7 @@ pure real function density_1d(tempw)
 end function density_1d
 
 
-subroutine temperw_quer(xnkzs, xtypw, xschwi, xextk, xhWS, xtempl, xro, xwge,  &
+subroutine temperw_quer(xnkzs, xwtyp, xschwi, xextk, xhWS, xtempl, xro, xwge,  &
                         xcloud, xWlage, dH2D, tflie, WUEBK, SPEWKS, PSREFS,    &
                         xtempwz, tempwt, tempmt, xtempw, btiefe, xTsed, xdtemp,&
                         iform_VerdR, itags, uhrz, ior,                         &
@@ -383,7 +383,7 @@ subroutine temperw_quer(xnkzs, xtypw, xschwi, xextk, xhWS, xtempl, xro, xwge,  &
    implicit none
    integer               :: nkz, iform_VerdR, itags, xnkzs, ior
    real                  :: dH2D, btiefe, tempmt, tflie, WUEBK, SPEWKS, PSREFS, tempwt, sdtemp, dtempS_mit, uhrz
-   real                  :: xRO, xWGE, xtypw, xcloud, xWlage, xhWS
+   real                  :: xRO, xWGE, xwtyp, xcloud, xWlage, xhWS
    real                  :: xtempw, xschwi, xTempl, xextk, xTsed, xdtemp_mit
    real, dimension(50)   :: xtempwz, xdtemp
    logical, intent(in)   :: kontroll  !< debugging
@@ -394,7 +394,7 @@ subroutine temperw_quer(xnkzs, xtypw, xschwi, xextk, xhWS, xtempl, xro, xwge,  &
    ! der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
    ! übergeben wird die Temperaturänderung dtemp in den einzelnen Schichten
    do nkz = 1,xnkzs
-      call temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                    &
+      call temperw_kern(nkz,xnkzs,xwtyp,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                    &
                         ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz(1),tempmt,xtempw,btiefe,xTsed,xdtemp(nkz),dtempS_mit,iform_VerdR &
                         ,kontroll,jjj)
    enddo

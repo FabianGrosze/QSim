@@ -151,6 +151,7 @@
 		<File RelativePath="..\metabolism\sediment.f90"/>
 		<File RelativePath="..\metabolism\Sedimentation.f90"/>
 		<File RelativePath="..\metabolism\Sedimentbelastung.f90"/>
+		<File RelativePath="..\metabolism\set_cloud_reflectance.f90"/>
 		<File RelativePath="..\metabolism\strahlg.f90"/>
 		<File RelativePath="..\metabolism\tage.f90"/>
 		<File RelativePath="..\metabolism\temperl.f90"/>
