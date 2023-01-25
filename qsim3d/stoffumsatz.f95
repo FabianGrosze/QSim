@@ -84,6 +84,9 @@ subroutine stoffumsatz()
                ! algaeski()
                ! algaesbl()
                ! algaesgr()
+               if (iglob == kontrollknoten) print*,' nach algae_huelle ,aki,agr,abl,chla',   &
+               planktonic_variable_p(8+nk),planktonic_variable_p(9+nk),planktonic_variable_p(10+nk),planktonic_variable_p(11+nk)
+
                do k = 1,number_trans_quant
                   if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
                      print*,'nach algae_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang

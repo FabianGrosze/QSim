@@ -61,22 +61,25 @@ subroutine stofftransport_schism()
       !if(inunfl==0) then
       call levels0(0,izeit) !(iths_main,it)
       do i = 1,nvrt
-         print*,meinrang,' after levels0 i=',i,' ze(nea)  from...until '  &
-               ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
-               ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+         !print*,meinrang,' after levels0 i=',i,' ze(nea)  from...until '  &
+         !      ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+         !      ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+         if(control_proc==meinrang)then
+            print*,meinrang,control_elem,' after levels0 ze(kontrollknoten)',ze(i,control_elem),i,kontrollknoten
+         endif
       end do ! all i levels
       call mpi_barrier (mpi_komm_welt, ierr)
-      do i = 1,nvrt
-         print*,meinrang,' after levels0 i=',i,' znl(npa)  from...until '  &
-               ,minval(znl(i,1:npa)),maxval(znl(i,1:npa))   &
-               ,' ze(np)  from...until',minval(znl(i,1:np)),maxval(znl(i,1:np))
-      end do ! all i levels
+      !do i = 1,nvrt
+      !   print*,meinrang,' after levels0 i=',i,' znl(npa)  from...until '  &
+      !         ,minval(znl(i,1:npa)),maxval(znl(i,1:npa))   &
+      !         ,' ze(np)  from...until',minval(znl(i,1:np)),maxval(znl(i,1:np))
+      !end do ! all i levels
       call mpi_barrier (mpi_komm_welt, ierr)
 
       !else
       !  call levels1(iths_main,it)
       !endif
-      if(myrank==0) write(16,*) 'done recomputing levels0...'
+      if(myrank==0) print*,' stofftransport_schism: done recomputing levels0 ...'
 
          ! do_transport_tvd_imp(it,ntr,difnum_max_l)
          ! integer, intent(in) :: it !time stepping #; info only
@@ -90,7 +93,7 @@ subroutine stofftransport_schism()
       !myrank=meinrang
       !comm=mpi_komm_welt 
       
-      call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+      !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
 !      end do ! all sub timesteps
       

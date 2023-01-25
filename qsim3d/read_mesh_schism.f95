@@ -49,7 +49,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
                           h_tvd,eps1_tvd_imp,eps2_tvd_imp,                       &
                           ip_weno,courant_weno,ntd_weno,nquad,                   &
                           epsilon1,epsilon2,ielm_transport,                      &
-                          ztot,sigma,in_dir,len_in_dir,nxq,kbp,dp,znl,ivcor
+                          ztot,sigma,in_dir,len_in_dir,nxq,kbp,dp,znl,ze,zs,ivcor
                           
   use schism_msgp, only:  comm, nproc, myrank
 
@@ -177,6 +177,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       do i=1,ne
          read(10+meinrang,*)j,ielg(j)
       enddo
+      allocate(ze(nvrt,nea))
       read(10+meinrang,*)np,npa
       if(allocated(iplg)) deallocate(iplg); allocate(iplg(npa)); iplg=0
       do i=1,np
@@ -187,6 +188,7 @@ subroutine read_mesh_schism() !meinrang.eq.0
       do i=1,ns
          read(10+meinrang,*)j,islg(j)
       enddo
+      allocate(zs(nvrt,nsa))
       print*,meinrang,'local_to_global: elements',ne,nea,nea2,' points',np,npa,' sides/edges',ns,nsa
       call mpi_barrier (mpi_komm_welt, ierr)
       call mpi_reduce(ns,total_edge_number,1,MPI_INT,mpi_sum,0,mpi_komm_welt,ierr)

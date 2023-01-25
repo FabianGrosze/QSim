@@ -137,16 +137,16 @@ if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    !   write(ion,'(f27.6)') real(element_rand(n))
    !end do ! all elements
    
-   do i=1,nvrt
-      write(level,'(I4.4)')i
-      beschriftung = 'ze'//level
-      beschriftung = 'SCALARS '//trim(beschriftung)//' float 1'
-      write(ion,'(A)')trim(beschriftung)
-      write(ion,'(A)')'LOOKUP_TABLE default'
-      do n = 1,number_plankt_point
-         write(ion,'(f27.6)') element_z(i,n)
-      end do ! all n elements
-   end do ! all i levelselements
+   !do i=1,nvrt
+   !   write(level,'(I4.4)')i
+   !   beschriftung = 'ze'//level
+   !   beschriftung = 'SCALARS '//trim(beschriftung)//' float 1'
+   !   write(ion,'(A)')trim(beschriftung)
+   !   write(ion,'(A)')'LOOKUP_TABLE default'
+   !   do n = 1,number_plankt_point
+   !      write(ion,'(f27.6)') element_z(i,n)
+   !   end do ! all n elements
+   !end do ! all i levelselements
 
    write(ion,'(A)')'SCALARS WSP_rb3 float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'

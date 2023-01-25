@@ -147,6 +147,7 @@ subroutine eingabe()
             if(kontrollknoten==ielg(i))then
                control_proc=meinrang
                control_elem=i
+               print*,' kontrollknoten schism ',kontrollknoten,' auf Prozessor=',control_proc,' lokale element nr=',control_elem
             endif
          end do
 

@@ -442,6 +442,7 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
       
       !######################### zelem ################################################
+      goto 100 ! überspringen
       call check_err( nf_inq_varid(ncid,"zelem", varid) )
       call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
       if(.not.allocated(ze)) allocate(ze(nvrt,nea),stat=istat);
@@ -481,9 +482,12 @@ subroutine get_schism_step(nt)
       !#call exchange_s3dw(ze)
       
       do i = 1,nvrt
-         print*,meinrang,' level from .nc i=',i,' ze(nea)  from...until '  &
-               ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
-               ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+         !print*,meinrang,' level from .nc i=',i,' ze(nea)  from...until '  &
+         !      ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+         !      ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+         if(control_proc==meinrang)then
+            print*,meinrang,control_elem,' ze(kontrollknoten)',ze(i,control_elem),i,kontrollknoten
+         endif
       end do ! all i levels
       call mpi_barrier (mpi_komm_welt, ierr)
       
@@ -496,6 +500,7 @@ subroutine get_schism_step(nt)
       !end do ! all i levels
       !call mpi_barrier (mpi_komm_welt, ierr)
 
+  100 continue ! Z-Einlesen überspringen
 
       !######################### temp_elem(time, nSCHISM_hgrid_face ################################################
       !        if(iof_hydro(29)==1) call writeout_nc(id_out_var(32),'temp_elem',6,nvrt,nea,tr_el(1,:,:))
@@ -618,12 +623,12 @@ subroutine get_schism_step(nt)
       call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### zside ################################################
-      call check_err( nf_inq_varid(ncid,"zside", varid) )
-      call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
-      if(.not.allocated(zs)) allocate(zs(nvrt,nsa),stat=istat);
-      if (istat /= 0) call qerror('allocate zs( failed')
-      zs=0.0
-      call mpi_barrier (mpi_komm_welt, ierr)!#!
+      !call check_err( nf_inq_varid(ncid,"zside", varid) )
+      !call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      !if(.not.allocated(zs)) allocate(zs(nvrt,nsa),stat=istat);
+      !if (istat /= 0) call qerror('allocate zs( failed')
+      !zs=0.0
+      !call mpi_barrier (mpi_komm_welt, ierr)!#!
 
       !######################### hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two ################################################
       !## if(iof_hydro(27)==1) call writeout_nc(id_out_var(30),'hvel_side',8,nvrt,nsa,su2,sv2)  !su2(nvrt,nsa),sv2(nvrt,nsa)
