@@ -19,6 +19,17 @@ Seite gelistet und verlinkt wird, schicken Sie bitte eine E-Mail an
 es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
 ## Laufende Projekte ##
+_(alphabetisch sortiert)_
+
+* __Ausbreitungsprognosen zur Überwachung der Umweltradioaktivität__
+  Im Rahmen des Strahlenschutzgesetzes (StrlSchG §161) erstellt das Referat G4 
+  Ausbreitungsprognosen radioaktiver Stoffe an Bundeswasserstraßen. Mit QSim 
+  wird der Transport und die Verteilung der Radionuklide im Flusslauf bei 
+  verschiedenen stationären Strömungen simuliert. So können im Ereignisfall, 
+  z.B. einer unfallbedingten Ableitung aus einem Kernkraftwerk, 
+  Konzentrationserhöhungen und -durchgänge prognostiziert werden. \n
+  Ansprechpartnerin: Rike Völpel (voelpel[at]bafg.de)
+
 * __BMDV Expertennetzwerk 2.0__ (2020 - 2025) \n
   Das Expertennetzwerk beschäftigt sich mit Zukunftsfragen im Bereich Verkehr
   und digitaler Infrastruktur. Es ist ein behörden- und 
