@@ -1946,12 +1946,8 @@ program qsim
             hcq20 = hcq20 + abfls(mstr,imRB_K1(iRB))
             i_K120 = 1
          endif
-         if (iwsim /= 4 .and. tempws(mstr,imRB_K1(iRB)) > -9.99) then
-            hc21 = hc21 + tempws(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
-            hcq21 = hcq21 + abfls(mstr,imRB_K1(iRB))
-            i_K121 = 1
-         endif
-         if (iwsim == 4 .and. tempws(mstr,imRB_K1(iRB))>=0.0) then
+         if ((iwsim /= 4 .and. tempws(mstr,imRB_K1(iRB)) > -9.99) .or.       &
+             (iwsim == 4 .and. tempws(mstr,imRB_K1(iRB)) >= 0.0 )) then
             hc21 = hc21 + tempws(mstr,imRB_K1(iRB))*abfls(mstr,imRB_K1(iRB))
             hcq21 = hcq21 + abfls(mstr,imRB_K1(iRB))
             i_K121 = 1
@@ -2031,6 +2027,7 @@ program qsim
    ! Initialisation of values moved here to prevent uninitaliised use in case of iwsim = 2, 4, 5
    fssgrs = 0.7
    fbsgrs = 0.4  !   0.21
+   bsbzoo = 0.
    ! frfgrs = 0.13
    
    if (iwsim == 4) goto 396   !Tracer
@@ -2063,9 +2060,9 @@ program qsim
             
             ! falls der Anteil der Blaualgen = 0 ist
             if (antbls(mstr,mRB) == 0.0) then
-               ! TODO FG: That means one can never run a model without canobacteria ...
+               ! TODO FG: This means one can never run a model without cyanobacteria ...
                antbls(mstr,mRB) = 0.01
-               vkigrs(mstr,mRB) = max(0.01,(vkigrs(mstr,mRB) - antbls(mstr,mRB)))
+               vkigrs(mstr,mRB) = max(0.01, (vkigrs(mstr,mRB) - antbls(mstr,mRB)))
             endif
             
             ! Silikat
@@ -9442,49 +9439,48 @@ program qsim
          xJPO4 = sJPO4(mstr,iior)/itime
          xJO2 = sJO2(mstr,iior)/itime
          xJSi = sJSi(mstr,iior)/itime
-         !
-         if (iwsim == 4 .or. (iwsim == 2 .and. iColi == 0)) goto 891
-         algae_biomass = xaki+xagr+xabl
-         if (algae_biomass <= 0.0) then
-            xalgdr = 0.0
-            xalgzo = 0.0
-            xdalg  = 0.0
-            xdalga = 0.0
-            xalmor = 0.0
-            xsedal = 0.0
-            xalgco = 0.0
-            xakigr = 0.0
-         else
-            xalgdr = xalgdr * (1./tflie) / algae_biomass
-            xalgzo = xalgzo * (1./tflie) / algae_biomass
-            xdalg  = xdalg  * (1./tflie) / algae_biomass
-            if (xdalg < 0.00001) xdalg = 0.0
-            xdalga = xdalga * (1./tflie) / algae_biomass
-            if (xdalga < 0.00001)xdalga = 0.0
-            xalmor = xalmor * (1./tflie) / algae_biomass
-            if (xalmor < 0.00001)xalmor = 0.0
-            xsedal = xsedal * (1./tflie) / algae_biomass
-            xalgco = xalgco * (1./tflie) / algae_biomass
-            xakigr = xagr*Cagr + xaki*Caki + xabl*Cabl
-         endif
-         cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
          
-         !     Berechnung der Abbaubarkeit
-         abbau = -.1
-         if (xcsb > 0.0)abbau = xbsb5/xcsb
+         xalgdr = 0.0
+         xalgzo = 0.0
+         xdalg  = 0.0
+         xdalga = 0.0
+         xalmor = 0.0
+         xsedal = 0.0
+         xalgco = 0.0
+         xakigr = 0.0
+         xCHNFi = -1.
+         xCHNF  = -1.
          
-         if (xBVHNF <= 0.0) then
-            xCHNFi = -1.
-            xCHNF = -1.
-         else
-            ! Umrechnung in Zellzahlen
-            xCHNFi = xCHNF*1.e6/(xBVHNF*0.22)
-            ! xCHNF in æg/l
-            xCHNF = xCHNF*1000.
+         if (iwsim /= 4 .and. iwsim /= 2) then
+            algae_biomass = xaki+xagr+xabl
+            if (algae_biomass > 0.0) then
+               xalgdr = xalgdr * (1./tflie) / algae_biomass
+               xalgzo = xalgzo * (1./tflie) / algae_biomass
+               xdalg  = xdalg  * (1./tflie) / algae_biomass
+               if (xdalg < 0.00001) xdalg = 0.0
+               xdalga = xdalga * (1./tflie) / algae_biomass
+               if (xdalga < 0.00001)xdalga = 0.0
+               xalmor = xalmor * (1./tflie) / algae_biomass
+               if (xalmor < 0.00001)xalmor = 0.0
+               xsedal = xsedal * (1./tflie) / algae_biomass
+               xalgco = xalgco * (1./tflie) / algae_biomass
+               xakigr = xagr*Cagr + xaki*Caki + xabl*Cabl
+            endif
+            cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
+            
+            !     Berechnung der Abbaubarkeit
+            abbau = -.1
+            if (xcsb > 0.0)abbau = xbsb5/xcsb
+            
+            if (xBVHNF > 0.0) then
+               ! Umrechnung in Zellzahlen
+               xCHNFi = xCHNF*1.e6/(xBVHNF*0.22)
+               ! xCHNF in æg/l
+               xCHNF = xCHNF*1000.
+            endif
          endif
          
          ! Buhnenfelder
-         891 continue
          if (nbuhn(mstr) == 1) then
             ! river stretch with groins
             bxtemp = bste(mstr,iior)/itime
