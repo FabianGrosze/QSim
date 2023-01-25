@@ -30,7 +30,7 @@ When trying to solve problems, there are several places where to take a look:
   parameters
 - check that your QSim parameter values fit to your QSim version. The current 
   version of QSim parameter values can be found here:
-  z:\Projekte\QSim\Parameter_und_Umrechnungen\Parameterlisten\ 
+  `z:\Projekte\QSim\Parameter_und_Umrechnungen\Parameterlisten\` 
   <!-- we should include a current list within the doc. portal, best would be 
    to have one that is automatically created/read + under the link on Z there 
    are so many lists that it will be hard to find the right one -->

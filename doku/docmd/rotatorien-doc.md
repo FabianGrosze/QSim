@@ -1,44 +1,39 @@
-Rotatorien {#lnk_rotatorien}
+Rotifers {#lnk_rotatorien}
 ==========
 
-Anstatt die Gesamheit des Zooplanktons zu modellieren, werden in QSim lediglich 
-Rädertierchen (Rotatorien) modelliert.
+QSim simulates rotifers instead of the total of zooplankton.
+
+Rotifers feed on phytoplankton and thereby put grazing pressure on the 
+phytoplankton in the model.
+
+Like all organisms, rotifers cannot fully utilise their food,
+so they excrete part of their food as faeces.
+From the assimilated part of their food they cover their energy requirements 
+for basic maintenance and growth.
+maintenance and growth.
+The model takes into account a natural die-off rate, which can increase when 
+there is a lack of oxygen in the water.
+All turnover rates are also temperature-dependent, so that an increase in the
+ambient temperature leads to an acceleration of the rates.
+
+The intrinsic motion of the rotifers is negligible compared to the flow velocity 
+of the watercourse, so that in the model they are passively drifted with the 
+current. 
 
 
-
-Die Rotatorien ernähren sich ausschließlich von Algen und üben somit Fraßdruck auf das
-Phytoplankton des Modells aus. 
-
-
-Wie alle Organismen, können auch Rotatorien ihre Nahrung nicht vollständig verwerten,
-so dass sie einen Teil der Nahrung als Faeces wieder ausscheiden.
-Aus dem assimilierten Teil ihrer Nahrung decken sie ihren Energiebedarf für
-Grunderhaltung und Wachstum.
-Das Modell berücksichtigt eine natürliche Absterberate, die bei Sauerstoffmangel
-im Wasser ansteigen kann.
-Alle Umsatzraten sind zudem temperaturabhängig, so dass eine Erhöhung der
-Umgebungstemperatur zu einer Beschleunigung der Raten führt.
-
-
-Die Eigenbewegung der Rotatorien ist gegenüber der Fließgeschwindigkeit des 
-Gewässers vernachlässigbar, so dass sie im Modell passiv mit der Strömung verdriftet 
-werden.
-
-
-Weitere Informationen:
+Further Information:
 - \subpage lnk_rotatorien_equ
 - \subpage lnk_rotatorien_pars
 - \subpage lnk_rotatorien_num
 
 
-Veröffentlichungen:
+Publications:
 - [Schoel et al., 2002](./pdf/Schoel_et_al_2002rhein.pdf)
 - [Schoel et al., 1999](./pdf/Schoel_et_al_1999mosel-saar.pdf)
 
 
-
 <hr>
-Textquelle: rotatorien-doc.md ; Codesource: konsum_kern.f90 ; 
-zurück: \ref lnk_konsumenten
+Text source: rotatorien-doc.md ; Code source: konsum_kern.f90 ; 
+go back to: \ref lnk_konsumenten
 
 

@@ -25,43 +25,43 @@ can be selected in a drop-down menu.
 
 # Executables
 The different compiled versions and thus executable QSim software are located 
-in this directory: "z:\Projekte\QSim\Versionen_u_Setups\QSim\"
+in this directory: `z:\Projekte\QSim\Versionen_u_Setups\QSim\`
 (currently main14.08, best to chose "_ohnesedflux").
 
 To run QSim, it is necessary to use a hydrodynamic model with it.
 For QSim1D, we use the BfG-owned model HYDRAX. The documentation of HYDRAX 
 can be found [here](https://doi.bafg.de/BfG/2021/HYDRAX2021.pdf).
 The latest version of HYDRAX and its source code can be found here:
-"z:\Projekte\QSim\Versionen_u_Setups\Hydrax_mit_Code\Hydrax_2020_version527_mit Code\"
+`z:\Projekte\QSim\Versionen_u_Setups\Hydrax_mit_Code\Hydrax_2020_version527_mit Code\`
 
 Gerris is a graphical user interface, which integrates the BfG models HYDRAX and 
 QSim. The documentation of Gerris (Anleitung Gerris.docx) is located here:
-"Z:\Projekte\QSim\Dokumentation_und_Handbuecher\Gerris". The latest version of 
-Gerris is located here: "Z:\Projekte\QSim\Versionen_u_Setups\Gerris". 
+`Z:\Projekte\QSim\Dokumentation_und_Handbuecher\Gerris`. The latest version of 
+Gerris is located here: `Z:\Projekte\QSim\Versionen_u_Setups\Gerris`. 
 The Gerris-zip-files include HYDRAX, but you should carefully check the version 
 of QSim and replace it by the latest version if necessary. 
 
 # Tutorial/Video
 We have recorded a lecture on first steps with the model chain 
 Gerris/HYDRAX/QSim: 
-"Z:\Projekte\QSim\Dokumentation_und_Handbuecher\Gerris\2020-07-28 GERRIS Schulung".
+`Z:\Projekte\QSim\Dokumentation_und_Handbuecher\Gerris\2020-07-28 GERRIS Schulung`.
 
 # Rights and access
 Overview of rights/access that you may need when working with QSim:
 - GitLab (see above)
 - Funktionspostfach QSim-Support@bafg.de 
 - Funktionspostfach qsim@bafg.de
-- Z:/Projekte/QSim
+- `Z:/Projekte/QSim`
 - Rocket chat groups: QSim, QSim-Code, HPC, rrrr, R-Fragen-U2
 
 # Who is responsible?
-The following table lists who is responsible for what within the QSim group:
+The following table lists who is responsible for what within the QSim group: \n
 *tbd* <!-- Link zu unserer Tabelle aus QSim-Intern? -->
 
 # QSim and R
 - Within U2 and G1, we have an active R-group that is, among others, 
   developing R-scripts around QSim. An overview and notes of the meetings can be 
-  found here: "Z:\U\U2\R-Werkzeuge\Skripte\QSim" and in the 
+  found here: `Z:\U\U2\R-Werkzeuge\Skripte\QSim` and in the 
   [U2-Wiki](http://voss-wiki.bafg.de/instanzen/u2wiki/doku.php?id=start) 
   (*to be uploaded*). Some of the packages that are being developed are hosted on 
   [GitLab](https://gitlab.lan.bafg.de/qsim), too. These include a package to run 

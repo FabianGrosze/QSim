@@ -8,7 +8,7 @@ References  {#lnk_literatur}
 	 Instrument zur Simulation und Prognose des Stoffhaushalts und der 
 	 Planktondynamik in Fließgewässern
 	 
-- [Hübner, G., Schwandt, D. und Kirchesch, V. 2017](pdf/Huebner_Schwandt_Kirchesch_2017_DGL_Jahrestagung_Cottbus.pdf) 
+ - [Hübner, G., Schwandt, D. und Kirchesch, V. 2017](pdf/Huebner_Schwandt_Kirchesch_2017_DGL_Jahrestagung_Cottbus.pdf) 
     Transport von Salzen und
     Schwermetallen beim Niedrigwasser der Elbe im Jahr 2015. Deutsche 
 	Gesellschaft der Limnologie. Ergebnisse der Jahrestagung 2017.

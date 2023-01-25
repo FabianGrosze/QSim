@@ -1,4 +1,4 @@
-QSim-Projekte {#lnk_projekte}
+QSim projects {#lnk_projekte}
 ==============
 <!-- #mf: Texte unten sind von unseren U2-Website-Texten übernommen, sie könnten
 von den ProjektbearbeiterInnen noch mehr Richtung QSim angepasst werden -->
@@ -6,20 +6,21 @@ von den ProjektbearbeiterInnen noch mehr Richtung QSim angepasst werden -->
 sollen z.B. ProjektleiterInnen hingeschrieben werden oder die jeweiligen 
 QSim-AnwenderInnen -->
 
-QSim wird zur Begutachtung z.B. von wasserbaulichen Maßnahmen verwendet,
-aber auch zu Forschungszwecken. Im Folgenden werden laufende und 
-vergangene Projekte kurz vorgestellt. 
+QSim is used for the assessment of e.g. hydraulic engineering measures,
+but also for research purposes. Current and past QSim projects are briefly 
+presented below.
 
-Sollten Sie aktiv mit QSim arbeiten und möchten, dass Ihr Projekt auf dieser 
-Seite gelistet und verlinkt wird, schicken Sie bitte eine E-Mail an
+If you are actively working with QSim and would like your project to be 
+listed and linked on this page, please send an e-mail to
 <a href="mailto:qsim@bafg.de">QSim-Kontakt</a>.
 
 <!-- #mf: wolle wir, dass alle Anwendungen von QSim hier gelistet werden?
 + wollen wir die E-Mail adresse so verlinken oder geschützt schreiben, damit 
 es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
-## Laufende Projekte ##
-_(alphabetisch sortiert)_
+## Current projects
+
+*(alphabetically sorted)*
 
 * __Ausbreitungsprognosen zur Überwachung der Umweltradioaktivität__
   Im Rahmen des Strahlenschutzgesetzes (StrlSchG §161) erstellt das Referat G4 
@@ -28,7 +29,9 @@ _(alphabetisch sortiert)_
   verschiedenen stationären Strömungen simuliert. So können im Ereignisfall, 
   z.B. einer unfallbedingten Ableitung aus einem Kernkraftwerk, 
   Konzentrationserhöhungen und -durchgänge prognostiziert werden. \n
-  Ansprechpartnerin: Rike Völpel (voelpel[at]bafg.de)
+  Ansprechpartnerin: Rike Völpel (voelpel[at]bafg.de) 
+  
+  \n
 
 * __BMDV Expertennetzwerk 2.0__ (2020 - 2025) \n
   Das Expertennetzwerk beschäftigt sich mit Zukunftsfragen im Bereich Verkehr
@@ -131,7 +134,7 @@ _(alphabetisch sortiert)_
   Ansprechpartnerin: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
   \n\n
 
-## Externe Projekte ##
+## External projects ##
 
 * __KLIWA Sensitivitätsstudie Main__ (seit 2020) \n
   Die Kooperation [KLIWA](https://www.kliwa.de/) „Klimaveränderung und 
@@ -146,7 +149,7 @@ _(alphabetisch sortiert)_
   Ansprechpersonen im LfU: Maria Foltyn und Ulrich Kaul
 
   
-## Vergangene Projekte ##
+## Past projects ##
 * Expertennetzwerk 1.0 \n
 ...
 
@@ -156,6 +159,6 @@ _(alphabetisch sortiert)_
 * ProWaS \n
 ...
 
-* Weitere Anwendungen siehe: <a href="https://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSim_Anw/qsim_praxis_node.html;jsessionid=094E89FDEA85B27F72B60F9E9B936714.live21301">QSim-Anwendungen (BfG)</a>
+* For more applications, also see: <a href="https://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSim_Anw/qsim_praxis_node.html;jsessionid=094E89FDEA85B27F72B60F9E9B936714.live21301">QSim-Anwendungen (BfG)</a>
 
-Textquelle: projekte-doc.md
+Text source: projekte-doc.md
