@@ -40,11 +40,11 @@ subroutine verteilungskoeff(hcSS,hcph  &
    
    implicit none
    
-   real                   :: hcSS, hcph
-   real                   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
-   real                   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-   integer                :: iformVert
-   logical, intent(in)    :: kontroll  !< debugging
+   real   , intent(in)    :: hcSS, hcph
+   real   , intent(out)   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
+   real   , intent(out)   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
+   integer, intent(in)    :: iformVert
+   integer, intent(in)    :: kontroll  !< debugging
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
    if (iformVert == 1) then

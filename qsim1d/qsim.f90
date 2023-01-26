@@ -2024,7 +2024,7 @@ program qsim
    ! Abfrage ob alle benötigten Eingaben gemacht wurden (nur beim Modellstart)
    ! --------------------------------------------------------------------------
    
-   ! Initialisation of values moved here to prevent uninitaliised use in case of iwsim = 2, 4, 5
+   ! Initialisation of values moved here to prevent uninitaliised use
    fssgrs = 0.7
    fbsgrs = 0.4  !   0.21
    bsbzoo = 0.

@@ -57,9 +57,9 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    integer, dimension(200,40000)               :: itagl, monatl, jahrl
    ! integer, Dimension(50,200,30)             :: mREC
    integer, dimension(:,:,:), allocatable      :: mREC
-   real, dimension(2)                          :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
-   real, dimension(2)                          :: VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe
-   real, dimension(2)                          :: VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U
+   real                                        :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
+   real                                        :: VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe
+   real                                        :: VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U
    real, dimension(azStrs,100)                 :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesNs, vx0s, vx02s
    real, dimension(azStrs,100)                 :: gelps, gesPs, sis, chlas, waers
    real, dimension(azStrs,100)                 :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
@@ -386,101 +386,101 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                                   ,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U,iformVert,i)
          enddo
          if (gsZns(mstr,RBNR) > 0.0 .and. glZns(mstr,RBNR) <= 0.0) then
-            glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn(1)*hcSS/1000.)
+            glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn*hcSS/1000.)
          else if (gsZns(mstr,RBNR) <= 0.0 .and. glZns(mstr,RBNR) > 0.0) then
-            gsZns(mstr,RBNR) = glZns(mstr,RBNR)*(1+VTKoeff_Zn(1)*hcSS/1000.)
+            gsZns(mstr,RBNR) = glZns(mstr,RBNR)*(1+VTKoeff_Zn*hcSS/1000.)
             !           else if(gsZns(mstr,RBNR)>0.0.and.glZns(mstr,RBNR)==gsZns(mstr,RBNR))then
-            !             glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn(1)*hcSS/1000.)
+            !             glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn*hcSS/1000.)
          else if (gsZns(mstr,RBNR) > 0.0 .and. glZns(mstr,RBNR) > 0.0.and.gsZns(mstr,RBNR) < glZns(mstr,RBNR)) then
             glZns(mstr,RBNR) = gsZns(mstr,RBNR)
          endif
          if (gsCads(mstr,RBNR) > 0.0 .and. glCads(mstr,RBNR) <= 0.0) then
-            glCads(mstr,RBNR) = gsCads(mstr,RBNR)/(1.+VTKoeff_Cad(1)*hcSS/1000.)
+            glCads(mstr,RBNR) = gsCads(mstr,RBNR)/(1.+VTKoeff_Cad*hcSS/1000.)
          else if (gsCads(mstr,RBNR) <= 0.0 .and. glCads(mstr,RBNR) > 0.0) then
-            gsCads(mstr,RBNR) = glCads(mstr,RBNR)*(1+VTKoeff_Cad(1)*hcSS/1000.)
+            gsCads(mstr,RBNR) = glCads(mstr,RBNR)*(1+VTKoeff_Cad*hcSS/1000.)
             !           else if(gsCads(mstr,RBNR)>0.0.and.glCads(mstr,RBNR)==gsCads(mstr,RBNR))then
-            !             glCads(mstr,RBNR) = gsCads(mstr,RBNR)/(1.+VTKoeff_Cad(1)*hcSS/1000.)
+            !             glCads(mstr,RBNR) = gsCads(mstr,RBNR)/(1.+VTKoeff_Cad*hcSS/1000.)
          else if (gsCads(mstr,RBNR) > 0.0 .and. glCads(mstr,RBNR) > 0.0.and.gsCads(mstr,RBNR) < glCads(mstr,RBNR)) then
             glCads(mstr,RBNR) = gsCads(mstr,RBNR)
          endif
          if (gsCus(mstr,RBNR) > 0.0 .and. glCus(mstr,RBNR) <= 0.0) then
-            glCus(mstr,RBNR) = gsCus(mstr,RBNR)/(1.+VTKoeff_Cu(1)*hcSS/1000.)
+            glCus(mstr,RBNR) = gsCus(mstr,RBNR)/(1.+VTKoeff_Cu*hcSS/1000.)
          else if (gsCus(mstr,RBNR) <= 0.0 .and. glCus(mstr,RBNR) > 0.0) then
-            gsCus(mstr,RBNR) = glCus(mstr,RBNR)*(1+VTKoeff_Cu(1)*hcSS/1000.)
+            gsCus(mstr,RBNR) = glCus(mstr,RBNR)*(1+VTKoeff_Cu*hcSS/1000.)
             !           else if(gsCus(mstr,RBNR)>0.0.and.glCus(mstr,RBNR)==gsCus(mstr,RBNR))then
-            !             glCus(mstr,RBNR) = gsCus(mstr,RBNR)/(1.+VTKoeff_Cu(1)*hcSS/1000.)
+            !             glCus(mstr,RBNR) = gsCus(mstr,RBNR)/(1.+VTKoeff_Cu*hcSS/1000.)
          else if (gsCus(mstr,RBNR) > 0.0 .and. glCus(mstr,RBNR) > 0.0.and.gsCus(mstr,RBNR) < glCus(mstr,RBNR)) then
             glCus(mstr,RBNR) = gsCus(mstr,RBNR)
          endif
          if (gsNis(mstr,RBNR) > 0.0 .and. glNis(mstr,RBNR) <= 0.0) then
-            glNis(mstr,RBNR) = gsNis(mstr,RBNR)/(1.+VTKoeff_Ni(1)*hcSS/1000.)
+            glNis(mstr,RBNR) = gsNis(mstr,RBNR)/(1.+VTKoeff_Ni*hcSS/1000.)
          else if (gsNis(mstr,RBNR) <= 0.0 .and. glNis(mstr,RBNR) > 0.0) then
-            gsNis(mstr,RBNR) = glNis(mstr,RBNR)*(1+VTKoeff_Ni(1)*hcSS/1000.)
+            gsNis(mstr,RBNR) = glNis(mstr,RBNR)*(1+VTKoeff_Ni*hcSS/1000.)
             !           else if(gsNis(mstr,RBNR)>0.0.and.glNis(mstr,RBNR)==gsZns(mstr,RBNR))then
-            !             glNis(mstr,RBNR) = gsNis(mstr,RBNR)/(1.+VTKoeff_Ni(1)*hcSS/1000.)
+            !             glNis(mstr,RBNR) = gsNis(mstr,RBNR)/(1.+VTKoeff_Ni*hcSS/1000.)
          else if (gsNis(mstr,RBNR) > 0.0 .and. glNis(mstr,RBNR) > 0.0.and.gsNis(mstr,RBNR) < glNis(mstr,RBNR)) then
             glNis(mstr,RBNR) = gsNis(mstr,RBNR)
          endif
          if (gsAss(mstr,RBNR) > 0.0 .and. glAss(mstr,RBNR) <= 0.0) then
-            glAss(mstr,RBNR) = gsAss(mstr,RBNR)/(1.+VTKoeff_As(1)*hcSS/1000.)
+            glAss(mstr,RBNR) = gsAss(mstr,RBNR)/(1.+VTKoeff_As*hcSS/1000.)
          else if (gsAss(mstr,RBNR) <= 0.0 .and. glAss(mstr,RBNR) > 0.0) then
-            gsAss(mstr,RBNR) = glAss(mstr,RBNR)*(1+VTKoeff_As(1)*hcSS/1000.)
+            gsAss(mstr,RBNR) = glAss(mstr,RBNR)*(1+VTKoeff_As*hcSS/1000.)
             !           else if(gsAss(mstr,RBNR)>0.0.and.glAss(mstr,RBNR)==gsAss(mstr,RBNR))then
-            !             glAss(mstr,RBNR) = gsAss(mstr,RBNR)/(1.+VTKoeff_As(1)*hcSS/1000.)
+            !             glAss(mstr,RBNR) = gsAss(mstr,RBNR)/(1.+VTKoeff_As*hcSS/1000.)
          else if (gsAss(mstr,RBNR) > 0.0 .and. glAss(mstr,RBNR) > 0.0.and.gsAss(mstr,RBNR) < glAss(mstr,RBNR)) then
             glAss(mstr,RBNR) = gsAss(mstr,RBNR)
          endif
          if (gsPbs(mstr,RBNR) > 0.0 .and. glPbs(mstr,RBNR) <= 0.0) then
-            glPbs(mstr,RBNR) = gsPbs(mstr,RBNR)/(1.+VTKoeff_Pb(1)*hcSS/1000.)
+            glPbs(mstr,RBNR) = gsPbs(mstr,RBNR)/(1.+VTKoeff_Pb*hcSS/1000.)
          else if (gsPbs(mstr,RBNR) <= 0.0 .and. glPbs(mstr,RBNR) > 0.0) then
-            gsPbs(mstr,RBNR) = glPbs(mstr,RBNR)*(1+VTKoeff_Pb(1)*hcSS/1000.)
+            gsPbs(mstr,RBNR) = glPbs(mstr,RBNR)*(1+VTKoeff_Pb*hcSS/1000.)
             !           else if(gsPbs(mstr,RBNR)>0.0.and.glPbs(mstr,RBNR)==gsPbs(mstr,RBNR))then
-            !             glPbs(mstr,RBNR) = gsPbs(mstr,RBNR)/(1.+VTKoeff_Pb(1)*hcSS/1000.)
+            !             glPbs(mstr,RBNR) = gsPbs(mstr,RBNR)/(1.+VTKoeff_Pb*hcSS/1000.)
          else if (gsPbs(mstr,RBNR) > 0.0 .and. glPbs(mstr,RBNR) > 0.0.and.gsPbs(mstr,RBNR) < glPbs(mstr,RBNR)) then
             gsPbs(mstr,RBNR) = glPbs(mstr,RBNR)
          endif
          if (gsCrs(mstr,RBNR) > 0.0 .and. glCrs(mstr,RBNR) <= 0.0) then
-            glCrs(mstr,RBNR) = gsCrs(mstr,RBNR)/(1.+VTKoeff_Cr(1)*hcSS/1000.)
+            glCrs(mstr,RBNR) = gsCrs(mstr,RBNR)/(1.+VTKoeff_Cr*hcSS/1000.)
          else if (gsCrs(mstr,RBNR) <= 0.0 .and. glCrs(mstr,RBNR) > 0.0) then
-            gsCrs(mstr,RBNR) = glCrs(mstr,RBNR)*(1+VTKoeff_Cr(1)*hcSS/1000.)
+            gsCrs(mstr,RBNR) = glCrs(mstr,RBNR)*(1+VTKoeff_Cr*hcSS/1000.)
             !           else if(gsCrs(mstr,RBNR)>0.0.and.glCrs(mstr,RBNR)==gsCrs(mstr,RBNR))then
-            !             glCrs(mstr,RBNR) = gsCrs(mstr,RBNR)/(1.+VTKoeff_Cr(1)*hcSS/1000.)
+            !             glCrs(mstr,RBNR) = gsCrs(mstr,RBNR)/(1.+VTKoeff_Cr*hcSS/1000.)
          else if (gsCrs(mstr,RBNR) > 0.0 .and. glCrs(mstr,RBNR) > 0.0.and.gsCrs(mstr,RBNR) < glCrs(mstr,RBNR)) then
             gsCrs(mstr,RBNR) = glCrs(mstr,RBNR)
          endif
          if (gsFes(mstr,RBNR) > 0.0 .and. glFes(mstr,RBNR) <= 0.0) then
-            glFes(mstr,RBNR) = gsFes(mstr,RBNR)/(1.+VTKoeff_Fe(1)*hcSS/1000.)
+            glFes(mstr,RBNR) = gsFes(mstr,RBNR)/(1.+VTKoeff_Fe*hcSS/1000.)
          else if (gsFes(mstr,RBNR) <= 0.0 .and. glFes(mstr,RBNR) > 0.0) then
-            gsFes(mstr,RBNR) = glFes(mstr,RBNR)*(1+VTKoeff_Fe(1)*hcSS/1000.)
+            gsFes(mstr,RBNR) = glFes(mstr,RBNR)*(1+VTKoeff_Fe*hcSS/1000.)
             !           else if(gsFes(mstr,RBNR)>0.0.and.glFes(mstr,RBNR)==gsFes(mstr,RBNR))then
-            !             glFes(mstr,RBNR) = gsFes(mstr,RBNR)/(1.+VTKoeff_Fe(1)*hcSS/1000.)
+            !             glFes(mstr,RBNR) = gsFes(mstr,RBNR)/(1.+VTKoeff_Fe*hcSS/1000.)
          else if (gsFes(mstr,RBNR) > 0.0 .and. glFes(mstr,RBNR) > 0.0.and.gsFes(mstr,RBNR) < glFes(mstr,RBNR)) then
             gsFes(mstr,RBNR) = glFes(mstr,RBNR)
          endif
          if (gsHgs(mstr,RBNR) > 0.0 .and. glHgs(mstr,RBNR) <= 0.0) then
-            glHgs(mstr,RBNR) = gsHgs(mstr,RBNR)/(1.+VTKoeff_Hg(1)*hcSS/1000.)
+            glHgs(mstr,RBNR) = gsHgs(mstr,RBNR)/(1.+VTKoeff_Hg*hcSS/1000.)
          else if (gsHgs(mstr,RBNR) <= 0.0 .and. glHgs(mstr,RBNR) > 0.0) then
-            gsHgs(mstr,RBNR) = glHgs(mstr,RBNR)*(1+VTKoeff_Hg(1)*hcSS/1000.)
+            gsHgs(mstr,RBNR) = glHgs(mstr,RBNR)*(1+VTKoeff_Hg*hcSS/1000.)
             !           else if(gsHgs(mstr,RBNR)>0.0.and.glHgs(mstr,RBNR)==gsHgs(mstr,RBNR))then
-            !             glHgs(mstr,RBNR) = gsHgs(mstr,RBNR)/(1.+VTKoeff_Hg(1)*hcSS/1000.)
+            !             glHgs(mstr,RBNR) = gsHgs(mstr,RBNR)/(1.+VTKoeff_Hg*hcSS/1000.)
          else if (gsHgs(mstr,RBNR) > 0.0 .and. glHgs(mstr,RBNR) > 0.0.and.gsHgs(mstr,RBNR) < glHgs(mstr,RBNR)) then
             gsHgs(mstr,RBNR) = glHgs(mstr,RBNR)
          endif
          if (gsMns(mstr,RBNR) > 0.0 .and. glMns(mstr,RBNR) <= 0.0) then
-            glMns(mstr,RBNR) = gsMns(mstr,RBNR)/(1.+VTKoeff_Mn(1)*hcSS/1000.)
+            glMns(mstr,RBNR) = gsMns(mstr,RBNR)/(1.+VTKoeff_Mn*hcSS/1000.)
          else if (gsMns(mstr,RBNR) <= 0.0 .and. glMns(mstr,RBNR) > 0.0) then
-            gsMns(mstr,RBNR) = glMns(mstr,RBNR)*(1+VTKoeff_Mn(1)*hcSS/1000.)
+            gsMns(mstr,RBNR) = glMns(mstr,RBNR)*(1+VTKoeff_Mn*hcSS/1000.)
             !           else if(gsMns(mstr,RBNR)>0.0.and.glMns(mstr,RBNR)==gsMns(mstr,RBNR))then
-            !             glMns(mstr,RBNR) = gsMns(mstr,RBNR)/(1.+VTKoeff_Mn(1)*hcSS/1000.)
+            !             glMns(mstr,RBNR) = gsMns(mstr,RBNR)/(1.+VTKoeff_Mn*hcSS/1000.)
          else if (gsMns(mstr,RBNR) > 0.0 .and. glMns(mstr,RBNR) > 0.0.and.gsMns(mstr,RBNR) < glMns(mstr,RBNR)) then
             gsMns(mstr,RBNR) = glMns(mstr,RBNR)
          endif
          if (gsUs(mstr,RBNR) > 0.0 .and. glUs(mstr,RBNR) <= 0.0) then
-            glUs(mstr,RBNR) = gsUs(mstr,RBNR)/(1.+VTKoeff_U(1)*hcSS/1000.)
+            glUs(mstr,RBNR) = gsUs(mstr,RBNR)/(1.+VTKoeff_U*hcSS/1000.)
          else if (gsUs(mstr,RBNR) <= 0.0 .and. glUs(mstr,RBNR) > 0.0) then
-            gsUs(mstr,RBNR) = glUs(mstr,RBNR)*(1+VTKoeff_U(1)*hcSS/1000.)
+            gsUs(mstr,RBNR) = glUs(mstr,RBNR)*(1+VTKoeff_U*hcSS/1000.)
             !           else if(gsUs(mstr,RBNR)>0.0.and.glUs(mstr,RBNR)==gsUs(mstr,RBNR))then
-            !             glUs(mstr,RBNR) = gsUs(mstr,RBNR)/(1.+VTKoeff_U(1)*hcSS/1000.)
+            !             glUs(mstr,RBNR) = gsUs(mstr,RBNR)/(1.+VTKoeff_U*hcSS/1000.)
          else if (gsUs(mstr,RBNR) > 0.0 .and. glUs(mstr,RBNR) > 0.0.and.gsUs(mstr,RBNR) < glUs(mstr,RBNR)) then
             gsUs(mstr,RBNR) = glUs(mstr,RBNR)
          endif
