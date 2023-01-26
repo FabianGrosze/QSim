@@ -86,6 +86,8 @@ if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    close (ion)
    print*,meinrang,myrank,'node output ausgeben_schism done'
    
+   return !!!#########
+
 !####### elements ##########################################################################################   
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'elements_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename elemente_ failed')

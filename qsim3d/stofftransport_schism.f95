@@ -55,7 +55,7 @@ subroutine stofftransport_schism()
 !?? alle subschritte ???
 
       call get_schism_step(na_transinfo) !!****
-      print*,meinrang,'stofftransport_schism: did get_schism_step()'
+      if (meinrang == 0)print*,meinrang,'stofftransport_schism: did get_schism_step()'
       call mpi_barrier (mpi_komm_welt, ierr)
 !...  Recompute vgrid and calculate rewetted pts
       !if(inunfl==0) then
@@ -93,7 +93,7 @@ subroutine stofftransport_schism()
       !myrank=meinrang
       !comm=mpi_komm_welt 
       
-      !call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+      !!!###!!! call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
 !      end do ! all sub timesteps
       

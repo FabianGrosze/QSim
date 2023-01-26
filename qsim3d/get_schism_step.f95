@@ -32,7 +32,7 @@ subroutine get_schism_step(nt)
       use netcdf
       use modell
       use schism_glbl, only:su2,sv2,tr_el,eta2                       &
-      ,npa,np, nsa,ne, nea, nvrt, ns_global,ne_global,np_global      &
+      ,npa,np,ns, nsa,ne, nea, nvrt, ns_global,ne_global,np_global      &
       ,ielg,iplg,islg,isidenode, znl, zs, dp,idry,idry_e,idry_e_2t   &
       ,idry_s,nea2,dfh,hdif,flux_adv_vface,ntracers,ze,zs,iegrpv,    &
        npa2, nea2, nsa2, znl, kbp
@@ -66,6 +66,7 @@ subroutine get_schism_step(nt)
       real , allocatable , dimension (:) :: var_g
       real , allocatable , dimension (:) :: var1_g
       real , allocatable , dimension (:) :: var2_g
+      real , allocatable , dimension (:) :: velo
       
       if((nt.lt.1).or.(nt.gt.transinfo_anzahl))then
          print*,'nt,transinfo_anzahl=',nt,transinfo_anzahl
@@ -181,7 +182,7 @@ subroutine get_schism_step(nt)
                knoten_trocken(iplg_sc(j,k)) = int(var_g((j-1)*maxstack+k))
             end do
          end do
-         print*,'get_schism_step knoten_trocken minwert, maxwert = ',minval(knoten_trocken),maxval(knoten_trocken)
+         print*,'get_schism_step idry->knoten_trocken minwert, maxwert = ',minval(knoten_trocken),maxval(knoten_trocken)
       end if ! meinrang==0
       call mpi_barrier (mpi_komm_welt, ierr)
 
@@ -252,16 +253,17 @@ subroutine get_schism_step(nt)
          ! rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
          ! benthic_distribution(44+(j-1)*number_benth_distr) = 0.1      ! ks #### jetzt anders gelöst mit zone()%reib
          ! benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
+         print*,'kontrollknoten=',kontrollknoten,' wsp=rb_hydraul(3+...)=',rb_hydraul(3+(kontrollknoten-1)*number_rb_hydraul)
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
       
       ! complement ghost element values
       call exchange_p2d(eta2)
       
-      print*,meinrang,'get_schism_step after eta2 min/max np,npa,npa2 = ',  &
-            minval(eta2(1:np)),maxval(eta2(1:np)),  &
-            minval(eta2(np+1:npa)),maxval(eta2(np+1:npa)),  &
-            minval(eta2(npa+1:npa2)),maxval(eta2(npa+1:npa2))
+      !print*,meinrang,'get_schism_step after eta2 min/max np,npa,npa2 = ',  &
+      !      minval(eta2(1:np)),maxval(eta2(1:np)),  &
+      !      minval(eta2(np+1:npa)),maxval(eta2(np+1:npa)),  &
+      !      minval(eta2(npa+1:npa2)),maxval(eta2(npa+1:npa2))
       
       !######################### dp tiefe depth rb_hydraul(2  ################################################
       ! find depth
@@ -328,8 +330,9 @@ subroutine get_schism_step(nt)
             rb_hydraul(2+(j-1)*number_rb_hydraul) = sump/real(cornernumber(j))
             rb_hydraul(2+(j-1)*number_rb_hydraul) = rb_hydraul(3+(j-1)*number_rb_hydraul)-rb_hydraul(2+(j-1)*number_rb_hydraul)
          end do ! all j elements
-         print*,'### get_schism_step bathymetry ###, knoten_z minwert, maxwert = '  &
+         print*,'get_schism_step bathymetry , knoten_z minwert, maxwert = '  &
                ,minval(knoten_z),maxval(knoten_z)
+         print*,'kontrollknoten=',kontrollknoten,' tief=rb_hydraul(2+...)=',rb_hydraul(2+(kontrollknoten-1)*number_rb_hydraul)
       end if ! proc. 0 only
       call mpi_barrier (mpi_komm_welt, ierr)
       
@@ -439,6 +442,9 @@ subroutine get_schism_step(nt)
          end do
          print*,'get_schism_step: element_trocken min,max = ',minval(element_trocken),maxval(element_trocken)
       end if !meinrang==0
+      if(control_proc==meinrang)then
+         print*,meinrang,control_elem,' wetdry_elem=idry_e(kontrollknoten)=',idry_e(control_elem),kontrollknoten
+      endif
       call mpi_barrier (mpi_komm_welt, ierr)
       
       !######################### zelem ################################################
@@ -523,10 +529,13 @@ subroutine get_schism_step(nt)
          !!###tr_el(1,i,1:ne) = 22.22*real(i) !### test exchange_e3d_2t_tr
          !print*,meinrang,i,'temp_elem before from...until ne',  &
          !       minval(tr_el(1,i,1:ne)),maxval(tr_el(1,i,1:ne))
+         if(control_proc==meinrang)then
+            print*,meinrang,control_elem,i,' temp_elem=tr_el(kontrollknoten)',tr_el(1,i,control_elem),kontrollknoten
+         endif
       end do ! all i levels
       !print*,meinrang,'nnbr,nbrrank min/max',nnbr,minval(nbrrank(:)),maxval(nbrrank(:))
       !print*,meinrang,'nnbr_2t,nbrrank_2t min/max',nnbr_2t,minval(nbrrank_2t(:)),maxval(nbrrank_2t(:))
-      
+
       call mpi_barrier (mpi_komm_welt, ierr)
  
       !######################### salt_elem(time, nSCHISM_hgrid_face ################################################
@@ -552,6 +561,9 @@ subroutine get_schism_step(nt)
          !     minval(tr_el(2,i,1:ne)),maxval(tr_el(2,i,1:ne)),  &
          !     minval(tr_el(2,i,1+ne:nea)),maxval(tr_el(2,i,1+ne:nea)),  &
          !     minval(tr_el(2,i,1+nea:nea2)),maxval(tr_el(2,i,1+nea:nea2))
+         if(control_proc==meinrang)then
+            print*,meinrang,control_elem,i,' salt_elem=tr_el(kontrollknoten)',tr_el(2,i,control_elem),kontrollknoten
+         endif
       end do ! all i levels
       call mpi_barrier (mpi_komm_welt, ierr)
       
@@ -594,6 +606,9 @@ subroutine get_schism_step(nt)
          call mpi_barrier (mpi_komm_welt, ierr)
          minwert=min(minwert,minima)
          maxwert=max(maxwert,maxima)
+         if(control_proc==meinrang)then
+            print*,meinrang,control_elem,i,' flux_adv_vface(kontrollknoten)=',flux_adv_vface(i,1,control_elem),kontrollknoten
+         endif
       end do ! all i levels
       call mpi_reduce(minwert,minima,1,MPI_FLOAT,mpi_min,0,mpi_komm_welt,ierr)
       call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
@@ -619,7 +634,7 @@ subroutine get_schism_step(nt)
       if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var idry_s failed iret = ",iret
       call check_err(iret)
       idry_s(1:nsa) = int(var_p(1:nsa))
-      if (meinrang == 0)print*,'get_schism_step: idry_s min,max = ',minval(idry_s),maxval(idry_s)
+      if (meinrang == 0)print*,'get_schism_step: idry_s min,max = ',minval(idry_s(1:ns)),maxval(idry_s(1:ns))
       call mpi_barrier (mpi_komm_welt, ierr)
 
       !######################### zside ################################################
@@ -653,6 +668,8 @@ subroutine get_schism_step(nt)
       if (dlength(dimids(1)) > maxstack)call qerror("wetdry_elem:dlength(dimids(1)) > maxstack")
       !! initialize
       var1_p(:) = 666.666; var2_p(:) = 666.666
+      if(.not.allocated(velo))allocate(velo(number_plankt_point))
+      
       do i = 1,nvrt
          ! float hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two) ;
          start4 = (/1, i, 1  , nin /)
@@ -670,6 +687,13 @@ subroutine get_schism_step(nt)
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Gather(var1_p, maxstack, MPI_FLOAT, var1_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
          call MPI_Gather(var2_p, maxstack, MPI_FLOAT, var2_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+
+         maxwert=maxval(su2(i,1:ns))
+         call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+         if (meinrang == 0)print*,'level=',i,'maxima su2=',maxima
+         maxwert=maxval(sv2(i,1:ns))
+         call mpi_reduce(maxwert,maxima,1,MPI_FLOAT,mpi_max,0,mpi_komm_welt,ierr)
+         if (meinrang == 0)print*,'level=',i,'maxima sv2=',maxima
 
          !! recombine into global numbers !ed_vel_x, ed_vel_y
          if (meinrang == 0) then
@@ -692,19 +716,20 @@ subroutine get_schism_step(nt)
          !!!!call mpi_barrier (mpi_komm_welt, ierr)
          if (meinrang == 0) then
             maxima=0.0
+            velo=0.0
             do n = 1,number_plankt_point! all n elements
                vel_sum=0.0
+               if(i==1)rb_hydraul(1+(n-1)*number_rb_hydraul)=0.0
                if(cornernumber(n)==0)call qerror('get_schism_step: cornernumber(n)==0')
                do j=1,cornernumber(n)
                   k=elementedges(n,j)
                   vel_sum=vel_sum+sqrt(ed_vel_x(k)**2 + ed_vel_y(k)**2)
                end do ! all j corners
-               rb_hydraul(1+(n-1)*number_rb_hydraul)=vel_sum/real(cornernumber(n)) !### tiefenaufgelöst ???
-               if(maxima<rb_hydraul(1+(n-1)*number_rb_hydraul))maxima=rb_hydraul(1+(n-1)*number_rb_hydraul)
+               velo(n)=vel_sum/real(cornernumber(n)) !### tiefenaufgelöst ???
+               if(maxima<velo(n))maxima=velo(n)
+               rb_hydraul(1+(n-1)*number_rb_hydraul)=rb_hydraul(1+(n-1)*number_rb_hydraul)+velo(n)
             end do ! all n elements
-            print*,'level=',i,  &
-            ' vel.mag. rb_hydraul(1 at elements mean from adjacent edge-vel. su2,sv2 | max=',maxima
-
+            print*,'level=',i,' maximum velo from ed_vel =',maxima
             if(.not.allocated(u))then
                call qerror('get_schism_step .not. allocated(u)')
             endif
@@ -717,11 +742,18 @@ subroutine get_schism_step(nt)
                if(knot_kant(n)==0)call qerror('get_schism_step knot_kant(n)==0')
                u(n)=u(n)/real(knot_kant(n))
             end do ! alle n knoten
-            maxima=maxval(u)
-            print*,'level=',i,  &
-            ' vel.mag. u at nodes mean from linked edge-vel. su2,sv2 | max=',maxima
          end if !meinrang==0
       end do ! all i levels
+      call mpi_barrier (mpi_komm_welt, ierr)
+
+      ! simple depth averaging
+      if (meinrang == 0) then
+         do n = 1,number_plankt_point! all n elements
+            rb_hydraul(1+(n-1)*number_rb_hydraul)=rb_hydraul(1+(n-1)*number_rb_hydraul)/real(nvrt)
+         end do ! all n elements
+         print*,kontrollknoten,'=kontrollknoten vel=rb_hydraul(1+...)=',rb_hydraul(1+(kontrollknoten-1)*number_rb_hydraul)
+      end if !meinrang==0
+      deallocate(velo)
 
       !######################### close clean return
       iret = nf_close(ncid)
