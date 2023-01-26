@@ -196,7 +196,7 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
          else if (iee1 == -1 .and. iee2 == 1) then
             Ywert = wert2
          else if (iee1 == -1 .and. iee2 == -1) then
-            ! TODO FG: introduced switches to avoud uninitialised use of wert1
+            ! TODO FG: introduced switches to avoid uninitialised use of wert1
             if (is_set_wert1) then
                Ywert = wert1
             else if (is_set_wert2) then

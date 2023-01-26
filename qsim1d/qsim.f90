@@ -1592,27 +1592,26 @@ program qsim
    
    
    ! ==========================================================================
-   9999 continue ! Rücksprunglabel Zeitschleife
+9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
    
    !---------------------------------------------------------------------------
    ! read from Ablauf.txt
    !---------------------------------------------------------------------------
-   do istr = 1,(2*azStrs)
-      read(97,9700,iostat = read_error)STRNR(istr),iFlRi_l(istr),(ESTRNR(istr,nstr),nstr = 1,azStrs)
-      if (iFlRi_l(istr) == 99 .or. read_error < 0) then ! muss wieder ==99 stehen!!!
-         jStrNr = StrNr(istr)
-         exit
-      endif
+   do istr = 1,nazStrs
+      read(97,9700,iostat = read_error) STRNR(istr), iFlRi_l(istr), (ESTRNR(istr,nstr),nstr = 1,azStrs)
+      if (iFlRi_l(istr) == 99 .or. read_error < 0) exit
       
-      do nstr = 1,(2*azStrs)
+      ! TODO: ESTRNR has dimensions (nazStrs,azStrs) nStr may exceed limit of second dimension
+      do nstr = 1,nazStrs
          if (ESTRNR(istr,nstr) == 0) then
-            nstrs(istr) = nstr-1
+            nstrs(istr) = nstr - 1
             nnstrs(StrNR(istr)) = nstrs(istr)
             exit
          endif
       enddo
    enddo
+   
    9700 format(I5,2x,I2,500(2x,I5))
    
    istrs = istr-1
@@ -1709,29 +1708,29 @@ program qsim
    
    istr = 0
    ! dann werden die Zeitreihen selbst aus EREIGG.txt gelesen
-   call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs                 &
-                 ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                &
-                 ,ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,glAss,gsAss,glPbs,gsPbs,glCrs,gsCrs    &
-                 ,glFes,gsFes,glHgs,gsHgs,glMns,gsMns,glUs,gsUs                                                    &
-                 ,c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn,VTKoeffDe_Zn                                   &
-                 ,c1Cu,e1Cu,c2Cu,e2Cu,c3Cu,e3Cu,c4Cu,e4Cu,c5Cu,e5Cu,VTKoeffDe_Cu                                   &
-                 ,c1Cad,e1Cad,c2Cad,e2Cad,c3Cad,e3Cad,c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad                        &
-                 ,c1Ni,e1Ni,c2Ni,e2Ni,c3Ni,e3Ni,c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni                                   &
-                 ,c1As,e1As,c2As,e2As,c3As,e3As,c4As,e4As,c5As,e5As,VTKoeffDe_As                                   &
-                 ,c1Pb,e1Pb,c2Pb,e2Pb,c3Pb,e3Pb,c4Pb,e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb                                   &
-                 ,c1Cr,e1Cr,c2Cr,e2Cr,c3Cr,e3Cr,c4Cr,e4Cr,c5Cr,e5Cr,VTKoeffDe_Cr                                   &
-                 ,c1Fe,e1Fe,c2Fe,e2Fe,c3Fe,e3Fe,c4Fe,e4Fe,c5Fe,e5Fe,VTKoeffDe_Fe                                   &
-                 ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                   &
-                 ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                   &
-                 ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                              &
-                 ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands               &
+   call funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,gesPs,sis,chlas,vkigrs                        &
+                 ,antbls,zooins,vphs,mws,cas,lfs,ssalgs,tempws,vo2s,CHNFs,BVHNFs,colis,DOSCFs,waers                       &
+                 ,iColi, ischwer,glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis,glAss,gsAss,glPbs,gsPbs,glCrs,gsCrs    &
+                 ,glFes,gsFes,glHgs,gsHgs,glMns,gsMns,glUs,gsUs                                                           &
+                 ,c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn,VTKoeffDe_Zn                                          &
+                 ,c1Cu,e1Cu,c2Cu,e2Cu,c3Cu,e3Cu,c4Cu,e4Cu,c5Cu,e5Cu,VTKoeffDe_Cu                                          &
+                 ,c1Cad,e1Cad,c2Cad,e2Cad,c3Cad,e3Cad,c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad                               &
+                 ,c1Ni,e1Ni,c2Ni,e2Ni,c3Ni,e3Ni,c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni                                          &
+                 ,c1As,e1As,c2As,e2As,c3As,e3As,c4As,e4As,c5As,e5As,VTKoeffDe_As                                          &
+                 ,c1Pb,e1Pb,c2Pb,e2Pb,c3Pb,e3Pb,c4Pb,e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb                                          &
+                 ,c1Cr,e1Cr,c2Cr,e2Cr,c3Cr,e3Cr,c4Cr,e4Cr,c5Cr,e5Cr,VTKoeffDe_Cr                                          &
+                 ,c1Fe,e1Fe,c2Fe,e2Fe,c3Fe,e3Fe,c4Fe,e4Fe,c5Fe,e5Fe,VTKoeffDe_Fe                                          &
+                 ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                          &
+                 ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                          &
+                 ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                                     &
+                 ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands                      &
                  ,iw_max,iformVert)
    
    ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
    do azStr = 1,azStrs !Strangschleife ANFANG
       mstr = mstra(azStr)
       if (iwied == 0)exit
-      if (iRB_K1(mstr) <= 1)cycle
+      if (iRB_K1(mstr) <= 1) cycle
       !.or.nnStrs(mstr)==0)cycle ! noch überprüfen
       sum_QEinl = 0.0
       hcq1 = 0.0
@@ -1818,7 +1817,6 @@ program qsim
       i_K126 = 0
       hc27 = hDOSCF(mstr,1) * hcQ1
       
-      hcq1 = hcq1
       hcq2 = hcq1
       hcq3 = hcq1
       hcq4 = hcq1
@@ -2070,19 +2068,13 @@ program qsim
                call qerror("Missing values for silicate at boundary.")
             endif
             
-            ! ph-Wert
-            if (iph == 1 .and. vphs(mstr,mRB) <= 0.0) then
-               call qerror("Missing values for 'vphs' at boundary.")
-            endif
-            
-            ! m-Wert
-            if (iph == 1 .and. mws(mstr,mRB) <= 0.0) then
-               call qerror("Missing values for 'm-Wert' at boundary.")
-            endif
-            
-            ! Ca-Wert
-            if (iph == 1 .and. Cas(mstr,mRB) <= 0.0) then
-               call qerror("Missing values for Calcium at boundary.")
+            if (iph == 1) then
+               ! ph
+               if (vphs(mstr,mRB) <= 0.0) call qerror("Missing values for pH at boundary.")
+               ! m-value
+               if( mws(mstr,mRB)  <= 0.0) call qerror("Missing values for m-value at boundary.")
+               ! calcium
+               if (Cas(mstr,mRB)  <= 0.0) call qerror("Missing values for calcium at boundary.")
             endif
             
             ! BSB5 und CSB
@@ -2149,23 +2141,22 @@ program qsim
          hcno2s = vno2s(mstr,mRB)
          hcno3s = vno3s(mstr,mRB)
          hcgePs = gelPs(mstr,mRB)
-         hcbsb = vbsbs(mstr,mRB)
-         hccsb = vcsbs(mstr,mRB)
+         hcbsb  = vbsbs(mstr,mRB)
+         hccsb  = vcsbs(mstr,mRB)
          hcchla = chlas(mstr,mRB)
-         hcvkg = vkigrs(mstr,mRB)
+         hcvkg  = vkigrs(mstr,mRB)
          hcantb = antbls(mstr,mRB)
          
-         if (zooins(mstr,mRB) < 0.0)zooins(mstr,mRB) = 0.0
-         if (vnh4s(mstr,mRB) < 0.0)vnh4s(mstr,mRB) = 0.0
-         if (vno2s(mstr,mRB) < 0.0)vno2s(mstr,mRB) = 0.0
-         if (vno3s(mstr,mRB) < 0.0)vno3s(mstr,mRB) = 0.0
-         if (gelPs(mstr,mRB) < 0.0)gelPs(mstr,mRB) = 0.0
-         if (vbsbs(mstr,mRB) < 0.0)vbsbs(mstr,mRB) = 0.0
-         if (vcsbs(mstr,mRB) < 0.0)vcsbs(mstr,mRB) = 0.0
-         if (chlas(mstr,mRB) < 0.0)chlas(mstr,mRB) = 0.0
-         
-         if (vkigrs(mstr,mRB) < 0.0)vkigrs(mstr,mRB) = 0.0
-         if (antbls(mstr,mRB) < 0.0)antbls(mstr,mRB) = 0.0
+         if (zooins(mstr,mRB) < 0.0) zooins(mstr,mRB) = 0.0
+         if (vnh4s(mstr,mRB) < 0.0)  vnh4s(mstr,mRB)  = 0.0
+         if (vno2s(mstr,mRB) < 0.0)  vno2s(mstr,mRB)  = 0.0
+         if (vno3s(mstr,mRB) < 0.0)  vno3s(mstr,mRB)  = 0.0
+         if (gelPs(mstr,mRB) < 0.0)  gelPs(mstr,mRB)  = 0.0
+         if (vbsbs(mstr,mRB) < 0.0)  vbsbs(mstr,mRB)  = 0.0
+         if (vcsbs(mstr,mRB) < 0.0)  vcsbs(mstr,mRB)  = 0.0
+         if (chlas(mstr,mRB) < 0.0)  chlas(mstr,mRB)  = 0.0
+         if (vkigrs(mstr,mRB) < 0.0) vkigrs(mstr,mRB) = 0.0
+         if (antbls(mstr,mRB) < 0.0) antbls(mstr,mRB) = 0.0
          
          ! Fehlerausgabe falls AnteilGR+AnteilKI+AnteilBL >1
          if (vkigrs(mstr,mRB) + antbls(mstr,mRB) > 1.0) then
@@ -2257,77 +2248,78 @@ program qsim
             call pwert(mws(mstr,mRB),vphs(mstr,mRB),lfs(mstr,mRB),tempws(mstr,mRB),pws(mstr,mRB))
          endif
          
-         if (RBtyp(mstr,mRB) > 0 .or. NRschr(mstr,mRB) == 0)cycle
+         if (RBtyp(mstr,mRB) > 0 .or. NRschr(mstr,mRB) == 0) cycle
          
          ! Belegen des 1. Knotens eines Strangs, wenn Vorstränge und Einleitung am 1. Knoten
-         if (nnstrs(mstr) > 0) then
-            hgesN(mstr,1) = gesNs(mstr,mRB)
-            hgesP(mstr,1) = gesPs(mstr,mRB)
+         ! TODO FG: check if adding azStrs == 1 causes troubles in Elbe model.
+         if (nnstrs(mstr) > 0 .or. azStrs == 1) then
+            hgesN(mstr,1)  = gesNs(mstr,mRB)
+            hgesP(mstr,1)  = gesPs(mstr,mRB)
             hfssgr(mstr,1) = frfgrs(mstr,mRB)
-            hnl0(mstr,1) = nl0s(mstr,mRB)
-            hpl0(mstr,1) = pl0s(mstr,mRB)
-            hbsb(mstr,1) = obsbs(mstr,mRB)
-            hcsb(mstr,1) = ocsbs(mstr,mRB)
-            hCHNF(mstr,1) = CHNFs(mstr,mRB)
+            hnl0(mstr,1)   = nl0s(mstr,mRB)
+            hpl0(mstr,1)   = pl0s(mstr,mRB)
+            hbsb(mstr,1)   = obsbs(mstr,mRB)
+            hcsb(mstr,1)   = ocsbs(mstr,mRB)
+            hCHNF(mstr,1)  = CHNFs(mstr,mRB)
             hBVHNF(mstr,1) = BVHNFs(mstr,mRB)
-            hCD(mstr,1,1) = CDs(mstr,1,mRB)
-            hCD(mstr,2,1) = CDs(mstr,2,mRB)
-            hCP(mstr,1,1) = CPs(mstr,1,mRB)
-            hCP(mstr,2,1) = CPs(mstr,2,mRB)
-            hCM(mstr,1) = CMs(mstr,mRB)
-            hBAC(mstr,1) = BACs(mstr,mRB)
-            hnh4(mstr,1) = vNH4s(mstr,mRB)
-            if (isnan(vo2s(mstr,mRB)))print*,"isnan(vo2s) ",mstr,mRB
-            ho2(mstr,1) = vo2s(mstr,mRB)
-            hno3(mstr,1) = vno3s(mstr,mRB)
-            hno2(mstr,1) = vnO2s(mstr,mRB)
-            hx0(mstr,1) = vx0s(mstr,mRB)
-            hx02(mstr,1) = vx02s(mstr,mRB)
-            hsi(mstr,1) = Sis(mstr,mRB)
-            hchla(mstr,1) = chlas(mstr,mRB)
-            haki(mstr,1) = (chlas(mstr,mRB)*vkigrs(mstr,mRB)/1000.) * (hakbcm(mstr,1)/Caki)
-            hagr(mstr,1) = (chlas(mstr,mRB)*(1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))/1000.) * (hagbcm(mstr,1)/Cagr)
-            habl(mstr,1) = (Chlas(mstr,mRB)*antbls(mstr,mRB)/1000.) * (habbcm(mstr,1)/Cabl)
-            hchlak(mstr,1) = chlas(mstr,mRB)* vkigrs(mstr,mRB)
-            hchlag(mstr,1) = chlas(mstr,mRB)* (1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))
-            hchlab(mstr,1) = chlas(mstr,mRB)* antbls(mstr,mRB)
+            hCD(mstr,1,1)  = CDs(mstr,1,mRB)
+            hCD(mstr,2,1)  = CDs(mstr,2,mRB)
+            hCP(mstr,1,1)  = CPs(mstr,1,mRB)
+            hCP(mstr,2,1)  = CPs(mstr,2,mRB)
+            hCM(mstr,1)    = CMs(mstr,mRB)
+            hBAC(mstr,1)   = BACs(mstr,mRB)
+            hnh4(mstr,1)   = vNH4s(mstr,mRB)
+            if (isnan(vo2s(mstr,mRB))) print*, "isnan(vo2s) ", mstr, mRB
+            ho2(mstr,1)    = vo2s(mstr,mRB)
+            hno3(mstr,1)   = vno3s(mstr,mRB)
+            hno2(mstr,1)   = vnO2s(mstr,mRB)
+            hx0(mstr,1)    = vx0s(mstr,mRB)
+            hx02(mstr,1)   = vx02s(mstr,mRB)
+            hsi(mstr,1)    = Sis(mstr,mRB)
+            hchla(mstr,1)  = chlas(mstr,mRB)
+            haki(mstr,1)   = (chlas(mstr,mRB) *       vkigrs(mstr,mRB)                    /1000.) * (hakbcm(mstr,1)/Caki)
+            hagr(mstr,1)   = (chlas(mstr,mRB) * (1. - vkigrs(mstr,mRB) - antbls(mstr,mRB))/1000.) * (hagbcm(mstr,1)/Cagr)
+            habl(mstr,1)   = (Chlas(mstr,mRB) *                          antbls(mstr,mRB) /1000.) * (habbcm(mstr,1)/Cabl)
+            hchlak(mstr,1) = chlas(mstr,mRB) *       vkigrs(mstr,mRB)
+            hchlag(mstr,1) = chlas(mstr,mRB) * (1. - vkigrs(mstr,mRB) - antbls(mstr,mRB))
+            hchlab(mstr,1) = chlas(mstr,mRB) *                          antbls(mstr,mRB)
             hvkigr(mstr,1) = vkigrs(mstr,mRB)
             hantbl(mstr,1) = antbls(mstr,mRB)
             hssalg(mstr,1) = ssalgs(mstr,mRB)
-            hss(mstr,1) = sss(mstr,mRB)
-            hzooi(mstr,1) = zooins(mstr,mRB)
-            hgelp(mstr,1) = gelps(mstr,mRB)
-            hmw(mstr,1) = mws(mstr,mRB)
-            hpw(mstr,1) = pws(mstr,mRB)
-            hca(mstr,1) = cas(mstr,mRB)
-            hlf(mstr,1) = lfs(mstr,mRB)
-            hph(mstr,1) = vphs(mstr,mRB)
-            hcoli(mstr,1) = colis(mstr,mRB)
+            hss(mstr,1)    = sss(mstr,mRB)
+            hzooi(mstr,1)  = zooins(mstr,mRB)
+            hgelp(mstr,1)  = gelps(mstr,mRB)
+            hmw(mstr,1)    = mws(mstr,mRB)
+            hpw(mstr,1)    = pws(mstr,mRB)
+            hca(mstr,1)    = cas(mstr,mRB)
+            hlf(mstr,1)    = lfs(mstr,mRB)
+            hph(mstr,1)    = vphs(mstr,mRB)
+            hcoli(mstr,1)  = colis(mstr,mRB)
             hDOSCF(mstr,1) = DOSCFs(mstr,mRB)
-            hvbsb(mstr,1) = vbsbs(mstr,mRB)
-            hvcsb(mstr,1) = vcsbs(mstr,mRB)
-            hgsZn(mstr,1) = gsZns(mstr,mRB)
-            hglZn(mstr,1) = glZns(mstr,mRB)
+            hvbsb(mstr,1)  = vbsbs(mstr,mRB)
+            hvcsb(mstr,1)  = vcsbs(mstr,mRB)
+            hgsZn(mstr,1)  = gsZns(mstr,mRB)
+            hglZn(mstr,1)  = glZns(mstr,mRB)
             hgsCad(mstr,1) = gsCads(mstr,mRB)
             hglCad(mstr,1) = glCads(mstr,mRB)
-            hgsCu(mstr,1) = gsCus(mstr,mRB)
-            hglCu(mstr,1) = glCus(mstr,mRB)
-            hgsNi(mstr,1) = gsNis(mstr,mRB)
-            hglNi(mstr,1) = glNis(mstr,mRB)
-            hgsAs(mstr,1) = gsAss(mstr,mRB)
-            hglAs(mstr,1) = glAss(mstr,mRB)
-            hgsPb(mstr,1) = gsPbs(mstr,mRB)
-            hglPb(mstr,1) = glPbs(mstr,mRB)
-            hgsCr(mstr,1) = gsCrs(mstr,mRB)
-            hglCr(mstr,1) = glCrs(mstr,mRB)
-            hgsFe(mstr,1) = gsFes(mstr,mRB)
-            hglFe(mstr,1) = glFes(mstr,mRB)
-            hgsHg(mstr,1) = gsHgs(mstr,mRB)
-            hglHg(mstr,1) = glHgs(mstr,mRB)
-            hgsMn(mstr,1) = gsMns(mstr,mRB)
-            hglMn(mstr,1) = glMns(mstr,mRB)
-            hgsU(mstr,1) = gsUs(mstr,mRB)
-            hglU(mstr,1) = glUs(mstr,mRB)
+            hgsCu(mstr,1)  = gsCus(mstr,mRB)
+            hglCu(mstr,1)  = glCus(mstr,mRB)
+            hgsNi(mstr,1)  = gsNis(mstr,mRB)
+            hglNi(mstr,1)  = glNis(mstr,mRB)
+            hgsAs(mstr,1)  = gsAss(mstr,mRB)
+            hglAs(mstr,1)  = glAss(mstr,mRB)
+            hgsPb(mstr,1)  = gsPbs(mstr,mRB)
+            hglPb(mstr,1)  = glPbs(mstr,mRB)
+            hgsCr(mstr,1)  = gsCrs(mstr,mRB)
+            hglCr(mstr,1)  = glCrs(mstr,mRB)
+            hgsFe(mstr,1)  = gsFes(mstr,mRB)
+            hglFe(mstr,1)  = glFes(mstr,mRB)
+            hgsHg(mstr,1)  = gsHgs(mstr,mRB)
+            hglHg(mstr,1)  = glHgs(mstr,mRB)
+            hgsMn(mstr,1)  = gsMns(mstr,mRB)
+            hglMn(mstr,1)  = glMns(mstr,mRB)
+            hgsU(mstr,1)   = gsUs(mstr,mRB)
+            hglU(mstr,1)   = glUs(mstr,mRB)
          endif
          
       enddo
@@ -2847,6 +2839,7 @@ program qsim
             
          enddo ! Ende Schleife über die Ortspunkte ior
          
+         ! TODO FG: remove?
          cycle
       
       else

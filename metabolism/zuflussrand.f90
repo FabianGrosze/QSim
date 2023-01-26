@@ -403,7 +403,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
          if (pl0s < 0.001) then
             ! ......Fehlermeldung .........
             write(*, 1405)mRB,mstr,jjj   ! jjj-3D knotennummer
-            write(*,'(a)') "  Sum of organic and disolved P is greater than total P. Set organic P:C to 0.001."
+            write(*,'(a)') "  Sum of organic and dissolved P is greater than total P. Set organic P:C to 0.001."
             pl0s = 0.001
             exit
          endif

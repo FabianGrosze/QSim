@@ -226,7 +226,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    endif
    
    dCM = bac_s * (exp(hupBAC * tflie) - 1.)
-   if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt - 0.00001 > 0.) then
+   if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt > 0.00001) then
      hupBAC = 0.0
      if (tflie > 0.0) hupBAC = (log(bac_s+CMt-0.00001)-log(bac_s))/tflie
      dCM = bac_s*(exp(hupBAC*tflie)-1.)
