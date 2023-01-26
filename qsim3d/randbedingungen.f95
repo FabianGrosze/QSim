@@ -60,7 +60,6 @@ subroutine randbedingungen_setzen()
                RB_zaehl = element_rand(j)
             case(3) ! SCHISM
                RB_zaehl = element_rand(j)
-               !trth(ntracers,nvrt,mnond_global,max(1,nope_global))
             case default
                call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
@@ -103,8 +102,7 @@ subroutine randbedingungen_setzen()
    call scatter_planktkon()
    if(hydro_trieb==3)then
       call schism_boundaries()
-      if(meinrang==0)print*,'schism_boundaries called by randbedingungen_setzen: ',  &
-                            '### warning ### trth=0.0 not properly set yet'
+      if(meinrang==0)print*,'schism_boundaries called by randbedingungen_setzen: '
    endif
    
    !j = kontrollknoten-(meinrang*part)
@@ -516,13 +514,6 @@ subroutine randbedingungen_parallel()
    !      ,rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang
    !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierr
    
-   if(hydro_trieb==3)then ! SCHISM
-      !real(rkind),save,allocatable :: trth(:,:,:,:) !time series of b.c. for T,S, tracers
-      !trth(ntracers,nvrt,mnond_global,max(1,nope_global))
-      if(.not.allocated(trth))allocate(trth(number_plankt_vari,num_lev,1,1),stat=as)
-      print*,'randbedingungen_parallel: allocated(trth(ntracers,nvrt,mnond_global,max(1,nope_global)) '
-   endif
-   
    return
 end subroutine randbedingungen_parallel
 !----+-----+----
@@ -533,9 +524,66 @@ subroutine schism_boundaries()
       use modell
       use schism_glbl, only:trth
       implicit none
-      integer i,j,k
+      integer i,j,k,n,alloc_status,nk,ll,  ind1,ibnd  ,ierr
+      real , allocatable , dimension (:,:) :: rb_aktuell
+
+      print*,meinrang,'schism_boundaries: starting for ',ianz_rb,' boundaries'
       
-      trth=0.0
+      ! schism_init: allocate trth(ntracers,nvrt,mnond_global,max(1,nope_global))
+      ! real(rkind),save,allocatable :: trth(:,:,:,:) !time series of b.c. for T,S, tracers
+      ! planktonic_variable(ll+nk)
+
+      if(.not.allocated(rb_aktuell))then
+         allocate(rb_aktuell(number_plankt_vari,ianz_rb),stat=alloc_status)
+         rb_aktuell=0.0
+      endif
+      
+      if(meinrang==0)then
+         do i=1,number_plankt_point ! all global elements
+            if(element_rand(i)>0)then
+               nk = (i-1)*number_plankt_vari
+               do ll=1,number_plankt_vari
+                  rb_aktuell(ll,element_rand(i))=planktonic_variable(ll+nk)
+               end do ! all concentrations ll
+            endif ! boundary
+            !planktonic_variable_name(71)= "            Tracer"
+            rb_aktuell(71,1)=1.0 ! Tracerzufluss im Elbemodell
+         enddo ! all elemens
+      endif ! rank 0 only
+      call mpi_barrier (mpi_komm_welt, ierr)
+      call MPI_Bcast(rb_aktuell,number_plankt_vari*ianz_rb,MPI_FLOAT,0,mpi_komm_welt,ierr)
+
+      if(.not.allocated(trth))then
+         !trth(ntracers,nvrt,mnond_global,max(1,nope_global))
+         allocate(trth(number_plankt_vari,num_lev,ianz_rb,ianz_rb),stat=alloc_status)
+         trth=0.0
+         if(alloc_status/=0)then
+            write(fehler,*)'schism_boundaries: allocate(trth gone wrong', alloc_status
+            call qerror(fehler)
+         end if ! allocate fehlgeschlagen
+      endif
+
+      do ll=1,number_plankt_vari
+         do k=1,num_lev ! no vertical differences in boundary concentrations !=nvrt 
+            do n=1,ianz_rb
+               trth(ll,k,n,n) =rb_aktuell(ll,n) ! planktonic_variable(ll+nk)
+            end do ! all n boundaries
+         end do ! all k levels
+      end do ! all ll concentrations
+
+      call mpi_barrier (mpi_komm_welt, ierr)
+      if(meinrang==0) print*,' schism_boundaries: finished #### ind1 in trth unsoved #### '
+
+!##########################################################################
+!                ibnd=isbs(jsj) !global bnd #
+!          do k=kbe(i)+1,nvrt
+!                    do ll=irange_tr(1,jj),irange_tr(2,jj)
+!                  do lll=1,2 !2 possible bnds
+!                    if(isbnd(lll,ndo)==ibnd) then
+!                      nwild(ll)=isbnd(-lll,ndo) !global index
+!                ind1=nwild(1); ind2=nwild(2);
+!trth(ll,k,ind1,ibnd)
+!##########################################################################
 
    return
 end subroutine schism_boundaries
