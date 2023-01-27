@@ -28,7 +28,8 @@
 subroutine stofftransport_schism()
       use netcdf
       use modell
-      use schism_glbl, only:su2,sv2,tr_el,eta2, np, npa, nsa, ne, nea, dt, ze, znl, nvrt
+      use schism_glbl, only:su2,sv2,tr_el,eta2, np, npa, nsa, ne, nea, dt, ze, znl, nvrt, ntrs,  &
+          dfhm,bdy_frc,flx_sf,flx_bt, ntracers
       use schism_msgp, only: myrank,parallel_abort, comm !,nproc
    
       implicit none
@@ -37,7 +38,7 @@ subroutine stofftransport_schism()
       integer nt, i,n,j,k, subtim, diff, diffprev, alloc_status, ierr
       real :: laeng, cu_max, cu_min, dt_sub, sumwicht , difnum_max_l
       real , allocatable , dimension (:,:) :: zwischen
-      integer :: num_sub
+      integer :: num_sub,istat
       integer nti(maxsubst)
    
       if (meinrang == 0) then !! prozessor 0 only
@@ -50,55 +51,67 @@ subroutine stofftransport_schism()
       call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
       call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
       
-!      num_sub=1 !6?
-!      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
-!?? alle subschritte ???
+      num_sub=1 !6?
+      !?? alle subschritte ???
+      do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte ??????????????????????????????????????????#############
 
-      call get_schism_step(na_transinfo) !!****
-      if (meinrang == 0)print*,meinrang,'stofftransport_schism: did get_schism_step()'
-      call mpi_barrier (mpi_komm_welt, ierr)
-!...  Recompute vgrid and calculate rewetted pts
-      !if(inunfl==0) then
-      call levels0(0,izeit) !(iths_main,it)
-      do i = 1,nvrt
-         !print*,meinrang,' after levels0 i=',i,' ze(nea)  from...until '  &
-         !      ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
-         !      ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
-         if(control_proc==meinrang)then
-            print*,meinrang,control_elem,' after levels0 ze(kontrollknoten)',ze(i,control_elem),i,kontrollknoten
+         !!! get hydraulic drive
+         call get_schism_step(na_transinfo) !!****
+         if (meinrang == 0)print*,meinrang,'stofftransport_schism: did get_schism_step()'
+         call mpi_barrier (mpi_komm_welt, ierr)
+      
+         ! Recompute vgrid and calculate rewetted pts
+         !if(inunfl==0) then
+            call levels0(0,izeit) !(iths_main,it)
+         !else
+         !  call levels1(iths_main,it)
+         !endif
+         do i = 1,nvrt
+            !print*,meinrang,' after levels0 i=',i,' ze(nea)  from...until '  &
+            !      ,minval(ze(i,1:nea)),maxval(ze(i,1:nea))   &
+            !      ,' ze(ne)  from...until',minval(ze(i,1:ne)),maxval(ze(i,1:ne))
+            if(control_proc==meinrang)then
+               print*,meinrang,control_elem,' after levels0 ze(kontrollknoten)',ze(i,control_elem),i,kontrollknoten
+            endif
+         end do ! all i levels
+         call mpi_barrier (mpi_komm_welt, ierr)
+         if(myrank==0) print*,' stofftransport_schism: done recomputing levels0 ...'
+         
+         ! no bottom and surface fluxes in Transport
+         ! =0     dfhm,bdy_frc,flx_sf,flx_bt
+         ! bdy_frc(ntracers,nvrt,nea),flx_sf(ntracers,nea),flx_bt(ntracers,nea) dfhm(nvrt,ntrs(5),npa)
+         ntrs=1
+         print*,meinrang,'nvrt, ntrs(5), npa, ntracers, nea = ',nvrt,ntrs(5),npa,ntracers,nea
+         if(.not.allocated(dfhm))then
+            allocate(dfhm(nvrt,ntrs(5),npa),stat=istat)
+            if(istat/=0) call qerror('allocation failure dfhm')
          endif
-      end do ! all i levels
-      call mpi_barrier (mpi_komm_welt, ierr)
-      !do i = 1,nvrt
-      !   print*,meinrang,' after levels0 i=',i,' znl(npa)  from...until '  &
-      !         ,minval(znl(i,1:npa)),maxval(znl(i,1:npa))   &
-      !         ,' ze(np)  from...until',minval(znl(i,1:np)),maxval(znl(i,1:np))
-      !end do ! all i levels
-      call mpi_barrier (mpi_komm_welt, ierr)
+         dfhm=0.0
+         if(.not.allocated(bdy_frc))then
+            allocate(bdy_frc(ntracers,nvrt,nea),stat=istat)
+            if(istat/=0) call qerror('allocation failure bdy_frc')
+         endif
+         bdy_frc=0.0
+         if(.not.allocated(flx_sf))then
+            allocate(flx_sf(ntracers,nea),stat=istat)
+            if(istat/=0) call qerror('allocation failure flx_sf')
+         endif
+         flx_sf=0.0
+         if(.not.allocated(flx_bt))then
+            allocate(flx_bt(ntracers,nea),stat=istat)
+            if(istat/=0) call qerror('allocation failure flx_bt')
+         endif
+         flx_bt=0.0
 
-      !else
-      !  call levels1(iths_main,it)
-      !endif
-      if(myrank==0) print*,' stofftransport_schism: done recomputing levels0 ...'
-
+         ! call SCHISM transport
          ! do_transport_tvd_imp(it,ntr,difnum_max_l)
          ! integer, intent(in) :: it !time stepping #; info only
          ! ntr=ntracers=number_plankt_vari
          ! real(rkind), intent(out) :: difnum_max_l !max. horizontal diffusion number reached by this process (check stability)
-         
-         !if (meinrang == 0)print*,  &
-         !   '### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
-      !print*,meinrang,myrank,'=meinrang,myrank'
-      !print*,'mpi_komm_welt,comm,MPI_COMM_WORLD=',mpi_komm_welt,comm,MPI_COMM_WORLD 
-      !myrank=meinrang
-      !comm=mpi_komm_welt 
-      
-      call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
+         call do_transport_tvd_imp(izeit,number_plankt_vari,difnum_max_l)
 
-!      end do ! all sub timesteps
+      end do ! all sub timesteps
       
-      !print*,'### no transport warning ### stofftransport_schism: do_transport_tvd_imp() not yet active ####'
-
       return
 end subroutine stofftransport_schism
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+

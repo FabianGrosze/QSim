@@ -47,7 +47,8 @@ if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
    
-!####### nodes ##########################################################################################   
+!####### nodes ##########################################################################################
+   if(.not.allocated(output))allocate(output(knotenanzahl2D))
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'nodes_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename node_ failed')
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
@@ -82,13 +83,35 @@ if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') real(knoten_trocken(n))
    end do
+   
+   ! planktische, transportierte Konzentrationen entsprechend ausgabeflag
+   do j = 1,number_plankt_vari ! alle tiefengemittelten
+      if (output_plankt(j)) then ! zur ausgabe vorgesehen
+         print*,' output_plankt ',ADJUSTL(trim(planktonic_variable_name(j)))
+         output=0.0
+         do n = 1,number_plankt_point ! all elements
+            do i= 1,cornernumber(n)
+               ! knot_ele(elementnodes(n,j))
+               output(elementnodes(n,i))=output(elementnodes(n,i))+planktonic_variable(j+(n-1)*number_plankt_vari)
+            end do ! all corners of this element
+         end do ! all elements
+         write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(planktonic_variable_name(j))),' float 1'
+         write(ion,'(A)')'LOOKUP_TABLE default'
+         do n = 1,knotenanzahl2D
+            output(n)=output(n)/real(knot_ele(n))
+            write(ion,'(f27.6)') output(n)
+         end do ! alle n knoten
+      end if ! zur ausgabe vorgesehen
+   end do ! alle planktonic_variable
 
    close (ion)
    print*,meinrang,myrank,'node output ausgeben_schism done'
    
+end if ! meinrang==0
    return !!!#########
 
 !####### elements ##########################################################################################   
+if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'elements_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename elemente_ failed')
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)

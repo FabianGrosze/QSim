@@ -228,6 +228,7 @@ subroutine eingabe()
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
    
+   call MPI_Bcast(ianz_rb,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(na_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(ne_transinfo,1,MPI_INT,0,mpi_komm_welt,ierr)
 
