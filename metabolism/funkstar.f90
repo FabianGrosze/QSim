@@ -73,6 +73,8 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    logical                                     :: is_set_wert1, is_set_wert2
    character(len = 200)                        :: message
    
+   real, parameter                             :: epsilon = 1.e-8
+   
    double precision                            :: R_NRS, R_NRS2, R_NRS1
    
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
@@ -195,70 +197,61 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          is_set_wert1 = .false.
          is_set_wert2 = .false.
          
+         ! set fail values depending on the parameter
+         if     (ipp == 22) then
+            NaN_value = -9.99
+         elseif (ipp == 27) then
+            NaN_value = -9999.9
+         else
+            NaN_value = 0.
+         endif
+         
          ! Beginn Werteschleife
          do iwe = iRec,manzW
             NRS = itagl(ianzRB,iwe)+31*(monatl(ianzRB,iwe)-1)
             if (monatl(ianzRB,iwe) > 2) NRS = NRS - INT(0.4*monatl(ianzRB,iwe)+2.3)
             NRSJ = (jahrl(ianzRB,iwe) - 1900)*365+int((jahrl(ianzRB,iwe)-1900)/4)
             R_NRS0 = NRS + NRSJ + uhrl(ianzRB,iwe)/24.
-            
-            if     (ipp ==  1) then
-               i_zeiger = 1
-            elseif (ipp == 22) then
-               i_zeiger = 2
-            elseif (ipp == 27) then
-               i_zeiger = 3
+            if (ipp == 1) then
+               if (R_NRS0 <= R_NRS) then
+                  R_NRS1 = R_NRS0
+                  iee1   = 1
+                  wert1  = werts(ianzRB,ipp,iwe)
+                  mREC(mstr,ianzRB,ipp) = iwe
+                  is_set_wert1 = .true.
+               else
+                  R_NRS2 = R_NRS0
+                  iee2   = 1
+                  wert2  = werts(ianzRB,ipp,iwe)
+                  is_set_wert2 = .true.
+                  exit
+               endif
             else
-               i_zeiger = 4
-            endif
-            zeiger_var: select case (i_zeiger)
-               case(1)
-                  if (R_NRS0 <= R_NRS) then
+               if (R_NRS0 <= R_NRS) then
+                  if (iee1 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                     mREC(mstr,ianzRB,ipp) = iwe
+                     wert1 = werts(ianzRB,ipp,iwe)
+                     is_set_wert1 = .true.
+                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
                      R_NRS1 = R_NRS0
                      iee1   = 1
-                     wert1  = werts(ianzRB,ipp,iwe)
                      mREC(mstr,ianzRB,ipp) = iwe
+                     wert1  = werts(ianzRB,ipp,iwe)
                      is_set_wert1 = .true.
-                  else
+                  endif
+               else
+                  if (iee2 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                     wert2 = werts(ianzRB,ipp,iwe)
+                     is_set_wert2 = .true.
+                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
                      R_NRS2 = R_NRS0
-                     iee2   = 1
-                     wert2  = werts(ianzRB,ipp,iwe)
+                     iee2 = 1
+                     wert2 = werts(ianzRB,ipp,iwe)
                      is_set_wert2 = .true.
                      exit
                   endif
-               case(2,3,4)
-                  if     (i_zeiger == 2) then
-                     NaN_value = -9.99
-                  elseif (i_zeiger == 3) then
-                     NaN_value = -9999.9
-                  elseif (i_zeiger == 4) then
-                     NaN_value = 0.
-                  endif
-                  if (R_NRS0 <= R_NRS) then
-                     if (iee1 == -1 .and. werts(ianzRB,ipp,iwe) == NaN_value) then
-                        mREC(mstr,ianzRB,ipp) = iwe
-                        wert1 = werts(ianzRB,ipp,iwe)
-                        is_set_wert1 = .true.
-                     else if (werts(ianzRB,ipp,iwe) > NaN_value) then
-                        R_NRS1 = R_NRS0
-                        iee1   = 1
-                        mREC(mstr,ianzRB,ipp) = iwe
-                        wert1  = werts(ianzRB,ipp,iwe)
-                        is_set_wert1 = .true.
-                     endif
-                  else
-                     if (iee2 == -1 .and. werts(ianzRB,ipp,iwe) == NaN_value) then
-                        wert2 = werts(ianzRB,ipp,iwe)
-                        is_set_wert2 = .true.
-                     else if (werts(ianzRB,ipp,iwe) > NaN_value) then
-                        R_NRS2 = R_NRS0
-                        iee2 = 1
-                        wert2 = werts(ianzRB,ipp,iwe)
-                        is_set_wert2 = .true.
-                        exit
-                     endif
-                  endif
-            end select zeiger_var
+               endif
+            endif
          
          enddo ! Ende Werteschleife
          
