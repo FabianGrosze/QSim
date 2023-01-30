@@ -36,6 +36,7 @@ subroutine anzTag(monat, jahr, tage)
    integer, intent(out)    :: tage  !< Anzahl der Tage
    
    integer                 :: schalttag
+   character(1000)         :: message
    
    ! --- auf Schaltjahr prüfen ---
    ! Ein Jahr ist ein Schaltjahr, wenn es durch 4 teilbar ist.
@@ -78,8 +79,9 @@ subroutine anzTag(monat, jahr, tage)
       case(12) 
          tage = 31
       case default
-         print*,'Fehlerhafte Monatsangabe im Datum.'
-         stop
+         write(message, "(a,i0)"), "subroutine anztag: Given month is invalid: ", monat
+         call qerror(message)
+
    end select
    
    return 

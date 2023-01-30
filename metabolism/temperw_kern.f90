@@ -49,6 +49,7 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
    real                            :: xtempwz1,xdtemp_nkz
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
+   character(1000)                 :: message
    save  WBn, WLn1, WLn2, WRSn, WRSn1, WRSn2
    
    ! Liste der neuen Übergabeparameter
@@ -252,9 +253,11 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
                      Qn = WB*42.+Schwia-WSTRWS
                      HR = (xtempl+b3)*abs(Qn)/(cv_t*roh2O)
                      HR = HR * ((sddw-pdltt)/sddw)*a3
-                     case default
-                     print*,'temperw_kern: Verdunstungsoption iform_VerdR = ',iform_VerdR,' nicht zulässig.'
-                     stop 123
+                  case default
+                     write(message, "(a,i0)") "subroutine temperw_kern: The &
+                        given value for 'iform_verdr' is invalid: ", iform_verdr
+                     call qerror(message)
+
                end select
                WV = roh2o*VDW*HR
                !...  Umrechnung der Verdunstungswaerme von KJ/(m2*h) in cal/(cm2*h)

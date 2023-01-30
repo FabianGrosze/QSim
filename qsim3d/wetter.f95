@@ -25,147 +25,144 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-! QSIM.f90:
-!~~~~~~~~~~~~~~ Weg der Ufervegetationsparameter von Eingabe MODELLG bis TEMPERW
-!1190      open(unit=103, DEFAULTFILE=cpfad, file='MODELLG.txt') 
-!1309      if(ckenn.eq.'O')then ... read(77,1040)aVeg(mstr,mV),eVeg(mstr,mV),(VTYPA(mstr,mV,iV)       &
-!         &,iV=1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                          &
-!         &,(VTYPA(mstr,mV,iV),iV=7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)      &
-!         &,(VTYPA(mstr,mV,iV),iV=13,14)                                     
-!1542      EDUFLH(mstr,mSta) = EDUFAL(mstr,mV) 
-!3932      EDUFBL(jR) = EDUFLH(mstr,ior) 
-!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
-!         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)  
-!                        
-!~~~~~~~~~~~~~~ Alle an der Wärmebilanz beteiligten Subroutinen ??
-!1074  740 open(unit=86, DEFAULTFILE=cpfad, file='WETTER.txt') 
-!1759      9999 CONTINUE ! Beginn eines neuen Zeitschritts
-!2527      call sasu(itags,monats,geob,geol,sa,su,zg,zlk,dk,tdj) 
-!2546      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
-!         &,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
-!         &,imet,iWSta,iwetts)                                               
-!3689      do 8888 azStr = 1,azStrs.... !Strangschleife                                   
-!4015      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk         &
-!         &,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP,VALTBL,EDUFBL      &
-!         &,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)                          
-!4020      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet) 
-!5803      call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE                 &
-!         &,vmitt,flag,elen,ior,anze,etemp,ewaerm,typ,qeinl,vabfl            &
-!         &,jiein,cloud,typw,iwied,uhrz,ilbuhn,nwaerm,fkm,nkzs               &
-!         &,tempwz,dH2D,iorLa,iorLe,ieinLs,flae,qeinlL,etempL                &
-!         &,mstr,IDWe,ilang,dtemp,FluxT1,extk,itags,monats,Tsed              &
-!         &,Wlage,hWS,iRHKW)                                                 
-
-
-!---------------------------------------------------------------------------------------------------------------
-
-!> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen\n
-!! \n\n
+!> Wetter Randbedingungen auf allen Prozessen allocieren und verteilen.
 subroutine wetter_parallel()  ! called from all processes randbedingungen_parallel()
    use modell
    implicit none
+
    integer :: alloc_status
+
+
    call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (meinrang == 0)print*,'meinrang, IWETTs_T, IMET_T, mwettmax_T'
    print*, meinrang, IWETTs_T, IMET_T, mwettmax_T
    call mpi_barrier (mpi_komm_welt, ierr)
+
+
    if (meinrang /= 0) then ! alle Prozesse ausser 0
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
+         write(fehler,*)' allocate failed in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
                         , meinrang, alloc_status
          call qerror(fehler)
       end if
+      
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel iWSta :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel iWSta :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (mwetts_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel mwetts :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel mwetts :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (itagw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel itagw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel itagw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel monatw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel monatw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel jahrw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel jahrw :', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel uhrzw_T:', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel uhrzw_T:', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel zeitpunktw:', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel zeitpunktw:', alloc_status
          call qerror(fehler)
       end if
+      
       allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel wertw :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel wertw :', alloc_status
          call qerror(fehler)
       end if
-      !     allokieren der Felder für die Momentan-Werte
+      
+      
+      ! allocate and initialize arrays for time-values
       allocate (glob_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel glob_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel glob_T :', alloc_status
          call qerror(fehler)
       end if
+      glob_t(:) = 0.0
+      
       allocate (tlmax_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmax_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmax_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmax_t(:) = 0.0
+      
       allocate (tlmin_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmin_t(:) = 0.0
+      
       allocate (tlmed_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel tlmin_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
          call qerror(fehler)
       end if
+      tlmed_t(:) = 0.0
+      
       allocate (ro_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel ro_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel ro_T :', alloc_status
          call qerror(fehler)
       end if
+      ro_t(:) = 0.0
+      
       allocate (wge_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel wge_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel wge_T :', alloc_status
          call qerror(fehler)
       end if
+      wge_t(:) = 0.0
+      
       allocate (cloud_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel cloud_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel cloud_T :', alloc_status
          call qerror(fehler)
       end if
+      cloud_t(:) = 0.0
+      
       allocate (typw_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel typw_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel typw_T :', alloc_status
          call qerror(fehler)
       end if
+      typw_t(:) = 0.0
+      
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate faile in wetter_parallel strahlung :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel strahlung :', alloc_status
          call qerror(fehler)
       end if
-   end if !! alle Prozesse ausser 0
+      schwi_t(:) = 0.0
+   end if
+   
    call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
@@ -175,10 +172,11 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   !call MPI_Bcast(,,MPI_,0,mpi_komm_welt,ierr)
+   
    return
 end subroutine wetter_parallel
-!----+-----+----
+
+
 !> Dient der eingabe() von  Wetterdaten aus <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>.\n
 !! In QSim-3D können die selben Dateien verwendet werden wie in QSim-1D.\n
 !! Die Wetterdaten sind die wesentlichen Randbedingungen für die Berechnung der Wärmebilanz mittels temperw_huelle(),
@@ -509,11 +507,9 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
    end if !! nur prozessor 0
    return
 end subroutine wetter_readallo0
-!----+-----+----
-!> update_weather \n
-!! Wetterdaten für Waermebilanz in diesem Zeitschritt\n
-!! runs at all processes parallel;
-!! \n\n
+
+!> Wetterdaten für Waermebilanz in diesem Zeitschritt  
+!! runs at all processes parallel
 subroutine update_weather()
    use modell
    implicit none
@@ -543,27 +539,38 @@ subroutine update_weather()
    end do ! all i nodes at this processor
    return
 end subroutine update_weather
-!----+-----+----
+
+
+
 !> Dient der Ermittlung der momentanen Wetterwerte an allen Stationen.
-!! ersetzt die QSim Subroutine Wettles()\n\n
-!! wird von allen Prozessen aufgerufen\n\n
+!! Ersetzt die QSim1D Subroutine Wettles()  
+!! wird von allen Prozessen aufgerufen  
 !! all processes do all weather-stations
-!! \n\n
 subroutine wettles_wetter()
    use modell
    implicit none
-   integer i, j, ipw ,z1,z2
-   real b,ywert,w1,w2
-   logical found1,found2,wert_gueltig
-   !print*,'i : glob_T | tlmax_T | tlmin_T | ro_T | wge_T | cloud_T | typw_T'
-   do i = 1,IWETTs_T   !! Schleife über alle Wetterstationen
-      do ipw = 1,7   !! Schleife über alle 7 Wetterwerte
-         if ( (zeitpunkt < (zeitpunktw(i,1)-43200)) .or. (zeitpunkt > (zeitpunktw(i,mwetts_T(i))+43200)) ) then
-            print*,'zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor'
+   integer     :: i, j, ipw, z1, z2
+   real        :: b, ywert, w1, w2
+   logical     :: found1, found2, wert_gueltig
+   
+   if (meinrang == 0) then 
+      print '(a,i0,a)',   "* wettles_wetter(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
+      print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","typw_T"
+   endif
+   
+   ! Schleife über alle Wetterstationen
+   do i = 1, iwetts_t
+      ! Schleife über alle 7 Wetterwerte
+      do ipw = 1,7
+         
+         if (zeitpunkt < (zeitpunktw(i,1)-43200) .or. zeitpunkt > (zeitpunktw(i,mwetts_T(i))+43200)) then
+            print*,'Zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor.'
             print*,'zeitpunkt = ', zeitpunkt
             write(fehler,*)'zeitpunktw(i,1) = ',zeitpunktw(i,1),' zeitpunktw(i,mwetts_T(i)) = ',zeitpunktw(i,mwetts_T(i))
             call qerror(fehler)
          end if
+         
+         
          ywert = 0.0
          found1 = .false.
          found2 = .false.
@@ -571,57 +578,84 @@ subroutine wettles_wetter()
          w2 = 0.0
          z1 = 0
          z2 = 0
+         
+         ! find closest valid datapoint before current time
          do j = 1,mwetts_T(i),1 ! alle j zeitintervalle vorwärts
-            if ( (zeitpunktw(i,j) <= zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
-               if ( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then !gültiger wert
+            if (zeitpunktw(i,j) <= zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+               if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then
                   found1 = .true.
                   w1 = wertw_T(i,ipw,j)
                   z1 = zeitpunktw(i,j)
                else
-                  if ( .not. found1) w1 = wertw_T(i,ipw,j) ! ungültige Werte merken bis gültiger gefunden
-               end if !gültiger wert
-            end if ! Wert vorher
-         end do ! alle j zeitintervalle vorwärts
+                  ! ungültige Werte merken bis gültiger gefunden
+                  if (.not. found1) w1 = wertw_T(i,ipw,j)
+               end if 
+            end if
+         end do
+         
+         ! find closest valid datapoint after curent time
          do j = mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
-            if ( (zeitpunktw(i,j) >= zeitpunkt) ) then ! bis zum aktuellen Zeitpunkt
-               if ( wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then !gültiger wert
+            if (zeitpunktw(i,j) > zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+               if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t)) then
                   found2 = .true.
                   w2 = wertw_T(i,ipw,j)
                   z2 = zeitpunktw(i,j)
                else
-                  if ( .not. found2) w2 = wertw_T(i,ipw,j) ! ungültige Werte merken bis gültiger gefunden
-               end if !gültiger wert
-            end if ! Wert nachher
-         end do ! alle j zeitintervalle rückwärts
+                  ! ungültige Werte merken bis gültiger gefunden
+                  if (.not. found2) w2 = wertw_T(i,ipw,j)
+               end if
+            end if
+         end do
+         
+         
+         ! Interpolation
          if (found1 .and. found2) then
             b = real(zeitpunkt-z1)/real(z2-z1)
-            ywert = (1.0-b)*w1 + b*w2
-            !if(ipw.eq.2)print*,'wettles_wetter: tlmax=',ywert,zeitpunkt,w1,z1,w2,z2
-         end if
-         if (found1 .and. ( .not. found2)) ywert = w1
-         if (( .not. found1) .and. found2) ywert = w2
-         if (( .not. found1) .and. ( .not. found2)) then
+            ywert = (1.0 - b) * w1 + b * w2
+         
+         else if (found1 .and. .not.found2) then
             ywert = w1
-            if (ipw == 7) then ! wolkentyp darf negativ = ungültig
+         
+         else if (.not.found1 .and. found2) then
+            ywert = w2
+         
+         else if (.not.found1 .and. .not.found2) then
+            ! if no valid values are found before and after and error is thrown.
+            ! ipw == 7 (Wolkentyp) is an exception. For some station no such data
+            ! is available, so it is accepted for timeseries to have no values at all.
+            if (ipw == 7) then
                ywert = w1
             else
                write(fehler,*)'wettles_wetter: no valid data at weather station ',i,' for value ',ipw,"  ",w1
                call qerror(fehler)
-            end if! wolkentyp
-         end if ! nix gefunden
-         if (ipw == 1)glob_T(i) = ywert
-         if (ipw == 2)tlmax_T(i) = ywert
-         if (ipw == 3)tlmin_T(i) = ywert
-         if (ipw == 4)ro_T(i) = ywert
-         if (ipw == 5)wge_T(i) = ywert
-         if (ipw == 6)cloud_T(i) = ywert
-         if (ipw == 7)typw_T(i) = ywert
-      end do ! Schleife über alle 7 Wetterwerte
-      if (meinrang == 0)print*,'wettles_wetter: Wetterstation,zeitpunkt = ',i,zeitpunkt,' Werte = '  &
-          ,glob_T(i),tlmax_T(i),tlmin_T(i),ro_T(i),wge_T(i),cloud_T(i),typw_T(i)
-   end do ! i Schleife über alle Wetterstationen
+            end if
+         end if
+         
+         ! set interpolated values to their variable
+         select case(ipw)
+            case(1); glob_T(i) = ywert
+            case(2); tlmax_T(i) = ywert
+            case(3); tlmin_T(i) = ywert
+            case(4); ro_T(i) = ywert
+            case(5); wge_T(i) = ywert
+            case(6); cloud_T(i) = ywert
+            case(7); typw_T(i) = ywert
+            case default
+               write(fehler,*)'wettles_wetter: wrong number in variable ipw', ipw
+               call qerror(fehler)
+         end select
+      end do
+      
+      if (meinrang == 0) then
+         print "(i9,1x,*(f9.2,1x))", i, glob_T(i), tlmax_T(i), tlmin_T(i), ro_T(i), wge_T(i), cloud_T(i), typw_T(i)
+      endif
+      
+   end do 
+   
+   if (meinrang == 0) print*, ""
 end subroutine wettles_wetter
-!----+-----+----
+
+
 logical function wert_gueltig(ipw,wert,imet)
    implicit none
    character (300) :: fehler
@@ -670,7 +704,7 @@ subroutine temperl_wetter()
       geob = modell_geob
       uhrz = uhrzeit_stunde
       tdj = tagdesjahres !! wird von sasu verändert (wozu ist unklar)
-      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj, ifehl)
+      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
       sonnenaufgang = sa
       sonnenuntergang = su
       IDWe(1,1) = 1
@@ -680,141 +714,102 @@ subroutine temperl_wetter()
       mstr = 1
       TLMAX(1) = tlmax_T(i)
       TLMIN(1) = tlmin_T(i)
-      call Temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
+      call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
       tlmed_T(i) = TEMPL(1)
       if ((kontrollknoten > 0) .and. (meinrang == 0))      &
           print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
    end do ! alle Wetterstationen i
 end subroutine temperl_wetter
 !----+-----+----
-!
-!> Diese Hüllroutine dient dazu, die QSim-Subroutine strahlg() punktweise aufzurufen.\n\n
-!! all processes do all weather-stations\n
-!! \n
-!!      SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj           &\n
-!!     &,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP            &\n
-!!    &,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)            \n
-!!                                                             \n
-!!     EIN PROGRAMM ZUR BERECHNUNG DER MITTL. GLOBALSTRAHLUNG \n
-!!     FUER DEN BERECHNUNGSSCHRITT IN CAL/(CM2*H) AUS DER TAGES- \n
-!!     SUMME                                                     \n
-!!                                                                \n
-!!     AUTOR : VOLKER KIRCHESCH                                    \n
-!!                                                                 \n
-!!     STAND: 06.11.1987                                           \n
-!!                                                                 \n
-!!     Parameter:                                                  \n
-!!                                                                   \n
-!!     SCHWI  - Globalstrahlung an der Wasseroberflaeche unter Berueck-  \n
-!!              sichtigung der Reflektion an der Wasseroberflaeche     \n
-!!              [cal/(cm2*h)]                                        \n
-!!                                                                   \n
-!!     SH     - Sonnenhoehe im Bogenmass                             \n
-!!     SHGR   - Sonnenhoehe im Gradmass                               \n
-!!                                                                    \n
-!!     CLOUD  - Bewoelkungsgrad                                      \n
+
+
+!> Diese Hüllroutine dient dazu, die QSim-Subroutine strahlg() punktweise aufzurufen.  
+!! all processes do all weather-stations  
 !!
-!! Umstellung von Profilweise auf Wetterstationsweise (Zuordnung über Zonen)
-!!
+!! Umstellung von profilweise auf wetterstationsweise (Zuordnung über Zonen)
 subroutine strahlg_wetter()
    use modell
-   use QSimDatenfelder
+   use qsimdatenfelder
    implicit none
-   integer NRV(8)
-   real maxi,lt
-   real ar(4),br(4),Breite(1000)
-   real EVALT(14),EKRBRT(14),EDUFER(14),EVDICH(14)
-   real ESLEN(14),ESLENS(14),VTYP(1000,14),VALTBL(1000)
-   real EDUFBL(1000),VALTBR(1000),EDUFBR(1000)
-   real SHtest(50)
-   ! vorher implizit definiert:
-   real dk, sa, su, schwia, zg, zlk, geol, geob
-   ! hier neu:
-   logical printi
-   integer i, tdj, azStr
-   !
-   !integer k1, k2, k3, k4
-   !if(kontrollknoten.gt.0)then
-   !   k1=knoten_zone(kontrollknoten)
-   !   k2=zonen_nummer(k1)
-   !   k3=wetterstations_nummer(k1)
-   !   k4=Wetterstationskennung_T(k3)
-   !   print*,'konstat=',kontrollknoten, k1, k2, k3, k4
-   !end if
-   do i = 1,IWETTs_T   !! loop all weather stations
-      glob(1) = glob_T(i)     ! Eingangsdaten
-      !print*,'glob=',glob(1)
+   
+   integer, dimension(8)      :: NRV
+   real                       :: maxi,lt
+   real, dimension(4)         :: ar, br
+   real, dimension(1000)      :: breite
+   real, dimension(14)        :: EVALT, EKRBRT, EDUFER, EVDICH, ESLEN, ESLENS
+   real, dimension(1000,14)   :: VTYP
+   real, dimension(1000)      :: VALTBL, EDUFBL, VALTBR, EDUFBR
+   real, dimension(50)        :: SHtest
+   real                       :: dk, sa, su, schwia, zg, zlk, geol, geob
+   logical                    :: printi
+   integer                    :: i, tdj, azStr
+   
+   ! loop all weather stations
+   do i = 1,IWETTs_T
+      ! Eingangsdaten
+      glob(1) = glob_T(i)     
       uhrz = uhrzeit_stunde
-      !call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
-      !print*,'vor sasu tagdesjahres=',tagdesjahres,' meinrang=', meinrang
-      tdj = tagdesjahres !! wird von sasu verändert (wozu ist unklar)
-      !    print*,'strahlg_wetter0 station',Wetterstationskennung_T(i),' tag, monat, tagdesjahres=',tag, monat, tagdesjahres &
-      !&         ,' glob(1)glob_T(i)=',glob(1),glob_T(i)
-      !    print*,'SASU vorher tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl=' &
-      !&                      ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+      ! call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
+      
+      ! wird von sasu verändert (wozu ist unklar)
+      tdj = tagdesjahres 
+      
       geol = modell_geol
       geob = modell_geob
-      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj,ifehl)
-      !        if(kontrollknoten.gt.0)      &
-      !        print*,'Wetterstation ',i,' SASU nachher: sa, su,tag, monat, modell_geob, modell_geol, zg, zlk, dk, tdj,ifehl=' &
-      !     &                       ,sa,su,tag,monat,modell_geob,modell_geol,zg,zlk,dk,tdj,ifehl
-      if (ifehl /= 0)call qerror("SASU fehlgeschlagen")
+      call sasu(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
       if (sa > su) then
-         print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl" &
-         ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj,ifehl
+         print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj" &
+         ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj
          call qerror("strahlg_wetter: computing daylight hours went wrong")
       endif
-      !if(meinrang.ge.(proz_anz-3)) then
-      !   print*,'strahlg_wetter,sasu: meinrang,Wetterstationen, tag, monat, geob, geol, sa, su, zg, zlk, dk, tagdesjahres'
-      !   print*,meinrang,i,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tagdesjahres
-      !end if
-      schwi(1) = 0.0     ! Rückgabewert initialisiert
-      tflie = real(deltat)/3600.0 ! Zeitschrittweite von integer-Sekunden in real-Stunden umrechnen
-      dk = 0.0     !
-      cloud(1) = cloud_T(i)   ! Bewölkung
-      schwia = 0.0     !
-      mstr = 1     ! nur ein Strang
-      IDWe(1,1) = 1     ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
-      IDWe(1,2) = 1     ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
-      VTYP = 0     !
-      VALTBL(1) = 0     ! Keinerlei Uferbewuchs
-      EDUFBL(1) = 0     !
-      VALTBR(1) = 0     !
-      EDUFBR(1) = 0     !
-      breite(1) = 100.0     !
-      anze = 1    ! nur an einem Punkt/Profil
-      ifehl = 1     !
-      ifhStr = 1     !
-      if (kontrollknoten > 0)      &
-          !print*,'strahlg_wetter station',i,Wetterstationskennung_T(i),' uhrzeit_stunde,sa,su,uhrz=',uhrzeit_stunde,sa,su,uhrz
-      ij = 1 ! Zeitschritt-Nummer während eines Tages   (unbenutzt in 3D)
-      azStr = 1 ! Laufindex über alle Stränge =1 in 3D
-      call strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,IMET_T,mstr,IDWe,tag,monat,VTYP   &
-                   ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr   &
-                   ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
-      if (kontrollknoten > 0)      &
-          !print*,meinrang,i," strahlg_wetter glob,schwi,uhrz,sa,su",glob(1),schwi(1),uhrz,sa,su
-      !   SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP   &
-      !                     ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr
-      !                     ,it_h,ij,jahrs,itage,monate,jahre,uhren,isim_end,azStr,azStrs)
       
-      ! Rueckgabe
-      !print*,'meinrang,uhrzeit_stunde,glob,schwi,i,tagdesjahres'
-      !print*, meinrang,uhrzeit_stunde,glob(1),schwi(1),i,tagdesjahres
+      
+      ! --- calculate global radiation at weather station ---
+      ! strahlg(...) is a subroutine written for QSim1D.
+      ! To use it in QSim3D the following variables are adapted to this subroutine
+      
+      ! transform timestep from seconds (integer) to hours (real)
+      tflie = real(deltat)/3600.0 
+      
+      ! nur ein Strang
+      mstr = 1
+      anze = 1
+      azStr = 1 
+      IDWe(1,1) = 1  ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
+      IDWe(1,2) = 1  ! für strahlg() hat strang 1, profil 1 die 1. wetterstation
+      
+      ! cloudiness
+      cloud(1) = cloud_T(i)
+      
+      ! Kein Uferbewuchs
+      VTYP = 0
+      VALTBL(1) = 0
+      EDUFBL(1) = 0
+      VALTBR(1) = 0
+      EDUFBR(1) = 0
+      
+      breite(1) = 100.0
+      dk = 0.0
+      
+      ! Zeitschritt-Nummer während eines Tages (unbenutzt in 3D)
+      ij = 1 
+      
+      call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
+                   cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
+                   EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
+                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr,    &
+                   azStrs)
       schwi_T(i) = schwi(1)    ! global radiation at weather station
+      
       !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)
       if (isNaN(schwi_T(i))) then
          write(fehler,*)'strahlg_wetter station',Wetterstationskennung_T(i),' IMET_T = ',IMET_T,' isNaN(schwi_T(i))'
          call qerror(fehler)
       endif
       transfer_value_p(10) = it_h(1,1) ! Anzahl der Zeitschritte während der Hellphase (unbenutzt in 3D)
-      ! isim_end = 1 Ausgabeparameter -> Algenroutinen
-   end do ! i all weather stationen
+      
+   end do
    return
 end subroutine strahlg_wetter
-!      SUBROUTINE strahlg(glob,uhrz,sa,su,schwi,tflie,geol,tdj           &
-!     &,geob,dk,cloud,schwia,imet,mstr,IDWe,itags,monats,VTYP            &
-!     &,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,ifehl,ifhStr)
-!----+-----+----
-!      end module wetter
+

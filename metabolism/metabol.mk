@@ -1,17 +1,22 @@
 #====================================================================
 # to include in Makefiles of QSim1D and QSim3D
 # Linux
-# wyrwa 02sep22
+# Wyrwa 02.September 2022
 #====================================================================
 
 META= ../metabolism/module_allodim.o \
       ../metabolism/module_aparam.o \
+      ../metabolism/organic_carbon/module_organic_carbon.o \
+      ../metabolism/oxygen/module_oxygen.o \
       ../metabolism/ph/module_ph.o\
+      ../metabolism/phosphate/module_phosphate.o \
+      ../metabolism/silicate/module_silicate.o \
+      ../metabolism/nitrogen/module_nitrogen.o \
+      ../metabolism/module_metabolism.o \
       ../metabolism/albenth.o \
       ../metabolism/algaesbl.o \
       ../metabolism/algaesgr.o \
       ../metabolism/algaeski.o \
-      ../metabolism/cbsb5.o \
       ../metabolism/C_Chla.o \
       ../metabolism/coliform.o \
       ../metabolism/coroph.o \
@@ -26,12 +31,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/lin_spline.o \
       ../metabolism/lin_sys.o \
       ../metabolism/mphyt.o \
-      ../metabolism/ncyc.o \
-      ../metabolism/orgc.o \
-      ../metabolism/oxygen.o \
-      ../metabolism/ph/ph.o \
-      ../metabolism/ph/pwert.o \
-      ../metabolism/po4s.o \
       ../metabolism/runge_kutta.o \
       ../metabolism/sasu.o \
       ../metabolism/schiff.o \
@@ -40,7 +39,6 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/Sedimentation.o \
       ../metabolism/sediment.o \
       ../metabolism/sed_pom.o \
-      ../metabolism/silikat.o \
       ../metabolism/strahlg.o \
       ../metabolism/tage.o \
       ../metabolism/temperl.o \
@@ -55,8 +53,8 @@ META= ../metabolism/module_allodim.o \
       ../metabolism/version_string.o \
       ../metabolism/verteilungskoeff.o \
       ../metabolism/Sedimentbelastung.o \
-      ../metabolism/Schwermetalle.o \
-      ../metabolism/Schwermetalle_kern.o \
+      ../metabolism/schwermetalle.o \
+      ../metabolism/schwermetalle_kern.o \
       ../metabolism/erosion.o \
       ../metabolism/erosion_kern.o \
       ../metabolism/schweb.o \

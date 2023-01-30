@@ -24,25 +24,24 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-
 subroutine randbedingungen(cpfad, i_Rands, iw_max)
    implicit none
    
-   character*255               :: cpfad
-   integer                     :: i_rands, iw_max
+   ! --- dummy arguments ---
+   character(len=255), intent(in) :: cpfad
+   integer, intent(out)           :: i_rands
+   integer, intent(out)           :: iw_max
    
-   character (len = 275)       :: pfadstring
-   integer                     :: read_error,open_error
-   integer                     :: mstr,i_hcon,iws_RB,itagl,iwe
-   integer                     :: RBNR
+   ! --- local varaibles ---
+   character(len=275) :: pfadstring
+   integer            :: read_error,open_error
+   integer            :: mstr,i_hcon,iws_RB,itagl,iwe
+   integer            :: RBNR
    
    
    pfadstring =  trim(adjustl(cpfad)) // 'EREIGG.txt'
    open(unit = 92, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) then
-      print*,'open_error Randbedingungen EREIGG.txt',pfadstring
-      stop 3
-   end if
+   if (open_error /= 0) call qerror("Could not open EreigG.txt")
    rewind (92)
    
    ! skip file header

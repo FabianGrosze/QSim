@@ -87,9 +87,9 @@ module aparam
    
    
    ! Hardcoded
-   real, parameter    :: Caki = 0.48   !< C-Anteil Kieselalgen [mgC/mgTG]
-   real, parameter    :: Cabl = 0.48   !< C-Anteil Blaualgen [mgC/mgTG]
-   real, parameter    :: Cagr = 0.48   !< C-Anteil Grünalgen [mgC/mgTG]
+   real, parameter    :: Caki = 0.48   !< \anchor Caki C-Anteil Kieselalgen [mgC/mgTG]
+   real, parameter    :: Cabl = 0.48   !< \anchor Cabl C-Anteil Blaualgen [mgC/mgTG]
+   real, parameter    :: Cagr = 0.48   !< \anchor Cagr C-Anteil Grünalgen [mgC/mgTG]
    
    real, parameter    :: CZoo = 0.45   !< C-Anteil Rotatorien [mgC/mgTG]
    real, parameter    :: PZoo = 0.01   !< P-Anteil Rotatorien [mgP/mgTG]
@@ -102,19 +102,20 @@ module aparam
    
 contains
    
-   !> <h1>SUBROUTINE aparam_lesen()</h1>
-   !! Einlesen der Konstanten   \n \n
-   !! Beschreibung siehe: \ref lnk_globale_parameter \n
-   !! Quelle: module_aparam.f90
-subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
+!> Read Parameters from AParam
+!!
+!! Beschreibung siehe: \ref lnk_globale_parameter
+!! Quelle: module_aparam.f90
+subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    
    character(255), intent(in) :: cpfad
    integer, intent(in)        :: iwsim, icoli, ieros, ischwer
-   integer, intent(out)       :: ifehl
+   
    
    integer                    :: io_error, summ_err
-   character(500)             :: dateiname
+   character(500)             :: dateiname, message
    real                       :: dummy
+   logical                    :: ex
    
    namelist /ALGAE/  &
       AGCHL, AGGMAX, IKge, AGKSN, AGKSP, AGREMI, frmuge, BSBGR, CSBGR, QMX_NG, &
@@ -159,25 +160,21 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
    ! write example
    dateiname = trim(adjustl(cpfad)) // 'APARAM_example.nml'
    open (Unit=55 , file = dateiname, action = 'write', iostat = io_error)
-   if (io_error == 0) then 
-      write(55, nml = ALGAE)
-      write(55, nml = Rotatorien)
-      write(55, nml = Nitrosomonas)
-      write(55, nml = Nitrobacter)
-      write(55, nml = Kohlenstoff)
-      write(55, nml = Muscheln)
-      write(55, nml = HNF)
-      write(55, nml = Wasser)
-      write(55, nml = Sediment)
-      write(55, nml = Hygiene)
-      write(55, nml = Schwermetalle)
-   else
-      print*, 'open_error APARAM_example.nml'
-   endif
+   if (io_error /= 0) call qerror("Error while opening APARAM_example.nml")
+   
+   write(55, nml = ALGAE)
+   write(55, nml = Rotatorien)
+   write(55, nml = Nitrosomonas)
+   write(55, nml = Nitrobacter)
+   write(55, nml = Kohlenstoff)
+   write(55, nml = Muscheln)
+   write(55, nml = HNF)
+   write(55, nml = Wasser)
+   write(55, nml = Sediment)
+   write(55, nml = Hygiene)
+   write(55, nml = Schwermetalle)
    close (55)
    summ_err = 0
-   ifehl = 0
-   
    
    ! APARAM.nml
    ! write(dateiname,'(2A)')trim(adjustl(cpfad)),'APARAM.nml'
@@ -187,53 +184,51 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
       rewind (55)
       
       read(55,nml = ALGAE,iostat = io_error)
-      if (io_error /= 0) print*, 'reading namelist ALGAE went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist ALGAE from AParam.")
       
       read(55,nml = Rotatorien,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Rotatorien went wrong'
-      print*,'Rotatorien: = IRMAX,FOPTR,GROT,ZRESG',IRMAX,FOPTR,GROT,ZRESG
+      if (io_error /= 0) call qerror("Error while reading namelist Rotatorien from AParam.")
       
       read(55,nml = Nitrosomonas,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Nitrosomonas went wrong'
-      print*,'Nitrosomonas: YNMAX1,STKS1,ANITR1,BNMX1,BNKS1 = ',YNMAX1,STKS1,ANITR1,BNMX1,BNKS1
+      if (io_error /= 0) call qerror("Error while reading namelist Nitrosomonas from AParam.")
       
       read(55,nml = Nitrobacter,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Nitrobacter went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Nitrobacter from AParam.")
       
       read(55,nml = Kohlenstoff,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Kohlenstoff went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Kohlenstoff from AParam.")
       
       read(55,nml = Muscheln,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Muscheln went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Muscheln from AParam.")
       
       read(55,nml = HNF,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist HNF went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist HNF from AParam.")
       
       read(55,nml = Wasser,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Wasser went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Wasser from AParam.")
       
       read(55,nml = Sediment,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Sediment went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Sediment from AParam.")
       
       read(55,nml = Hygiene,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Hygiene went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Hygiene from AParam.")
       
       read(55,nml = Schwermetalle,iostat = io_error)
-      if (io_error /= 0) print*,'reading namelist Schwermetalle went wrong'
+      if (io_error /= 0) call qerror("Error while reading namelist Schwermetalle from AParam.")
       
       close (55)
       
    else ! APARAM.nml does not exist
-      print*,'APARAM.nml option not yet operational'
+      ! print*,'APARAM.nml option not yet operational'
       summ_err = 0
       
       ! APARAM.txt
       dateiname = trim(adjustl(cpfad)) // 'APARAM.txt'
+      inquire(file = dateiname, exist = ex)
+      if (.not. ex) call qerror("Could not find AParam.txt.")
+      
       open(Unit=55, file = dateiname, status = 'old', action = 'read ', iostat = io_error )
-      if (io_error /= 0) then
-         print*,'open_error APARAM.txt file propably not existing'
-         stop 55
-      endif
+      if (io_error /= 0) call qerror("Error while opening AParam.txt.")
       
       rewind (55)
       ! line 1
@@ -297,33 +292,35 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer, ifehl)
    
    ! check
    if (summ_err > 0) then
-      print*,'during reading APARAM.txt ',summ_err,' errors occured'
-      ifehl = 3
+      write(message, "(i0,a)"), summ_err, " errors occured while reading APARAM.txt."
+      call qerror(message)
       return
    endif
-   if (iwsim == 2 .and. icoli == 0)return
+   
+   if (iwsim == 2 .and. icoli == 0) return
    
    if (icoli /= 1) then
-      if (IKge < 0.0 .or. IKke < 0.0 .or. KNH4 < 0.0 .or. KapN3 < 0.0 .or. HyP1 < 0.0 .or. ToptG < 0.0 .or. Klang < 0.0 .or. ifix < 0) then
-         ifehl = 3
-         return
+      if (IKge < 0.0 .or. IKke  < 0.0 .or. KNH4  < 0.0 .or. KapN3 < 0.0 .or. &
+          HyP1 < 0.0 .or. ToptG < 0.0 .or. Klang < 0.0 .or. ifix < 0) then
+         call qerror("Not all Parameters are defined in AParam.") 
       endif
+      
       if (kTemp_Gr < 0.0 .or. kTemp_Ki < 0.0 .or. kTemp_Bl < 0.0) then
-         ifehl = 3
-         return
+         call qerror("Not all Parameters are defined in AParam.") 
       endif
+      
       if (iwsim == 3 .and. IRMAX < -1 .or. FOPTR < -1.) then
-         ifehl = 3
-         return
+         call qerror("Not all Parameters are defined in AParam.") 
       endif
+      
       if (csbki < 1.) then
-         ifehl = 27
-         return
+         call qerror("Value for 'csbki' is missing or wrong in AParam.")
       endif
+      
    else 
-      if (ratecd < 0.0 .or. etacd < 0.0 .or. rateci < 0.0 .or. xnuec < 0.0 .or. ratecg < 0.0 .or. ratecs < 0.0) then
-         ifehl = 26
-         return
+      if (ratecd < 0.0 .or. etacd  < 0.0 .or. rateci < 0.0 .or. &
+          xnuec  < 0.0 .or. ratecg < 0.0 .or. ratecs < 0.0) then
+         call qerror("Parameters for coliform bacteria are missing or wrong in AParam.")
       endif
    endif 
    
@@ -332,16 +329,15 @@ end subroutine aparam_lesen
 
 
 
-!> Writes file `AParamParam.xml`
+!> Write file `AParamParam.xml`
 !!
 !! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine AParamParam(cpfad1)
    character (len = 255)       :: cpfad1
    character (len = 275)       :: pfadstring
    character (len = 8)         :: versionstext
-  
-
-  call version_string(versionstext)
+   
+   call version_string(versionstext)
    
    pfadstring =  trim(adjustl(cpfad1)) // 'AParamParam.xml'
    open(unit=200, file=pfadstring, encoding='UTF-8')
@@ -581,8 +577,9 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '</ParamSetDef>'
    write(200, '(A)') '</GerrisParam>'
   
-  CLOSE(200)
-      RETURN
+   close(200)
+   return
+   
+end subroutine AParamParam
 
- END subroutine AParamParam
 end module aparam

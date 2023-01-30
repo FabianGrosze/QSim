@@ -36,8 +36,8 @@ subroutine ErgebTParam(cpfad1)
    
    call version_string(versionstext)
   
-  pfadstring = trim(adjustl(cpfad1)) // 'ErgebTParam.xml'
-  open(unit=1, file=pfadstring, encoding='UTF-8')
+   pfadstring = trim(adjustl(cpfad1)) // 'ErgebTParam.xml'
+   open(unit=1, file=pfadstring, encoding='UTF-8')
   
    write(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
    write(1, '(3A)') '<GerrisParam FileType="ErgebT" QsimVersion="',versionstext,'">'  

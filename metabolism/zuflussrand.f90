@@ -135,7 +135,7 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    real :: algb5,algcs,alphlP,ant_CrefP
    real :: zoobsb,zoocsb
    real :: vcb,antBAC,BTOC5s,BTOCs,alphaD,alphlD !,alphaD1
-   real :: hc_CPg,fak_aCref,hc_CP
+   real :: hc_CPg,fak_aCref
    ! Berechnung der "BSB-Komponenten" am oberen Rand
    ! (auch bei Stundenwert-Generierung)
    TOC_CSB = 3.1
@@ -227,7 +227,7 @@ end subroutine orgc_start
 !! Quelle zuflussrand.f90
 subroutine naehr_start(akis ,abls ,agrs ,                                  &
                        vnh4s ,vNO3s ,vno2s ,gesNs ,                        &
-                       zooins ,nZoo, pZoo, GRote,                          &
+                       zooins ,                                            &
                        gelPs ,gesPs ,                                      &
                        Q_NKs ,Q_PKs ,Q_SKs ,Q_NGs ,Q_PGs ,Q_NBs ,Q_PBs ,   &
                        Qmx_NK,Qmn_NK,Qmx_PK,Qmn_PK,Qmx_SK,Qmn_SK, Qmx_NG,  &
@@ -236,12 +236,14 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
                        nl0s , pl0s ,                                       &
                        sss , ssalgs ,                                      &
                        itags,monats,mstr,mRB,  einmalig, kontroll, jjj )
+   
+   use aparam, only :nZoo, pZoo, GRot
    implicit none
    logical kontroll,  einmalig
    integer jjj
    real :: akis ,abls ,agrs
    real :: vnh4s ,vNO3s ,vno2s ,gesNs
-   real :: zooins ,nZoo, pZoo, GRote
+   real :: zooins
    real :: gelPs ,gesPs
    real :: Q_NKs ,Q_PKs ,Q_SKs ,Q_NGs ,Q_PGs ,Q_NBs ,Q_PBs
    real :: Qmx_NK,Qmn_NK,Qmx_PK,Qmn_PK,Qmx_SK,Qmn_SK, Qmx_NG,Qmn_NG,Qmx_PG,Qmn_PG, Qmx_NB,Qmn_NB,Qmx_PB,Qmn_PB
@@ -250,16 +252,16 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    real :: sss , ssalgs
    integer :: itags,monats,mstr,mRB
    real :: hcsum, hcsumP
-   real :: orgN, akiNmx,agrNmx, ablNmx, algNmx, g7sN, orgN1, orgN2, gsN
+   real :: orgN, akiNmx,agrNmx, ablNmx, algNmx, orgN1, orgN2, gsN
    real :: hcon1, hcon2, dgsN, dalgN, faNneu
    real :: orgP, akiPmx,agrPmx, ablPmx, algPmx, orgP1, orgP2, GsP
-   real :: dgsP, g7sP, faPneu, dalgP
+   real :: dgsP, faPneu, dalgP
    integer :: m
    real :: Sum_N, f_NK
    real :: hcQ_NK, hcQ_NG, hcQ_NB
    real :: hcQ_PK, hcQ_PG, hcQ_PB
    
-   !....zelluläre Nährstoffgehalte
+   ! zelluläre Nährstoffgehalte
    Sum_N = vnh4s+vNO3s
    f_NK = 0.582*(Sum_N/(Sum_N+0.011))
    f_NK = 1.
@@ -283,7 +285,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    if (gesNs < 0.0)goto 831
    orgN = gesNs-(agrs*Q_NGs            &
           +abls*Q_NBs+akis*Q_NKs    &
-          +(zooins*GRote/1000.)*nZoo                              &
+          +(zooins*grot/1000.)*nZoo                              &
           +vnh4s+vno2s+vno3s)
    nl0s = orgN/(Cref+CDges+CPges+BACs+CMs)
    
@@ -296,7 +298,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
       agrNmx = agrs*Q_NGs
       ablNmx = abls*Q_NBs
       algNmx = akiNmx+agrNmx+ablNmx
-      gsN = algNmx+orgN+(zooins*GRote/1000.)*nZoo+vnh4s+vno2s+vno3s
+      gsN = algNmx+orgN+(zooins*grot/1000.)*nZoo+vnh4s+vno2s+vno3s
       if (gsN <= gesNs)exit
       hcon1 = gsN-gesNs
       hcon2 = orgN-hcon1
@@ -335,7 +337,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    orgN1 = (Cref+CDges+CPges+BACs+CMs)*nl0s
    orgN2 = agrs*Q_NGs                            &
            +abls*Q_NBs+akis*Q_NKs    &
-           +(zooins*GRote/1000.)*nZoo
+           +(zooins*grot/1000.)*nZoo
    gesNs = orgN1+orgN2+vnh4s+vno2s     &
            +vno3s
    !
@@ -347,7 +349,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    833 if (gesPs < 0.0)goto 832
    orgP = gesPs-(agrs*Q_PGs            &
           +abls*Q_PBs+akis*Q_PKs    &
-          +(zooins*GRote/1000.)*pZoo+gelps)
+          +(zooins*grot/1000.)*pZoo+gelps)
    pl0s = orgP/(Cref+CDges+CPges+BACs+CMs)
    if (pl0s > 0.005)goto 834
    
@@ -358,7 +360,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
       agrPmx = agrs*Q_PGs
       ablPmx = abls*Q_PBs
       algPmx = akiPmx+agrPmx+ablPmx
-      gsP = algPmx+orgP+(zooins*GRote/1000.)*pZoo+gelps
+      gsP = algPmx+orgP+(zooins*grot/1000.)*pZoo+gelps
       
       if (gsP <= gesPs)exit
       hcon1 = gsP-gesPs
@@ -397,7 +399,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    orgP1 = (Cref+CPges+CDges+BACs+CMs)*pl0s
    orgP2 = agrs*Q_PGs                            &
            +abls*Q_PBs+akis*Q_PKs    &
-           +(zooins*GRote/1000.)*pZoo
+           +(zooins*grot/1000.)*pZoo
    gesPs = orgP1+orgP2+gelps
    !
    if (hcsumP == 0.0) then
@@ -406,7 +408,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    endif
    !
    834 sss = ssalgs-akis-agrs    &
-             -abls-(zooins*GRote/1000.)
+             -abls-(zooins*grot/1000.)
    if (sss < 1.0)sss = 1.
    
    return

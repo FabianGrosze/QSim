@@ -344,7 +344,7 @@ module modell
    !> Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
    real , allocatable , dimension (:) :: glob_T,  tlmax_T,  tlmin_T, tlmed_T
    real , allocatable , dimension (:) :: ro_T,  wge_T,  cloud_T,  typw_T
-   !> lokale Strahlung ?:
+   !> Globalstrahlung
    real , allocatable , dimension (:) :: schwi_T
    ! Veraltet:
    !      integer, parameter :: number_rb_wetter=6
@@ -452,8 +452,8 @@ module modell
    !     depth averaged quantities
    !>    points where transfer quantities are defined (all mesh points in general)
    integer :: number_trans_quant_points
-   !>    number of transfer quantities
-   integer, parameter :: number_trans_quant = 96
+   !> number of transfer quantities
+   integer, parameter :: number_trans_quant = 99
    !>    Names and Descriptions of transfer quantities
    character(18) ::  trans_quant_name(number_trans_quant)
    !>    output-flag
@@ -557,10 +557,11 @@ module modell
    real , allocatable , dimension (:) :: vert1, vert2 ! nur auf Prozess 1 vorhanden
    !-------------------------------------------------------------------------------Alter/Aufenthaltszeit
    ! Beschreibung in alter.f95
-   logical :: nur_alter
-   integer :: wie_altern ! 0-nix, 1-Zone, 2-Rand
-   integer :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
-   real , allocatable , dimension (:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
+   logical                            :: nur_alter
+   integer                            :: wie_altern ! 0-nix, 1-Zone, 2-Rand
+   integer                            :: alter_nummer ! zonen oder randnummer für die alter berechnet wird
+   real, parameter                    :: minimum_age_tracer = 0.00001 ! minimum concentration of passive tracer for age calculation
+   real, allocatable , dimension(:,:) :: tr_integral_zone, vol_integral_zone, ent_integral_zone
    !-------------------------------------------------------------------------------Querschnitte - cross-sections
    ! description in schnitt.f95 fluxes in array: schnittflux_gang
    logical :: querschneiden
@@ -606,12 +607,14 @@ module modell
    !                points, netz_lesen, netz_gr3,
    !!  modell_parallel in parallel.f95
 contains
-   !----+-----+----
+   
    !> Die suboutine modeverz() setzt den Namen vom modellverzeichnis aus dem beim Aufruf angegebenen
    !! Modellnamen, das ist ein Unterverzeichnis, das alle Modelldateien enthält,
    !! und dem Modellordner, dessen Name in der Umgebungsvariablen TQM gespeichert ist, zusammen.
    !! (export TQM=... | z. B. in .bashrc)
-   !! \n\n nur auf rang 0 !!\n\n
+   !! 
+   !! n nur auf rang 0  
+   !!
    !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modeverz()
       implicit none
@@ -1037,56 +1040,71 @@ contains
       !!minu_stund=aint(lesezeit)
       minu_stund = aint(lesezeit)+(lesezeit-aint(lesezeit))*(100.0/60.0)
    end function minu_stund
-   !----+-----+----
+   
+   !> Prüfen, ob alle notwendigen Dateien im Modellverzeichnis vorliegen.
    logical function modell_vollstaendig()
       implicit none
       character (len = longname) :: aufrufargument,systemaufruf, emaildatei
-      integer io_error,sysa, ia, ion, errcode
-      logical zeile_vorhanden
+      integer                    :: io_error,sysa, ia, ion, errcode
+      logical                    :: zeile_vorhanden
+      
       modell_vollstaendig = .true.
+      
+      ! EREIGG.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
+         print*, 'In Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
       end if
+      
+      ! MODELLA.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
+         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
       end if
+      
+      ! WETTER.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
+         print*, 'In Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
       end if
+      
+      ! MODELLG.3D.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
+         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
       end if
+      
+      ! APARAM.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
+         print*,'In Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
       end if
+      
+      ! e_extnct.dat
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei e_extnct.dat'
+         print*,'In Ihrem Modellverzeichnis fehlt die Datei e_extnct.dat'
       end if
-      !
+      
+      
       select case (hydro_trieb)
          case(1) ! casu-transinfo
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta >/dev/null 2>/dev/null'
@@ -1094,74 +1112,84 @@ contains
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
-               print*,'in Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
+               print*,'In Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
             end if
+            
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
-               print*,'in Ihrem Modellverzeichnis fehlt die Datei transinfo/points'
+               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/points'
                !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
                !else
             end if
+
             write(systemaufruf,'(3A)',iostat = errcode) &
                'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
-               print*,'in Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
+               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
             end if
+            
          case(2) ! Untrim² netCDF
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
-               print*,'in Ihrem Modellverzeichnis fehlt die Datei transport.nc'
+               print*,'In Ihrem Modellverzeichnis fehlt die Datei transport.nc'
             end if
+            
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                modell_vollstaendig = .false.
-               print*,'in Ihrem Modellverzeichnis fehlt die Datei ELEMENTE.txt'
+               print*,'In Ihrem Modellverzeichnis fehlt die Datei ELEMENTE.txt'
             end if
+         
          case(3) ! SCHISM netCDF
             print*,'not yet checking completeness of SCHISM model'
             case default
             call qerror('Hydraulischer Antrieb unbekannt')
       end select
-      !
+      
+      ! ganglinien_knoten.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
+         print*,'In Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
       end if
+      
+      ! ausgabezeitpunkte.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
+         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
       end if
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis)  &
-                                         ,'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
+      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis), &
+                                                 'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
       if (sysa /= 0) then
          modell_vollstaendig = .false.
-         print*,'in Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
+         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
       end if
+      
+      ! email.txt
       send_email = .False.
       write(emaildatei,'(2A)')trim(modellverzeichnis),'email.txt'
       ion = 101
-      open ( unit = ion , file = emaildatei, status = 'old', action = 'read ', iostat = sysa )
+      open (unit = ion, file = emaildatei, status = 'old', action = 'read ', iostat = sysa)
       if (sysa /= 0) then
-         print*,'ohne Datei email.txt keine Benachrichtigung'
+         print*,'Ohne Datei email.txt keine Benachrichtigung'
       else
          do while ( zeile(ion))
             if (ctext(1:1) /= '#') then !! keine Kommentarzeile
@@ -1170,8 +1198,10 @@ contains
                send_email = .True.
             end if ! keine Kommentarzeile
          end do ! alle Zeilen
-         if ( .not. send_email)print*,'nix brauchbares aus Datei email.txt gelesen'
+         if (.not. send_email)print*,'No data found in email.txt'
       end if ! Datei lässt sich öffnen
+      
+      ! alter.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
       call system(systemaufruf,sysa)
@@ -1182,6 +1212,27 @@ contains
          print*,'##### Datei alter.txt vorhanden, nur Aufenthaltszeit-Simulation, ggf incl. Temp. #####'
          nur_alter = .true.
       end if
+      
+      ! qusave
+      print*,'script qusave:'
+      write(systemaufruf,'(3A)',iostat = errcode)'which qusave'
+      if (errcode /= 0)call qerror('modell_vollstaendig writing which qusave failed')
+      call system(systemaufruf,sysa)
+      if (sysa /= 0) then
+         print*, 'script qusave, called by QSim not available'
+         print*, 'Input data will not be archived.'
+      end if
+      
+      ! quzip
+      print*,'script quzip:'
+      write(systemaufruf,'(3A)',iostat = errcode)'which quzip'
+      if (errcode /= 0)call qerror('modell_vollstaendig writing which quzip failed')
+      call system(systemaufruf,sysa)
+      if (sysa /= 0) then
+         print*, 'script quzip, called by QSim not available'
+         print*, 'Input data will not be archived.'
+      end if
+      
    end function modell_vollstaendig
    !----+-----+----
    !> Reibungsbeiwert \f$ \lambda \f$ aus Wassertiefe/Sohlabstand und Rauheitshöhe gemäß dem Colebrook-White Gesetz berechnen (nach DVWK 220).\n

@@ -17,19 +17,20 @@ die in Algen- und Zooplanktonbiomasse gebundenen Anteile sowie um die anorganisc
 Stickstoffkomponenten reduziert. Der restliche Stickstoff ist der organische Anteil 
 des Detritus und der gelösten organischen Verbindungen.
 
-Für die N-Retention werden in QSim die folgenden Prozesse berücksichtigt: Die 
-Sedimentation des organischen Materials abzüglich der durch sessile Mineralisierung 
-wieder freigesetzten gelösten N-Komponenten (NH4-Flux aus dem Sediment, dieser führt 
+Für die N-Retention werden in QSim momentan nur die 
+Sedimentation des organischen Materials und die Retention über benthische 
+Filtrierer (Aufnahme in benthische Biomasse) berücksichtigt.
+Eine Freisetzung von gelösten N-Komponenten (NH4-Flux aus dem Sediment, dieser führt 
 zu negativen Retentionswerten) sowie die durch benthische Nitrifikation und/oder 
-Denitrifikation entstehenden NO3-Fluxe in oder aus dem Sediment. QSim enthält auch 
-die Retention über benthische Filtrierer (Aufnahme in benthische Biomasse). 
+Denitrifikation entstehenden NO3-Fluxe in oder aus dem Sediment werden momentan
+nicht berücksichtigt. 
 
 Weitere Veränderungen auf der Fließstrecke erfahren der Gesamt-Stickstoffgehalt 
 sowie der anorganische Stickstoff durch punktförmige und diffuse Einleitungen. 
-Ebenso wird mit den suspendierten Nitrifikanten (Nitrosomonas und Nitrobakter) 
-verfahren, die zur Beschreibung der Nitrifikation in der fließenden Welle benötigt 
-werden. Ihr Wachstum wird in Abhängigkeit von den Milieubedingungen berechnet 
-(sessile Nitrifikation siehe Sedimentbaustein). Dabei ist die lokale Wachstumsrate 
+Suspendierte Nitrifikanten (Nitrosomonas und Nitrobakter) 
+werden zur Beschreibung der Nitrifikation in der fließenden Welle benötigt. 
+Ihr Wachstum wird in Abhängigkeit von den Milieubedingungen berechnet. 
+Dabei ist die lokale Wachstumsrate 
 der Nitrifikanten abhängig von der vorherrschenden Wassertemperatur, dem aktuellen 
 Sauerstoffgehalt und dem Angebot an Ammoniumstickstoff (Nitrosomonas) und 
 Nitritstickstoff (Nitrobakter). Außerdem wird die Hemmung des Wachstums durch die 
@@ -40,13 +41,10 @@ Organismengruppen durch Sedimentation und Mortalität berechnet.
 
 Bei der Bilanz des Ammoniumstickstoffs werden neben der bakteriellen Oxidation 
 von Ammonium noch andere Prozesse berücksichtigt. Diese umfassen die 
-Ammoniumaufnahme durch Algen und Makrophyten sowie die Ammonium-Nachlieferung 
-beim Abbau organischen Materials. Außerdem wird in QSim der 
-Ammonium-Austauschprozess mit dem Sediment berücksichtigt. 
+Ammoniumaufnahme durch Algen sowie die Ammonium-Nachlieferung 
+beim Abbau organischen Materials. 
 Bei der Veränderung des Nitratstickstoffs dient die Oxidation des Nitrits als 
-Quellterm, die Aufnahme durch Algen und Makrophyten als Senkenterm. Der Austausch 
-mit dem Sediment kann je nach Situation entweder als Quell- oder als Senkenterm 
-auftreten.
+Quellterm, die Aufnahme durch Algen als Senkenterm.
 
 
 Details zum Stickstoff-Modul sind in den folgenden Abschnitten beschrieben:

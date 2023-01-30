@@ -118,9 +118,9 @@ subroutine ini_benthic0(nk)
       benth_distr_name(14) = "            albewk" ! Wachstum benthischer kiesel-Algen
       benth_distr_name(15) = "             resdr" ! Respirationsrate benthischer Filtrierer (Dreissena-Muscheln)
       benth_distr_name(16) = "            hschlr" ! Sauerstoffzehrung durch das Sediments, Ausgabe in mgO2/(l*h)
-      benth_distr_name(17) = "            so2ein" ! Sättigungs-Sauerstoffeintrag aus der Luft ? , Ausgabe in mgO2/(l*h)
+      benth_distr_name(17) = "            so2ein" ! potentieller Sauerstoffeintrag aus der Luft (Ausgabe) [mgO2/l/h]
       benth_distr_name(18) = "            dO2o2D" ! Beiwert Oberflächenbelüftung ? (oxygen) war bbei2D
-      benth_distr_name(19) = "            o2ein1" ! Defizit-Sauerstoffeintrag aus der Luft ? , Ausgabe
+      benth_distr_name(19) = "            o2ein1" ! Sauerstoffeintrag aus der Luft (Ausgabe)
       benth_distr_name(20) = "            abeowg" ! Sauerstoffproduktion benthischer Grünalgen
       benth_distr_name(21) = "            abeorg" ! Sauerstoffverbrauch benthischer Grünalgen
       benth_distr_name(22) = "            abeowk" ! Sauerstoffproduktion benthischer Kieselalgen

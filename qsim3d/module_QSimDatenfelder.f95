@@ -511,10 +511,6 @@ module QSimDatenfelder
    integer , parameter :: ilang = 1
    integer, dimension(100)     :: typ
    ! temperw_korr27jan14
-   !>  \anchor ifehl Fehlernummer
-   integer                     :: ifehl
-   !>  \anchor ifhstr Strang in dem der Fehler auftrat
-   integer                     :: ifhStr
    !> \anchor wuebks wuebks Wärmeübergangskoeffizient Wasser-Sediment in KJ/(K*m2*h) wenn vorhanden aus \ref wuebk , sonst WUEBK0 = 350. \n
    !! qsim.f90:1215: ,temp.dat=77, read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA) \n
    !! QSim3D benutzt WUEBK0
@@ -629,7 +625,6 @@ module QSimDatenfelder
    !!<tr><td>    Wlage   </td><td>   real, Dimension(50,1000)</td><td>   Höhenlage der zuständigen Wetterstation mü.NHN         </td></tr>
    !!<tr><td>    hWS   </td><td>   real, Dimension(50,1000)</td><td>   Höhenlage des Wasserspiegels mü.NHN            </td></tr>
    !!
-   !!<tr><td>    iRHKW   </td><td>   integer (implizit?)   </td><td>   %%% hier unbenutzt                  </td></tr>
    !!<tr><td>    htempw   </td><td>   real, Dimension(50,1000)    </td><td>   ?   </td></tr>
    !!<tr><td>    htempz   </td><td>   real, Dimension(50,50,1000)    </td><td>   ?   </td></tr>
    !!<tr><td>    dH2De   </td><td>   real, Dimension(1000)    </td><td>   ?                      </td></tr>

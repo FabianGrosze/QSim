@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Write file `EreigHParam.xml`
+!> Write file EreigHParam.xml
  subroutine EreigHParam(cpfad1)
    implicit none
    character(255), intent(in)  :: cpfad1
@@ -40,6 +40,7 @@
   
    write(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
    write(1, '(3A)') '<GerrisParam FileType="EreigH" QsimVersion="',versionstext,'">' 
+   
    write(1, '(A)') '<ParamSetDef Ident="EreigH" Text="Hydraulische Ereignisdaten" Help="Die von Qsim verwendeten hydraulischen Ereignisdaten">'
    write(1, '(A)') '  <Parameter Ident="W" Text="W" Unit="m ü.NN" Format="F9.4" Help="Wasserstand" Quantity="W" />'
    write(1, '(A)') '  <Parameter Ident="Q" Text="Q" Unit="m3/s" Format="F13.6" Help="Durchfluss" Quantity="Q" />'
@@ -58,7 +59,9 @@
    write(1, '(A)') '  <Parameter Ident="BULIAKTV" Text="L.Bu.aktiv" Unit="" Format="I2" Help="Linke-Buhne-benetzt-Indikator" Quantity="BULIAKTV" />'
    write(1, '(A)') '  <Parameter Ident="BUREAKTV" Text="R.Bu.aktiv" Unit="" Format="I2" Help="Rechte-Buhne-benetzt-Indikator" Quantity="BUREAKTV" />'
    write(1, '(A)') '</ParamSetDef>'
+   
    write(1, '(A)') '</GerrisParam>'
+   
    close(1)
 end subroutine EreigHParam
 

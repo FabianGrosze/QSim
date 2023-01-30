@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Writes file `EreigGParam.xml`
+!> Write file EreigGParam.xml
 subroutine EreigGParam(cpfad1)
    implicit none
    
@@ -42,6 +42,7 @@ subroutine EreigGParam(cpfad1)
    write(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
    call version_string(versionstext)
    write(1, '(3A)') '<GerrisParam FileType="EreigG" QsimVersion="',versionstext,'">'  
+   
    write(1, '(A)') '<ParamSetDef Ident="EreigG" Text="Randbedingungs-Parameter" Help="Parameter der Randbedingungen">'
    write(1, '(A)') '  <Parameter Ident="OBSB" Text="C-BSB5" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="C-BSB5" Min="0" Max="999.99" Default="" Module="Alle" />'
    write(1, '(A)') '  <Parameter Ident="OCSB" Text="CSB" IsLoad="0" Unit="mg/l" Format="F6.2" Null="-1" Help="CSB" Min="0" Max="999.99" Default="" Module="Alle" />'
@@ -80,28 +81,33 @@ subroutine EreigGParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="gsNi" Text="Ni-ges." IsLoad="0" Unit="µg/l" Format="F7.3" Null="-1" Help="" Min="0.001" Max="999.999" Default="" Module="Schwer" />'
    write(1, '(A)') '  <Parameter Ident="glNi" Text="Ni-gel." IsLoad="0" Unit="µg/l" Format="F7.3" Null="-1" Help="" Min="0.001" Max="999.999" Default="" Module="Schwer" />'
    write(1, '(A)') '</ParamSetDef>'
+   
    write(1, '(A)') '<TpEquations>'
    write(1, '(A)') '  <TpEquation Value="1" Text="CIP (Semi-Lagrange-Verfahren)" Help="Semi-Lagrange-Verfahren" />'
    write(1, '(A)') '  <TpEquation Value="2" Text="LAX-WENDROFF-Verfahren (finite Differenzen-Verfahren)" Help="finite Differenzen-Verfahren" />'
    write(1, '(A)') '  <TpEquation Value="3" Text="QUICKEST-Verfahren (finite Volumen-Verfahren)" Help="finite Volumen-Verfahren (hier: Masseerhaltend)" />'
    write(1, '(A)') '</TpEquations>'
+   
    write(1, '(A)') '<DlEquations>'
    write(1, '(A)') '  <DlEquation Value="1" Text="nach Deng(2001): Dx = (0.15/8*Dy)*(v/u*)^2*(B/H)^1.67" Help="Dx = (0.15/8*Dy)*(v/u*)^2*(B/H)^1.67" />'
    write(1, '(A)') '  <DlEquation Value="2" Text="nach Li(1998): Dx = 0.2*(v/u*)^1.2*(B/H)^1.3*H*u* " Help="Dx = 0.2*(v/u*)^1.2*(B/H)^1.3*H*u*" />'
    write(1, '(A)') '  <DlEquation Value="3" Text="nach Iwasa and Aya(1991): Dx = 2*(B/H)^1.5*H*u* " Help="Dx = 2*(B/H)^1.5*H*u*" />'
    write(1, '(A)') '  <DlEquation Value="4" Text="nach Elder(1959): Dx = 5.93*H*u*" Help="Dx = 5.93*H*u*" />'
    write(1, '(A)') '</DlEquations>'
+   
    write(1, '(A)') '<AerFormulas>'
    write(1, '(A)') '<AerFormula Value="1" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16+K2wind (mit Wind)" Help="Berechnung nach Kirchesch" />´'
    write(1, '(A)') '<AerFormula Value="2" Text="k2=79.6*(v*S)^0.32*H^-0.38*B^-0.16 (ohne Wind)" Help="Berechnung nach Kirchesch" />'
    write(1, '(A)') '<AerFormula Value="3" Text="##Formelfehler## k2=10.47*v^0.43*H^-1.37*S^0.22+K2wind (Dantengrundlage Wolf 1974)" Help="Berechnung nach Wolf (überarbeitete Form)" />'
    write(1, '(A)') '<AerFormula Value="4" Text="K2=142*(v*S)^0.333*H^-0.66*B^-0.243 (Melching 1999)" Help="Berechnung nach Melching" />'
    write(1, '(A)') '</AerFormulas>'
+   
    write(1, '(A)') '<HmFormulas>'
    write(1, '(A)') '<HmFormula Value="1" Text="Ansatz nach DWA-Modell" Help="" />'
    write(1, '(A)') '<HmFormula Value="2" Text="Verteilungskoeff. nach Deltares (2010)" Help="" />'
    write(1, '(A)') '<HmFormula Value="3" Text="noch nicht belegt" Help="" />'
    write(1, '(A)') '</HmFormulas>'
+   
    write(1, '(A)') '<EvapoFormulas>'
    write(1, '(A)') '  <EvapoFormula Value="1" Text="Windabhängigk. nach WMO" Help="fwind = 0,13 + 0,0936 * uw [m/s]" />'
    write(1, '(A)') '  <EvapoFormula Value="2" Text="nach Sweers (1976)" Help="fwind = 0,153 + 0,063 * uw [m/s]" />'
@@ -109,7 +115,9 @@ subroutine EreigGParam(cpfad1)
    write(1, '(A)') '  <EvapoFormula Value="4" Text="ohne Wind nach Priestley-Taylor (1972)" Help="ohne Wind nach Priestley-Taylor (1972)" />'
    write(1, '(A)') '  <EvapoFormula Value="5" Text="ohne Wind nach Delclaux et al. (2007)" Help="ohne Wind nach Delclaux et al. (2007)" />'
    write(1, '(A)') '</EvapoFormulas>'
+   
    write(1, '(A)') '</GerrisParam>'
+   
    close(1)
 end subroutine EreigGParam
 

@@ -1,5 +1,13 @@
 Organischer Kohlenstoff  - Prozesse {#lnk_orgC_prozesse}
 ===================== 
+
+\warning Die Dokumentation der Prozesse im orgC-Baustein ist momentan ein 
+Stückelwerk aus verschiedenen Quellen. Es können sich daher wiedersprechende
+Angaben oder Bezeichnungen im Text finden.
+
+<!-- #Der obere Teil kommt aus der Kurzdokumentation, der untere Teil aus dem 
+alten Dokuportal. Am besten Zusammenführung parallel zur Codedurchsicht... -->
+
 Der Baustein orgc() dient dazu, die Fraktionen des organischen Kohlenstoffs zu 
 bilanzieren, deren Abbau den biochemischen Sauerstoffbedarf (BSB) hervorruft.
 
@@ -35,37 +43,214 @@ Prozesse im Gewässer aus:
 * [Schwebstoffgehalt](\ref lnk_schwebkohl)
 * [Sedimentation](\ref lnk_sedkohl)
 
+# Bilanzgleichungen 
+
 Für jede modellierte Kohlenstofffraktionen sowie für die Bakterienbiomasse 
 existieren eigene Bilanzgleichungen.
 
-Die Bilanzgleichung für die refraktären C-Verbindungen lautet:
+## Bilanzgleichung der partikulären Kohlenstoff-(C-)Verbindungen 
 
-\f[ 
- \frac{dC_{ref}}{dt} = \alpha_{C,ref} \cdot \left( \sum_{j = 1}^{j = 3} A_{mor,j} 
-   \cdot C_{A,j} + I_{rot,mor} \cdot \frac{G_rot}{1000} \cdot C_{rot} +
-   \sum_{j = 1}^{j = 3} ROT_{faec, j} \cdot C_{A,j} + 
-   \sum_{j = 1}^{j = 3} DR_{faec,j} \cdot C_{A,j}  \right) - C_{ref, sed}
-\f]
-<!-- #mf: beim Summenzeichen schauen, da stimmt die Notation noch nicht -->
+\f{equation}{
+ \begin{split}
+  \frac{dCP_i}{dt} = -hyP_i \cdot CP_i + \alpha_{CP,i} \cdot \left(
+  \sum_{j = 1}^{3} A_{mor,j} \cdot C_{A,j} + I_{Rot,mor} \cdot 
+  \frac{G_{Rot}}{1000} \cdot C_{Rot} + \\
+  \sum_{j = 1}^{3} ROT_{faec,j} \cdot
+  C_{A,j} + \sum_{j = 1}^{3} DR_{faec,j} \cdot C_{A,j} - CP_{sed,i} \right)
+  \end{split}
+\f}
+\n\n
 
-\f$ C_{ref} \f$:   Kohlenstoffanteil der refraktären organischen Substanz [g*m-3*d-1] \n
-\f$ \alpha_{C,ref} \f$:  Anteil der refraktären C-Verbindungen an der 
+| Symbol | Bedeutung | Einheit | 
+| ------ | --------- | ------- |
+| \f$CP_i\f$: | partikuläre organische C-Verbindungen der Stoffgruppe i  | [g*m-3] | 
+| \f$hyP_i\f$: | Hydrolyserate für die partikuläre organische Stoffgruppe i  | [d-1] | 
+| \f$\alpha_{CP,i}\f$: | Anteil der partikulären organischen C-Verbindungen  der abgestorbenen bzw. gefressenen Biomasse für die Stoffgruppe i  | [-] | 
+| \f$A_{mor,j}\f$: | abgestorbene Algenbiomasse der Algenklasse j | [g*m-3*d-1]  |  
+| \f$C_{A,j}\f$: | Kohlenstoffanteil der abgestorbenen Algenbiomasse der Algenklasse j | [-]  | 
+| \f$I_{Rot,mor}\f$: | Anzahl abgestorbener Rotatorien | [Ind*dm-3] | 
+| \f$G_{Rot}\f$: | Gewicht einer Rotatorie  | [µg TG] | 
+| \f$C_{Rot}\f$: | Kohlenstoffanteil der abgestorbenen Rotatorienbiomasse | [-] | 
+| \f$ROT_{faec,j}\f$: | ausgeschiedene Algenbiomasse (Faeces) der Algenklasse j durch Rotatorien  | [g*m-3*d-1]  | 
+| \f$DR_{faec,j}\f$: | ausgeschiedene Algenbiomasse (Faeces) der Algenklasse j durch Dreissena  |   [g*m-3*d-1]  | 
+| \f$CP_{sed,i}\f$: | sedimentierte partikuläre organische Kohlenstoffverbindungen der Stoffklasse i  | [g*m-3*d-1] | 
+_i = 1 entspricht leicht abbaubar, i = 2 entspricht schwer abbaubar; 
+j = 1: Kieselalgen, j = 2: Grünalgen, j = 3: Blaualgen_
+\n\n
+
+Die sedimentierten partikulären Anteile werden im Sediment mit unterschiedlichen 
+Raten für die leicht- und schwerabbaubaren Verbindungen verstoffwechselt und 
+führen ebenfalls zu einem Sauerstoffverbrauch (siehe Sedimentmodul). 
+
+\n\n
+
+## Bilanzgleichung der refraktären C-Verbindungen
+
+\f{equation}{
+ \begin{split}
+ \frac{dC_{ref}}{dt} = \alpha_{C,ref} \cdot \left( \sum_{j = 1}^{3} A_{mor,j} 
+   \cdot C_{A,j} + I_{rot,mor} \cdot \frac{G_{rot}}{1000} \cdot C_{rot} + \\
+   \sum_{j = 1}^{3} ROT_{faec, j} \cdot C_{A,j} + 
+   \sum_{j = 1}^{3} DR_{faec,j} \cdot C_{A,j}  \right) - C_{ref, sed}
+  \end{split}   
+\f}
+
+\f$ C_{ref} \f$: Kohlenstoffanteil der refraktären organischen Substanz 
+ [g*m-3*d-1] \n
+\f$\alpha_{C,ref}\f$:  Anteil der refraktären C-Verbindungen an der 
   abgestorbenen bzw. gefressenen Biomasse [\f$ - \f$] \n
-\f$ A_{mor,j} \f$:  abgestorbene Algenbiomasse der Algenklasse *j* [\f$ g \cdot m^{-3} \cdot d^{-1} \f$] \n
-\f$ C_{A,j} \f$:  Kohlenstoffanteil der abgestorbenen Algenbiomasse der Algenklasse *j* [\f$ - \f$] \n
-\f$ I_{rot,mor} \f$:  Anzahl abgestorbener Rotatorien [\f$ Ind \cdot d^{-1}m^{-3} \f$] \n
+\f$A_{mor,j}\f$: abgestorbene Algenbiomasse der Algenklasse *j* 
+ [\f$ g \cdot m^{-3} \cdot d^{-1} \f$] \n
+\f$C_{A,j}\f$: Kohlenstoffanteil der abgestorbenen Algenbiomasse der 
+ Algenklasse *j* [\f$ - \f$] \n
+\f$I_{rot,mor}\f$: Anzahl abgestorbener Rotatorien 
+ [\f$ Ind \cdot d^{-1}m^{-3} \f$] \n
 \f$ G_rot \f$:  Gewicht einer Rotatorie [\f$ \mu g TG \f$] \n
-\f$ C_{rot} \f$:  Kohlenstoffanteil der abgestorbenen Rotatorienbiomasse [\f$ - \f$] \n
-\f$ ROT_{faec, j} \f$:  ausgeschiedene Algenbiomasse (Faeces) der Algenklasse *j* durch Rotatorien [\f$ g m^{-3} d^{-1} \f$] \n
-\f$ DR_{faec,j} \f$:  ausgeschiedene Algenbiomasse (Faeces) der Algenklasse *j* durch Dreissena [\f$ g m^{-3} d^{-1} \f$] \n
-\f$ C_{ref, sed} \f$:  Kohlenstoffanteil der sedimentierten refraktären organischen Substanz [\f$ g m^{-3} d^{-1} \f$] \n
-\f$ j \f$:  Algengruppe (1 = Kieselalgen, 2 = Grünalgen, 3 = Cyanobakterien) [\f$ - \f$] \n
+\f$ C_{rot} \f$:  Kohlenstoffanteil der abgestorbenen Rotatorienbiomasse 
+ [\f$ - \f$] \n
+\f$ROT_{faec, j}\f$: ausgeschiedene Algenbiomasse (Faeces) der Algenklasse *j* 
+ durch Rotatorien [\f$ g m^{-3} d^{-1} \f$] \n
+\f$DR_{faec,j}\f$:  ausgeschiedene Algenbiomasse (Faeces) der Algenklasse *j* 
+ durch Dreissena [\f$ g m^{-3} d^{-1} \f$] \n
+\f$C_{ref, sed}\f$:  Kohlenstoffanteil der sedimentierten refraktären 
+ organischen Substanz [\f$ g m^{-3} d^{-1} \f$] \n
+\f$j\f$:  Algengruppe (1 = Kieselalgen, 2 = Grünalgen, 3 = Cyanobakterien) 
+ [\f$ - \f$] \n
+\n\n
 
-Die Bilanzgleichungen für die beiden partikulären Kohlenstoff- (C-) Verbindungen lauten:
+## Bilanzgleichung der gelösten organischen C-Verbindungen
+Die gelösten organischen C-Verbindungen DOC stammen neben der abgestorbenen 
+Algen- und Zooplankterbiomasse sowie der Faecesbildung durch Zooplankton und 
+Makrozoobenthos aus den partikulären C-Verbindungen sowie aus bakteriellen 
+C-Stoffumsetzungen:
 
-<!-- #mf: ab hier noch das Word Dok weiter einarbeiten, aber am besten gleich 
-mit Text unten abgleichen -->
+\f{equation}{
+ \begin{split}
+  \frac{dCD_i}{dt} = -hyD_i \cdot BAC + hyP_i \cdot CP_i + \alpha_{CD,i} \cdot 
+   \left(\sum_{j = 1}{^3} A_{mor,j} \cdot C_{A,j} +  \\
+   I_{Rot,mor} \cdot \frac{G_{Rot}}{1000} \cdot C_{Rot} + 
+   \sum_{j = 1}{^3} ROT_{faec,j} \cdot C_{A,j} + 
+   \sum_{j = 1}{^3} DR_{faec,j} \cdot C_{A,j}  \right)  
+  \end{split}   
+\f} 
 
+\f$ CD_i \f$: gelöste organische C-Verbindungen der Stoffgruppe i [g*m-3] \n
+\f$ hyD_i \f$: Hydrolyserate für die gelöste Stoffgruppe i [d-1] \n
+\f$ BAC \f$: Bakterienbiomasse [gC*m-3] \n
+\f$ hyP_i \f$: Hydrolyserate für die partikuläre Stoffgruppe i [d-1] \n
+\f$ CP_i \f$: partikuläre organische C-Verbindungen der Stoffgruppe i [g*m-3]  \n
+\f$ \alpha_{CD,i} \f$: Anteil der gelösten organischen C-Verbindungen der 
+  abgestorbenen bzw. gefressenen Biomasse für die Stoffgruppe i [-] \n
+\f$ A_{mor,j} \f$: abgestorbene Algenbiomasse der Algenklasse j [g*m-3*d-1]  \n
+\f$ C_{A,j} \f$: Kohlenstoffanteil der abgestorbenen Algenbiomasse der 
+  Algenklasse j [-] \n
+\f$ I_{Rot,mor} \f$: Anzahl abgestorbener Rotatorien [Ind*dm-3] \n
+\f$ G_{Rot} \f$: Gewicht einer Rotatorie [µg TG] \n
+\f$ C_{Rot} \f$: Kohlenstoffanteil der abgestorbenen Rotatorienbiomasse [-] \n
+\f$ ROT_{faec,j} \f$: ausgeschiedene Algenbiomasse (Faeces) der Algenklasse j 
+  durch Rotatorien [g*m-3*d-1] \n
+\f$ DR_{faec,j} \f$: ausgeschiedene Algenbiomasse (Faeces) der Algenklasse j 
+  durch Dreissena [g*m-3*d-1] \n
+_i = 1 entspricht leicht abbaubar, i = 2 entspricht schwer abbaubar; 
+j = 1: Kieselalgen, j = 2: Grünalgen, j = 3: Blaualgen_ 
+
+\n\n
+Die monomeren, ausschließlich leicht abbaubaren Stoffe, werden durch Hydrolyse 
+und exoenzymatische Aktivität, welche durch die Höhe der Bakterienbiomasse 
+bestimmt ist, aus den gelösten C-Verbindungen gebildet, deren Bildung wiederum 
+durch Hydrolyse aus den partikulären Verbindungen erfolgt. 
+
+Die Aufnahme der monomeren Verbindungen durch die Bakterien und die damit 
+verbundene Respiration führen zu einem Sauerstoffverbrauch. Für die monomeren 
+C-Verbindungen gilt:
+
+\f{equation}{\frac{dCM_i}{dt} = hyD_i \cdot BAC - up_{BAC} \cdot BAC \f}
+
+\f$CM_i\f$:   monomere C-Verbindungen der Stoffgruppe _i_ [g*m-3] \n
+\f$hyD_i\f$: Hydrolyserate für die gelöste Stoffgruppe _i_ [d-1] \n
+\f$BAC\f$:  Bakterienbiomasse [gC*m-3] \n
+\f$up_{BAC}\f$: Aufnahmerate der monomeren C-Verbindungen durch Bakterien [d-1] \n
+_i = 1 entspricht leicht abbaubar, i = 2 entspricht schwer abbaubar_
+
+Die Bakterienbiomasse unterliegt einem Wachstum sowie Respirations- und 
+Mortalitätsverlusten. Der biologische Sauerstoffbedarf BSB sowie das 
+Bakterienwachstum dBAC/dt errechnen sich aus:
+
+\f{equation}{BSB = (resp_{BAC,G} + up_{BAC} \cdot (1 - Y_{BAC})) \cdot 
+  BAC \cdot f_{CO} \f}
+
+\f{equation}{\frac{dBac}{dt} = (up_{Bac} - resp_{Bac}) \cdot BAC - 
+  Graz_{bac,HNF} \f}
+
+\f$resp_{BAC,G},G\f$: Grundrespirationsrate der Bakterien [d-1] \n
+\f$up_{BAC}\f$: Aufnahmerate der monomeren C-Verbindungen durch Bakterien [d-1] \n
+\f$Y_{BAC}\f$: Ertragskoeffizient für Bakterienbiomasse [-] \n
+\f$BAC\f$: Bakterienbiomasse [gC*m-3] \n
+\f$f_{CO}\f$: Umrechnung veratmeter Kohlenstoff in Sauerstoff [gO2*gC-1] \n
+\f$Graz_{bac,HNF}\f$: Grazingrate der HNF an Bakterien [mgC*l-1*d-1], siehe Modul HNF \n
+\n\n
+
+Die Aufnahmerate der Bakterien hängt von der Konzentration an verfügbaren 
+monomeren Substanzen ab:
+ 
+\f{equation}{up_{Bac,max} = up_{Bac,max} \cdot \frac{C_M}{C_M + K_{s,C_M}} \cdot
+  f_{Bac}(T) \f}
+
+\f$up_{Bac,max}\f$: maximale Aufnahmerate der Bakterien [d-1] \n
+\f$C_M\f$: Konzentration an monomeren Substanzen [mgC*l-1] \n
+\f$ K_{s,C_M}\f$: Halbsättigungskonstante der Bakterien für monomere Substanzen [mgC*l-1] \n
+\f$f_{Bac}(T)\f$: Temperaturabhängiger Faktor des Bakterienwachstums [-] \n
+\n\n
+
+Der temperaturabhängige Faktor fBac(T) für Bakterien wurde nach BILLEN (1991) 
+modelliert:
+ 
+\f{equation}{f_{Bac}(T) = e^{-\frac{(T - T_{opt,Bac})^2}{dti^2}} \f}
+
+\f$T\f$: Wassertemperatur [°C] \n
+\f$T_{opt,Bac}\f$: optimale Wassertemperatur für Bakterien [°C] \n
+\f$dti\f$: Temperaturspanne für Bakterien nach BILLEN (1991) [°C] \n
+\n\n
+
+Die Respirationsrate der Bakterien hängt von der Konzentration der nicht 
+assimilierten monomeren Substanzen sowie einer temperaturabhängigen 
+Grundrespiration ab:
+ 
+\f{equation}{resp_{Bac} = up_{Bac} \cdot (1 - Y_{Bac}) + resp_{Bac,G} \cdot 
+f_{Bac}(T) \f}
+
+\f$resp_{Bac}\f$: Respirationsrate der Bakterien [d-1] \n
+\f$up_{Bac}\f$: Aufnahmerate der Bakterien [d-1] \n
+\f$Y_{Bac}\f$: Ertragskoeffizient für Bakterienbiomasse [-] \n
+\f$resp_{Bac,G},G\f$: Grundrespirationsrate der Bakterien [d-1] \n
+\f$f_{Bac}(T)\f$: Temperaturabhängiger Faktor des Bakterienwachstums [-] \n
+
+
+# Randbelegung
+
+Die Aufteilung der gesamten organischen Kohlenstoffverbindungen auf die 
+einzelnen Kohlenstofffraktionen erfolgt im Gütemodell an den Modellrändern 
+über das C-BSB5/TOC-Verhältnis. Der C-BSB5 gibt den kohlenstoffbürtigen Anteil 
+des biochemischen Sauerstoffbedarfs nach 5 Tagen an. Wenn der C-BSB5 nicht 
+gemessen wurde, wird sein Wert intern aus dem BSB5 und dem Ammoniumgehalt 
+berechnet.
+
+Der Zusammenhang zwischen Bakterienbiomasse und Abbaubarkeit des Substrats wurde 
+erneut aus den eigenen Langzeitversuchen abgeleitet, bei denen der 
+Sauerstoffverbrauch über 1.000 Stunden in Wasserproben aus vier verschiedenen 
+Flüssen und zwei Kläranlagen gemessen wurde. 
+
+
+![Verhältnis zwischen dem gesamten abbaubaren Kohlenstoffgehalt und der modellierten Bakterienbiomasse für unterschiedlich abbaubare Substrate, ausgedrückt als Verhältnis von C-BSB5 zu CSB in der Legende.](kohlenstoff_bakterienmasse_abbaubarC.png)
+
+Durch den vorgestellten Modellansatz kann aus Überwachungswerten des CSB- und 
+BSB5-Gehaltes auch die Bakterienbiomasse berechnet werden, die am oberen 
+Modellrand und durch Nebenflüsse eingetragen wird, obwohl keine Messwerte zu 
+Bakterien vorliegen. 
+
+
+
+<!-- # ab hier Teil altes Dokuportal -->
 
 # Hydrolyse partikulärer C-Verbindungen in gelöste organische C-Verbindungen {#lnk_hyp} 
  
@@ -73,26 +258,27 @@ Bei der Hydrolyse (Umwandlung, Zerfall) von partikulären organischen
 C-Verbindungen in gelöste organische C-Verbindungen wird eine 
 temperaturabhängige Hydrolyserate angesetzt.\n
 In Q-Sim werden 2 Fraktionen unterschieden, 1. leicht und 2. schwer abbaubare
-C-Verbindungen.
+C-Verbindungen. \n
 Dabei wird angenommen, dass sich schwer abbaubare partikuläre C-Verbindungen 
-nur und schwer abbaubare gelöste C-Verbindungen umwandeln; analog wandeln sich 
-leichtabbaubare partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste 
+nur in schwer abbaubare gelöste C-Verbindungen umwandeln; analog wandeln sich 
+leicht abbaubare partikuläre C-Verbindungen auch nur in leicht abbaubare gelöste 
 C-Verbindungen um:
 
-\f[ 
- \frac{\partial CD_i}{\partial t}_{hyp} = hy_{P,i} * f_T * CP_i
-\f]
+\f{equation}{
+ \frac{\partial CD_i}{\partial t}_{hyp} = hy_{P,i} \cdot f_T \cdot CP_i
+\f}
 
-\f$ \partial CD_i \f$:  Beschreibung [\f$ Einheit \f$] \n
+\f$ \partial CD_i \f$:  Konzentration von gelösten organischen C-Verbindungen 
+ der i-ten Stoffgruppe [\f$ m \f$] \n
 \f$ hy_{P,i} \f$:  Beschreibung [\f$ Einheit \f$] \n
 \f$ f_T \f$:  Beschreibung [\f$ Einheit \f$] \n
 \f$ CP_i \f$:  Beschreibung [\f$ Einheit \f$] \n
 
 Im gleichen Maße wie die Konzentrationen der gelösten C-Verbindungen zunehmen, 
 müssen natürlich die der partikulären organischen C-Verbindungen abnehmen:
-\f[ 
+\f{equation}{
  \frac{\partial CP_i}{\partial t}_{hyp} = -\frac{\partial CD_i}{\partial t}_{hyp}
-\f]
+\f}
 
 \f$ \partial CP_i \f$:  Beschreibung [\f$ Einheit \f$] \n
 \f$ \partial CD_i \f$:  Beschreibung [\f$ Einheit \f$] \n
@@ -100,9 +286,9 @@ müssen natürlich die der partikulären organischen C-Verbindungen abnehmen:
 
 Bei der Temperaturabhängigkeit wird angenommen, dass sich bei 25 °C ein Optimum 
 ergibt:                                         
-\f[ 
+\f{equation}{
  f_T= e^{ -\frac{ {(T - T_{opt})}^2}{dti^2} }
-\f]
+\f}
 
 \f$ f_T \f$:  Beschreibung [\f$ Einheit \f$] \n
 \f$ T \f$:  Beschreibung [\f$ Einheit \f$] \n
@@ -121,8 +307,8 @@ bei den 2. schwer abbaubare C-Verbindungen wird eine Abhängigkeit vom
 Verhältnis des biologischen zum chemischen Sauerstoffbedarf berücksichtigt.
 
 \f{eqnarray*}{
- hy_{P,1}=& hy_{P,e}  \\
- hy_{P,2}=& 1.51*(\frac{C-BSB_5}{CSB})^{2.31}
+ hy_{P,1} =& hy_{P,e}  \\
+ hy_{P,2} =& 1.51 \cdot \left(\frac{C - BSB_5}{CSB}\right)^{2.31}
 \f}
 
 Die Veränderungen werden explizit diskretisiert:
@@ -140,32 +326,30 @@ in Bezug auf: \f$ CD_i \f$
 
 # Hydrolyse gelöster organischer C-Verbindungen in monomolekulare organische C-Verbindungen {#lnk_hyd} 
 
-<!-- #mf: hier weiter aufräumen: -->
-
 1. leicht und 2. schwer abbaubare gelöste C-Verbindungen werden in 
 monomolekulare organische C-Verbindungen umgewandelt.
 Diese Hydrolyse wird befördert von extrazellulären Enzymen, die von 
 heterotrophen Bakterien ins Wasser abgegeben werden, um monomolekulare 
 organische C-Verbindungen zu erhalten, von denen selbige sich ernähren.
 
-\f[ 
- \frac{\partial CM}{\partial t}_{hyd} = (hy_{D,1} + hy_{D,2}) * f_T * HBAC
-\f]
+\f{equation}{
+ \frac{\partial CM}{\partial t}_{hyd} = (hy_{D,1} + hy_{D,2}) \cdot f_T \cdot HBAC
+\f}
 
 im gleichen Maße wie die Konzentrationen der monomolekularen C-Verbindungen zunimmt, 
 müssen natürlich die Konzentrationen der gelösten organischen C-Verbindungen abnehmen:
 
-\f[ 
- \frac{\partial CD_i}{\partial t}_{hyd} = -hy_{D,i}*f_T*HBAC
-\f]
+\f{equation}{
+ \frac{\partial CD_i}{\partial t}_{hyd} = -hy_{D,i} \cdot f_T \cdot HBAC
+\f}
 
 Die Hydrolyseraten für die gelösten organischen C-Verbindungen werden abhängig vom 
 vorhandenen gelösten organischen Kohlenstoff unter Zuhilfenahme von Maximalwert und
 Halbsättigungskonstante gemäß fogender Formel berechnet:
 
-\f[ 
- hy_{D,i}= hy_{max,D,i}* \frac{CD_i}{(CD_i+K_{s,D,i})}
-\f]
+\f{equation}{
+ hy_{D,i}= hy_{max,D,i} \cdot \frac{CD_i}{(CD_i+K_{s,D,i})}
+\f}
 
 Dabei sind die Halbsättigungskonstanten Parameter, die vorgegeben werden müssen 
 (APARAM.txt KsD1e 18|1, KsD2e 18|2).\n
@@ -180,7 +364,7 @@ bestimmt:
 
 \f{eqnarray*}{
  hy_{max,D,1}=& const.  =hymxDe \\
- hy_{max,D,2}=& min(0.474*(\frac{C-BSB_5}{CSB})^{-1.346},6)
+ hy_{max,D,2}=& min(0.474 \cdot (\frac{C-BSB_5}{CSB})^{-1.346},6)
 \f}\n
 
 Die Veränderungen werden explizit diskretisiert:
@@ -206,7 +390,7 @@ in Bezug auf :\f$ CM \f$
       ksD(1) = *KsD1e*  \n
       ksD(2) = *KsD2e*  \n
 </code> 
-zurück zu: \ref lnk_orgC , Quelle: kohlenstoff-prozess.md 
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: kohlenstoff-prozess.md 
 <!-- alt: orgc_huelle.f95 -->
  
 
@@ -216,35 +400,35 @@ Die Zunahme der Masse von in heterotrophen Bakterien gespeicherten C-Verbindunge
 infolge der Aufnahme von monomolekularen C-Verbindungen
 und der Rückgang infolge von Respiration (Atmung) wird wie folgt ermittelt:
 
-\f[ 
- \frac{\partial HBAC}{\partial t}_{BAC} = (up_{HBAC}-res_{HBAC})*HBAC
-\f]
+\f{equation}{
+ \frac{\partial HBAC}{\partial t}_{BAC} = (up_{HBAC}-res_{HBAC}) \cdot HBAC
+\f}
 
 Im gleichen Maße wie die Masse des Kohlenstoff in heterotrophen Bakterien zunimmt, 
 muss die Konzentration von monomolekularen organischen Kohlenstoff abnehmen:
 
-\f[ 
- \frac{\partial CM}{\partial t}_{BAC} = - up_{HBAC}*HBAC
-\f]
+\f{equation}{
+ \frac{\partial CM}{\partial t}_{BAC} = - up_{HBAC} \cdot HBAC
+\f}
 
 Dabei berechnet sich die Aufnahmerate von Kohlenstoff durch heterotrophen 
 Bakterien wie folgt:
-\f[ 
- up_{HBAC}= up_{HBAC,max}* \frac{CM}{(CM+K_{s,M})}
-\f]
+\f{equation}{
+ up_{HBAC}= up_{HBAC,max} \cdot \frac{CM}{(CM+K_{s,M})}
+\f}
 
 Die in obiger Formel auftretende maximale Aufnahmerate und die Halbsättigungskonstante
 sind Parameter, die vorgegeben werden (APARAM.txt upBACe 18|4, KsMe 18|3)\n
 Die Gesamtmasse der monomolekularen organischen C-Verbindungen \f$ CM \f$ , 
 die von der \ref lnk_hyd im aktuellen Zeitschritt gebildet werden, sind für die 
 Bakterien schon im aktuellen Zeitschritt verfügbar.
-\n
+\n\n
 
 Die Respirationsrate der heterotrophen Bakterien wird wie folgt ermittelt:
 
-\f[ 
- res_{HBAC}= res_{G,HBAC}*f_T+up_{HBAC}*(1-Y)
-\f]
+\f{equation}{
+ res_{HBAC}= res_{G,HBAC} \cdot f_T+up_{HBAC} \cdot (1-Y)
+\f}
 
 Die in obiger Formel auftretende Grundrespirationsrate und der Ertragskoeffizient
 sind Parameter, die vorgegeben werden (APARAM.txt rsGBACe 19|1 , YBACe 18|5 )\n
@@ -252,9 +436,9 @@ sind Parameter, die vorgegeben werden (APARAM.txt rsGBACe 19|1 , YBACe 18|5 )\n
 Ausserdem wird die Massenzunahme der Bakterien durch das 
 Vorhandensein von monomolekularen organischen C-Verbindungen limitiert.\n
 
-\f[ 
- up_{HBAC} < \frac{CM}{\Delta t * HBAC}
-\f]\n
+\f{equation}{
+ up_{HBAC} < \frac{CM}{\Delta t \cdot HBAC}
+\f}\n
 
 Die Veränderungen werden auch hier explizit diskretisiert:
 
@@ -269,19 +453,20 @@ hartes Klipping bei:\f$ CM(t+\Delta t) > 0.00001 \f$ und \f$ HBAC(t+\Delta t) > 
 ist nicht notwendigerweise massenerhaltend für die aufnehmende Größe.
 \n
 
-zurück zu: \ref lnk_orgC , Quelle: kohlenstoff-prozess.md
-<!-- orgc_huelle.f95 -->
-!                                                                     
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse
+\n\n
+
 # Aufnahme gelöster C-Verbindungen durch Organismen auf Makrophyten {#lnk_fluxmaphy} 
+
 Sessile Organismen, die sich auf Makrophyten (Wasserpflanzen) als Biofilm 
 anlagern, entziehen dem sie umgebenden Wasser gelöste C-Verbindungen. Diese 
 Entnahme wird für die leicht und schwer abbaubare 
 Fraktion der gelösten C-Verbindungen getrennt nach folgendem Ansatz (woher??) 
 berechnet:
 
-\f[ FluxD_1 = (0.62*{(CD_1+CD_2)}^{0.817})*(0.62*log(\frac{C-BSB_5}{CSB})+2.2)  \f]
-\f[ FluxD_2 = (0.56*{(CD_1+CD_2)}^{0.916})*(-3.11*(\frac{C-BSB_5}{CSB})+1.407)  \f]
-\f[ \Delta {CD_i}_{pfl} = -FluxD_i \cdot \frac{pfl}{300 h} \cdot f_t \cdot \Delta t \f] 
+\f{equation}{FluxD_1 = (0.62 \cdot {(CD_1+CD_2)}^{0.817}) \cdot (0.62 \cdot log(\frac{C-BSB_5}{CSB})+2.2)  \f}
+\f{equation}{FluxD_2 = (0.56 \cdot {(CD_1+CD_2)}^{0.916}) \cdot (-3.11 \cdot (\frac{C-BSB_5}{CSB})+1.407)  \f}
+\f{equation}{\Delta {CD_i}_{pfl} = -FluxD_i \cdot \frac{pfl}{300 h} \cdot f_t \cdot \Delta t \f} 
 
 Der gesamte orgc- Baustein basiert auf einer tiefengemittelten Betrachtungsweise, 
 was hier besonders deutlich wird.
@@ -292,19 +477,20 @@ gelösten organischen C-Verbindungen
 \f$ CD_i \f$ bedienen können, der ihnen von der \ref lnk_hyd übriggelassen wurde.
 \n\n
 
-zurück zu: lnk_orgC , Quelle: kohlenstoff-prozess.md
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: kohlenstoff-prozess.md
 <!-- zurück zu: \ref BSB , Quelle: orgc_huelle.f95 -->
 
 # Absterben von lebender Biomasse {#lnk_mortalgC} 
+
 Bei der absterbenden Algenbiomasse wird ein Kohlenstoffanteil von 48% angenommen.\n
 Desweiteren wird angesetzt, dass sich die absterbende Algenbiomasse 
 folgendermaßen in die verschiedenen Kohlenstofffraktionen verteilt: 
 
-<ul> <li> 10% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 10% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 35% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, </li>
-<li> 35% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und </li>
-<li> 10% in die refraktären organischen C-Verbindungen </li></ul>
+* 10% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, 
+* 10% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen, 
+* 35% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, 
+* 35% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und 
+* 10% in die refraktären organischen C-Verbindungen
 
 \n\n
 
@@ -312,11 +498,11 @@ Bei der Absterbenden Biomasse aus Heterotrophen Naloflagelaten und Rotatorien
 wird angesetzt, dass sie sich in die verschiedenen
 Kohlenstofffraktionen wie folgt verteilen: 
 
-<ul> <li> 20% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 20% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 20% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, </li>
-<li> 20% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und </li>
-<li> 20% in die refraktären organischen C-Verbindungen </li></ul>
+* 20% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, 
+* 20% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen,
+* 20% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, 
+* 20% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und
+* 20% in die refraktären organischen C-Verbindungen 
 
 Bei der absterbenden Rotatorienbiomasse wird ein Kohlenstoffanteil von 40% angenommen.\n
 \n
@@ -330,34 +516,82 @@ Dies führt auf folgende Formel \n
  &+& 0.2 \cdot \left( BSB_{HNF} + Rot_{mort}  \cdot \frac{G_{Rot}}{1000} \right) \cdot 0.4
 \f}\n
 
-zurück zu: \ref lnk_orgC , Quelle kohlenstoff-prozess.md
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle kohlenstoff-prozess.md
 <!-- zurück zu: \ref BSB , Quelle: orgc_huelle.f95 -->
+\n\n
  
+# Ausscheidungen von Zooplanktern und Dreissena-Muscheln {#lnk_facesC} 
+
+Verbunden mit der Nahrungsaufnahme exkretieren Zooplankter (Rotatorien) und Dreissena-Muscheln
+sogenannte Faeces. Genauso wie bei der absterbenden Algenbiomasse wird davon ausgegangen, dass diese Faeces
+ein Kohlenstoffanteil von 48% haben. Und ebenfalls genauso wie bei der absterbenden Algenbiomasse wird die 
+Verteilung in die verschiedenen Kohlenstofffraktionen angesetzt: \n
+<ul> <li> 10% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, </li>
+<li> 10% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen, </li>
+<li> 35% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, </li>
+<li> 35% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und </li>
+<li> 10% in die refraktären organischen C-Verbindungen </li></ul>\n
+Untenstehend sei hier exemplarisch für alle Kohlenstofffraktionen nur die Formel für die
+1-leicht abbaubaren partikulären organischen C-Verbindungen angegeben:\n
+\f{eqnarray*}{
+ \Delta {CP_1}_{faec} &=& 0.35 \cdot \\
+ &[& \\
+ &+& 0.48 \cdot \left( ROT_{faec,Ki} + ROT_{faec,Gr} + ROT_{faec,Bl}\right)  \\
+ &+& 0.48 \cdot \left( DR_{faec,Ki} + DR_{faec,Gr} + DR_{faec,Bl}   \right)  \\
+ &]& \\
+\f}
+
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95 
+\n\n
+ 
+# Schwebstoffaufnahme der Dreissena Muscheln {#lnk_Cschwebdreiss} 
+
+Dieser Teilprozess ist momentan ausgeschaltet, weil in
+dreissen.f90: ".....Schwebstoffaufnahme durch Dreissena wird vorläufig auf Null gesetz". \n 
+Teil-Prozess momentan fachlich unklar.\n\n
+Die hier codierte Formel würde annehmen, dass von dem durch Dreissena-Muscheln aufgenommenen Schwebstoff
+30% partikuläre C-Verbindungen sind und dass die Muscheln davon 60% ungenutzt wieder ausscheiden (oder andersrum).
+Vom refraktären Kohlenstoff wird angenommen, dass nur 10% partikulär vorliegen.\n
+\f{equation}{
+ \Delta {CP_1}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{CP_1}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
+\f}
+
+\f{equation}{
+ \Delta {CP_2}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{CP_2}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
+\f}
+
+\f{equation}{
+ \Delta {C_{ref}}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{C_{ref}}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
+\f}
+
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse, Quelle: orgc_huelle.f95
+\n\n
+
 # Sedimentation kohlenstoffhaltigen Materials {#lnk_Sediorgc} 
 Berechnungsverfahren dem Dokumentator noch unklar (wy 12dez12)\n \n 
     einfluss der Sedimentation \n                                       
       g = sqrt(9.81)  \n 
       ust = (((1/rau(ior))*g)/(tiefe(ior)**0.16667))*abs(vmitt(ior))  \n 
-\f[ 
+\f{equation}{
    u_* = \sqrt{ \frac{g}{ (K_{st})^2 \cdot h^{1/3} }  }  \cdot \sqrt{(\bar{u})^2}
-\f]
+\f}
      ASEDC = 1.44E-6  \n 
      BSEDC = 3.13  \n 
      wsgr = 0.625*ust**2.1  \n 
      qsgr = 1./(1+asedc*exp(-bsedc*alog10(wsgr)))  \n 
-\f[
+\f{equation}{
    q_{s,gr} = \frac{1}{ 1 + (1.44 \cdot 10^{-6}) \cdot e^{ -3.13 \cdot \log_{10}( 0.625 \cdot {u_*}^{2.1}) } }
-\f]
+\f}
       qssed = (1+qsgr)/2. \n
       WS = (LOG(1./QSSED-1)-LOG(ASEDC))/(-BSEDC) \n
       WS = 10**WS \n
       fwst = 1.14*exp(-188.2*ust) \n
       if(fwst>1.0)fwst = 1. \n
       wst = ws*fwst \n
-\f[
+\f{equation}{
    w_* = \left(1.14 \cdot  e^{(-188.2 \cdot u_*)} \right) \cdot 
 10^{ \left( \log( \frac{2.}{1+q_{s,gr}}-1) - \log(1.44 \cdot 10^{-6})\right) / -3.13 }
-\f]
+\f}
       prop = 0.6  \n
       OC = 1./(EXP(prop*WST*TFLIE*86400./TIEFE(ior)))  \n
       OC = 1.-OC  \n
@@ -381,17 +615,17 @@ sedC_{ref} &=&
   andere \cdot Werte + sonst + wie + oben \\
 \\
 \f}
-!!
-<h2>Sedimentation von Schwebstoff</h2>
-                                      
-      SSSED = fssgr(ior)*SS(ior) \n
-      sedimentation() -> ,qsgr,oc \n
-      ceq = sssed*qsgr ) \n
-      sedss(ior) = max(0.0,(sssed-ceq)) * oc) \n
-) \n
-\f[
- sedss = SS(ior) * fssgr(ior) *(1-qsgr) * oc
-\f]
+
+## Sedimentation von Schwebstoff
+
+    SSSED = fssgr(ior)*SS(ior) \n
+    sedimentation() -> ,qsgr,oc \n
+    ceq = sssed*qsgr ) \n
+    sedss(ior) = max(0.0,(sssed-ceq)) * oc) \n
+\n
+
+\f{equation}{ sedss = SS(ior) \cdot fssgr(ior) \cdot(1 - qsgr) \cdot oc \f}
+
 mit:  \ref fssgr Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration von Schwebstoff \n
       hc1 = SS(ior)-sedss(ior)+exzo+dkimor(ior) \n 
       hc1 = hc1+dgrmor(ior)+dblmor(ior)+zomor-ssdr(ior) \n 
@@ -402,20 +636,28 @@ mit:  \ref fssgr Faktor zur Berechnung der ablagerungsfreien Grenzkonzentration 
       hc2 = hc2+dorgSS(ior)+drfaek(ior)+drfaeg(ior) \n 
       hc2 = hc2+drfaeb(ior)+drfaes(ior)\n 
       fssgr(ior) = hc2/hc1 \n 
-\f[
- qsgr = 1./(1+ased \cdot e^{(-bsed \cdot log_{10}(0.14 \cdot {u_*}^2 + 0.0054 \cdot u_* + 1.25e-6))})
-\f]
+	  
+\f{equation}{
+ qsgr = 1./(1+ased \cdot e^{(-bsed \cdot log_{10}(0.14 \cdot {u_*}^2 + 
+  0.0054 \cdot u_* + 1.25e-6))})
+\f}
       wsgr =  0.14*ust**2+0.0054*ust+1.25e-6(0.14 * {u_*}^2 + 0.0054 * u_* + 1.25e-6) 
       qsgr = 1./(1+ased*exp(-bsed*alog10(wsgr)))  \n 
 mit ased = 1.55e-7 ;  bsed = 2.8
-\f[
- oc = 1.-(1./e^{(prop \cdot w_* \cdot \Delta t / h )}
-\f] 
+
+\f{equation}{
+  oc = 1.-(1./e^{(prop \cdot w_* \cdot \Delta t / h )}
+\f}
+ 
 mit prop=0.75 und
-\f[
-w_* = (log(1./((1+(1./(1+ased*exp(-bsed*alog10((0.14 \cdot {u_*}^2 + 0.0054 \cdot u_* + 1.25e-6))))))/2.)-1.)-log(ased))/(-bsed) \cdot e^{(-604.2 \cdot u_*)}
-\f] 
-      qsgr = 1./(1+ased*exp(-bsed*alog10(wsgr)))  \n
+
+\f{equation}{
+  w_* = (log(1./((1+(1./(1+ased \cdot exp(-bsed \cdot alog10((0.14 \cdot 
+  {u_*}^2 + 0.0054 \cdot u_* + 1.25e-6))))))/2.)-1.)-log(ased))/(-bsed) \cdot 
+  e^{(-604.2 \cdot u_*)}
+\f} 
+
+      qsgr = 1./(1+ased exp(-bsed*alog10(wsgr)))  \n
       qssed = (1+qsgr)/2.  \n
       ws = (log(1./qssed-1.)-log(ased))/(-bsed) \n
       fwst = exp(-604.2*ust) \n
@@ -423,119 +665,80 @@ w_* = (log(1./((1+(1./(1+ased*exp(-bsed*alog10((0.14 \cdot {u_*}^2 + 0.0054 \cdo
 
 \n\n
 
-<h2> Neuberechnung des Faktors zur Berechnung der ablagerungsfreien Grenzkonzentration</h2> 
-      hc1 = CP(2,ior)-sedCP2+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48 \n                      
-      hc1 = hc1+0.2*abszo(ior)*(GRote/1000.)*0.4 \n
-      hc1 = hc1+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483 \n                      
-      hc1 = hc1+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48\n
-      hc1 = hc1-(ssdr(ior)*0.3*0.4*(CP(2,ior)/(CP(1,ior)+CP(2,ior)+0.1*Cref)))   \n                    
-                                                                       \n
-      hc2 = CP2sd-sedCP2+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48\n                       
-      hc2 = hc2+0.2*abszo(ior)*(GRote/1000.)*0.4 \n
-      hc2 = hc2+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483 \n                      
-      hc2 = hc2+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48 \n
-      hc2 = hc2-(ssdr(ior)*0.3*0.4*(CP(2,ior)/(CP(1,ior)+CP(2,ior)+0.1*Cref)))    \n                   
-                       \n                                                
-      fbsgrt = hc2/hc1 \n
-\n \n
-      hc1 = Cref-sedCrf+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48   \n                     
-      hc1 = hc1+0.2*abszo(ior)*(GRote/1000.)*0.4  \n
-      hc1 = hc1+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483     \n                   
-      hc1 = hc1+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48  \n
-      hc1 = hc1-(ssdr(ior)*0.3*0.4*(cref/(CP(1,ior)+CP(2,ior)+0.1*Cref)))                         \n    
-                                                                        \n
-      hc2 = Crfsd-sedCrf+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48    \n                    
-      hc2 = hc2+0.2*abszo(ior)*(GRote/1000.)*0.4  \n
-      hc2 = hc2+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483    \n                    
-      hc2 = hc2+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48  \n
-      hc2 = hc2-(ssdr(ior)*0.3*0.4*(cref/(CP(1,ior)+CP(2,ior)+0.1*Cref)))   \n                          
-                                                                   \n     
-     frfgrt = hc2/hc1 \n 
+## Neuberechnung des Faktors zur Berechnung der ablagerungsfreien Grenzkonzentration
+
+      hc1 = CP(2,ior)-sedCP2+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48                      
+      hc1 = hc1+0.2*abszo(ior)*(GRote/1000.)*0.4
+      hc1 = hc1+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483                      
+      hc1 = hc1+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48
+      hc1 = hc1-(ssdr(ior)*0.3*0.4*(CP(2,ior)/(CP(1,ior)+CP(2,ior)+0.1*Cref)))                       
+                                                                       
+      hc2 = CP2sd-sedCP2+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48                       
+      hc2 = hc2+0.2*abszo(ior)*(GRote/1000.)*0.4
+      hc2 = hc2+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483                      
+      hc2 = hc2+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48
+      hc2 = hc2-(ssdr(ior)*0.3*0.4*(CP(2,ior)/(CP(1,ior)+CP(2,ior)+0.1*Cref)))                      
+                                                                      
+      fbsgrt = hc2/hc1
+
+      hc1 = Cref-sedCrf+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48                       
+      hc1 = hc1+0.2*abszo(ior)*(GRote/1000.)*0.4  
+      hc1 = hc1+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483                       
+      hc1 = hc1+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48  
+      hc1 = hc1-(ssdr(ior)*0.3*0.4*(cref/(CP(1,ior)+CP(2,ior)+0.1*Cref)))                            
+                                                                        
+      hc2 = Crfsd-sedCrf+0.2*BSBHNF(ior)+0.2*dkimor(ior)*0.48+0.2*dgrmor(ior)*0.483+0.2*dblmor(ior)*0.48                      
+      hc2 = hc2+0.2*abszo(ior)*(GRote/1000.)*0.4  
+      hc2 = hc2+0.2*zexki(ior)*0.48+0.2*zexgr(ior)*0.483+0.2*drfaek(ior)*0.48+0.2*drfaeg(ior)*0.483                     
+      hc2 = hc2+0.2*zexbl(ior)*0.48+0.2*drfaeb(ior)*0.48  
+      hc2 = hc2-(ssdr(ior)*0.3*0.4*(cref/(CP(1,ior)+CP(2,ior)+0.1*Cref)))                             
+                                                                        
+     frfgrt = hc2/hc1  
 \n
-zurück zu: \ref lnk_orgC     , Quelle: orgc_huelle.f95                                                                 
-
-# Schwebstoffaufnahme der Dreissena Muscheln {#lnk_Cschwebdreiss} 
-Dieser Teilprozess ist momentan ausgeschaltet, weil in
-dreissen.f90: ".....Schwebstoffaufnahme durch Dreissena wird vorläufig auf Null gesetz". \n 
-Teil-Prozess momentan fachlich unklar.\n\n
-Die hier codierte Formel würde annehmen, dass von dem durch Dreissena-Muscheln aufgenommenen Schwebstoff
-30% partikuläre C-Verbindungen sind und dass die Muscheln davon 60% ungenutzt wieder ausscheiden (oder andersrum).
-Vom refraktären Kohlenstoff wird angenommen, dass nur 10% partikulär vorliegen.\n
-\f[ 
- \Delta {CP_1}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{CP_1}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
-\f]
-
-\f[ 
- \Delta {CP_2}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{CP_2}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
-\f]
-
-\f[ 
- \Delta {C_{ref}}_{drs} = - ssdr \cdot 0.3 \cdot 0.4 \cdot \frac{C_{ref}}{CP_1 + CP_2 + 0.1 \cdot C_{ref}}
-\f]
-
-
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse, Quelle: orgc_huelle.f95 
+\n\n
  
 # Verlust der Bakterien durch HNF-Grazing {#lnk_bacHNFgraz}
+
 Heterotrophe Nanoflagelaten konsumieren (fressen, engl.: to graze) Bakterien.
 Die Masse an C-Verbindungen in Bakterien, die dadurch je Zeitschritt verloren geht,
 wird in der Subroutine HNF() ermittelt. \n                          
-\f[ 
+\f{equation}{
  \Delta {HBAC}_{HNF} = - HNFBAC
-\f]
+\f}
 Klipping bei:\f$ HBA(t+\Delta t) > 0.00001 \f$
 
-zurück zu: \ref lnk_orgC
-
-# Ausscheidungen von Zooplanktern und Dreissena-Muscheln {#lnk_facesC} 
-Verbunden mit der Nahrungsaufnahme exkretieren Zooplankter (Rotatorien) und Dreissena-Muscheln
-sogenannte Faeces. Genauso wie bei der absterbenden Algenbiomasse wird davon ausgegangen, dass diese Faeces
-ein Kohlenstoffanteil von 48% haben. Und ebenfalls genauso wie bei der absterbenden Algenbiomasse wird die 
-Verteilung in die verschiedenen Kohlenstofffraktionen angesetzt: \n
-<ul> <li> 10% in die 1-leicht abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 10% in die 2-schwer abbaubaren gelösten organischen C-Verbindungen, </li>
-<li> 35% in die 1-leicht abbaubaren partikulären organischen C-Verbindungen, </li>
-<li> 35% in die 2-schwer abbaubaren partikulären organischen C-Verbindungen und </li>
-<li> 10% in die refraktären organischen C-Verbindungen </li></ul>\n
-Untenstehend sei hier exemplarisch für alle Kohlenstofffraktionen nur die Formel für die
-1-leicht abbaubaren partikulären organischen C-Verbindungen angegeben:\n
-\f{eqnarray*}{
- \Delta {CP_1}_{faec} &=& 0.35 \cdot \\
- &[& \\
- &+& 0.48 \cdot \left( ROT_{faec,Ki} + ROT_{faec,Gr} + ROT_{faec,Bl}\right)  \\
- &+& 0.48 \cdot \left( DR_{faec,Ki} + DR_{faec,Gr} + DR_{faec,Bl}   \right)  \\
- &]& \\
-\f}
-
-zurück zu: \ref lnk_orgC  , Quelle: orgc_huelle.f95                                                                    
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse
+\n\n
 
 # Sauerstoff-Verbrauch {#lnk_o2zehr} 
-<h1> aktuell stattfindender Sauerstoff-Verbrauch </h1>
+
+## aktuell stattfindender Sauerstoff-Verbrauch 
 bei den folgenden Prozesse beim Umsatz von C-Verbindungen kommt es zum Verbrauch von Sauerstoff:
 <ul> <li> \ref lnk_BACm und </li>
 <li> \ref lnk_fluxmaphy. </li></ul>\n\n
 
-\f[ 
+\f{equation}{
    \Delta {O_2}_{BAC} = res_{HBAC} \cdot HBAC \cdot O_2dC
-\f]
+\f}
 
-\f[ 
+\f{equation}{
   \Delta {O_2}_{pfl} = \left(0.758 \left(CD_1 + CD_2 \right) + 0.21 \right)  \cdot  
        \left( -5.476 \left(\frac{C-BSB_5}{CSB}\right)^2 + 2.256 \frac{C-BSB_5}{CSB} + 0.789 \right)
        \cdot   ( \frac{pfl}{300  \cdot h} \cdot f_T )
-\f]
+\f}
 
 Allerdings scheint der obenstehende Ansatz für den Sauerstoffverbrauch nicht 
 mit den Ansätzen zur \ref lnk_fluxmaphy 
 zusammenzupassen.
 
-\f[ 
+\f{equation}{
      \Delta {O_2}_{orgC} = \Delta {O_2}_{BAC} + \Delta {O_2}_{pfl}
-\f]
+\f}
 
-<h1> Zehrungsfähigkeit der C-Verbindungen </h1>
+## Zehrungsfähigkeit der C-Verbindungen 
 
-<h2> biologischer Sauerstoffbedarf in 5 Tagen </h2>
+### biologischer Sauerstoffbedarf in 5 Tagen
 Bei den hier als leicht zehrbar bilanzierten C-Verbindungen wird davon ausgegangen, dass mehr als 92% in 5 Tagen
 biologisch abgebaut werden. Die monomolekularen C-Verbindungen
 und 40% der in Bakterien und Nanoflagelaten gespeicherten C-Verbindungen werden ebenfalls 
@@ -551,8 +754,8 @@ als schwer abbaubar angenommen.\n
  &+& 0.095 \cdot \left[ CD_2 + CP_2      + 0.4 \cdot \left( HBAC + C_{HNF} \right) \right]  \\
  &]& \\
 \f}
-                                                                  
-<h2> chemischer Sauerstoffbedarf</h2>
+
+### chemischer Sauerstoffbedarf
 Nahezu der gesamte im Wasserenthaltene Kohlenstoff kann auf Chemischem Wege oxidiert werden.\n
 Lediglich bei dem in Bakterien und Nanoflagelaten gebundenen Kohlenstoff wird davon ausgegangen,
 dass nur 80% chemisch zehrungsfähig ist, was der Summe des biologisch abbaubaren Materials entspricht.\n
@@ -560,26 +763,30 @@ Fernerhin wird angenommen, dass ein kleiner Teil des chemischen Sauerstoffbedarf
 Kohlendioxid verwendet wird (2.8 statt 2.667). \n
 Die Neuberechnung erfasst den Zustand nach erfolgtem Stoffumsatz. D. h. \f$ CD_1 = CD_1(t+\Delta t)\f$
 
-\f[ 
+\f{equation}{
      CSB = \left[ C_{ref} + CD_1 + CD_2 + CP_1 +CP_2 + CM + 0.8 \cdot \left( HBAC + C_{HNF} \right) \right] \cdot 2.8 
-\f]
+\f}
 
 \n\n
 
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
  
 # Ammonium-Freisetzung {#lnk_nh4freis} 
-<h2> Freisetzung von Ammonium </h2>
+
+## Freisetzung von Ammonium 
+
 Bei der Umwandlung von C-Verbindungen in Kohlendioxyd
 wird der in ersteren gebundene Stickstoff als Ammonium freigesetzt:
 
-\f[ 
+\f{equation}{
    BSB_{NH4} = BSB_{C} \cdot N_{org}
-\f]
+\f}
 
 \n
 
-<h2> Neuberechnung Stickstoffgehalt </h2>
+## Neuberechnung Stickstoffgehalt 
+
 Beim \ref lnk_mortalgC Absterben von lebender Biomasse 
 und bei den \ref lnk_facesC Ausscheidungen von Zooplanktern und Dreissena-Muscheln
 geht nicht nur deren Kohlenstoffanteil in die hier bilanzierten C-Verbindungen über,
@@ -599,25 +806,25 @@ organischen C-Verbindungen stattfinden:
 Das Verhältnis von Stickstoff zu Kohlenstoff ergibt sich dann aus der Division des Gesamt-Stickstoffgehalts 
 durch den Kohlenstoffanteil im CSB.   (2.8 mgC/mgO2)         
 
-\f[ 
+\f{equation}{
      N_{org}(t + \Delta t) = \frac{orgN(t + \Delta t)}{CSB(t + \Delta t)/2.8}
-\f]
+\f}
 
-mit:
-
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 # Phosphat Freisetzung {#lnk_pfreis} 
-<h2> Freisetzung von ortho-Phospshat </h2>
+
+## Freisetzung von ortho-Phospshat 
 Bei der Umwandlung von C-Verbindungen in Kohlendioxyd
 wird der in ersteren gebundene Phosphor als ortho-Phosphat freigesetzt:
 
-\f[ 
+\f{equation}{
    BSB_{PO4} = BSB_{C} \cdot P_{org}
-\f]
+\f}
 
 
-<h2> Neuberechnung Phosphatgehalt </h2>
+## Neuberechnung Phosphatgehalt 
 Beim \ref lnk_mortalgC Absterben von lebender Biomasse 
 und bei den \ref lnk_facesC Ausscheidungen von Zooplanktern und Dreissena-Muscheln
 geht nicht nur deren Kohlenstoffanteil in die hier bilanzierten C-Verbindungen über,
@@ -637,24 +844,28 @@ organischen C-Verbindungen stattfinden:
 Das Verhältnis von Phosphor zu Kohlenstoff ergibt sich dann aus der Division des Gesamt-Phosphorgehalts 
 durch den Kohlenstoffanteil im CSB.   (2.8 mgC/mgO2)         
 
-\f[ 
+\f{equation}{
      P_{org} (t + \Delta t) = \frac{orgP(t + \Delta t)}{CSB(t + \Delta t)/2.8}
-\f]
+\f}
 
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
-
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
-
-# Änderung des ph-Werts durch Bildung von Kohlensäure {#lnk_kohlensauer} 
+# Änderung des ph-Werts durch Bildung von Kohlensäure {#lnk_kohlensauer}
+ 
 Das beim Abbau von C-Verbindungen entstehende Kohlendioxyd (CO2) verändert den \ref lnk_ph.
 Dort wird die CO2 Lieferung aus C-abbau aus \f$ \Delta O_2 \f$ bestimmt, das hier im 
 Zusammenhang mit dem \ref lnk_o2zehr berechnet wurde. \n
-<table>
-<tr><td> \f$ \Delta O_2 \f$  </td><td> \ref bsbt </td><td> Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt </td><td> mgO2/l zeitschrittbezogen </td><td> ? </td></tr>
-</table>\n\n
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| \f$ \Delta O_2 \f$ | \ref bsbt | Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt | mgO2/l zeitschrittbezogen | ? |
+
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 # Schwebstoffgehalt {#lnk_schwebkohl} 
+
 Zur Schwebstoffmasse tragen die partikulär vorliegenden C-Verbindungen bei, dies sind 
 
 \f$ CP_i \f$, \f$ HBAC \f$ und 20% von \f$ C_{ref} \f$
@@ -675,22 +886,24 @@ Es wird fernerhin angesetzt, dass Kohlenstoff die Hälfte dieser Schwebstoffmass
 Wie obige Formel zeigt, sind in der Größe \f$ \Delta SS_{org} \f$, die an schweb() übergeben wird,
  die sedimentierten Partikel mit enthalten !  \n\n
 
-
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 # Sedimentation {#lnk_sedkohl} 
+
 Die Gesamtmasse des sedimentierten Kohlenstoffs wird aufsummiert und nachfolgenden Modulen zur Verfügung gestellt:
 \ref lnk_stickstoff , \ref lnk_phosphor , SedFlux().\n
 
-\f[ 
+\f{equation}{
    orgC_{sed} = sedCP_1 + sedCP_2 + sedBAC + sedC_{ref} 
-\f]
+\f}
 
-
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 <!--  ----------------------------Bilanzen----------------------- -->
 # Konzentration von partikulären organischen C-Verbindungen {#lnk_bilaCP} 
+
 Die Konzentration der partikulären organischen C-Verbindungen
 ändert sich aufgrund der folgenden Teilprozesse: 
 <ul> <li> \ref lnk_hyp, </li>
@@ -701,24 +914,24 @@ Die Konzentration der partikulären organischen C-Verbindungen
 Die Konzentration im nächsten Zeitschritt berechnet sich aus derjenigen im vorangegangen Zeitschritt
 plus der Summe der Veränderungen:
 
-\f[ 
+\f{equation}{
 CP_i(t+\Delta t) = CP_i(t) 
 + \Delta {CP_i}_{hyp} + \Delta {CP_i}_{sed}
 + \Delta {CP_i}_{mort} + \Delta {CP_i}_{drs} + \Delta {CP_i}_{faec} 
-\f]
+\f}
 
 Negative Werte werden ausgeschlossen, zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches nicht massenerhaltend ist.\n
 
-\f[ 
+\f{equation}{
  CP_i(t+\Delta t)_{klipp}= \frac{CP_i(t)}{ 2 + \left|CP_i(t+\Delta t)/CP_i(t)\right|} 
-\f]
+\f}
 
-mit:
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
-
-# Konzentrationen von gelöstenen organischen C-Verbindungen {#lnk_bilaCD} 
+# Konzentrationen von gelöstenen organischen C-Verbindungen {#lnk_bilaCD}
+ 
 Die Konzentrationen von gelöstenen organischen C-Verbindungen ändert sich aufgrund der folgenden Teilprozesse: 
 <ul> <li> \ref lnk_hyp, </li>
 <li> \ref lnk_hyd, </li>
@@ -728,17 +941,19 @@ Die Konzentrationen von gelöstenen organischen C-Verbindungen ändert sich aufg
 Die Konzentration im nächsten Zeitschritt berechnet sich aus derjenigen im vorangegangen Zeitschritt
 plus der Summe der Veränderungen:
 
-\f[ 
+\f{equation}{
  CD_i(t+\Delta t) = CD_i(t)
  + (\Delta CD_i)_{hyp} + (\Delta CD_i)_{hyd} + (\Delta CD_i)_{pfl} + (\Delta CD_i)_{mort} + (\Delta CD_i)_{faec}
-\f]
+\f}
 
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 # Konzentration von monomolekularen organischen Kohlenstoff {#lnk_bilaCM} 
+
 Die Konzentration von monomolekularen organischem Kohlenstoff
 ändert sich aufgrund der folgenden Teilprozesse: 
 <ul> <li> \ref lnk_hyd, </li>
@@ -748,16 +963,18 @@ Die Konzentration von monomolekularen organischem Kohlenstoff
 Die Konzentration im nächsten Zeitschritt berechnet sich aus derjenigen im vorangegangen Zeitschritt
 plus der Summe der Veränderungen:
 
-\f[ 
+\f{equation}{
  CM(t+\Delta t) = CM(t) + \Delta {CM}_{hyd} + \Delta {CM}_{BAC} + (\Delta CM)_{mort} + (\Delta CM)_{faec} 
-\f]
+\f}
 
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref lnk_orgC
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse
+\n\n
 
 # Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen  {#lnk_bilaBAC} 
+
 Die Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
 ändert sich aufgrund der folgenden Teilprozesse: 
 <ul> <li> \ref lnk_BACm, </li>
@@ -766,17 +983,19 @@ Die Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
 Die Konzentration im nächsten Zeitschritt berechnet sich aus derjenigen im vorangegangen Zeitschritt
 plus der Summe der Veränderungen:
 
-\f[ 
+\f{equation}{
  HBAC(t+\Delta t) = HBAC(t) + \Delta {HBAC}_{BAC} + \Delta {HBAC}_{HNF} + \Delta {HBAC}_{sed}
-\f]
+\f}
 
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 Abgesehen von Massenverlusten durch Respiration, HNF-Grazing und Sedimentation sind Bakterien unsterblich.
 
-zurück zu: \ref lnk_orgC , Quelle: orgc_huelle.f95
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle: orgc_huelle.f95
+\n\n
 
 # refraktäre (nicht abbaubare) C-Verbindungen  {#lnk_bilaCref} 
+
 Die Konzentration der refraktären (nicht abbaubaren) C-Verbindungen
 ändert sich aufgrund der folgenden Teilprozesse: 
 <ul> <li> \ref lnk_facesC, </li>
@@ -788,9 +1007,9 @@ zu Beginn der Berechnungen in orgc() wird der Gehalt an refraktären (nicht abba
 aus dem chemischen Sauerstoffbedarf durch Abzug aller anderen C-Verbindungen rückgerechnet
 (Dies ist notwendig, weil \f$ C_{ref} \f$ keine transportierte, planktische Feldgröße ist).
 
-\f[ 
+\f{equation}{
      C_{ref} = \frac{1}{2.8} \cdot CSB - CP_1 - CP_2 - CD_1 - CD_2  - CM - 0.8 \cdot HBAC  - 0.8 \cdot C_{HNF}                    
-\f]
+\f}
 
 Dabei wird angenommen, dass ein kleiner Teil des chemischen Sauerstoffbedarfs nicht zur Bildung von 
 Kohlendioxid verwendet wird (2.8 statt 2.667). Ausserdem wird angenommen, dass nur 80% des Kohlenstoffs in
@@ -799,16 +1018,16 @@ Bakterien und Nanoflagelaten chemisch zehrungsfähig ist.
 Die Konzentration im nächsten Zeitschritt berechnet sich aus derjenigen im vorangegangen Zeitschritt
 plus der Summe der Veränderungen:
 
-\f[ 
+\f{equation}{
  C_{ref}(t+\Delta t) = C_{ref}(t) + \Delta C_{ref,fac}
  + \Delta C_{ref,drs} + \Delta C_{ref,sed} + \Delta C_{ref,mort} + \Delta C_{ref,faec}
-\f]
+\f}
 
 Negative Werte werden ausgeschlossen. Zuletzt durch sanftes Klipping (asymtotische Nullannäherung), 
 welches auch nicht massenerhaltend ist.\n
 
-zurück zu: \ref lnk_orgC , Quelle orgc_huelle.f95 
- 
+zurück zu: \ref lnk_orgC oder \ref lnk_orgC_prozesse , Quelle orgc_huelle.f95 
+\n\n 
  
 # QSim-Veröffentlichungen, die den Kohlenstoff-Baustein beschreiben und/oder anwenden: 
 <!-- #mf: noch aufräumen -->
@@ -817,13 +1036,12 @@ Der orgc-Baustein wurde verwendet, um die Zehrung von schwer abbaubarem organisc
  Oxygen - Conceptual Model and QSim Approach</a>
  \n Schöl et al. 2013 \n zu simulieren. 
  \n\n
- Siehe dazu auch :Validierung orgc in \ref lnk_validierung
+ Siehe dazu auch: Validierung orgc in \ref lnk_validierung
  (war mal ./vali/orgc_oxygen.html )
  \n
- 
 
 \n\n
 
 
 Textquelle: kohlenstoff-prozess.md; Codesource: orgC.f90; orgc_huelle.f95; 
-zurück: \ref lnk_orgC
+zurück: \ref lnk_orgC oder \ref lnk_orgC_prozesse

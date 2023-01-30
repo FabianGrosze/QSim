@@ -2,7 +2,7 @@ pH-Wert {#lnk_ph}
 ==========
 
 
-![] (pHscala_mini.png)
+![ ](pHscala_mini.png)
 
 <small>Quelle: https://commons.wikimedia.org/wiki/File:PHscala.png Creative 
 Commons Attribution-Share Alike 4.0 International license </small>

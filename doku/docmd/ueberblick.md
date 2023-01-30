@@ -10,35 +10,42 @@ und die Subpages entsprechend anordnen...-->
 Für die Simulation der einzelnen Stoffumsetzungs-Prozesse, die im fließenden 
 Wasser ablaufen, verwendet QSim Module. Diese sind:
 - Das Modul für den \ref lnk_waerme,
-- 6 bio-chemische Module zur Beschreibung von \ref lnk_sauerstoff, und 
-  \ref lnk_ph sowie der \ref lnk_naehrstoffe \ref lnk_stickstoff, 
-  \ref lnk_phosphor, \ref lnk_silikat und \ref lnk_orgC .
-- 3 biologische Module zur Erfassung von \ref lnk_primaer : 
-  [Phytoplankton (Algen)](\ref lnk_phytoplankton), 
-  [benthischen Algen](\ref lnk_albenth) und 
-  [Makrophyten (Wasserpflanzen)](\ref lnk_makrophyt)
+- 6 bio-chemische Module zur Beschreibung von \ref lnk_sauerstoff,  
+  \ref lnk_ph und \ref lnk_orgC sowie der \ref lnk_naehrstoffe \ref lnk_stickstoff, 
+  \ref lnk_phosphor und \ref lnk_silikat.
+- 1 biologisches Modul zur Erfassung von \ref lnk_primaer : 
+  [Phytoplankton (Algen)](\ref lnk_phytoplankton); \n
+  [benthische Algen](\ref lnk_albenth) und 
+  [Makrophyten (Wasserpflanzen)](\ref lnk_makrophyt) sind derzeit abgeschaltet
 - 2 biologische Module zur Erfassung der ersten trophischen Ebene 
   (\ref lnk_konsumenten) : [Zooplankton](\ref lnk_rotatorien) sowie 
-  [benthischen Filtrierern (Muscheln)](\ref lnk_dreissena)
-- Ein [Sedimentmodul](\ref lnk_sediment) zur Berechnung der frühdiagenetischen
-  Prozesse, welche Sauerstoff-, Kohlenstoff- und Nährstoff-Flüsse hervorrufen.
-- sowie weitere Module für: \ref lnk_coliform , \ref lnk_schwermetalle , 
+  [benthische Filtrierer (Muscheln)](\ref lnk_dreissena)
+- sowie weitere Module für: \ref lnk_schwermetalle , 
   \ref lnk_schweb und \ref lnk_aufenthaltszeit
+  
+Das [Sedimentmodul](\ref lnk_sediment), welches frühdiagenetischen
+Prozesse berechnet, die Sauerstoff-, Kohlenstoff- und Nährstoff-Flüsse 
+hervorrufen ist derzeit abgeschaltet  
 
-Eine kurze Beschreibung dieser Stoffumsetzungs-Module finden Sie in
+Weitere Module, die derzeit abgeschaltet sind, sind \ref lnk_coliform,
+\ref lnk_hnf und \ref lnk_corophium .
+
+
+Eine kurze Beschreibung der Stoffumsetzungs-Module finden Sie in
 <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+492" target="_blank">Schöl et al. 2014</a>,
 ausführlichere Informationen sind in den Unterkapitel der einzelnen Module 
 verfügbar.
 
-Wie QSim die von der Strömung des Wassers hervorgerufenen advektiven
-und diffusiven Transportprozesse der o.g. Wasserinhaltstoffe simuliert,
-erläutert der Abschnitt [Stofftransport](\ref lnk_stofftransport).
-Auch der Transport eines Tracers, welcher keinem Stoffumsatz unterliegt ist 
-mit QSim möglich.
+Die Simulation der advektiven und diffusiven Transportprozesse der o.g. 
+Wasserinhaltstoffe erläutert der 
+Abschnitt [Stofftransport](\ref lnk_stofftransport_3d).
+Auch der Transport eines [Tracers](\ref lnk_tracer), welcher keinem Stoffumsatz 
+unterliegt ist mit QSim möglich.
 
-Eine Einführung in die Gewässergütesimulation finden Sie auf der
+Eine weitere kurze Einführung in die Gewässergütesimulation mit QSim finden Sie 
+auf der
 <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html" target="_blank">
-Website der Bundesanstalt für Gewäserkunde</a>, in der
+Website der Bundesanstalt für Gewässerkunde</a>, in der
 <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+321" target="_blank">
 QSim Übersicht</a>.
 

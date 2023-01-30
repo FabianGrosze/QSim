@@ -26,10 +26,11 @@ folgende Liste angesprochen werden.
 - \subpage lnk_konsumenten
 - \subpage lnk_sauerstoff
 - \subpage lnk_ph
-- \subpage lnk_sediment
+- (\subpage lnk_sediment -> _derzeit ausgeschaltet_)
 - \subpage lnk_weitere_stoffe
-- \subpage lnk_aufenthaltszeit
+- \subpage lnk_tracer_aufenthalt
 - \subpage lnk_stofftransport
+- \subpage lnk_erosion_sedimentation
 - \subpage lnk_modellbedienung
 - \subpage lnk_modelldetails
 - \subpage lnk_projekte
@@ -37,7 +38,7 @@ folgende Liste angesprochen werden.
 - \subpage lnk_literatur
 - \subpage lnk_kontakt
 
-Diese sollten später wieder weg:
+Diese Seiten sollten später wieder weg:
 - \subpage lnk_todo
 - \subpage lnk_broken
 

@@ -11,6 +11,8 @@ Global
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		unused_parameters|x64 = unused_parameters|x64
+		unused_parameters|x86 = unused_parameters|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.Debug|x64.ActiveCfg = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.Release|x64.Build.0 = Release|x64
 		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.Release|x86.ActiveCfg = Release|Win32
 		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.Release|x86.Build.0 = Release|Win32
+		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.unused_parameters|x64.ActiveCfg = unused_parameters|x64
+		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.unused_parameters|x64.Build.0 = unused_parameters|x64
+		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.unused_parameters|x86.ActiveCfg = unused_parameters|Win32
+		{BDD16370-EEE2-4FBB-BD6E-1314D07CD4A5}.unused_parameters|x86.Build.0 = unused_parameters|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

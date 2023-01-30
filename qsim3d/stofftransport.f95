@@ -83,13 +83,15 @@ subroutine stofftransport()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine stofftransport
+
+
 !----+-----+----
-!> allokieren der Felder für die Transportinformationen.
-!! \n\n
+!> Allokieren der Felder für die Transportinformationen.
 subroutine allo_trans()
    use modell
    implicit none
-   integer :: alloc_status,j
+   integer :: alloc_status, j
+   
    if (meinrang == 0) then ! prozess 0 only
       allocate( p(number_plankt_point), stat = alloc_status ) !, tief(number_plankt_point)
       if (alloc_status /= 0) then
@@ -114,6 +116,7 @@ subroutine allo_trans()
          write(fehler,*)' Rueckgabewert   von   allocate inflow :', alloc_status
          call qerror(fehler)
       end if
+      
       select case (hydro_trieb)
          case(1) ! casu-transinfo
             !call allo_trans(knotenanzahl2D) !! Felder für Transportinformationen und Strömungsfeld allocieren
@@ -131,34 +134,43 @@ subroutine allo_trans()
             if (alloc_status /= 0) then
                write(fehler,*)' Rueckgabewert   von   allocate w :', alloc_status
                call qerror(fehler)
-            end if
+            endif
             allocate (ur_x(number_plankt_point),ur_y(number_plankt_point),ur_z(number_plankt_point), stat = alloc_status )
             if (alloc_status /= 0)call qerror('allocate (ur_ failed')
+         
          case(2) ! Untrim² netCDF
             !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
             allocate( el_vol(number_plankt_point), el_area(number_plankt_point), stat = alloc_status )
-            if (alloc_status /= 0)call qerror('allocate (el_vol(number_plankt_point), el_area(number_plankt_point)) failed')
+            if (alloc_status /= 0) call qerror('allocate (el_vol(number_plankt_point), el_area(number_plankt_point)) failed')
             allocate( ed_flux(kantenanzahl), ed_area(kantenanzahl), stat = alloc_status )
-            if (alloc_status /= 0)call qerror('allocate( ed_area(kantenanzahl) ) failed')
+            if (alloc_status /= 0) call qerror('allocate( ed_area(kantenanzahl) ) failed')
             allocate( ed_vel_x(kantenanzahl), ed_vel_y(kantenanzahl), stat = alloc_status )
-            if (alloc_status /= 0)call qerror('allocate( ed_vel(kantenanzahl) ) failed')
+            if (alloc_status /= 0) call qerror('allocate( ed_vel(kantenanzahl) ) failed')
             allocate (wicht(5*number_plankt_point), stat = alloc_status )
             if (alloc_status /= 0) then
                write(fehler,*)' Rueckgabewert   von   allocate  wicht(5* :', alloc_status
                call qerror(fehler)
-            end if
-            allocate (cu(number_plankt_point), stat = alloc_status )
+            endif
+            
+            ! Courrant-Zahl
+            allocate(cu(number_plankt_point), stat = alloc_status)
+            if (alloc_status /= 0) then
+               write(fehler,"(a,i0)") 'Rueckgabewert von allocate(cu):', alloc_status
+               call qerror(fehler)
+            endif
+         
          case(3) ! SCHISM netCDF
-            print*,'####### allo_trans SCHISM macht noch nix spezielles VORSICHT #######'
-            case default
+            print*,'####### allo_trans SCHISM macht noch nichts Spezielles VORSICHT #######'
+         
+         case default
             call qerror('allo_trans: Hydraulischer Antrieb unbekannt')
       end select
+   
    end if ! only prozessor 0
    return
 end subroutine allo_trans
 !----+-----+----
 !> calculate proton concentration from pH
-!! \n\n
 subroutine ph2hplus()
    use modell
    implicit none

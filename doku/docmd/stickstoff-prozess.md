@@ -2,7 +2,7 @@ Stickstoff - Prozesse {#lnk_stickstoff_prozesse}
 ===================== 
 
 In QSim werden mehrere Fraktionen des Stickstoffs berechnet: der 
-Gesamtstickstoff, \f$ N_ges \f$, Ammoniumstickstoff, \f$ NH_4^+ \f$, 
+Gesamtstickstoff, \f$ N_{ges} \f$, Ammoniumstickstoff, \f$ NH_4^+ \f$, 
 Nitritstickstoff, \f$ NO_2^- \f$ und Nitratstickstoff, \f$ NO_3^- \f$.
 Jede dieser Fraktionen wird einzeln bilanziert.
 
@@ -10,7 +10,7 @@ Im Stickstoff-Baustein wird auch die Biomasse der Nitrifikanten Nitrosomonas
 und Nitrobacter berechnet. 
 
 ## Teilprozesse ##
-Gesamtsticktoff (\f$ N_ges \f$)
+Gesamtsticktoff (\f$ N_{ges} \f$)
 
 * Sedimentation von organischem Material
 * Sedimentation von Algen
@@ -60,15 +60,17 @@ in die O2-Bilanz mit eingeht -->
 
 ## Bilanz des Gesamtsticktoffs ##
 
-\f[ \frac{N_ges}{dt} = - C_{org, sed} \cdot q_{N:C} - 
-\sum\limits_{j=1}^3 A_{sed, i} \cdot q_N{_i} +
-u_N{_2} \cdot (A_{wachs, cyan} - A_{resp, cyan}) - r_{denitrif} \f]
+\f{equation}{ 
+  \frac{N_{ges}}{dt} = - C_{org, sed} \cdot q_{N:C} - 
+  \sum\limits_{j=1}^3 A_{sed, i} \cdot q_N{_i} +
+  u_N{_2} \cdot (A_{wachs, cyan} - A_{resp, cyan}) - r_{denitrif} 
+\f}
 <!-- nicht mehr enthalten: Sediment-Flux, Verlust durch 
 Konsum benthischer Filtrierer, Aufnahme durch benth. 
 Algen -->
 
 <!-- Einheiten in der folgenden Liste sind noch nicht geprüft --> 
-\f$ N_ges \f$:   Gesamtstickstoff [mg N/L] \n
+\f$ N_{ges} \f$:   Gesamtstickstoff [mg N/L] \n
 \f$ C_{org, sed} \f$: sedimentierte Menge des organischen Kohlenstoffs   [mg C/L/t] \n
 \f$ q_{N:C} \f$: Stickstoff zu Kohlenstoff-Verhältnis in org. gelöstem Material [mg N/mg C] \n
 <!-- N:C oder C:N-Verhältnis? molar oder Masse? -->
@@ -83,7 +85,9 @@ Algen -->
 
 
 ## Bilanz des Nitrat-Stickstoffs 
-\f[ \frac{NO_3^-}{dt} = r_{NH_4, nitrif} - up_{NO3, A_i} - r_{denitrif} \f]
+\f{equation}{ 
+  \frac{NO_3^-}{dt} = r_{NH_4, nitrif} - up_{NO3, A_i} - r_{denitrif} 
+\f}
 
 <!-- vno3t = vno3(ior) + SUSN2 + PflN2 + hJNO3(mstr,ior) * tflie/Tiefe(ior) 
              - algN3m - dNO3Den
@@ -104,7 +108,7 @@ und als Nitrit angereichert (NH4N -> NO2N), \f$ r_{NH_4, nitrif} \f$.
 Anschließend wird Nitrit durch Nitrobacter abgebaut (NO2N-> NO3N), 
 \f$ r_{NO_2, nitrif} \f$:
 
-\f[ \frac{NO_2^-}{dt} = r_{NH_4, nitrif} - r_{NO_2, nitrif} \f]
+\f{equation}{ \frac{NO_2^-}{dt} = r_{NH_4, nitrif} - r_{NO_2, nitrif} \f}
 
 <!-- vno2t = vno2(ior) + susn(ior) + PFLN1 - susN2 - PfLN2 -->
 
@@ -113,8 +117,9 @@ Anschließend wird Nitrit durch Nitrobacter abgebaut (NO2N-> NO3N),
 
 
 ## Bilanz des Ammonium-Stickstoffs
-\f[ \frac{NH_4^+}{dt} = - r_{NH_4, nitrif} + doN + dzN - up_{NH4, A_i} 
-		 + arN4m  \f]
+\f{equation}{ 
+  \frac{NH_4^+}{dt} = - r_{NH_4, nitrif} + doN + dzN - up_{NH4, A_i} + arN4m  
+\f}
 
 <!-- NH4t = - susN(ior) + hJNH4(mstr,ior) * tFlie/Tiefe(ior) - pflN1 
          + doN(ior) + dzN + ddrN - aGrNH4(ior) - aKiNH4(ior) - aBlNH4(ior) 
@@ -123,25 +128,27 @@ Anschließend wird Nitrit durch Nitrobacter abgebaut (NO2N-> NO3N),
 Der Sedimentflux, die Aufnahme durch sessile Nitrosomonas und die NH4-Freisetzung 
 durch die Respiration benthischer Filtrierer sind ausgeschaltet.		 
 
-Die Ammoniumfreisetzung beim C-Abbau \f$ doN \f$ wird im Baustein \ref lnk_orgC berechnet.
-<!-- #mf: beizeiten Link zu entsprechender Stelle orgC-Doku einfügen (zu orgC statt lnk_orgC) -->
+Die Ammoniumfreisetzung beim C-Abbau \f$ doN \f$ wird im Baustein \ref lnk_orgC 
+berechnet.
+<!-- #mf: beizeiten Link zu entsprechender Stelle orgC-Doku einfügen 
+(zu orgC statt lnk_orgC) -->
 
 \f$ r_{NH_4, nitrif} \f$: durch suspendierte Nitrifikanten oxidierte NH4-Menge [??] \n <!-- susn -->
 \f$ doN \f$: Ammoniumfreisetzung beim C-Abbau [\f$ mg N \cdot L^{-1} \cdot t^{-1} \f$] \n
 \f$ dzN \f$: Ammoniumfreisetzung durch Zooplankton (Rotatorienrespiration) [\f$  \f$] \n
 \f$ up_{NH4, A_i} \f$: Ammonium-Aufnahme durch Algengruppe *i* [\f$  \f$] \n <!-- aGrNH4, aKiNH4, aBlNH4 -->
-\f$ arN4m \f$:  [\f$  \f$] \n
+\f$ arN4m \f$: ... [\f$ ... \f$] \n
 
-
+<!--
 arN4m = nresgz(1) + nreskz(1) + nresbz(1)  \n
 ! = respiriertes NH4? woher kommt der Wert? 
-+ warum steckt das dann nicht in NO3-N-Bilanz auch für NO3?
++ warum steckt das dann nicht in NO3-N-Bilanz auch für NO3? -->
 
 
 ## Teilprozesse
 
 ### Oxidation von NH4-N durch suspendierte Nitrifikanten
-\f[ r_{denitrif} = (VXzt - VX0)/EKX0 \f]
+\f{equation}{ r_{denitrif} = (VXzt - VX0)/EKX0 \f}
 
 <!-- susN = (VXzt - VX0)/EKX0 -->
 
@@ -219,10 +226,7 @@ KMO_NO3 = 0.26
 
 ### Wachstum der Nitrifikanten - Nitrobacter
 
-\f[ eine Gleichung \f]
-
-\f$ Symbol \f$:    Beschreibung [Einheit] \n
-\f$  \f$:    [ ] \n
+...
 
 
 
@@ -250,7 +254,7 @@ else
 endif
 		
 
-\f[ eine Gleichung \f]
+\f{equation}{ eine Gleichung \f}
 
 \f$ Symbol \f$:    Beschreibung [Einheit] \n
 \f$  \f$:    [ ] \n

@@ -110,24 +110,21 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    if (meinrang == 0) call ereigg_modell() ! read time-stepping information at first
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call allo_trans() !! Felder für Transportinformationen und Strömungsfeld allocieren
+   call allo_trans() ! Felder für Transportinformationen und Strömungsfeld allocieren
+   
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
-      !     read global model-parameters now in module ::uebergabe_werte
-      write(cpfad,*,iostat = ifehl)trim(adjustl(modellverzeichnis))
-      if (ifehl /= 0)call qerror('eingabe: write(cpfad went wrong')
-      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,ifehl)
-      if (ifehl /= 0) then
-         print*,'cpfad,iwsim,icoli,ieros = ',trim(cpfad),iwsim,icoli,ieros
-         write(fehler,*)'eingabe: aparam_lesen went wrong, ifehl = ',ifehl
-         call qerror(fehler)
-      endif
+      ! read global model-parameters now in module ::uebergabe_werte
+      write(cpfad,*,iostat = ierr)trim(adjustl(modellverzeichnis))
+      if (ierr /= 0) call qerror('eingabe: write(cpfad went wrong')
+      
+      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       call extnct_lesen()
-      call ausgabezeitpunkte() !! reading points in time for output
-      call ausgabekonzentrationen() !! reading output-values
+      call ausgabezeitpunkte()      ! reading points in time for output
+      call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
       call wetter_readallo0()
       print*,"wetter_readallo0() gemacht"
@@ -234,10 +231,7 @@ subroutine ereigg_modell()
    !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' deltat=',deltat
    !end if !SCHISM
    print*,"hydro_trieb = ",hydro_trieb      !case(2) ! Untrim² netCDF
-   if ((hydro_trieb == 2) .and. (deltat /= 1200)) then
-      !call qerror('Untrim-Läufe bisher nur mit Zeitschrittweite 20 min. möglich')
-      print*,"Untrim Lauf hydro_trieb = ",hydro_trieb," deltat = ",deltat, "sollte jetzt (okt20) eigentlich gehen"
-   endif
+   
    print*,'transinfo_zeit,Anfang+Ende = ',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
       print*,"startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1) = "
@@ -254,6 +248,21 @@ subroutine ereigg_modell()
    if ( .not. zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
         ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
+   
+   ! Schönung, November 2022
+   ! Schwermetalle sind noch nicht ausreichend getestet unter QSim3D
+   ! Im Codecafe am 17.November 2022 wurde beschlossen, die Schwermetalle vorläufig
+   ! zu deaktivieren. 
+   ! Aktuell finden Entwicklungsarbeiten zur Verknüpfung zwischen Schwermetalle, 
+   ! Schwebstoffe und Erosion statt. Nach Abschluss dieser Arbeiten und erfolgreichen
+   ! Tests für QSim1D und QSim3D sollen die Schwermetalle auch in QSim3D wieder
+   ! aktiviert werden können.
+   if (iSchwer == 1) then
+      print*, 'You are trying to run a simulation with heavy metals.'
+      print*, 'This is not supported by this version of QSim3D'
+      call qerror('Heavy metals not supported by this version of QSim3D')
+   endif
+   
    print*,'Zeile 5 von EREIGG.txt:'
    print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
    print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr

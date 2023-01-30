@@ -24,32 +24,29 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag              &
-                    ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl        &
-                    ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr            &
-                    ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                    &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                    & !!wy, Einlesen von e_extnct.dat nicht hier
-                    ,tpgr,uhrz,iwied,algcog                                                                                 &
-                    ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG        &
-                    ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
-                    ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
-                    ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
-                    ,a1Gr,a2Gr,a3Gr,ifehl,ifhstr,isim_end,agmor_1,azStrs                                                    &
-                    ,kontroll ,jjj )              !!wy
+subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                      &
+                    ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl      &
+                    ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr          &
+                    ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                 &
+                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                   & !!wy, Einlesen von e_extnct.dat nicht hier
+                    ,tpgr,uhrz,iwied,algcog                                                                               &
+                    ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG      &
+                    ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG               &
+                    ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                   &
+                    ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz  &
+                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1,azStrs                                                               &
+                    ,kontroll, jjj)
    
-   !###### UNTERPROGRAMM ZUR BERECHNUNG DES Grünalgenwachstums ######
+   ! Unterprogramm zur Berechnung des Grünalgenwachstums
+   ! Autor: Volker Kirchesch
+   ! Stand: 08.09.2015
    
-   !     AUTOR :VOLKER KIRCHESCH
-   
-   !     STAND :08.09.2015
-   
-   
-   !     UNTERPROGRAMME :TAGE,ALBEDO
+   ! unterprogramme :tage,albedo
   
    logical kontroll !wy
    integer jjj !wy
    character (len = 255) cpfad
-   character (len = 275)                      :: pfadstring
+   character (len = 275)                    :: pfadstring
    character (len = 2) ckenn_Vers1
    integer                                  :: anze, azStrs
    integer, dimension(1000)                 :: flag, jiein, ischif, nkzs
@@ -716,19 +713,26 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          if ( hctest > 1.e-10)vkigr(ior) = chlaki(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
          if ( hctest > 1.e-10)antbl(ior) = chlabl(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
          if (nkzs(ior) == 1)Chlaz(1,ior) = chla(ior)
-         !...Fehlermeldung
-         ifehl = 0
+         
+         ! Fehlermeldung
          if (ISNAN(chla(ior))) then
+            print*, "subroutine algesgr: isnan(chla)"
+            print*, "   mstr    = ", mstr
+            print*, "   ior     = ", ior
+            print*, "   chlaki  = ", chlaki(ior)
+            print*, "   chlabl  = ", chlabl(ior)
+            print*, "   chlagrt = ", chlagrt
             print*,'algaesgr ISNAN(chla)',mstr,ior,chlaki(ior),chlabl(ior),chlagrt
-            ifehl = 25
-            ifhStr = mstr
-            exit
+            
+            call qerror("Division by zero in subroutine algaesgr")
          endif
-         !......Ausgaben
+         
+         ! Ausgaben
          agmuea(ior) = aggrow
          fhegas(ior) = svhemg(ior)
          agreau(ior) = agres
-         !      agreau(ior) = Q_PG(ior)/Qmx_PG
+         ! agreau(ior) = Q_PG(ior)/Qmx_PG
+         
          if (schwi(ior) <= 0.001 .and. isim_end == 0) then
             tpgr(ior) = 0.0
             figaus = 0.0

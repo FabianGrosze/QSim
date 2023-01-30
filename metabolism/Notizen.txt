@@ -1,5 +1,0 @@
-Qeinl aus EREIGG.txt ???
-ob Einleitungen vorkommen, wird von mstrLe gesteuert, das aus MODELLA.txt kommt.
-Qeinl kommt über abfls (von funkstar aus EREIGG.txt gelesen)
-
-Der Gesamtablfuss vabfl kommt über sysgenou mittels sysgen.f90 aus EREIGH.txt

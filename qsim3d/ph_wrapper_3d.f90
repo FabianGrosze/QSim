@@ -27,7 +27,7 @@
 subroutine ph_wrapper_3d(i)
    use modell
    use QSimDatenfelder
-   use module_ph, only: ph
+   use module_metabolism, only: ph
    
    implicit none
    integer, intent(in) :: i !< lokale Knotennummer auf dem jeweiligen Prozessor; läuft von 1 bis part

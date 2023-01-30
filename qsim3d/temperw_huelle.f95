@@ -39,8 +39,6 @@ subroutine temperw_huelle(i)
    real :: tempmt
    real :: dtempS_mit
    real :: btiefe
-   !        call temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                                &
-   !                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz(1),tempmt,xtempw,btiefe,xTsed,xdtemp(nkz),dtempS_mit,iform_VerdR)
    !    nkz        :   Zähler Tiefenschichten (nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
    !    xnkzs      :   Anzahl der Tiefenschichten am Querprofil
    ! ### Die Tiefenschichten müssen immer von 1 bis xnkzs nacheinander aufgerufen werden ####
@@ -74,71 +72,91 @@ subroutine temperw_huelle(i)
    !    iform_VerdR==5 ! Delclaux et al. (2007)
    
    !> i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-   iglob = (i+meinrang*part)
-   kontroll = (iglob == kontrollknoten)
-   !if (kontroll) print*,'temperw_huelle meinrang,i,iglob,wetterstations_nummer,tlmed_T'
-   nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
-   tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+   iglob = i + meinrang*part
+   kontroll = iglob == kontrollknoten
    
-   if (num_lev > 1)call qerror("temperw_huelle not ready for 3D")
-   if (kontroll) print*,'temperw vorher: temperw, extk, tiefe, temperwz1',planktonic_variable_p(1+nk)  &
-       ,transfer_quantity_p(54+(i-1)*number_trans_quant),rb_hydraul_p(2+(i-1)*number_rb_hydraul)  &
-       ,plankt_vari_vert_p(1+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
-   !########################################################################################
-   !  das Abarbeiten der einzelnen Schichten erfolgt von
-   !  der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
-   !  übergeben wird die Temperaturänderung dtemp in den einzelnen Schichten
-   !########################################################################################
+   ! Ort im Feld der transportierten planktischen Variablen
+   nk = (i-1)*number_plankt_vari 
+   
+   ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
+   tflie = real(deltat)/86400 
+   
+   if (num_lev > 1) call qerror("temperw_huelle not ready for 3D")
+   
+   if (kontroll) then
+      print*,'before temperw:'
+      print*, '   temperw   = ', planktonic_variable_p(1+nk)
+      print*, '   extk      = ', transfer_quantity_p(54+(i-1)*number_trans_quant)
+      print*, '   tiefe     = ', rb_hydraul_p(2+(i-1)*number_rb_hydraul)
+      print*, '   temperwz1 = ', plankt_vari_vert_p(1+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
+   endif
+   
+   
+   ! das Abarbeiten der einzelnen Schichten erfolgt von
+   ! der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
+   ! übergeben wird die Temperaturänderung dtemp in den einzelnen Schichten
+   
    btiefe = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
-   if (btiefe <= min_tief)btiefe = min_tief ! minimale Wassertiefe erhalten
+   
+   ! minimale Wassertiefe erhalten
+   if (btiefe <= min_tief) btiefe = min_tief 
    dH2D = btiefe  ! =tiefe           ! eigentlich delta_z
    
-   if ((iform_VerdR < 1) .or. (iform_VerdR > 5)) then
+   if (iform_VerdR < 1 .or. iform_VerdR > 5) then
       print*,meinrang,'temperw_huelle iform_VerdR = ',iform_VerdR
       call qerror('iform_VerdR unzulässiger Wert in temperw_huelle')
    endif
+   
+   
    do j = 1,num_lev ! Wassertemperatur tiefenaufgelöst von oben nach unten
-      call temperw_kern(                                                      &
-                        j                                                     &
-                        ,num_lev                                              &
-                        ,transfer_quantity_p(67+(i-1)*number_trans_quant)     &
-                        ,transfer_quantity_p(64+(i-1)*number_trans_quant)     &
-                        ,transfer_quantity_p(54+(i-1)*number_trans_quant)     &
-                        ,rb_hydraul_p(3+(i-1)*number_rb_hydraul)              &
-                        ,transfer_quantity_p(62+(i-1)*number_trans_quant)     &
-                        ,transfer_quantity_p(63+(i-1)*number_trans_quant)     &
-                        ,transfer_quantity_p(65+(i-1)*number_trans_quant)     &
-                        ,transfer_quantity_p(66+(i-1)*number_trans_quant)     &
-                        ,zone(point_zone(iglob))%wettstat%wetterstations_lage &
-                        ,dH2D                                                 &
-                        ,xdtemp_mit                                           &
-                        ,tflie                                                &
-                        ,zone(point_zone(iglob))%seditemp%wuebk               &
-                        ,zone(point_zone(iglob))%seditemp%spewks              &
-                        ,zone(point_zone(iglob))%seditemp%psrefs              &
-                        ,plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)       &
-                        ,tempmt                                               &
-                        ,planktonic_variable_p(1+nk)                          &
-                        ,btiefe                                               &
-                        ,benthic_distribution_p(1+(i-1)*number_benth_distr)   &
-                        ,xdtemp_nkz                                           &
-                        ,dtempS_mit                                           &
-                        ,iform_VerdR                                          &
-                        ,kontroll, iglob)
-      !   subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                           &
-      !                          ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz1,tempmt,xtempw,btiefe,xTsed,xdtemp_nkz,dtempS_mit,iform_VerdR            &
-      !                    ,kontroll ,jjj )
-      if (kontroll) print*,meinrang,i,'nach temperw_kern tempw = ',planktonic_variable_p(1+nk),(1+nk)
-      !! error check
-      if ( isNaN(xdtemp_nkz) ) then
+      call temperw_kern(                                          &
+            j,                                                    & ! nkz
+            num_lev,                                              & ! xnkzs
+            transfer_quantity_p(67+(i-1)*number_trans_quant),     & ! xtypw
+            transfer_quantity_p(64+(i-1)*number_trans_quant),     & ! xschwi
+            transfer_quantity_p(54+(i-1)*number_trans_quant),     & ! xextk
+            rb_hydraul_p(3+(i-1)*number_rb_hydraul),              & ! xhWS
+            transfer_quantity_p(62+(i-1)*number_trans_quant),     & ! xtempl
+            transfer_quantity_p(63+(i-1)*number_trans_quant),     & ! xro
+            transfer_quantity_p(65+(i-1)*number_trans_quant),     & ! xwge
+            transfer_quantity_p(66+(i-1)*number_trans_quant),     & ! xcloud
+            zone(point_zone(iglob))%wettstat%wetterstations_lage, & ! xWlage
+            dH2D,                                                 & ! dH2D
+            xdtemp_mit,                                           & ! xdtemp_mit 
+            tflie,                                                & ! tflie
+            zone(point_zone(iglob))%seditemp%wuebk,               & ! WUEBK
+            zone(point_zone(iglob))%seditemp%spewks,              & ! SPEWKS,
+            zone(point_zone(iglob))%seditemp%psrefs,              & ! PSREFS,
+            plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev),& ! xtempwz1
+            tempmt,                                               & ! tempmt,
+            planktonic_variable_p(1+nk),                          & ! xtempw,
+            btiefe,                                               & ! btiefe,
+            benthic_distribution_p(1+(i-1)*number_benth_distr),   & ! xTsed
+            xdtemp_nkz,                                           & ! xdtemp_nkz
+            dtempS_mit,                                           & ! dtempS_mit
+            iform_VerdR,                                          & ! iform_VerdR 
+            kontroll, iglob)
+      
+   
+      if (kontroll) then
+         print*,' after temperw_kern:'
+         print*, '   meinrang = ', meinrang
+         print*, '   i        = ', i
+         print*, '   tempw    = ', planktonic_variable_p(1+nk)
+      endif
+      
+      ! error check
+      if (isNaN(xdtemp_nkz)) then
          write(fehler,*)meinrang," isNaN(xdtemp_nkz) ",j,i,iglob
          call qerror(fehler)
       endif
-      if ( isNaN(xdtemp_mit) ) then
+      
+      if (isNaN(xdtemp_mit) ) then
          write(fehler,*)meinrang," isNaN(xdtemp_mit) ",j,i,iglob
          call qerror(fehler)
       endif
-      !! Temperatur change ...
+      
+      ! Temperatur change 
       if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief) then ! wet nodes
          planktonic_variable_p(1+nk) = tempmt  ! = planktonic_variable_p(1+nk) + xdtemp_mit ! tempw(1)
          !plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) =       &
@@ -146,6 +164,7 @@ subroutine temperw_huelle(i)
       else ! dry nodes
          planktonic_variable_p(1+nk) = transfer_quantity_p(62+(i-1)*number_trans_quant) ! water temperature equals air temp.
       endif ! wet nodes
+      
       !keine extra Tiefenauflösung im 3D
       plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable_p(1+nk)
    end do ! all j num_lev

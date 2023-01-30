@@ -39,17 +39,19 @@ subroutine randbedingungen_setzen()
    !print*,'randbedingungen_setzen'
    !!wy call gather_planktkon() ! syncronize non-parallel fields to paralell ones
    
-   !>>>> Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   ! Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP)
    call scatter_rb_hydraul()
-   !>>>> Wetter-Randbedingungen <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+   ! Wetter-Randbedingungen
    call update_weather()
    call mpi_barrier (mpi_komm_welt, ierr)
-   !Randverläufe und Wetterstationen haben alle Prozessoren alle Eingabedaten
-   !und wenden sie auf ihre Knoten an.
-   !
+   ! Randverläufe und Wetterstationen haben alle Prozessoren alle Eingabedaten
+   ! und wenden sie auf ihre Knoten an.
+   
    if (meinrang == 0) then !! nur prozessor 0
-      einmalig = .true. !Fehlermeldung nur einmal ausgeben
+      einmalig = .true. ! Fehlermeldung nur einmal ausgeben
       call RB_werte_aktualisieren(rechenzeit)
+      
       do j = 1,number_plankt_point ! nur bei casu=knotenanzahl2D
          select case (hydro_trieb)
             case(1) ! casu-transinfo
@@ -61,6 +63,7 @@ subroutine randbedingungen_setzen()
                case default
                call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
+         
          if ( (RB_zaehl > 0) .and. (RB_zaehl < 100000) ) then !! Alle Knoten, deren RB's bedient werden:
             if (j == kontrollknoten)print*,'Konrollstelle #',j,' ist Rand mit RB_zaehl = ',RB_zaehl
             if (inflow(j)) then !! alle Zufluss-Knoten
@@ -86,46 +89,50 @@ subroutine randbedingungen_setzen()
       !      schwi(1)=strahlung        ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
       !      cloud(1)=bewoelkung       ! Bewölkungsdichte  aus Wetterstationsdaten
       !      typw(1)=wolkentyp         ! Wolkentyp  aus Wetterstationsdaten
-      if (kontrollknoten > 0)  &
-          print*,'randbedingungen_setzen, prozessor 0, chla(kontrollknoten) = '  &
-          ,planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
-   end if !! nur prozessor 0
-   !
+      
+      if (kontrollknoten > 0) then
+          print*,'randbedingungen_setzen, prozessor 0, chla(kontrollknoten) = ',  &
+                  planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
+      endif
+      
+   end if ! nur prozessor 0
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    call scatter_BC()
    call scatter_planktkon()
+   
    j = kontrollknoten-(meinrang*part)
-   if ((j >= 1) .and. (j <= part)) then
+   if (j >= 1 .and. j <= part) then
       print*,'nach randbedingungen_setzen am Kontrollknoten:',kontrollknoten,meinrang,part,j
-      print*,'Tiefe = ', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
-      print*,'tempw = ', planktonic_variable_p(1+(j-1)*number_plankt_vari),1+(j-1)*number_plankt_vari
-      print*,'O2 = '   , planktonic_variable_p(2+(j-1)*number_plankt_vari),2+(j-1)*number_plankt_vari ! Sauerstoffgehalt tiefengemittelt
-      print*,'obsb = ',planktonic_variable_p(17+(j-1)*number_plankt_vari)
-      print*,'ocsb = ',planktonic_variable_p(18+(j-1)*number_plankt_vari)
-      print*,'cd1 = ',planktonic_variable_p(37+(j-1)*number_plankt_vari) !    leicht abbaubare gelöste organische C-Verbindungen    mg C / l
-      print*,'cd2 = ',planktonic_variable_p(38+(j-1)*number_plankt_vari) !    schwer abbaubare gelöste organische C-Verbindungen    mg C / l
-      print*,'cp1 = ',planktonic_variable_p(39+(j-1)*number_plankt_vari) !     leicht abbaubare partikuläre organische C-Verbindungen    mg C / l
-      print*,'cp2 = ',planktonic_variable_p(40+(j-1)*number_plankt_vari) !     schwer abbaubare partikuläre organische C-Verbindungen    mg C / l
-      print*,'cm = ',planktonic_variable_p(41+(j-1)*number_plankt_vari) !     monomolekularen organischen C-Verbindungen    mg C / l
-      print*,'bac = ',planktonic_variable_p(42+(j-1)*number_plankt_vari) !     Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen    mg C / l
-      print*,'o2bsb = ',planktonic_variable_p(43+(j-1)*number_plankt_vari) !     Sauerstoff-Kohlenstoffverhältnis beim C-Abbau    mgO2/mgC
-      print*,'bl01 = ',planktonic_variable_p(44+(j-1)*number_plankt_vari) !     schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent    mg O2 / l
-      print*,'bl02 = ',planktonic_variable_p(45+(j-1)*number_plankt_vari) !     leichtabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent    mg O2 / l
-      print*,'vbsb = ',planktonic_variable_p(46+(j-1)*number_plankt_vari) !     BSB5 incl. lebender Organismen    mg O2 / l
-      print*,'vcsb = ',planktonic_variable_p(47+(j-1)*number_plankt_vari) !     CSB incl. lebender Organismen    mg O2 / l
-      print*,'chla = ',planktonic_variable_p(11+(j-1)*number_plankt_vari) !     Chlorophyll-a
-      print*,'vkigr = ',planktonic_variable_p(19+(j-1)*number_plankt_vari)
-      print*,'antbl = ',planktonic_variable_p(20+(j-1)*number_plankt_vari)
-      print*,'chlaki = ',planktonic_variable_p(12+(j-1)*number_plankt_vari)
-      print*,'chlagr = ',planktonic_variable_p(13+(j-1)*number_plankt_vari)
-      print*,'chlabl = ',planktonic_variable_p(14+(j-1)*number_plankt_vari)
-      print*,'aki = ',planktonic_variable_p(8+(j-1)*number_plankt_vari)
-      print*,'agr = ',planktonic_variable_p(9+(j-1)*number_plankt_vari)
-      print*,'abl = ',planktonic_variable_p(10+(j-1)*number_plankt_vari)
-      print*,'akbcm = ',planktonic_variable_p(24+(j-1)*number_plankt_vari) !, ' Caki=',Caki
-      print*,'agbcm = ',planktonic_variable_p(25+(j-1)*number_plankt_vari) !, ' Caki=',Caki
-      print*,'abbcm = ',planktonic_variable_p(26+(j-1)*number_plankt_vari) !, ' Caki=',Caki
-      print*,'ph = ',planktonic_variable_p(66+(j-1)*number_plankt_vari) !
+      print*,'Tiefe  = ', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
+      print*,'tempw  = ', planktonic_variable_p(1+(j-1)*number_plankt_vari), 1+(j-1)*number_plankt_vari
+      print*,'O2     = ', planktonic_variable_p(2+(j-1)*number_plankt_vari), 2+(j-1)*number_plankt_vari ! Sauerstoffgehalt tiefengemittelt
+      print*,'obsb   = ', planktonic_variable_p(17+(j-1)*number_plankt_vari)
+      print*,'ocsb   = ', planktonic_variable_p(18+(j-1)*number_plankt_vari)
+      print*,'cd1    = ', planktonic_variable_p(37+(j-1)*number_plankt_vari) ! leicht abbaubare gelöste organische C-Verbindungen    mg C / l
+      print*,'cd2    = ', planktonic_variable_p(38+(j-1)*number_plankt_vari) ! schwer abbaubare gelöste organische C-Verbindungen    mg C / l
+      print*,'cp1    = ', planktonic_variable_p(39+(j-1)*number_plankt_vari) ! leicht abbaubare partikuläre organische C-Verbindungen    mg C / l
+      print*,'cp2    = ', planktonic_variable_p(40+(j-1)*number_plankt_vari) ! schwer abbaubare partikuläre organische C-Verbindungen    mg C / l
+      print*,'cm     = ', planktonic_variable_p(41+(j-1)*number_plankt_vari) ! monomolekularen organischen C-Verbindungen    mg C / l
+      print*,'bac    = ', planktonic_variable_p(42+(j-1)*number_plankt_vari) ! Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen    mg C / l
+      print*,'o2bsb  = ', planktonic_variable_p(43+(j-1)*number_plankt_vari) ! Sauerstoff-Kohlenstoffverhältnis beim C-Abbau    mgO2/mgC
+      print*,'bl01   = ', planktonic_variable_p(44+(j-1)*number_plankt_vari) ! schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent    mg O2 / l
+      print*,'bl02   = ', planktonic_variable_p(45+(j-1)*number_plankt_vari) ! leichtabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent    mg O2 / l
+      print*,'vbsb   = ', planktonic_variable_p(46+(j-1)*number_plankt_vari) ! BSB5 incl. lebender Organismen    mg O2 / l
+      print*,'vcsb   = ', planktonic_variable_p(47+(j-1)*number_plankt_vari) ! CSB incl. lebender Organismen    mg O2 / l
+      print*,'chla   = ', planktonic_variable_p(11+(j-1)*number_plankt_vari) ! Chlorophyll-a
+      print*,'vkigr  = ', planktonic_variable_p(19+(j-1)*number_plankt_vari)
+      print*,'antbl  = ', planktonic_variable_p(20+(j-1)*number_plankt_vari)
+      print*,'chlaki = ', planktonic_variable_p(12+(j-1)*number_plankt_vari)
+      print*,'chlagr = ', planktonic_variable_p(13+(j-1)*number_plankt_vari)
+      print*,'chlabl = ', planktonic_variable_p(14+(j-1)*number_plankt_vari)
+      print*,'aki    = ', planktonic_variable_p(8+(j-1)*number_plankt_vari)
+      print*,'agr    = ', planktonic_variable_p(9+(j-1)*number_plankt_vari)
+      print*,'abl    = ', planktonic_variable_p(10+(j-1)*number_plankt_vari)
+      print*,'akbcm  = ', planktonic_variable_p(24+(j-1)*number_plankt_vari)
+      print*,'agbcm  = ', planktonic_variable_p(25+(j-1)*number_plankt_vari)
+      print*,'abbcm  = ', planktonic_variable_p(26+(j-1)*number_plankt_vari)
+      print*,'ph     = ', planktonic_variable_p(66+(j-1)*number_plankt_vari)
    endif  ! kontrollknoten
    return
 end subroutine randbedingungen_setzen
@@ -396,7 +403,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
                     planktonic_variable(67+nk),      & ! GESN | gesNs,
                     planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    nZoo, pZoo, GROT,                & ! globale Parameter aus module aparam
                     planktonic_variable( 6+nk),      & ! GELP | gelPs,
                     planktonic_variable(68+nk),      & ! GESP | gesPs,
                     planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
@@ -432,6 +438,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
               planktonic_variable(65+nk),      & ! lf
               planktonic_variable( 1+nk),      & ! tempw 
               planktonic_variable(63+nk))        ! pw 
+
    return
 end subroutine randbedingungen_ergaenzen
 !----+-----+----
@@ -1300,53 +1307,4 @@ subroutine randlinie_zusammenstellen()
    ! weil dort erst die Anzahl der Konzentrationen für die Massenflüsse zusammengezählt wird.
    return
 end subroutine randlinie_zusammenstellen
-!----+-----+----
-!aus qsim.f90_v13.10 orgc:
-!!....Berechnung der "BSB-Komponenten" am oberen Rand
-!!     (auch bei Stundenwert-Generierung)!!!!!
-!      bk1 = 0.51
-!      bk2 = 0.02
-!      vcb = obsbs(mstr,mRB)/ocsbs(mstr,mRB)
-!      antBAC = 0.0462*vcb
-!      CMs(mstr,mRB) = 0.03
-!!...Berechnung des BTOC
-!      BTOC5s = obsbs(mstr,mRB)/4.
-!      BTOCs = BTOC5s*0.782*vcb**(-0.921)
-!!....Berechnung des Anteils an gelsten org. C-Verbindungen
-!      alphaD = 0.21*log(vcb)+0.6294
-!      if(alphaD.gt.1.)alphaD = 0.95
-!      if(alphaD.lt.0.0)alphaD = 0.0
-!      CDges = BTOCs*alphaD-CMs(mstr,mRB)
-!      if(CDges.lt.0.00001)CDges = 0.00001
-!!.......Aufteilung der gelsten Fraktion in leicht und schwer abbaubar
-!      alphlD = 0.218*log(vcb)+0.717
-!      if(alphlD.lt.0.0)alphlD = 0.0
-!      CD1s(mstr,mRB) = CDges*alphlD
-!      CD2s(mstr,mRB) = CDges*(1.-alphlD)
-!!.......Aufteilung der part. Fraktion in leicht und schwer abbaubar
-!      CPges = BTOCs*(1.-alphaD)
-!      BACs(mstr,mRB) = CPges*antBAC
-!      CPges = CPges-BACs(mstr,mRB)
-!      alphlP = 0.4258*log(vcb)+1.114
-!      if(alphlP.lt.0.0)alphlP = 0.0
-!      CP1s(mstr,mRB) = CPges*alphlP
-!      CP2s(mstr,mRB) = CPges*(1.-alphlP)
-!!....Verringerung der einzelnen Fraktionen aufrund von HNF
-!      CD1s(mstr,mRB) = CD1s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CD2s(mstr,mRB) = CD2s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CP1s(mstr,mRB) = CP1s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      CP2s(mstr,mRB) = CP2s(mstr,mRB)-0.2*CHNFs(mstr,mRB)
-!      if(CD1s(mstr,mRB).le.0.0)CD1s(mstr,mRB) = 0.000001
-!      if(CD2s(mstr,mRB).le.0.0)CD2s(mstr,mRB) = 0.000001
-!      if(CP1s(mstr,mRB).le.0.0)CP1s(mstr,mRB) = 0.000001
-!      if(CP2s(mstr,mRB).le.0.0)CP2s(mstr,mRB) = 0.000001
-!!....Berechnung der Komponenten fuer BSB5
-!      bx1 = alphaD*alphlD+(1.-antBAC)*(1-alphaD)*alphlP                 &
-!     &+antBAC*(1.-alphaD)*0.4
-!      if(bx1.gt.1.)bx1 = 1.
-!      bx2 = (1.-bx1)
-!      hcon = 1.-(bx1*exp(-bk1*5.)+bx2*exp(-bk2*5.))
-!      BL0s = obsbs(mstr,mRB)/hcon
-!      O2BSBs(mstr,mRB) = BL0s/BTOCs
-!      bl01s(mstr,mRB) = bl0s*bx1
-!      bl02s(mstr,mRB) = bl0s*bx2
+

@@ -18,7 +18,7 @@ unaufwändig und der dadurch erzielbare Vorteil nicht sicher einschätzbar.
 Bisher realisiert wurde in dieser Frage nur eine einfache Vergröberung von 
 Deltares.
 
-siehe auch: \ref lnk_stofftransport
+siehe auch: \ref lnk_stofftransport_3d
 
 
 Zum Lesen des Netzes aus dem Modellverzeichnis bedient sich netz_lesen() der 
@@ -35,4 +35,4 @@ Steinbruch Numerik
 \f]
 
 Textquelle: diskretisierung.md ; Codesources: stofftransport.f95 ;  
-zurück: \ref lnk_stofftransport oder \ref lnk_modellerstellung
+zurück: \ref lnk_stofftransport_3d oder \ref lnk_modellerstellung

@@ -6,25 +6,21 @@ Dokumentationsgenarators
 <a href="http://www.doxygen.org/index.html" target="_blank">Doxygen </a>
 direkt aus dem Quell-Code generiert wird.
 
-Dies hat den Vorteil, dass die Beschreibung des Berechnungsverfahrens zusammen 
-mit dessen programmtechnischer Realisierung (QSim ist in Fortran codiert) 
-gemeinsam in einer Datei erstellt wird. Das heißt dieselbe Datei,
-die der Compiler zur Erzeugung des ausführbaren Programms verwendet, dient auch 
-dem Dokumentationsgenarator zur Erzeugung der Dokumentation. Der Entwickler 
-muss keine seperate Dokumentation pflegen, sondern hat sie in
-der Datei direkt neben dem entsprechenden Abschnitt unmittelbar vorliegen.
+Doxygen erlaubt eine automatisierte Erstellung von Teilen der Dokumentation.
+Diese befinden sich im unteren Teil der Navigationsleiste (links: Module, 
+Datentyp-Liste und Dateien).  \n
+Außerdem ist es möglich direkt die Files mit dem Programmcode zu verlinken
+(QSim ist in Fortran codiert), z.B. zum Hauptprogramm von QSim3D: QSim3D.f95.
+Solch eine Verlinkung findet sich meistens am Ende der einzelnen Webseiten,
+damit die Beschreibung des Berechnungsverfahrens direkt mit der 
+programmtechnischen Realisierung verglichen werden kann.
 
-Der Vorteil für den Anwender besteht darin, dass bei weitergehenden Fragen auch 
-direkt im Programmcode das tatsächlich ausgeführte Berechnungsverfahren
-im Detail nachgeschaut werden kann. In der Regel finden Sie untenstehend auf den 
-Web-Seiten dieses Portals auch den Link zu derjenigen
-Programmdatei aus der sie erzeugt wurde.
-Diese hier wurde z.B. aus der Datei QSim3D.f95 generiert, welche das 
-Hauptprogramm enthält.
+Der Großteil der Dokumentation ist in Markdown verfasst. Unten auf den 
+einzelnen Unterseiten steht das Markdown-File aus welchem der Text generiert 
+wurde.
 
-Darüber hinaus ermöglicht
 <a href="http://www.doxygen.org/index.html" target="_blank">Doxygen 
-</a> die Einbindung von Links auf externe Quellen.
+</a> ermöglicht die Einbindung von Links auf externe Quellen.
 Diese Dokumentation wird nicht nur zur direkten Beschreibung der Programmquellen 
 genutzt, sondern auch als zentrale Stelle, von der aus alle weiteren 
 Informationen zu QSim erreicht werden können. Daher ist die Bezeichnung 

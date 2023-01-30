@@ -53,7 +53,7 @@ subroutine sedflux_huelle(i)
    !#    call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif &
    !#                 ,SedOM,SedOMb,dKorn,dKornb    &
    !#                 ,raua,vmq,Hmq,nbuhn,bvmq,bHmq &
-   !#                 ,jsed,w2,w2b,ifehl) ... ruft ...
+   !#                 ,jsed,w2,w2b) ... ruft ...
    !#    subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b)
    !#    subroutine Sed_POM:    w2(mstr,mSta) = 0.74e-5
    !#vmitt1 = vmq(mstr,mSta)
@@ -79,8 +79,7 @@ subroutine sedflux_huelle(i)
    call Sediment(1,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif   &
                  ,hsedom,SedOMb,hdkorn,dKornb                   &
                  ,raua,vmq,Hmq,nbuhn,bvmq,bHmq                  &
-                 ,0,hw2,w2b,ifehl)
-   if (ifehl /= 0)call qerror('Sediment ifehl')
+                 ,0,hw2,w2b)
    hsedom(1,2) = hsedom(1,1)
    hw2(1,2) = hw2(1,1)
    hdkorn(1,2) = hdkorn(1,1)

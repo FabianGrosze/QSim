@@ -41,9 +41,9 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    
    integer                                :: azStrs, anze, nkz, ior
    integer, dimension(azStrs)             :: iFlRi, imac
-   integer, dimension(1000)               :: flag, nkzs, imarker
+   integer, dimension(1000)               :: flag, nkzs
    integer, dimension(1000,50)            :: m, isgn
-   real, dimension(1000)                  :: vmitt, elen, Calpha, Nenner, Uneu, dl, U,CUx, U_lin
+   real, dimension(1000)                  :: vmitt, elen, dl, U,CUx, U_lin
    real, dimension(1000,50)               :: xpoint
    real, dimension(50,1000)               :: vmittt_1,Uvert
    real, allocatable, dimension(:,:,:)    :: Uvertt_1
@@ -216,7 +216,6 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
    real, dimension(1000)            :: elen, vmitt
    real, dimension(50,1000)         :: vmittt_1, Uvert
    real, dimension(1000,50)         :: xpoint
-   double precision                 :: Ax, hconA
    real, dimension(1:azStrs,1:nkztot_max,1:ianze_max+1) :: Uvertt_1
   
    vmitt(anze+1) = vmitt(anze)
@@ -420,7 +419,6 @@ end subroutine Crank_Nicolson
 subroutine cra_NicKoeff(elen,r1,r2,r3,dl,flag,deltat,anze,nkzs,nkz,mstr,ktrans,imarker,icraNicKoeff,itags,uhrz)
    integer                        :: anze
    integer, dimension(1000)       :: flag, imarker, nkzs
-   integer, dimension(1000,50)    :: isgn
    real                           :: nenner
    real, dimension(1000)          :: elen, r1, r2, r3, dl
    iein = 0
@@ -506,9 +504,8 @@ end subroutine trimat
 subroutine Thomas(a,b,c,d,anze,U,flag,mstr,ktrans,imarker,iwahlD,itags,nkz,itime)
    integer                           :: anze
    integer, dimension(1000)          :: imarker, flag
-   integer, dimension(1000,50)       :: isgn
    real, dimension(1000)             :: U
-   double precision, dimension(1000) :: a,b,c,d, bp, dp, bpz, dpz
+   double precision, dimension(1000) :: a,b,c,d, bp, dp
    double precision                  :: m
    
    bp(1) = b(1)
@@ -688,7 +685,7 @@ subroutine CIP(U, CUx, DX, DT, NX, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,
    integer :: NX, I, azStrs
    integer, dimension(1000) :: nkzs, flag
    integer, dimension(1000,50) :: m, isgn
-   real, dimension(1000) :: DX, w, U,CUx, CU_neu,U_neu, Ulin
+   real, dimension(1000) :: DX, U,CUx, CU_neu,U_neu, Ulin
    real, dimension(1000,50) :: xpoint
    save CU_neu, U_neu, Ulin,a,b
    
@@ -938,12 +935,11 @@ end subroutine lax_wendroff
 subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkzs, &
                     iwahlD, isgn, Uhrz, itags, monats, itime,iwsim)
    
-   integer                       :: nx, m1, m2, ktrans
-   integer, dimension(1000)      :: n, nm, nkzs
+   integer                       :: nx, ktrans
+   integer, dimension(1000)      :: nkzs
    integer, dimension(1000)      :: flag
    integer, dimension(1000,50)   :: isgn
-   real                          :: nenner,lammda
-   real, dimension(1000)         :: dx, Crr, w, F_plus, vmitt, vr, vl, U, U_neu, U_lin, Phi
+   real, dimension(1000)         :: dx, Crr, F_plus, vmitt, vr, U, U_neu
    real, dimension(50,1000)      :: Uvert
    save U_neu
    

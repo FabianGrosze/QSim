@@ -31,18 +31,16 @@
 !! @date 06.11.1987
 subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
                    cloud, schwia, imet, mstr, IDWe, itags, monats, VTYP,    &
-                   VALTBL, EDUFBL, VALTBR, EDUFBR, breite, anze, ifehl,     &
-                   ifhStr, it_h, ij, jahrs, itage, monate, jahre, uhren,    &
+                   VALTBL, EDUFBL, VALTBR, EDUFBR, breite, anze,            &
+                   it_h, ij, jahrs, itage, monate, jahre, uhren,            &
                    isim_end, azStr, azStrs)
    
-   !     Parameter:
-   !
-   !     SCHWI  - Globalstrahlung an der Wasseroberflaeche unter Berueck-
-   !              sichtigung der Reflektion an der Wasseroberflaeche
-   !              [cal/(cm2*h)]
-   !     SH     - Sonnenhoehe im Bogenmass
-   !     SHGR   - Sonnenhoehe im Gradmass
-   !     CLOUD  - Bewoelkungsgrad
+   ! Parameter:
+   ! SCHWI  - Globalstrahlung an der Wasseroberflaeche unter Berücksichtigung
+   !          der Reflektion an der Wasseroberflaeche [cal/(cm2*h)]
+   ! SH     - Sonnenhoehe im Bogenmass
+   ! SHGR   - Sonnenhoehe im Gradmass
+   ! CLOUD  - Bewoelkungsgrad
    integer                                       :: tdj, anze, azStr, azStrs
    integer, dimension(8)                         :: NRV
    integer, dimension(azStrs,1000)               :: IDWe, it_h
@@ -53,11 +51,10 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    real, dimension(1000)                         :: Schwi, Breite, VALTBL, EDUFBL, VALTBR, EDUFBR
    real, dimension(1000,14)                      :: VTYP
    real, dimension(azStrs)                       :: SHtest
+   
+   character(1000) :: message
    save itags_tst, monats_tst, jahrs_tst, uhrz_tst
    
-   
-   ifehl = 0
-   ifhStr = 0
    j = 0
    PI = 22./7.
    Uhrv = Uhrz
@@ -67,60 +64,67 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    ! NRV3, NrV4 : Übergang Frühjahr
    ! NRV5, NRV6 : Sommer
    ! NRV7, NRV8 : Übergang Herbst
-   !
+   
    itagv = 16
    monatv = 11
    j = j+1
    goto 777
-   !
-   700 itagv = 15
+   
+   700 continue
+   itagv = 15
    monatv = 4
    j = j+1
    goto 777
-   !
-   705 itagv = 16
+   
+   705 continue
+   itagv = 16
    monatv = 4
    j = j+1
    goto 777
-   !
-   710 itagv = 15
+   
+   710 continue
+   itagv = 15
    monatv = 5
    j = j+1
    goto 777
-   !
-   715 itagv = 16
+   
+   715 continue
+   itagv = 16
    monatv = 5
    j = j+1
    goto 777
-   !
-   720 itagv = 15
+   
+   720 continue
+   itagv = 15
    monatv = 10
    j = j+1
    goto 777
-   !
-   725 itagv = 16
+   
+   725 continue
+   itagv = 16
    monatv = 10
    j = j+1
    goto 777
-   !
-   730 itagv = 15
+   
+   730 continue
+   itagv = 15
    monatv = 10
    j = j+1
    goto 777
-   !
-   777 if (monatv > 2)goto 26
-   NRV(j) = ITAGV+31*(MONATV-1)
-   goto 27
-   26 NRV(j) = (ITAGV+31*(MONATV-1) - int(0.4*MONATV+2.3))
-   27 continue
-   !
+   
+   777 continue
+   if (monatv > 2) then
+      NRV(j) = (ITAGV+31*(MONATV-1) - int(0.4*MONATV+2.3))
+   else
+      NRV(j) = ITAGV+31*(MONATV-1)
+   endif
    goto (700,705,710,715,720,725,730)j
-   !
-   if (monats > 2)goto 28
-   NRS = ITAGS+31*(MONATS-1)
-   goto 29
-   28 NRS = (ITAGS+31*(MONATS-1) - int(0.4*MONATS+2.3))
-   29 continue
+   
+   if (monats > 2)then 
+      NRS = (ITAGS+31*(MONATS-1) - int(0.4*MONATS+2.3))
+   else
+      NRS = ITAGS+31*(MONATS-1)
+   endif
    
    ! Vegetationstypen und Zugeordnete Parameter
    !--------------------------------------------
@@ -166,13 +170,13 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    EDUFER(11) = 3.0
    EDUFER(13) = 4.0
    EDUFER(14) = 3.0
-   !
+   
    if (NRS >= NRV(3) .and. NRS <= NRV(4))goto 410
    if (NRS >= NRV(7) .and. NRS <= NRV(8))goto 410
    if (NRS >= NRV(5) .and. NRS <= NRV(6))goto 420
-   !
-   !...EVDICH   -   Dichte der Vegetationsart in %
-   !...Winter
+   
+   ! EVDICH - Dichte der Vegetationsart in %
+   ! Winter
    EVDICH(1) = 10.
    EVDICH(2) = 20.
    EVDICH(3) = 20.
@@ -188,8 +192,10 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    EVDICH(13) = 25.
    EVDICH(14) = 85.
    goto 450
-   !...Übergang
-   410 EVDICH(1) = 30.
+   
+   ! Übergang
+   410 continue
+   EVDICH(1) = 30.
    EVDICH(2) = 35.
    EVDICH(3) = 30.
    EVDICH(4) = 45.
@@ -204,8 +210,10 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    EVDICH(13) = 45.
    EVDICH(14) = 85.
    goto 450
-   !....Sommer
-   420 EVDICH(1) = 65.
+   
+   ! Sommer
+   420 continue
+   EVDICH(1) = 65.
    EVDICH(2) = 57.
    EVDICH(3) = 43.
    EVDICH(4) = 93.
@@ -219,54 +227,65 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    EVDICH(12) = 100
    EVDICH(13) = 93.
    EVDICH(14) = 85.
-   !
+   
    !--------------------------------------------
-   !
+   
    450 continue
-   !
-   !....falls Stundenwerte aus der Datei WETTER.TXT eingelesen wurden
-   do 25 ior = 1,anze+1
-      
-      !...Fehlermeldung
+   
+   ! falls Stundenwerte aus der Datei WETTER.TXT eingelesen wurden
+   do ior = 1,anze+1
+      ! Fehlermeldung
       if (IDWe(mstr,ior) <= 0) then
-         ifehl = 12
-         ifhStr = mstr
-         goto 999
+         write(message, "(a,i0)"), "No weather station defined for stretch ", mstr
+         call qerror(message)
       endif
       
-      Vtest1 = VTYP(ior,1)+VTYP(ior,2)+VTYP(ior,4)+VTYP(ior,5)          &
-               +VTYP(ior,6)+VTYP(ior,13)+VTYP(ior,14)
-      Vtest2 = VTYP(ior,7)+VTYP(ior,8)+VTYP(ior,9)+VTYP(ior,10)         &
-               +VTYP(ior,11)+VTYP(ior,12)+VTYP(ior,13)+VTYP(ior,14)
+      Vtest1 = VTYP(ior,1)   &
+             + VTYP(ior,2)   &
+             + VTYP(ior,4)   &
+             + VTYP(ior,5)   &
+             + VTYP(ior,6)   &
+             + VTYP(ior,13)  &
+             + VTYP(ior,14)
+      
+      Vtest2 = VTYP(ior,7)   &
+             + VTYP(ior,8)   &
+             + VTYP(ior,9)   &
+             + VTYP(ior,10)  &
+             + VTYP(ior,11)  &
+             + VTYP(ior,12)  &
+             + VTYP(ior,13)  &
+             + VTYP(ior,14)
       if (Vtest1 > 100) then
-         ifehl = 15
-         ifhStr = mstr
-         goto 999
+         write(message, "(a,i0)"), "subroutine strahlg: Proportion of vegetation &
+                                    (left bank) exceeds 100% in stretch: ", mstr
+         call qerror(message)
       endif
-      !
+      
       if (Vtest2 > 100) then
-         ifehl = 16
-         ifhStr = mstr
-         goto 999
+         write(message, "(a,i0)"), "subroutine strahlg: Proportion of vegetation &
+                                    (right bank) exceeds 100% in stretch: ", mstr
+         call qerror(message)
       endif
-      !
-      !....Parameter zur Berücksichtigung der Strahlungsabschirmung durch Bebauung
+      
+      ! Parameter zur Berücksichtigung der Strahlungsabschirmung durch Bebauung
       EVALT(6) = VALTBL(ior)
       EVALT(12) = VALTBR(ior)
       EDUFER(6) = EDUFBL(ior)
       EDUFER(12) = EDUFBR(ior)
       
-      if (imet == 0)goto 333
-      schwi(ior) = glob(IDWe(mstr,ior))/4.2
-      goto 444
-      333 THELL = su-sa
-      time0 = -thell/2.
-      MAXI = 2.*glob(IDWe(mstr,ior))/(THELL*4.2)
-      if (UHRZ.LE.SA)MAXI = 0.0
-      if (UHRZ.GE.SU)MAXI = 0.0
-      TSSA = UHRZ-SA
-      time = time0+tssa
-      SCHWI(ior) = MAXI*0.5*(1.+cos(2.*pi*time/thell))
+      if (imet == 0) then 
+         thell = su-sa
+         time0 = -thell/2.
+         maxi = 2.*glob(idwe(mstr,ior))/(thell*4.2)
+         if (uhrz <= sa) maxi = 0.0
+         if (uhrz >= su) maxi = 0.0
+         tssa = uhrz-sa
+         time = time0+tssa
+         schwi(ior) = maxi*0.5*(1.+cos(2.*pi*time/thell))
+      else
+         schwi(ior) = glob(idwe(mstr,ior))/4.2
+      endif
       
       ! -----------------------------------------------------------------------
       ! Berechnung der Globalstrahlung unter Beruecksichtigung der  Reflexion
@@ -275,21 +294,20 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
       !I.) Einfluss der Sonnenhoehe
       ! BERECHNUNG DES SONNENHOEHENWINKELS  <sh>
       ! sw - Stundenwinkel
-      444 continue
       dtsl = (1./15.)*(15.-geol)
       lt = uhrz-dtsl
       hconx = 0.9856*tdj-2.72
       hconx = hconx*pi/180.
       eqtime = (-7.66*sin(hconx)-9.87*sin(2.*hconx+0.4362+0.06685*sin   &
                (hconx)))/60.
-      !
+      
       if (lt < 12.)epsi = 12.
       if (lt >= 12.)epsi = -12.
       sw = (pi*(lt+epsi+eqtime))/12.
-      !
-      SH = SIN(GEOB*pi/180.)*SIN(DK)+COS(GEOB*pi/180.)*COS(DK)*COS(SW)
-      SH = ASIN(SH)
-      if (SH.LT.0)SH = 0
+      
+      sh = sin(geob*pi/180.)*sin(dk)+cos(geob*pi/180.)*cos(dk)*cos(sw)
+      sh = asin(sh)
+      if (sh.lt.0)sh = 0
       shgr = sh*180./pi
       
       ! II.) Einfluss der Bewoelkung
@@ -306,19 +324,16 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
       br(4) = -0.45
       
       if (cloud(IDWe(mstr,ior)) > 8 .or. cloud(IDWe(mstr,ior)) < 0.) then
-         ifehl = 11
-         goto 999
+         call qerror("Degree of cloudiness is greater than 8/8 or less than 0.")
       endif
       
-      if (cloud(IDWe(mstr,ior)) < 1.)icl = 1
-      if (cloud(IDWe(mstr,ior)) >= 1 .and. &
-          cloud(IDWe(mstr,ior)) < 5.)icl = 2
-      if (cloud(IDWe(mstr,ior)) >= 5 .and. &
-          cloud(IDWe(mstr,ior)) < 7.)icl = 3
-      if (cloud(IDWe(mstr,ior)) >= 7.)icl = 4
+      if (cloud(IDWe(mstr,ior)) < 1.) icl = 1
+      if (cloud(IDWe(mstr,ior)) >= 1 .and. cloud(IDWe(mstr,ior)) < 5.) icl = 2
+      if (cloud(IDWe(mstr,ior)) >= 5 .and. cloud(IDWe(mstr,ior)) < 7.) icl = 3
+      if (cloud(IDWe(mstr,ior)) >= 7.) icl = 4
       
-      if (shgr <= 1.)hconwr = ar(icl)
-      if (shgr > 1.)hconwr = ar(icl)*shgr**br(icl)
+      if (shgr <= 1.) hconwr = ar(icl)
+      if (shgr >  1.) hconwr = ar(icl)*shgr**br(icl)
       if (hconwr > 1.)hconwr = 1.
       
       ! Berücksichtigung der Beschattung durch Ufervegetation
@@ -326,25 +341,28 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
       EMDIR = 0.0
       ETAS = Uhrz*180./12.
       ETAS = ETAS*PI/180.
-      !
-      do 600 I = 1,14
-         if (VTYP(ior,I) <= 0.0 .or. SH == 0.0)goto 600
-         !
+      
+      do I = 1,14
+         if (VTYP(ior,I) <= 0.0 .or. SH == 0.0) cycle
+         
          if (shgr > 88.)ESLEN(i) = 0.0
          if (shgr <= 88.)ESLEN(i) = EVALT(i)/tan(SH)
-         !....Schattenlaenge
+         
+         ! Schattenlaenge
          ESLENS(i) = ESLEN(i)*abs(sin(ETAS))
-         !....Abzug der Uferbreite
+         
+         ! Abzug der Uferbreite
          ESLENS(i) = ESLENS(i)-EDUFER(i)
          if (ESLENS(i) < 0.0)ESLENS(i) = 0.0
          if (ESLENS(i) > Breite(ior))ESLENS(i) = Breite(ior)
-         !....Berücksichtigung der Kronenbreite
+         
+         ! Berücksichtigung der Kronenbreite
          ESLENK = (EKRBRT(i)/2.)-EDUFER(i)
          if (ESLENK < 0.0)ESLENK = 0.0
          if (ESLENK > breite(ior))ESLENK = breite(ior)
          if (ESLENK > ESLENS(i))ESLENS(i) = ESLENK
-         !
-         !...Abfrage ob Kronenschluss
+         
+         ! Abfrage ob Kronenschluss
          if (i == 13 .or. i == 14) then
             hconK = EKRBRT(i)-2.*EDUFER(i)
             if (hconK > Breite(ior)) then
@@ -362,16 +380,14 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
          ! SH<SHtest Sonne geht unter linke Ufervegetation wirft keinen Schatte
          ! nur rechtes Ufer
          if (shgr > 88.)goto 630
-         if (shgr <= 88 .and. i <= 6.and.SH < SHtest(mstr))                  &
-             ESLENS(i) = 0.0
-         if (shgr <= 88 .and. i > 6.and.i <= 12.and.SH > SHtest(mstr))      &
-             ESLENS(i) = 0.0
-         !
-         !
+         if (shgr <= 88 .and. i <= 6.and.SH < SHtest(mstr)) ESLENS(i) = 0.0
+         if (shgr <= 88 .and. i > 6.and.i <= 12.and.SH > SHtest(mstr)) ESLENS(i) = 0.0
+         
+         
          630 HCON1 = ESLENS(i)/Breite(ior)
-         if (HCON1 > 1.)HCON1 = 1.
+         if (HCON1 > 1.) HCON1 = 1.
          EMDIR = EMDIR+(EVDICH(i)/100.)*((VTYP(ior,i)/100.)*HCON1)
-      600 continue
+      enddo
       
       
       ! Abschattung der Diffusen Strahlung
@@ -491,15 +507,13 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
          endif
       endif
       
-      
-      
       if (itags_tst == itage .and. monats_tst == monate .and. &
           jahrs_tst == jahre.and.uhrz_tst == uhren.and.it_h(mstr,ior) == 0) then
          it_h(mstr,ior) = 1
          isim_end = 1
       endif
-   25 continue
+   enddo
    SHtest(mstr) = SH
    
-   999 return
+   return
 end subroutine strahlg

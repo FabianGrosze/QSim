@@ -3,6 +3,7 @@
 *.zip
 *.aps
 *.o
+*.a
 *.mod
 *.csv
 *.png
@@ -17,7 +18,8 @@ doku/pdf/
 doku/taz/
 doku/*.zip
 doku/doxygen.exe
-doku/doxygen_1.9.4.exe
+doku/doxygen_*.exe
+doku/*.log
 backup-dokufiles/*
 doku/confi_stripped
 doku/libclang.dll

@@ -74,17 +74,15 @@ subroutine coliform_huelle(i)
    ! xnueC  ! aus APARAM.txt
    ! RateCG ! aus APARAM.txt
    ! RateCS ! aus APARAM.txt
-   ifehl = 0 !initialisiert
    !----------------------------------------------------------------------------------
-   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli    &
-                 ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs            &
-                 ,ratecd,etacd,rateci,xnuec,ratecg,ratecs,ifehl                                             &
-                 ,kontroll , iglob )
+   
+   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli  &
+                 ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs         &
+                 ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
+                 ,kontroll, iglob)
    !----------------------------------------------------------------------------------
-   if (ifehl > 0) then
-      print*,'ifehl = ',ifehl,' in coliform_huelle: iglob,i,meinrang = ',iglob,i,meinrang
-      call qerror('COLIFORM ifehl > 0')
-   end if
+   
+   
    planktonic_variable_p(61+(i-1)*number_plankt_vari) = coli(1)  ! Fäkalcoliforme Bakterien
    planktonic_variable_p(70+(i-1)*number_plankt_vari) = DOSCF(1) !
    if (kontroll)print*,'coliform_huelle ende: coli = ',coli(1)

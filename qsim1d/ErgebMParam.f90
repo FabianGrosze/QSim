@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Writes file `ErgebMParam.xml`
+!> Write file ErgebMParam.xml
 subroutine ErgebMParam(cpfad1)
    implicit none
    
@@ -41,6 +41,7 @@ subroutine ErgebMParam(cpfad1)
   
    write(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
    write(1, '(A)') '<GerrisParam FileType="ErgebM" QsimVersion="13.42">'  
+   
    write(1, '(A)') '<ParamSetDef Ident="ErgebM" Text="Tageswert-Ergebnis-Parameter" Help="Die von QSim als Tageswerte berechneten Parameter">'
    write(1, '(A)') '  <Parameter Ident="MIB5" Text="C-BSB5, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5, Tages-Minimum" Group="Haupt" Quantity="BSB5" Aggregat="Min" />'
    write(1, '(A)') '  <Parameter Ident="XBSB5" Text="C-BSB5, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5, Tagesmittelwert" Group="Haupt" Quantity="BSB5" Aggregat="Avg" />'
@@ -269,13 +270,13 @@ subroutine ErgebMParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="XZOORO" Text="Sauerstoffverbrauch durch Zooplankter" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="ZOORO" />'
    write(1, '(A)') '  <Parameter Ident="XPO2P" Text="Sauerstoffproduktion durch Makrophyten" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="PO2P" />'
    write(1, '(A)') '  <Parameter Ident="XPO2R" Text="Sauerstoffverbrauch durch Makrophyten" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="PO2R" />'
-   write(1,'(A)') '  <Parameter Ident="SEDHY" Text="Sedimenthöhe" Unit="mm" Format="F12.6" Help="" Group="Sediment" Quantity="SEDHY" />'
-   write(1,'(A)') '  <Parameter Ident="BMIBSB" Text="C-BSB5 im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BBSB5" Aggregat="Min" />'
-   write(1,'(A)') '  <Parameter Ident="BXBSB5" Text="C-BSB5 im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5 im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="BBSB5" Aggregat="Avg" />'
-   write(1,'(A)') '  <Parameter Ident="BMXBSB" Text="C-BSB5 im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="BBSB5" Aggregat="Max" />'
-   write(1,'(A)') '  <Parameter Ident="BMICSB" Text="CSB im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="CSB im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BCSB" Aggregat="Min" />'
-   write(1,'(A)') '  <Parameter Ident="BXCSB" Text="CSB im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" CSB im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="BCSB" Aggregat="Avg" />'
-   write(1,'(A)') '  <Parameter Ident="BMXCSB" Text="CSB im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="CSB im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="BCSB" Aggregat="Max" />'
+   write(1, '(A)') '  <Parameter Ident="SEDHY" Text="Sedimenthöhe" Unit="mm" Format="F12.6" Help="" Group="Sediment" Quantity="SEDHY" />'
+   write(1, '(A)') '  <Parameter Ident="BMIBSB" Text="C-BSB5 im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BBSB5" Aggregat="Min" />'
+   write(1, '(A)') '  <Parameter Ident="BXBSB5" Text="C-BSB5 im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5 im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="BBSB5" Aggregat="Avg" />'
+   write(1, '(A)') '  <Parameter Ident="BMXBSB" Text="C-BSB5 im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="BBSB5" Aggregat="Max" />'
+   write(1, '(A)') '  <Parameter Ident="BMICSB" Text="CSB im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="CSB im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BCSB" Aggregat="Min" />'
+   write(1, '(A)') '  <Parameter Ident="BXCSB" Text="CSB im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" CSB im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="BCSB" Aggregat="Avg" />'
+   write(1, '(A)') '  <Parameter Ident="BMXCSB" Text="CSB im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="CSB im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="BCSB" Aggregat="Max" />'
    write(1, '(A)') '  <Parameter Ident="BMINH4" Text="NH4-N im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="NH4-N im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BNH4" Aggregat="Min" />'
    write(1, '(A)') '  <Parameter Ident="BXNH4" Text="NH4-N im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" NH4-N im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="NH4" Aggregat="Avg" />'
    write(1, '(A)') '  <Parameter Ident="BMXNH4" Text="NH4-N im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="NH4-N im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="NH4" Aggregat="Max" />'
@@ -432,6 +433,7 @@ subroutine ErgebMParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="bxJSi" Text="Si-Flux Wasser/Sediment(-)" Unit="gSi/(m2*d)" Format="F10.8" Help="" Group="Buhne" Quantity="" />'
    write(1, '(A)') '  <Parameter Ident="bxJO2" Text="O2Flux Wasser/Sediment(+)" Unit="gO2/(m2*d)" Format="F10.8" Help="" Group="Buhne" Quantity="" />'
    write(1, '(A)') '</ParamSetDef>'
+   
    write(1, '(A)') '</GerrisParam>'
    
    close(1)

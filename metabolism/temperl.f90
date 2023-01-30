@@ -27,46 +27,62 @@
 !> Berechnung der Lufttemperatur für eine gegebene Uhrzeit aus der Tagesmaximums-
 !! und minimumstemperatur
 !!
-!! Literatur: W.J. Parton and J.A. Logan: A MOdel for Diurnal variation in Soil and Air
+!! Literatur: W.J. Parton and J.A. Logan: A Model for Diurnal variation in Soil and Air
 !!            Temperature. - Agricultural Meteorology, 23, S.205-216 (1981)
-subroutine temperl(SA,SU,Uhrz,TEMPL,mstr,IDWe,TLMAX,TLMIN,anze,imet,azStrs)
-  
-   integer                             :: anze, azStrs
-   integer, dimension(azStrs,1000)     :: IDWe
-   real, dimension(1000), intent(out)  :: templ !< Temperatur zu einer bestimmten Uhrzeit
-   real, dimension(20), intent(in)     :: tlMax !< Tagesmaximum der Temperatur
-   real, dimension(20), intent(in)     :: tlMin !< Tagesminimum der Temperatur
-  
-   ! BBD = Zeit seit SA in h
-   ! BBD = Zeit seit SU in h
+subroutine temperl(sa, su, uhrz, templ, mstr, idwe, tlmax, tlmin, anze, imet)
+   use allodim
+   implicit none
    
-   A = 2. ! zeiliche Verschiebung des Temperaturmaximums [h]
-   B = 3. ! Koeffizient der die Temperaturabnahme während der Nacht beschreibt [-]
+   ! --- dummy arguments ---
+   real,    intent(in)                            :: sa     !< sunrise
+   real,    intent(in)                            :: su     !< sunset
+   real,    intent(in)                            :: uhrz   !< current time of simulation
+   real,    intent(out), dimension(ialloc2)       :: templ  !< air temperature at given time
+   integer, intent(in)                            :: mstr   !< current stretch
+   integer, intent(in), dimension(azStrs,ialloc2) :: IDWe   !<  
+   real,    intent(in), dimension(20)             :: tlMax  !< daily maximum of air temperature
+   real,    intent(in), dimension(20)             :: tlMin  !< daily minimum of air temperature
+   integer, intent(in)                            :: anze   !< number of segments in current stretch
+   integer, intent(in)                            :: imet   !<
+ 
+ 
+   ! --- local variables ---
+   real, parameter :: a = 2.0 ! zeiliche Verschiebung des Temperaturmaximums [h]
+   real, parameter :: b = 3.0 ! Koeffizient, der die Temperaturabnahme während der Nacht beschreibt [-]
    
-   ! Dauer des Lichttages[h]
-   ADY = SU-SA
-   ! Dauer der Nacht [h]
-   ANI = 24.-SU+SA
+   real :: a_day, a_night, t_max, t_min, bbd, t_sn
+   integer :: ior
+   
    
    do ior = 1,anze+1
-      if (imet == 1) then ! Werte der Lufttemperatur liegen im Berechnungszeittakt vor.
-         templ(ior) = TLMAX(IDWe(mstr,ior))
+      ! Werte der Lufttemperatur liegen im Berechnungszeittakt vor
+      if (imet == 1) then 
+         templ(ior) = tlmax(idwe(mstr,ior))
       
       else
-         TMX = TLMAX(IDWe(mstr,ior))
-         TMN = TLMIN(IDWe(mstr,ior))
-         if (Uhrz <= SU .and. Uhrz>=SA) then ! Festlegung ob Tag oder Nacht
-            BBD = Uhrz-SA
-            Templ(ior) = (TMX-TMN)*SIN((3.14*BBD)/(ADY + 2.*A)) +TMN
+         t_max = tlmax(idwe(mstr,ior))
+         t_min = tlmin(idwe(mstr,ior))
+         
+         ! duration of brigthness [h]
+         a_day = su - sa
+         ! duration of darkness [h]
+         a_night = 24. - a_day
+         
+         if (uhrz <= su .and. uhrz>=sa) then ! Festlegung ob Tag oder Nacht
+            ! time since sunrise
+            bbd = uhrz-sa
+            templ(ior) = (t_max-t_min)*sin((3.14*bbd)/(a_day + 2.*a)) +t_min
          else
-            if (Uhrz > SA) then
-               BBD = Uhrz-SU
+            ! time since sunset
+            if (uhrz > sa) then
+               bbd = uhrz-su
             else
-               BBD = 24.-SU+Uhrz
+               bbd = 24.-su+uhrz
             endif
-            TSN = (TMX-TMN)*SIN((3.14*ADY)/(ADY + 2.*A))+TMN
-            Templ(ior) = TMN + (TSN-TMN)*EXP(-B*BBD/ANI)
+            t_sn = (t_max - t_min) * sin((3.14*a_day) / (a_day + 2.*a)) + t_min
+            templ(ior) = t_min + (t_sn-t_min)*exp(-b*bbd/a_night)
          endif
       endif
    enddo
+
 end subroutine temperl
