@@ -274,7 +274,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                    .not.(iwsim   == 4 .and. ipp == 28) .and.     &  ! Passive tracer inactive
                    .not.(iwsim   == 5 .and. ipp == 29) .and.     &  ! Conservative substances inactive
                    .not.(iSchwer == 1 .and. ipp >= 30)      ) then  ! Heavy metals inactive
-                  write(*, '("funkstar.f90: No valid data for parameter nr. ",i3," at boundary nr. ",i3," Set to zero.")') ipp, RBNR
+                  write(*, '("funkstar.f90: No valid data for parameter nr. ",i3," at boundary nr. ",i3,". Set to zero.")') ipp, RBNR
                elseif (ipp /= 24 .and. ipp /= 25) then
                   if (iColi == 1 .and. ipp == 26) then
                      ! Coliform bacteria active

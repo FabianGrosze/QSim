@@ -4117,22 +4117,17 @@ program qsim
          call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
       endif
       
-      
+      ! Berechnung der Austauschraten zwischen Hauptstrom und Buhnenfelder
+      hctau1 = 0.
+      hctau2 = 0.
       if (nbuhn(mstr) > 0) then
-         ! Berechnung der Austauschraten zwischen Hauptstrom und Buhnenfelder
          do ior = 1,anze+1
-            hctau1(ior) = ((bf(mstr,ior)/flae(ior))*tau2(ior))*tflie*86400.
-            hctau2(ior) = tau2(ior)*tflie*86400.
-            hconF = bf(mstr,ior)/flae(ior)
-            htau1m = -0.3196*hconF**2+0.8026*hconF+0.0122
-            ! if(hctau1(ior).gt.htau1m)then
-            !    hctau1(ior) = htau1m
-            !    hctau2(ior) = 1.-htau1m
-            ! endif
+            if (tau2(ior) > 0.) then
+               hctau1(ior) = 1. - exp(-tau2(ior) * tflie * 86400. * bf(mstr,ior) / flae(ior))
+               hctau2(ior) = 1. - exp(-tau2(ior) * tflie * 86400.)
+            endif
          enddo
       endif
-      
-      
       
       ! -----------------------------------------------------------------------
       ! Sediment-Stofffluxe
@@ -4418,19 +4413,20 @@ program qsim
             algzok(ior) = zwzok(ior)
             algzog(ior) = zwzog(ior)
             algzob(ior) = zwzob(ior)
-            diff1 = bzooi(mstr,ior)-zooind(ior)
-            diff2 = bTGZoo(mstr,ior)-TGZoo(mstr,ior)
-            bdiff1 = zooind(ior)-bzooi(mstr,ior)
-            bdiff2 = TGZoo(mstr,ior)-bTGZoo(mstr,ior)
+            
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1 = bzooi(mstr,ior)  - zooind(ior)
+               diff2 = bTGZoo(mstr,ior) - TGZoo(mstr,ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               zooind(ior) = zooind(ior)+diff1*(1.-exp(-hctau1(ior)))
-               TGZoo(mstr,ior) = TGZoo(mstr,ior)+diff2*(1.-exp(-hctau1(ior)))
+               zooind(ior)     = zooind(ior)     + diff1 * hctau1(ior)
+               TGZoo(mstr,ior) = TGZoo(mstr,ior) + diff2 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bzooi(mstr,ior) = bzooi(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bTGZoo(mstr,ior) = bTGZoo(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
+               bzooi(mstr,ior)  = bzooi(mstr,ior)  - diff1 * hctau2(ior)
+               bTGZoo(mstr,ior) = bTGZoo(mstr,ior) - diff2 * hctau2(ior)
             endif
          enddo
          
@@ -4855,23 +4851,21 @@ program qsim
             vNO3z(1,ior) = zwN3z(ior)
             siz(1,ior) = zwsiz(ior)
             gelPz(1,ior) = zwPz(ior)
-            diff1 = bsvhek(mstr,ior)-svhemk(ior)
-            diff2 = bSKmor(mstr,ior)-SKmor(ior)
-            bdiff1 = svhemk(ior)-bsvhek(mstr,ior)
-            bdiff2 = SKmor(ior)-bSKmor(mstr,ior)
+            
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
+               diff1 = bsvhek(mstr,ior) - svhemk(ior)
+               diff2 = bSKmor(mstr,ior) - SKmor(ior)
+            endif
+            
             if (bleb(mstr,ior) > 0.0) then
-               svhemk(ior) = svhemk(ior)+diff1*(1.-exp(-hctau1(ior)))
-               SKmor(ior) = SKmor(ior)+diff2*(1.-exp(-hctau1(ior)))
-               if (svhemk(ior) < 0.0)svhemk(ior) = 0.0
-               if (SKmor(ior) < 0.0)SKmor(ior) = 0.0
+               svhemk(ior) = max(0., svhemk(ior) + diff1 * hctau1(ior))
+               SKmor(ior)  = max(0., SKmor(ior)  + diff2 * hctau1(ior))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bsvhek(mstr,ior) = bsvhek(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bSKmor(mstr,ior) = bSKmor(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
+               bsvhek(mstr,ior) = max(0., bsvhek(mstr,ior) - diff1 * hctau2(ior))
+               bSKmor(mstr,ior) = max(0., bSKmor(mstr,ior) - diff2 * hctau2(ior))
             endif
-            if (bsvhek(mstr,ior) < 0.0)bsvhek(mstr,ior) = 0.0
-            if (bSKmor(mstr,ior) < 0.0)bSKmor(mstr,ior) = 0.0
          enddo
          
          ilbuhn = 0
@@ -5047,19 +5041,10 @@ program qsim
             gelPz(1,ior) = zwPz(ior)
             sedAlg_MQ(mstr,ior) = zwsedAlg_MQ(ior)
             abmor_1(mstr,ior) = zwabmor_1(ior)
-            diff1 = bsvheb(mstr,ior)-svhemb(ior)
             
-            bdiff1 = svhemb(ior)-bsvheb(mstr,ior)
-            
-            if (bleb(mstr,ior) > 0.0) then
-               svhemb(ior) = svhemb(ior)+diff1*(1.-exp(-hctau1(ior)))
-               if (svhemb(ior) < 0.0)svhemb(ior) = 0.0
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bsvheb(mstr,ior) = bsvheb(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               if (bsvheb(mstr,ior) < 0.0)bsvheb(mstr,ior) = 0.0
-            endif
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) diff1 = bsvheb(mstr,ior) - svhemb(ior)
+            if (bleb(mstr,ior) > 0.0) svhemb(ior)      = max(0., svhemb(ior)      + diff1 * hctau1(ior))
+            if (hctau2(ior)    > 0.0) bsvheb(mstr,ior) = max(0., bsvheb(mstr,ior) - diff1 * hctau2(ior))
          enddo
          
          ilbuhn = 0
@@ -5257,72 +5242,70 @@ program qsim
             vNH4z(1,ior) = zwN4z(ior)
             vNO3z(1,ior) = zwN3z(ior)
             gelPz(1,ior) = zwPz(ior)
-            diff1 = bsvheg(mstr,ior)-svhemg(ior)
-            diff2 = bchlak(mstr,ior)-chlaki(ior)
-            diff3 = bchlag(mstr,ior)-chlagr(ior)
-            diff4 = bchlab(mstr,ior)-chlabl(ior)
-            diff5 = bchla(mstr,ior)-chla(ior)
-            diff6 = baki(mstr,ior)-aki(ior)
-            diff7 = bagr(mstr,ior)-agr(ior)
-            diff8 = babl(mstr,ior)-abl(ior)
-            diff9 = bakbcm(mstr,ior)-akbcm(ior)
-            diff10 = bagbcm(mstr,ior)-agbcm(ior)
-            diff11 = babbcm(mstr,ior)-abbcm(ior)
-            diff12 = bakmor_1(mstr,ior)-akmor_1(mstr,ior)
-            diff13 = babmor_1(mstr,ior)-abmor_1(mstr,ior)
-            diff14 = bagmor_1(mstr,ior)-agmor_1(mstr,ior)
-            bdiff1 = svhemg(ior)-bsvheg(mstr,ior)
-            bdiff2 = chlaki(ior)-bchlak(mstr,ior)
-            bdiff3 = chlagr(ior)-bchlag(mstr,ior)
-            bdiff4 = chlabl(ior)-bchlab(mstr,ior)
-            bdiff5 = chla(ior)-bchla(mstr,ior)
-            bdiff6 = aki(ior)-baki(mstr,ior)
-            bdiff7 = agr(ior)-bagr(mstr,ior)
-            bdiff8 = abl(ior)-babl(mstr,ior)
-            bdiff9 = akbcm(ior)-bakbcm(mstr,ior)
-            bdiff10 = agbcm(ior)-bagbcm(mstr,ior)
-            bdiff11 = abbcm(ior)-babbcm(mstr,ior)
-            bdiff12 = akmor_1(mstr,ior)-bakmor_1(mstr,ior)
-            bdiff13 = abmor_1(mstr,ior)-babmor_1(mstr,ior)
-            bdiff14 = agmor_1(mstr,ior)-bagmor_1(mstr,ior)
+            
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1  = bsvheg(mstr,ior)   - svhemg(ior)
+               diff2  = bchlak(mstr,ior)   - chlaki(ior)
+               diff3  = bchlag(mstr,ior)   - chlagr(ior)
+               diff4  = bchlab(mstr,ior)   - chlabl(ior)
+               diff5  = bchla(mstr,ior)    - chla(ior)
+               diff6  = baki(mstr,ior)     - aki(ior)
+               diff7  = bagr(mstr,ior)     - agr(ior)
+               diff8  = babl(mstr,ior)     - abl(ior)
+               diff9  = bakbcm(mstr,ior)   - akbcm(ior)
+               diff10 = bagbcm(mstr,ior)   - agbcm(ior)
+               diff11 = babbcm(mstr,ior)   - abbcm(ior)
+               diff12 = bakmor_1(mstr,ior) - akmor_1(mstr,ior)
+               diff13 = babmor_1(mstr,ior) - abmor_1(mstr,ior)
+               diff14 = bagmor_1(mstr,ior) - agmor_1(mstr,ior)
+            endif
+            
             if (bleb(mstr,ior) > 0.0) then
-               svhemg(ior) = svhemg(ior)+diff1*(1.-exp(-hctau1(ior)))
-               chlaki(ior) = chlaki(ior)+diff2*(1.-exp(-hctau1(ior)))
-               chlagr(ior) = chlagr(ior)+diff3*(1.-exp(-hctau1(ior)))
-               chlabl(ior) = chlabl(ior)+diff4*(1.-exp(-hctau1(ior)))
-               chla(ior) = chla(ior)+diff5*(1.-exp(-hctau1(ior)))
-               aki(ior) = aki(ior)+diff6*(1.-exp(-hctau1(ior)))
-               agr(ior) = agr(ior)+diff7*(1.-exp(-hctau1(ior)))
-               abl(ior) = abl(ior)+diff8*(1.-exp(-hctau1(ior)))
-               akbcm(ior) = akbcm(ior)+diff9*(1.-exp(-hctau1(ior)))
-               agbcm(ior) = agbcm(ior)+diff10*(1.-exp(-hctau1(ior)))
-               abbcm(ior) = abbcm(ior)+diff11*(1.-exp(-hctau1(ior)))
-               akmor_1(mstr,ior) = akmor_1(mstr,ior)+diff12*(1.-exp(-hctau1(ior)))
-               abmor_1(mstr,ior) = abmor_1(mstr,ior)+diff13*(1.-exp(-hctau1(ior)))
-               agmor_1(mstr,ior) = agmor_1(mstr,ior)+diff14*(1.-exp(-hctau1(ior)))
-               if (svhemg(ior) < 0.0)svhemg(ior) = 0.0
-               vkigr(ior) = chlaki(ior)/(Chlaki(ior)+chlagr(ior)+chlabl(ior))
-               antbl(ior) = chlabl(ior)/(Chlaki(ior)+chlagr(ior)+chlabl(ior))!
+               svhemg(ior)       = max(0., svhemg(ior) + diff1  * hctau1(ior))
+               chlaki(ior)       = chlaki(ior)       + diff2  * hctau1(ior)
+               chlagr(ior)       = chlagr(ior)       + diff3  * hctau1(ior)
+               chlabl(ior)       = chlabl(ior)       + diff4  * hctau1(ior)
+               chla(ior)         = chla(ior)         + diff5  * hctau1(ior)
+               aki(ior)          = aki(ior)          + diff6  * hctau1(ior)
+               agr(ior)          = agr(ior)          + diff7  * hctau1(ior)
+               abl(ior)          = abl(ior)          + diff8  * hctau1(ior)
+               akbcm(ior)        = akbcm(ior)        + diff9  * hctau1(ior)
+               agbcm(ior)        = agbcm(ior)        + diff10 * hctau1(ior)
+               abbcm(ior)        = abbcm(ior)        + diff11 * hctau1(ior)
+               akmor_1(mstr,ior) = akmor_1(mstr,ior) + diff12 * hctau1(ior)
+               abmor_1(mstr,ior) = abmor_1(mstr,ior) + diff13 * hctau1(ior)
+               agmor_1(mstr,ior) = agmor_1(mstr,ior) + diff14 * hctau1(ior)
+               if (Chlaki(ior) + chlagr(ior) + chlabl(ior) > 0.) then
+                  vkigr(ior) = chlaki(ior) / (Chlaki(ior) + chlagr(ior) + chlabl(ior))
+                  antbl(ior) = chlabl(ior) / (Chlaki(ior) + chlagr(ior) + chlabl(ior))
+               else
+                  vkigr(ior) = 1./3.
+                  antbl(ior) = 1./3.
+               endif
             endif
             
             if (hctau2(ior) > 0.0) then
-               bsvheg(mstr,ior) = bsvheg(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bchlak(mstr,ior) = bchlak(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bchlag(mstr,ior) = bchlag(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-               bchlab(mstr,ior) = bchlab(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-               bchla(mstr,ior) = bchla(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-               baki(mstr,ior) = baki(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior)))
-               bagr(mstr,ior) = bagr(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior)))
-               babl(mstr,ior) = babl(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior)))
-               bakbcm(mstr,ior) = bakbcm(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior)))
-               bagbcm(mstr,ior) = bagbcm(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior)))
-               babbcm(mstr,ior) = babbcm(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior)))
-               bakmor_1(mstr,ior) = bakmor_1(mstr,ior)+bdiff12*(1.-exp(-hctau2(ior)))
-               babmor_1(mstr,ior) = babmor_1(mstr,ior)+bdiff13*(1.-exp(-hctau2(ior)))
-               bagmor_1(mstr,ior) = bagmor_1(mstr,ior)+bdiff14*(1.-exp(-hctau2(ior)))
-               if (bsvheg(mstr,ior) < 0.0)bsvheg(mstr,ior) = 0.0
-               bvkigr(mstr,ior) = bchlak(mstr,ior)/(bChlak(mstr,ior)+bchlag(mstr,ior)+bchlab(mstr,ior))
-               bantbl(mstr,ior) = bchlab(mstr,ior)/(bChlak(mstr,ior)+bchlag(mstr,ior)+bchlab(mstr,ior))
+               bsvheg(mstr,ior)   = max(0., bsvheg(mstr,ior) - diff1 * hctau2(ior))
+               bchlak(mstr,ior)   = bchlak(mstr,ior)   - diff2 * hctau2(ior)
+               bchlag(mstr,ior)   = bchlag(mstr,ior)   - diff3 * hctau2(ior)
+               bchlab(mstr,ior)   = bchlab(mstr,ior)   - diff4 * hctau2(ior)
+               bchla(mstr,ior)    = bchla(mstr,ior)    - diff5 * hctau2(ior)
+               baki(mstr,ior)     = baki(mstr,ior)     - diff6 * hctau2(ior)
+               bagr(mstr,ior)     = bagr(mstr,ior)     - diff7 * hctau2(ior)
+               babl(mstr,ior)     = babl(mstr,ior)     - diff8 * hctau2(ior)
+               bakbcm(mstr,ior)   = bakbcm(mstr,ior)   - diff9 * hctau2(ior)
+               bagbcm(mstr,ior)   = bagbcm(mstr,ior)   - diff10 * hctau2(ior)
+               babbcm(mstr,ior)   = babbcm(mstr,ior)   - diff11 * hctau2(ior)
+               bakmor_1(mstr,ior) = bakmor_1(mstr,ior) - diff12 * hctau2(ior)
+               babmor_1(mstr,ior) = babmor_1(mstr,ior) - diff13 * hctau2(ior)
+               bagmor_1(mstr,ior) = bagmor_1(mstr,ior) - diff14 * hctau2(ior)
+               if (bChlak(mstr,ior) + bchlag(mstr,ior) + bchlab(mstr,ior) > 0.) then
+                  bvkigr(mstr,ior) = bchlak(mstr,ior) / (bChlak(mstr,ior) + bchlag(mstr,ior) + bchlab(mstr,ior))
+                  bantbl(mstr,ior) = bchlab(mstr,ior) / (bChlak(mstr,ior) + bchlag(mstr,ior) + bchlab(mstr,ior))
+               else
+                  bvkigr(mstr,ior) = 1./3.
+                  bantbl(mstr,ior) = 1./3.
+               endif
             endif
          enddo
          ilbuhn = 0
@@ -5343,7 +5326,6 @@ program qsim
       alberk(:) = 0.0
       cmatgr(:) = 0.0
       cmatki(:) = 0.0
-     
       
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]
@@ -5432,47 +5414,49 @@ program qsim
                      kontroll, jjj)
             
             ! --- mixing between groyne-field and main river ---
-            diff1  = bbsb(mstr,ior)   - obsb(ior)
-            diff2  = bcsb(mstr,ior)   - ocsb(ior)
-            diff3  = bvbsb(mstr,ior)  - vbsb(ior)
-            diff4  = bvcsb(mstr,ior)  - vcsb(ior)
-            diff5  = bcd(mstr,1,ior)  - CD(1,ior)
-            diff6  = bcd(mstr,2,ior)  - CD(2,ior)
-            diff7  = bcp(mstr,1,ior)  - CP(1,ior)
-            diff8  = bcp(mstr,2,ior)  - CP(2,ior)
-            diff9  = bcm(mstr,ior)    - CM(ior)
-            diff10 = bBAC(mstr,ior)   - BAC(ior)
-            diff11 = bfbsgr(mstr,ior) - fbsgr(ior)
-            diff12 = bfrfgr(mstr,ior) - frfgr(ior)
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1  = bbsb(mstr,ior)   - obsb(ior)
+               diff2  = bcsb(mstr,ior)   - ocsb(ior)
+               diff3  = bvbsb(mstr,ior)  - vbsb(ior)
+               diff4  = bvcsb(mstr,ior)  - vcsb(ior)
+               diff5  = bcd(mstr,1,ior)  - CD(1,ior)
+               diff6  = bcd(mstr,2,ior)  - CD(2,ior)
+               diff7  = bcp(mstr,1,ior)  - CP(1,ior)
+               diff8  = bcp(mstr,2,ior)  - CP(2,ior)
+               diff9  = bcm(mstr,ior)    - CM(ior)
+               diff10 = bBAC(mstr,ior)   - BAC(ior)
+               diff11 = bfbsgr(mstr,ior) - fbsgr(ior)
+               diff12 = bfrfgr(mstr,ior) - frfgr(ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               obsb(ior)  = obsb(ior)  + diff1  * (1. - exp(-hctau1(ior)))
-               ocsb(ior)  = ocsb(ior)  + diff2  * (1. - exp(-hctau1(ior)))
-               vbsb(ior)  = vbsb(ior)  + diff3  * (1. - exp(-hctau1(ior)))
-               vcsb(ior)  = vcsb(ior)  + diff4  * (1. - exp(-hctau1(ior)))
-               CD(1,ior)  = CD(1,ior)  + diff5  * (1. - exp(-hctau1(ior)))
-               CD(2,ior)  = CD(2,ior)  + diff6  * (1. - exp(-hctau1(ior)))
-               CP(1,ior)  = CP(1,ior)  + diff7  * (1. - exp(-hctau1(ior)))
-               CP(2,ior)  = CP(2,ior)  + diff8  * (1. - exp(-hctau1(ior)))
-               CM(ior)    = CM(ior)    + diff9  * (1. - exp(-hctau1(ior)))
-               BAC(ior)   = BAC(ior)   + diff10 * (1. - exp(-hctau1(ior)))
-               fbsgr(ior) = fbsgr(ior) + diff11 * (1. - exp(-hctau1(ior)))
-               frfgr(ior) = frfgr(ior) + diff12 * (1. - exp(-hctau1(ior)))
+               obsb(ior)  = obsb(ior)  + diff1  * hctau1(ior)
+               ocsb(ior)  = ocsb(ior)  + diff2  * hctau1(ior)
+               vbsb(ior)  = vbsb(ior)  + diff3  * hctau1(ior)
+               vcsb(ior)  = vcsb(ior)  + diff4  * hctau1(ior)
+               CD(1,ior)  = CD(1,ior)  + diff5  * hctau1(ior)
+               CD(2,ior)  = CD(2,ior)  + diff6  * hctau1(ior)
+               CP(1,ior)  = CP(1,ior)  + diff7  * hctau1(ior)
+               CP(2,ior)  = CP(2,ior)  + diff8  * hctau1(ior)
+               CM(ior)    = CM(ior)    + diff9  * hctau1(ior)
+               BAC(ior)   = BAC(ior)   + diff10 * hctau1(ior)
+               fbsgr(ior) = fbsgr(ior) + diff11 * hctau1(ior)
+               frfgr(ior) = frfgr(ior) + diff12 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bbsb(mstr,ior)   = bbsb(mstr,ior)   - diff1  * (1.-exp(-hctau2(ior)))
-               bcsb(mstr,ior)   = bcsb(mstr,ior)   - diff2  * (1.-exp(-hctau2(ior)))
-               bvbsb(mstr,ior)  = bvbsb(mstr,ior)  - diff3  * (1.-exp(-hctau2(ior)))
-               bvcsb(mstr,ior)  = bvcsb(mstr,ior)  - diff4  * (1.-exp(-hctau2(ior)))
-               bCD(mstr,1,ior)  = bCD(mstr,1,ior)  - diff5  * (1.-exp(-hctau2(ior)))
-               bCD(mstr,2,ior)  = bCD(mstr,2,ior)  - diff6  * (1.-exp(-hctau2(ior)))
-               bCP(mstr,1,ior)  = bCP(mstr,1,ior)  - diff7  * (1.-exp(-hctau2(ior)))
-               bCP(mstr,2,ior)  = bCP(mstr,2,ior)  - diff8  * (1.-exp(-hctau2(ior)))
-               bCM(mstr,ior)    = bCM(mstr,ior)    - diff9  * (1.-exp(-hctau2(ior)))
-               bBAC(mstr,ior)   = bBAC(mstr,ior)   - diff10 * (1.-exp(-hctau2(ior)))
-               bfbsgr(mstr,ior) = bfbsgr(mstr,ior) - diff11 * (1.-exp(-hctau2(ior)))
-               bfrfgr(mstr,ior) = bfrfgr(mstr,ior) - diff12 * (1.-exp(-hctau2(ior)))
+               bbsb(mstr,ior)   = bbsb(mstr,ior)   - diff1  * hctau2(ior)
+               bcsb(mstr,ior)   = bcsb(mstr,ior)   - diff2  * hctau2(ior)
+               bvbsb(mstr,ior)  = bvbsb(mstr,ior)  - diff3  * hctau2(ior)
+               bvcsb(mstr,ior)  = bvcsb(mstr,ior)  - diff4  * hctau2(ior)
+               bCD(mstr,1,ior)  = bCD(mstr,1,ior)  - diff5  * hctau2(ior)
+               bCD(mstr,2,ior)  = bCD(mstr,2,ior)  - diff6  * hctau2(ior)
+               bCP(mstr,1,ior)  = bCP(mstr,1,ior)  - diff7  * hctau2(ior)
+               bCP(mstr,2,ior)  = bCP(mstr,2,ior)  - diff8  * hctau2(ior)
+               bCM(mstr,ior)    = bCM(mstr,ior)    - diff9  * hctau2(ior)
+               bBAC(mstr,ior)   = bBAC(mstr,ior)   - diff10 * hctau2(ior)
+               bfbsgr(mstr,ior) = bfbsgr(mstr,ior) - diff11 * hctau2(ior)
+               bfrfgr(mstr,ior) = bfrfgr(mstr,ior) - diff12 * hctau2(ior)
             endif
          enddo
       endif
@@ -5589,45 +5573,47 @@ program qsim
                        
             
             
-            ! mixing between main river and groyne-field 
-            diff1  = bx0(mstr,ior)    - vx0(ior)
-            diff2  = bx02(mstr,ior)   - vx02(ior)
-            diff3  = bnh4(mstr,ior)   - vnh4(ior)
-            diff4  = bno2(mstr,ior)   - vno2(ior)
-            diff5  = bno3(mstr,ior)   - vno3(ior)
-            diff6  = bnl0(mstr,ior)   - nl0(ior)
-            diff7  = bgesN(mstr,ior)  - gesN(ior)
-            diff8  = bQ_NK(mstr,ior)  - Q_NK(ior)
-            diff9  = bQ_NG(mstr,ior)  - Q_NG(ior)
-            diff10 = bQ_NB(mstr,ior)  - Q_NB(ior)
-            diff11 = bFluN3(mstr,ior) - hFluN3(mstr,ior)
+            ! mixing between main river and groyne-field
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
+               diff1  = bx0(mstr,ior)    - vx0(ior)
+               diff2  = bx02(mstr,ior)   - vx02(ior)
+               diff3  = bnh4(mstr,ior)   - vnh4(ior)
+               diff4  = bno2(mstr,ior)   - vno2(ior)
+               diff5  = bno3(mstr,ior)   - vno3(ior)
+               diff6  = bnl0(mstr,ior)   - nl0(ior)
+               diff7  = bgesN(mstr,ior)  - gesN(ior)
+               diff8  = bQ_NK(mstr,ior)  - Q_NK(ior)
+               diff9  = bQ_NG(mstr,ior)  - Q_NG(ior)
+               diff10 = bQ_NB(mstr,ior)  - Q_NB(ior)
+               diff11 = bFluN3(mstr,ior) - hFluN3(mstr,ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               vx0(ior)         = vx0(ior)         + diff1  * (1.-exp(-hctau1(ior)))
-               vx02(ior)        = vx02(ior)        + diff2  * (1.-exp(-hctau1(ior)))
-               vnh4(ior)        = vnh4(ior)        + diff3  * (1.-exp(-hctau1(ior)))
-               vno2(ior)        = vno2(ior)        + diff4  * (1.-exp(-hctau1(ior)))
-               vno3(ior)        = vno3(ior)        + diff5  * (1.-exp(-hctau1(ior)))
-               nl0(ior)         = nl0(ior)         + diff6  * (1.-exp(-hctau1(ior)))
-               gesN(ior)        = gesN(ior)        + diff7  * (1.-exp(-hctau1(ior)))
-               Q_NK(ior)        = Q_NK(ior)        + diff8  * (1.-exp(-hctau1(ior)))
-               Q_NG(ior)        = Q_NG(ior)        + diff9  * (1.-exp(-hctau1(ior)))
-               Q_NB(ior)        = Q_NB(ior)        + diff10 * (1.-exp(-hctau1(ior)))
-               hFluN3(mstr,ior) = hFluN3(mstr,ior) + diff11 * (1.-exp(-hctau1(ior)))
-            endif 
+               vx0(ior)         = vx0(ior)         + diff1  * hctau1(ior)
+               vx02(ior)        = vx02(ior)        + diff2  * hctau1(ior)
+               vnh4(ior)        = vnh4(ior)        + diff3  * hctau1(ior)
+               vno2(ior)        = vno2(ior)        + diff4  * hctau1(ior)
+               vno3(ior)        = vno3(ior)        + diff5  * hctau1(ior)
+               nl0(ior)         = nl0(ior)         + diff6  * hctau1(ior)
+               gesN(ior)        = gesN(ior)        + diff7  * hctau1(ior)
+               Q_NK(ior)        = Q_NK(ior)        + diff8  * hctau1(ior)
+               Q_NG(ior)        = Q_NG(ior)        + diff9  * hctau1(ior)
+               Q_NB(ior)        = Q_NB(ior)        + diff10 * hctau1(ior)
+               hFluN3(mstr,ior) = hFluN3(mstr,ior) + diff11 * hctau1(ior)
+            endif
             
             if (hctau2(ior) > 0.0) then
-               bx0(mstr,ior)    = bx0(mstr,ior)    - diff1  * (1.-exp(-hctau2(ior)))
-               bx02(mstr,ior)   = bx02(mstr,ior)   - diff2  * (1.-exp(-hctau2(ior)))
-               bnh4(mstr,ior)   = bnh4(mstr,ior)   - diff3  * (1.-exp(-hctau2(ior)))
-               bno2(mstr,ior)   = bno2(mstr,ior)   - diff4  * (1.-exp(-hctau2(ior)))
-               bno3(mstr,ior)   = bno3(mstr,ior)   - diff5  * (1.-exp(-hctau2(ior)))
-               bnl0(mstr,ior)   = bnl0(mstr,ior)   - diff6  * (1.-exp(-hctau2(ior)))
-               bgesN(mstr,ior)  = bgesN(mstr,ior)  - diff7  * (1.-exp(-hctau2(ior)))
-               bQ_NK(mstr,ior)  = bQ_NK(mstr,ior)  - diff8  * (1.-exp(-hctau2(ior)))
-               bQ_NG(mstr,ior)  = bQ_NG(mstr,ior)  - diff9  * (1.-exp(-hctau2(ior)))
-               bQ_NB(mstr,ior)  = bQ_NB(mstr,ior)  - diff10 * (1.-exp(-hctau2(ior)))
-               bFluN3(mstr,ior) = bFluN3(mstr,ior) - diff11 * (1.-exp(-hctau2(ior)))
+               bx0(mstr,ior)    = bx0(mstr,ior)    - diff1  * hctau2(ior)
+               bx02(mstr,ior)   = bx02(mstr,ior)   - diff2  * hctau2(ior)
+               bnh4(mstr,ior)   = bnh4(mstr,ior)   - diff3  * hctau2(ior)
+               bno2(mstr,ior)   = bno2(mstr,ior)   - diff4  * hctau2(ior)
+               bno3(mstr,ior)   = bno3(mstr,ior)   - diff5  * hctau2(ior)
+               bnl0(mstr,ior)   = bnl0(mstr,ior)   - diff6  * hctau2(ior)
+               bgesN(mstr,ior)  = bgesN(mstr,ior)  - diff7  * hctau2(ior)
+               bQ_NK(mstr,ior)  = bQ_NK(mstr,ior)  - diff8  * hctau2(ior)
+               bQ_NG(mstr,ior)  = bQ_NG(mstr,ior)  - diff9  * hctau2(ior)
+               bQ_NB(mstr,ior)  = bQ_NB(mstr,ior)  - diff10 * hctau2(ior)
+               bFluN3(mstr,ior) = bFluN3(mstr,ior) - diff11 * hctau2(ior)
             endif
          enddo
       endif
@@ -5678,30 +5664,32 @@ program qsim
                     bsusn(mstr,ior),bpo2p(mstr,ior),bpo2r(mstr,ior),bssalg(mstr,ior),bstind(mstr,ior),               &
                     kontroll, jjj)
              
-            ! mixing between main river and groyne-field 
-            diff1  = bmw(mstr,ior) - mw(ior)
-            diff2  = bpw(mstr,ior) - pw(ior)
-            diff3  = bca(mstr,ior) - ca(ior)
-            diff4  = blf(mstr,ior) - lf(ior)
-            diff5  = bph(mstr,ior) - vph(ior)
-            diff6  = bstind(mstr,ior) - stind(ior)
+            ! mixing between main river and groyne-field
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1  = bmw(mstr,ior)    - mw(ior)
+               diff2  = bpw(mstr,ior)    - pw(ior)
+               diff3  = bca(mstr,ior)    - ca(ior)
+               diff4  = blf(mstr,ior)    - lf(ior)
+               diff5  = bph(mstr,ior)    - vph(ior)
+               diff6  = bstind(mstr,ior) - stind(ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               mw(ior)    = mw(ior)    + diff1 * (1.-exp(-hctau1(ior)))
-               pw(ior)    = pw(ior)    + diff2 * (1.-exp(-hctau1(ior)))
-               ca(ior)    = ca(ior)    + diff3 * (1.-exp(-hctau1(ior)))
-               lf(ior)    = lf(ior)    + diff4 * (1.-exp(-hctau1(ior)))
-               vph(ior)   = vph(ior)   + diff5 * (1.-exp(-hctau1(ior)))
-               stind(ior) = stind(ior) + diff6 * (1.-exp(-hctau1(ior)))
+               mw(ior)    = mw(ior)    + diff1 * hctau1(ior)
+               pw(ior)    = pw(ior)    + diff2 * hctau1(ior)
+               ca(ior)    = ca(ior)    + diff3 * hctau1(ior)
+               lf(ior)    = lf(ior)    + diff4 * hctau1(ior)
+               vph(ior)   = vph(ior)   + diff5 * hctau1(ior)
+               stind(ior) = stind(ior) + diff6 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bmw(mstr,ior)    = bmw(mstr,ior)    - diff1 * (1.-exp(-hctau2(ior)))
-               bpw(mstr,ior)    = bpw(mstr,ior)    - diff2 * (1.-exp(-hctau2(ior)))
-               bca(mstr,ior)    = bca(mstr,ior)    - diff3 * (1.-exp(-hctau2(ior)))
-               blf(mstr,ior)    = blf(mstr,ior)    - diff4 * (1.-exp(-hctau2(ior)))
-               bph(mstr,ior)    = bph(mstr,ior)    - diff5 * (1.-exp(-hctau2(ior)))
-               bstind(mstr,ior) = bstind(mstr,ior) - diff6 * (1.-exp(-hctau2(ior)))
+               bmw(mstr,ior)    = bmw(mstr,ior)    - diff1 * hctau2(ior)
+               bpw(mstr,ior)    = bpw(mstr,ior)    - diff2 * hctau2(ior)
+               bca(mstr,ior)    = bca(mstr,ior)    - diff3 * hctau2(ior)
+               blf(mstr,ior)    = blf(mstr,ior)    - diff4 * hctau2(ior)
+               bph(mstr,ior)    = bph(mstr,ior)    - diff5 * hctau2(ior)
+               bstind(mstr,ior) = bstind(mstr,ior) - diff6 * hctau2(ior)
             endif
          enddo
       endif
@@ -5758,18 +5746,17 @@ program qsim
                tempwz(nkz,ior) = zwtez(nkz,ior)
             enddo
             tiefe(ior) = zwtief(ior)
-            diff1 = btempw(mstr,ior)-tempw(ior)
-            bdiff1 = tempw(ior)-btempw(mstr,ior)
+            
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) diff1 = btempw(mstr,ior) - tempw(ior)
             if (bleb(mstr,ior) > 0.0) then
-               tempw(ior) = tempw(ior)+diff1*(1.-exp(-hctau1(ior)))
-               
+               tempw(ior) = tempw(ior) + diff1 * hctau1(ior)
                do nkz = 1,nkzs(ior)
-                  tempwz(nkz,ior) = tempwz(nkz,ior)+(btempw(mstr,ior)-tempw(ior))*(1.-exp(-hctau1(ior)))
+                  tempwz(nkz,ior) = tempwz(nkz,ior) + diff1 * hctau1(ior)
                enddo
             endif
             
             if (hctau2(ior) > 0.0) then
-               btempw(mstr,ior) = btempw(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
+               btempw(mstr,ior) = btempw(mstr,ior) - diff1 * hctau2(ior)
             endif
          enddo
          
@@ -5833,30 +5820,32 @@ program qsim
                            tflie,                                                                             &
                            kontroll, jjj)
             
-            ! mixing of groyne fields and main river 
-            diff1 = bgelp(mstr,ior) - gelp(ior)
-            diff2 = bpl0(mstr,ior)  - pl0(ior)
-            diff3 = bgesP(mstr,ior) - gesP(ior)
-            diff4 = bQ_PK(mstr,ior) - Q_PK(ior)
-            diff5 = bQ_PG(mstr,ior) - Q_PG(ior)
-            diff6 = bQ_PB(mstr,ior) - Q_PB(ior)
+            ! mixing of groyne fields and main river
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1 = bgelp(mstr,ior) - gelp(ior)
+               diff2 = bpl0(mstr,ior)  - pl0(ior)
+               diff3 = bgesP(mstr,ior) - gesP(ior)
+               diff4 = bQ_PK(mstr,ior) - Q_PK(ior)
+               diff5 = bQ_PG(mstr,ior) - Q_PG(ior)
+               diff6 = bQ_PB(mstr,ior) - Q_PB(ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               gelp(ior) = gelp(ior) + diff1 * (1.-exp(-hctau1(ior)))
-               pl0(ior)  = pl0(ior)  + diff2 * (1.-exp(-hctau1(ior)))
-               gesP(ior) = gesP(ior) + diff3 * (1.-exp(-hctau1(ior)))
-               Q_PK(ior) = Q_PK(ior) + diff4 * (1.-exp(-hctau1(ior)))
-               Q_PG(ior) = Q_PG(ior) + diff5 * (1.-exp(-hctau1(ior)))
-               Q_PB(ior) = Q_PB(ior) + diff6 * (1.-exp(-hctau1(ior)))
+               gelp(ior) = gelp(ior) + diff1 * hctau1(ior)
+               pl0(ior)  = pl0(ior)  + diff2 * hctau1(ior)
+               gesP(ior) = gesP(ior) + diff3 * hctau1(ior)
+               Q_PK(ior) = Q_PK(ior) + diff4 * hctau1(ior)
+               Q_PG(ior) = Q_PG(ior) + diff5 * hctau1(ior)
+               Q_PB(ior) = Q_PB(ior) + diff6 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bgelp(mstr,ior) = bgelp(mstr,ior) - diff1*(1.-exp(-hctau2(ior)))
-               bpl0(mstr,ior)  = bpl0(mstr,ior)  - diff2*(1.-exp(-hctau2(ior)))
-               bgesP(mstr,ior) = bgesP(mstr,ior) - diff3*(1.-exp(-hctau2(ior)))
-               bQ_PK(mstr,ior) = bQ_PK(mstr,ior) - diff4*(1.-exp(-hctau2(ior)))
-               bQ_PG(mstr,ior) = bQ_PG(mstr,ior) - diff5*(1.-exp(-hctau2(ior)))
-               bQ_PB(mstr,ior) = bQ_PB(mstr,ior) - diff6*(1.-exp(-hctau2(ior)))
+               bgelp(mstr,ior) = bgelp(mstr,ior) - diff1 * hctau2(ior)
+               bpl0(mstr,ior)  = bpl0(mstr,ior)  - diff2 * hctau2(ior)
+               bgesP(mstr,ior) = bgesP(mstr,ior) - diff3 * hctau2(ior)
+               bQ_PK(mstr,ior) = bQ_PK(mstr,ior) - diff4 * hctau2(ior)
+               bQ_PG(mstr,ior) = bQ_PG(mstr,ior) - diff5 * hctau2(ior)
+               bQ_PB(mstr,ior) = bQ_PB(mstr,ior) - diff6 * hctau2(ior)
             endif
          enddo
       endif
@@ -5890,18 +5879,20 @@ program qsim
                           bh(mstr,ior), tflie,                                               &
                           kontroll, jjj)
             
-            ! mixing between main river and groyne-field 
-            diff1 = bsi(mstr,ior)   - si(ior)
-            diff2 = bQ_SK(mstr,ior) - Q_SK(ior)
+            ! mixing between main river and groyne-field
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1 = bsi(mstr,ior)   - si(ior)
+               diff2 = bQ_SK(mstr,ior) - Q_SK(ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               si(ior)   = si(ior)   + diff1 * (1.-exp(-hctau1(ior)))
-               Q_SK(ior) = Q_SK(ior) + diff2 * (1.-exp(-hctau1(ior)))
+               si(ior)   = si(ior)   + diff1 * hctau1(ior)
+               Q_SK(ior) = Q_SK(ior) + diff2 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bsi(mstr,ior)   = bsi(mstr,ior)   - diff1 * (1.-exp(-hctau2(ior)))
-               bQ_SK(mstr,ior) = bQ_SK(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
+               bsi(mstr,ior)   = bsi(mstr,ior)   - diff1 * hctau2(ior)
+               bQ_SK(mstr,ior) = bQ_SK(mstr,ior) - diff2 * hctau2(ior)
             endif
          enddo
       
@@ -5977,15 +5968,9 @@ program qsim
                      kontroll, jjj)
             
             ! Mixing of main river and groyne-fields
-            diff1 = bo2(mstr,ior) - vo2(ior)
-            
-            if (bleb(mstr,ior) > 0.0) then
-               vo2(ior) = vo2(ior) + diff1 * (1.-exp(-hctau1(ior)))
-            endif
-               
-            if (hctau2(ior) > 0.0) then
-                bo2(mstr,ior) = bo2(mstr,ior) - diff1 * (1. - exp(-hctau2(ior)))
-            endif
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) diff1 = bo2(mstr,ior) - vo2(ior)
+            if (bleb(mstr,ior) > 0.0) vo2(ior)      = vo2(ior)      + diff1 * hctau1(ior)
+            if (hctau2(ior)    > 0.0) bo2(mstr,ior) = bo2(mstr,ior) - diff1 * hctau2(ior)
          endif
       enddo
       ! -----------------------------------------------------------------------
@@ -6099,23 +6084,22 @@ program qsim
             sedss(ior) = zwsedS(ior)
             sedSS_MQ(mstr,ior) = zwsedSS_MQ(ior)
             if (ieros == 0) then
-               diff1 = bss(mstr,ior)-ss(ior)
-               diff2 = bssalg(mstr,ior)-ssalg(ior)
-               diff3 = bfssgr(mstr,ior)-fssgr(ior)
-               bdiff1 = ss(ior)-bss(mstr,ior)
-               bdiff2 = ssalg(ior)-bssalg(mstr,ior)
-               bdiff3 = fssgr(ior)-bfssgr(mstr,ior)
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1 = bss(mstr,ior)    - ss(ior)
+                  diff2 = bssalg(mstr,ior) - ssalg(ior)
+                  diff3 = bfssgr(mstr,ior) - fssgr(ior)
+               endif
                
                if (bleb(mstr,ior) > 0.0) then
-                  ss(ior) = ss(ior)+diff1*(1.-exp(-hctau1(ior)))
-                  ssalg(ior) = ssalg(ior)+diff2*(1.-exp(-hctau1(ior)))
-                  fssgr(ior) = fssgr(ior)+diff3*(1.-exp(-hctau1(ior)))
+                  ss(ior)    = ss(ior)    + diff1 * hctau1(ior)
+                  ssalg(ior) = ssalg(ior) + diff2 * hctau1(ior)
+                  fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
                endif
                
                if (hctau2(ior) > 0.0) then
-                  bss(mstr,ior) = bss(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-                  bssalg(mstr,ior) = bssalg(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-                  bfssgr(mstr,ior) = bfssgr(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
+                  bss(mstr,ior)    = bss(mstr,ior)    - diff1 * hctau2(ior)
+                  bssalg(mstr,ior) = bssalg(mstr,ior) - diff2 * hctau2(ior)
+                  bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
                endif
             endif
          enddo
@@ -6165,19 +6149,19 @@ program qsim
             tiefe(ior) = zwtief(ior)
             coli(ior) = zwcoli(ior)
             
-            diff1 = bcoli(mstr,ior)-coli(ior)
-            diff2 = bDOSCF(mstr,ior)-DOSCF(ior)
-            bdiff1 = coli(ior)-bcoli(mstr,ior)
-            bdiff2 = DOSCF(ior)-bDOSCF(mstr,ior)
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
+               diff1 = bcoli(mstr,ior)  - coli(ior)
+               diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
+            endif
             
             if (bleb(mstr,ior) > 0.0) then
-               coli(ior) = coli(ior)+diff1*(1.-exp(-hctau1(ior)))
-               DOSCF(ior) = DOSCF(ior)+diff2*(1.-exp(-hctau1(ior)))
+               coli(ior)  = coli(ior)  + diff1 * hctau1(ior)
+               DOSCF(ior) = DOSCF(ior) + diff2 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bcoli(mstr,ior) = bcoli(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bDOSCF(mstr,ior) = bDOSCF(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
+               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * hctau2(ior)
+               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * hctau2(ior)
             endif
          enddo
          ilbuhn = 0
@@ -6237,22 +6221,23 @@ program qsim
             SSeros(ior) = zwSSeros(ior)
             dsedH(mstr,ior) = zwdsedH(mstr,ior)
             ! btausc(mstr,ior) = tausc(mstr,ior)
-            diff1 = bssalg(mstr,ior)-ssalg(ior)
-            diff2 = bss(mstr,ior)-ss(ior)
-            diff3 = bfssgr(mstr,ior)-fssgr(ior)
-            bdiff1 = ssalg(ior)-bssalg(mstr,ior)
-            bdiff2 = ss(ior)-bss(mstr,ior)
-            bdiff3 = fssgr(ior)-bfssgr(mstr,ior)
+            
+            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+               diff1 = bssalg(mstr,ior) - ssalg(ior)
+               diff2 = bss(mstr,ior)    - ss(ior)
+               diff3 = bfssgr(mstr,ior) - fssgr(ior)
+            endif
+            
             if (bleb(mstr,ior) > 0.0) then
-               ssalg(ior) = ssalg(ior)+diff1*(1.-exp(-hctau1(ior)))
-               ss(ior) = ss(ior)+diff2*(1.-exp(-hctau1(ior)))
-               fssgr(ior) = fssgr(ior)+diff3*(1.-exp(-hctau1(ior)))
+               ssalg(ior) = ssalg(ior) + diff1 * hctau1(ior)
+               ss(ior)    = ss(ior)    + diff2 * hctau1(ior)
+               fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
-               bssalg(mstr,ior) = bssalg(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-               bss(mstr,ior) = bss(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-               bfssgr(mstr,ior) = bfssgr(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
+               bssalg(mstr,ior) = bssalg(mstr,ior) - diff1 * hctau2(ior)
+               bss(mstr,ior)    = bss(mstr,ior)    - diff2 * hctau2(ior)
+               bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
             endif
          enddo
          ilbuhn = 0
@@ -6453,98 +6438,80 @@ program qsim
                vph(ior) = zwph(ior)
                anzZeit(mstr,ior) = zwanzZeit(mstr,ior)
                jiein(ior) = zwjiein(ior)
-               diff1 = bgsZn(mstr,ior)-hgsZn(mstr,ior)
-               diff2 = bglZn(mstr,ior)-hglZn(mstr,ior)
-               diff3 = bgsCad(mstr,ior)-hgsCad(mstr,ior)
-               diff4 = bglCad(mstr,ior)-hglCad(mstr,ior)
-               diff5 = bgsCu(mstr,ior)-hgsCu(mstr,ior)
-               diff6 = bglCu(mstr,ior)-hglCu(mstr,ior)
-               diff7 = bgsNi(mstr,ior)-hgsNi(mstr,ior)
-               diff8 = bglNi(mstr,ior)-hglNi(mstr,ior)
-               diff9 = bgsAs(mstr,ior)-hgsAs(mstr,ior)
-               diff10 = bglAs(mstr,ior)-hglAs(mstr,ior)
-               diff11 = bgsPb(mstr,ior)-hgsPb(mstr,ior)
-               diff12 = bglPb(mstr,ior)-hglPb(mstr,ior)
-               diff13 = bgsCr(mstr,ior)-hgsCr(mstr,ior)
-               diff14 = bglCr(mstr,ior)-hglCr(mstr,ior)
-               diff15 = bgsFe(mstr,ior)-hgsFe(mstr,ior)
-               diff16 = bglFe(mstr,ior)-hglFe(mstr,ior)
-               diff17 = bgsHg(mstr,ior)-hgsHg(mstr,ior)
-               diff18 = bglHg(mstr,ior)-hglHg(mstr,ior)
-               diff19 = bgsMn(mstr,ior)-hgsMn(mstr,ior)
-               diff20 = bglMn(mstr,ior)-hglMn(mstr,ior)
-               diff21 = bgsU(mstr,ior)-hgsU(mstr,ior)
-               diff22 = bglU(mstr,ior)-hglU(mstr,ior)
-               bdiff1 = hgsZn(mstr,ior)-bgsZn(mstr,ior)
-               bdiff2 = hglZn(mstr,ior)-bglZn(mstr,ior)
-               bdiff3 = hgsCad(mstr,ior)-bgsCad(mstr,ior)
-               bdiff4 = hglCad(mstr,ior)-bglCad(mstr,ior)
-               bdiff5 = hgsCu(mstr,ior)-bgsCu(mstr,ior)
-               bdiff6 = hglCu(mstr,ior)-bglCu(mstr,ior)
-               bdiff7 = hgsNi(mstr,ior)-bgsNi(mstr,ior)
-               bdiff8 = hglNi(mstr,ior)-bglNi(mstr,ior)
-               bdiff9 = hgsAs(mstr,ior)-bgsAs(mstr,ior)
-               bdiff10 = hglAs(mstr,ior)-bglAs(mstr,ior)
-               bdiff11 = hgsPb(mstr,ior)-bgsPb(mstr,ior)
-               bdiff12 = hglPb(mstr,ior)-bglPb(mstr,ior)
-               bdiff13 = hgsCr(mstr,ior)-bgsCr(mstr,ior)
-               bdiff14 = hglCr(mstr,ior)-bglCr(mstr,ior)
-               bdiff15 = hgsFe(mstr,ior)-bgsFe(mstr,ior)
-               bdiff16 = hglFe(mstr,ior)-bglFe(mstr,ior)
-               bdiff17 = hgsHg(mstr,ior)-bgsHg(mstr,ior)
-               bdiff18 = hglHg(mstr,ior)-bglHg(mstr,ior)
-               bdiff19 = hgsMn(mstr,ior)-bgsMn(mstr,ior)
-               bdiff20 = hglMn(mstr,ior)-bglMn(mstr,ior)
-               bdiff21 = hgsU(mstr,ior)-bgsU(mstr,ior)
-               bdiff22 = hglU(mstr,ior)-bglU(mstr,ior)
+               
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1  = bgsZn(mstr,ior)  - hgsZn(mstr,ior)
+                  diff2  = bglZn(mstr,ior)  - hglZn(mstr,ior)
+                  diff3  = bgsCad(mstr,ior) - hgsCad(mstr,ior)
+                  diff4  = bglCad(mstr,ior) - hglCad(mstr,ior)
+                  diff5  = bgsCu(mstr,ior)  - hgsCu(mstr,ior)
+                  diff6  = bglCu(mstr,ior)  - hglCu(mstr,ior)
+                  diff7  = bgsNi(mstr,ior)  - hgsNi(mstr,ior)
+                  diff8  = bglNi(mstr,ior)  - hglNi(mstr,ior)
+                  diff9  = bgsAs(mstr,ior)  - hgsAs(mstr,ior)
+                  diff10 = bglAs(mstr,ior)  - hglAs(mstr,ior)
+                  diff11 = bgsPb(mstr,ior)  - hgsPb(mstr,ior)
+                  diff12 = bglPb(mstr,ior)  - hglPb(mstr,ior)
+                  diff13 = bgsCr(mstr,ior)  - hgsCr(mstr,ior)
+                  diff14 = bglCr(mstr,ior)  - hglCr(mstr,ior)
+                  diff15 = bgsFe(mstr,ior)  - hgsFe(mstr,ior)
+                  diff16 = bglFe(mstr,ior)  - hglFe(mstr,ior)
+                  diff17 = bgsHg(mstr,ior)  - hgsHg(mstr,ior)
+                  diff18 = bglHg(mstr,ior)  - hglHg(mstr,ior)
+                  diff19 = bgsMn(mstr,ior)  - hgsMn(mstr,ior)
+                  diff20 = bglMn(mstr,ior)  - hglMn(mstr,ior)
+                  diff21 = bgsU(mstr,ior)   - hgsU(mstr,ior)
+                  diff22 = bglU(mstr,ior)   - hglU(mstr,ior)
+               endif
+               
                if (bleb(mstr,ior) > 0.0) then
-                  hgsZn(mstr,ior) = hgsZn(mstr,ior)+diff1*(1.-exp(-hctau1(ior)))
-                  hglZn(mstr,ior) = hglZn(mstr,ior)+diff2*(1.-exp(-hctau1(ior)))
-                  hgsCad(mstr,ior) = hgsCad(mstr,ior)+diff3*(1.-exp(-hctau1(ior)))
-                  hglCad(mstr,ior) = hglCad(mstr,ior)+diff4*(1.-exp(-hctau1(ior)))
-                  hgsCu(mstr,ior) = hgsCu(mstr,ior)+diff5*(1.-exp(-hctau1(ior)))
-                  hglCu(mstr,ior) = hglCu(mstr,ior)+diff6*(1.-exp(-hctau1(ior)))
-                  hgsNi(mstr,ior) = hgsNi(mstr,ior)+diff7*(1.-exp(-hctau1(ior)))
-                  hglNi(mstr,ior) = hglNi(mstr,ior)+diff8*(1.-exp(-hctau1(ior)))
-                  hgsAs(mstr,ior) = hgsAs(mstr,ior)+diff9*(1.-exp(-hctau1(ior)))
-                  hglAs(mstr,ior) = hglAs(mstr,ior)+diff10*(1.-exp(-hctau1(ior)))
-                  hgsPb(mstr,ior) = hgsPb(mstr,ior)+diff11*(1.-exp(-hctau1(ior)))
-                  hglPb(mstr,ior) = hglPb(mstr,ior)+diff12*(1.-exp(-hctau1(ior)))
-                  hgsCr(mstr,ior) = hgsCr(mstr,ior)+diff13*(1.-exp(-hctau1(ior)))
-                  hglCr(mstr,ior) = hglCr(mstr,ior)+diff14*(1.-exp(-hctau1(ior)))
-                  hgsFe(mstr,ior) = hgsFe(mstr,ior)+diff15*(1.-exp(-hctau1(ior)))
-                  hglFe(mstr,ior) = hglFe(mstr,ior)+diff16*(1.-exp(-hctau1(ior)))
-                  hgsHg(mstr,ior) = hgsHg(mstr,ior)+diff17*(1.-exp(-hctau1(ior)))
-                  hglHg(mstr,ior) = hglHg(mstr,ior)+diff18*(1.-exp(-hctau1(ior)))
-                  hgsMn(mstr,ior) = hgsMn(mstr,ior)+diff19*(1.-exp(-hctau1(ior)))
-                  hglMn(mstr,ior) = hglMn(mstr,ior)+diff20*(1.-exp(-hctau1(ior)))
-                  hgsU(mstr,ior) = hgsU(mstr,ior)+diff21*(1.-exp(-hctau1(ior)))
-                  hglU(mstr,ior) = hglU(mstr,ior)+diff22*(1.-exp(-hctau1(ior)))
+                  hgsZn(mstr,ior)  = hgsZn(mstr,ior)  + diff1  * hctau1(ior)
+                  hglZn(mstr,ior)  = hglZn(mstr,ior)  + diff2  * hctau1(ior)
+                  hgsCad(mstr,ior) = hgsCad(mstr,ior) + diff3  * hctau1(ior)
+                  hglCad(mstr,ior) = hglCad(mstr,ior) + diff4  * hctau1(ior)
+                  hgsCu(mstr,ior)  = hgsCu(mstr,ior)  + diff5  * hctau1(ior)
+                  hglCu(mstr,ior)  = hglCu(mstr,ior)  + diff6  * hctau1(ior)
+                  hgsNi(mstr,ior)  = hgsNi(mstr,ior)  + diff7  * hctau1(ior)
+                  hglNi(mstr,ior)  = hglNi(mstr,ior)  + diff8  * hctau1(ior)
+                  hgsAs(mstr,ior)  = hgsAs(mstr,ior)  + diff9  * hctau1(ior)
+                  hglAs(mstr,ior)  = hglAs(mstr,ior)  + diff10 * hctau1(ior)
+                  hgsPb(mstr,ior)  = hgsPb(mstr,ior)  + diff11 * hctau1(ior)
+                  hglPb(mstr,ior)  = hglPb(mstr,ior)  + diff12 * hctau1(ior)
+                  hgsCr(mstr,ior)  = hgsCr(mstr,ior)  + diff13 * hctau1(ior)
+                  hglCr(mstr,ior)  = hglCr(mstr,ior)  + diff14 * hctau1(ior)
+                  hgsFe(mstr,ior)  = hgsFe(mstr,ior)  + diff15 * hctau1(ior)
+                  hglFe(mstr,ior)  = hglFe(mstr,ior)  + diff16 * hctau1(ior)
+                  hgsHg(mstr,ior)  = hgsHg(mstr,ior)  + diff17 * hctau1(ior)
+                  hglHg(mstr,ior)  = hglHg(mstr,ior)  + diff18 * hctau1(ior)
+                  hgsMn(mstr,ior)  = hgsMn(mstr,ior)  + diff19 * hctau1(ior)
+                  hglMn(mstr,ior)  = hglMn(mstr,ior)  + diff20 * hctau1(ior)
+                  hgsU(mstr,ior)   = hgsU(mstr,ior)   + diff21 * hctau1(ior)
+                  hglU(mstr,ior)   = hglU(mstr,ior)   + diff22 * hctau1(ior)
                endif
                
                if (hctau2(ior) > 0.0) then
-                  bgsZn(mstr,ior) = bgsZn(mstr,ior)+bdiff1*(1.-exp(-hctau2(ior)))
-                  bglZn(mstr,ior) = bglZn(mstr,ior)+bdiff2*(1.-exp(-hctau2(ior)))
-                  bgsCad(mstr,ior) = bgsCad(mstr,ior)+bdiff3*(1.-exp(-hctau2(ior)))
-                  bglCad(mstr,ior) = bglCad(mstr,ior)+bdiff4*(1.-exp(-hctau2(ior)))
-                  bgsCu(mstr,ior) = bgsCu(mstr,ior)+bdiff5*(1.-exp(-hctau2(ior)))
-                  bglCu(mstr,ior) = bglCu(mstr,ior)+bdiff6*(1.-exp(-hctau2(ior)))
-                  bgsNi(mstr,ior) = bgsNi(mstr,ior)+bdiff7*(1.-exp(-hctau2(ior)))
-                  bglNi(mstr,ior) = bglNi(mstr,ior)+bdiff8*(1.-exp(-hctau2(ior)))
-                  bgsAs(mstr,ior) = bgsAs(mstr,ior)+bdiff9*(1.-exp(-hctau2(ior)))
-                  bglAs(mstr,ior) = bglAs(mstr,ior)+bdiff10*(1.-exp(-hctau2(ior)))
-                  bgsPb(mstr,ior) = bgsPb(mstr,ior)+bdiff11*(1.-exp(-hctau2(ior)))
-                  bglPb(mstr,ior) = bglPb(mstr,ior)+bdiff12*(1.-exp(-hctau2(ior)))
-                  bgsCr(mstr,ior) = bgsCr(mstr,ior)+bdiff13*(1.-exp(-hctau2(ior)))
-                  bglCr(mstr,ior) = bglCr(mstr,ior)+bdiff14*(1.-exp(-hctau2(ior)))
-                  bgsFe(mstr,ior) = bgsFe(mstr,ior)+bdiff15*(1.-exp(-hctau2(ior)))
-                  bglFe(mstr,ior) = bglFe(mstr,ior)+bdiff16*(1.-exp(-hctau2(ior)))
-                  bgsHg(mstr,ior) = bgsHg(mstr,ior)+bdiff17*(1.-exp(-hctau2(ior)))
-                  bglHg(mstr,ior) = bglHg(mstr,ior)+bdiff18*(1.-exp(-hctau2(ior)))
-                  bgsMn(mstr,ior) = bgsMn(mstr,ior)+bdiff19*(1.-exp(-hctau2(ior)))
-                  bglMn(mstr,ior) = bglMn(mstr,ior)+bdiff20*(1.-exp(-hctau2(ior)))
-                  bgsU(mstr,ior) = bgsU(mstr,ior)+bdiff21*(1.-exp(-hctau2(ior)))
-                  bglU(mstr,ior) = bglU(mstr,ior)+bdiff22*(1.-exp(-hctau2(ior)))
+                  bgsZn(mstr,ior)  = bgsZn(mstr,ior)  - diff1  * hctau2(ior)
+                  bglZn(mstr,ior)  = bglZn(mstr,ior)  - diff2  * hctau2(ior)
+                  bgsCad(mstr,ior) = bgsCad(mstr,ior) - diff3  * hctau2(ior)
+                  bglCad(mstr,ior) = bglCad(mstr,ior) - diff4  * hctau2(ior)
+                  bgsCu(mstr,ior)  = bgsCu(mstr,ior)  - diff5  * hctau2(ior)
+                  bglCu(mstr,ior)  = bglCu(mstr,ior)  - diff6  * hctau2(ior)
+                  bgsNi(mstr,ior)  = bgsNi(mstr,ior)  - diff7  * hctau2(ior)
+                  bglNi(mstr,ior)  = bglNi(mstr,ior)  - diff8  * hctau2(ior)
+                  bgsAs(mstr,ior)  = bgsAs(mstr,ior)  - diff9  * hctau2(ior)
+                  bglAs(mstr,ior)  = bglAs(mstr,ior)  - diff10 * hctau2(ior)
+                  bgsPb(mstr,ior)  = bgsPb(mstr,ior)  - diff11 * hctau2(ior)
+                  bglPb(mstr,ior)  = bglPb(mstr,ior)  - diff12 * hctau2(ior)
+                  bgsCr(mstr,ior)  = bgsCr(mstr,ior)  - diff13 * hctau2(ior)
+                  bglCr(mstr,ior)  = bglCr(mstr,ior)  - diff14 * hctau2(ior)
+                  bgsFe(mstr,ior)  = bgsFe(mstr,ior)  - diff15 * hctau2(ior)
+                  bglFe(mstr,ior)  = bglFe(mstr,ior)  - diff16 * hctau2(ior)
+                  bgsHg(mstr,ior)  = bgsHg(mstr,ior)  - diff17 * hctau2(ior)
+                  bglHg(mstr,ior)  = bglHg(mstr,ior)  - diff18 * hctau2(ior)
+                  bgsMn(mstr,ior)  = bgsMn(mstr,ior)  - diff19 * hctau2(ior)
+                  bglMn(mstr,ior)  = bglMn(mstr,ior)  - diff20 * hctau2(ior)
+                  bgsU(mstr,ior)   = bgsU(mstr,ior)   - diff21 * hctau2(ior)
+                  bglU(mstr,ior)   = bglU(mstr,ior)   - diff22 * hctau2(ior)
                endif
             enddo
             ilbuhn = 0
@@ -8512,11 +8479,12 @@ program qsim
          srbar(mstr,iior)   = srbar(mstr,iior)   + rbary(iior)
          sffood(mstr,iior)  = sffood(mstr,iior)  + ffoody(iior)
          
-         ! sfik enthaelt die mittlere Produktionsraten der Algen fuer die 3 Algengruppen
-         sfik(mstr,iior)   = sfik(mstr,iior)                              &
-                           + fiy(iior)  * vkigry(iior)                    &
-                           + figy(iior) * (1.-vkigry(iior)-antbly(iior))  &
-                           + fiby(iior) * antbly(iior)
+         ! average light limitation factor of all phytoplankton groups
+         if (chlaky(iior) + chlagy(iior) + chlaby(iior) > 0.) then
+            sfik(mstr,iior)   = sfik(mstr,iior) +                                                                       &
+                                (fiy(iior)  * chlaky(iior) + figy(iior) * chlagy(iior) + fiby(iior) * chlaby(iior)) /   &
+                                (chlaky(iior) + chlagy(iior) + chlaby(iior))
+         endif
          
          !sfig wird mit dem Extinktionskoeffizient belegt
          sfig(mstr,iior) = sfig(mstr,iior)+extky(iior)
@@ -8742,11 +8710,12 @@ program qsim
                               + bacoky(iior)          &
                               + bacogy(iior)          &
                               + bacoby(iior)
-            ! sfik enthaelt die mittlere Produktionsraten der Algen für die 3 Algengruppen
-            bsfik(mstr,iior) = bsfik(mstr,iior)                               &
-                             + bfikay(iior) * bkigry(iior)                    &
-                             + bfigay(iior) * (1.-bkigry(iior)-bantby(iior))  &
-                             + bfibay(iior) * bantby(iior)
+            ! mean light limitation factor of algae in groin field
+            if (bchlky(iior) + bchlgy(iior) + bchlby(iior) > 0.) then
+               bsfik(mstr,iior) = bsfik(mstr,iior) +                                                                             &
+                                  (bfikay(iior)  * bchlky(iior) + bfigay(iior) * bchlgy(iior) + bfibay(iior) * bchlby(iior)) /   &
+                                  (bchlky(iior) + bchlgy(iior) + bchlby(iior))
+            endif
             
             ! bsfig: Summenbildung des extiktionskoeffizients
             bsfig(mstr,iior) = bsfig(mstr,iior)+bextky(iior)
@@ -10316,9 +10285,9 @@ program qsim
    ! end of program
    ! --------------------------------------------------------------------------
    ! --- delete temporary files ---
-   pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
-   open(unit = 11, file = pfadstring)
-   close(11, status = "delete")
+   !pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
+   !open(unit = 11, file = pfadstring)
+   !close(11, status = "delete")
    
    pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring)
