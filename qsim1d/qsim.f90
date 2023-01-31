@@ -4031,7 +4031,7 @@ program qsim
          bsohlm(ior) = hbsohl(mstr,ior)
          vabfl(ior)  = hvabfl(mstr,ior)
          
-         if (nbuhn(mstr) > 0) tau2(ior) = 1./(htau2(mstr,ior)*3600.)
+         if (nbuhn(mstr) > 0) tau2(ior) = 1. / (htau2(mstr,ior)*3600.)
          
          ! Berechnung des Abschnittsvolumens vol(ior)
          elenl = elen(ior)
