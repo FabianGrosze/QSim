@@ -42,6 +42,9 @@ subroutine ausgeben_schism(itime)
    real :: ubetr, infl, aus, relnumdiff, tr,al,aufenthaltszeit
    real , allocatable , dimension (:) :: output
    
+   ! everything went in parallel with SCHISM ... only gather for output
+   call gather_planktkon()
+   
 if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
    write(zahl,*)itime
    zahl = adjustl(zahl)

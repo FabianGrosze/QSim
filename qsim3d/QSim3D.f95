@@ -73,8 +73,8 @@ program QSim3D
       !------------------------------------------------- all metabolic processes
       call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       !------------------------------------------------- transport all concentrations (advection-diffusion) ...
-      !call stofftransport()  !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< if (hydro_trieb.ne. 3) für SCHISM erstmal nicht #########
-      if(meinrang==0)print*,'stofftransport switched off temporarily'
+      call stofftransport()  !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< if (hydro_trieb.ne. 3) für SCHISM erstmal nicht #########
+      !if(meinrang==0)print*,'stofftransport switched off temporarily'
       !------------------------------------------------- finish time step
       call zeitschritt_halb(.false.)
       call mpi_barrier (mpi_komm_welt, ierr)

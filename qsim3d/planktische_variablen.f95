@@ -281,7 +281,7 @@ subroutine schism_tracer_fields(hin_her)
       !!!###end do ! all i elements (discretized points)
 
       ! 2D
-      if(hin_her==1)then
+      if(hin_her==1)then ! into tr_el
          do i=1,nea2
             nk=(i-1) * number_plankt_vari
             do j=1,number_plankt_vari
@@ -289,7 +289,7 @@ subroutine schism_tracer_fields(hin_her)
             end do ! all j concentrations
          end do ! all i elements (discretized points)
       endif ! hin
-      if(hin_her==2)then
+      if(hin_her==2)then ! from tr_el
          do i=1,nea2
             nk=(i-1) * number_plankt_vari
             do j=1,number_plankt_vari
