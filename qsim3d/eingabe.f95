@@ -48,6 +48,9 @@ subroutine eingabe()
    !print*,'eingabe() startet'
    only = .false.
    num_lev=1 ; num_lev_trans=1
+   control_proc=-1
+   control_elem=-1
+
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          if (meinrang == 0) then ! prozess 0 only
@@ -63,6 +66,9 @@ subroutine eingabe()
          if (n < n_cal)part= part+1
          num_lev = 1 !! preliminary 2D depth averaged
          party=part
+         if(meinrang==proz_anz-1)then ! last processor
+            party=number_plankt_point-(meinrang*part)
+         endif
          !local kontrollknoten
          if (meinrang == 0) then ! prozess 0 only
             do i=1,proz_anz
@@ -94,6 +100,9 @@ subroutine eingabe()
          if (n < n_cal)part= part+1
          num_lev = 1 !! preliminary 2D depth averaged
          party=part
+         if(meinrang==proz_anz-1)then ! last processor
+            party=number_plankt_point-(meinrang*part)
+         endif
          !local kontrollknoten
          if (meinrang == 0) then ! prozess 0 only
             do i=1,proz_anz
@@ -103,6 +112,8 @@ subroutine eingabe()
                   control_elem=j
                endif
             end do
+            print*,'Untrim eingabe: kontrollknoten,part,proz_anz,control_proc,control_elem=',  &
+                                    kontrollknoten,part,proz_anz,control_proc,control_elem
          end if ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(control_proc,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -141,8 +152,6 @@ subroutine eingabe()
          !tracer concentration @ prism center; used as temp. storage. tr_el(ntracers,nvrt,nea2) but last index usually
          !is valid up to nea only except for TVD
          !!! real(rkind),save,allocatable,target :: tr_el(:,:,:) 
-         control_proc=-1
-         control_elem=-1
          do i=1,party
             if(kontrollknoten==ielg(i))then
                control_proc=meinrang
@@ -154,7 +163,9 @@ subroutine eingabe()
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
-   print*,meinrang,' part =',part,' part*proz_anz=',part*proz_anz,' n_cal = ', n_cal
+   print*,meinrang,'eingabe: proz_anz,part,party,number_plankt_point,n_cal='  &
+                            ,proz_anz,part,party,number_plankt_point,n_cal
+   if(party < 1)call qerror('eingabe: party<1 partioning went wrong')
    call mpi_barrier (mpi_komm_welt, ierr)
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)

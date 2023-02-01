@@ -37,8 +37,7 @@ subroutine stoffumsatz()
    real , allocatable , dimension (:) :: tempsed_k, tempw_k
    if (meinrang == 0)print*,'stoffumsatz start'
    !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
-   party=part
-   if(hydro_trieb==3)party=ne ! schism partition
+   
    do i = 1,party ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
       if(hydro_trieb==3)iglob=ielg(i)
