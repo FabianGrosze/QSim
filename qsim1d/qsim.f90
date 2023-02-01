@@ -1590,9 +1590,24 @@ program qsim
    enddo
    9705 format(I5,2x,i2,2x,i2,2x,i2,2x,i4,2x,f5.2)
    
+   ! ==========================================================================
+   ! Initialisation of otherwise uninitialised variables before time loop
+   ! ==========================================================================
+   ! algae variables
+   akmor_1 = 0.
+   abmor_1 = 0.
+   agmor_1 = 0.
+   SKmor   = 0.
+   hSKmor  = 0.
+   
+   if (any(nbuhn > 0)) then
+      bakmor_1 = 0.
+      babmor_1 = 0.
+      bagmor_1 = 0.
+   endif
    
    ! ==========================================================================
-9999 continue ! Rücksprunglabel Zeitschleife
+   9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
    
    !---------------------------------------------------------------------------
@@ -2008,12 +2023,12 @@ program qsim
          ! if(i_K122>0)vo2s(mstr,mRB) = hc22/hcq22
          if (i_K123 > 0)CHNFs(mstr,mRB) = hc23/hcq23
          if (i_K124 > 0)BVHNFs(mstr,mRB) = hc24/hcq24
-         
          if (i_K125 > 0) then
             Colis(mstr,mRB) = hc25/hcq25
             DOSCFs(mstr,mRB) = hc27/hcq25
          endif
          if (i_K126 > 0)tempws(mstr,mRB) = hc26
+         
       enddo
    enddo ! Strangschleife ENDE
    
@@ -3862,8 +3877,9 @@ program qsim
       enddo
       
       do ior = 1, anze + 1
-         if (ISNAN(ho2(mstr,ior)))  &
-             print*,"qsim Linienquellen mstr,ior,vo2(ior),ho2(mstr,ior)",mstr,ior,vo2(ior),ho2(mstr,ior)
+         if (isnan(ho2(mstr,ior))) then
+             print*,"qsim Linienquellen - ho2 is NaN - mstr,ior,vo2(ior),ho2(mstr,ior): ",mstr,ior,vo2(ior),ho2(mstr,ior)
+         endif
       enddo
       
       ! Kenngrößen für Pflanzen- und Dreissenawachstum
@@ -4150,7 +4166,7 @@ program qsim
          JDOC2(:) = 0.0
       endif 
       
-      if (nbuhn(mstr) == 0)goto 1612
+      if (nbuhn(mstr) == 0) goto 1612
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zww2(ior)    = hw2(mstr,ior)
@@ -4299,7 +4315,7 @@ program qsim
       ! -----------------------------------------------------------------------
       ! Rotatorien
       ! -----------------------------------------------------------------------
-      1612 continue
+      1612  continue
       call konsum(vkigr,TEMPW,VO2,TFLIE                                          &
                   ,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl          &
                   ,jiein,FOPTR,GROT,dzres1,dzres2,ZRESG                          &
@@ -4309,7 +4325,7 @@ program qsim
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
                   ,itags,uhrz,mstr, .false., 0)
       
-      if (nbuhn(mstr) == 0)goto 1415
+      if (nbuhn(mstr) == 0 ) goto 1415
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -4515,7 +4531,7 @@ program qsim
       ! -----------------------------------------------------------------------
       1441 continue
       
-      if (nbuhn(mstr) == 1) then ! Annahme: Dreissena nur im Buhnenfeld
+      if (nbuhn(mstr) > 0) then ! Annahme: Dreissena nur im Buhnenfeld
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
             tempw(ior) = btempw(mstr,ior)
@@ -4557,7 +4573,7 @@ program qsim
                     ,sgwmue,fkm,FoptD,mstr,azStr,                       &
                     .false., 0)
       
-      if (nbuhn(mstr) == 1) then
+      if (nbuhn(mstr) > 0) then
          do ior = 1,anze+1
             tempw(ior) = zwtemp(ior)
             flae(ior) = zwflae(ior)
@@ -4600,7 +4616,6 @@ program qsim
          enddo
       endif
       
-      
       ! -----------------------------------------------------------------------
       ! heterotrophe Nanoflagelaten (HNF)
       ! [ausgeschaltet]
@@ -4622,14 +4637,14 @@ program qsim
       !         ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks  &
       !         ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz,   &
       !          .false., 0)
-      HNFmua(:) = 0.0
-      HNFrea(:) = 0.0
-      HNFupa(:) = 0.0
-      HNFmoa(:) = 0.0
-      HNFexa(:) = 0.0
-      HNFbac(:) = 0.0
-      rO2HNF(:) = 0.0
-      bsbHNF(:) = 0.0
+      HNFmua = 0.
+      HNFrea = 0.
+      HNFupa = 0.
+      HNFmoa = 0.
+      HNFexa = 0.
+      HNFbac = 0.
+      rO2HNF = 0.
+      bsbHNF = 0.
       
       if (nbuhn(mstr) > 0) then
          bro2HF(mstr,:) = 0.
@@ -4655,12 +4670,6 @@ program qsim
                     ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB             &
                     ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                            &
                     ,.false.,0)
-      isinisi = 0
-      do ior = 1,anze+1
-         if (isnan(aki(ior))) then
-            isinisi = isinisi+1
-         endif
-      enddo
       
       if (nbuhn(mstr) == 0)goto 1413
       if (ilbuhn == 0) then
@@ -4888,11 +4897,6 @@ program qsim
                     ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                              &
                     ,.false.,0)
       
-      do ior = 1,anze+1
-         if (isnan(abl(ior))) then
-            isinisi = isinisi+1
-         endif
-      enddo
       if (nbuhn(mstr) == 0)goto 1414
       if (ilbuhn == 0) then
          do ior = 1,anze+1
@@ -5067,9 +5071,8 @@ program qsim
                     ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
                     ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1                                                                        &
                     ,.false.,0)
-      do ior = 1,anze+1
-         if (isnan(agr(ior))) call qerror("Division by zero in subroutine algaesgr")
-      enddo
+      
+      if (any(isnan(agr))) call qerror("Division by zero in subroutine algaesgr")
       
       if (nbuhn(mstr) == 0)goto 1513
       if (ilbuhn == 0) then
@@ -5397,25 +5400,25 @@ program qsim
       if (nbuhn(mstr) > 0) then 
          do ior = 1, anze+1
             ! metabolism in groyne-field
-            call organic_carbon(                                                                  &
-                     bcsb(mstr,ior), bbsb(mstr,ior), bCD(mstr,1,ior), bCD(mstr,2,ior),            &
-                     bCP(mstr,1,ior), bCP(mstr,2,ior),                                            &
-                     bCM(mstr,ior), bBAC(mstr,ior), bfbsgr(mstr,ior), bfrfgr(mstr,ior),           &
-                     nl0(ior), pl0(ior),                                                          &
-                     bCHNF(mstr,ior), bvHNF(ior),                                                 &
-                     btempw(mstr,ior), bh(mstr,ior), bpfl(mstr,ior), bJDOC1(ior), bJDOC2(ior),    &
-                     rau(ior), vbm(mstr,ior), bBSBHN(mstr,ior),                                   &
-                     bdkmor(mstr,ior), bdgmor(mstr,ior), bdbmor(mstr,ior), babszo(mstr,ior),      &
-                     Q_PK(ior), Q_PG(ior), Q_PB(ior),                                             &
-                     Q_NK(ior), Q_NG(ior), Q_NB(ior),                                             &
-                     bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                        &
-                     bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                        &
-                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                                &
-                     babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),             &
-                     bsbzoo, toc_csb, tflie,                                                      &
-                     BAcmua(ior), bbsbct(mstr,ior), bsbctP(ior), bdoN(mstr,ior), bbsbt(mstr,ior), &
-                     bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),      &
-                     borgSS(mstr,ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                          &
+            call organic_carbon(                                                                       &
+                     bcsb(mstr,ior), bbsb(mstr,ior), bCD(mstr,1,ior), bCD(mstr,2,ior),                 &
+                     bCP(mstr,1,ior), bCP(mstr,2,ior),                                                 &
+                     bCM(mstr,ior), bBAC(mstr,ior), bfbsgr(mstr,ior), bfrfgr(mstr,ior),                &
+                     nl0(ior), pl0(ior),                                                               &
+                     bCHNF(mstr,ior), bvHNF(ior),                                                      &
+                     btempw(mstr,ior), bh(mstr,ior), bpfl(mstr,ior), bJDOC1(ior), bJDOC2(ior),         &
+                     rau(ior), vbm(mstr,ior), bBSBHN(mstr,ior),                                        &
+                     bdkmor(mstr,ior), bdgmor(mstr,ior), bdbmor(mstr,ior), babszo(mstr,ior),           &
+                     Q_PK(ior), Q_PG(ior), Q_PB(ior),                                                  &
+                     Q_NK(ior), Q_NG(ior), Q_NB(ior),                                                  &
+                     bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                             &
+                     bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                             &
+                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                                     &
+                     babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),                  &
+                     bsbzoo, toc_csb, tflie,                                                           &
+                     BAcmua(ior), bbsbct(mstr,ior), bbsbcP(mstr,ior), bdoN(mstr,ior), bbsbt(mstr,ior), &
+                     bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),           &
+                     borgSS(mstr,ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                               &
                      kontroll, jjj)
             
             ! --- mixing between groyne-field and main river ---
@@ -6544,8 +6547,6 @@ program qsim
          hgsU(mstr,:) = 0.0
          hglU(mstr,:) = 0.0
       endif ! ischwer==1
-      
-      
       
       ! -----------------------------------------------------------------------
       ! transportation
@@ -8099,7 +8100,7 @@ program qsim
                vno2y(iior)  = -1.
                vno3y(iior)  = -1.
                gsNy(iior)   = -1.
-               gelpy(iior)  = -.1
+               gelpy(iior)  = -1.
                gsPy(iior)   = -1.
                Siy(iior)    = -1.
                chlay(iior)  = -1.
@@ -8169,10 +8170,10 @@ program qsim
                bvbsby(iior) = -1.
                bvcsby(iior) = -1
                bnh4y(iior)  = -1.
-               bno2y(iior)  = -.1
+               bno2y(iior)  = -1.
                bno3y(iior)  = -1.
                bgsNy(iior)  = -1.
-               bgelpy(iior) = -.1
+               bgelpy(iior) = -1.
                bgsPy(iior)  = -1.
                bsiy(iior)   = -1.
                bchlay(iior) = -1.

@@ -279,7 +279,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          FH2oVol = FR*Yc+FR*Ycs
          FH2oVOL = FH2oVOL*tflie
          
-         ! Gewichts„nderung einer Muschel
+         ! Gewichtsaenderung einer Muschel
          drmue = idr-(idr*qfec)-(idr*(1.-qfec)*0.064)-((1.-qfec)*qres*idr)-rres*hcont
          dgewdr = gewdr(ior,ndr)*drmue*tflie
          gewdr(ior,ndr) = gewdr(ior,ndr)+dgewdr

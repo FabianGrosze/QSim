@@ -237,9 +237,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       
       !   Temperaturabhaengigkeit der Ingestionsrate
       fTing = thIng**(Tempw(ior)-20.)
-      if (tempw(ior)>=ztmax) then
-         !          fTing = 0.01
-      else
+      if (tempw(ior) < ztmax) then
          LNQ = 0.61519
          W = LNQ*(ztmax - ztopt)
          X = (W**2*(1+SQRT(1+40/W))**2)/400.
@@ -247,31 +245,26 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       endif
       
       !   Umrechnung der Individienzahl in Biomasse (g*m-3)
-      ROT = zooind(ior)*GROT/1000.
-      
-      
-      !   filtrierbare Algenbiomasse
-      filabio = aki(ior)*Caki+agr(ior)*Cagr+abl(ior)*Cabl
+      ROT = zooind(ior) * GROT/1000.
       
       !   Grundrespiration
       !   Temperaturabhängigkeit
       fTresR = thresR**(tempw(ior)-20.)
-      respRg = zresge*fTresR
+      respRg = zresge * fTresR
       
       !   Mortalitaetsrate
       !   Berechnung unter Beruecksichtigung der Futterkonz.
       !   des Sauerstoffgehalts und der Temperatur
       
       !   O2-Einfluss
-      filo2 = (dokrit-vo2(ior))/dokrit
-      filo2 = 1.-filo2
+      filo2 = max(0., min(1., vo2(ior) / dokrit))
       
-      !   Nahrungseinfluss
-      hconF = filabio/(filabio+FKs) !Filabio in mgC/l
-      if (hconF > 1.)hconF = 1.
-      if (hconF < 0.0)hconF = 0.0
+      !   Nahrungseinfluss: filtrierbare Algenbiomasse (in mgC/l)
+      filabio = aki(ior) * Caki + agr(ior) * Cagr + abl(ior) * Cabl
+      hconF = max(0., min(1., filabio/(filabio+FKs)))
+      
       hcaki = aki(ior)
-      if ((aki(ior)+agr(ior)+abl(ior)) == 0.0)hcaki = 0.000001
+      if ((aki(ior) + agr(ior) + abl(ior)) == 0.0) hcaki = 0.000001
       hconki = hcaki/(hcaki+agr(ior)+abl(ior))
       hconGr = agr(ior)/(hcaki+agr(ior)+abl(ior))
       hconBl = abl(ior)/(hcaki+agr(ior)+abl(ior))
@@ -292,8 +285,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       if (hconF == 0.0) then
          zass = 0.0
       else
-         zass = ASSmxR*exp(-EASS*hconF)
-         if (zass > 1.)zass = 1.
+         zass = max(1., ASSmxR*exp(-EASS*hconF))
       endif
       ir_F = irmax*hconF
       ProdRot = (zass-respaR)*ir_F*fTing-respRg
@@ -309,8 +301,9 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       zBAC(ior) = 0.0
       if (ir(ior) /= 0.0) then
          zHNF(ior) = ir(ior)*CHNF(ior)/(CHNF(ior)+agr(ior)+aki(ior)+abl(ior))
-         zBAC(ior) = ir(ior)*BAC(ior)/(BAC(ior)+agr(ior)+aki(ior)+abl(ior))
-         zBAC(ior) = 0.0
+         ! TODO FG: commented the two lines below
+         !zBAC(ior) = ir(ior)*BAC(ior)/(BAC(ior)+agr(ior)+aki(ior)+abl(ior))
+         !zBAC(ior) = 0.0
       endif
       !   Ausgabe
       if (CHNF(ior) /= 0.0) HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
@@ -318,25 +311,24 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       ROTt = ROT * exp((ProdRot-morRot)*tflie) ! Rotatorienzunahme
       !!wy if(mstr==1)write(79,*)ior,ProdRot,zass,respaR,ir_F,fTing,respRg
       
-      !FG TODO line below added as no value assigned to TGZoot if iTGZoo == 0
-      TGZoot = TGZoo(mstr,ior)
       if (iTGZoo == 1) then
          TGZoot = TGZoot * exp(ProdRot*0.20*tflie)
+      else
+         TGZoot = TGZoo(mstr,ior)
       endif
-      dzres1(ior) = ROT*(1.-(exp(-respRg*tflie)))
-      ABSZO(ior) = ROTt*(1.-(EXP(-morRot*TFLIE)))
+      dzres1(ior) = ROT  * (1.- exp(-respRg*tflie))
+      ABSZO(ior)  = ROTt * (1.- exp(-morRot*tflie))
       dzres2(ior) = respaR*ir(ior)
       
-      zexki(ior) = ir(ior)*(1.-zass)*hconki
-      zexgr(ior) = ir(ior)*(1.-zass)*hconGr
-      zexbl(ior) = ir(ior)*(1.-zass)*hconBl
+      zexki(ior) = ir(ior) * (1.-zass) * hconki
+      zexgr(ior) = ir(ior) * (1.-zass) * hconGr
+      zexbl(ior) = ir(ior) * (1.-zass) * hconBl
       
-      algzok(ior) = min((aki(ior)*zaki),ir(ior)*hconki)
-      algzog(ior) = min((agr(ior)*zagr),ir(ior)*hconGr)
-      algzob(ior) = min((abl(ior)*zabl),ir(ior)*hconBl)
+      algzok(ior) = min(aki(ior) * zaki, ir(ior) * hconki)
+      algzog(ior) = min(agr(ior) * zagr, ir(ior) * hconGr)
+      algzob(ior) = min(abl(ior) * zabl, ir(ior) * hconBl)
       
-      if (nkzs(ior) == 1) then
-      else
+      if (nkzs(ior) /= 1) then
          !          2D-Modellierung
          
          do nkz = 1,nkzs(ior)
@@ -346,16 +338,17 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
             hcongr = agrz(nkz,ior)/(hcaki+agrz(nkz,ior)+ablz(nkz,ior))
             hconbl = ablz(nkz,ior)/(hcaki+agrz(nkz,ior)+ablz(nkz,ior))
             
-            algzkz(nkz,ior) = ir(ior)*hconki
-            algzgz(nkz,ior) = ir(ior)*hcongr
-            algzbz(nkz,ior) = ir(ior)*hconBl
+            algzkz(nkz,ior) = ir(ior) * hconki
+            algzgz(nkz,ior) = ir(ior) * hcongr
+            algzbz(nkz,ior) = ir(ior) * hconBl
          enddo
       endif
       
-      zooint = (ROTt*1000./GROT)
-      delzoo = zooint-zooind(ior)
-      if (zooind(ior) < 0.0)zooint = (zooind(ior)/(zooind(ior)+abs(delzoo)))*zooind(ior)
-      
+      zooint = ROTt * 1000. / GROT
+      if (zooind(ior) < 0.0) then
+         delzoo = zooint-zooind(ior)
+         zooint = (zooind(ior)/(zooind(ior)+abs(delzoo)))*zooind(ior)
+      endif
       
       !   Ausgabeparameter
       rmuas(ior) = ProdRot - morRot

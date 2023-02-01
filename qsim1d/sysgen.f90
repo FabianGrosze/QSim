@@ -181,13 +181,13 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       ! hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
       
-      if (nbuhn(mstrl) == 0)goto 233
+      if (nbuhn(mstrl) == 0 )goto 233
       
-      if (iBliak(mstrl,khyd) == 1 .or. iBreak(mstrl,khyd) == 1)goto 234
+      if (iBliak(mstrl,khyd) == 1 .or. iBreak(mstrl,khyd) == 1) goto 234
       goto 235
       
       234 hcon = hFlaea(mstrl,khyd)*0.01
-      if (hhbu(mstrl,khyd) < 0.01 .or. hflbu(mstrl,khyd) < hcon)goto 235
+      if (hhbu(mstrl,khyd) < 0.01 .or. hflbu(mstrl,khyd) < hcon) goto 235
       goto 233
       235 hflbu(mstrl,khyd) = hFlaea(mstrl,khyd)*0.01
       if (hWFlbu(mstrl,khyd) < 0.0)hWFlbu(mstrl,khyd) = 0.0
@@ -1043,7 +1043,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          if (cour > courmx)courmx = cour
          
          if (flbum(i) <= 0.0)vbum(i) = -1.
-         if (nbuhn(mstr) == 0)goto 646
+         if (nbuhn(mstr) == 0) goto 646
          
          tau2_0 = tau2m
          if (tau2_0 <= 0.0) then
