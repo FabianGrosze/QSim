@@ -5533,37 +5533,37 @@ program qsim
       if (nbuhn(mstr) > 0)then
          do ior = 1,anze+1
             ! nitrifiers
-         call nitrifiers(bx0(mstr,ior), bx02(mstr,ior), bpfl(mstr,ior), bph(mstr,ior), btempw(mstr,ior), &
-                         bO2(mstr,ior), bNH4(mstr,ior), bNO2(mstr,ior), rhyd(ior), rau(ior),             &
-                         bh(mstr,ior), vbm(mstr,ior), bjNH4(mstr,ior), tflie,                            &
-                         bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior),          &
-                         bsedx0(mstr,ior), bbettn(mstr,ior), bgo2n(mstr,ior), bsuso(mstr,ior),           &
-                         kontroll, jjj)
-         
-         ! nitrogen
-         call nitrogen(bNH4(mstr,ior), bNO3(mstr,ior), bNO2(mstr,ior), bgesN(mstr,ior), bO2(mstr,ior),   &
-                       bx02(mstr,ior),                                                                   &
-                       baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior),                                   &
-                       bQ_NK(mstr,ior), bQ_NG(mstr,ior), bQ_NB(mstr,ior),                                &
-                       bup_NK(mstr,ior), bup_NG(mstr,ior), bup_NB(mstr,ior),                             &
-                       baktbr(mstr,ior), bagtbr(mstr,ior), babtbr(mstr,ior),                             &
-                       balakz(mstr,ior), balagz(mstr,ior), balabz(mstr,ior),                             & 
-                       bsedak(mstr,ior), bsedag(mstr,ior), bsedab(mstr,ior),                             &
-                       badrk(mstr,ior), badrg(mstr,ior), badrb(mstr,ior),                                &
-                       abltbr(ior),                                                                      &
-                       babewk(mstr,ior), babewg(mstr,ior),                                               &
-                       baberk(mstr,ior), baberg(mstr,ior),                                               &
-                       bresdr(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),                             &
-                       bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),                             &
-                       up_N2z(1,ior), borgCs(mstr,ior),bnl0(mstr,ior), bbsbct(mstr,ior),                 &
-                       bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior), bdon(mstr,ior), &
-                       bJNH4(mstr,ior), bJNO3(mstr,ior), bJN2(mstr,ior),                                 &
-                       bh(mstr,ior), tflie,                                                              &
-                       bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                &
-                       bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                &
-                       bFluN3(mstr,ior), dC_DenW(ior),                                                   &
-                       kontroll, jjj)
-                       
+            call nitrifiers(bx0(mstr,ior), bx02(mstr,ior), bpfl(mstr,ior), bph(mstr,ior), btempw(mstr,ior), &
+                            bO2(mstr,ior), bNH4(mstr,ior), bNO2(mstr,ior), rhyd(ior), rau(ior),             &
+                            bh(mstr,ior), vbm(mstr,ior), bjNH4(mstr,ior), tflie,                            &
+                            bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior),          &
+                            bsedx0(mstr,ior), bbettn(mstr,ior), bgo2n(mstr,ior), bsuso(mstr,ior),           &
+                            kontroll, jjj)
+            
+            ! nitrogen
+            call nitrogen(bNH4(mstr,ior), bNO3(mstr,ior), bNO2(mstr,ior), bgesN(mstr,ior), bO2(mstr,ior),        &
+                          bx02(mstr,ior),                                                                        &
+                          baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior),                                        &
+                          bQ_NK(mstr,ior), bQ_NG(mstr,ior), bQ_NB(mstr,ior),                                     &
+                          bup_NK(mstr,ior), bup_NG(mstr,ior), bup_NB(mstr,ior),                                  &
+                          baktbr(mstr,ior), bagtbr(mstr,ior), babtbr(mstr,ior),                                  &
+                          balakz(mstr,ior), balagz(mstr,ior), balabz(mstr,ior),                                  & 
+                          bsedak(mstr,ior), bsedag(mstr,ior), bsedab(mstr,ior),                                  &
+                          badrk(mstr,ior), badrg(mstr,ior), badrb(mstr,ior),                                     &
+                          abltbr(ior),                                                                           &
+                          babewk(mstr,ior), babewg(mstr,ior),                                                    &
+                          baberk(mstr,ior), baberg(mstr,ior),                                                    &
+                          bresdr(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),                                  &
+                          bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),                                  &
+                          up_N2z(1,ior), borgCs(mstr,ior),bnl0(mstr,ior), bbsbct(mstr,ior),                      &
+                          bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior), bdon(mstr,ior), &
+                          bJNH4(mstr,ior), bJNO3(mstr,ior), bJN2(mstr,ior),                                      &
+                          bh(mstr,ior), tflie,                                                                   &
+                          bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                     &
+                          bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                     &
+                          bFluN3(mstr,ior), dC_DenW(ior),                                                        &
+                          kontroll, jjj)
+            
             ! TODO (Schönung)
             ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
             
@@ -10289,9 +10289,9 @@ program qsim
    ! end of program
    ! --------------------------------------------------------------------------
    ! --- delete temporary files ---
-   !pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
-   !open(unit = 11, file = pfadstring)
-   !close(11, status = "delete")
+   pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
+   open(unit = 11, file = pfadstring)
+   close(11, status = "delete")
    
    pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring)

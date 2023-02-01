@@ -180,37 +180,42 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    alpha_upN4g = 0.
    alpha_upN4b = 0.
    
+   akiNH4_s = 0.
+   agrNH4_s = 0.
+   ablNH4_s = 0.
+   
    if (nwgr /= 0.0 .or. nwki /= 0.0 .or. nwbl /= 0.0) then
-      a_up = 1.
-      b_up = 3.
       select case (j_up)
          case(0) ! Quelle unklar
             ! Kieselalgen
-            alpha_upN4k = vNH4_s * vNO3_s / ((akksN + vNH4_s) * (akksN + vNO3_s))  &
-                     + vNH4_s * akksN  /((vNH4_s + vNO3_s) * (akksN + vNO3_s))
+            alpha_upN4k = vNH4_s * vNO3_s / (( akksN + vNH4_s) * (akksN + vNO3_s))  &
+                        + vNH4_s * akksN  / ((vNH4_s + vNO3_s) * (akksN + vNO3_s))
             
             ! Grünalgen
-            alpha_upN4g = vNH4_s * vNO3_s / ((agksN + vNH4_s) * (agksN + vNO3_s))  &
-                     + vNH4_s * agksN  /((vNH4_s + vNO3_s) * (agksN + vNO3_s))
+            alpha_upN4g = vNH4_s * vNO3_s / (( agksN + vNH4_s) * (agksN + vNO3_s))  &
+                        + vNH4_s * agksN  / ((vNH4_s + vNO3_s) * (agksN + vNO3_s))
             
             ! Blaualgen
-            alpha_upN4b = vNH4_s * vNO3_s /((abksN + vNH4_s) * (abksN + vNO3_s))  &
-                  + vNH4_s * abksN  /((vNH4_s + vNO3_s) * (abksN + vNO3_s))
+            alpha_upN4b = vNH4_s * vNO3_s / (( abksN + vNH4_s) * (abksN + vNO3_s))  &
+                        + vNH4_s * abksN  / ((vNH4_s + vNO3_s) * (abksN + vNO3_s))
             
           case(1) ! nach Yajnik & Sharada (2003)
+            a_up = 1.
+            b_up = 3.
+            
             ! Kieselalgen
-            hc_upN3 = vNO3_s * (1. + a_up * vNH4_s) / ((akksN + vNO3_s) * (1. + b_up * vNH4_s))
-            hc_upN4 = vNH4_s / (akksN + vNH4_s)
+            hc_upN3     = vNO3_s * (1. + a_up * vNH4_s) / ((akksN + vNO3_s) * (1. + b_up * vNH4_s))
+            hc_upN4     = vNH4_s /  (akksN + vNH4_s)
             alpha_upN4k = hc_upN4 / (hc_upN3 + hc_upN4)
             
             ! Grünalgen
-            hc_upN3 = vNO3_s *(1. + a_up * vNH4_s) / ((agksN + vNO3_s) * (1. + b_up * vNH4_s))
-            hc_upN4 = vNH4_s / (agksN + vNH4_s)
+            hc_upN3     = vNO3_s * (1. + a_up * vNH4_s) / ((agksN + vNO3_s) * (1. + b_up * vNH4_s))
+            hc_upN4     = vNH4_s /  (agksN + vNH4_s)
             alpha_upN4g = hc_upN4 / (hc_upN3 + hc_upN4)
             
             ! Blaualgen
-            hc_upN3 = vNO3_s * (1. + a_up * vNH4_s) / ((abksN + vNO3_s) * (1.+ b_up * vNH4_s))
-            hc_upN4 = vNH4_s / (abksN+vNH4_s)
+            hc_upN3     = vNO3_s * (1. + a_up * vNH4_s) / ((abksN + vNO3_s) * (1.+ b_up * vNH4_s))
+            hc_upN4     = vNH4_s / (abksN + vNH4_s)
             alpha_upN4b = hc_upN4 / (hc_upN3 + hc_upN4)
          
          case default
