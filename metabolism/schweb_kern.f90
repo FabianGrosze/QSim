@@ -30,25 +30,32 @@
 subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        &
                        ,raus,tflie,VMITTs                                       &
                        ,dkimors,dgrmors,abszos,zexkis,zexgrs                    &
-                       ,abls,zexbls,dblmors,drfaebs,akis,agrs,ssdrs,drfaeks      &
+                       ,abls,zexbls,dblmors,drfaebs,akis,agrs,ssdrs,drfaeks     &
                        ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs                 &
                        ,tauscs,ischifs,ieros                                    &
                        ,kontroll,jjj)
    
    use aparam
    implicit none
-   real                 :: sss      !< organische und anorganischer Schwebstoffe (ohne Algen und Zooplankton)
-   real                 :: ssalgs   !< Gesamtschwebstoffe
-   integer              :: ischifs,ieros,ised,jsed
-   real                 :: akis,agrs,abls
-   real                 :: zooinds, dorgSSs, dkimors, dgrmors, dblmors, drfaebs
-   real                 :: ssdrs,drfaeks,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs
-   real                 :: tflie,TIEFEs,RAUs,VMITTs,tauscs
-   real                 :: UST, g, v6, vges,SSSED,ZellV,hc1,hc2,delfss,fssgrv
-   real                 :: ustkri,vkrit,qsgr,oc,Oc0,wst,ceq,delss
-   real                 :: exzo,zexkis,zexgrs,zexbls,sst,abszos
-   logical, intent(in)  :: kontroll !< debugging
-   integer, intent(in)  :: jjj      !< debugging
+   real   , intent(inout) :: sss      !< organische und anorganischer Schwebstoffe (ohne Algen und Zooplankton)
+   real   , intent(out)   :: ssalgs   !< Gesamtschwebstoffe
+   real   , intent(out)   :: sedsss, sedSS_MQs
+   integer, intent(in)    :: ischifs, ieros
+   real   , intent(in)    :: zooinds, akis, agrs, abls
+   real   , intent(in)    :: dorgSSs, dkimors, dgrmors, dblmors, drfaebs
+   real   , intent(in)    :: drfaeks, drfaegs, drfaess
+   real   , intent(inout) :: ssdrs, fssgrs
+   real   , intent(in)    :: tflie, TIEFEs, RAUs, VMITTs, tauscs
+   real   , intent(in)    :: zexkis, zexgrs, zexbls, abszos
+   logical, intent(in)    :: kontroll !< debugging
+   integer, intent(in)    :: jjj      !< debugging
+   
+   ! local variables
+   integer                :: ised, jsed
+   real                   :: ssdrs_tmp
+   real                   :: exzo, sst
+   real                   :: UST, g, v6, vges, SSSED, ZellV, hc1, hc2, delfss, fssgrv
+   real                   :: ustkri, vkrit, qsgr, oc, Oc0, wst, ceq, delss
    
    
    if (kontroll) print*,'schweb_kern TIEFE,RAU,VMITT,tausc = ',TIEFEs,RAUs,VMITTs,tauscs
@@ -79,7 +86,8 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    exzo = zexkis+zexgrs+zexbls
    
    !...Schwebstoffverluste durch Dreissena werden nicht beruecksichtigt
-   ssdrs = 0.0
+   ssdrs_tmp = ssdrs
+   ssdrs     = 0.
    
    SSt = SSs                          &
        - sedsss                       &
@@ -103,6 +111,9 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    hc2 = hc2+dgrmors+dblmors+abszos-ssdrs
    hc2 = hc2+dorgSSs+drfaeks+drfaegs
    hc2 = hc2+drfaebs+drfaess
+   
+   ssdrs = ssdrs_tmp
+   
    if (hc2 < 0.0)hc2 = 0.0
    if (hc1 < 0.0)hc1 = 0.0
    

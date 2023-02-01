@@ -58,7 +58,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: it_h, it_hy, iorlah, iorleh, typh, ischig, ikwsta, idwe, mstrle, istund
    integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
-   real                                    :: lat_k, lgh, o2ein
+   real                                    :: lat_k, o2ein
    real                                    :: mikonss, mxkonss, bxcoli,algae_biomass
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
@@ -1726,10 +1726,10 @@ program qsim
                  ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands                      &
                  ,iw_max,iformVert)
    
-   ! Berücksichtigung von Eineitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
+   ! Berücksichtigung von Einleitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
    do azStr = 1,azStrs !Strangschleife ANFANG
       mstr = mstra(azStr)
-      if (iwied == 0)exit
+      if (iwied == 0) exit
       if (iRB_K1(mstr) <= 1) cycle
       !.or.nnStrs(mstr)==0)cycle ! noch überprüfen
       sum_QEinl = 0.0
@@ -2017,7 +2017,6 @@ program qsim
       enddo
    enddo ! Strangschleife ENDE
    
-   
    ! --------------------------------------------------------------------------
    ! Abfrage ob alle benötigten Eingaben gemacht wurden (nur beim Modellstart)
    ! --------------------------------------------------------------------------
@@ -2103,19 +2102,19 @@ program qsim
    ! --------------------------------------------------------------------------
    !  Umrechnung der Zellzahlen von HNF in mgC
    ! --------------------------------------------------------------------------
-   do  azStr = 1,azStrs
+   do azStr = 1,azStrs
       mstr = mstra(azStr)
       do  mRB = 1,mRBs(mstr)
        
          if (CHNFs(mstr,mRB) < 0.0) then
-            CHNFs(mstr,mRB) = 0.0
+            CHNFs(mstr,mRB)  = 0.0
             BVHNFs(mstr,mRB) = 0.0
          else
             if (CHNFs(mstr,mRB) > 0.0 .and. BVHNFs(mstr,mRB) <= 0.0) BVHNFs(mstr,mRB) = 25. ! in µm3
             CHNFs(mstr,mRB) = CHNFs(mstr,mRB)*BVHNFs(mstr,mRB)*0.22
             
             ! Umrechnung von pg in mg /1.e9; Angabe CHNFs pro ml ergibt /1.e6 bezogen auf ein Liter
-            CHNFs(mstr,mRB) = CHNFs(mstr,mRB)/1.e6
+            CHNFs(mstr,mRB) = CHNFs(mstr,mRB) * 1.e-6
          endif
       enddo
    enddo
@@ -2277,9 +2276,9 @@ program qsim
             hx02(mstr,1)   = vx02s(mstr,mRB)
             hsi(mstr,1)    = Sis(mstr,mRB)
             hchla(mstr,1)  = chlas(mstr,mRB)
-            haki(mstr,1)   = (chlas(mstr,mRB) *       vkigrs(mstr,mRB)                    /1000.) * (hakbcm(mstr,1)/Caki)
-            hagr(mstr,1)   = (chlas(mstr,mRB) * (1. - vkigrs(mstr,mRB) - antbls(mstr,mRB))/1000.) * (hagbcm(mstr,1)/Cagr)
-            habl(mstr,1)   = (Chlas(mstr,mRB) *                          antbls(mstr,mRB) /1000.) * (habbcm(mstr,1)/Cabl)
+            haki(mstr,1)   = (chlas(mstr,mRB) *       vkigrs(mstr,mRB)                    /1000.) * (hakbcm(mstr,1) / Caki)
+            hagr(mstr,1)   = (chlas(mstr,mRB) * (1. - vkigrs(mstr,mRB) - antbls(mstr,mRB))/1000.) * (hagbcm(mstr,1) / Cagr)
+            habl(mstr,1)   = (Chlas(mstr,mRB) *                          antbls(mstr,mRB) /1000.) * (habbcm(mstr,1) / Cabl)
             hchlak(mstr,1) = chlas(mstr,mRB) *       vkigrs(mstr,mRB)
             hchlag(mstr,1) = chlas(mstr,mRB) * (1. - vkigrs(mstr,mRB) - antbls(mstr,mRB))
             hchlab(mstr,1) = chlas(mstr,mRB) *                          antbls(mstr,mRB)
@@ -2385,7 +2384,7 @@ program qsim
    ! ==========================================================================
    if (iwied == 0) then
       ! Ermittlung eines Strangs mit Randbedingungen am 1. Ortspunkt
-      ! alle Stränge die keine Randbedingung am 1. Ortspunkt  und keine Vor- 
+      ! alle Stränge die keine Randbedingung am 1. Ortspunkt und keine Vor- 
       ! und nachgelagerten Straenge haben, werden mit diesen Randbedingungen belegt.
       mRB_1 = 0
       j = 0
@@ -2395,12 +2394,12 @@ program qsim
             if (RBtyp(mstr,mRB) == 0 .or. RBtyp(mstr,mRB) == 2) then
                if (mRB_1 == 0) then
                   mstrRB = mstr
-                  mRB_1 = mRB
+                  mRB_1  = mRB
                endif
             endif
          
             if (RBtyp(mstr,mRB) == 0 .and. nstrs(istr) == 0) then
-               j = j+1
+               j = j + 1
                mstr_ist(j) = mstr
             endif
          enddo
@@ -2417,8 +2416,7 @@ program qsim
       ! Test, ob zu Beginn der Simulation die zufließenden Stränge mit Anfangsbedingungen belegt sind
       if (iwied == 0) then  
          j_ist = 0
-         if (nstrs(istr) == 0) then
-         else
+         if (nstrs(istr) /= 0) then
             do nstr = 1,nstrs(istr)
                do jj = 1,azStrs    !js
                   if (ESTRNR(istr,nstr) == mstr_ist(jj)) then
@@ -2548,14 +2546,11 @@ program qsim
                mRand = 1
                mstrRB = mstr   ! mstrRB: StrangNummer mit Randbedingung am 1. Ortspunkt
                mRB_1 = mRB     ! Nummer der Randbedingung für den ersten (letzten)Ortspunkt eines Strangs
-            endif
-            
-            if (iFlRi(mstr) == -1 .and. RBtyp(mstr,mRB) == 2) then
+           elseif (iFlRi(mstr) == -1 .and. RBtyp(mstr,mRB) == 2) then
                mRand = 2
                mstrRB = mstr
                mRB_1 = mRB
             endif
-            
          endif
          
       enddo  ! Randbedingungsschleife
@@ -2574,14 +2569,14 @@ program qsim
             ianze(mstr) = hanze(mstr)+1
             iB = 1
             anzej = hanze(mstr)+1
-            if (iwsim == 4)anzej = 1                       ! Tracer
-            if (mRand == 0 .and. iwsim /= 4)mstr1 = mstrRB   ! Falls keine Randbedingung fuer diesen Strang vorhanden, wird
-            ! dieser Strang mit der Randbedingung eines anderen
-            ! Strangs belegt (nicht bei Tracer)
-            ! else if(iwied==1.and.iwsim/=4)then
-            if (mRand == 0 .and. iwsim == 4) then
-               mstr1 = mstr
-               tempws(mstr1,mRB) = 0.0
+            if (iwsim == 4) then
+               anzej = 1                    ! Tracer
+               if (mRand == 0) then
+                  mstr1 = mstr
+                  tempws(mstr1,mRB) = 0.0
+               endif
+            elseif (mRand == 0) then
+               mstr1 = mstrRB               ! Falls keine Randbedingung fuer diesen Strang vorhanden, wird
             endif
          else if (iwied == 1) then
             iB = 1
@@ -2759,7 +2754,7 @@ program qsim
                bstind(mstr,ior) = hstind(mstr,ior)
                btempw(mstr,ior) = htempw(mstr,ior)
                ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-               if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
+               bTsed(mstr,ior) = htempw(mstr,ior)
                bbsb(mstr,ior) = hbsb(mstr,ior)
                bcsb(mstr,ior) = hcsb(mstr,ior)
                bnh4(mstr,ior) = hnh4(mstr,ior)
@@ -3162,11 +3157,9 @@ program qsim
             hcs62 = hcs62+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hlf(ESTRNR(istr,nstr),kanz)
             
             ! pH-Wert in H+-umrechnen
-            hmue = 1.7e-5*hlf(ESTRNR(istr,nstr),kanz)
-            if (hmue < 0.0)hmue = 0.0
-            hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
-            lgh = hph(ESTRNR(istr,nstr),kanz)-hk
-            vhplus = 10**(-lgh)
+            hmue = sqrt(max(0., 1.7e-5 * hlf(ESTRNR(istr,nstr),kanz)))
+            hk   = 0.5 * hmue / (1. + 1.4 * hmue)
+            vhplus = 10**(hk - hph(ESTRNR(istr,nstr),kanz))
             
             hcs63 = hcs63+abs(hQaus(ESTRNR(istr,nstr),iSta)) * vhplus
             hcs64 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hcoli(ESTRNR(istr,nstr),kanz)
@@ -3343,11 +3336,13 @@ program qsim
             hcs63 = hcs63/hcq
             
             ! Umrechnung von H+ in pH-Wert
-            hmue = 1.7e-5*hcs62
-            if (hmue < 0.0)hmue = 0.0
-            hk = (0.5*sqrt(hmue))/(1.+1.4*sqrt(hmue))
-            hcs63 = log10(hcs63)
-            hcs63 = (-1.*hcs63)+hk
+            hmue = sqrt(max(0., 1.7e-5*hcs62))
+            hk   = 0.5 * hmue / (1. + 1.4 * hmue)
+            if (hcs63 > 0.) then
+               hcs63 = hk - log10(hcs63)
+            else
+               hcs63 = hk
+            endif
             
             hcs64 = hcs64/hcq
             hcs100 = hcs100/hcq
@@ -3514,7 +3509,7 @@ program qsim
                hglU(mstr,ior) = hcs126
                
                ! nur Tracer
-               if (iwsim == 4)cycle
+               if (iwsim == 4) cycle
                do nkz = 1,hnkzs(mstr,ior)              ! Gitterbelegung 2D
                   if (nkz > nkzs_hc) then
                      hcs67(nkz) = hcs67(nkz-1)
@@ -3580,7 +3575,7 @@ program qsim
                bstind(mstr,ior) = hstind(mstr,ior)
                btempw(mstr,ior) = htempw(mstr,ior)
                ! Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
-               if (iwied == 0)bTsed(mstr,ior) = htempw(mstr,ior)
+               if (iwied == 0) bTsed(mstr,ior) = htempw(mstr,ior)
                bbsb(mstr,ior) = hbsb(mstr,ior)
                bcsb(mstr,ior) = hcsb(mstr,ior)
                bnh4(mstr,ior) = hnh4(mstr,ior)
@@ -4037,7 +4032,6 @@ program qsim
          elenl = elen(ior)
          if (elenl <= 0.01)elenl = 0.0
          vol(ior) = flae(ior)*elenl
-         
          
          ! --------------------------------------------------------------------
          ! Berechnung des longitudinalen Dispersionskoeffizienten
@@ -4562,6 +4556,7 @@ program qsim
                     ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax              &
                     ,sgwmue,fkm,FoptD,mstr,azStr,                       &
                     .false., 0)
+      
       if (nbuhn(mstr) == 1) then
          do ior = 1,anze+1
             tempw(ior) = zwtemp(ior)
@@ -4611,16 +4606,16 @@ program qsim
       ! [ausgeschaltet]
       ! -----------------------------------------------------------------------
       218 continue
-      if (CHNF(1) <= 0.0) then
-         if (nbuhn(mstr) > 0) then
-            do ior = 1,anze+1
-               bro2HF(mstr,ior) = 0.0
-               bHNFBS(mstr,ior) = 0.0
-               bBSBHN(mstr,ior) = 0.0
-            enddo
-         endif
-         goto 1412
-      endif
+      !if (CHNF(1) <= 0.0) then
+      !   if (nbuhn(mstr) > 0) then
+      !      do ior = 1,anze+1
+      !         bro2HF(mstr,ior) = 0.0
+      !         bHNFBS(mstr,ior) = 0.0
+      !         bBSBHN(mstr,ior) = 0.0
+      !      enddo
+      !   endif
+      !   goto 1412
+      !endif
       
       ! call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                            &
       !         ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl               &
@@ -4635,6 +4630,12 @@ program qsim
       HNFbac(:) = 0.0
       rO2HNF(:) = 0.0
       bsbHNF(:) = 0.0
+      
+      if (nbuhn(mstr) > 0) then
+         bro2HF(mstr,:) = 0.
+         bHNFBS(mstr,:) = 0.
+         bBSBHN(mstr,:) = 0.
+      endif
       
       ! -----------------------------------------------------------------------
       ! Kieselalgen
@@ -5342,13 +5343,17 @@ program qsim
       !    enddo
       ! endif
       
-      pfl(:)    = 0.0
-      pflmax(:) = 0.0
-      pflmin(:) = 0.0
-      po2p(:)   = 0.0
-      po2r(:)   = 0.0
+      pfl    = 0.
+      pflmax = 0.
+      pflmin = 0.
+      po2p   = 0.
+      po2r   = 0.
       
-      if (nbuhn(mstr) > 0) bpfl(:,:) = 0.0
+      if (nbuhn(mstr) > 0) then
+         bpfl(mstr,:)  = 0.
+         bpo2p(mstr,:) = 0.
+         bpo2r(mstr,:) = 0.
+      endif
       
       ! -----------------------------------------------------------------------
       ! organic carbon
@@ -5392,25 +5397,25 @@ program qsim
       if (nbuhn(mstr) > 0) then 
          do ior = 1, anze+1
             ! metabolism in groyne-field
-            call organic_carbon(                                                                &
-                     bcsb(mstr,ior), bbsb(mstr,ior), bCD(mstr,1,ior), bCD(mstr,2,ior),          &
-                     bCP(mstr,1,ior), bCP(mstr,2,ior),                                          &
-                     bCM(mstr,ior), bBAC(mstr,ior), bfbsgr(mstr,ior), bfrfgr(mstr,ior),         &
-                     nl0(ior), pl0(ior),                                                        &
-                     bCHNF(mstr,ior), bvHNF(ior),                                               &
-                     btempw(mstr,ior), bh(mstr,ior), bpfl(mstr,ior), bJDOC1(ior), bJDOC2(ior),  &
-                     rau(ior), vbm(mstr,ior), bBSBHN(mstr,ior),                                 &
-                     bdkmor(mstr,ior), bdgmor(mstr,ior), bdbmor(mstr,ior), babszo(mstr,ior),    &
-                     Q_PK(ior), Q_PG(ior), Q_PB(ior),                                           &
-                     Q_NK(ior), Q_NG(ior), Q_NB(ior),                                           &
-                     bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                      &
-                     bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                      &
-                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                              &
-                     babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),           &
-                     bsbzoo, toc_csb, tflie,                                                    &
-                     BAcmua(ior),  bsbct(ior), bsbctP(ior), doN(ior), bbsbt(mstr,ior),          &
-                     bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),    &
-                     dorgSS(ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                             &
+            call organic_carbon(                                                                  &
+                     bcsb(mstr,ior), bbsb(mstr,ior), bCD(mstr,1,ior), bCD(mstr,2,ior),            &
+                     bCP(mstr,1,ior), bCP(mstr,2,ior),                                            &
+                     bCM(mstr,ior), bBAC(mstr,ior), bfbsgr(mstr,ior), bfrfgr(mstr,ior),           &
+                     nl0(ior), pl0(ior),                                                          &
+                     bCHNF(mstr,ior), bvHNF(ior),                                                 &
+                     btempw(mstr,ior), bh(mstr,ior), bpfl(mstr,ior), bJDOC1(ior), bJDOC2(ior),    &
+                     rau(ior), vbm(mstr,ior), bBSBHN(mstr,ior),                                   &
+                     bdkmor(mstr,ior), bdgmor(mstr,ior), bdbmor(mstr,ior), babszo(mstr,ior),      &
+                     Q_PK(ior), Q_PG(ior), Q_PB(ior),                                             &
+                     Q_NK(ior), Q_NG(ior), Q_NB(ior),                                             &
+                     bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                        &
+                     bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                        &
+                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                                &
+                     babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),             &
+                     bsbzoo, toc_csb, tflie,                                                      &
+                     BAcmua(ior), bbsbct(mstr,ior), bsbctP(ior), bdoN(mstr,ior), bbsbt(mstr,ior), &
+                     bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),      &
+                     borgSS(mstr,ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                          &
                      kontroll, jjj)
             
             ! --- mixing between groyne-field and main river ---
@@ -5559,19 +5564,17 @@ program qsim
                        bFluN3(mstr,ior), dC_DenW(ior),                                                   &
                        kontroll, jjj)
                        
-                       ! TODO (Schönung)
-                       ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
-                       
-                       ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
-                       ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
-                       ! auf Identität getestet werden kann
-                       ! Nach einem Erfolgreichen Test sollten diese Fehler hier ausgebessert werden
-                       albewg(ior) = zwabwg(ior)
-                       alberg(ior) = zwabrg(ior)
-                       albewk(ior) = zwabwk(ior)
-                       alberk(ior) = zwabrk(ior)
-                       
+            ! TODO (Schönung)
+            ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
             
+            ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
+            ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
+            ! auf Identität getestet werden kann
+            ! Nach einem Erfolgreichen Test sollten diese Fehler hier ausgebessert werden
+            albewg(ior) = zwabwg(ior)
+            alberg(ior) = zwabrg(ior)
+            albewk(ior) = zwabwk(ior)
+            alberk(ior) = zwabrk(ior)
             
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
@@ -5977,7 +5980,7 @@ program qsim
       ! Schwebstoffe
       ! -----------------------------------------------------------------------
       1518 continue
-      if (ssalg(1) < 0.0)goto 1525
+      if (ssalg(1) < 0.0) goto 1525
       call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
                   ,tflie,VMITT,flae,flag,elen,ior,anze,ess,ssL,qeinl,qeinlL,vabfl   &
                   ,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinLs               &
@@ -5986,6 +5989,7 @@ program qsim
                   ,tausc,ischif,ilbuhn,fkm,ieros,iwied                              &
                   ,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,mstr,itags,monats,uhrz &
                   ,kontroll,0)
+      
       if (nbuhn(mstr) == 0)goto 1525
       if (ilbuhn == 0) then
          do ior = 1,anze+1

@@ -46,7 +46,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    real, intent(inout)     :: lf_s      !< Leitfähigkeit
    real, intent(in)        :: tempw_s   !< Wassertemperatur [°C]
    real, intent(inout)     :: vph_s     !< pH-Wert [-]
-   real, intent(inout)     :: vco2_s    !< CO2
+   real, intent(out)       :: vco2_s    !< CO2
    real, intent(in)        :: tflie     !< Zeitschritt [d]
    real, intent(in)        :: rau_s     !< Kst
    real, intent(in)        :: vmitt_s   !< Geschwindigkeit

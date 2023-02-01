@@ -269,27 +269,29 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                Ywert = 0.
                ! report if boundary values are missing (abort simulation if required)
                ! TODO FG: Parts on HNF in if-condition below need to be adapted once HNF is operational again.
-               if (         ipp /= 24 .and. ipp /= 25  .and.     &  ! Heterotrophic nanoflagellates (HNF)
-                   .not.(iColi   == 1 .and. ipp == 26) .and.     &  ! Coliform bacteria inactive
-                   .not.(iwsim   == 4 .and. ipp == 28) .and.     &  ! Passive tracer inactive
-                   .not.(iwsim   == 5 .and. ipp == 29) .and.     &  ! Conservative substances inactive
-                   .not.(iSchwer == 1 .and. ipp >= 30)      ) then  ! Heavy metals inactive
-                  write(*, '("funkstar.f90: No valid data for parameter nr. ",i3," at boundary nr. ",i3,". Set to zero.")') ipp, RBNR
-               elseif (ipp /= 24 .and. ipp /= 25) then
-                  if (iColi == 1 .and. ipp == 26) then
-                     ! Coliform bacteria active
-                     write(message, '("funkstar.f90: No valid data for colis at boundary nr. ",i3,".")') RBNR
-                  elseif (iwsim   == 4 .and. ipp == 28) then
-                     ! Passive tracer active
-                     write(message, '("funkstar.f90: No valid data for tracer at boundary nr. ",i3,".")') RBNR
-                  elseif (iwsim   == 5 .and. ipp == 29) then
-                     ! Conservative substances active
-                     write(message, '("funkstar.f90: No valid data for conservative substance at boundary nr. ",i3,".")') RBNR
-                  elseif (iSchwer == 1 .and. ipp >= 30) then
-                     ! Heavy metals active
-                     write(message, '("funkstar.f90: No valid data for heavy metal (ipp =",i3,") at boundary nr. ",i3,".")') ipp, RBNR
+               if (iwied == 0) then
+                  if (         ipp /= 24 .and. ipp /= 25  .and.     &  ! Heterotrophic nanoflagellates (HNF)
+                      .not.(iColi   == 1 .and. ipp == 26) .and.     &  ! Coliform bacteria inactive
+                      .not.(iwsim   == 4 .and. ipp == 28) .and.     &  ! Passive tracer inactive
+                      .not.(iwsim   == 5 .and. ipp == 29) .and.     &  ! Conservative substances inactive
+                      .not.(iSchwer == 1 .and. ipp >= 30)      ) then  ! Heavy metals inactive
+                     write(*, '("funkstar.f90: No valid data for parameter nr. ",i3," at boundary nr. ",i3,". Set to zero.")') ipp, RBNR
+                  elseif (ipp /= 24 .and. ipp /= 25) then
+                     if (iColi == 1 .and. ipp == 26) then
+                        ! Coliform bacteria active
+                        write(message, '("funkstar.f90: No valid data for colis at boundary nr. ",i3,".")') RBNR
+                     elseif (iwsim   == 4 .and. ipp == 28) then
+                        ! Passive tracer active
+                        write(message, '("funkstar.f90: No valid data for tracer at boundary nr. ",i3,".")') RBNR
+                     elseif (iwsim   == 5 .and. ipp == 29) then
+                        ! Conservative substances active
+                        write(message, '("funkstar.f90: No valid data for conservative substance at boundary nr. ",i3,".")') RBNR
+                     elseif (iSchwer == 1 .and. ipp >= 30) then
+                        ! Heavy metals active
+                        write(message, '("funkstar.f90: No valid data for heavy metal (ipp =",i3,") at boundary nr. ",i3,".")') ipp, RBNR
+                     endif
+                     call qerror(trim(message))
                   endif
-                  call qerror(trim(message))
                endif
             endif
          else

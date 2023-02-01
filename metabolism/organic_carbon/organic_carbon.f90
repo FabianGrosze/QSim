@@ -233,10 +233,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    endif
    
    ! Respiration
-   resBAC = rsGBAC * ftemp + hupBAC * (1. - yBAC)
-   if (resBAC < 0.0) resBAC = 0.0
-   
-   dBAC = bac_s * (exp((hupBAC-resBAC)*tflie)-1.)
+   resBAC = max(0., rsGBAC * ftemp + hupBAC * (1. - yBAC))
+   dBAC = bac_s * (exp((hupBAC - resBAC)*tflie) - 1.)
    BACt = bac_s + dBAC
    BACmua_s = hupBAC - resBAC     ! Ausgabewert
    
@@ -488,8 +486,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          - sedCrf*pl0_s
    
    ! Verlust der Bakterien durch HNF-Grazing
-   BACt = BACt - HNFbac_s - zbac_s
-   if (BACt < 0.00001) BACt = 0.00001
+   BACt = max(0.00001, BACt - HNFbac_s - zbac_s)
    
    ! --- Neuberechnung des BSB5 ---
    BL01t = ( CD1_t                  &
@@ -686,8 +683,6 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
             + (Creft + sedCrf - Cref) * fakCref
    ! Umrechnung in TG
    dorgSS_s = dorgSS_s/0.45
-   
-   
    
    ! -----------------------------------------------------------------------
    ! update values

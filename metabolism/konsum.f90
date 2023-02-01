@@ -306,17 +306,14 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       !   ir/A - Filtriertes Wasservolumen l/h
       
       zHNF(ior) = 0.0
-      if (ir(ior) == 0.0) then
-      else
+      zBAC(ior) = 0.0
+      if (ir(ior) /= 0.0) then
          zHNF(ior) = ir(ior)*CHNF(ior)/(CHNF(ior)+agr(ior)+aki(ior)+abl(ior))
          zBAC(ior) = ir(ior)*BAC(ior)/(BAC(ior)+agr(ior)+aki(ior)+abl(ior))
          zBAC(ior) = 0.0
       endif
       !   Ausgabe
-      if (CHNF(ior) == 0.0) then
-      else
-         HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
-      endif
+      if (CHNF(ior) /= 0.0) HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
       
       ROTt = ROT * exp((ProdRot-morRot)*tflie) ! Rotatorienzunahme
       !!wy if(mstr==1)write(79,*)ior,ProdRot,zass,respaR,ir_F,fTing,respRg
