@@ -25,8 +25,10 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Writes file `ModellGParam.xml`
-subroutine ModellGParam(cpfad1)
+!> Write file `ModellGParam.xml`
+!!
+!! This file is used to organise the GUI Gerris.
+subroutine write_modellg_param(cpfad1)
    implicit none
    character(255), intent(in) :: cpfad1
    
@@ -108,7 +110,6 @@ subroutine ModellGParam(cpfad1)
    write(1, '(A)') '</ParamSetDef>'
    
    ! Kenngrößen Temperatur und Sediment
-   write(1, '(A)') '</ParamSetDef>'
    write(1, '(A)') '<ParamSetDef Id="QS" Text="Kenngrössen für Sedimenttemperatur" Help="Kenngrößen für die Gewässerabschnitten" Scope="Abschnitt">'
    write(1, '(A)') '  <Parameter Ident="SPEWKS" Text="Spez. WärmeKapazität Sediment" Unit="KJ/(kg*K)" Format="F6.2" Null="-1" Help="Ton: 0.83; Sand: 0.88" Min="0.8" Max="4.5" Default="-1" />'
    write(1, '(A)') '  <Parameter Ident="WUEBK" Text="Wärmeübergangskoeffizient" Unit="KJ/(K*m2*h)" Format="F7.2" Null="-1" Help="" Min="0" Max="1000" Default="-1." />'
@@ -127,4 +128,4 @@ subroutine ModellGParam(cpfad1)
    write(1, '(A)') '</GerrisParam>'
    
    close(1)
-end subroutine ModellGParam
+end subroutine write_modellg_param

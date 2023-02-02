@@ -177,7 +177,6 @@
 		<File RelativePath=".\init_result_files.f90"/>
 		<File RelativePath=".\km_sys.f90"/>
 		<File RelativePath=".\lin_interpolation.f90"/>
-		<File RelativePath=".\ModellGParam.f90"/>
 		<File RelativePath=".\module_model_settings.f90"/>
 		<File RelativePath=".\nitrogen_inflow_1d.f90"/>
 		<File RelativePath=".\organic_carbon_inflow_1d.f90"/>
@@ -198,5 +197,6 @@
 		<File RelativePath=".\WetterParam.f90"/>
 		<File RelativePath=".\write_e_extnct.f90"/>
 		<File RelativePath=".\write_gerris_definitions.f90"/>
+		<File RelativePath=".\write_modellg_param.f90"/>
 		<File RelativePath=".\z_gitter_einl.f90"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>

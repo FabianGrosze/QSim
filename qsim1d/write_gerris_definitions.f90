@@ -40,7 +40,7 @@ subroutine write_gerris_definitions(cpfad1)
    call EreigGParam(cpfad1)
    
    print *, '  * ModellGParam.xml'
-   call ModellGParam(cpfad1)
+   call write_modellg_param(cpfad1)
    
    print *, '  * E_extnctParam.xml'
    call E_extnctParam(cpfad1)
