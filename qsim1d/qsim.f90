@@ -60,6 +60,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
    real                                    :: lat_k, o2ein
    real                                    :: mikonss, mxkonss, bxcoli,algae_biomass
+   real                                    :: POM_sed, BedGS, xsedvvertz
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, wtyp, ro, wge
@@ -278,7 +279,7 @@ program qsim
    real, dimension(:,:), allocatable       :: znsed,cadsed,cused,nised,assed
    real, dimension(:,:), allocatable       :: pbsed,crsed,fesed,hgsed,mnsed,used
    real, dimension(:,:), allocatable       :: apfl, epfl, pflmxs, pflmis, aschif, eschif, awett, ewett, abal, ebal
-   real, dimension(:,:), allocatable       :: ggbal, gkbal, akdrei, ekdrei, apom, epom, pomz, bedgsz, sedvvertz, acoro, ecoro
+   real, dimension(:,:), allocatable       :: ggbal, gkbal, akdrei, ekdrei, acoro, ecoro
    real, dimension(:,:), allocatable       :: coro1s, aksed, eksed, spewksx, wuebkx, psrefsx, extkx, coross, aveg, eveg
    real, dimension(:,:), allocatable       :: valtal, edufal, valtar, edufar
    real, dimension(:,:), allocatable       :: sedom, bedgsed, sedvvert, spewksus, wuebkus, psrefsus, spewkss, wuebks, psrefss
@@ -712,8 +713,8 @@ program qsim
    allocate(apfl(azStrs,ialloc3), epfl(azStrs,ialloc3), pflmxs(azStrs,ialloc3), pflmis(azStrs,ialloc3))
    allocate(aschif(azStrs,ialloc3),eschif(azStrs,ialloc3), awett(azStrs,ialloc3), ewett(azStrs,ialloc3))
    allocate(abal(azStrs,ialloc3), ebal(azStrs,ialloc3),ggbal(azStrs,ialloc3), gkbal(azStrs,ialloc3))
-   allocate(akdrei(azStrs,ialloc3), ekdrei(azStrs,ialloc3), aPOM(azStrs,ialloc3),ePOM(azStrs,ialloc3))
-   allocate(POMz(azStrs,ialloc3), BedGSz(azStrs,ialloc3), sedvvertz(azStrs,ialloc3), acoro(azStrs,ialloc3))
+   allocate(akdrei(azStrs,ialloc3), ekdrei(azStrs,ialloc3))
+   allocate(acoro(azStrs,ialloc3))
    allocate(ecoro(azStrs,ialloc3), WUEBKx(azStrs,ialloc3), extkx(azStrs,ialloc3), VALTAL(azStrs,ialloc3))
    allocate(coro1s(azStrs,ialloc3), aKSED(azStrs,ialloc3), eKSED(azStrs,ialloc3), SPEWKSx(azStrs,ialloc3))
    allocate(PSREFSx(azStrs,ialloc3), coross(azStrs,ialloc3), aVEG(azStrs,ialloc3), eVEG(azStrs,ialloc3))
@@ -1005,10 +1006,6 @@ program qsim
                  ,(VTYPA(mstr,mV,iV),iV = 7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV) &
                  ,(VTYPA(mstr,mV,iV),iV = 13,14)
             
-            case('Z') ! sediment
-               mZ = mZ+1
-               read(ctext,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
-               
             case('S') ! sediment temperature
                mA = mA+1
                read(ctext,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA),extkx(mstr,mA)
@@ -1342,29 +1339,9 @@ program qsim
          848 continue
          ! organisches Material des Sediments
          POM_sed = -1.0
-         BedGS = -1.
+         BedGS = -1.0
          xsedvvertz = -1.0
-         do mZ = 1,mZs(mstr) !alle Z-Zeilen (ModellG.txt) in diesem Strang (Sedimenteigenschaften)
-            if (abfr(mstr) == 0) then  ! Kilometrierung gegen Fließrichtung
-               if (fkmgit <= aPOM(mstr,mZ) .and. fkmgit>=ePOM(mstr,mZ)) then
-                  POM_sed = POMz(mstr,mZ)
-                  BedGS = BedGSz(mstr,mZ)
-                  xsedvvertz = sedvvertz(mstr,mz)
-                  exit
-               else
-                  cycle
-               endif
-            else
-               if (fkmgit>=aPOM(mstr,mZ) .and. fkmgit <= ePOM(mstr,mZ)) then
-                  POM_sed = POMz(mstr,mZ)
-                  BedGS = BedGSz(mstr,mZ)
-                  xsedvvertz = sedvvertz(mstr,mz)
-                  exit
-               else
-                  cycle
-               endif
-            endif
-         enddo
+         
          ! organisches Material des Sediments in Buhnenfelder
          POM_sedb = -1.0
          do mU = 1,mUs(mstr)
