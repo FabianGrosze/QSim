@@ -25,17 +25,17 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg,CHLA,ir                  &
-                    ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                                 &
-                    ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema                     &
-                    ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda                                                       &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                                  & !!wy
-                    ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                                                    &
-                    ,akraus,tausc,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK                      &
-                    ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                              &
-                    ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL            &
-                    ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki              &
-                    ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB                        &
-                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1,azStrs                                                &
+                    ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                       &
+                    ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema           &
+                    ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda                                             &
+                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                        & !!wy
+                    ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                                          &
+                    ,akraus,tausc,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GRote,SS,Q_PK,Q_NK,Q_SK            &
+                    ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                    &
+                    ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL  &
+                    ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki    &
+                    ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB              &
+                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                             &
                     ,kontroll ,jjj )              !!wy
    
    
@@ -46,6 +46,8 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    
    !     STAND: 08.09.2015
    
+   use allodim
+   
    logical kontroll !!wy
    integer jjj !!wy
    
@@ -53,7 +55,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    character (len = 255)                      :: cpfad
    character (len = 275)                      :: pfadstring
    character (len = 2)                        :: ckenn_vers1
-   integer                                    :: anze, azStrs
+   integer                                    :: anze
    integer, dimension(1000)                   :: flag, jiein, ischif, nkzs
    integer, dimension(azStrs)                 :: ieinLs
    integer, dimension(azStrs,1000)            :: it_h
@@ -78,6 +80,9 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    real, dimension(azStrs,50,1000)            :: hchlkz, hchlgz, hchlbz, hQ_NKz, hQ_NGz, hQ_NBz, hCChlkz, hCChlbz, hCChlgz
    real, dimension(azstrs,1000)               :: tausc
    save Cchlaz, hcakbcm, hcabbcm, hcagbcm, hcsvhemk, hcsvhemg, hcsvhemb, hcChla1, hcvkigr1, hcantbl1, hcchla1z, xmuet, akizt
+   ! TODO FG: Added the following variables here; otherwise debug run for Mittelelbe fails
+   save hcakmor_11, hcagmor_11, hcabmor_11, hcQ_PK, hcQ_NK, hcQ_SK, hcQ_PG, hcQ_NG, hcQ_PB, hcQ_NB
+   save hcCChlkz, hcCChlbz, hcCChlgz, hcQ_NKz, hcQ_NGz, hcQ_NBz
    
    iein = 1
    ispek = 0
@@ -249,8 +254,8 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
          endif
          if (ilbuhn == 1) then
             nkzs(ior) = 1
-         else if (flag(ior) /= 4) then
-         else                        ! Berücksichtigung der Einleitungen
+         else if (flag(ior) == 4) then
+            ! Berücksichtigung der Einleitungen
             m = 1
             ihcQ = 0
             if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0)m = -1

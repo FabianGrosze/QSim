@@ -30,6 +30,7 @@
 !! Literatur: W.J. Parton and J.A. Logan: A Model for Diurnal variation in Soil and Air
 !!            Temperature. - Agricultural Meteorology, 23, S.205-216 (1981)
 subroutine temperl(sa, su, uhrz, templ, mstr, idwe, tlmax, tlmin, anze, imet)
+
    use allodim
    implicit none
    

@@ -28,12 +28,12 @@
 !> @ author Volker Kirchesch
 !! @date 21.04.2004
 subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,poro1,poro2,vvert,vvert1,vvert2    &
-                     ,mstr,ior,itags,monats,uhrz,azStrs,  kontroll ,jjj )
+                     ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
    
+   use allodim
    
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
-   integer                         :: azStrs
    real                            :: Kappa, K, kVis, nueSternmx, nueStern, nue, nue0, nueStern_2
    real, dimension(azStrs,1000)    :: hdKorn
    real, dimension(1000)           :: Tiefe, vmitt,rau

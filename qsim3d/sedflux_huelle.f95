@@ -26,10 +26,14 @@
 ! --------------------------------------------------------------------------- !
 
 subroutine sedflux_huelle(i)
+
+   use allodim
+   use aparam
    use modell
    use QSimDatenfelder
-   use aparam
+   
    implicit none
+   
    integer i,j,nk
    ! für Sediment
    integer, dimension(azStrs)            :: mStas, mSs, abfr, mStra, nbuhn
@@ -50,11 +54,11 @@ subroutine sedflux_huelle(i)
    !#    Berechnung der SedimentKenngroessen
    !#    ****************************************
    !#    lesen von modellg.txt: aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
-   !#    call Sediment(abfr,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif &
+   !#    call Sediment(abfr,mStra,Stakm,mStas,mSs,aschif,eschif &
    !#                 ,SedOM,SedOMb,dKorn,dKornb    &
    !#                 ,raua,vmq,Hmq,nbuhn,bvmq,bHmq &
    !#                 ,jsed,w2,w2b) ... ruft ...
-   !#    subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b)
+   !#    subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b)
    !#    subroutine Sed_POM:    w2(mstr,mSta) = 0.74e-5
    !#vmitt1 = vmq(mstr,mSta)
    !#tiefe1 = Hmq(mstr,mSta)
@@ -76,7 +80,7 @@ subroutine sedflux_huelle(i)
    bvmq(1,1:2) = 1.0
    bHmq(1,1:2) = 2.0
    if (kontroll)print*,'vor Sediment: hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2) = ',hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2)
-   call Sediment(1,azStrs,mStra,Stakm,mStas,mSs,aschif,eschif   &
+   call Sediment(1,mStra,Stakm,mStas,mSs,aschif,eschif          &
                  ,hsedom,SedOMb,hdkorn,dKornb                   &
                  ,raua,vmq,Hmq,nbuhn,bvmq,bHmq                  &
                  ,0,hw2,w2b)
@@ -91,7 +95,7 @@ subroutine sedflux_huelle(i)
    hsedvvert(1,1:2) = zone(point_zone(iglob))%sediflux%sedvvert ! Sedvvertz  volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h | ust???
    if (kontroll)print*,'sedflux_huelle: hdkorn,hbedgs,hsedom,hw2 = ',hdkorn(1,1:2),hbedgs(1,1:2),hsedom(1,1:2),hw2(1,1:2)
    !!,\ref hdkorn,\ref vo2,\ref vno3,\ref vnh4,\ref gelP,\ref tempw,\ref anze,\ref mstr           &\n
-   !#  subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b)
+   !#  subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b)
    !   Berechnung des Mittleren Korndurchmessers in mm
    !   dKorn(mstr,mSta) = min(100.,0.0047*exp(64.89*ust))
    !hdkorn(1,1) = 0.02! ##### ???,dKorn
@@ -192,7 +196,7 @@ subroutine sedflux_huelle(i)
    agr(2) = agr(1)
    abl(1) = planktonic_variable_p(10+nk) ! Biomasse an Blau-Algen
    abl(2) = abl(1)
-   !!\ref chlaki,\ref chlagr,\ref chlabl,\ref hflun3,\ref ilang,\ref azstrs,\ref iwied,\ref ynmx1e,\ref stks1e     &\n
+   !!\ref chlaki,\ref chlagr,\ref chlabl,\ref hflun3,\ref ilang,\ref iwied,\ref ynmx1e,\ref stks1e     &\n
    Chlaki(1) = planktonic_variable_p(12+nk)  ! Chlorophyl in Kieselalgen muegchla/l
    Chlaki(2) = Chlaki(1)
    chlagr(1) = planktonic_variable_p(13+nk)  ! Chlorophyl in gruenalgen muegchla/l
@@ -201,7 +205,6 @@ subroutine sedflux_huelle(i)
    chlabl(2) = chlabl(1)
    hFluN3(1,1) = benthic_distribution_p(37+(i-1)*number_benth_distr) ! Ausgabe NitratFlux Wasser/Sediment in mgN/(l*h) aus ncyc()
    hFluN3(1,2) = hFluN3(1,1)
-   !module_QSimDatenfelder.f95:    integer , parameter :: azStrs=1
    iwied = 0      ! unbenutzte Variable
    ! direkt aus QSimDatenfelder ynmx1e  !  Max. Wachstum Nitrosomonas
    ! direkt aus QSimDatenfelder ystks1e !  Halbsättigung Nitrosomonas
@@ -212,11 +215,11 @@ subroutine sedflux_huelle(i)
    ocsb(2) = ocsb(1)
    !if(kontroll)print*,'sedflux vorher: vO2,hJSi,hJNO3,hJNH4,hJN2=',vo2(1),hJSi(1,1),hJNO3(1,1),hJNH4(1,1),hJN2(1,1)
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   call sedflux (tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP,Tempw,anze,mstr          &
-                 ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4,KapN3                                   &
-                 ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCap,Klang                               &
-                 ,KdNh3,fPOC1,fPOC2,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                                 &
-                 ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,YNMAX1,STKS1     &
+   call sedflux (tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP,Tempw,anze,mstr  &
+                 ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4,KapN3                            &
+                 ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCap,Klang                        &
+                 ,KdNh3,fPOC1,fPOC2,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                           &
+                 ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,YNMAX1,STKS1    &
                  ,obsb,ocsb,  kontroll ,iglob ) !!wy
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Datenrückgabe:
    if (kontroll)print*,'sedflux nacher: ,hJO2,vo2(1),hJSi,hJNO3,hJNH4,hJPO4(1,1),hJN2 = ' &

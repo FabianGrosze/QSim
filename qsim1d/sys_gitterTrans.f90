@@ -29,10 +29,13 @@ subroutine sys_gitterTrans(mstr, anze, nkzs, nkzmax, dH2D, tempwz, vo2z, vnh4z,&
                            vno2z, vno3z, gelPz, Siz, akiz, agrz, ablz, chlaz,  &
                            hchlkz, hchlgz, hchlbz, hCChlkz, hCChlbz, hCChlgz,  &
                            hgesPz, hgesNz, hQ_NKz, hQ_NBz, hQ_NGz, Uvert,      &
-                           i_point, itags, monats, uhrz, azStrs)
+                           i_point, itags, monats, uhrz)
    ! nkzs:    Anzahl der Gitterpunkte des alten Gitters
    ! nkzmax:  Anzahl Gitterpunkte des neuen Gitters
-   integer                         :: anze, nkzs_neu, nkz_alt,mstr, azStrs
+   
+   use allodim
+   
+   integer                         :: anze, nkzs_neu, nkz_alt,mstr
    integer,dimension(1000)         :: nkzs
    real, dimension(50,1000)        :: tempwz, vo2z, vnh4z, vno2z, vno3z, gelPz, Siz, akiz, agrz, ablz, chlaz, Uvert, hc_array
    real, dimension(azStrs,50,1000) :: hchlkz, hchlgz, hchlbz, hgesPz, hgesNz, hQ_NKz, hQ_NBz, hQ_NGz

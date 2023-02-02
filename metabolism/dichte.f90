@@ -24,14 +24,15 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine dichte(tempwz,nkzs,D)
+subroutine dichte(tempwz, nkzs, ior, D)
    use allodim
    implicit none
    real,    intent(in),  dimension(ialloc5,ialloc2) :: tempwz
    integer, intent(in),  dimension(ialloc2)         :: nkzs
+   integer, intent(in)                              :: ior
    real,    intent(out), dimension(ialloc5)         :: D
    
-   integer         :: j, nkz, ior
+   integer         :: j, nkz
    
    real, parameter :: a0 =  999.842594
    real, parameter :: a1 =  6.793952e-2

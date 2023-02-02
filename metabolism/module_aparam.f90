@@ -112,18 +112,18 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    integer, intent(in)        :: iwsim, icoli, ieros, ischwer
    
    
-   integer                    :: io_error, summ_err
+   integer                    :: io_error, io_error_sum
    character(500)             :: dateiname, message
    real                       :: dummy
-   logical                    :: ex
+   logical                    :: isExistent
    
    namelist /ALGAE/  &
-      AGCHL, AGGMAX, IKge, AGKSN, AGKSP, AGREMI, frmuge, BSBGR, CSBGR, QMX_NG, &
-      QMX_PG, QMN_NG, QMN_PG, UPMXNG, UPMXPG, OPGRMI, OPGRMA, ASGRE, TOPTG,    &
-      KTEMP_GR, AKCHL, AKGMAX, IKke, AKKSN, AKKSP, AKKSSI, AKREMI, frmuke,     &
-      BSBKI, CSBKI, QMX_NK, QMX_PK, QMX_SK, QMN_NK, QMN_PK, QMN_SK, UPMXNK,    &
-      UPMXPK, UPMXSK, OPKIMI, OPKIMA, ASKIE, TOPTK, KTEMP_Ki, ABCHL, ABGMAX,   &
-      IKbe, ABKSN, ABKSP, ABREMI, frmube, BSBBL, CSBBL, QMX_NB, QMX_PB, QMN_NB,&
+      AGCHL, AGGMAX, IKge, AGKSN, AGKSP, AGREMI, frmuge, BSBGR, CSBGR, QMX_NG,   &
+      QMX_PG, QMN_NG, QMN_PG, UPMXNG, UPMXPG, OPGRMI, OPGRMA, ASGRE, TOPTG,      &
+      KTEMP_GR, AKCHL, AKGMAX, IKke, AKKSN, AKKSP, AKKSSI, AKREMI, frmuke,       &
+      BSBKI, CSBKI, QMX_NK, QMX_PK, QMX_SK, QMN_NK, QMN_PK, QMN_SK, UPMXNK,      &
+      UPMXPK, UPMXSK, OPKIMI, OPKIMA, ASKIE, TOPTK, KTEMP_Ki, ABCHL, ABGMAX,     &
+      IKbe, ABKSN, ABKSP, ABREMI, frmube, BSBBL, CSBBL, QMX_NB, QMX_PB, QMN_NB,  &
       QMN_PB, UPMXNB, UPMXPB, OPBLMI, OPBLMA, ASBLE, TOPTB, KTEMP_Bl, ifix
    
    namelist /Rotatorien/ IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
@@ -143,23 +143,23 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    namelist /Sediment/ KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
    namelist /Hygiene/ ratecd, etacd, rateci, xnuec, ratecg, ratecs
    
-   namelist /Schwermetalle/                                                       &
-      c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb,   &
-      c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad,&
-      c1Cr, e1Cr, c2Cr, e2Cr, c3Cr, e3Cr, c4Cr, e4Cr, c5Cr, e5Cr, VTKoeffDe_Cr,   &
-      c1Fe, e1Fe, c2Fe, e2Fe, c3Fe, e3Fe, c4Fe, e4Fe, c5Fe, e5Fe, VTKoeffDe_Fe,   &
-      c1Cu, e1Cu, c2Cu, e2Cu, c3Cu, e3Cu, c4Cu, e4Cu, c5Cu, e5Cu, VTKoeffDe_Cu,   &
-      c1Mn, e1Mn, c2Mn, e2Mn, c3Mn, e3Mn, c4Mn, e4Mn, c5Mn, e5Mn, VTKoeffDe_Mn,   &
-      c1Ni, e1Ni, c2Ni, e2Ni, c3Ni, e3Ni, c4Ni, e4Ni, c5Ni, e5Ni, VTKoeffDe_Ni,   &
-      c1Hg, e1Hg, c2Hg, e2Hg, c3Hg, e3Hg, c4Hg, e4Hg, c5Hg, e5Hg, VTKoeffDe_Hg,   &
-      c1U, e1U, c2U, e2U, c3U, e3U, c4U, e4U, c5U, e5U, VTKoeffDe_U,              &
-      c1Zn, e1Zn, c2Zn, e2Zn, c3Zn, e3Zn, c4Zn, e4Zn, c5Zn, e5Zn, VTKoeffDe_Zn,   &
-      c1As, e1As, c2As, e2As, c3As, e3As, c4As, e4As, c5As, e5As, VTKoeffDe_As
+   namelist /Schwermetalle/                                                                  &
+      c1Pb , e1Pb , c2Pb , e2Pb , c3Pb , e3Pb , c4Pb , e4Pb , c5Pb , e5Pb , VTKoeffDe_Pb ,   &
+      c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad,   &
+      c1Cr , e1Cr , c2Cr , e2Cr , c3Cr , e3Cr , c4Cr , e4Cr , c5Cr , e5Cr , VTKoeffDe_Cr ,   &
+      c1Fe , e1Fe , c2Fe , e2Fe , c3Fe , e3Fe , c4Fe , e4Fe , c5Fe , e5Fe , VTKoeffDe_Fe ,   &
+      c1Cu , e1Cu , c2Cu , e2Cu , c3Cu , e3Cu , c4Cu , e4Cu , c5Cu , e5Cu , VTKoeffDe_Cu ,   &
+      c1Mn , e1Mn , c2Mn , e2Mn , c3Mn , e3Mn , c4Mn , e4Mn , c5Mn , e5Mn , VTKoeffDe_Mn ,   &
+      c1Ni , e1Ni , c2Ni , e2Ni , c3Ni , e3Ni , c4Ni , e4Ni , c5Ni , e5Ni , VTKoeffDe_Ni ,   &
+      c1Hg , e1Hg , c2Hg , e2Hg , c3Hg , e3Hg , c4Hg , e4Hg , c5Hg , e5Hg , VTKoeffDe_Hg ,   &
+      c1U  , e1U  , c2U  , e2U  , c3U  , e3U  , c4U  , e4U  , c5U  , e5U  , VTKoeffDe_U  ,   &
+      c1Zn , e1Zn , c2Zn , e2Zn , c3Zn , e3Zn , c4Zn , e4Zn , c5Zn , e5Zn , VTKoeffDe_Zn ,   &
+      c1As , e1As , c2As , e2As , c3As , e3As , c4As , e4As , c5As , e5As , VTKoeffDe_As
    
    
    ! write example
    dateiname = trim(adjustl(cpfad)) // 'APARAM_example.nml'
-   open (Unit=55 , file = dateiname, action = 'write', iostat = io_error)
+   open (unit = 55 , file = dateiname, action = 'write', iostat = io_error)
    if (io_error /= 0) call qerror("Error while opening APARAM_example.nml")
    
    write(55, nml = ALGAE)
@@ -174,7 +174,10 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    write(55, nml = Hygiene)
    write(55, nml = Schwermetalle)
    close (55)
-   summ_err = 0
+   
+   
+   ! initialise I/O error counter
+   io_error_sum = 0
    
    ! APARAM.nml
    ! write(dateiname,'(2A)')trim(adjustl(cpfad)),'APARAM.nml'
@@ -183,118 +186,117 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    if (.false.) then 
       rewind (55)
       
-      read(55,nml = ALGAE,iostat = io_error)
+      read(55, nml = ALGAE, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist ALGAE from AParam.")
       
-      read(55,nml = Rotatorien,iostat = io_error)
+      read(55, nml = Rotatorien, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Rotatorien from AParam.")
       
-      read(55,nml = Nitrosomonas,iostat = io_error)
+      read(55, nml = Nitrosomonas, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Nitrosomonas from AParam.")
       
-      read(55,nml = Nitrobacter,iostat = io_error)
+      read(55, nml = Nitrobacter, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Nitrobacter from AParam.")
       
-      read(55,nml = Kohlenstoff,iostat = io_error)
+      read(55, nml = Kohlenstoff, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Kohlenstoff from AParam.")
       
-      read(55,nml = Muscheln,iostat = io_error)
+      read(55, nml = Muscheln, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Muscheln from AParam.")
       
-      read(55,nml = HNF,iostat = io_error)
+      read(55, nml = HNF, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist HNF from AParam.")
       
-      read(55,nml = Wasser,iostat = io_error)
+      read(55, nml = Wasser, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Wasser from AParam.")
       
-      read(55,nml = Sediment,iostat = io_error)
+      read(55, nml = Sediment, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Sediment from AParam.")
       
-      read(55,nml = Hygiene,iostat = io_error)
+      read(55, nml = Hygiene, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Hygiene from AParam.")
       
-      read(55,nml = Schwermetalle,iostat = io_error)
+      read(55, nml = Schwermetalle, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Schwermetalle from AParam.")
       
       close (55)
       
    else ! APARAM.nml does not exist
-      ! print*,'APARAM.nml option not yet operational'
-      summ_err = 0
       
-      ! APARAM.txt
+      ! check existence of APARAM.txt
       dateiname = trim(adjustl(cpfad)) // 'APARAM.txt'
-      inquire(file = dateiname, exist = ex)
-      if (.not. ex) call qerror("Could not find AParam.txt.")
+      inquire(file = dateiname, exist = isExistent)
+      if (.not. isExistent) call qerror("Could not find AParam.txt.")
       
-      open(Unit=55, file = dateiname, status = 'old', action = 'read ', iostat = io_error )
-      if (io_error /= 0) call qerror("Error while opening AParam.txt.")
-      
+      ! open file and set locator to start
+      open(unit = 55, file = dateiname, status = 'old', action = 'read ', iostat = io_error )
+      if (io_error /= 0) call qerror("Error opening AParam.txt.")
       rewind (55)
+      
+      ! read parameters from file
       ! line 1
-      read(55,*,iostat = io_error)agchl,aggmax,IKge,agksn,agksp         ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)agremi,frmuge,bsbgr,csbgr,Qmx_NG      ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG    ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)opgrmi,opgrma,asgre,ToptG,kTemp_Gr    ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)akchl,akgmax,IKke,akksn,akksp         ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)akkssi,akremi,frmuke,bsbki,csbki      ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK    ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi    ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)opkima,askie,ToptK,kTemp_Ki,abchl     ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)abgmax,IKbe,abksn,abksp,abremi        ; if (io_error /= 0)summ_err = summ_err+1
+      read(55,*,iostat = io_error) agchl,aggmax,IKge,agksn,agksp            ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) agremi,frmuge,bsbgr,csbgr,Qmx_NG         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) Qmx_PG,Qmn_NG,Qmn_PG,upmxNG,upmxPG       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) opgrmi,opgrma,asgre,ToptG,kTemp_Gr       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) akchl,akgmax,IKke,akksn,akksp            ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) akkssi,akremi,frmuke,bsbki,csbki         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) Qmx_NK,Qmx_PK,Qmx_SK,Qmn_NK,Qmn_PK       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) Qmn_SK,upmxNK,upmxPK,upmxSK,opkimi       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) opkima,askie,ToptK,kTemp_Ki,abchl        ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) abgmax,IKbe,abksn,abksp,abremi           ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       ! line 11
-      read(55,*,iostat = io_error)frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB      ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi    ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)opblma,asble,ToptB,kTemp_Bl,ifix      ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)IRMAX,FOPTR,GROT,ZRESG,ZAKI           ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)ZAGR,ZABL,YNMAX1,STKS1,ANITR1         ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)BNMX1,BNKS1,YNMAX2,STKS2,ANITR2       ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)BNMX2,BNKS2,KNH4,KapN3,HyP1           ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)hymxD,KsD1,KsD2,KsM,upBAC             ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)YBAC,rsGBAC,FoptD,upHNF,BACks         ; if (io_error /= 0)summ_err = summ_err+1
-      read(55,*,iostat = io_error)alamda,fPOC1,fPOC2,SorpCap,Klang      ; if (io_error /= 0)summ_err = summ_err+1
+      read(55,*,iostat = io_error) frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) opblma,asble,ToptB,kTemp_Bl,ifix         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) IRMAX,FOPTR,GROT,ZRESG,ZAKI              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) ZAGR,ZABL,YNMAX1,STKS1,ANITR1            ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) BNMX1,BNKS1,YNMAX2,STKS2,ANITR2          ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) BNMX2,BNKS2,KNH4,KapN3,HyP1              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) hymxD,KsD1,KsD2,KsM,upBAC                ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) YBAC,rsGBAC,FoptD,upHNF,BACks            ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) alamda,fPOC1,fPOC2,SorpCap,Klang         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       ! line 21
-      read(55,*,iostat = io_error)KdNh3,ratecd,etacd,rateci,xnuec       ; if (io_error /= 0)summ_err = summ_err+1
+      read(55,*,iostat = io_error) KdNh3,ratecd,etacd,rateci,xnuec          ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       
       if (ischwer == 0) then
-         read(55,*,iostat = io_error)ratecg,ratecs                      ; if (io_error /= 0)summ_err = summ_err+1
+         read(55,*,iostat = io_error) ratecg,ratecs                         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       else
-         read(55,*,iostat = io_error)ratecg,ratecs,dummy,c1Pb,e1Pb         ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c2Pb,e2Pb,c3Pb,e3Pb,c4Pb              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb,c1Cad     ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e1Cad,c2Cad,e2Cad,c3Cad,e3Cad         ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c1Cr,e1Cr,c2Cr,e2Cr,c3Cr              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e3Cr,c4Cr,e4Cr,c5Cr,e5Cr              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)VTKoeffDe_Cr,c1Fe,e1Fe,c2Fe,e2Fe      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c3Fe,e3Fe,c4Fe,e4Fe,c5Fe              ; if (io_error /= 0)summ_err = summ_err+1
+         read(55,*,iostat = io_error) ratecg,ratecs,dummy,c1Pb,e1Pb         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c2Pb,e2Pb,c3Pb,e3Pb,c4Pb              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e4Pb,c5Pb,e5Pb,VTKoeffDe_Pb,c1Cad     ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e1Cad,c2Cad,e2Cad,c3Cad,e3Cad         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c4Cad,e4Cad,c5Cad,e5Cad,VTKoeffDe_Cad ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c1Cr,e1Cr,c2Cr,e2Cr,c3Cr              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e3Cr,c4Cr,e4Cr,c5Cr,e5Cr              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) VTKoeffDe_Cr,c1Fe,e1Fe,c2Fe,e2Fe      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c3Fe,e3Fe,c4Fe,e4Fe,c5Fe              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          ! line 31
-         read(55,*,iostat = io_error)e5Fe,VTKoeffDe_Fe,c1Cu,e1Cu,c2Cu      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e2Cu,c3Cu,e3Cu,c4Cu,e4Cu              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c5Cu,e5Cu,VTKoeffDe_Cu,c1Mn,e1Mn      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c2Mn,e2Mn,c3Mn,e3Mn,c4Mn              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn,c1Ni      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e1Ni,c2Ni,e2Ni,c3Ni,e3Ni              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c1Hg,e1Hg,c2Hg,e2Hg,c3Hg              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e3Hg,c4Hg,e4Hg,c5Hg,e5Hg              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)VTKoeffDe_Hg,c1U,e1U,c2U,e2U          ; if (io_error /= 0)summ_err = summ_err+1
+         read(55,*,iostat = io_error) e5Fe,VTKoeffDe_Fe,c1Cu,e1Cu,c2Cu      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e2Cu,c3Cu,e3Cu,c4Cu,e4Cu              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c5Cu,e5Cu,VTKoeffDe_Cu,c1Mn,e1Mn      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c2Mn,e2Mn,c3Mn,e3Mn,c4Mn              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn,c1Ni      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e1Ni,c2Ni,e2Ni,c3Ni,e3Ni              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c4Ni,e4Ni,c5Ni,e5Ni,VTKoeffDe_Ni      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c1Hg,e1Hg,c2Hg,e2Hg,c3Hg              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e3Hg,c4Hg,e4Hg,c5Hg,e5Hg              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) VTKoeffDe_Hg,c1U,e1U,c2U,e2U          ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          !line 41
-         read(55,*,iostat = io_error)c3U,e3U,c4U,e4U,c5U                   ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e5U,VTKoeffDe_U,c1Zn,e1Zn,c2Zn        ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e2Zn,c3Zn,e3Zn,c4Zn,e4Zn              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c5Zn,e5Zn,VTKoeffDe_Zn,c1As,e1As      ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)c2As,e2As,c3As,e3As,c4As              ; if (io_error /= 0)summ_err = summ_err+1
-         read(55,*,iostat = io_error)e4As,c5As,e5As,VTKoeffDe_As           ; if (io_error /= 0)summ_err = summ_err+1
+         read(55,*,iostat = io_error) c3U,e3U,c4U,e4U,c5U                   ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e5U,VTKoeffDe_U,c1Zn,e1Zn,c2Zn        ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e2Zn,c3Zn,e3Zn,c4Zn,e4Zn              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c5Zn,e5Zn,VTKoeffDe_Zn,c1As,e1As      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) c2As,e2As,c3As,e3As,c4As              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e4As,c5As,e5As,VTKoeffDe_As           ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       endif
       close (55)
    endif 
    
-   ! check
-   if (summ_err > 0) then
-      write(message, "(i0,a)"), summ_err, " errors occured while reading APARAM.txt."
+   ! check for I/O errors
+   if (io_error_sum > 0) then
+      write(message, "(a,i0)"), 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
       call qerror(message)
-      return
    endif
    
    if (iwsim == 2 .and. icoli == 0) return

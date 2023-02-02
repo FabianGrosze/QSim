@@ -112,7 +112,7 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
                rohE = density_1d(hcTE)
                
                ! Dichte im Vorfluter
-               call dichte(tempwz, nkzs, D)
+               call dichte(tempwz, nkzs, ior, D)
                
                ! Berechnung der vertikalen Einmischung
                call einleiter_misch(nkzs,ior,hcvo2z,Cpart,hcQ,hcQE,hco2E,rohE,D,dH2D)

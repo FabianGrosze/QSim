@@ -132,7 +132,7 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    real :: CMs ,  CDs1,CDs2, CPs1,CPs2
    real :: ssalgs ,frfgrs ,BACs,CHNFs
    real :: CPges,CDges,Cref,TOC
-   real :: algb5,algcs,alphlP,ant_CrefP
+   real :: algb5,algcs,alphlP
    real :: zoobsb,zoocsb
    real :: vcb,antBAC,BTOC5s,BTOCs,alphaD,alphlD !,alphaD1
    real :: hc_CPg,fak_aCref
@@ -184,11 +184,14 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    !  0.4  :
    ! refr. partik. Anteil (ant_CrefP) ergibt sich aus dem Verhältnis von CPges und CDges
    
+   
    if (ssalgs > 0.0) then
       hc_CPg = ssalgs-akis-agrs-abls-(zooins*GRote/1000.)
+      !FG: TODO should only one factor be used?
       hc_CPg = hc_CPg * 0.45 * 0.4
       TOC = max((BTOCs+0.01),ocsbs/TOC_CSB)
-      Cref = TOC - BTOCs      
+      Cref = TOC - BTOCs
+
       fak_aCref = CPges/(CDges+CPges)  ! Anteil ref. am hc_CPg ?????
       
       !##################################################
@@ -217,7 +220,11 @@ subroutine orgc_start(TOC_CSB,bsbZoo,GRote,                   &
    if (CDs2 <= 0.0)CDs2 = 0.000001
    if (CPs1 <= 0.0)CPs1 = 0.000001
    if (CPs2 <= 0.0)CPs2 = 0.000001
-   frfgrs = min(1.,(hc_CPg * ant_CrefP/Cref))
+   !FG TODO ant_CrefP was not assigned a value.
+   !        Hence, replaced line with line below, assuming that:
+   !        ant_CrefP = Cref / (CPges + CDges)
+   !frfgrs = min(1.,(hc_CPg * ant_CrefP/Cref))
+   frfgrs = min(1.,(hc_CPg / (CPges + CDges)))
    return
 end subroutine orgc_start
 
@@ -252,7 +259,7 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    real :: sss , ssalgs
    integer :: itags,monats,mstr,mRB
    real :: hcsum, hcsumP
-   real :: orgN, akiNmx,agrNmx, ablNmx, algNmx, orgN1, orgN2, gsN
+   real :: orgN, orgC, akiNmx,agrNmx, ablNmx, algNmx, orgN1, orgN2, gsN
    real :: hcon1, hcon2, dgsN, dalgN, faNneu
    real :: orgP, akiPmx,agrPmx, ablPmx, algPmx, orgP1, orgP2, GsP
    real :: dgsP, faPneu, dalgP
@@ -263,83 +270,104 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    
    ! zelluläre Nährstoffgehalte
    Sum_N = vnh4s+vNO3s
+   
+   ! TODO FG: These calculations imply that all cell quotas are set to their maxima
    f_NK = 0.582*(Sum_N/(Sum_N+0.011))
    f_NK = 1.
-   Q_NKs = Qmx_NK-(1.-f_NK)*(Qmx_NK-Qmn_NK)
-   Q_PKs = Qmn_PK+(Qmx_PK-Qmn_PK)/1.
+   Q_NKs = Qmx_NK - (1. - f_NK) * (Qmx_NK - Qmn_NK)
+   Q_PKs = Qmn_PK + (Qmx_PK - Qmn_PK)/1.
    Q_SKs = Qmx_SK
-   Q_NGs = Qmn_NG+(Qmx_NG-Qmn_NG)/1.
-   Q_PGs = Qmn_PG+(Qmx_PG-Qmn_PG)/1.
-   Q_NBs = Qmn_NB+(Qmx_NB-Qmn_NB)/1.
-   Q_PBs = Qmn_PB+(Qmx_PB-Qmn_PB)/1.
+   Q_NGs = Qmn_NG + (Qmx_NG - Qmn_NG)/1.
+   Q_PGs = Qmn_PG + (Qmx_PG - Qmn_PG)/1.
+   Q_NBs = Qmn_NB + (Qmx_NB - Qmn_NB)/1.
+   Q_PBs = Qmn_PB + (Qmx_PB - Qmn_PB)/1.
    
    !....Berechnung von nL0 und pL0 (N und P Gehalt der Abwasserbuertigen
    !    org Substanz)
    !
    hcsum = agrs+akis+abls              &
-           +zooins+vnh4s+vno2s                 &
+           +zooins+vnh4s+vno2s         &
            +vno3s
    hcsumP = agrs+akis+abls             &
             +zooins+gelPs
-   !
-   if (gesNs < 0.0)goto 831
-   orgN = gesNs-(agrs*Q_NGs            &
-          +abls*Q_NBs+akis*Q_NKs    &
-          +(zooins*grot/1000.)*nZoo                              &
-          +vnh4s+vno2s+vno3s)
-   nl0s = orgN/(Cref+CDges+CPges+BACs+CMs)
    
-   if (nl0s > 0.04)goto 833
+   ! organic carbon
+   orgC = Cref + CDges + CPges + BACs + CMs
+   
+   if (gesNs < 0.0) goto 831
+   orgN = gesNs -                                              &
+          (agrs*Q_NGs + abls*Q_NBs + akis*Q_NKs +              &
+           (zooins*grot/1000.) * nZoo + vnh4s + vno2s + vno3s)
+   
+   !N:C ratio of detritus + bacteria
+   if (orgC > 0.) then
+      nl0s = orgN / orgC
+   else
+      nl0s = 0.
+   endif
+   
+   if (nl0s > 0.04) goto 833
    
    nl0s = 0.04
    do m = 1,2
-      orgN = nl0s*(Cref+CDges+CPges+BACs+CMs)
-      akiNmx = akis*Q_NKs
-      agrNmx = agrs*Q_NGs
-      ablNmx = abls*Q_NBs
-      algNmx = akiNmx+agrNmx+ablNmx
-      gsN = algNmx+orgN+(zooins*grot/1000.)*nZoo+vnh4s+vno2s+vno3s
-      if (gsN <= gesNs)exit
-      hcon1 = gsN-gesNs
-      hcon2 = orgN-hcon1
-      nl0s = nl0s*hcon2/orgN
-      if ((nl0s < 0.01) .and. (einmalig)) then
-         ! ......Fehlermeldung .........
-         write(*,1405)mRB,mstr,jjj   ! jjj-3D knotennummer
-         1405 format('  Zufluss:',i3,'  Strang-Nr.:',i3,'   jjj = ',I8)
-         write(*,*) "  Summe aus orgN und NH4, NO2 und NO3 ist groesser als der Wert fuer gesN"
-         einmalig = .false.
+      orgN   = nl0s * orgC
+      akiNmx = akis * Q_NKs
+      agrNmx = agrs * Q_NGs
+      ablNmx = abls * Q_NBs
+      algNmx = akiNmx + agrNmx + ablNmx
+      gsN = algNmx + orgN + (zooins*grot/1000.)*nZoo + vnh4s + vno2s + vno3s
+      if (gsN <= gesNs) exit
+      hcon1 = gsN  - gesNs
+      hcon2 = orgN - hcon1
+      if (orgC > 0.) then
+         nl0s = hcon2 / orgC
+         if ((nl0s < 0.01) .and. (einmalig)) then
+            ! ......Fehlermeldung .........
+            write(*, 1405)mRB,mstr,jjj   ! jjj-3D knotennummer
+            write(*,*) "  Sum of organic N, NH4, NO2 and NO3 is greater than total N. Set organic N:C to 0.01."
+            einmalig = .false.
+            nl0s = 0.01
+            exit
+         endif
+      else
+         write(*,1405) mRB,mstr,jjj   ! jjj-3D knotennummer
+         write(*, '(a)') "  Sum of detrital and bacterial organic carbon less or equal 0. Set organic N:C to 0.01."
          nl0s = 0.01
          exit
       endif
    enddo
-   dgsN = gsN-gesNs
-   dalgN = algNmx-dgsN
-   if (algNmx > 0.0)faNneu = dalgN/algNmx
-   if (algNmx == 0.0)faNneu = 0.0
-   !
-   Q_NKs = Q_NKs*faNneu
-   Q_NGs = Q_NGs*faNneu
-   Q_NBs = Q_NBs*faNneu
-   hcQ_NK = 0.7*(Qmx_NK - Qmn_NK)+Qmn_NK
-   hcQ_NG = 0.7*(Qmx_NG - Qmn_NG)+Qmn_NG
-   hcQ_NB = 0.7*(Qmx_NB - Qmn_NB)+Qmn_NB
    
-   if (Q_NKs < hcQ_NK)Q_NKs = hcQ_NK
-   if (Q_NGs < hcQ_NG)Q_NGs = hcQ_NG
-   if (Q_NBs < hcQ_NB)Q_NBs = hcQ_NB
+   if (algNmx > 0.0) then
+      dgsN  = gsN - gesNs
+      dalgN  = algNmx - dgsN
+      faNneu = dalgN / algNmx
+      Q_NKs  = Q_NKs * faNneu
+      Q_NGs  = Q_NGs * faNneu
+      Q_NBs  = Q_NBs * faNneu
+   else
+      Q_NKs  = 0.
+      Q_NGs  = 0.
+      Q_NBs  = 0.
+   endif
+   !
+   hcQ_NK = 0.7*(Qmx_NK - Qmn_NK) + Qmn_NK
+   hcQ_NG = 0.7*(Qmx_NG - Qmn_NG) + Qmn_NG
+   hcQ_NB = 0.7*(Qmx_NB - Qmn_NB) + Qmn_NB
+   
+   if (Q_NKs < hcQ_NK) Q_NKs = hcQ_NK
+   if (Q_NGs < hcQ_NG) Q_NGs = hcQ_NG
+   if (Q_NBs < hcQ_NB) Q_NBs = hcQ_NB
+   
    goto 833
    !
    831 continue
    !....kein gesN am oberen Profil vorhanden wird errechnet!!
    !
-   nl0s = 0.04
-   orgN1 = (Cref+CDges+CPges+BACs+CMs)*nl0s
-   orgN2 = agrs*Q_NGs                            &
-           +abls*Q_NBs+akis*Q_NKs    &
-           +(zooins*grot/1000.)*nZoo
-   gesNs = orgN1+orgN2+vnh4s+vno2s     &
-           +vno3s
+   nl0s  = 0.04
+   orgN1 = nl0s * orgC
+   orgN2 = agrs*Q_NGs + abls*Q_NBs + akis*Q_NKs +   &
+           (zooins*grot/1000.) * nZoo
+   gesNs = orgN1 + orgN2 + vnh4s + vno2s + vno3s
    !
    if (hcsum == 0.0) then
       nl0s = -1.
@@ -350,45 +378,63 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    orgP = gesPs-(agrs*Q_PGs            &
           +abls*Q_PBs+akis*Q_PKs    &
           +(zooins*grot/1000.)*pZoo+gelps)
-   pl0s = orgP/(Cref+CDges+CPges+BACs+CMs)
-   if (pl0s > 0.005)goto 834
+   
+   if (orgC > 0.) then
+      pl0s = orgP / orgC
+   else
+      pl0s = 0.
+   endif
+   if (pl0s > 0.005) goto 834
    
    pl0s = 0.005
    do m = 1, 2
-      orgP = pl0s*(Cref+CPges+CDges+BACs+CMs)
-      akiPmx = akis*Q_PKs
-      agrPmx = agrs*Q_PGs
-      ablPmx = abls*Q_PBs
-      algPmx = akiPmx+agrPmx+ablPmx
-      gsP = algPmx+orgP+(zooins*grot/1000.)*pZoo+gelps
+      orgP   = pl0s * orgC
+      akiPmx = akis * Q_PKs
+      agrPmx = agrs * Q_PGs
+      ablPmx = abls * Q_PBs
+      algPmx = akiPmx + agrPmx + ablPmx
+      gsP    = algPmx + orgP + (zooins*grot/1000.)*pZoo + gelps
       
       if (gsP <= gesPs)exit
       hcon1 = gsP-gesPs
       hcon2 = orgP-hcon1
-      pl0s = pl0s*hcon2/orgP
-      if (pl0s < 0.0001) then
-         ! ......Fehlermeldung .........
-         write(*,1405)mRB,mstr,jjj   ! jjj-3D knotennummer
-         write(*,*) "  Summe aus orgP und gelP ist groesser als der Wert fuer gesP"
+      if (orgC > 0.) then
+         pl0s = hcon2 / orgC
+         if (pl0s < 0.001) then
+            ! ......Fehlermeldung .........
+            write(*, 1405)mRB,mstr,jjj   ! jjj-3D knotennummer
+            write(*,'(a)') "  Sum of organic and dissolved P is greater than total P. Set organic P:C to 0.001."
+            pl0s = 0.001
+            exit
+         endif
+      else
+         write(*, 1405)mRB,mstr,jjj   ! jjj-3D knotennummer
+         write(*, '(a)') "  Sum of detrital and bacterial organic carbon less or equal 0. Set organic P:C to 0.001."
          pl0s = 0.001
          exit
       endif
    enddo
-   dgsP = gsP-gesPs
-   dalgP = algPmx-dgsP
-   if (algPmx > 0.0)faPneu = dalgP/algPmx
-   if (algPmx == 0.0)faPneu = 0.0
-   Q_PKs = Q_PKs*faPneu
-   Q_PGs = Q_PGs*faPneu
-   Q_PBs = Q_PBs*faPneu
    
-   hcQ_PK = 0.7*(Qmx_PK - Qmn_PK)+Qmn_PK
-   hcQ_PG = 0.7*(Qmx_PG - Qmn_PG)+Qmn_PG
-   hcQ_PB = 0.7*(Qmx_PB - Qmn_PB)+Qmn_PB
+   if (algPmx > 0.0) then
+      dgsP   = gsP-gesPs
+      dalgP  = algPmx-dgsP
+      faPneu = dalgP / algPmx
+      Q_PKs  = Q_PKs * faPneu
+      Q_PGs  = Q_PGs * faPneu
+      Q_PBs  = Q_PBs * faPneu
+   else
+      Q_PKs = 0.
+      Q_PGs = 0.
+      Q_PBs = 0.
+   endif
    
-   if (Q_PKs < hcQ_PK)Q_PKs = hcQ_PK
-   if (Q_PGs < hcQ_PG)Q_PGs = hcQ_PG
-   if (Q_PBs < hcQ_PB)Q_PBs = hcQ_PB
+   hcQ_PK = 0.7*(Qmx_PK - Qmn_PK) + Qmn_PK
+   hcQ_PG = 0.7*(Qmx_PG - Qmn_PG) + Qmn_PG
+   hcQ_PB = 0.7*(Qmx_PB - Qmn_PB) + Qmn_PB
+   
+   if (Q_PKs < hcQ_PK) Q_PKs = hcQ_PK
+   if (Q_PGs < hcQ_PG) Q_PGs = hcQ_PG
+   if (Q_PBs < hcQ_PB) Q_PBs = hcQ_PB
    
    goto 834
    
@@ -396,20 +442,20 @@ subroutine naehr_start(akis ,abls ,agrs ,                                  &
    !....kein gesP am oberen Profil vorhanden wird errechnet!!
    
    pl0s = 0.01
-   orgP1 = (Cref+CPges+CDges+BACs+CMs)*pl0s
-   orgP2 = agrs*Q_PGs                            &
-           +abls*Q_PBs+akis*Q_PKs    &
-           +(zooins*grot/1000.)*pZoo
-   gesPs = orgP1+orgP2+gelps
+   orgP1 = pl0s * orgC
+   orgP2 = agrs*Q_PGs + abls*Q_PBs + akis*Q_PKs +  &
+           (zooins*grot/1000.)*pZoo
+   gesPs = orgP1 + orgP2 + gelps
    !
    if (hcsumP == 0.0) then
-      pl0s = -1.
+      pl0s  = -1.
       gesPs = -1.
    endif
    !
-   834 sss = ssalgs-akis-agrs    &
-             -abls-(zooins*grot/1000.)
-   if (sss < 1.0)sss = 1.
+   834 sss = max(1., ssalgs - akis - agrs - abls - (zooins*grot/1000.))
    
+   1405 format('  Zufluss:',i3,'  Strang-Nr.:',i3,'   jjj = ',I8)
+    
    return
+   
 end subroutine naehr_start

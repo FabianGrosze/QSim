@@ -67,7 +67,6 @@ subroutine coliform_huelle(i)
    coli(1:2) = planktonic_variable_p(61+(i-1)*number_plankt_vari) ! Fäkalcoliforme Bakterien
    DOSCF(1:2) = planktonic_variable_p(70+(i-1)*number_plankt_vari) !
    EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS ((nicht mehr)nur bei Temperaturmodellierung erforderlich!)       mstr
-   ! integer , parameter :: azStrs=1
    ! RateCd ! aus APARAM.txt
    ! etaCd  ! aus APARAM.txt
    ! RateCI ! aus APARAM.txt
@@ -76,8 +75,8 @@ subroutine coliform_huelle(i)
    ! RateCS ! aus APARAM.txt
    !----------------------------------------------------------------------------------
    
-   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,ss,zooind,GROT,Chla,tempw,jiein,ecoli  &
-                 ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr,azStrs         &
+   call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli  &
+                 ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
                  ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
                  ,kontroll, iglob)
    !----------------------------------------------------------------------------------
