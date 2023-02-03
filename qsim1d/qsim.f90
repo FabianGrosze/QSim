@@ -155,7 +155,7 @@ program qsim
    real, dimension(ialloc2)                :: bgsasy, bglasy, bgspby, bglpby, bgscry, bglcry, bgsfey, bglfey
    real, dimension(ialloc2)                :: bgshgy, bglhgy, bgsmny, bglmny, bgsuy, bgluy, bsseros
    real, dimension(ialloc2)                :: bjdoc1, bjdoc2, btracer, abegm2, abekm2, coroi, corois
-   real, dimension(ialloc2)                :: jdoc1, jdoc2, sgwmue, dh2de, saett, sseros
+   real, dimension(ialloc2)                :: jdoc1, jdoc2, sgwmue, dh2de, sseros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
    real, dimension(ialloc2,5)              :: coro, coros
@@ -5922,7 +5922,7 @@ program qsim
                   iPhy, tflie,                                                     &
                   dalgo(ior), dalgao(ior), algo, abeowg(ior), abeowk(ior),         &
                   abeorg(ior), abeork(ior), zooro2(ior), hSchlr(mstr,ior),         &
-                  o2ein, o2ein1(ior), saett(ior),                                  &
+                  o2ein, o2ein1(ior),                                              &
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
@@ -5931,11 +5931,7 @@ program qsim
          endif
          
          if (nbuhn(mstr) > 0) then
-            ! TODO (schoenung, august 2022): Ticket #52
-            ! Folgende Größen aus dem Hauptfluss werden fehlerhafterweise an das Buhnenfeld übergeben:
-            ! * zooind: hier muss bzooi übergeben werden
-            ! * saett:  hier muss eine neue Variable für das Buhnenfeld angelegt und übergeben werden
-            call oxygen(bo2(mstr,ior), zooind(ior),                                                                &
+            call oxygen(bo2(mstr,ior), bzooi(mstr,ior),                                                            &
                      bagn4(mstr,ior), bakn4(mstr,ior), babn4(mstr,ior),                                            &
                      bagn3(mstr,ior), bakn3(mstr,ior), babn3(mstr,ior),                                            &
                      bdagr(mstr,ior), bdaki(mstr,ior), bdabl(mstr,ior), babewg(mstr,ior), babewk(mstr,ior),        &
@@ -5947,7 +5943,7 @@ program qsim
                      iPhy, tflie,                                                                                  &
                      bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
                      babeorg(mstr,ior), babeork(mstr,ior), bzooro2(mstr,ior), bschlr(mstr,ior),                    &
-                     bo2ein(mstr,ior), bo2ein1(mstr,ior), saett(ior),                                              &
+                     bo2ein(mstr,ior), bo2ein1(mstr,ior),                                                          &
                      kontroll, jjj)
             
             ! Mixing of main river and groyne-fields
