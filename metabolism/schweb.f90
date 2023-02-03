@@ -42,20 +42,21 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
    use aparam
    implicit none
    
-   logical, intent(in)              :: kontroll !< debugging
-   integer, intent(in)              :: jjj      !< debugging
-   integer                          :: anze
-   integer                          :: iein,mstr,itags,monats,ieinL,ior,j,ior_flag,ilbuhn,m,ihcq,iwied,ji,ieros
-   real                             :: tflie,uhrz
-   real                             :: hcss,hcsse,HCFSSG,HCQ,HCQE, akie, agre, able, hcfssgE, FSSGRS
-   integer, dimension(ialloc1)      :: iorLa, iorLe
-   integer, dimension(ialloc2)      :: flag, jiein, ischif
-   real, dimension(ialloc1)         :: ess, echla, ezind, qeinl, ssL, qeinlL
-   real, dimension(ialloc2)         :: zooind, ss, vabfl, ssalg, tiefe, rau, vmitt, flae, elen, zexki, zexgr, zexbl
-   real, dimension(ialloc2)         :: fkm, dblmor ,drfaeb, abl, aki, agr, dkimor, dgrmor, abszo, dorgSS
-   real, dimension(ialloc2)         :: ssdr, drfaek, drfaeg, drfaes, fssgr, sedss, vkigr, antbl, akbcm, agbcm, abbcm
-   real, dimension(azStrs,ialloc2)  :: sedSS_MQ
-   real, dimension(azStrs,ialloc2)  :: tausc
+   logical, intent(in)                  :: kontroll !< debugging
+   integer, intent(in)                  :: jjj      !< debugging
+   integer                              :: anze
+   integer                              :: iein,mstr,itags,monats,ieinL,ior,j,ior_flag,ilbuhn,m,ihcq,iwied,ji,ieros
+   real                                 :: tflie,uhrz
+   real                                 :: hcss,hcsse,HCFSSG,HCQ,HCQE, akie, agre, able, hcfssgE, FSSGRS
+   integer, dimension(ialloc1)          :: iorLa, iorLe
+   integer, dimension(ialloc2)          :: flag, jiein, ischif
+   real, dimension(ialloc1)             :: ess, echla, ezind, qeinl, ssL, qeinlL
+   real, dimension(ialloc2)             :: zooind, ss, vabfl, ssalg, tiefe, rau, vmitt, flae, elen, zexki, zexgr, zexbl
+   real, dimension(ialloc2)             :: fkm, dblmor ,drfaeb, abl, aki, agr, dkimor, dgrmor, abszo
+   real, dimension(ialloc2), intent(in) :: dorgSS
+   real, dimension(ialloc2)             :: ssdr, drfaek, drfaeg, drfaes, fssgr, sedss, vkigr, antbl, akbcm, agbcm, abbcm
+   real, dimension(azStrs,ialloc2)      :: sedSS_MQ
+   real, dimension(azStrs,ialloc2)      :: tausc
    integer, dimension(azStrs) :: ieinLs
    
    iein = 1
@@ -132,7 +133,6 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
          endif
       endif ! Ende Einleitungs-flag
       
-      
       call schweb_kern(zooind(ior),dorgSS(ior),SS(ior),ssalg(ior),tiefe(ior)                               &
                       ,rau(ior),tflie,vmitt(ior)                                                           &
                       ,dkimor(ior),dgrmor(ior),abszo(ior),zexki(ior),zexgr(ior)                            &
@@ -140,7 +140,9 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
                       ,drfaeg(ior),drfaes(ior),fssgr(ior),sedss(ior),sedSS_MQ(mstr,ior)                    &
                       ,tausc(mstr,ior),ischif(ior),ieros                                                   &
                       ,kontroll,jjj)
+      
    enddo ! Ende Knotenschleife
+   
    if (kontroll)print*,mstr,jjj,' schweb computing SSALG,SS,fssgr = ',  &
        SSALG(jjj),SS(jjj),fssgr(jjj)
    

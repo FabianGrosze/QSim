@@ -279,7 +279,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          FH2oVol = FR*Yc+FR*Ycs
          FH2oVOL = FH2oVOL*tflie
          
-         ! Gewichts„nderung einer Muschel
+         ! Gewichtsaenderung einer Muschel
          drmue = idr-(idr*qfec)-(idr*(1.-qfec)*0.064)-((1.-qfec)*qres*idr)-rres*hcont
          dgewdr = gewdr(ior,ndr)*drmue*tflie
          gewdr(ior,ndr) = gewdr(ior,ndr)+dgewdr
@@ -374,7 +374,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          algdrg(ior) = algdrg(ior)+filagr(ndr)
          algdrk(ior) = algdrk(ior)+filaki(ndr)
          algdrb(ior) = algdrb(ior)+filabl(ndr)
-         ssdr(ior) = ssdr(ior)+filss(ndr)
+         ssdr(ior)   = ssdr(ior)  +filss(ndr)
          drfaeg(ior) = drfaeg(ior)+drfecg(ndr)
          drfaek(ior) = drfaek(ior)+drfeck(ndr)
          drfaeb(ior) = drfaeb(ior)+drfecb(ndr)
@@ -392,6 +392,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       
       ! Schwebstoffaufnahme durch Dreissena wird vorläufig auf Null gesetz
       ssdr(ior) = 0.0
+      ! Pseudo faces fraction of Dreissena
       if ((algdrg(ior)+algdrk(ior)+algdrb(ior)) == 0.0) then
          drpfec(ior) = 0.0
       else

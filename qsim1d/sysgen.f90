@@ -31,16 +31,18 @@
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
 subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
-                  ,aschif,eschif,mSs,azStrs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa              &
+                  ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                   ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                   ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
                   ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
                   ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
    
+   use allodim
+   
    character (len = 2)                    :: cwertv
    character (len = 255)                  :: cpfad
    character (len = 275)                  :: pfadstring
-   integer                                :: anze, SCHRNR, azStr, azStrs, read_error
+   integer                                :: anze, SCHRNR, azStr, read_error, dummy
    integer, dimension(azStrs)             :: STRiz, nbuhn, mSs, mStra, isegs, mUs, abfr, mStas, mRBs
    integer, dimension(1000)               :: flag, jiein
    integer, dimension(azStrs,100)         :: RBtyp
@@ -149,11 +151,11 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    
    do azStr = 1,azStrs
       khyd = 1
-      read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)         &
-           ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd)      &
-           ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)  &
-           ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)     &
-           ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)   &
+      read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
+           ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd), dummy   &
+           ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)      &
+           ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)         &
+           ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)       &
            ,iBliak(mstrl,khyd),iBreak(mstrl,khyd)
       if (iwsim == 2 .or. iwsim == 4 .or. iwsim == 5)SedOM(mstrl,khyd) = 0.0
       if (ieros == 1 .and. nbuhn(mstrl) > 0) then
@@ -179,13 +181,13 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       ! hQaus(mstrl,khyd) = abs(hQaus(mstrl,khyd))
       
-      if (nbuhn(mstrl) == 0)goto 233
+      if (nbuhn(mstrl) == 0 )goto 233
       
-      if (iBliak(mstrl,khyd) == 1 .or. iBreak(mstrl,khyd) == 1)goto 234
+      if (iBliak(mstrl,khyd) == 1 .or. iBreak(mstrl,khyd) == 1) goto 234
       goto 235
       
       234 hcon = hFlaea(mstrl,khyd)*0.01
-      if (hhbu(mstrl,khyd) < 0.01 .or. hflbu(mstrl,khyd) < hcon)goto 235
+      if (hhbu(mstrl,khyd) < 0.01 .or. hflbu(mstrl,khyd) < hcon) goto 235
       goto 233
       235 hflbu(mstrl,khyd) = hFlaea(mstrl,khyd)*0.01
       if (hWFlbu(mstrl,khyd) < 0.0)hWFlbu(mstrl,khyd) = 0.0
@@ -197,11 +199,11 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       233 continue
       
       do khyd = 2,mStas(mstrl)
-         read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)           &
-              ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd)        &
-              ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)    &
-              ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)       &
-              ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)     &
+         read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
+              ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd), dummy   &
+              ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)      &
+              ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)         &
+              ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)       &
               ,iBliak(mstrl,khyd),iBreak(mstrl,khyd)
          
          if (ieros == 1 .and. nbuhn(mstrl) > 0) then
@@ -291,8 +293,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       bsobu(khyd) = hbsobu(mstr,khyd)
       vmbu(khyd) = hvmbu(mstr,khyd)
       
-      1111 format(I5,2x,f8.3,2x,F9.4,2x,F13.6,2x,F8.5,2x,F7.1,12x,f7.4,2x    &
-      ,f7.3,2x,f7.2,2x,F7.1,2x,F7.1,2x,F7.4,2x,F6.2,2x,F6.2,2x,F8.5     &
+      1111 format(I5,2x,f8.3,2x,F9.4,2x,F13.6,2x,F8.5,2x,F7.1,I10,2x,f7.4,2x    &
+      ,f7.3,2x,f7.2,2x,F7.1,2x,F7.1,2x,F7.4,2x,F6.2,2x,F6.2,2x,F8.5             &
       ,2x,i2,2x,i2)
       
       ieinsy = 1
@@ -1041,7 +1043,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          if (cour > courmx)courmx = cour
          
          if (flbum(i) <= 0.0)vbum(i) = -1.
-         if (nbuhn(mstr) == 0)goto 646
+         if (nbuhn(mstr) == 0) goto 646
          
          tau2_0 = tau2m
          if (tau2_0 <= 0.0) then

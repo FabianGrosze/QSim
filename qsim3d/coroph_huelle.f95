@@ -38,7 +38,7 @@ subroutine coroph_huelle(i)
    
    call coroph(coro,coros,tempw,flae,elen,anze,ior                             &
                ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs   &
-               ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs   &
+               ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn          &
                ,kontroll ,iglob ) !!wy
    return
 end subroutine coroph_huelle

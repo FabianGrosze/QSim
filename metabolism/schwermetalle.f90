@@ -205,7 +205,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
             call Verteilungskoeff( hcSS, hcph  &
                                   ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb   &
                                   ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U               &
-                                  ,iformVert, kontroll,jjj)
+                                  ,iformVert, kontroll)
             if (hcgsCadE < 0.0 .and. hcglCadE < 0.0) then
                hcgsCadE = hcgsCad
                hcglCadE = hcglCad

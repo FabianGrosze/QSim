@@ -89,9 +89,9 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
            + exdrvb_s * Q_PB_s
    
    ! --- Einfluss der Algen
-   agrP = -up_PG_s *(agrbr_s-algag_s) - (albewg_s-alberg_s) * Qmx_PG
-   akiP = -up_PK_s *(akibr_s-algak_s) - (albewk_s-alberk_s) * Qmx_PK
-   ablP = -up_PB_s *(ablbr_s-algab_s)
+   agrP = -up_PG_s * (agrbr_s - algag_s) - (albewg_s - alberg_s) * Qmx_PG
+   akiP = -up_PK_s * (akibr_s - algak_s) - (albewk_s - alberk_s) * Qmx_PK
+   ablP = -up_PB_s * (ablbr_s - algab_s)
    
    ! --- sediment flux ---
    if (tiefe_s > 0.0) then 
@@ -103,6 +103,7 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
    ! -----------------------------------------------------------------------
    ! timestep gelP
    ! -----------------------------------------------------------------------
+   
    gelPt = gelP_s              &
          + agrP + akiP + ablP  & ! Änderung durch Algen
          + bsbctP_s            & ! Änderung durch C-Abbau
@@ -110,12 +111,10 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
          + gelP_zoo            & ! Änderung durch Zooplankton
          + gelP_dr               ! Änderung durch Dreissena
    
-   delp = gelPt - gelP_s
    if (gelPt < 0.0) then
+      delp = gelPt - gelP_s
       gelPt = 0.0
-      if (gelP_s + abs(delP) > 0.0) then
-         gelPt = (gelP_s / (gelP_s + abs(delp))) * gelP_s
-      endif
+      if (gelP_s + abs(delP) > 0.0) gelPt = (gelP_s / (gelP_s + abs(delp))) * gelP_s
    endif
    
    ! -----------------------------------------------------------------------

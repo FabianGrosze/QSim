@@ -143,7 +143,7 @@ subroutine stofftransport_untrim()
          , planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari) &
          ,' Tracer = ', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
       end if !kontrollknoten
-      subtim = startzeitpunkt + int( real((2*nt-1)*deltat)/real(num_sub*2) )
+      subtim = startzeitpunkt + nint( real((2*nt-1)*deltat)/real(num_sub*2) )
       
       if (subtim < transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
       if (subtim > transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
@@ -740,7 +740,7 @@ subroutine read_elemente_gerris()
    allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_rand failed')
    do n = 1,knotenanzahl2D
-      knoten_rand(n) = int(rbc(n))
+      knoten_rand(n) = nint(rbc(n))
    end do ! alle Knoten
    deallocate (rbc, stat = alloc_status )
    ! Knoten-zonen zu Darstellungszwecken
@@ -792,9 +792,9 @@ subroutine nc_sichten()
       ,zeitstunde(transinfo_anzahl),' h'
       !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
       delt = (zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
-      !print*,'nc_sichten: delt=',delt,(delt*3600.0),int(delt*3600.0)
+      !print*,'nc_sichten: delt=',delt,(delt*3600.0),nint(delt*3600.0)
       do n = 1,transinfo_anzahl ! timestep exactly equal
-         transinfo_zeit(n) = (n-1)*int(delt*3600.0) + int(zeitstunde(1)*3600.0)
+         transinfo_zeit(n) = (n-1)*nint(delt*3600.0) + nint(zeitstunde(1)*3600.0)
          transinfo_zuord(n) = n
          !nnn=n-1-(((n-1)/3)*3)
          !transinfo_zeit(n)= transinfo_zeit(n)+ 1200.0*real(nnn) !Elbe
@@ -827,9 +827,9 @@ subroutine nc_sichten()
       !  transinfo_zeit(n)= transinfo_zeit(n)+time_offset
       !end do ! alle Transportzeitschritte
       do n = 1,transinfo_anzahl
-         if (iabs(transinfo_zeit(n)-int(zeitstunde(n)*3600.0)) > 5) then ! wrong times
+         if (iabs(transinfo_zeit(n)-nint(zeitstunde(n)*3600.0)) > 5) then ! wrong times
             write(fehler,*)'nc_sichten: ERROR nMesh2_data_time does not fit'
-            print*,n,' times do not fit = ',zeitstunde(n),' h, ', int(zeitstunde(n)*3600.0),transinfo_zeit(n),' s'
+            print*,n,' times do not fit = ',zeitstunde(n),' h, ', nint(zeitstunde(n)*3600.0),transinfo_zeit(n),' s'
             call qerror(fehler)
          endif
       end do ! alle Transportzeitschritte ab 2

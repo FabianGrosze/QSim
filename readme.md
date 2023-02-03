@@ -2,6 +2,25 @@
 
 ## 14.09
 
+### 14.09.17
+* Turn off 'Sediment-Kenngrößen' in GUI Gerris
+
+### 14.09.16
+First version compiled and tested using 'Release' (= default) and 'Debug' mode (1D) and yielding identical results
+
+Tests run:
+* tracer simulation with simple model
+* coliform simulation with simple model
+* water quality simulation with simple model without groins
+* water quality simulation with simple model with groins
+
+Bugs fixed:
+* bug fix in 3D hydrodynamics time selection
+* several uninitialised variables
+* several initalisation errors for groin-related variables
+* fixed treatment of cloud typ
+* bug fix in interpolation of boundary conditions - see metabolism/set_cloud_reflectance.f90
+
 ### 14.09.15
 Fixed some bugs that remained from previous versions and entirely removed (unused) `aparamles.f90` from code base.
 

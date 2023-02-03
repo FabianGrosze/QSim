@@ -28,8 +28,8 @@
 !> advDiff
 !! @author Volker Kirchesch
 !! @date 27.01.2009
-subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sumdet,itime,izeits,mstr,iwied           &
-                   ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,azStrs,kktrans,nkztot_max   &
+subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sumdet,itime,izeits,mstr,iwied         &
+                   ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max     &
                    ,ianze_max,mtracer,iwsim,uhrz)
    
    ! Lösungsverfahren RCIP nach: F. Xiao et al., Constructing oscillation preventing
@@ -39,7 +39,9 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    !                             Lax_Wendroff: High Resolution Shock-Capturing Numerical Methods
    !                             S. 100, Formel (6.20)
    
-   integer                                :: azStrs, anze, nkz, ior
+   use allodim
+   
+   integer                                :: anze, nkz, ior
    integer, dimension(azStrs)             :: iFlRi, imac
    integer, dimension(1000)               :: flag, nkzs
    integer, dimension(1000,50)            :: m, isgn
@@ -85,7 +87,6 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
             dx1 = elen(ior-1)
             dx2 = elen(ior)
          endif
-         
          
          if (iwahlD == 1) then
             CU(ktrans,mstr,ior) = (S2-S1)/(dx1+dx2)
@@ -134,7 +135,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
          
          call basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint,m,iwied,itime,izeits  &
                          ,jpoin1,sumdet,tfliesec,nkz,nkzs,iwahlD,ipo,mstr,itags,monats,ktrans             &
-                         ,isgn,vx_Cr,azStrs,nkztot_max,ianze_max,uhrz)
+                         ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
       endif
    endif
    if (iverfahren == 1) then
@@ -146,7 +147,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    endif
    if (iverfahren == 1) then
       call CIP(U, CUx, elen, DeltaT, anze, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,mstr    &
-               ,iwahld,azSTrs, nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
+               ,iwahld, nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
       if (iwahlD == 1) then
          CU(ktrans,mstr,1:anze+1) = CUx(1:anze+1)
       else
@@ -170,10 +171,10 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    ! if(ktrans/=44)then
    if (iMac(mstr) == 0) then
       call Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
-                          ,itags,monats,itime,isub_dtx,isgn,uhrz,azStrs)
+                          ,itags,monats,itime,isub_dtx,isgn,uhrz)
    else
       call MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,itags,monats,itime            &
-                   ,isub_dtx,isgn,uhrz,azStrs)
+                   ,isub_dtx,isgn,uhrz)
    endif
    ! endif
    ! **Ende Zeitschleife**
@@ -208,11 +209,13 @@ end subroutine AdvDiff
 
 subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint,m,iwied,itime,izeits  &
                       ,jpoin1,sumdet,tfliesec,nkz,nkzs,iwahlD,ipo,mstr,itags,monats,ktrans              &
-                      ,isgn,vx_Cr,azStrs,nkztot_max,ianze_max,uhrz)
+                      ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
+                      
+   use allodim
    
    integer, dimension(1000)         :: flag, nkzs
    integer, dimension(1000,50)      :: m, isgn
-   integer                          :: anze, azStrs
+   integer                          :: anze
    real, dimension(1000)            :: elen, vmitt
    real, dimension(50,1000)         :: vmittt_1, Uvert
    real, dimension(1000,50)         :: xpoint
@@ -312,12 +315,12 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
    return
 end subroutine BasisPoint
 
-
-
-
 subroutine Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
-                          ,itags,monats,itime,isub_dtx,isgn,uhrz,azStrs)
-   integer                            :: anze,azStrs
+                          ,itags,monats,itime,isub_dtx,isgn,uhrz)
+   
+   use allodim
+   
+   integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs, imarker
    integer, dimension(1000,50)        :: isgn
    real, dimension(1000)              :: r1, r2, r3, dl, elen, U
@@ -530,8 +533,11 @@ end subroutine thomas
 
 
 subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,itags,monats,itime           &
-                   ,isub_dtx,isgn,uhrz,azStrs)
-   integer                            :: anze, azStrs
+                   ,isub_dtx,isgn,uhrz)
+   
+   use allodim
+   
+   integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs
    integer, dimension(1000,50)        :: isgn
    real, dimension(1000)              :: dl, elen, nenner
@@ -648,6 +654,7 @@ subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,
                S2 = Uneu_1(i)
                S3 = Uneu_1(i-1)
             endif
+            
             if (flag(i) == 6 .or. i == 1) then
                S1 = Uneu_1(i+1)
                S2 = Uneu_1(i)
@@ -658,11 +665,6 @@ subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,
                S1 = Uneu_1(i)
                S2 = Uneu_1(i)
                S3 = Uneu_1(i-1)
-            endif
-            if (i == 1) then
-               S1 = Uneu_1(i+1)
-               S2 = Uneu_1(i)
-               S3 = Uneu_1(i)
             endif
          endif
          SS2(i) = dlmit(i)*(S3-(1.+Calpha(i))*S2+Calpha(i)*S1)/nenner(i)
@@ -680,9 +682,11 @@ end subroutine MacCorm
 
 !> Calculating 1D Advection equation based on an cubic Interpolation
 subroutine CIP(U, CUx, DX, DT, NX, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,mstr    &
-               ,iwahld,azStrs,nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
+               ,iwahld,nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
 
-   integer :: NX, I, azStrs
+   use allodim
+   
+   integer :: NX, I
    integer, dimension(1000) :: nkzs, flag
    integer, dimension(1000,50) :: m, isgn
    real, dimension(1000) :: DX, U,CUx, CU_neu,U_neu, Ulin
@@ -846,19 +850,11 @@ subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itim
          endif
       endif
       if (isgn(i,nkz) == -1) then
-         if (i == 1) then
+         if (i == 1 .or. (i > 1 .and. flag(i-1) == 4)) then
             S1 = U(i+1)
             S2 = U(i)
             S3 = U(i)
-         else if (i > 1 .and. flag(i-1) == 4) then
-            S1 = U(i+1)
-            S2 = U(i)
-            S3 = U(i)
-         else if (i == nx+1) then
-            S1 = U(i)
-            S2 = U(i)
-            S3 = U(i-1)
-         else if (flag(i) == 4) then
+         else if (i == nx+1 .or. flag(i) == 4) then
             S1 = U(i)
             S2 = U(i)
             S3 = U(i-1)
@@ -866,7 +862,6 @@ subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itim
             S1 = U(i+1)
             S2 = U(i)
             S3 = U(i-1)
-            
          endif
       endif
       
@@ -952,8 +947,8 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
    endif
    do i = 1,nx+1
       if (iwahlD == 1) then
-         if (i < nx+1)vr(i) = (vmitt(i)+vmitt(i+1))/2.
-         if (i == nx+1)vr(i) = vmitt(i)
+         if (i <  nx+1) vr(i) = (vmitt(i) + vmitt(i+1)) / 2.
+         if (i == nx+1) vr(i) = vmitt(i)
       else
          vr(i) = Uvert(nkz,i)
       endif
@@ -1021,44 +1016,37 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
    enddo
    do i = 1,nx+1        ! ultimate-Limiter
       if (isgn(i,nkz) == 1) then
-         if (i == 1 .or. flag(i) == 4) then
-            S2 = U(i)
-            Crr1 = Crr(i)
-         else
-            S2 = U(i-1)
+         S2   = U(2)
+         S3   = U(i)
+         Crr1 = Crr(i)
+         Crr2 = Crr(i)
+         if (i > 1) then
+            S2   = U(i-1)
             Crr1 = Crr(i-1)
          endif
-         S3 = U(i)
-         Crr2 = Crr(i)
-         if (i == nx+1 .or. flag(i+1) == 4) then
-            S4 = U(i)
-         else
-            S4 = U(i+1)
+         if (i == 1 .or. flag(i) == 4) then
+            S2   = U(i)
+            Crr1 = Crr(i)
          endif
+         S3   = U(i)
+         if (i <  nx + 1) S4 = U(i+1)
+         if (i == nx + 1 .or. flag(i+1) == 4) S4 = U(i)
       else           ! vr ist kleiner 0.0
-         
-         S4 = U(i)
-         if (flag(i) == 4) then
-            S4 = U(i+1)
-         endif
-         
-         S3 = U(i+1)
-         if (i == nx+1) then
-            S3 = U(i)
-         endif
-         S2 = U(i+2)
-         dx_p1 = dx(i+1)
-         if (i == nx .or. flag(i+1) == 4) then
-            S2 = U(i+1)
-            dx_p1 = dx(i)
-         endif
-         if (i == nx+1) then
-            S2 = U(i)
-            dx_p1 = dx(i)
+         S2    = U(i)
+         S3    = U(i)
+         S4    = U(i)
+         dx_p1 = dx(i)
+         if (i < nx + 1) then
+            S3    = U(i+1)
+            if (flag(i) == 4) S4 = U(i+1)
+            if (i == nx .or. flag(i+1) == 4) then
+               S2 = U(i+1)
+            elseif (i < nx) then
+               S2 = U(i+2)
+               dx_p1 = dx(i+1)
+            endif
          endif
       endif
-      CRNT = Crr(i)
-      !    if(i>1)CRNT = (Crr(i-1)+Crr(i))/2.
       CRNT = abs(Crr(i))
       if (S2>=S3 .and. S3>=S4) then
          Uv = max(S4, S2+(S3-S2)/CRNT)
@@ -1078,36 +1066,25 @@ subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkz
          U_neu(i) = U(i)
          cycle
       endif
+      
       if (i == 1) then
          Crm = Crr(i)
       else
-         Crm = (Crr(i-1)+Crr(i))/2.
+         Crm = (Crr(i-1) + Crr(i)) / 2.
       endif
-      
-      hconr = Crm*F_plus(i)
-      hconl = hconr
-      if (i>1)hconl = Crm*F_plus(i-1)
-      if (isgn(i,nkz) == -1) then
-         hconr = -hconr
-         hconl = -hconl
+      if (i == 1) then
+         U_neu(i) = U(i) + real(min(0, isgn(i,nkz))) * Crm * (U(i) - U(i+1))
+      elseif (i == nx+1) then
+         U_neu(i) = U(i) - real(max(0, isgn(i,nkz))) * Crm * (U(i) - U(i-1))
+      else
+         U_neu(i) = U(i) + real(isgn(i,nkz)) * Crm * (F_plus(i-1) - F_plus(i))
       endif
-      
-      U_neu(i) = U(i)-hconr+hconl
-      if (i == 1 .and. isgn(i,nkz) == 1)U_neu(i) = U(i)
-      if (i == 1 .and. isgn(i,nkz) == -1)U_neu(i) = U(i)-crr(i)*(U(i)-U(i+1))
-      if (i == nx+1 .and. isgn(i,nkz) == -1)U_neu(nx+1) = U(nx+1)
-      if (i == nx+1 .and. isgn(i,nkz) == 1)U_neu(nx+1) = U(nx+1)-crr(i-1)*(U(nx+1)-U(nx))
-      if (abs(U_neu(i)) < 1.e-25)U_neu(i) = 0.0
-      if (ktrans /= 1 .and. ktrans /= 57) then
-         if (U_neu(i) < 0.0)U_neu(i) = 0.0
-      endif
-      if (iwsim == 4) then
-         if (U_neu(i) < 0.0)U_neu(i) = 0.0
-      endif
+      if (abs(U_neu(i)) < 1.e-25) U_neu(i) = 0.0
+      if ((iwsim == 4 .or. (ktrans /= 1 .and. ktrans /= 57)) .and. U_neu(i) < 0.0) U_neu(i) = 0.0
    enddo !Ende Knoten-Schleife
-   if (NX == 1) then ! Falls der Strang nur aus einem Knoten besteht
-      U_neu(1) = U(1)
-      U_neu(NX+1) = U_neu(1)
+   if (nx == 1) then ! Falls der Strang nur aus einem Knoten besteht
+      U_neu(1)    = U(1)
+      U_neu(nx+1) = U(1)
    endif
    do i = 1,nx+1
       U(i) = U_neu(i)

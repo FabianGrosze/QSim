@@ -83,12 +83,12 @@ subroutine randbedingungen_setzen()
          end if ! bedienter Randknoten
       end do ! alle j Knoten
       ! meteorological Boundary Conditions
-      !      templ(1)=temperatur_lu    ! Lufttemperatur aus Wetterstationsdaten
-      !      ro(1)=luftfeuchte         ! relative Luftfeuchte in %
-      !      wge(1)=wind               ! Windgeschwindigkeit  aus Wetterstationsdaten
-      !      schwi(1)=strahlung        ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
-      !      cloud(1)=bewoelkung       ! Bewölkungsdichte  aus Wetterstationsdaten
-      !      typw(1)=wolkentyp         ! Wolkentyp  aus Wetterstationsdaten
+      !      templ(1)=temperatur_lu       ! Lufttemperatur aus Wetterstationsdaten
+      !      ro(1)=luftfeuchte            ! relative Luftfeuchte in %
+      !      wge(1)=wind                  ! Windgeschwindigkeit  aus Wetterstationsdaten
+      !      schwi(1)=strahlung           ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
+      !      cloud(1)=bewoelkung          ! Bewölkungsdichte  aus Wetterstationsdaten
+      !      wtyp(1)=Cloud reflectance(?) ! Derived from cloud type (0-9)
       
       if (kontrollknoten > 0) then
           print*,'randbedingungen_setzen, prozessor 0, chla(kontrollknoten) = ',  &

@@ -473,7 +473,6 @@ subroutine algae_huelle(i)
                  ,mstr,it_h,itags,monats,isim_end                               &
                  ,extkS                                                         &
                  ,akmor_1,agmor_1,abmor_1                                       &
-                 ,azStrs                                                        &
                  ,kontroll,iglob)
    
    call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                       & 
@@ -485,7 +484,7 @@ subroutine algae_huelle(i)
                  ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                    &
                  ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz             &
                  ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ          &
-                 ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1,azStrs                                      &
+                 ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                             &
                  ,kontroll ,iglob )
    
    call algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                   &
@@ -498,7 +497,7 @@ subroutine algae_huelle(i)
                  ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG            &
                  ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                &
                  ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0,hQ_NGz&
-                 ,a1Gr,a2Gr,a3Gr, isim_end,agmor_1,azStrs                                                           &
+                 ,a1Gr,a2Gr,a3Gr, isim_end,agmor_1                                                                  &
                  ,kontroll,iglob)
    
    ! vkigr(ior) = chlaki(ior)/(chlagrt+chlaki(ior)+chlabl(ior))

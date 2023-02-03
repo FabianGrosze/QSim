@@ -28,12 +28,14 @@
 !> Berechnung des Schlammzehrungspotentials
 !! @author Volker Kirchesch
 !! @date 30.08.1994
-subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
+subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq,&
                     bHmq, jsed, w2, w2b,                                      &
                     kontroll, jjj)
+   
+   use allodim
 
-   integer                         :: azStr, azStrs
+   integer                         :: azStr
    integer, dimension(azStrs)      :: mStas, mSs, abfr, mStra, nbuhn
    real                            :: oc, wst, tau
    real, dimension(azStrs,20)      :: aschif, eschif
@@ -153,7 +155,7 @@ subroutine sediment(abfr, azStrs, mStra, Stakm, mStas, mSs, aschif, eschif,   &
             PhytoC = 3.4   !1.3
             GesSS = 55.            ! 16.
             call Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,&
-                        dKornb,fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b,   &
+                        dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,   &
                         kontroll,jjj)
             
          50 continue

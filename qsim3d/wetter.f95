@@ -148,12 +148,12 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
       end if
       cloud_t(:) = 0.0
       
-      allocate (typw_T(IWETTs_T), stat = alloc_status )
+      allocate (wtyp_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel typw_T :', alloc_status
+         write(fehler,*)' allocate failed in wetter_parallel wtyp_T :', alloc_status
          call qerror(fehler)
       end if
-      typw_t(:) = 0.0
+      wtyp_t(:) = 0.0
       
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
@@ -459,9 +459,9 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
          write(fehler,*)' Rueckgabewert   von   allocate cloud_T :', alloc_status
          call qerror(fehler)
       end if
-      allocate (typw_T(IWETTs_T), stat = alloc_status )
+      allocate (wtyp_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate typw_T :', alloc_status
+         write(fehler,*)' Rueckgabewert   von   allocate wtyp_T :', alloc_status
          call qerror(fehler)
       end if
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
@@ -498,7 +498,7 @@ subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
       !?      hconuh = uhrz
       !?      uhrn = uhrz+tflie*24.
       !?      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
-      !?     &,wertw,glob,tlmax,tlmin,ro,wge,cloud,typw,mwetts                  &
+      !?     &,wertw,glob,tlmax,tlmin,ro,wge,cloud,wtyp,mwetts                  &
       !?     &,imet,iWSta,iwetts)
       !?!
       !?      uhrz = hconuh
@@ -520,8 +520,8 @@ subroutine update_weather()
    call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
    do i2 = 1,IWETTs_T   !! Schleife über alle Wetterstationen
       if ((kontrollknoten > 0) .and. (meinrang == 0))      &
-          print*,i2,meinrang," update_weather: tlmed_T,ro_T,schwi_T,wge_T,cloud_T,typw_T = ",  &
-          tlmed_T(i2),ro_T(i2),schwi_T(i2),wge_T(i2),cloud_T(i2),typw_T(i2)
+          print*,i2,meinrang," update_weather: tlmed_T,ro_T,schwi_T,wge_T,cloud_T,wtyp_T = ",  &
+          tlmed_T(i2),ro_T(i2),schwi_T(i2),wge_T(i2),cloud_T(i2),wtyp_T(i2)
    end do ! i Schleife über alle Wetterstationen
    ! transfer to nodes via transfer_quantity_p array
    do i = 1,part ! Alle Knoten auf diesem Prozessor
@@ -533,7 +533,7 @@ subroutine update_weather()
          transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi_T(i2) ! radiation received by water
          transfer_quantity_p(65+(i-1)*number_trans_quant) = wge_T(i2)   ! wind speed in m/s
          transfer_quantity_p(66+(i-1)*number_trans_quant) = cloud_T(i2) ! cloud cover in 1/8
-         transfer_quantity_p(67+(i-1)*number_trans_quant) = typw_T(i2)  ! cloud type
+         transfer_quantity_p(67+(i-1)*number_trans_quant) = wtyp_T(i2)  ! cloud reflectance(?)
          if (iglob == kontrollknoten)print*,'update_weather: ',tlmed_T(i2),schwi_T(i2),i2,iglob,i,' auf Prozess #',meinrang
       end if ! Knotennummer existiert(letzter Prozess)
    end do ! all i nodes at this processor
@@ -555,7 +555,7 @@ subroutine wettles_wetter()
    
    if (meinrang == 0) then 
       print '(a,i0,a)',   "* wettles_wetter(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
-      print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","typw_T"
+      print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","wtyp_T"
    endif
    
    ! Schleife über alle Wetterstationen
@@ -593,7 +593,7 @@ subroutine wettles_wetter()
             end if
          end do
          
-         ! find closest valid datapoint after curent time
+         ! find closest valid datapoint after current time
          do j = mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
             if (zeitpunktw(i,j) > zeitpunkt) then ! bis zum aktuellen Zeitpunkt
                if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t)) then
@@ -607,6 +607,11 @@ subroutine wettles_wetter()
             end if
          end do
          
+         ! in case of cloud type (0-9) convert to cloud reflectance(?)
+         if (ipw == 7) then
+            if (found1) call set_cloud_reflectance(nint(w1), w1)
+            if (found2) call set_cloud_reflectance(nint(w2), w2)
+         endif
          
          ! Interpolation
          if (found1 .and. found2) then
@@ -639,7 +644,7 @@ subroutine wettles_wetter()
             case(4); ro_T(i) = ywert
             case(5); wge_T(i) = ywert
             case(6); cloud_T(i) = ywert
-            case(7); typw_T(i) = ywert
+            case(7); wtyp_T(i) = ywert
             case default
                write(fehler,*)'wettles_wetter: wrong number in variable ipw', ipw
                call qerror(fehler)
@@ -647,7 +652,7 @@ subroutine wettles_wetter()
       end do
       
       if (meinrang == 0) then
-         print "(i9,1x,*(f9.2,1x))", i, glob_T(i), tlmax_T(i), tlmin_T(i), ro_T(i), wge_T(i), cloud_T(i), typw_T(i)
+         print "(i9,1x,*(f9.2,1x))", i, glob_T(i), tlmax_T(i), tlmin_T(i), ro_T(i), wge_T(i), cloud_T(i), wtyp_T(i)
       endif
       
    end do 
@@ -676,8 +681,8 @@ logical function wert_gueltig(ipw,wert,imet)
          if (wert >= 0.0)wert_gueltig = .true.
       case(6) ! cloud_T(i) = ywert
          if ((wert >= 0.0) .and. (wert <= 8.0))wert_gueltig = .true.
-      case(7) ! typw_T(i) = ywert
-         if (wert >= 0.0)wert_gueltig = .true.
+      case(7) ! wtyp_T(i) = ywert
+         if (wert >= 0.0) wert_gueltig = .true.
          case default
          write(fehler,*)'wert_gueltig: wrong number in variable ipw',ipw
          call qerror(fehler)
@@ -728,8 +733,11 @@ end subroutine temperl_wetter
 !!
 !! Umstellung von profilweise auf wetterstationsweise (Zuordnung über Zonen)
 subroutine strahlg_wetter()
+   
+   use allodim
    use modell
    use qsimdatenfelder
+   
    implicit none
    
    integer, dimension(8)      :: NRV
@@ -798,8 +806,7 @@ subroutine strahlg_wetter()
       call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
                    cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
                    EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
-                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr,    &
-                   azStrs)
+                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr)
       schwi_T(i) = schwi(1)    ! global radiation at weather station
       
       !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)

@@ -78,7 +78,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real, intent(out)    :: BACmua_s     !<
    real, intent(out)    :: bsbct_s      !< mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
    real, intent(out)    :: BSBctP_s     !< Phosphorfreisetzung beim Abbau organischer Kohlenstoffverbidungen
-   real, intent(out)    :: doN_s        !< mineralisierter N-Gehalt in der Wassersäule ; Ammoniumfreisetzung beim Abbau org. Kohlenstoffverbidungen
+   real, intent(out)    :: doN_s        !< mineralisierter N-Gehalt in der Wassersäule ; Ammoniumfreisetzung beim Abbau org. C-Verbindungen
    real, intent(out)    :: BSBt_s       !< Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt
    real, intent(out)    :: BSBbet_s     !< Sauerstoffverbrauch durch Organismen auf Makrophyten; Ausgabevariable für bsbtb
    real, intent(out)    :: orgCsd0_s    !< sedimentiertes organisches Material
@@ -95,7 +95,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real     :: vcb, cref, orgN, orgP
    real     :: topt, dti, ftemp
    real     :: hymxD1, hymxD2, hhyp1, hhyp2
-   real     :: dCD1, dCD2, CD1_t, CD2_t, CP1_t, CP2_t, CMt, CMt_aus
+   real     :: dCD1, dCD2, CD1_t, CD2_t, CP1_t, CP2_t, CMt
    real     :: ddCM1, ddCM2, hyD1, hyD2
    real     :: hupBAC, dCM, resBAC, dBAC, BACt, bsbts
    real     :: fluxd1, fluxd2, fvcb, hconpf
@@ -226,17 +226,15 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    endif
    
    dCM = bac_s * (exp(hupBAC * tflie) - 1.)
-   if (dCM > CMt) then
+   if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt > 0.00001) then
      hupBAC = 0.0
      if (tflie > 0.0) hupBAC = (log(bac_s+CMt-0.00001)-log(bac_s))/tflie
      dCM = bac_s*(exp(hupBAC*tflie)-1.)
    endif
    
    ! Respiration
-   resBAC = rsGBAC * ftemp + hupBAC * (1. - yBAC)
-   if (resBAC < 0.0) resBAC = 0.0
-   
-   dBAC = bac_s * (exp((hupBAC-resBAC)*tflie)-1.)
+   resBAC = max(0., rsGBAC * ftemp + hupBAC * (1. - yBAC))
+   dBAC = bac_s * (exp((hupBAC - resBAC)*tflie) - 1.)
    BACt = bac_s + dBAC
    BACmua_s = hupBAC - resBAC     ! Ausgabewert
    
@@ -251,8 +249,12 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! wird überarbeitet
    
    FluxD1 = 0.62 * (CD1_s+CD2_s)**0.817
-   fvcb = 0.62 * log(vcb) + 2.2
-   if (vcb < 0.0) fvcb = 0.0
+   if (vcb > 0.) then
+      fvcb = 0.62 * log(vcb) + 2.2
+   else
+      fvcb = 0.0
+   endif
+  
    FluxD1 = FluxD1 * fvcb
    
    FluxD2 = 0.56*(CD1_s+CD2_s)**0.916
@@ -375,7 +377,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + famR * dBlmor_s * Cabl   &
          + famR * abszo_s  * Czoo
        
-   ! Ändderung des orgN und orgP-Gehalt
+   ! Änderung des orgN und orgP-Gehalt
    dorgP = bsbHNF_s * HNF_P_C       &
          + dKimor_s * Q_PK_s        &
          + dGrmor_s * Q_PG_s        &
@@ -484,8 +486,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          - sedCrf*pl0_s
    
    ! Verlust der Bakterien durch HNF-Grazing
-   BACt = BACt - HNFbac_s - zbac_s
-   if (BACt < 0.00001) BACt = 0.00001
+   BACt = max(0.00001, BACt - HNFbac_s - zbac_s)
    
    ! --- Neuberechnung des BSB5 ---
    BL01t = ( CD1_t                  &
@@ -614,8 +615,6 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    delbsg = fbsgr_s - fbsgrt
    delfrg = frfgr_s - frfgrt
    delbs  = obsbt   - obsb_s
-   ! TODO (schoenung, june 2022): ocsbt is has no initial value. (issue #30)
-   delcs  = ocsbt   - ocsb_s
    delCD1 = CD1_t   - CD1_s
    delCD2 = CD2_t   - CD2_s
    delCP1 = CP1_t   - CP1_s
@@ -634,21 +633,23 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + CD1_t + CD2_t      &
          + CP1_t + CP2_t      &
          + CMt                &
-         + (1.-famR) * BACt   &
-         + (1.-famR) * chnf_s
+         + (1. - famR) * (BACt + chnf_s)
    ocsbt = ocsbt * TOC_CSB
-   if (ocsbt < 0.0) ocsbt = max(0.0, (ocsb_s/(ocsb_s+abs(delcs)))*ocsb_s)
+   if (ocsbt < 0.0) then
+      delcs = ocsbt - ocsb_s
+      ocsbt = max(0.0, ocsb_s / (ocsb_s + abs(delcs)) *ocsb_s)
+   endif
    
    ! Neuberechnung von pl0 und nl0
-   if (ocsbt > 0.0 .and. TOC_CSB > 0.0) then
-     pl0_s = orgPn/(ocsbt/TOC_CSB)
-     nl0_s = orgNn/(ocsbt/TOC_CSB)
+   if (ocsbt > 0.0) then
+     pl0_s = orgPn * TOC_CSB / ocsbt
+     nl0_s = orgNn * TOC_CSB / ocsbt
    else
      nl0_s = 0.0
      pl0_s = 0.0
    endif
-   nl0_s = max(0.0,min(0.2,nl0_s))
-   pl0_s = max(0.0,min(0.02,pl0_s))
+   nl0_s = max(0.0, min(0.2 ,nl0_s))
+   pl0_s = max(0.0, min(0.02,pl0_s))
    
    ! --- Einfluss der lebenden Organismus auf BSB5 und CSB ---
    ! Algen
@@ -669,8 +670,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! wird dadurch beruecksichtigt, dass die gesamte Algenbioma
    ! zum BSB5 beitraegt.
    ! In 5d verbraucht 1 mg Zooplanktonbiomasse 1.6 mg O2
-   zoobsb = (zooind_s * GRot/1000.) * bsbZoo
-   zooCSB = (zooind_s * GRot*Czoo/1000.) * TOC_CSB
+   zoobsb = (zooind_s * GRot/1000.)        * bsbZoo
+   zooCSB = (zooind_s * GRot/1000. * Czoo) * TOC_CSB
    
    vbsb_s = obsbt + algb5 + zoobsb
    vCSB_s = ocsbt + algcs + zooCSB
@@ -682,8 +683,6 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
             + (Creft + sedCrf - Cref) * fakCref
    ! Umrechnung in TG
    dorgSS_s = dorgSS_s/0.45
-   
-   
    
    ! -----------------------------------------------------------------------
    ! update values

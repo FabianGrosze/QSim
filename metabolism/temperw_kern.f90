@@ -28,12 +28,12 @@
 ! das Abarbeiten der einzelnen Schichten erfolgt von
 ! der Oberfläche zur Gewässersohle.(nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
 ! übergeben wird die Temperaturänderung dtemp in den einzelnen Schichten: xdtemp_nkz , xdtemp_mit
-subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                  &
+subroutine temperw_kern(nkz,xnkzs,xwtyp,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud,xWlage,dH2D, xdtemp_mit                  &
                         ,tflie,WUEBK,SPEWKS,PSREFS,xtempwz1,tempmt,xtempw,btiefe,xTsed,xdtemp_nkz,dtempS_mit,iform_VerdR  &
                         ,kontroll ,jjj )
    implicit none
    integer                         :: nkz, itime, itimes, jiter, mSed, ilauf, iouter, iform_VerdR, xnkzs
-   real                            :: wtyp, G, A, cls, stbk, tempw1, tempw2, PARSab, APARS, AntUV, expWUEB, dTWUEB
+   real                            :: G, A, cls, stbk, tempw1, tempw2, PARSab, APARS, AntUV, expWUEB, dTWUEB
    real                            :: ATkor, sddw, sdtt, pdltt, fwind, fkWind, zW2, zWmess, WB, HR
    real                            :: VDW, WV, roh2o, WL, DT1D, DT2D, DT1, btiefe, tflie, hconS, sedPV
    real                            :: speWKW, sedHW, rohS, WUEBK, SPEWKS, PSREFS, dTW, TH2O
@@ -41,7 +41,7 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
    real                            :: tempmt, tempmv, tempwt, WBn, WLn1, WLn2, hconP, hconL1, hconL2, WBn_1, WLn1_1
    real                            :: WLn2_1, dH2D, xDH2D, cv_t, P, gamma_t, cp_air, v, xdtemp_mit
    real                            :: AntL1, AntL2, extkL1, extkL2, slope_t, Qn, b1, a3, b3, dtempS_mit, WSTRWSmax
-   real                            :: xtypw, xschwi, xextk, xhWS, xtempl, xro, xwge, xcloud, xWLage, xtempw, xTsed
+   real                            :: xwtyp, xschwi, xextk, xhWS, xtempl, xro, xwge, xcloud, xWLage, xtempw, xTsed
    double precision                :: hconSR2,  SchwiSr_PARS,  SchwiSr_L1, SchwiSr_L2, SchwiS_PARS, SchwiS_L1, SchwiS_L2
    double precision                :: SchwiS, Schwia_PARS, Schwia_L1, Schwia_L2, WRSn, WRSn1, WRSn2, WRSn_1, WRSn1_1, WRSn2_1
    double precision                :: hconSR, hconSR1, WRS, G1, G2, WBL1, WBL2
@@ -57,7 +57,7 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
    !    nkz        :   Zähler Tiefenschichten (nkz=1: Oberflächenschicht; nkz=xnkzs: Sohlschicht)
    !    xnkzs      :   Anzahl der Tiefenschichten am Querprofil
    ! ### Die Tiefenschichten müssen immer von 1 bis xnkzs nacheinander aufgerufen werden ####
-   !    xtypw      :   Wolkentyp (0-6)
+   !    xwtyp      :   Cloud reflectance(?) derived from cloud type (see set_cloud_reflectance.f90) [-]
    !    xschwi     :   Globalstrahlung am Querprofil [cal/(cm2*h)]
    !    xextk      :   Lichtextinktion [1/m]
    !    xhWS       :   Wasserspiegellage am Querprofil, Höhe ü. NN [m]
@@ -191,14 +191,7 @@ subroutine temperw_kern(nkz,xnkzs,xtypw,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
       !       STRAHLUNGSBILANZ
       ! #######################################
       !     Beruecksichtigung der Wolkenart
-      if (xtypw == 0)wtyp = 0.0
-      if (xtypw == 1)wtyp = 0.04
-      if (xtypw == 2)wtyp = 0.08
-      if (xtypw == 3)wtyp = 0.17
-      if (xtypw == 4 .or. xtypw == 5)wtyp = 0.2
-      if (xtypw > 5)wtyp = 0.25
-      if (xtypw < 0)wtyp = 0.17 ! keine Eingabe des Wolkentyps
-      cls = 1.+wtyp*(xcloud/8.)**2.6
+      cls = 1. + xwtyp * (xcloud / 8.)**2.6
       outerloop: do iouter = 1,100
          do itime = 1,itimes
             Schwia = 0.0

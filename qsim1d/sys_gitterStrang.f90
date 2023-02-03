@@ -29,9 +29,11 @@ subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
                             no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt,    &
                             chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt,    &
                             Q_NBzt, Q_NGzt,  CChlkzt,  CChlbzt, CChlgzt, jnkz, &
-                            i_EstRNR, itags, monats, uhrz, azStrs)
+                            i_EstRNR, itags, monats, uhrz)
    
-   integer                         :: nkzs_neu, nkz_alt,mstr, azStrs
+   use allodim
+   
+   integer                         :: nkzs_neu, nkz_alt,mstr
    real, dimension(azStrs,50,2)    :: tzt, o2zt, nh4zt, no2zt, no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt
    real, dimension(azStrs,50,2)    :: chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt
    real, dimension(azStrs,50,2)    :: CChlkzt, CChlbzt, CChlgzt
