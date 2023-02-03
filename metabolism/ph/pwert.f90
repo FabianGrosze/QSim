@@ -43,8 +43,8 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
    real     :: h, oh, y, y1, y2, eta
    integer  :: itera
    
-   ! Berechnung der absoluten Temperatur
-   abst = tempw_s + 273.16
+   ! calculate thermodynamic temperature
+   abst = tempw_s + 273.15
    
    ! Berechnung der negativen Logarithmen der Dissoziationskonstanten b
    ! in Abhängigkeit von der absoluten Temperatur für Konzentrationen in mo

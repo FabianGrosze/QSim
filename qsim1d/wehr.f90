@@ -196,7 +196,7 @@ subroutine wehr(wehrh, wehrb, ho2, hQaus, O2zt, htempw, ho2_z, ho2z_z, hlf,   &
    vphW = hph(ESTRNR(istr,nstr),kanz)
    
    ! Berechnung der absoluten Temperatur
-   abst = htempw(ESTRNR(istr,nstr),kanz)+273.16
+   abst = htempw(ESTRNR(istr,nstr),kanz) + 273.15
    tempwW = htempw(ESTRNR(istr,nstr),kanz)
    
    ! Berechnung der negativen Logarithmen der Dissoziationskonstantenl

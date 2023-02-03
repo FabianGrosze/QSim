@@ -102,9 +102,8 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    moca = ca_s / (1000.*40.08)
    c    = mw_s - pw_s
    
-   ! Berechnung der absoluten Temperatur
-   ! TODO (schoenung, 2022): must be 273.15
-   abst = tempw_s + 273.16
+   ! calculate thermodynamic temperature
+   abst = tempw_s + 273.15
    
    ! Berechnung der negativen Logarithmen der Dissoziationskonstantenl
    ! bei einer Ionenstaerke von 0 mol/l

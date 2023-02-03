@@ -66,16 +66,14 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       fph1n3 = 1.
       fph2n3 = 1.
    else
-      ! TODO (schoenung): absolute zero is -273.15°C
-      pka = 0.09018 + (2729.92/(273.16 + tempw_s))
+      pka = 0.09018 + (2729.92/(273.15 + tempw_s))
       vNH3 = vNH4_s / (1. + 10**(pka - vph_s))
       fph1n3 = 1. / (1. + vNH3 / kNH3_X1)
       fph2n3 = 1. + vNH3 / kNH3_x2
       
       
       if (vx02_s > 0.0) then
-         ! TODO (schoenung): absolute zero is -273.15°C
-         KD_N2 = exp(-2300. / (273.16 + tempw_s))
+         KD_N2 = exp(-2300. / (273.15 + tempw_s))
          vhNO2 = vNO2_s / (1. + KD_N2 * 10**vph_s)
       
          fph1n2 = 1. + vhNO2 / khNO2_x1
