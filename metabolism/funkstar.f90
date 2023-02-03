@@ -366,14 +366,12 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
       
       if (RBtyp(mstr,RBNR) == 0) mstrRB = mstr
       if (ischwer == 1 .and. RBtyp(mstr,RBNR) == 0) then
-         do i = 1,1
-            hcSS = max(0., min(100.,ssalgs(mstr,RBNR)))
-            hcph = vphs(mstr,RBNR)
-            if (hcph < 0.0) hcph = 7.5
-            call Verteilungskoeff(hcSS,hcph,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni                        &
-                                  ,VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe                                  &
-                                  ,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U,iformVert,i)
-         enddo
+         hcSS = max(0., min(100.,ssalgs(mstr,RBNR)))
+         hcph = vphs(mstr,RBNR)
+         if (hcph < 0.0) hcph = 7.5
+         call Verteilungskoeff(hcSS,hcph,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni                        &
+                               ,VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe                                  &
+                               ,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U,iformVert, .false.)
          if (gsZns(mstr,RBNR) > 0.0 .and. glZns(mstr,RBNR) <= 0.0) then
             glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn*hcSS/1000.)
          else if (gsZns(mstr,RBNR) <= 0.0 .and. glZns(mstr,RBNR) > 0.0) then
