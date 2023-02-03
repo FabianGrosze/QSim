@@ -26,11 +26,15 @@
 # --------------------------------------------------------------------------- #
 
 # Makefile for QSim3D
-
 SHELL=/usr/bin/bash
 
-PV='qsim3d_14.09.16_dev'
+# get QSim version from version_string.f90
+QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
+# set executable name
+PV= qsim3d_$(QSim_version)_dev
+
+# set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
 
@@ -58,17 +62,51 @@ MFC = $(MPI_BIN)/$(FC)
 # CDFLIBS = -L$(NETCDF_HOME)/lib -lnetcdf -L$(NETCDFF_HOME)/lib -lnetcdff
 # CDFINC = -I$(NETCDFF_HOME)/include # modules for netcdf 
 
-# compiler flags
-CFLAGS2  = -O -g -fbounds-check # develop
-#CFLAGS2 = -O3 # run fast
-FFLAGS   =  $(CFLAGS2) -c -ffree-line-length-none -finit-local-zero
+# ===================================== COMPILER OPTIONS =================================================
+# DEBUG MODE (complete list and details: https://gcc.gnu.org/onlinedocs/gfortran/Invoking-GNU-Fortran.html)
+# -O0                     ... No optimisation
+# -g                      ... Write additional output for error tracking in case of runtime error
+# -c                      ... Create an object file
+# -ffree-line-length-none ... Full line is interpreted
+# -fcheck=all,array-temps ... Enable all run time checks except for temporary array creation; includes:
+#                             bits      ... Check for invalid arguments to the bit manipulation intrinsics
+#                             bounds    ... Check if array subscripts violate the declared minimum and maximum values.
+#                             do        ... Check for invalid modification of loop iteration variables.
+#                             mem       ... Check for memory allocation.
+#                             pointer   ... Check for pointers and allocatables.
+#                             recursion ... Check for recursively called subroutines and functions which are not marked as recursive.
+# -fmax-errors=N          ... Abort compilation after N errors occurred
+# -pedantic               ... Warn about use of extensions to Fortran
+# -Wcharacter-truncation  ... Warn if a character string is truncated
+# -Wcompare-reals         ... Warn about real comparisons
+# -Wconversion            ... Warn if an implicit conversion likely changes the value of an expression
+# -Wconversion-extra      ... Warn about implicit conversions between different types and kinds
+# -Wrealloc-lhs-all       ... Warn if the compiler introduces code to (re)allocate variables
+# -Wsurprising            ... Warn about suspicious code (e.g. INTEGER SELECT construct with a CASE that can never be matched)
+# -Wtabs                  ... Warn if tabs are used as whitespace
+# -Wunused-dummy-argument ... Warn about unused dummy arguments in subroutines/functions
+# -Wunused-parameter      ... Warn about unused parameters
+# ------------------- Not available in currently installed mpif90/gfortran version -----------------------
+# -Wdo-subscript          ... Warn if an array subscript inside a DO loop could lead to an out-of-bounds access
+# -Winteger-division      ... Warn if an integer division causes a truncation
+# --------------------------------------------------------------------------------------------------------
+DEBUG_FLAGS = -O0 -g -c -ffree-line-length-none -fcheck=all,array-temps -fmax-errors=50 -pedantic    \
+              -Wcharacter-truncation -Wcompare-reals -Wconversion -Wconversion-extra                 \
+              -Wrealloc-lhs-all -Wsurprising -Wtabs -Wunused-dummy-argument -Wunused-parameter
+              # -Wdo-subscript -Winteger-division
+# ========================================================================================================
+# STANDARD MODE
+CFLAGS = -O -g -fcheck=bounds
+#CFLAGS = -O3 # run fast
+FFLAGS = $(CFLAGS) -c -ffree-line-length-none -finit-local-zero
+# ========================================================================================================
 
 # loader flags
-LDFLAGS = -lc -lstdc++ -g -fbounds-check -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  # develop
+LDFLAGS = -lc -lstdc++ -g -fcheck=bounds -Wl,-rpath=$(NETCDF_HOME)/lib -Wl,-rpath=$(NETCDFF_HOME)/lib  # develop
 # production ## LDFLAGS = -lc -lstdc++  $(MPICH2_LIB)  $(CDFLIBS)
 
-HIER=`pwd -P`
-JETZT=`date +"%-d%m%Y"`
+HERE=`pwd -P`
+NOW=`date +"%-d%m%Y"`
 
 SCHISM_HYDRO = ../../Hydro
 SCHISM_CORE  = ../../Core
@@ -102,10 +140,15 @@ Q3 = version.co trans_read.co \
 # list of all metabolism files
 -include ../metabolism/metabol.mk
 
-
 #--------------------------------------------------------------------
 
 usual: check date metabolism qsim3d
+
+debug: set_debug_options clean usual
+
+set_debug_options:
+	$(eval PV=$(PV)_debug)
+	$(eval FFLAGS=$(DEBUG_FLAGS))
 
 check:
 	@if [ `hostname` != "oss-cln51" ]; then \
@@ -113,15 +156,15 @@ check:
 	   echo "Use ssh oss-cln51"; \
 	   exit 1; \
 	fi
-	@if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) vorhanden"; else exit 1 ; fi;
-	@if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) vorhanden"; else exit 1 ; fi;
-	@if test -d ../metabolism; then echo "Directory ../metabolism ../metabolism vorhanden"; else echo "../metabolism" ; fi;
+	@if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) exists"; else exit 1 ; fi;
+	@if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) exists"; else exit 1 ; fi;
+	@if test -d ../metabolism; then echo "Directory ../metabolism ../metabolism exists"; else echo "../metabolism" ; fi;
 
-#	@if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) vorhanden"; else exit 1 ; fi;
-#	@if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) vorhanden"; else exit 1 ; fi;
-#	@if test -d "$$MPI_HOME"; then echo "Directory MPI_HOME=$(MPI_HOME) vorhanden"; else exit 1 ; fi;
-#	@if test -d $(SCHISM_HYDRO); then echo "Directory $(SCHISM_HYDRO) vorhanden"; else exit 1 ; fi;
-#	@if test -d $(SCHISM_CORE); then echo "Directory $(SCHISM_CORE) vorhanden"; else exit 1 ; fi;
+#	@if test -d "$$NETCDFF_HOME"; then echo "Directory NETCDFF_HOME=$(NETCDFF_HOME) exists"; else exit 1 ; fi;
+#	@if test -d "$$NETCDF_HOME"; then echo "Directory NETCDF_HOME=$(NETCDF_HOME) exists"; else exit 1 ; fi;
+#	@if test -d "$$MPI_HOME"; then echo "Directory MPI_HOME=$(MPI_HOME) exists"; else exit 1 ; fi;
+#	@if test -d $(SCHISM_HYDRO); then echo "Directory $(SCHISM_HYDRO) exists"; else exit 1 ; fi;
+#	@if test -d $(SCHISM_CORE); then echo "Directory $(SCHISM_CORE) exists"; else exit 1 ; fi;
 
 all: usual exe save
 # all: usual exe kombit save
@@ -129,9 +172,9 @@ all: usual exe save
 kombi: date kombit
 
 date: 
-	@echo "int version=$(JETZT);">version.h
+	@echo "int version=$(NOW);">version.h
 	@rm -f version.co nachricht.o
-	@echo 'write(codesource,*) "'$(HIER)'" ' >code_source.h
+	@echo 'write(codesource,*) "'$(HERE)'" ' >code_source.h
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
      $(SCHISM_CORE)/schism_io.o  \
