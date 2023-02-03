@@ -257,7 +257,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       !   des Sauerstoffgehalts und der Temperatur
       
       !   O2-Einfluss
-      filo2 = max(0., min(1., vo2(ior) / dokrit))
+      filo2 = vo2(ior) / dokrit
       
       !   Nahrungseinfluss: filtrierbare Algenbiomasse (in mgC/l)
       filabio = aki(ior) * Caki + agr(ior) * Cagr + abl(ior) * Cabl
