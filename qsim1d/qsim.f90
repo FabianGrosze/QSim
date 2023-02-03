@@ -87,7 +87,7 @@ program qsim
    real, dimension(ialloc2)                :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesn, gesp, sdbsb, abszo, bsbt, bsbct, bsbctp
    real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, doscf, extk, sised
-   real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, fkm
+   real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, bdc_denw, fkm
    real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zhnf, zbac, ro2hnf, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
@@ -5541,11 +5541,8 @@ program qsim
                           bh(mstr,ior), tflie,                                                                   &
                           bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                     &
                           bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                     &
-                          bFluN3(mstr,ior), dC_DenW(ior),                                                        &
+                          bFluN3(mstr,ior), bdc_denw(ior),                                                        &
                           kontroll, jjj)
-            
-            ! TODO (Schönung)
-            ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
             
             ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
             ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
@@ -5936,7 +5933,7 @@ program qsim
                      bagn3(mstr,ior), bakn3(mstr,ior), babn3(mstr,ior),                                            &
                      bdagr(mstr,ior), bdaki(mstr,ior), bdabl(mstr,ior), babewg(mstr,ior), babewk(mstr,ior),        &
                      bdaag(mstr,ior), bdaak(mstr,ior), bdaab(mstr,ior), baberg(mstr,ior), baberk(mstr,ior),        &
-                     bJO2(mstr,ior), bbsbt(mstr,ior), dC_DenW(ior), TOC_CSB, bgo2n(mstr,ior),                      &
+                     bJO2(mstr,ior), bbsbt(mstr,ior), bdc_denw(ior), TOC_CSB, bgo2n(mstr,ior),                     &
                      bpo2p(mstr,ior), bpo2r(mstr,ior), bro2dr(mstr,ior), bro2HF(mstr,ior),                         &
                      rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), flae(ior),                                  &
                      wlage(mstr,ior), hws(mstr,ior), wge(IDWe(mstr,ior)), btempw(mstr,ior),                        &
