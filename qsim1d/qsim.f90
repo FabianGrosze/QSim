@@ -9330,7 +9330,7 @@ program qsim
          xdrpfe = sdrpfe(mstr,iior)/itime
          xabeow = sabeow(mstr,iior)/itime
          xabeor = sabeor(mstr,iior)/itime
-         xdalg = sdalg(mstr,iior)/itime
+         xdalg  = sdalg(mstr,iior)/itime
          xdalga = sdalga(mstr,iior)/itime
          xalmor = salmor(mstr,iior)/itime
          xblmor = sblmor(mstr,iior)/itime
@@ -9339,31 +9339,31 @@ program qsim
          xsoein = ssoein(mstr,iior)/itime
          xsalgo = ssalgo(mstr,iior)/itime
          xo2nit = xsusn*4.33
-         xalgo = s2algo(mstr,iior)/itime
+         xalgo  = s2algo(mstr,iior)/itime
          xalgao = s2algao(mstr,iior)/itime
-         xbsbt = sbsbt(mstr,iior)/itime
+         xbsbt  = sbsbt(mstr,iior)/itime
          xschlr = sschlr(mstr,iior)/itime
          xbsbbe = sbsbbe(mstr,iior)/itime
          xo2phy = so2phy(mstr,iior)/itime
          xro2dr = sro2dr(mstr,iior)/itime
          xzooro = szooro(mstr,iior)/itime
-         xpo2p = spo2p(mstr,iior)/itime
-         xpo2r = spo2r(mstr,iior)/itime
-         xir = sir(mstr,iior)/itime
-         xrmue = srmue(mstr,iior)/itime
-         xrakr = srakr(mstr,iior)/itime
-         xrbar = srbar(mstr,iior)/itime
+         xpo2p  = spo2p(mstr,iior)/itime
+         xpo2r  = spo2r(mstr,iior)/itime
+         xir    = sir(mstr,iior)/itime
+         xrmue  = srmue(mstr,iior)/itime
+         xrakr  = srakr(mstr,iior)/itime
+         xrbar  = srbar(mstr,iior)/itime
          xffood = sffood(mstr,iior)/itime
-         xfik = sfik(mstr,iior)/it_hy(mstr,iior)
-         xfig = sfig(mstr,iior)/itime
-         xfib = -1.
+         xfik   = sfik(mstr,iior)/it_hy(mstr,iior)
+         xfig   = sfig(mstr,iior)/itime
+         xfib   = -1.
          xnaehr = snaehr(mstr,iior)/it_hy(mstr,iior)
          xakmua = sakmua(mstr,iior)/itime
          xagmua = sagmua(mstr,iior)/itime
          xabmua = sabmua(mstr,iior)/itime
-         xfhek = sfheka(mstr,iior)/itime
-         xfheg = sfhega(mstr,iior)/itime
-         xfheb = sfheba(mstr,iior)/itime
+         xfhek  = sfheka(mstr,iior)/itime
+         xfheg  = sfhega(mstr,iior)/itime
+         xfheb  = sfheba(mstr,iior)/itime
          xakrau = sakrau(mstr,iior)/itime
          xagrea = sagrea(mstr,iior)/itime
          xabrea = sabrea(mstr,iior)/itime
@@ -9384,32 +9384,33 @@ program qsim
          xJO2 = sJO2(mstr,iior)/itime
          xJSi = sJSi(mstr,iior)/itime
          
-         xalgdr = 0.0
-         xalgzo = 0.0
-         xdalg  = 0.0
-         xdalga = 0.0
-         xalmor = 0.0
-         xsedal = 0.0
-         xalgco = 0.0
-         xakigr = 0.0
-         xCHNFi = -1.
-         xCHNF  = -1.
-         
          if (iwsim /= 4 .and. iwsim /= 2) then
-            algae_biomass = xaki+xagr+xabl
+            algae_biomass = xaki + xagr + xabl
             if (algae_biomass > 0.0) then
                xalgdr = xalgdr * (1./tflie) / algae_biomass
                xalgzo = xalgzo * (1./tflie) / algae_biomass
                xdalg  = xdalg  * (1./tflie) / algae_biomass
-               if (xdalg < 0.00001) xdalg = 0.0
+               if (xdalg  < 0.00001) xdalg = 0.0
                xdalga = xdalga * (1./tflie) / algae_biomass
-               if (xdalga < 0.00001)xdalga = 0.0
+               if (xdalga < 0.00001) xdalga = 0.0
                xalmor = xalmor * (1./tflie) / algae_biomass
-               if (xalmor < 0.00001)xalmor = 0.0
+               if (xalmor < 0.00001) xalmor = 0.0
                xsedal = xsedal * (1./tflie) / algae_biomass
                xalgco = xalgco * (1./tflie) / algae_biomass
                xakigr = xagr*Cagr + xaki*Caki + xabl*Cabl
+            else
+               xalgdr = 0.0
+               xalgzo = 0.0
+               xdalg  = 0.0
+               xdalga = 0.0
+               xalmor = 0.0
+               xsedal = 0.0
+               xalgco = 0.0
+               xakigr = 0.0
+               xCHNFi = -1.
+               xCHNF  = -1.
             endif
+            
             cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
             
             !     Berechnung der Abbaubarkeit
@@ -9422,6 +9423,17 @@ program qsim
                ! xCHNF in æg/l
                xCHNF = xCHNF*1000.
             endif
+         else
+            xalgdr = 0.0
+            xalgzo = 0.0
+            xdalg  = 0.0
+            xdalga = 0.0
+            xalmor = 0.0
+            xsedal = 0.0
+            xalgco = 0.0
+            xakigr = 0.0
+            xCHNFi = -1.
+            xCHNF  = -1.
          endif
          
          ! Buhnenfelder

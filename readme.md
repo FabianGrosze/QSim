@@ -2,6 +2,18 @@
 
 ## 14.09
 
+### 14.09.18
+
+* Refactored `konsum.f90` (incl. `implicit none`)
+* Fixed bugs introduced in 14.09.16 (`konsum.f90`, `funkstar.f90`)
+* updated makefiles for compilation on HPC:
+   * corrected 1D makefile
+   * added 'debug' compilation option for 1D and 3D, together with 'clean_debug' and 'clean_release' rules
+   * implemented automatic detection of QSim version number from `version-string.f90` and naming of executables
+* added compilation script 'make_qsim_log.sh' to allow logging of compiler messages during compilation of 1D and 3D
+
+* Tested successfully for Elbe River model in both 'Debug' and 'Release' mode
+
 ### 14.09.17
 * Turn off 'Sediment-Kenngrößen' in GUI Gerris
 
