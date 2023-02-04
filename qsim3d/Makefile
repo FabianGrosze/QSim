@@ -22,7 +22,9 @@
 #                                                                             #
 #  Programmiert von                                                           #
 #  1979 bis 2018   Volker Kirchesch                                           #
-#  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  #
+#  seit 2011       Jens Wyrwa       , Wyrwa@bafg.de                           #
+#  seit 2021       Michael Schoenung, schoenung@bafg.de                       #
+#                  Fabian Große     , grosse@bafg.de                          #
 # --------------------------------------------------------------------------- #
 
 # Makefile for QSim3D
@@ -32,7 +34,7 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV= qsim3d_$(QSim_version)_dev
+PV=qsim3d_$(QSim_version)_dev
 
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -53,9 +55,9 @@ MFC = $(MPI_BIN)/$(FC)
 
 
 # ifeq ($(MPI_HOME),)
-# $(error Die Umgebungsvariable MPI_HOME (Bibliotheken für Parallelisierung) fehlt.)
+# $(error The environment variable MPI_HOME (parallelisation libraries) is missing.)
 # endif
-# MPI_INSTALL=$(MPI_HOME)  #  Variable wird auf dem hpc von module gesetzt
+# MPI_INSTALL=$(MPI_HOME)  #  variable set on HPC using 'module'
 # MPI_INSTALL_DIR = $(MPI_INSTALL) 
 # MPICH2_INCLUDE  = -I$(MPI_HOME)/include
 # MPICH2_LIB      = -L$(MPI_HOME)/lib -lmpich -lmpichf90 -lmpl -lpthread
@@ -198,11 +200,9 @@ schism: $(SC)
 
 %.o: %.f95
 	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
-#	gfortran-4.3 $(FFLAGS) -c -o $@  $<
 
 #  screen_schism_nc.o stofftransport_schism.o 
 #	 read_mesh_nc_sc.o  screen_schism_nc.o  get_schism_step.o  stofftransport_schism.o ausgeben_schism.o \
-
 
 metabolism: $(META)
 	ar ruv libmetabol.a $(META)
@@ -248,17 +248,12 @@ store:
 	cp $(FN) $(MY_ARC)
 	@echo "saved $(FN) to $(MY_ARC)"
 	if test -d "$$sicherung"; then cp $(FN) $(sicherung); echo "additionally saved $(FN) to $(sicherung)"; fi;
-	if test -d "./doku/taz"; then cp $(FN) ./doku/taz/qsim3d_source.taz; echo "Quellcode in Dokumentationsportal übertragen"; fi;
+	if test -d "./doku/taz"; then cp $(FN) ./doku/taz/qsim3d_source.taz; echo "Source code transferred to documentation"; fi;
 
 test: usual veri save
 
 veri:
 	cp -f $(PV) $(MY_BIN)/$(PV)_test
 	cp -f ./scripte/* $(MY_BIN)
-	@echo "TEST - QSim-3D executable  - $(PV)_test -  wurde erzeugt und in $(MY_BIN) bereitgestellt + scripte"
+	@echo "TEST - QSim-3D executable  - $(PV)_test -  was created and stored to $(MY_BIN) + scripte"
 	@echo "--"
-
-
-#untrim:
-#	qsim3d /scratch/jwyrwa/qmodelle/untrim/ > ./untrim.test
-#	/usr/bin/gedit ./untrim.test

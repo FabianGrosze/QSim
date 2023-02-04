@@ -23,6 +23,8 @@
 #  Programmiert von                                                           #
 #  1979 bis 2018   Volker Kirchesch                                           #
 #  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  #
+#  seit 2021       Michael Schoenung, schoenung@bafg.de                       #
+#                  Fabian Große, grosse@bafg.de                               #
 # --------------------------------------------------------------------------- #
 
 # Makefile for QSim1D
@@ -34,7 +36,7 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV= qsim1d_$(QSim_version)_dev
+PV=qsim1d_$(QSim_version)_dev
 
 #====================================================================
 
@@ -139,14 +141,10 @@ date:
 	@echo "NOW=$(NOW)"
 	@echo "HERE=$(HERE)"
 
-#	@echo "int version=$(NOW);">version.h
-#	rm -f version.co nachricht.o
-#	@echo 'write(codesource,*) "'$(HERE)'" ' >code_source.h
-
 check:
 	if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) exists"; else exit 1 ; fi;
-	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) exits"; else exit 1 ; fi;
-	if test -d ../metabolism; then echo "Directory ../metabolism exits"; else echo "../metabolism missing" ; fi;
+	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) exists"; else exit 1 ; fi;
+	if test -d ../metabolism; then echo "Directory ../metabolism exists"; else echo "../metabolism missing" ; fi;
 
 metabolism: $(META)
 	ar ruv libmetabol.a $(META)
@@ -164,9 +162,8 @@ exe:
 
 clean:
 	@echo "cleaning ..."
-	rm -f *.o $(PV) *.taz *~ *.mod
-	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.a ../metabolism/*.mod
-	rm -f libmetabol.a
+	rm -f *.o $(PV) *.taz *~ *.mod *.a
+	rm -f ../metabolism/*.o ../metabolism/*/*.o
 
 FN=$(PV)_linux_source_`date +%d%b%y`.taz
 
@@ -174,7 +171,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/makefile*
+	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/*.mk
 
 store:
 	cp $(FN) $(MY_ARC)
