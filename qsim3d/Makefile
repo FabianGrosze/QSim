@@ -143,14 +143,17 @@ Q3 = version.co trans_read.co \
 -include ../metabolism/metabol.mk
 
 #--------------------------------------------------------------------
-
 usual: check date metabolism qsim3d
 
-debug: set_debug_options clean usual
+debug: set_debug_options usual
 
 set_debug_options:
 	$(eval PV=$(PV)_debug)
 	$(eval FFLAGS=$(DEBUG_FLAGS))
+
+clean_release: clean usual
+
+clean_debug: clean debug
 
 check:
 	@if [ `hostname` != "oss-cln51" ]; then \

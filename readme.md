@@ -8,7 +8,7 @@
 * Fixed bugs introduced in 14.09.16 (`konsum.f90`, `funkstar.f90`)
 * updated makefiles for compilation on HPC:
    * corrected 1D makefile
-   * added 'debug' compilation option for 1D and 3D
+   * added 'debug' compilation option for 1D and 3D, together with 'clean_debug' and 'clean_release' rules
    * implemented automatic detection of QSim version number from `version-string.f90` and naming of executables
 * added compilation script 'make_qsim_log.sh' to allow logging of compiler messages during compilation of 1D and 3D
 

@@ -133,6 +133,10 @@ set_debug_options:
 	$(eval PV=$(PV)_debug)
 	$(eval FFLAGS=$(DEBUG_FLAGS))
 
+clean_release: clean usual
+
+clean_debug: clean debug
+
 all: usual save
 
 HERE=`pwd -P`
