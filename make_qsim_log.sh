@@ -1,12 +1,12 @@
-#!/bin/bash                                                       #
-# ----------------------------------------------------------------#
+#!/bin/bash
+#-----------------------------------------------------------------#
 # This script executes make [make rule] and generates a log file. #
-# ----------------------------------------------------------------#
+#-----------------------------------------------------------------#
 # SYNTAX: ./make_qsim_log.sh [subdirectory] [make rule] OR        #
 #         ./make_qsim_log.sh [subdirectory]                       #
 # NOTE: If no make rule is set, 'clean_release' is used creating  #
 #       an executable compiled from a clean compilation state.    #
-# ----------------------------------------------------------------#
+#-----------------------------------------------------------------#
 
 # check number of input arguments
 if [ $# -gt 2 ] || [ $# -lt 1 ]
