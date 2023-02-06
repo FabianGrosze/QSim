@@ -145,7 +145,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       itime_hoch = 1
    endif
    
-   do 111 ior = 1,anze
+   do ior = 1,anze
       
       do ndr = 1,nndr
          if (zdrei(ior,ndr) < 0.0)zdrei(ior,ndr) = 0.0
@@ -180,7 +180,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          exdrvz = 0.0
          exdrvg(ior) = 0.0
          exdrvk(ior) = 0.0
-         goto 111
+         cycle
       endif
       !
       exdrvz = 0.0
@@ -201,7 +201,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       ! max. Dreissena-Dichte
       ! drpr = zdreis(ior)/(bsohlm(ior)*elen(ior))
       
-      do 214 ndr = 1,nndr
+      do ndr = 1,nndr
          zdrei(ior,ndr) = zdrei(ior,ndr)*(2.*lboem(ior)*elen(ior))
          zdreis(ior,ndr) = zdreis(ior,ndr)*(bsohlm(ior)*elen(ior))
          Yc = zdrei(ior,ndr)
@@ -380,7 +380,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          
          filHNF(ndr) = CHNF(ior)*fh2ovol/vol
          
-      214 continue
+      enddo
       
       algdrg(ior) = 0.0
       algdrk(ior) = 0.0
@@ -580,12 +580,12 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       dlafes = (dlafes*exp(-klmorg))/(vol*1000.)
       114 dlarvn(ior) = dlarvn(ior)+ddlarn-dlamor-dlafes
       if (dlarvn(ior) < 0.0)dlarvn(ior) = 0.0
-      do 217 ndr = 1,nndr
+      do ndr = 1,nndr
          ddrein = 0.0
-         !
+         
          hconds(ndr) = zdreis(ior,ndr)
          hcondb(ndr) = zdrei(ior,ndr)
-         !
+         
          if (gewdr(ior,ndr) == 0.0) then
             dreing = 0.0
             dreisn = 0.0
@@ -593,7 +593,8 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          endif
          dreisn = ((zdrei(ior,ndr)+zdreis(ior,ndr))*1000.)/gewdr(ior,ndr)
          dreing = dreisn
-         219 if (ndr == 1 .and. dlafes > 0.0) then
+         219 continue
+         if (ndr == 1 .and. dlafes > 0.0) then
             gewdts = (dreisn*gewdr(ior,1)+dlafes*vol*1000.*8.6e-5)            &
                      /(dreisn+dlafes*vol*1000.)
             if (gewdts > 0.0246) then
@@ -601,9 +602,9 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
                gewdts = (dreisn*gewdr(ior,1)+dlafes*vol*1000.*8.6e-5)            &
                         /(dreisn+dlafes*vol*1000.)
             endif
-            !
+            
             gewdr(ior,1) = gewdts
-            !
+            
             dreing = dreisn+dlafes*vol*1000.
             goto 218
          endif
@@ -642,14 +643,14 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          if ((zdrei(ior,ndr)+zdreis(ior,ndr)) == 0.0 .and. ndr == 1) then
             zdrei(ior,ndr) = 0.0
             zdreis(ior,ndr) = 0.0
-            goto 217
+            cycle
          endif
          
          if ((zdrei(ior,ndr)+zdreis(ior,ndr)) == 0.0 .and. ndr == 2           &
              .and. ddrein == 0.0) then
             zdrei(ior,ndr) = 0.0
             zdreis(ior,ndr) = 0.0
-            goto 217
+            cycle
          endif
          
          if ((zdrei(ior,ndr)+zdreis(ior,ndr)) == 0.0 .and. ndr == 2           &
@@ -665,7 +666,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          351 zdrei(ior,ndr) = (dreing*gewdr(ior,ndr)/1000.)*hcond1
          zdreis(ior,ndr) = (dreing*gewdr(ior,ndr)/1000.)*hcond2
          
-      217 continue
+      enddo
       
       do ndr = 1,nndr
          zdrei(ior,ndr) = zdrei(ior,ndr)/(2.*lboem(ior)*elen(ior))
@@ -679,7 +680,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       211 dlmax(ior) = dlmax(ior)/(2.*lboem(ior)*elen(ior))
       dlmaxs(ior) = dlmaxs(ior)/(bsohlm(ior)*elen(ior))
       
-   111 continue
+   enddo
    
    999 dlarvn(anze+1) = dlarvn(anze)
    jahr_tst1 = jahrs

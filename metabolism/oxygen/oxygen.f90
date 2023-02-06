@@ -182,23 +182,23 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    o2ein1_s = defiz * (1 - exp(-bbei * tflie))
    
    if (kontroll) then
-      write(*,'(A)'),  'oxygen Oberflaechenbelueftung:'
-      write(*,'(A,F0.6)'), '  vO2    = ', vO2_s
-      write(*,'(A,F0.6)'), '  saett  = ', saett_s
-      write(*,'(A,F0.6)'), '  defiz  = ', defiz
-      write(*,'(A,F0.6)'), '  O2ein  = ', o2ein_s
-      write(*,'(A,F0.6)'), '  O2ein1 = ', o2ein1_s
-      write(*,'(A,F0.6)'), '  tempw  = ', tempw_s
-      write(*,'(A,F0.6)'), '  rau    = ', rau_s
-      write(*,'(A,F0.6)'), '  tiefe  = ', tiefe_s
-      write(*,'(A,F0.6)'), '  vmitt  = ', vmitt_s
-      write(*,'(A,F0.6)'), '  rhyd   = ', rhyd_s
-      write(*,'(A,F0.6)'), '  flae   = ', flae_s
-      write(*,'(A,F0.6)'), '  WLage  = ', WLage_s
-      write(*,'(A,F0.6)'), '  hws    = ', hws_s
-      write(*,'(A,F0.6)'), '  wge    = ', wge_s
-      write(*,'(A,F0.6)'), '  bbei   = ', bbei
-      write(*,'(A,I0)'),   '  iPhy   = ', iphy
+      write(*,'(A)')  'oxygen Oberflaechenbelueftung:'
+      write(*,'(A,F0.6)') '  vO2    = ', vO2_s
+      write(*,'(A,F0.6)') '  saett  = ', saett_s
+      write(*,'(A,F0.6)') '  defiz  = ', defiz
+      write(*,'(A,F0.6)') '  O2ein  = ', o2ein_s
+      write(*,'(A,F0.6)') '  O2ein1 = ', o2ein1_s
+      write(*,'(A,F0.6)') '  tempw  = ', tempw_s
+      write(*,'(A,F0.6)') '  rau    = ', rau_s
+      write(*,'(A,F0.6)') '  tiefe  = ', tiefe_s
+      write(*,'(A,F0.6)') '  vmitt  = ', vmitt_s
+      write(*,'(A,F0.6)') '  rhyd   = ', rhyd_s
+      write(*,'(A,F0.6)') '  flae   = ', flae_s
+      write(*,'(A,F0.6)') '  WLage  = ', WLage_s
+      write(*,'(A,F0.6)') '  hws    = ', hws_s
+      write(*,'(A,F0.6)') '  wge    = ', wge_s
+      write(*,'(A,F0.6)') '  bbei   = ', bbei
+      write(*,'(A,I0)')   '  iPhy   = ', iphy
    endif
    
    ! --------------------------------------------------------------------------

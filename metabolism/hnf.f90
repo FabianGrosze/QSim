@@ -57,7 +57,7 @@ subroutine HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                                   
    !
    iein = 1
    
-   !++++++Parametervorgabe
+   ! Parametervorgabe
    upmHNF = upHNFe
    ksBAC = BACkse
    rGHNF = 0.05
@@ -65,35 +65,34 @@ subroutine HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                                   
    HNFex = 0.5
    mTHNF = 0.1
    mOHNF = 0.25
-   !
-   do 100 ior = 1,anze+1
+   
+   do ior = 1,anze+1
       if (flag(ior) == 8)goto 107
-      !
-      !     Einleitungen
-      !
-      !
+      
+      ! Einleitungen
       206 if (flag(ior) /= 4)goto 107
       hcohnf = CHNF(ior-1)
       hcbhnf = BVHNF(ior-1)
       hcQ = vabfl(ior-1)
       if (hcQ < 0.0)hcQ = 0.0
-      !
-      do 113 ji = 1,jiein(ior)
+      
+      do ji = 1,jiein(ior)
          if (echnf(iein) <= 0.0) then
             sechnf = hcohnf
             seBVHN = hcbhnf
          endif
-         !
+         
          sechnf = echnf(iein)
-         !
+         
          if (eBVHNF(iein) <= 0.0) then
             seBVHN = hcbhnf
             goto 102
          endif
-         !
+         
          seBVHN = eBVHNF(iein)
-         !
-         102 sqeinl = qeinl(iein)
+         
+         102 continue
+         sqeinl = qeinl(iein)
          
          if (sqeinl < 0.0)sqeinl = 0.0
          
@@ -104,33 +103,32 @@ subroutine HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                                   
          endif
          chnf(ior) = (hcQ*hcohnf+sechnf*sqeinl)/(hcQ+sqeinl)
          BVHNF(ior) = (hcQ*hcbhnf+seBVHN*sqeinl)/(hcQ+sqeinl)
-         !
-         115 hcQ = hcQ+qeinl(iein)
+         
+         115 continue
+         hcQ = hcQ+qeinl(iein)
          iein = iein+1
          hcohnf = chnf(ior)
          hcbhnf = BVHNF(ior)
-      113 continue
-      !
-      !
+      enddo
+      
+      
       107 continue
-      !
+      
       if (ior > 1)CHNF(ior-1) = CHNFt
-      !
-      !     TEMPERATURABHAENGIGKEIT (evt.neu!!)
-      !
+      
+      ! TEMPERATURABHAENGIGKEIT (evt.neu!!)
       q10 = 2.
       ftemp = q10**((tempw(ior)-20.)*0.1)
-      !
-      !     HNF-Wachstum
-      !
-      !      ....spz. Aufnahmerate
+      
+      ! HNF-Wachstum
+      ! spz. Aufnahmerate
       upHNF = upmHNF*(BAC(ior)/(BAC(ior)+ksBAC))
       upHNF = upHNF*ftemp
-      !      ....Respirationsrate
+      ! Respirationsrate
       resHNF = rGHNF*ftemp+upHNF*(1.-HNFass)*(1.-HNFex)
-      !      ....Excretion
+      ! Excretion
       exHNF = upHNF*(1.-HNFass)*HNFex
-      !      ....Mortalitt
+      ! Mortalitt
       SAETT = 14.603-TEMPW(ior)*0.40215+(TEMPW(ior)**2)*0.007687        &
               -(tempw(ior)**3)*0.0000693
       fO2 = vo2(ior)/Saett
@@ -138,43 +136,37 @@ subroutine HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                                   
       !..wieder lschen!!!!
       fo2 = 1.
       morHNF = (1.-fO2)*mOHNF+mTHNF*ftemp
-      !      ....Wachstumsrate
+      ! Wachstumsrate
       mueHNF = upHNF-resHNF-exHNF-morHNF
-      !....Ausgabe
+      ! Ausgabe
       HNFmua(ior) = mueHNF
       HNFrea(ior) = resHNF
       HNFupa(ior) = upHNF
       HNFmoa(ior) = morHNF
       HNFexa(ior) = exHNF
-      !
+      
       CHNFt = CHNF(ior)*exp(mueHNF*tflie)
-      !
-      !.... Bercksichtigung von Rotatorien- und Dreissena-Grazing
-      !
+      
+      ! Bercksichtigung von Rotatorien- und Dreissena-Grazing
       CHNFt = CHNFt-drHNF(ior)-zHNF(ior)
       if (CHNFt < 0.0)CHNFt = 0.0000000001
       if (mstr == 14)write(579,*)ior,CHNFt,CHNF(ior),mueHNF,zHNF(ior)
-      !
-      !....Verlustrate der Bakterien
-      !
+      
+      ! Verlustrate der Bakterien
       HNFBAC(ior) = upHNF*CHNF(ior)*tflie
-      !
-      !.....Sauerstoffverbrauch durch HNF-Respiration
-      !      Annahme: bei der Respiration von 1 mg Biomasse (ausgedrckt
-      !               als mg C) werden 3.2 mg O2 verbraucht
-      !
+      
+      ! Sauerstoffverbrauch durch HNF-Respiration
+      ! Annahme: bei der Respiration von 1 mg Biomasse (ausgedrckt
+      !          als mg C) werden 3.2 mg O2 verbraucht
       rO2HNF(ior) = resHNF*CHNF(ior)*tflie
-      !
-      !.....BSB-Erhhung durch abgestorbene HNF bzw. excretierte Nahrung
-      !
+      
+      ! BSB-Erhhung durch abgestorbene HNF bzw. excretierte Nahrung
       BSBHNF(ior) = (morHNF+exHNF)*CHNF(ior)
-      !
+      
       delHNF = CHNFt-CHNF(ior)
-      if (CHNFt < 0.0)                                                  &
-          CHNFt = (CHNF(ior)/(CHNF(ior)+abs(delHNF)))*CHNF(ior)
-      !
-      !
-   100 continue
+      if (CHNFt < 0.0) CHNFt = (CHNF(ior)/(CHNF(ior)+abs(delHNF)))*CHNF(ior)
+   enddo
+   
    CHNF(anze+1) = CHNFt
    
    return

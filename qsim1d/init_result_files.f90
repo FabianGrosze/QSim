@@ -93,7 +93,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
       write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
-                       gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
+                     & gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
       
       ! --- Ausgabe 157 Schwermetalle ---
       print*, '> ausgabe157_schwermetalle.csv'
@@ -101,16 +101,16 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       open(unit = 157, file = pfadstring, iostat = open_error)
       
       write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
-                       glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
-                       SSeros; sedalk; sedalg; sedalb; sedss'
+                     & glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
+                     & SSeros; sedalk; sedalg; sedalb; sedss'
       
       ! --- Ausagbe 158 Algae ---
       print*, '> ausgabe158_algae.csv'
       pfadstring = trim(adjustl(cpfad)) // 'ausgabe158_algae.csv'
       open(unit = 158, file = pfadstring, iostat = open_error)
       
-      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ; aki ; agr ; abl ; chlak ; chlag ; chlab ; &
-                       ssalg ; ss'
+      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ;&
+                      &aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
    endif
       
 end subroutine init_result_files

@@ -201,7 +201,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       
       !############################
       !...Beginn der Segmentschleife
-      do 111 ior = 1,anze+1
+      do ior = 1,anze+1
          
       
          sumac = 0.0
@@ -245,7 +245,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
             enddo
          endif
          
-         if (ilbuhn == 1 .and. tiefe(ior) < 0.05)goto 111
+         if (ilbuhn == 1 .and. tiefe(ior) < 0.05) cycle
          
          
          !##### Temperaturabhaengigkeit der Respirationsrate  ######
@@ -774,9 +774,9 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
             tpgr(ior) = F52
             figaus(ior) = 0.0
          endif
-         
-         
-      111 continue
+      enddo
+      
+      
       agr(anze+1) = agrt
       agbcm(anze+1) = agbcmt
       chlagr(anze+1) = chlagrt

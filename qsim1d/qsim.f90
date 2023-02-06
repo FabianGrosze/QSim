@@ -323,7 +323,7 @@ program qsim
    real, dimension(:,:), allocatable       :: zdrei, hpfl, zdrel, zdresl, gewdr, hgewdr, vtyp, rzuwdr, rzuwdy
    real, dimension(:,:), allocatable       :: zdreis, cd, cp, migsp, mxgsp, migsn, mxgsn, miaki, mxaki, miagr, mxagr
    integer                                 :: ilamda
-   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al !!wy extinktionskoeffizienten von e_extnct.dat gelesen
+   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al 
    real, dimension(:,:), allocatable       :: extk_lamda, hsised, hskmor, mxtemp, mitemp, mxb5, mib5, mxcs, mics, mxnh4
    real, dimension(:,:), allocatable       :: minh4, mxchla,  michla, mxo2, mio2, mizo, mxzo, misi, mxsi, mivph, mxvph
    real, dimension(:,:), allocatable       :: micoli, mxcoli, mica, mxca, mimw, mxmw, mivno3, mxvno3, migp, mxgp, mxvno2
@@ -542,8 +542,8 @@ program qsim
    nazStrs = 2 * azStrs
    allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(azStrs*2))
    allocate(strNr(nazStrs), mstra(azStrs), ieinsh(azStrs), ieinLs(azStrs), nbuhn(azStrs), iFlRi(nazStrs), isegs(azStrs))
-   allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs), hte_z(azStrs), izufluss(azStrs))
-   allocate(hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
+   allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs))
+   allocate(hte_z(azStrs), izufluss(azStrs), hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
    allocate(strname(azStrs),strnumm(azStrs))
    allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs))
    allocate(mWes(azStrs), mVs(azStrs), mZs(azStrs), mAs(azStrs), itsts(azStrs), msts(azStrs), itmaxs(azStrs))
@@ -684,8 +684,10 @@ program qsim
    allocate(bfssgr(azStrs,ialloc2), bfbsgr(azStrs,ialloc2), bfrfgr(azStrs,ialloc2), bexdvk(azStrs,ialloc2))
    allocate(bexdvg(azStrs,ialloc2), bsgon(azStrs,ialloc2), bsedx0(azStrs,ialloc2), bexdvb(azStrs,ialloc2))
    allocate(bdon(azStrs,ialloc2), bsusn(azStrs,ialloc2), bbettn(azStrs,ialloc2), bsuso(azStrs,ialloc2))
-   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
-   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
+   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2))
+   allocate(babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
+   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2))
+   allocate(bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
    allocate(bsusn2(azstrs,ialloc2), bpfln1(azstrs,ialloc2), bpfln2(azstrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
@@ -1153,7 +1155,8 @@ program qsim
                   call qerror(message)
                endif
             
-               read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+               read(ctext,*,iostat = open_error) aEros(mstr,mE), eEros(mstr,mE), tausc(mstr,mE),  &
+                                                 M_eros(mstr,mE), n_eros(mstr,mE), sedroh(mstr,mE)
                if (open_error /= 0) call qerror("read error erosion parameters")
                print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
             
@@ -3785,8 +3788,8 @@ program qsim
          else !  Abfluss hcq <= 0.0
             if (ilang == 0 ) then ! Vorlauf
                write(message,*)  "Strang ",mstr, " ",trim(strnumm(mstr)),  &
-                  "  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
-                  noch einen zu ihm gerichteten Zufluss."
+                 &"  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
+                 &noch einen zu ihm gerichteten Zufluss."
                call qerror(message)
             endif
             

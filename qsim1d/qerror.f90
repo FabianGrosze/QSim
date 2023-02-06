@@ -22,10 +22,10 @@ subroutine qerror(message)
    flush(output_unit)
    call sleep(1)
    
-   write(error_unit,*), repeat('=', 78)
-   write(error_unit,*), repeat(' ', 32), '!!! ERROR !!!'
-   write(error_unit,*), repeat('=', 78)
-   write(error_unit,*), trim(message)
+   write(error_unit,*) repeat('=', 78)
+   write(error_unit,*) repeat(' ', 32), '!!! ERROR !!!'
+   write(error_unit,*) repeat('=', 78)
+   write(error_unit,*) trim(message)
    
    ! --- write to file1.err (needed for Gerris) ---
    ! Gerris needs this file. It reads the error message from there
