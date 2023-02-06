@@ -9407,8 +9407,6 @@ program qsim
                xsedal = 0.0
                xalgco = 0.0
                xakigr = 0.0
-               xCHNFi = -1.
-               xCHNF  = -1.
             endif
             
             cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
@@ -9422,6 +9420,9 @@ program qsim
                xCHNFi = xCHNF*1.e6/(xBVHNF*0.22)
                ! xCHNF in æg/l
                xCHNF = xCHNF*1000.
+            else
+               xCHNFi = -1.
+               xCHNF  = -1.
             endif
          else
             xalgdr = 0.0
