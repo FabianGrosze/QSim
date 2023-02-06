@@ -32,7 +32,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
                   ,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                      &
                   ,rakr,rbar,CHNF,zHNF,ilbuhn,zakie,zagre,zable,HNFza,algzok        &
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats    &
-                  ,itags,uhrz,mstr,azStrs                                           &
+                  ,itags,uhrz,mstr                                                  &
                   ,kontroll ,jjj ) !!wy
    
    
@@ -49,143 +49,147 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    
    !   irmax  - max. Filtrierate in mueg Chl-a/(100 Ind*d)
    
+   use allodim
+   
+   implicit none
+   
    logical kontroll !!wy
    integer jjj !!wy
-   integer                        :: anze, azStrs
+   integer                        :: anze, j, ior, mstr, ior_flag, ilbuhn, m, ihcQ, ji, nkz, itags, monats
    integer, dimension(1000)       :: jiein, nkzs, flag
-   real                           :: irmaxK, irmaxG, irmaxB, irmaxn, irmax, irmaxe, mueRot, mormax, mormin, morRot
-   real                           :: irmax_Ind, ir_F
-   real, dimension(50)            :: irz
+   real                           :: irmax, irmaxe, mueRot, morRot, uhrz
+   real                           :: irmax_Ind, ir_F, zagr, zagre, zaki, zakie, zabl, zable
+   real                           :: FOPTR, FopIre, GRot, GRote, RotC, Up_CRot
+   real                           :: ClearR, ClearRLog, ClearR_Ind, VolRot, FKs, hcZoo1, hcTGZoo1, hcZoo, hcTGZoo, hcQ
+   real                           :: hcZooE, hcTGZooE, zooint, TGZoot, Rot, FTResR, RespRG, ZResGe, filO2, filAbio
+   real                           :: hcon, hcaki, hconki, hcongr, hconbl, hconm, FTMoR, zass, ProdRot
+   real                           :: hcQe, hconf, FTing, tflie, Rott, delZoo
    real, dimension(100)           :: ezind, qeinl
    real, dimension(1000)          :: tempw, vo2, zooind, abszo, zexki, zexgr, zexbl, aki, agr, abl, vkigr
    real, dimension(1000)          :: elen, ir, dzres1, dzres2, vabfl, rmuas, iras, rakr, rbar
    real, dimension(1000)          :: CHNF, zHNF, BAC, zBAC, HNFza, algzok, algzog, algzob
    real, dimension(50,1000)       :: akiz, agrz, ablz, algzkz, algzgz, algzbz
    real, dimension(azSTrs,1000)   :: TGZoo
-   double precision               :: Qquell,QSenk
-   save hczoo1
    
-   !!wy open(unit=79,file='konsum.tst')
+   logical, parameter             :: isTGZoo = .false.
+   
+   real, parameter                :: epsilon = 1.e-8
+   real, parameter                :: Cagr    = 0.48
+   real, parameter                :: Caki    = 0.48
+   real, parameter                :: Cabl    = 0.48
+   real, parameter                :: CRot    = 0.45
+   real, parameter                :: dokrit  = 2.5
+   real, parameter                :: mormax  = 0.15            !    mormax = 0.32
+   real, parameter                :: ASSmxR  = 0.84            ! Verschoor et al. (2007)
+   real, parameter                :: respaR  = 0.203
+   real, parameter                :: Emort   = 2.
+   real, parameter                :: EASS    = 0.705           ! Verschoor et al. (2007)
+   real, parameter                :: thresR  = 1.12
+   real, parameter                :: thmorR  = 1.077
+   real, parameter                :: thIng   = 1.08
+   
+   real, parameter                :: zqz10   = 2.23
+   real, parameter                :: ztmax   = 26.1
+   real, parameter                :: ztopt   = 22.2
+   
+   real, parameter                :: ZellVGr = 320.
+   real, parameter                :: ZellVKi = 645.
+   real, parameter                :: ZellVBl = 1000.
+   
+   integer :: iein, iwied
+   
+   save hczoo1, hcTGZoo1
    
    iein = 1
    
-   iTGZoo = 0
-   
-   Cagr = 0.48
-   Caki = 0.48
-   Cabl = 0.48
-   CRot = 0.45
-   
-   dokrit = 2.5
-   !    mormax = 0.32
-   mormax = 0.15
-   ASSmxR = 0.84            ! Verschoor et al. (2007)
-   respaR = 0.203
-   Emort = 2.
-   EASS = 0.705             ! Verschoor et al. (2007)
-   thresR = 1.12
-   thmorR = 1.077
-   thIng = 1.08
-   
-   zqz10 = 2.23
-   ztmax = 26.1
-   ztopt = 22.2
    zagr = zagre
    zaki = zakie
    zabl = zable
-   ZellVGr = 320.
-   ZellVKi = 645.
-   ZellVBl = 1000.
-   if (iwied == 0) then
-      do j = 1, azStrs
-         do jj = 1,anze+1
-            TGZoo(j,jj) = GRote
-         enddo
-      enddo
-   endif
+   
+   if (iwied == 0) TGZoo(:,:) = GRote
    
    FOPTR = FopIRe
    GROT = GRote
    irmax = IRmaxe ! in [1/d]
-   RotC = GROT*CRot
-   if (iTGZoo == 0) then
-      if (IRmaxe < 0.0) then
-         up_CROT = -0.8377*log10(RotC)+0.3131   ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+   RotC = GROT * CRot
+   if (.not. isTGZoo) then
+      if (IRmaxe < 0. .and. RotC > 0.) then
+         ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+         up_CROT = -0.8377 * log10(RotC) + 0.3131
          up_CROT = 10**up_CROT
       else
          up_CROT = IRmaxe
       endif
-      
-      IRmax = up_CROT*RotC**(2./3.)
-      if (FopIRe < 0.0) then
-         ClearRlog = -0.9987*log10(RotC)-0.706
-         ClearR = (10**(ClearRlog)*RotC**(2./3.))*1.e5   ! Filtrierrate in 1/h
-         
-         VolRot = RotC*1.e6/0.12
-         ClearR_Ind = ClearR*VolRot/1.e9
-         
-         IRmax_Ind = IRmax*VolRot*0.00012/24.
+      ! maximum ingestion rate
+      IRmax = up_CROT * RotC**(2./3.)
+      if (FopIRe < 0. .and. RotC > 0.) then
+         ClearRlog = -0.9987 * log10(RotC) - 0.706
+         ! Clearance rate (1/h)
+         ClearR    = 1.e5 * (10**(ClearRlog)*RotC**(2./3.))
+         VolRot = RotC * 1.e6 / 0.12
+         ClearR_Ind = ClearR * VolRot / 1.e9
+         IRmax_Ind = IRmax * VolRot * 0.00012/24.
          FKs = IRmax_Ind/ClearR_Ind
       else
          FKs = FopIRe
       endif
    endif
+   
    do j = 1,anze+1  !Beginn Knotenschleife
       ior = j
-      if (iTGZoo == 1) then
-         if (TGZoo(mstr,ior) > 0.0) then
-            RotC = TGZoo(mstr,ior) * CRot
+      if (isTGZoo) then
+         up_CROT = IRmaxe
+         FKs     = 0.
+         RotC    = TGZoo(mstr,ior) * CRot
+         if (RotC > 0.0) then
             zagr = min(1.,max(0.0,-0.656*log10(ZellVGr/RotC)+3.27))
             zaki = min(1.,max(0.0,-0.656*log10(ZellVKi/RotC)+3.27))
             zabl = min(1.,max(0.0,-0.656*log10(ZellVBl/RotC)+3.27))
-         endif
-         
-         if (IRmaxe < 0.0) then
-            up_CROT = -0.8377*log10(RotC)+0.3131   ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
-            up_CROT = 10**up_CROT
-         else
-            up_CROT = IRmaxe
-         endif
-         
-         IRmax = up_CROT*RotC**(2./3.)
-         if (FopIRe < 0.0) then
-            ClearRlog = -0.9987*log10(RotC)-0.706
-            ClearR = (10**(ClearRlog)*RotC**(2./3.))*1.e5   ! Filtrierrate in 1/h
+            if (IRmaxe < 0.0) then
+               ! up_CROT: Gewichtszpezifische max. Ingestionsrate µC^(-2/3)*d-1
+               up_CROT = -0.8377 * log10(RotC) + 0.3131
+               up_CROT = 10**up_CROT
+            endif
+            ! maximum ingestion rate
+            IRmax = up_CROT * RotC**(2./3.)
+            if (FopIRe < 0.0) then
+               ClearRlog = -0.9987*log10(RotC) - 0.706
+               ClearR = (10**(ClearRlog) * RotC**(2./3.)) * 1.e5   ! Filtrierrate in 1/h
+               
+               VolRot = RotC * 1.e6 / 0.12
+               ClearR_Ind = ClearR*VolRot/1.e9
             
-            VolRot = RotC*1.e6/0.12
-            ClearR_Ind = ClearR*VolRot/1.e9
-            
-            IRmax_Ind = IRmax*VolRot*0.00012/24.
-            FKs = IRmax_Ind/ClearR_Ind
-         else
-            FKs = FopIRe
+               IRmax_Ind = IRmax*VolRot*0.00012/24.
+               FKs = IRmax_Ind/ClearR_Ind
+            else
+               FKs = FopIRe
+            endif
          endif
       endif
-      if (zooind(ior) < 0.0)zooind(ior) = 0.0
-      if (vabfl(ior)>=0.0 .and. vabfl(ior+1) < 0.0) then
-         hczoo1 = zooind(ior)
+      zooind(ior) = max(0., zooind(ior))
+      if (vabfl(ior) >= 0.0 .and. vabfl(ior+1) < 0.0) then
+         hczoo1   = zooind(ior)
          hcTGZoo1 = TGZoo(mstr,ior)
       endif
       ior_flag = 0
-      if (flag(ior) == 6 .and. vabfl(ior) < 0.0.and.vabfl(ior+1) > 0.0) then
-         ior = ior+1
+      if (flag(ior) == 6 .and. vabfl(ior) < 0.0 .and. vabfl(ior+1) > 0.0) then
+         ior = ior + 1
          ior_flag = 1
       endif
       if (ilbuhn == 1) then
          nkzs(ior) = 1
-      else if (flag(ior) /= 4) then
-      else                        ! Berücksichtigung der Einleitungen
+      elseif (flag(ior) == 4) then
+         ! Berücksichtigung der Einleitungen
          m = 1
          ihcQ = 0
-         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0)m = -1
-         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0)ihcQ = 1 ! Konzentration an der Einleitstelle
+         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0) m = -1
+         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcQ = 1 ! Konzentration an der Einleitstelle
          ! ist gleich der Konzentration der Einleitung
          
          hczoo = zooind(ior-m)     ! Umbenennen der benötigten Variablen; 1D
-         hcQ = vabfl(ior-m)
+         hcQ = abs(vabfl(ior-m))
          hcTGZoo = TGZoo(mstr,ior-m)
-         if (hcQ < 0.0)hcQ = abs(hcQ)
-         if (hcQ == 0.0 .or. ihcQ == 1)hcQ = 1.e-10
+         if (hcQ < epsilon .or. ihcQ == 1) hcQ = 1.e-10
          if (ihcQ == 1) then
             hczoo = hczoo1
             hcTGZoo = hcTGZoo1
@@ -194,7 +198,7 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
          do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
             hcQE = max(0.0,qeinl(iein))
             hczooE = ezind(iein)
-            if (hczooE < 0.0)hczooE = hczoo
+            if (hczooE < 0.0) hczooE = hczoo
             hcTGZooE = hcTGZoo
             zooind(ior) = (hcQ*hczoo+hcQE*hczooE)/(hcQ+hcQE)
             if (ezind(iein) > 0.0 .and. qeinl(iein) == 0.0) then
@@ -232,55 +236,50 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       
       !   Temperaturabhaengigkeit der Ingestionsrate
       fTing = thIng**(Tempw(ior)-20.)
-      !      fTing = exp(-0.0085*(Tempw(ior)-21.)**2)
-      if (tempw(ior)>=tmax) then
-         !          fTing = 0.01
-      else
-         LNQ = 0.61519
-         W = LNQ*(TMAX-TOPT)
-         X = (W**2*(1+SQRT(1+40/W))**2)/400.
-         FTA = ((TMAX-TEMPW(ior))/(TMAX-TOPT))**X
-         !              fTing = FTA*EXP(X*(1-((TMAX-TEMPW(ior))/(TMAX-TOPT))))
-      endif
+      !TODO FG: Not used, hence commented
+      !if (tempw(ior) < ztmax) then
+      !   LNQ = 0.61519
+      !   W = LNQ*(ztmax - ztopt)
+      !   X = (W**2*(1. + SQRT(1. + 40/W))**2)/400.
+      !   FTA = ((ztmax-TEMPW(ior))/(ztmax - ztopt))**X
+      !endif
       
       !   Umrechnung der Individienzahl in Biomasse (g*m-3)
-      ROT = zooind(ior)*GROT/1000.
-      
-      
-      !   filtrierbare Algenbiomasse
-      filabio = aki(ior)*Caki+agr(ior)*Cagr+abl(ior)*Cabl
+      ROT = zooind(ior) * GROT/1000.
       
       !   Grundrespiration
       !   Temperaturabhängigkeit
       fTresR = thresR**(tempw(ior)-20.)
-      respRg = zresge*fTresR
+      respRg = zresge * fTresR
       
       !   Mortalitaetsrate
       !   Berechnung unter Beruecksichtigung der Futterkonz.
       !   des Sauerstoffgehalts und der Temperatur
       
       !   O2-Einfluss
-      filo2 = (dokrit-vo2(ior))/dokrit
-      filo2 = 1.-filo2
+      filo2 = vo2(ior) / dokrit
       
-      !   Nahrungseinfluss
-      hconF = filabio/(filabio+FKs) !Filabio in mgC/l
-      if (hconF > 1.)hconF = 1.
-      if (hconF < 0.0)hconF = 0.0
+      !   Nahrungseinfluss: filtrierbare Algenbiomasse (in mgC/l)
+      filabio = aki(ior) * Caki + agr(ior) * Cagr + abl(ior) * Cabl
+      hconF = max(0., min(1., filabio / (filabio + FKs)))
+      
       hcaki = aki(ior)
-      if ((aki(ior)+agr(ior)+abl(ior)) == 0.0)hcaki = 0.000001
-      hconki = hcaki/(hcaki+agr(ior)+abl(ior))
-      hconGr = agr(ior)/(hcaki+agr(ior)+abl(ior))
-      hconBl = abl(ior)/(hcaki+agr(ior)+abl(ior))
-      hconF = hconF*(zaki*hconki + zagr*hcongr +zabl*hconbl)
+      if ((aki(ior) + agr(ior) + abl(ior)) < epsilon) then
+         hcaki = 1.e-6
+      else
+         hcaki = aki(ior)
+      endif
+      hconki = hcaki    / (hcaki + agr(ior) + abl(ior))
+      hconGr = agr(ior) / (hcaki + agr(ior) + abl(ior))
+      hconBl = abl(ior) / (hcaki + agr(ior) + abl(ior))
+      hconF = hconF * (zaki * hconki + zagr * hcongr + zabl * hconbl)
+      
+      hconM = min(hconF, filO2)
       
       !   Temperatureinfluss
-      fTmorR = thmorR**(tempw(ior)-20.)
-      
-      hconM = min(hconF,filO2)
+      fTmoR = thmorR**(tempw(ior) -20.)
       !    morRot = mormax*exp(-hconM*Emort)
-      morRot = -0.14*hconM**2-0.0093*hconM+mormax
-      morRot = morRot*fTmorR
+      morRot = (-0.14 * hconM**2 - 0.0093 * hconM + mormax) * fTmoR
       
       !   Zooplanktonwachstum
       
@@ -289,13 +288,12 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       if (hconF == 0.0) then
          zass = 0.0
       else
-         zass = ASSmxR*exp(-EASS*hconF)
-         if (zass > 1.)zass = 1.
+         zass = min(1., ASSmxR * exp(-EASS * hconF))
       endif
-      ir_F = irmax*hconF
-      ProdRot = (zass-respaR)*ir_F*fTing-respRg
-      ir(ior) = ir_F*fTing*tflie*ROT
-      iras(ior) = ir_F*fTing
+      ir_F      = irmax * hconF
+      ProdRot   = (zass - respaR) * ir_F * fTing - respRg
+      ir(ior)   = ir_F * fTing * tflie*ROT
+      iras(ior) = ir_F * fTing
       
       !   ir - Ingestionsrate in mg/(l*h)
       !   zHNF - Aufnahmerate der HNF
@@ -303,66 +301,68 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       !   ir/A - Filtriertes Wasservolumen l/h
       
       zHNF(ior) = 0.0
-      if (ir(ior) == 0.0) then
-      else
-         zHNF(ior) = ir(ior)*CHNF(ior)/(CHNF(ior)+agr(ior)+aki(ior)+abl(ior))
-         zBAC(ior) = ir(ior)*BAC(ior)/(BAC(ior)+agr(ior)+aki(ior)+abl(ior))
-         zBAC(ior) = 0.0
+      zBAC(ior) = 0.0
+      if (ir(ior) /= 0.0) then
+         zHNF(ior) = ir(ior) * CHNF(ior) / (CHNF(ior) + agr(ior) + aki(ior) + abl(ior))
+         ! TODO FG: commented the two lines below
+         !zBAC(ior) = ir(ior)*BAC(ior)/(BAC(ior)+agr(ior)+aki(ior)+abl(ior))
+         !zBAC(ior) = 0.0
       endif
       !   Ausgabe
-      if (CHNF(ior) == 0.0) then
-      else
-         HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
-      endif
+      if (CHNF(ior) /= 0.0) HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
       
       ROTt = ROT * exp((ProdRot-morRot)*tflie) ! Rotatorienzunahme
       !!wy if(mstr==1)write(79,*)ior,ProdRot,zass,respaR,ir_F,fTing,respRg
-      if (iTGZoo == 1) then
-         TGZoot = TGZoo(mstr,ior)*exp(ProdRot*0.20*tflie)
-      endif
-      dzres1(ior) = ROT*(1.-(exp(-respRg*tflie)))
-      ABSZO(ior) = ROTt*(1.-(EXP(-morRot*TFLIE)))
-      dzres2(ior) = respaR*ir(ior)
       
-      zexki(ior) = ir(ior)*(1.-zass)*hconki
-      zexgr(ior) = ir(ior)*(1.-zass)*hconGr
-      zexbl(ior) = ir(ior)*(1.-zass)*hconBl
+      TGZoot = TGZoo(mstr,ior)
+      if (isTGZoo) TGZoot = TGZoot * exp(ProdRot*0.20*tflie)
       
-      algzok(ior) = min((aki(ior)*zaki),ir(ior)*hconki)
-      algzog(ior) = min((agr(ior)*zagr),ir(ior)*hconGr)
-      algzob(ior) = min((abl(ior)*zabl),ir(ior)*hconBl)
+      dzres1(ior) = ROT  * (1. - exp(-respRg * tflie))
+      ABSZO(ior)  = ROTt * (1. - exp(-morRot * tflie))
+      dzres2(ior) = respaR * ir(ior)
       
-      if (nkzs(ior) == 1) then
-      else
+      zexki(ior) = ir(ior) * (1. - zass) * hconki
+      zexgr(ior) = ir(ior) * (1. - zass) * hconGr
+      zexbl(ior) = ir(ior) * (1. - zass) * hconBl
+      
+      algzok(ior) = min(aki(ior) * zaki, ir(ior) * hconki)
+      algzog(ior) = min(agr(ior) * zagr, ir(ior) * hconGr)
+      algzob(ior) = min(abl(ior) * zabl, ir(ior) * hconBl)
+      
+      if (nkzs(ior) /= 1) then
          !          2D-Modellierung
          
          do nkz = 1,nkzs(ior)
-            hcaki = akiz(nkz,ior)
-            if ((akiz(nkz,ior)+agrz(nkz,ior)+ablz(nkz,ior)) == 0.0)hcaki = 0.000001
+            if ((akiz(nkz,ior) + agrz(nkz,ior) + ablz(nkz,ior)) < epsilon) then
+               hcaki = 1.e-6
+            else
+               hcaki = akiz(nkz,ior)
+            endif
             hconki = hcaki/(hcaki+agrz(nkz,ior)+ablz(nkz,ior))
             hcongr = agrz(nkz,ior)/(hcaki+agrz(nkz,ior)+ablz(nkz,ior))
             hconbl = ablz(nkz,ior)/(hcaki+agrz(nkz,ior)+ablz(nkz,ior))
             
-            algzkz(nkz,ior) = ir(ior)*hconki
-            algzgz(nkz,ior) = ir(ior)*hcongr
-            algzbz(nkz,ior) = ir(ior)*hconBl
+            algzkz(nkz,ior) = ir(ior) * hconki
+            algzgz(nkz,ior) = ir(ior) * hcongr
+            algzbz(nkz,ior) = ir(ior) * hconBl
          enddo
       endif
       
-      zooint = (ROTt*1000./GROT)
-      delzoo = zooint-zooind(ior)
-      if (zooind(ior) < 0.0)zooint = (zooind(ior)/(zooind(ior)+abs(delzoo)))*zooind(ior)
-      
+      zooint = ROTt * 1000. / GROT
+      if (zooind(ior) < 0.0) then
+         delzoo = zooint - zooind(ior)
+         zooint = zooind(ior) / (zooind(ior) + abs(delzoo)) * zooind(ior)
+      endif
       
       !   Ausgabeparameter
       rmuas(ior) = ProdRot - morRot
-      rakr(ior) = morRot   ! ras(ior)*respaR
-      rbar(ior) = respRg
+      rakr(ior)  = morRot   ! ras(ior)*respaR
+      rbar(ior)  = respRg
       
    enddo ! Ende Knotenschleife
    
-   zooind(anze+1) = zooint
-   TGZoo(mstr,anze+1) = TGZoot
+   zooind(anze + 1)     = zooint
+   TGZoo(mstr,anze + 1) = TGZoot
    
    return
 end subroutine konsum

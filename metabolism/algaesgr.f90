@@ -34,7 +34,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
                     ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG               &
                     ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                   &
                     ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz  &
-                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1,azStrs                                                               &
+                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1                                                                      &
                     ,kontroll, jjj)
    
    ! Unterprogramm zur Berechnung des Grünalgenwachstums
@@ -42,13 +42,15 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    ! Stand: 08.09.2015
    
    ! unterprogramme :tage,albedo
+   
+   use allodim
   
    logical kontroll !wy
    integer jjj !wy
    character (len = 255) cpfad
    character (len = 275)                    :: pfadstring
    character (len = 2) ckenn_Vers1
-   integer                                  :: anze, azStrs
+   integer                                  :: anze
    integer, dimension(1000)                 :: flag, jiein, ischif, nkzs
    real                                     :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
    real                                     :: Icmit, kTresp

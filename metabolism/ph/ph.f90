@@ -46,7 +46,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    real, intent(inout)     :: lf_s      !< Leitfähigkeit
    real, intent(in)        :: tempw_s   !< Wassertemperatur [°C]
    real, intent(inout)     :: vph_s     !< pH-Wert [-]
-   real, intent(inout)     :: vco2_s    !< CO2
+   real, intent(out)       :: vco2_s    !< CO2
    real, intent(in)        :: tflie     !< Zeitschritt [d]
    real, intent(in)        :: rau_s     !< Kst
    real, intent(in)        :: vmitt_s   !< Geschwindigkeit
@@ -82,20 +82,25 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    ! --- local variables ---
    real     :: mwt,pwt,cat,lft
    real     :: bbeis,abst,pk1,pk2,pkw,pkca,mue,lgk1,lgk2,lgkca,hk,k1,k2,kca
-   real     :: lgh,h,poh,lgoh,oh,beta,fco2,fhco3,fco3,moco2,mohco3,moco3
+   real     :: h,oh,beta,fco2,fhco3,fco3,moco2,mohco3,moco3
    real     :: mgco2,mghco3,mgco3,fca
-   real     :: MOCA,c,SAETCO2,DEFCO2,MOLGCO,HCON,DCO2O,BKCO2,CO2BSB,CO2DR
-   real     :: CO2ZOO,ALCO2M,PFCO2R,ALHCO3,CO2ALW,CO2PFW,FPFL,FALG,DELTAH
-   real     :: GHCO31,GCO21,DCA,DCAH,DLF,RHCO3,RCO3,HCONTI
+   real     :: MOCA,c,SAETCO2,DEFCO2,HCON,DCO2O,BKCO2,CO2BSB,CO2DR
+   real     :: CO2ZOO,ALCO2M,PFCO2R,ALHCO3,CO2ALW,CO2PFW
+   real     :: GHCO31,GCO21,dca,dcah,RHCO3,RCO3,HCONTI
    real     :: UEBCA,TIND,CUEBCA,R1,R2,DCA1,DCA2,GCO31,CAV1,PH1,PH2
    integer  :: IITER
-   real     :: PH0,Y1,ETA,Y2,Y,DELPH,DELCA,DELLF,DELMW
+   real     :: PH0,Y1,ETA,Y2,Y,DELPH
+   
+   real, parameter :: mol_weight_O2   = 32.
+   real, parameter :: mol_weight_CO2  = 44.
+   real, parameter :: mol_weight_CO3  = 60.009
+   real, parameter :: mol_weight_HCO3 = 61.02
    
    ! Berechnung der Kohlensäuresumme [mol/l]
-   mw_s = mw_s*1.e-3
-   pw_s = pw_s*1.e-3
-   moca = ca_s/(1000.*40.08)
-   c = mw_s - pw_s
+   mw_s = mw_s * 1.e-3
+   pw_s = pw_s * 1.e-3
+   moca = ca_s / (1000.*40.08)
+   c    = mw_s - pw_s
    
    ! Berechnung der absoluten Temperatur
    ! TODO (schoenung, 2022): must be 273.15
@@ -104,10 +109,10 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    ! Berechnung der negativen Logarithmen der Dissoziationskonstantenl
    ! bei einer Ionenstaerke von 0 mol/l
    ! in Abhängigkeit der absoluten Temperatur
-   pk1 = (17052./abst) + 215.21 * log10(abst) - 0.12675*abst - 545.56
-   pk2 = (2902.39/abst) + 0.02379 * abst - 6.498
-   pkw = (4471.33/abst) + 0.017053 * abst - 6.085
-   kca = 9.41e-9                 &
+   pk1 = 17052.   / abst + 215.21 * log10(abst) - 0.12675  * abst - 545.56
+   pk2 =  2902.39 / abst                        + 0.02379  * abst -   6.498
+   pkw =  4471.33 / abst                        + 0.017053 * abst -   6.085
+   kca = 9.41e-9                  &
        - 2.52e-10 * tempw_s       &
        + 2.76e-12 * tempw_s**2    &
        - 1.14e-14 * tempw_s**3
@@ -115,42 +120,35 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    pkca = alog10(kca) * (-1.)
    
    ! Einfluss der Ionenstärke
-   if (lf_s < 0.0) lf_s = 0.0
-   mue = 1.7e-5*lf_s
-   lgk1 = sqrt(mue) / (1.+1.4*sqrt(mue))
-   lgk2 = (2.*sqrt(mue)) / (1.+1.4*sqrt(mue))
-   lgkca = (4.*sqrt(mue)) / (1.+3.9*sqrt(mue))
-   hk = (0.5*sqrt(mue)) / (1.+1.4*sqrt(mue))
+   lf_s  = max(0., lf_s)
+   mue   = sqrt(1.7e-5 * lf_s)
+   lgk1  =       mue / (1. + 1.4 * mue)
+   lgk2  = 2.  * mue / (1. + 1.4 * mue)
+   lgkca = 4.  * mue / (1. + 3.9 * mue)
+   hk    = 0.5 * mue / (1. + 1.4 * mue)
    
    ! Berechnung der von Temperatur und Ionenstärke abhängigen Konstanten
-   k1 = pk1-lgk1
-   k2 = pk2-lgk2
-   kca = pkca-lgkca
-   k1 = 10**(-k1)
-   k2 = 10**(-k2)
-   kca = 10**(-kca)
+   k1  = 10.**(lgk1  - pk1)
+   k2  = 10.**(lgk2  - pk2)
+   kca = 10.**(lgkca - pkca)
    
    ! Berechnung der Konzentrationen an H+ und OH-
-   lgh = vph_s-hk
-   h = 10**(-lgh)
-   poh = pkw-vph_s
-   lgoh = poh-hk
-   oh = 10**(-lgoh)
+   h  = 10**(hk - vph_s)
+   oh = 10**(hk + vph_s - pkw)
    
-   ! Berechnung der Kohlenssäureformen(nur einmal)
-   beta = 1+(k1/h)+(k1*k2/h**2)
-   fco2 = 1./beta
-   fhco3 = k1/(beta*h)
-   fco3 = (k1*k2)/(beta*h**2)
+   ! Berechnung der Kohlenssäureformen (nur einmal)
+   beta  = 1. + k1 / h + k1 * k2 / h**2
+   fco2  = 1. / beta
+   fhco3 = k1 / (beta * h)
+   fco3  = k1 * k2 / (beta * h**2)
    
    moco2  = c * fco2
    mohco3 = c * fhco3
    moco3  = c * fco3
    
-   mgco2  = moco2  * 44.000 * 1000.
-   mghco3 = mohco3 * 61.020 * 1000.
-   mgco3  = moco3  * 60.009 * 1000.
-   
+   mgco2  = moco2  * mol_weight_CO2  * 1000.
+   mghco3 = mohco3 * mol_weight_HCO3 * 1000.
+   mgco3  = moco3  * mol_weight_CO3  * 1000.
    
    fca = 1+(h/k2)+(h**2/(k1*k2))
    
@@ -162,8 +160,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
            
            
    DefCO2 = saetco2 - MGCO2
-   molgco = 44.
-   hcon = sqrt(32./molgco)
+   hcon = sqrt(mol_weight_O2 / mol_weight_CO2)
    dco2o = 0.0
    
    ! Berechnung des Belüftungsbeiwerts [1/d]
@@ -205,8 +202,8 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
           + alberg_s * Cagr &
           + alberk_s * Caki
    
-   ! Umrechnung Molmasse CO2/ O2 !war: pfco2r = po2rs*1.3
-   pfco2r = po2r_s * (44.0/32.0)
+   ! Umrechnung Molmasse CO2/ O2
+   pfco2r = mol_weight_CO2 / mol_weight_O2 * po2r_s
    
    mgco2 = mgco2     &
          + alco2m    &
@@ -217,60 +214,56 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
          + co2zoo
    
    !  CO2 Verbrauch durch Algenwachstum und Pflanzen
-   alhco3 = 0.0
    co2alw = dalgki_s * Caki    &
           + dalggr_s * Cagr    &
           + dalgbl_s * Cabl    &
           + albewg_s * Cagr    &
           + albewk_s * Caki
-   ! Umrechnung Molmasse CO2/ O2 ! War fälsclicherwiese: co2pfw = po2ps/1.3
-   co2pfw = po2p_s*(44.0/32.0) 
    
+   ! Umrechnung Molmasse CO2/ O2
+   co2pfw = mol_weight_CO2 / mol_weight_O2 * po2p_s
+   
+   alhco3 = 0.0
    if (co2alw + co2pfw > mgco2) then
-      if (co2pfw + co2alw == 0.0) then
-         fpfl = 0.0
-         falg = 0.0
+      if (co2pfw + co2alw > 0.0) then
+         co2pfw = mgco2 * co2pfw / (co2pfw + co2alw)
+         co2alw = mgco2 * co2alw / (co2pfw + co2alw)
       else
-         fpfl = co2pfw/(co2pfw+co2alw)
-         falg = co2alw/(co2pfw+co2alw)
+         co2pfw = 0.0
+         co2alw = 0.0
       endif
-      alhco3 = ((co2pfw+co2alw)-mgco2)
-      co2pfw = mgco2*fpfl
-      co2alw = mgco2*falg
+      alhco3 = co2pfw + co2alw - mgco2
    endif
    
    
    ! Einfluss der Nitrifikation
-   deltah = 2.*(susn_s/14.)/1000.
-   h = h + deltah
+   h = h + 2. * (susn_s/14.) / 1000.
    
    ghco31 = mghco3
    gco21  = mgco2
    mghco3 = mghco3 - alhco3
-   mgco2  = mgco2 - co2alw - co2pfw
+   mgco2  = mgco2  - co2alw - co2pfw
    
-   if (mghco3 < 0.0) mghco3 = (ghco31/(ghco31+alhco3))*ghco31
-   if (mgco2  < 0.0) mgco2 = (gco21/(gco21+co2alw+co2pfw))*gco21
+   if (mghco3 < 0.0) mghco3 = ghco31 / (ghco31 + alhco3)          * ghco31
+   if (mgco2  < 0.0) mgco2  = gco21  / (gco21  + co2alw + co2pfw) * gco21
    
    vco2_s = mgCo2
    
-   DCA = alhco3*0.328
-   DCAH = DCA
-   cat = ca_s - dca
+   dca  = alhco3 * 0.328
+   dcah = dca
+   cat  = ca_s - dca
    
    if (cat < 0.0) then
-      cat = (ca_s/(ca_s+dca)) * ca_s
-      DCA = Cat - ca_s
+      cat = ca_s / (ca_s + dca) * ca_s
+      dca = cat - ca_s
    endif
    
-   moca = cat/(1000.*40.08)
-   dLf = DCA * 2.2
-   LFt = lf_s - dLf
+   moca = cat / (1000. * 40.08)
+   lft = lf_s - DCA * 2.2
    
-   mohco3 = mghco3/61.02/1000.
-   moco2 = mgco2/44.0/1000.
-   moco3 = mgco3/60.009/1000.
-   
+   mohco3 = mghco3 / mol_weight_HCO3 / 1000.
+   moco2  = mgco2  / mol_weight_CO2  / 1000.
+   moco3  = mgco3  / mol_weight_CO3  / 1000.
    
    ! Berechnung der Calcitbildung
    dca = 0.0
@@ -298,17 +291,11 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    if (tind > stind_s) goto 55
    72 continue
    
-   if (lf_s < 0.0)lf_s = 0.0
-   mue = 1.7e-5*lf_s
-   lgkca = (4.*sqrt(mue))/(1.+3.9*sqrt(mue))
-   kca = pkca-lgkca
-   kca = 10**(-kca)
-   
-   uebca = moca*moco3/kca
+   uebca = moca * moco3 / kca
    dca = 0.0
    rhco3 = 0.0
    rco3 = 0.0
-   if (uebca < 10.0)goto 55
+   if (uebca < 10.0) goto 55
    
    dca = 0.0406*exp(0.0362*uebca)
    dca = dca*0.001*40.08*ssalg_s
@@ -316,52 +303,47 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    if (dca > cuebca)dca = cuebca
    
    r1 = -37.47 * vph_s + 360.67
-   r1 = r1/100.
+   r1 = r1 / 100.
    r2 = 1. - r1
    rhco3 = r1 * dca * 1.52
-   rco3 = r2 * dca * 1.5
-   dca1 = r1 * dca
-   dca2 = r2 * dca
-   if (rhco3 > mghco3)dca1 = mghco3/(r1*1.52)
-   if (rco3 > mgco3)dca2 = mgco3/(r2*1.5)
-   dca = dca1+dca2
+   rco3  = r2 * dca * 1.5
+   dca1  = r1 * dca
+   dca2  = r2 * dca
+   if (rhco3 > mghco3) dca1 = mghco3 / (r1 * 1.52)
+   if (rco3  > mgco3)  dca2 = mgco3  / (r2 * 1.5)
+   dca = dca1 + dca2
    
    if (alhco3 > rhco3) then
       rhco3 = 0.0
-      dca = dca2
+      dca   = dca2
    endif
-   
    if (alhco3 <= rhco3) then
-      rhco3 = rhco3-alhco3
-      dca = dca-dcaH
+      rhco3 = rhco3 - alhco3
+      dca   = dca   - dcaH
    endif
    
    ghco31 = mghco3
-   gco31 = mgco3
-   mghco3 = mghco3-rhco3
-   mgco3 = mgco3-rco3
+   gco31  = mgco3
+   mghco3 = mghco3 - rhco3
+   mgco3  = mgco3  - rco3
+   if (mghco3 < 0.0) mghco3 = ghco31 / (ghco31 + rhco3) * ghco31
+   if (mgco3  < 0.0) mgco3  = gco31  / (gco31  + rco3)  * gco31
    
-   if (mghco3 < 0.0)mghco3 = (ghco31/(ghco31+rhco3))*ghco31
-   
-   if (mgco3 < 0.0)mgco3 = (gco31/(gco31+rco3))*gco31
-   
-   mohco3 = mghco3/61.02/1000.
-   moco3 = mgco3/60.009/1000.
+   mohco3 = mghco3 / mol_weight_HCO3 / 1000.
+   moco3  = mgco3  / mol_weight_CO3  / 1000.
    
    cav1 = cat
-   cat = cat-dca
+   cat  = cat - dca
+   if (cat < 0.0) cat = cav1 / (cav1 + dca) * cav1
    
-   if (cat < 0.0) cat = (cav1/(cav1+dca))*cav1
-   
-   moca = cat/(1000.*40.08)
-   DLF = DCA*2.2
-   LFt = LFt-DLF
+   moca = cat / (1000. * 40.08)
+   lft = lft -  dca * 2.2
    
    55 continue
    !      poh = (-1.*(log10(h)))-pkw+2*hk
    !      oh = 10**poh
-   mwt = mohco3+2*moco3+oh-h
-   pwt = moco2*(-1.)+moco3+oh-h
+   mwt =  mohco3 + 2. * moco3 + oh - h
+   pwt = -moco2  +      moco3 + oh - h
    
    c = moco2 + mohco3 + moco3
    
@@ -372,53 +354,47 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    
    iiter = 0
    do while (.true.) 
-      ph0 = (ph1+ph2)/2.
-      poh = pkw-ph0
-      lgh = ph0 -hk
-      lgoh = poh-hk
-      h = 10**(-lgh)
-      oh = 10**(-lgoh)
-      y1 = oh-h
+      ph0 = 0.5 * (ph1 + ph2)
+      h   = 10**(hk - ph0)
+      oh  = 10**(hk + ph0 - pkw)
+      y1  = oh - h
    
       ! Berechnung des Äquivalenzfaktors eta
-      eta = (k1*h+2*k1*k2)/((h**2)+k1*h+k1*k2)
-      y2 = mwt-c*eta
-      y = y2-y1
-   
-      delph = ph2-ph1
-      if (delph < 0.001 .or. iiter == 50) exit
+      eta = (k1*h + 2*k1*k2) / (h**2 + k1*h + k1*k2)
+      y2  = mwt - c * eta
+      y   = y2 - y1
+      
+      if (ph2 - ph1 < 0.001 .or. iiter == 50) exit
       
       if (y < 0.0) then
          ph2 = ph0
-         iiter = iiter+1
       else
          ph1 = ph0
-         iiter = iiter+1
       endif
+      
+      iiter = iiter + 1
    enddo
    
-   vph_s = ph1
-   hconti = hconti-1.
-   if (hconti < 1 .or. uebca < 20) goto 56
+   vph_s  = ph1
+   hconti = hconti - 1.
+   if (hconti < 1. .or. uebca < 20) goto 56
+   
    goto 72
    
    ! ------------------------------------------------------------------------
    ! update return values
    ! ------------------------------------------------------------------------
    56 continue
-   mwt = mwt*1000.
-   pwt = pwt*1000.
    stind_s = stind_s + tflie * 1440.
    
-   delca = cat - ca_s
-   dellf = lft - lf_s
-   delmw = mwt - mw_s * 1000.
-   mw_s = mw_s * 1000.
-   pw_s = pw_s * 1000.
+   pwt   = pwt  * 1000.
+   mwt   = mwt  * 1000.
+   mw_s  = mw_s * 1000.
    
-   if (cat < 0.0) cat = (ca_s / (ca_s + abs(delca))) * ca_s
-   if (Lft < 0.0) Lft = (lf_s / (lf_s + abs(delLf))) * lf_s
-   if (mwt < 0.0) mwt = (mw_s / (mw_s + abs(delmw))) * mw_s
+   if (cat < 0.0) cat = ca_s / (ca_s + abs(cat - ca_s)) * ca_s
+   if (lft < 0.0) lft = lf_s / (lf_s + abs(lft - lf_s)) * lf_s
+   if (mwt < 0.0) mwt = mw_s / (mw_s + abs(mwt - mw_s)) * mw_s
+   
    ca_s = cat
    mw_s = mwt
    pw_s = pwt

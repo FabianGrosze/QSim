@@ -32,27 +32,28 @@
 !! @date 21.07.2019
 !! file: Verteilungskoeff.f90 zurück: \ref lnk_schwermetalle
 subroutine verteilungskoeff(hcSS,hcph  &
-                            ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb   &
-                            ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U               &
-                            ,iformVert, kontroll,jjj)
+                            ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb           &
+                            ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U                       &
+                            ,iformVert, kontroll)
+   
    use aparam
+   
    implicit none
-   real                   :: hcSS,hcph
-   real                   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
-   real                   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-   integer                :: iformVert
+   
+   real   , intent(in)    :: hcSS, hcph
+   real   , intent(out)   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
+   real   , intent(out)   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
+   integer, intent(in)    :: iformVert
    logical, intent(in)    :: kontroll  !< debugging
-   integer, intent(in)    :: jjj       !< debugging
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
-   if (iformVert == 1) then  
+   if (iformVert == 1) then
       ! --- DWA-Modell ---
       
       ! Berechnung der Verteilungskoeffizienten VTKoeff_Zn, VTKoeff_Cu, VTKoeff_Cad, VTKoeff_Ni
       ! VTKoff [l/g]
       VTKoeff_Zn = (c1Zn/hcSS**e1Zn) + (c2Zn/hcSS**e2Zn)*((hcph/9.)**(c3Zn/hcSS**e3Zn))          &
                    + ((c4Zn/hcSS**e4Zn)+c5Zn)*(((hcph-4.)/5.)**e5Zn-((hcph-4.)/5.)**(e5Zn-1))
-      
       VTKoeff_Cu = (c1Cu/hcSS**e1Cu) + (c2Cu/hcSS**e2Cu)*((hcph/9.)**(c3Cu/hcSS**e3Cu))          &
                    + ((c4Cu/hcSS**e4Cu)+c5Cu)*(((hcph-4.)/5.)**e5Cu-((hcph-4.)/5.)**(e5Cu-1))
       VTKoeff_Cad = (c1Cad/hcSS**e1Cad) + (c2Cad/hcSS**e2Cad)*((hcph/9.)**(c3Cad/hcSS**e3Cad))   &
@@ -75,7 +76,7 @@ subroutine verteilungskoeff(hcSS,hcph  &
                    + ((c4Mn/hcSS**e4Mn)+c5Mn)*(((hcph-4.)/5.)**e5Mn-((hcph-4.)/5.)**(e5Mn-1))
       VTKoeff_U = (c1U/hcSS**e1U) + (c2U/hcSS**e2U)*((hcph/9.)**(c3U/hcSS**e3U))                 &
                   + ((c4U/hcSS**e4U)+c5U)*(((hcph-4.)/5.)**e5U-((hcph-4.)/5.)**(e5U-1))
-   else    
+   else
       ! --- Deltares 2010 ---
       VTKoeff_Zn  = VTkoeffDe_Zn
       VTKoeff_Cu  = VTkoeffDe_Cu

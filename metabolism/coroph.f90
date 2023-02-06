@@ -30,12 +30,14 @@
 !! @date 10.10.2011
 subroutine coroph(coro,coros,tempw,flae,elen,anze,ior                                &
                   ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs      &
-                  ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,azStrs      &
+                  ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn             &
                   ,kontroll,jjj)
+   
+   use allodim
    
    logical                       :: kontroll !< debugging
    integer                       :: jjj      !< debugging
-   integer                       :: anze, azStrs
+   integer                       :: anze
    integer, dimension(azStrs)    :: nbuhn
    real                          :: lw1, lw2, kmonach, kmor1, kmor2, kmor3
    real, dimension(1000)         :: elen, tempw, flae, volfco, aki, agr, algcok, algcog, algcob, abl, bsohlm,lboem,coroI,coroIs

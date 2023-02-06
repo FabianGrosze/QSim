@@ -25,13 +25,13 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 subroutine sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,  &
-                   fsch,fOM_OC,mstr,mSta,azStrs,jsed,w2,w2b,                  &
+                   fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,                         &
                    kontroll ,jjj)
    
+   use allodim
    
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
-   integer                         :: azStrs
    real,dimension(azStrs,1000)     :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
    double precision                :: sedoc,ws
    

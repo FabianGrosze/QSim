@@ -35,10 +35,12 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
                    ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4e,kapN3e                               &
                    ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCape,Klange                           &
                    ,KdNh3e,fPOC1e,fPOC2e,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                             &
-                   ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,azStrs,iwied,yNmx1e,Stks1e &
+                   ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,yNmx1e,Stks1e &
                    ,obsb,ocsb,kontroll,jjj)
    
-   integer                        :: anze, anzZschritt,azStrs
+   use allodim
+   
+   integer                        :: anze, anzZschritt
    integer, dimension(1000)       :: nkzs
    real, dimension(1000)          :: Tiefe,vmitt,rau,Tempw,vo2,vNH4,vNO3,gelP,Si,JCH4aq
    real, dimension(1000)          :: sedalk,sedalg,sedalb,Q_NK,Q_PK,Q_NG,Q_PG, aki, agr ,abl, Chlaki, Chlagr, Chlabl
@@ -309,7 +311,7 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
             
             ! Berechnung des Diffusionskoeffizienten in der aeroben und anaeroben Schicht, DiffK1, DIFFK2
             call Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,poro1,poro2,vvert,vvert1,vvert2      &
-                           ,mstr,ior,itags,monats,uhrz,azStrs,  kontroll ,jjj )
+                           ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
             if (kontroll)print*,'sedflux: it,ior,iBedG = ',it,ior,iBedG
             if ((kontroll) .and. (it == 1).and.(ior == 1)) then
                print*,'sedflux: nach Sed_DiffK '

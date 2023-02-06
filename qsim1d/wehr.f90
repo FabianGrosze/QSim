@@ -39,10 +39,11 @@ subroutine wehr(wehrh, wehrb, ho2, hQaus, O2zt, htempw, ho2_z, ho2z_z, hlf,   &
                 hQ_NKz_z, Q_NBzt, hQ_NBz_z, Q_NGzt,  hQ_NGz_z, dH2D, ESTRNR,  &
                 kanz, inkzmx, iSta, nstr, istr, jnkz, iflRi, jlWO2, CChlkzt,  &
                 hCChlkz_z, CChlbzt, hCChlbz_z, CChlgzt, hCChlgz_z, janzWS,    &
-                janzWt, hnkzs, mwehr, mstr, WSP_UW, WSP_OW, iB, azStrs)
+                janzWt, hnkzs, mwehr, mstr, WSP_UW, WSP_OW, iB)
    ! CO2-Austrag müss noch geändert werden
    
-   integer                                :: azStrs
+   use allodim
+   
    integer, dimension(azStrs)             :: iflRi, janzWS, janzWt, mWehr, jlwo2
    integer, dimension(2*azStrs,azStrs)    :: ESTRNR
    integer, dimension(azStrs,1000)        :: hnkzs

@@ -38,9 +38,9 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
    real, intent(out) :: pw_s         !< p-Wert
    
    ! --- local varibles ---
-   real     :: K1,K2,MUE,lgk1,lgk2,lgh,lgoh, abst, pk1, pk2, pkw, hk
+   real     :: K1,K2,MUE,lgk1,lgk2, abst, pk1, pk2, pkw, hk
    real     :: c, ph0, ph1, ph2, delph1, delph2
-   real     :: poh, h, oh, y, y1, y2, eta
+   real     :: h, oh, y, y1, y2, eta
    integer  :: itera
    
    ! Berechnung der absoluten Temperatur
@@ -48,19 +48,15 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
    
    ! Berechnung der negativen Logarithmen der Dissoziationskonstanten b
    ! in Abhängigkeit von der absoluten Temperatur für Konzentrationen in mo
-   pk1 = (17052./abst) + 215.21 * log10(abst) - 0.12675 * abst - 545.56
-   pk2 = (2902.39/abst) + 0.02379 * abst - 6.498
-   pkw = (4471.33/abst) + 0.017053 * abst - 6.085
+   pk1 =  17052.   / abst + 215.21 * log10(abst) - 0.12675  * abst - 545.56
+   pk2 =   2902.39 / abst                        + 0.02379  * abst -   6.498
+   pkw =   4471.33 / abst                        + 0.017053 * abst -   6.085
    
    ! Einfluss der Ionenstärke
-   if (lf_s < 0.0) then 
-      mue = 0.0
-   else
-      mue = 1.7e-5 * lf_s
-   endif
-   lgk1 = sqrt(mue)/(1.+1.4*sqrt(mue))
-   lgk2 = (2.*sqrt(mue))/(1.+1.4*sqrt(mue))
-   hk = (0.5*sqrt(mue))/(1.+1.4*sqrt(mue))
+   mue  = sqrt(1.7e-5 * max(0.,lf_s))
+   lgk1 =       mue / (1. + 1.4 * mue)
+   lgk2 = 2.  * mue / (1. + 1.4 * mue)
+   hk   = 0.5 * mue / (1. + 1.4 * mue)
    
    ! Berechnung der von Temperatur und Ionenstärke abhängigen Konstanten
    k1 = 10**(-pk1 + lgk1)
@@ -74,29 +70,25 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
       ! Schaetzer
       ph1 = 0.
       ph2 = 14.
-      
       do while (.true.)
-         ph0 = (ph1+ph2)/2.
-         poh = pkw-ph0
-         lgh = ph0 -hk
-         lgoh = poh-hk
-         h = 10**(-lgh)
-         oh = 10**(-lgoh)
-         y1 = oh-h
+         ph0 = 0.5 * (ph1 + ph2)
+         h  = 10**(hk - ph0)
+         oh = 10**(hk + ph0 - pkw)
+         y1 = oh - h
    
          ! Berechnung des Aequivalenzfaktors eta
-         eta = (k1*h+2*k1*k2)/((h**2)+k1*h+k1*k2)
-         y2 = (mw_s * 1.e-3) - c * eta
-         y = y2-y1
+         eta = (k1 * h + 2. * k1 * k2) / (h**2 + k1 * h + k1 * k2)
+         y2  = (mw_s * 1.e-3) - c * eta
+         y   = y2 - y1
    
-         if (ph2-ph1 < 0.001) exit
+         if (ph2 - ph1 < 0.001) exit
          if (y < 0.0) then
             ph2 = ph0
          else
             ph1 = ph0
          endif
       enddo
-   
+      
       delph1 = vph_s -ph1
    
       if (abs(delph1) < 0.02) exit
@@ -109,5 +101,5 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
    enddo
    
    pw_s = pw_s *1000.
-   return
+   
 end subroutine pwert
