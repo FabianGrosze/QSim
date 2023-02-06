@@ -49,20 +49,21 @@ module mod_suspendedMatter
    !    then a dimension of the glorious new tracer array.
    !    QSim is dead, long live QSim!
    integer, parameter                    :: hydro_UnTRIM2 = 2           !< identifier of UnTRIM2 hydrodynamics
-   integer, parameter                    :: iSSalg = 52                 !< tracer index of SSalg
-   integer, parameter                    :: iSS = 53                    !< tracer index of SS
-   integer, parameter                    :: iZoo = 50                   !< tracer index of zooind
-   integer, parameter                    :: nPhyto = 3                  !< number of phytoplankton groups
-   integer, parameter, dimension(nPhyto) :: iPhyto = (/ 8, 9, 10 /)     !< tracer indices of phytoplankton groups
-   
+   !!integer, parameter                    :: iSSalg = 52                 !< tracer index of SSalg
+   !!integer, parameter                    :: iSS = 53                    !< tracer index of SS
+   !!integer, parameter                    :: iZoo = 50                   !< tracer index of zooind
+   !!integer, parameter                    :: nPhyto = 3                  !< number of phytoplankton groups
+   !!integer, parameter, dimension(nPhyto) :: iPhyto = (/ 8, 9, 10 /)     !< tracer indices of phytoplankton groups
+   integer, parameter                    :: iSalz = 72
    integer                               :: varid                       !< netCDF variable ID
-   integer                               :: nClasses                    !< number of SPM fractions to be read from file (starting with finest)
-   integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
+   !!integer                               :: nClasses                    !< number of SPM fractions to be read from file (starting with finest)
+   !!integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
    
    ! the following quantities are averaged over hydrodynamics output time step
-   real, allocatable, dimension(:  )     :: spm_element, spm_element_p  !< SPM concentration (mg L-1) in water column
-   real, allocatable, dimension(:  )     :: vol_element                 !< water column volume (m3)
-   real, allocatable, dimension(:,:)     :: spm_classes_element         !< mass of SPM size classes (kg)
+   real, allocatable, dimension(:  )     :: salz_element, salz_element_p 
+   !!real, allocatable, dimension(:  )     :: spm_element, spm_element_p  !< SPM concentration (mg L-1) in water column
+   !!real, allocatable, dimension(:  )     :: vol_element                 !< water column volume (m3)
+   !!real, allocatable, dimension(:,:)     :: spm_classes_element         !< mass of SPM size classes (kg)
    
    logical, parameter                    :: debug = .true.              !<s turn debugging on/off
    
@@ -72,8 +73,8 @@ contains
    ! ========================= SUBROUTINES and FUNCTIONS =============================
    ! =================================================================================
    
-   subroutine init_suspendedMatter
-      ! initialise data arrays for reading SPM from file
+   subroutine init_salt
+      ! initialise data arrays for reading Salt from file
       
       integer            :: allocStatus   ! success status of array allocation
       
@@ -82,7 +83,7 @@ contains
       ! data fields for NetCDF access
       if (meinrang == 0) then
          
-         if (iEros>=0) call qerror('init_suspendedMatter: iEros >= 0 invalid for reading SPM from file.')
+         if (iEros>=0) call qerror('init_salt: iEros >= 0 invalid for reading salt from file.')
          nClasses = abs(iEros)
          
          select case (hydro_trieb)
