@@ -33,9 +33,16 @@ subroutine HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                                   
                ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNFe,BACkse       &
                ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz           &
                ,kontroll,jjj)
-
-   logical kontroll
-   integer jjj
+   
+   implicit none
+   
+   integer :: mstr, monats, ji, itags, ior, jjj, iein
+   real    :: upmhnf, uphnf, uphnfe, uhrz, tflie
+   real    :: sqeinl, sechnf, sebvhn, saett, rghnf
+   real    :: reshnf, q10, hnfex, hnfass, hcq
+   real    :: hcohnf, hcbhnf, ftemp, fo2, exhnf
+   real    :: delhnf, chnft, backse
+   logical :: kontroll
    real tempw(1000),vo2(1000),BAC(1000)
    real elen(1000),vabfl(1000),qeinl(100)
    real CHNF(1000),BVHNF(1000),eCHNF(100),eBVHNF(100)

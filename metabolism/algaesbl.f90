@@ -40,31 +40,60 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
                     kontroll, jjj)
                     
    use allodim
+   implicit none
    
-   logical                                   :: kontroll
-   integer                                   :: jjj
-   character (len = 255)                     :: cpfad
-   character (len = 275)                     :: pfadstring
-   character (len = 2)                       :: ckenn_Vers1
-   integer                                   :: anze
-   integer, dimension(1000)                  :: ischif, jiein, flag, nkzs
-   real                                      :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp
-   real, dimension(1000)                     :: tempw, chla, vno3, elen, vnh4, gelp, ir, vco2, svhemb, dalgbl
-   real, dimension(1000)                     :: dalgab, vabfl, vmitt, rau, tiefe, sedalb, algzob, dblmor, fkm
-   real, dimension(1000)                     :: tpbl, zooind, abbcm, abl, chlabl, fibaus, abmuea, fhebas, abreau
-   real, dimension(1000)                     :: ss, antbl, vkigr, Q_NB, Q_PB, up_PB, up_NB, up_N2
-   real, dimension(1000)                     :: algdrb, algcob, abltbr, extk, Dz2D, sedAlb0, schwi
-   real, dimension(40)                       :: eta, aw, ack, acg, acb, ah,as, al, I0, Iz
-   real, dimension(50)                       :: chlablzt, hc_temp, Pz, F5z, abgrwz, CChlaz, CChlazt, xroh_Chlz, roh_Chlz
-   real, dimension(50)                       :: Y, YY, abltz, Q_PBz, dmorChlbz, abresz, dzMasse, Masse_neu, dzMasse0
-   real, dimension(50)                       :: xroh_Chl
-   real, dimension(100)                      :: echla, ess, qeinl, hemm
-   real, dimension(40,1000)                  :: extk_lamda
-   real, dimension(50,1000)                  :: up_NBz, up_PBz, ablz, algzbz, ablbrz, algabz, dbmorz, up_N2z, vNH4z
-   real, dimension(50,1000)                  :: vNO3z, tempwz, gelPz, dalgbz
-   real, dimension(azStrs,1000)              :: sedAlg_MQ, abmor_1
-   real, dimension(azStrs,50,1000)           :: hchlbz, hQ_Nbz, hCChlbz
-   real, dimension(azstrs,1000)              :: tausc
+   integer                          :: n_neu_s, n_alt_s, nschif, nkz, mstr
+   integer                          :: monats, j_aus, j, js, jsed , jjj
+   integer                          :: jcyano, i_zeiger, i, iwied, itemp
+   integer                          :: itags, isyn, ispek, isim_end, ised
+   integer                          :: iref, iph, ior, ilbuhn, ilamda
+   integer                          :: ifoto, ifix, ieros, iein, iaus
+   real                             :: vkrit, zellv, zakie, zagre, zable
+   real                             :: yk, x, xup_n, xk, xchla, a1Bl
+   real                             :: xagrow, xac, xabres, w, wst
+   real                             :: vmitt1, vges, v6, ust, ustkri
+   real                             :: up_n2i, up_ci, upmxpb, upmxnb, upmxi
+   real                             :: uhrz, topt, toptb, tmax, tiefe1
+   real                             :: tflie, te0, tauad, sumyk, sumroh_chl
+   real                             :: sumqp, sumqn, sumpc, sumn, sumh
+   real                             :: sumac, saettb, roh_chlzmit, qsgr, qmx_pb
+   real                             :: qmx_nb, qmxi, qmn_pb, qmn_nb, qmni
+   real                             :: pc, pcmit, pcmax, oc, oc0
+   real                             :: obfli, hconsk, hconql, halbi, g
+   real                             :: grote, ft_ks, ftemp, fta, frmube
+   real                             :: frespg, fn, fmor, fmor2, fmor1
+   real                             :: fmor0, f5, f52, f51_n2_1d, f51_n2
+   real                             :: f51_1d, f51, dz_spline, dz, dztot
+   real                             :: dz1, dh2d, deltaz, dabl, cnaehr
+   real                             :: chlablt, ceq, cchl_stern, cchl0, cabl
+   real                             :: a, asble, alpha_chl, alamda
+   real                             :: acmit, abr, abres, abremi, abmor
+   real                             :: abmomi, abmoma, ablzt, ablt, abls
+   real                             :: abksp, abksn, abgrow, abgmax, abgmaxtopt
+   real                             :: abchl_max, abchl, abbcmt, a3bl, a2bl
+   logical                          :: kontroll
+   character (len = 255)            :: cpfad
+   character (len = 275)            :: pfadstring
+   character (len = 2)              :: ckenn_Vers1
+   integer                          :: anze
+   integer, dimension(1000)         :: ischif, jiein, flag, nkzs
+   real                             :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp
+   real, dimension(1000)            :: tempw, chla, vno3, elen, vnh4, gelp, ir, vco2, svhemb, dalgbl
+   real, dimension(1000)            :: dalgab, vabfl, vmitt, rau, tiefe, sedalb, algzob, dblmor, fkm
+   real, dimension(1000)            :: tpbl, zooind, abbcm, abl, chlabl, fibaus, abmuea, fhebas, abreau
+   real, dimension(1000)            :: ss, antbl, vkigr, Q_NB, Q_PB, up_PB, up_NB, up_N2
+   real, dimension(1000)            :: algdrb, algcob, abltbr, extk, Dz2D, sedAlb0, schwi
+   real, dimension(40)              :: eta, aw, ack, acg, acb, ah,as, al, I0, Iz
+   real, dimension(50)              :: chlablzt, hc_temp, Pz, F5z, abgrwz, CChlaz, CChlazt, xroh_Chlz, roh_Chlz
+   real, dimension(50)              :: Y, YY, abltz, Q_PBz, dmorChlbz, abresz, dzMasse, Masse_neu, dzMasse0
+   real, dimension(50)              :: xroh_Chl
+   real, dimension(100)             :: echla, ess, qeinl, hemm
+   real, dimension(40,1000)         :: extk_lamda
+   real, dimension(50,1000)         :: up_NBz, up_PBz, ablz, algzbz, ablbrz, algabz, dbmorz, up_N2z, vNH4z
+   real, dimension(50,1000)         :: vNO3z, tempwz, gelPz, dalgbz
+   real, dimension(azStrs,1000)     :: sedAlg_MQ, abmor_1
+   real, dimension(azStrs,50,1000)  :: hchlbz, hQ_Nbz, hCChlbz
+   real, dimension(azstrs,1000)     :: tausc
    save Cchlaz, ablzt
    
    iein = 1
@@ -201,7 +230,8 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
       endif
       dz = sqrt(tauad*2.*dztot)
       
-      PCmax = (abgmaxTopt+abremi * exp(kTresp*(Topt-20.)))/(1.-frespg)   ! max C-spezifische Photosyntheserate bei optimal Temperatur
+      ! max C-spezifische Photosyntheserate bei optimal Temperatur
+      PCmax = (abgmaxTopt+abremi * exp(kTresp*(Topt-20.)))/(1.-frespg)
       ! Berechnung der Lichtabsorption im gesamten Wasserkörper
       
       js = 0   !!wy

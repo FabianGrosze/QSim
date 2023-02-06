@@ -29,13 +29,23 @@
 !! Bakterien in Fliessgewässer
 !! @author Volker Kirchesch
 !! @date 15.08.2017
-subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli,    &
-                    qeinl,colil,qeinll,anze,iorla,iorle,ieinls,ilbuhn,coli,doscf,extks,mstr,                    &
-                    ratecde,etacde,ratecie,xnuece,ratecge,ratecse,                                              &
+subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli,     &
+                    qeinl,colil,qeinll,anze,iorla,iorle,ieinls,ilbuhn,coli,doscf,extks,mstr,&
+                    ratecde,etacde,ratecie,xnuece,ratecge,ratecse,                          &
                     kontroll,jjj)
    
    use allodim
+   implicit none
    
+   integer                       :: m, mstr, meinrang, ji, ior
+   integer                       :: ilbuhn, ihcq, iein, ieinl, NA
+   real                          :: etaec, xnuece, xmuet, wirkdc, vrc
+   real                          :: vratei, vratede, vlicht, vges, ust, apara
+   real                          :: tlip, tflie, rateki, ratekd, ratecse
+   real                          :: ratecsd, ratecie, ratecgz, ratecge, ratecde
+   real                          :: pars, parsw_mj, parsw_j, hcq, hcqe
+   real                          :: hcdoscf, hccoli, hccolie, g, fn
+   real                          :: etacde, doscft, decoli, colit, a
    logical                       :: kontroll    !< debugging
    integer                       :: jjj         !< debugging
    integer                       :: anze
@@ -122,7 +132,8 @@ subroutine coliform(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein
          DOSCF(ior-1) = DOSCFt
       endif
       if (extk(ior) <= 0.0 .and. extkS(mstr,ior) > 0.0)extk(ior) = extkS(mstr,ior)
-      if (extk(ior) <= 0.0 .and. extkS(mstr,ior) <= 0.0)extk(ior) = 1.5  ! 0.17 reines Wasser; 0.13 Schwebstoffe; 0.094 Ki; 0.0145 Gr
+      ! 0.17 reines Wasser; 0.13 Schwebstoffe; 0.094 Ki; 0.0145 Gr
+      if (extk(ior) <= 0.0 .and. extkS(mstr,ior) <= 0.0)extk(ior) = 1.5
       
       ! Berechnung der Schubspannungsgeschwindigkeit
       FN = 1./RAU(ior)

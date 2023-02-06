@@ -30,7 +30,14 @@
 !! @date 15.04.2003
 subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
                    cloud, wtyp, imet, iwied, cpfad, ckenn_vers1)
-
+   implicit none
+   
+   integer                               :: iee2, nrs, nrsj, mwett, mwetts_mx
+   integer                               :: monats, jahrs, ixw, iwsta_mx, iwied
+   integer                               :: iwett, iwetts, itags, ipw, ipws
+   integer                               :: imet, iee1
+   real                                  :: ywert, wert2, wert1, uhr_dz, uhrz
+   real                                  :: r_nrs0, hctmx2, hcon2, hcon1
    character (len = 1)                   :: cwert
    character (len = 2)                   :: ckenn_vers1
    character (len = 40)                  :: MODELL, ERENAME
@@ -116,7 +123,7 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
             
             ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
             if (hcTmx2 == -1.) then
-               write(message, "(a,i0)"), "No minimum temperature given for weather station ", iwett
+               write(message, "(a,i0)") "No minimum temperature given for weather station ", iwett
                call qerror(trim(message))
             endif
             

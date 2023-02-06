@@ -295,7 +295,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    
    ! check for I/O errors
    if (io_error_sum > 0) then
-      write(message, "(a,i0)"), 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
+      write(message, "(a,i0)") 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
       call qerror(message)
    endif
    

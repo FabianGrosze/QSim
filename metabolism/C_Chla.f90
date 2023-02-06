@@ -30,8 +30,14 @@
 !! @date 12.11.2015
 subroutine c_chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, C_Bio,         &
                   CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+                  
+   implicit none
    
-   real, dimension(50)          :: roh_Chlz, CChlaz
+   integer             :: nkz, isyn, iaus
+   real                :: xup_n, xchla, xakres, xagrow, xac
+   real                :: up_n, tflie, pchl, hconz, hconv
+   real                :: hconn, dchl, c_bio, chla_neu, cchl_stern
+   real, dimension(50) :: roh_Chlz, CChlaz
    
    
    up_N = xup_N/C_Bio

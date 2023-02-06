@@ -42,7 +42,16 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    
    use allodim
    
-   integer                             :: anze
+   implicit none
+   
+   integer                             :: nkz, nkztot_max, mtracer, mstr, monats
+   integer                             :: ktrans, kktrans, j, jpoin1, izeits
+   integer                             :: iwsim, iwied, iwahld, iverfahren, itime
+   integer                             :: itags, isub_dtx, ischwer, iph, ior
+   integer                             :: iork, iorks, ianze_max, anze
+   real                                :: vhrann, vhrand, uhrz, tflie, tempn
+   real                                :: temp0, sumdet, qmx_pk, qmx_pg, qmx_pb
+   real                                :: qmx_nk, qmx_ng, qmx_nb, hk, deltat
    integer, dimension(azStrs)          :: iflRi, imac, isub_dt, isub_dt_Mac
    integer, dimension(ialloc2)         :: iore, flag, nkzs
    real                                :: mue, lgh

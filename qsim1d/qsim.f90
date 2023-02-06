@@ -25,23 +25,161 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 program qsim
-
+   
    use allodim
    use aparam
    use module_model_settings
    use module_metabolism
-   
+   implicit none
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
-   character                               :: ckenn,cpoint
-   character (len = 2)                     :: chcon,ckenn_vers,ckenn_vers1
-   character (len = 7)                     :: cmin,cmax
-   character (len = 40)                    :: erename, modname
-   character (len = 201)                   :: ctext
-   character (len = 275)                   :: pfadstring
-   character (len = 6000)                  :: langezeile, message
-   logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
-   integer                                 :: open_error, jjj
+   character       :: ckenn,cpoint
+   character(2)    :: chcon,ckenn_vers,ckenn_vers1
+   character(7)    :: cmin,cmax
+   character(40)   :: erename, modname
+   character(201)  :: ctext
+   character(275)  :: pfadstring
+   character(6000) :: langezeile, message
+   logical         :: kontroll, einmalig, linux,mitsedflux, write_csv_output
+   integer         :: open_error, jjj, iior
+   integer         :: iend, iwied, ilang, ilbuhn, jlauf
+   integer         :: jtag, iergeb, itracer_vor, nndr, jstr
+   integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
+   integer         :: mrb, iseg, mtracer, itags, monats
+   integer         :: jahrs, ij, lait1, laid1, laim1
+   integer         :: mpf, ms, md, mc, mb
+   integer         :: mu, mwe, mv, mz, ma
+   integer         :: me, ndr, iv, j, ksta
+   integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
+   integer         :: itags_schr, istr, nstr, istrs, ifhstr
+   integer         :: ianze_max, ior, itimeh, itimeb, itimea
+   integer         :: itimee, itime, i_rands, iw_max, mstrrb
+   integer         :: irb, i_k11, i_k12, i_k13, i_k14
+   integer         :: i_k15, i_k16, i_k17, i_k18, i_k19
+   integer         :: i_k110, i_k111, i_k112, i_k113, i_k114
+   integer         :: i_k115, i_k116, i_k117, i_k118, i_k119
+   integer         :: i_k120, i_k121, i_k122, i_k123, i_k124
+   integer         :: i_k125, i_k126, nkzsmx, imet, mrb_1
+   integer         :: j_ist, jj, js, iein, mrand
+   integer         :: inkzmx, mstr1, ib, nkz, kanz
+   integer         :: ista, jnkz, kanz2, jnkz2, kanz1
+   integer         :: nkzs_hc, nkzs_hc1, i_estrnr, minute, kein
+   integer         :: itstart, mstart, itmax, mmax, itend
+   integer         :: mend, istriz_neu, isim_end, nwaerm, izeits
+   integer         :: jpoin1, ico, ke, itagv, monatv
+   integer         :: jahrv, jtage, ianfan, itag_schr, i
+   real            :: lat_k, o2ein
+   real            :: mikonss, mxkonss, bxcoli,algae_biomass
+   real            :: POM_sed, BedGS, xsedvvertz
+   real            :: dh2d, geol, geob, uhrs, uhrz
+   real            :: hcmin, hcuhrz, dlmax1, dlmax2, dlmax3
+   real            :: dlmax4, coro1, fkmgit, trpmin, trpmax
+   real            :: tggbal, tgkbal, coroe, corose, pom_sedb
+   real            :: spewksx1, wuebkx1, psrefsx1, extkx1, uhrz_schr
+   real            :: hcumt, dt, fhprof, hcon, hcontm
+   real            :: sum_qeinl, hcq1, hcq2, hcq3, hcq4
+   real            :: hcq5, hcq6, hcq7, hcq8, hcq9
+   real            :: hcq10, hcq11, hcq12, hcq13, hcq14
+   real            :: hcq15, hcq16, hcq17, hcq18, hcq19
+   real            :: hcq20, hcq21, hcq22, hcq23, hcq24
+   real            :: hcq25, hcq26, hc1, hc2, hc3
+   real            :: hc4, hc5, hc6, hc7, hc8
+   real            :: hc9, hc10, hc11, hc12, hc13
+   real            :: hc14, hc15, hc16, hc17, hc18
+   real            :: hc19, hc20, hc21, hc22, hc23
+   real            :: hc24, hc25, hc26, hc27, fssgrs
+   real            :: fbsgrs, bsbzoo, hcchla, hczoos, hcnh4s
+   real            :: hcno2s, hcno3s, hcgeps, hcbsb, hccsb
+   real            :: hcvkg, hcantb, a2ki, a3ki, a1ki
+   real            :: a3bl, a2bl, a1bl, a3gr, a1gr
+   real            :: a2gr, toc_csb, cdges, cref, cpges
+   real            :: toc, dk, sa, zlk, zg
+   real            :: su, wtst, wtst_t, algb5, zoobsb
+   real            :: algcs, zoocsb, hcs1, hcs2, hcs3
+   real            :: hcs6, hcs7, hcs8, hcs9, hcs10
+   real            :: hcs20, hcs21, hcs22, hcs23, hcs24
+   real            :: hcs25, hcs26, hcs27, hcs28, hcs29
+   real            :: hcs30, hcs31, hcs32, hcs33, hcs34
+   real            :: hcs35, hcs36, hcs37, hcs38, hcs39
+   real            :: hcs40, hcs41, hcs42, hcs43, hcs44
+   real            :: hcs45, hcs46, hcs47, hcs48, hcs49
+   real            :: hcs50, hcs51, hcs52, hcs53, hcs54
+   real            :: hcs55, hcs56, hcs57, hcs58, hcs59
+   real            :: hcs60, hcs61, hcs62, hcs63, hcs64
+   real            :: hcs65, hcs66, hcs77, hcs78, hcs79
+   real            :: hcs80, hcs81, hcs82, hcs83, hcs85
+   real            :: hcs86, hcs95, hcs99, hcs100, hcs101
+   real            :: hcs102, hcs103, hcs104, hcs105, hcs106
+   real            :: hcs107, hcs108, hcs110, hcs111, hcs112
+   real            :: hcs113, hcs114, hcs115, hcs116, hcs117
+   real            :: hcs118, hcs119, hcs120, hcs121, hcs122
+   real            :: hcs123, hcs124, hcs125, hcs126, hcq
+   real            :: hmue, hk, vhplus, rmin, uhrzhm
+   real            :: sumtracer, dtmin, dtmin_mac, elenl, ust
+   real            :: alpha, cr_zahl, cr_zahl_mac, hc_alpha, hc_dl
+   real            :: dtneu, dtneu_mac, schwia, diff1, diff2
+   real            :: saettk, akrema, sbioki, saettb, pbiogr
+   real            :: pbiobl, diff3, diff4, diff5, diff6
+   real            :: diff7, diff8, diff9, diff10, diff11
+   real            :: diff12, diff13, diff14, vco2s, tiefev
+   real            :: algo, diff15, diff16, diff17, diff18
+   real            :: diff19, diff20, diff21, diff22, deltat
+   real            :: st, so2, ski, sgr, sbl
+   real            :: schl, sn4, sn2, sn3, sp
+   real            :: spges, snges, ssi, sumh, uhrsv
+   real            :: hconu, tend, vn4end, vn2end, vn3end
+   real            :: vo2end, vgpend, siend, akiend, agrend
+   real            :: ablend, chlend, uhrhm, bhnfy, sbal
+   real            :: sco, scos, salc, salw, salr
+   real            :: salm, sals, salz, sald, ztp
+   real            :: salco, cbsbab, abbau, hnfin, san
+   real            :: vx0mue, vx02mu, sabow, sabor, bakg
+   real            :: bdaw, bdar, bam, bas, baz
+   real            :: sbco, xtempw, xchnf, xbvhnf, xcd1
+   real            :: xcd2, xcp1, xcp2, xcm, xbac
+   real            :: xbsb5, xcsb, xnh4, xchla, xvkigr
+   real            :: xantbl, xaki, xagr, xabl, xchlak
+   real            :: xchlag, xchlab, xcchlk, xcchlg, xcchlb
+   real            :: xo2, xzooind, xvph, xvno3, xvno2
+   real            :: xgelp, xsi, xca, xmw, xlf
+   real            :: xcoli, xgszn, xglzn, xgscad, xglcad
+   real            :: xgscu, xglcu, xgsni, xglni, xgsas
+   real            :: xglas, xgspb, xglpb, xgscr, xglcr
+   real            :: xgsfe, xglfe, xgshg, xglhg, xgsmn
+   real            :: xglmn, xgsu, xglu, xdlarn, xss
+   real            :: xpfl, xgsp, xgsn, xcori, xcoris
+   real            :: xbal, xsusn, xbettn, xdon, xalgn
+   real            :: xalno3, xflun3, xvx0, xvx02, xsedx
+   real            :: xsedal, xalgzo, xalgdr, xalgco, xvoldr
+   real            :: xdrpfe, xabeow, xabeor, xdalg, xdalga
+   real            :: xalmor, xblmor, xsgo2n, xsdbsb, xsoein
+   real            :: xsalgo, xo2nit, xalgo, xalgao, xbsbt
+   real            :: xschlr, xbsbbe, xo2phy, xro2dr, xzooro
+   real            :: xpo2p, xpo2r, xir, xrmue, xrakr
+   real            :: xrbar, xffood, xfik, xfig, xfib
+   real            :: xnaehr, xakmua, xagmua, xabmua, xfhek
+   real            :: xfheg, xfheb, xakrau, xagrea, xabrea
+   real            :: xhnfmu, xhnfre, xhnfup, xhnfmo, xhnfex
+   real            :: xhnfdr, xhnfz, xbacmu, xhnfba, xnl0
+   real            :: xpl0, xjno3, xjnh4, xjpo4, xjo2
+   real            :: xjsi, xakigr, xchnfi, bxtemp, bxno3
+   real            :: bxno2, bxnh4, bxgelp, bxchla, bxssal
+   real            :: bxsi, bxzooi, bxbsb5, bxcsb, bxaki
+   real            :: bxagr, bxabl, bxo2, bxph, bxca
+   real            :: bxmw, bxlf, bxlarn, bxnl0, bxpl0
+   real            :: bxgsp, bxgsn, bxdalg, bxvkg, bxantb
+   real            :: bxdaa, bxamor, bxseda, bxalgz, bxaldr
+   real            :: bxalco, bxfik, bxfig, bxfib, xbnaeh
+   real            :: bxkmue, bxgmue, bxbmue, bxhek, bxheg
+   real            :: bxheb, bxkre, bxgre, bxbre, bxchlk
+   real            :: bxchlg, bxchlb, bxfln3, bxbetn, bxjno3
+   real            :: bxjnh4, bxjpo4, bxjo2, bxjsi, bmikonss
+   real            :: bxkonss, bmxkonss, bxdrpf, bxgszn, bxglzn
+   real            :: bxgscad, bxglcad, bxgscu, bxglcu, bxgsni
+   real            :: bxglni, bxgsas, bxglas, bxgspb, bxglpb
+   real            :: bxgscr, bxglcr, bxgsfe, bxglfe, bxgshg
+   real            :: bxglhg, bxgsmn, bxglmn, bxgsu, bxglu
+   real            :: bxakg, xkonss, bxmicl, bxmxcl
    character(len=50),dimension(ialloc5,ialloc1) :: cename
    character(len=40),dimension(:),allocatable   :: strname,strnumm
    integer                                 :: maus, read_error, anze, azstr, azstr_read, anzej, stunde, anzema
@@ -58,9 +196,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: it_h, it_hy, iorlah, iorleh, typh, ischig, ikwsta, idwe, mstrle, istund
    integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
-   real                                    :: lat_k, o2ein
-   real                                    :: mikonss, mxkonss, bxcoli,algae_biomass
-   real                                    :: POM_sed, BedGS, xsedvvertz
+   
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, wtyp, ro, wge
@@ -1304,8 +1440,9 @@ program qsim
             842 mV = mV+1
             if (mV > mVs(mstr))goto 848
             if (eVEG(mstr,mV) > fkmgit .and. mV < mVs(mstr))goto 842
-            do 843 iV = 1,14
-            843 VTYPH(mstr,mSta,iV) = VTYPA(mstr,mV,iV)
+            do iV = 1,14
+               VTYPH(mstr,mSta,iV) = VTYPA(mstr,mV,iV)
+            enddo
             VALTLH(mstr,mSta) = VALTAL(mstr,mV)
             EDUFLH(mstr,mSta) = EDUFAL(mstr,mV)
             VALTRH(mstr,mSta) = VALTAR(mstr,mV)
@@ -2071,7 +2208,7 @@ program qsim
             ! BSB5 und CSB
             if (vbsbs(mstr,mRB) < 0.0 .and. vcsbs(mstr,mRB) < 0.0) then
                call qerror("Missing values for C-BSB5 or CSB at boundary. &
-                            One of them must be given.")
+                           &One of them must be given.")
             endif
             
             ! Schwebstoffe
@@ -5926,7 +6063,7 @@ program qsim
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
-            write(message, "(a,i0)"), "Division by zero in subroutine oxygen in stretch ", mstr
+            write(message, "(a,i0)") "Division by zero in subroutine oxygen in stretch ", mstr
             call qerror(message)
          endif
          

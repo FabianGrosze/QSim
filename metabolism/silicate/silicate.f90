@@ -34,6 +34,7 @@ subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
                     tiefe_s, tflie,                  &
                     kontroll, jjj)
    use aparam, only: Qmx_SK
+   implicit none
    
    ! --- dummy arguments ---
    real, intent(inout)  :: si_s     !< Silikat-Silizium-Konzentration  

@@ -30,15 +30,23 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
                  itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi,     &
                  pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                     &
                  kontroll,jjj)
+                 
+   implicit none
    
-   logical     :: kontroll
-   integer     :: jjj
-   integer     :: anze
-   real        :: mftd,mftd1,mcona,mconb,mgrmax,mgrow,miopt
-   real        :: nrstart,nrmax,nrend,nrpmax,nrs,nrsi
-   real        :: pfldalg(1000),po2p(1000),po2r(1000),pflmin(1000)
-   real        :: pflmax(1000),schwi(1000)
-   real        :: tiefe(1000),tempw(1000),pfl(1000),extk(1000)
+   integer         :: mstr, mstart, monats, mmax, mend, ilang
+   integer         :: itstart, itmax, itend, itags, ior
+   real            :: tlip1, tflie, su, sa, pmaxpfl
+   real            :: phytmx, phytmi, pfln, pfln1, pconb
+   real            :: pcona, obfli, hconpfl, grstr, fim
+   real            :: dpfl, dpflmax, alpha, algip1
+   logical         :: kontroll
+   integer         :: jjj
+   integer         :: anze
+   real            :: mftd,mftd1,mcona,mconb,mgrmax,mgrow,miopt
+   real            :: nrstart,nrmax,nrend,nrpmax,nrs,nrsi
+   real            :: pfldalg(1000),po2p(1000),po2r(1000),pflmin(1000)
+   real            :: pflmax(1000),schwi(1000)
+   real            :: tiefe(1000),tempw(1000),pfl(1000),extk(1000)
    character(1000) :: message
   
    if (ilang == 0) return
@@ -79,7 +87,7 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
    do 111 ior = 1,anze
       !
       if (itstart <= 0 .and. pflmax(ior) > 0.0) then
-         write(message, "(a,i0)"), "Invalid dates for macrophytes growth in stretch ", mstr
+         write(message, "(a,i0)") "Invalid dates for macrophytes growth in stretch ", mstr
          call qerror(message)
       endif
       !

@@ -21,6 +21,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     kontroll, jjj)
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
+   implicit none
    
    ! --- dummy arguments ---
    real, intent(inout)  :: vNH4_s      !< Ammonium

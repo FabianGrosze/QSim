@@ -39,7 +39,38 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
                    ,obsb,ocsb,kontroll,jjj)
    
    use allodim
+   implicit none
    
+   integer                        :: mstr, monats, kdsi2, kdsi1, i
+   integer                        :: izaehl_str, iwied, it, itags, ior
+   integer                        :: ilbuhn, ilang, ibedg, ibedgs
+   real                           :: temps, zwxalphals, zwsumsdss_mq, zwsumsdalg_mq, zwsumpopsed
+   real                           :: zwsumponsed, zwsumpocsed, zwsumdw2, zwjpop_neu, zwjpon_neu
+   real                           :: zwjpoc_neu, ynmx1e, w20, w12, vvert
+   real                           :: vvert2, vvert1, vcb, vbc, uhrz
+   real                           :: thtasi, thtaom, thtan4, thtan3, thtad
+   real                           :: thtadp, thtac4, tflie, sumw21, sumpopsedz
+   real                           :: sumponsedz, sumpocsedz, sumdw22, sumdw21, stks1e
+   real                           :: sorpcape, sorpcap1, sod, sodinit, sisaett
+   real                           :: si2, si1, si0, sech, psi2
+   real                           :: psi2init, psi1, poro2, poro1, popsed
+   real                           :: popsed2, popsed1, ponsed, ponsed2, ponsed1
+   real                           :: poc_1, pocsed, pocsed2, pocsed1, poc1_r
+   real                           :: po42tinit, po42por, po41por, po40, po40z
+   real                           :: o2cpo4, o20, hjsiz, hjpo4z, hjo2z
+   real                           :: hjno3z, hjnh4z, hjch4aqz, hcono, hconn
+   real                           :: hcond2, hcond1, hcon2, hcon1, hcalphals
+   real                           :: h2, h1, h11, g, ftpom, adsorbP
+   real                           :: fsi_c, fpsi2, fpsi1, fpom, fpoc2e
+   real                           :: fpoc1e, fpoc0, fp2, fp1, fo_nit
+   real                           :: fdsi2, fdsi1, fdnc_n, fd2, fd1_aus
+   real                           :: fd1, fc_p, fc_o2, fc_n, fakh
+   real                           :: dsumdw22, dsumdw21, dp, dpocvert, dkdp41
+   real                           :: dim_kn, difkp2, difkp1, diffk2, diffk1
+   real                           :: dichto, dichte, dichta, delta_adp, dalgvert
+   real                           :: csod, csodmx, csod1, ch4sat, ch41
+   real                           :: ch40, caki, cagr, cabl, c4toc2
+   real                           :: bettf, benmx1, benks1, aus_kd, alphals
    integer                        :: anze, anzZschritt
    integer, dimension(1000)       :: nkzs
    real, dimension(1000)          :: Tiefe,vmitt,rau,Tempw,vo2,vNH4,vNO3,gelP,Si,JCH4aq

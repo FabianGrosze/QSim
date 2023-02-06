@@ -28,7 +28,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
                     ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl      &
                     ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr          &
                     ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                 &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                   & !!wy, Einlesen von e_extnct.dat nicht hier
+                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                   &
                     ,tpgr,uhrz,iwied,algcog                                                                               &
                     ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG      &
                     ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG               &
@@ -44,33 +44,63 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    ! unterprogramme :tage,albedo
    
    use allodim
-  
-   logical kontroll !wy
-   integer jjj !wy
-   character (len = 255) cpfad
-   character (len = 275)                    :: pfadstring
-   character (len = 2) ckenn_Vers1
-   integer                                  :: anze
-   integer, dimension(1000)                 :: flag, jiein, ischif, nkzs
-   real                                     :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
-   real                                     :: Icmit, kTresp
-   real, dimension(40)                      :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
-   real, dimension(50)                      :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
-   real, dimension(50)                      :: Y, YY, hc_temp, Q_PGz, dmorChlgz, agresz, dzMasse, Masse_neu, dzMasse0
-   real, dimension(50)                      :: xroh_Chl
-   real, dimension(100)                     :: qeinl, evkigr, eantbl, echla, ess, hemm
-   real, dimension(1000)                    :: tempw, chla, ssalg, vno3, vnh4, gelp, vco2, chlaki, svhemg, dalggr
-   real, dimension(1000)                    :: dalgag, chlagr, vmitt, rau, tiefe, elen, vabfl, vkigr, antbl, Q_PK
-   real, dimension(1000)                    :: Q_NK, sedalg, algzog, dgrmor, agrtbr, fkm, algdrg, algcog, cmatgr
-   real, dimension(1000)                    :: cmatki, tpgr, extk, akbcm, agbcm, aki, agr, zooind, abl, chlabl
-   real, dimension(1000)                    :: abbcm, ss, figaus, agmuea, fhegas, agreau, up_PG, up_NG, Q_PG, Q_NG
-   real, dimension(1000)                    :: schwi, Dz2D, sedAlg0
-   real, dimension(40,1000)                 :: extk_lamda
-   real, dimension(50,1000)                 :: agrbrz, up_PGz, up_NGz, akiz, agrz, ablz, algagz, dgmorz, algzgz
-   real, dimension(50,1000)                 :: vNH4z, vNO3z, gelPz, dalggz, tempwz, chlaz
-   real, dimension(azStrs,1000)             :: sedAlg_MQ, agmor_1
-   real, dimension(azStrs,50,1000)          :: hchlkz, hchlgz, hchlbz, hCChlgz, hQ_NGz
-   real, dimension(azStrs,1000)             :: tausc
+   implicit none
+   
+   integer                          :: n_neu_s, n_alt_s, nschif, nkz, mstr
+   integer                          :: monats, j_aus, j, js, jsed, jjj
+   integer                          :: jcyano, i_zeiger, i, iwied, itemp
+   integer                          :: itags, isyn, ispek, isim_end, ised
+   integer                          :: iref, iph, ior, ilbuhn, ilamda
+   integer                          :: ifoto, ifix, ieros, iein, iaus, anze
+   real                             :: qmn_ng, zellv, yk, x, xup_n
+   real                             :: xk, xchla, xagrow, xagres, xac
+   real                             :: w, wst, vmitt1, vkrit, vges
+   real                             :: v6, ust, ustkri, up_n2i, up_ci
+   real                             :: upmxpg, upmxng, upmxi, uhrz, topt
+   real                             :: toptg, tmax, tiefe1, tflie, te0
+   real                             :: tauad, sumyk, sumroh_chl, sumqp, sumqn
+   real                             :: sumpc, sumn, sumh, sumaw, sumas
+   real                             :: sumah, sumac, sumacg, slamda, saettg
+   real                             :: roh_chlzmit, qsgr, qmx_pg, qmx_ng, qmxi
+   real                             :: qmn_pg, qmni, pc, pcmit, pcmax
+   real                             :: pbiogr, pbiobl, oc, oc0, obfli
+   real                             :: hctest, hconsk, hconql, halbi, g
+   real                             :: grote, ft_ks, ftemp, fta, frmuge
+   real                             :: frespx, frespg, frespgx, fn, fmor
+   real                             :: fmor2, fmor1, fmor0, f5, f52, a1Gr
+   real                             :: f51, dz_spline, dz, dztot, dz1
+   real                             :: dh2d, deltaz, dagr, cnaehr, chlagrt
+   real                             :: ceq, cchl_stern, cchl0, caki, cagr
+   real                             :: cabl, a, awmit, asmit, asgre
+   real                             :: alpha_chl, alamda, akremi, ahmit, agrzt
+   real                             :: agrt, agrs, agres, agremi, agmor
+   real                             :: agmomi, agmoma, agksp, agksn, aggrow
+   real                             :: aggmax, aggmaxtopt, agchl_max, agchl, agbcmt
+   real                             :: acmit, acmitg, abr, a3gr, a2gr
+   real                             :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
+   real                             :: Icmit, kTresp
+   logical                          :: kontroll
+   character (len = 255)            :: cpfad
+   character (len = 275)            :: pfadstring
+   character (len = 2)              :: ckenn_Vers1
+   integer, dimension(1000)         :: flag, jiein, ischif, nkzs
+   real, dimension(40)              :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
+   real, dimension(50)              :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
+   real, dimension(50)              :: Y, YY, hc_temp, Q_PGz, dmorChlgz, agresz, dzMasse, Masse_neu, dzMasse0
+   real, dimension(50)              :: xroh_Chl
+   real, dimension(100)             :: qeinl, evkigr, eantbl, echla, ess, hemm
+   real, dimension(1000)            :: tempw, chla, ssalg, vno3, vnh4, gelp, vco2, chlaki, svhemg, dalggr
+   real, dimension(1000)            :: dalgag, chlagr, vmitt, rau, tiefe, elen, vabfl, vkigr, antbl, Q_PK
+   real, dimension(1000)            :: Q_NK, sedalg, algzog, dgrmor, agrtbr, fkm, algdrg, algcog, cmatgr
+   real, dimension(1000)            :: cmatki, tpgr, extk, akbcm, agbcm, aki, agr, zooind, abl, chlabl
+   real, dimension(1000)            :: abbcm, ss, figaus, agmuea, fhegas, agreau, up_PG, up_NG, Q_PG, Q_NG
+   real, dimension(1000)            :: schwi, Dz2D, sedAlg0
+   real, dimension(40,1000)         :: extk_lamda
+   real, dimension(50,1000)         :: agrbrz, up_PGz, up_NGz, akiz, agrz, ablz, algagz, dgmorz, algzgz
+   real, dimension(50,1000)         :: vNH4z, vNO3z, gelPz, dalggz, tempwz, chlaz
+   real, dimension(azStrs,1000)     :: sedAlg_MQ, agmor_1
+   real, dimension(azStrs,50,1000)  :: hchlkz, hchlgz, hchlbz, hCChlgz, hQ_NGz
+   real, dimension(azStrs,1000)     :: tausc
    save Cchlaz, agrzt
    
    ispek = 0

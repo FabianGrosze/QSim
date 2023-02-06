@@ -34,7 +34,15 @@ subroutine coroph(coro,coros,tempw,flae,elen,anze,ior                           
                   ,kontroll,jjj)
    
    use allodim
+   implicit none
    
+   integer                       :: nrs, nrg3, nrg2, nrg1, mstr
+   integer                       :: monats, j, jahr_tst, jahrs, izeiger
+   integer                       :: itags, ior, ilbuhn, ilang, ig3tag
+   integer                       :: ig3mon, ig2tag, ig2mon, ig1tag, ig1mon
+   real                          :: vol, volfm3, volfl, tflie, schlupf
+   real                          :: rfil, hconf, fweib2, fweib1, corsg
+   real                          :: corg, anzei
    logical                       :: kontroll !< debugging
    integer                       :: jjj      !< debugging
    integer                       :: anze

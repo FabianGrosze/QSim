@@ -39,7 +39,32 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
                     CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax,             &
                     sgwmue,fkm,FoptDe,mstr,azStr,                      &
                     kontroll,jjj)
+                    
+   implicit none
    
+   integer     :: nrla1e, nrs, nrla1a, nndr, ndr, ilang
+   integer     :: mstr, monats, lait1, laim1, laid1
+   integer     :: jahr_tst1, jahrs, itime_hoch, itags, ior
+   real        :: ztopt, ztmax, zqz10, yc, ycs
+   real        :: x, w, vol, up, upt, ablc
+   real        :: uptm3, ups, upst, tflie, tdpla
+   real        :: stdpla, ssorg, ssc, spwmx, rres
+   real        :: rres0, respo2, respc, respcs, respbio
+   real        :: rescm3, qres, qfec, pss, pki
+   real        :: pgr, pbl, hconvs, hconvk, hconvg
+   real        :: hconvb, hcont, hconf, hcond2, hcond1
+   real        :: hconc2, hconc1, gewdts, f_lim, fweib
+   real        :: fss, fr, foptd, foptde, food
+   real        :: flai, fki, fh2ovol, fgr, fgesund
+   real        :: fdrrt, fco, fcos, fcom, fbl
+   real        :: exdr, exdrvz, exdrs, excm3, dyc
+   real        :: dycs, drrtt, drrt3, drrt33, drrt2
+   real        :: drrt22, drrt1, drrt11, drmue, drftt
+   real        :: dreisn, dreinm, dreing, drcgeh, draup
+   real        :: do2krit, dmorg, dlamor, dlafes, dgwmue
+   real        :: dgewdr, dfmue, dfmues, dfemue, dei
+   real        :: deimue, ddrein, ddlarn, caki, cagr
+   real        :: cabl, assr, assrs, akic, agrc
    logical     :: kontroll !< debugging
    integer     :: jjj      !< debugging
    real        :: elen(1000),tempw(1000),flae(1000),zdrei(1000,4)

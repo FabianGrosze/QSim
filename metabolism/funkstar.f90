@@ -47,35 +47,64 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,iw_max,iformVert)
    
    use allodim
+   implicit none
    
-   character (len = 255)                       :: cpfad
-   character (len = 275)                       :: pfadstring
-   
-   integer                                     :: RBNR, read_error
-   integer, dimension(40000)                   :: imstr, iRBNR, ianzW
-   integer, dimension(azStrs,100)              :: istund, RBtyp, NRSchr
-   integer, dimension(200,40000)               :: itagl, monatl, jahrl
-   integer, intent(in)                         :: iColi, iSchwer
-   integer, dimension(:,:,:), allocatable      :: mREC
-   real                                        :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
-   real                                        :: VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe
-   real                                        :: VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U
-   real, dimension(azStrs,100)                 :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesNs, vx0s, vx02s
-   real, dimension(azStrs,100)                 :: gelps, gesPs, sis, chlas, waers
-   real, dimension(azStrs,100)                 :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
-   real, dimension(azStrs,100)                 :: tempws, vo2s, CHNFs, BVHNFs, colis, DOSCFs, abfls
-   real, dimension(azStrs,100)                 :: glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis
-   real, dimension(azStrs,100)                 :: glAss,gsAss,glPbs,gsPbs,glCrs,gsCrs,glFes,gsFes
-   real, dimension(azStrs,100)                 :: glHgs,gsHgs,glMns,gsMns,glUs,gsUs
-   real, dimension(200,40000)                  :: uhrl
-   real, dimension(:,:,:), allocatable         :: werts
-   real                                        :: NaN_value
-   logical                                     :: is_set_wert1, is_set_wert2
-   character(len = 200)                        :: message
-   
-   real, parameter                             :: epsilon = 1.e-8
-   
-   double precision                            :: R_NRS, R_NRS2, R_NRS1
+   integer                                :: nrs, nrsj, mstr, mstrrb, monats
+   integer                                :: manzw, jahrs, i_rand, i_rands, i
+   integer                                :: ixpp, iw_max, iwsim, iwied, iwe
+   integer                                :: itags, irec, ipp, ipps, ilang
+   integer                                :: iformvert, iee2, iee1, ianzrb, ianrbs
+   integer                                :: rbnr, read_error
+   real                                   :: uhrz, r_nrs0, hcss, hcph, hcon2
+   real                                   :: e4cu, ywert, wert2, wert1, vtkoeffde_zn
+   real                                   :: hcon1, e5zn, e5u, e5pb, e5ni
+   real                                   :: e5mn, e5hg, e5fe, e5cu, e5cr
+   real                                   :: e5cad, e5as, e4zn, e4u, e4pb
+   real                                   :: e4ni, e4mn, e4hg, e4fe, e4cr
+   real                                   :: e4cad, e4as, e3zn, e3u, e3pb
+   real                                   :: e3ni, e3mn, e3hg, e3fe, e3cu
+   real                                   :: e3cr, e3cad, e3as, e2zn, e2u
+   real                                   :: e2pb, e2ni, e2mn, e2hg, e2fe
+   real                                   :: e2cu, e2cr, e2cad, e2as, e1zn
+   real                                   :: e1u, e1pb, e1ni, e1mn, e1hg
+   real                                   :: e1fe, e1cu, e1cr, e1cad, e1as
+   real                                   :: c5zn, c5u, c5pb, c5ni, c5mn
+   real                                   :: c5hg, c5fe, c5cu, c5cr, c5cad
+   real                                   :: c5as, c4zn, c4u, c4pb, c4ni
+   real                                   :: c4mn, c4hg, c4fe, c4cu, c4cr
+   real                                   :: c4cad, c4as, c3zn, c3u, c3pb
+   real                                   :: c3ni, c3mn, c3hg, c3fe, c3cu
+   real                                   :: c3cr, c3cad, c3as, c2zn, c2u
+   real                                   :: c2pb, c2ni, c2mn, c2hg, c2fe
+   real                                   :: c2cu, c2cr, c2cad, c2as, c1zn
+   real                                   :: c1u, c1pb, c1ni, c1mn, c1hg
+   real                                   :: c1fe, c1cu, c1cr, c1cad, c1as
+   real                                   :: vtkoeffde_u, vtkoeffde_pb, vtkoeffde_ni, vtkoeffde_mn, vtkoeffde_hg
+   real                                   :: vtkoeffde_fe, vtkoeffde_cu, vtkoeffde_cr, vtkoeffde_cad, vtkoeffde_as
+   real                                   :: vtkoeff_zn,vtkoeff_cu,vtkoeff_cad,vtkoeff_ni
+   real                                   :: vtkoeff_as,vtkoeff_pb,vtkoeff_cr,vtkoeff_fe
+   real                                   :: vtkoeff_hg,vtkoeff_mn,vtkoeff_u
+   real                                   :: nan_value
+   double precision                       :: r_nrs, r_nrs2, r_nrs1
+   character(200)                         :: message
+   character(255)                         :: cpfad
+   character(275)                         :: pfadstring
+   integer, dimension(40000)              :: imstr, irbnr, ianzw
+   integer, dimension(azstrs,100)         :: istund, rbtyp, nrschr
+   integer, dimension(200,40000)          :: itagl, monatl, jahrl
+   integer, intent(in)                    :: icoli, ischwer
+   integer, dimension(:,:,:), allocatable :: mrec
+   real,    dimension(azstrs,100)         :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesns, vx0s, vx02s
+   real,    dimension(azstrs,100)         :: gelps, gesps, sis, chlas, waers
+   real,    dimension(azstrs,100)         :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
+   real,    dimension(azstrs,100)         :: tempws, vo2s, chnfs, bvhnfs, colis, doscfs, abfls
+   real,    dimension(azstrs,100)         :: glzns,gszns,glcads,gscads,glcus,gscus,glnis,gsnis
+   real,    dimension(azstrs,100)         :: glass,gsass,glpbs,gspbs,glcrs,gscrs,glfes,gsfes
+   real,    dimension(azstrs,100)         :: glhgs,gshgs,glmns,gsmns,glus,gsus
+   real,    dimension(200,40000)          :: uhrl
+   real,    dimension(:,:,:), allocatable :: werts
+   logical                                :: is_set_wert1, is_set_wert2
+   real, parameter                        :: epsilon = 1.e-8
    
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
    save R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni

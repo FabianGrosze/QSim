@@ -34,7 +34,13 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                     kontroll, jjj)
    
    use allodim
-
+   implicit none
+   
+   integer                         :: n, ns, nschif, ms, mstr
+   integer                         :: msta, kbuhn, jsed, ised, ischif
+   real                            :: vmitt1, v6, ust, tiefe1, raun
+   real                            :: phytoc, hcon, g, gesss, fsch
+   real                            :: fom_oc, bsbc
    integer                         :: azStr
    integer, dimension(azStrs)      :: mStas, mSs, abfr, mStra, nbuhn
    real                            :: oc, wst
@@ -83,7 +89,7 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
          
          ! Fehlermeldung
          if (Hmq(mstr,mSta) <= 0.0) then
-            write(message, "(a,f8.3)"), "Missing MQ values at profile ", Stakm(mstr,mSta)
+            write(message, "(a,f8.3)") "Missing MQ values at profile ", Stakm(mstr,mSta)
             call qerror(message)
          endif
          

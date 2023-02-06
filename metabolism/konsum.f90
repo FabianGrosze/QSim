@@ -25,6 +25,10 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
+!> Calculation of zooplankton dynamics
+!!
+!! @author: Volker Kirchesch
+!! @date: 21.5.2015
 subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                             &
                   ,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl             &
                   ,jiein,FopIRe,GRote,dzres1,dzres2,zresge                          &
@@ -35,68 +39,55 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
                   ,itags,uhrz,mstr                                                  &
                   ,kontroll ,jjj ) !!wy
    
-   
-   !   UNTERPROGRAMM ZUR BERECHNUNG DES ZOOPLANKTONEINFLUSSES
-   !   AUF DEN STOFF-UND SAUERSTOFFHAUSHALT EINES FLIEGEWAESSERS
-   
-   
-   !   AUTOR :      VOLKER KIRCHESCH
-   
-   !   STAND :      21.5.2015
-   
-   
-   !   VARIABLENLISTE:
-   
    !   irmax  - max. Filtrierate in mueg Chl-a/(100 Ind*d)
-   
    use allodim
-   
    implicit none
    
-   logical kontroll !!wy
-   integer jjj !!wy
-   integer                        :: anze, j, ior, mstr, ior_flag, ilbuhn, m, ihcQ, ji, nkz, itags, monats
-   integer, dimension(1000)       :: jiein, nkzs, flag
-   real                           :: irmax, irmaxe, mueRot, morRot, uhrz
-   real                           :: irmax_Ind, ir_F, zagr, zagre, zaki, zakie, zabl, zable
-   real                           :: FOPTR, FopIre, GRot, GRote, RotC, Up_CRot
-   real                           :: ClearR, ClearRLog, ClearR_Ind, VolRot, FKs, hcZoo1, hcTGZoo1, hcZoo, hcTGZoo, hcQ
-   real                           :: hcZooE, hcTGZooE, zooint, TGZoot, Rot, FTResR, RespRG, ZResGe, filO2, filAbio
-   real                           :: hcon, hcaki, hconki, hcongr, hconbl, hconm, FTMoR, zass, ProdRot
-   real                           :: hcQe, hconf, FTing, tflie, Rott, delZoo
-   real, dimension(100)           :: ezind, qeinl
-   real, dimension(1000)          :: tempw, vo2, zooind, abszo, zexki, zexgr, zexbl, aki, agr, abl, vkigr
-   real, dimension(1000)          :: elen, ir, dzres1, dzres2, vabfl, rmuas, iras, rakr, rbar
-   real, dimension(1000)          :: CHNF, zHNF, BAC, zBAC, HNFza, algzok, algzog, algzob
-   real, dimension(50,1000)       :: akiz, agrz, ablz, algzkz, algzgz, algzbz
-   real, dimension(azSTrs,1000)   :: TGZoo
-   
-   logical, parameter             :: isTGZoo = .false.
-   
-   real, parameter                :: epsilon = 1.e-8
-   real, parameter                :: Cagr    = 0.48
-   real, parameter                :: Caki    = 0.48
-   real, parameter                :: Cabl    = 0.48
-   real, parameter                :: CRot    = 0.45
-   real, parameter                :: dokrit  = 2.5
-   real, parameter                :: mormax  = 0.15            !    mormax = 0.32
-   real, parameter                :: ASSmxR  = 0.84            ! Verschoor et al. (2007)
-   real, parameter                :: respaR  = 0.203
-   real, parameter                :: Emort   = 2.
-   real, parameter                :: EASS    = 0.705           ! Verschoor et al. (2007)
-   real, parameter                :: thresR  = 1.12
-   real, parameter                :: thmorR  = 1.077
-   real, parameter                :: thIng   = 1.08
-   
-   real, parameter                :: zqz10   = 2.23
-   real, parameter                :: ztmax   = 26.1
-   real, parameter                :: ztopt   = 22.2
-   
-   real, parameter                :: ZellVGr = 320.
-   real, parameter                :: ZellVKi = 645.
-   real, parameter                :: ZellVBl = 1000.
-   
-   integer :: iein, iwied
+   integer                      :: ji, nkz, m, mstr, monats, jjj
+   integer                      :: lnq, j, jj, itgzoo, anze, iein, iwied
+   integer                      :: itags, ior_flag, ior, ilbuhn, ihcq
+   real                         :: zresge,  zooint, zass, zaki
+   real                         :: zakie, zagr, zagre, zabl, zable
+   real                         :: x, w, volrot, up_crot, uhrz
+   real                         :: tgzoot, tflie, rot, rott, rotc, resprg
+   real                         :: prodrot, hczoo, hczooe, hczoo1, hctgzoo
+   real                         :: hctgzooe, hctgzoo1, hcq, hcqe, hconm
+   real                         :: hconki, hcongr, hconf, hconbl, hcaki
+   real                         :: grot, grote, ftresr, ftmorr
+   real                         :: irmax, irmaxe, mueRot, morRot
+   real                         :: irmax_Ind, ir_F, FTing,  delZoo
+   real                         :: FOPTR, FopIre, ClearR, ClearRLog, ClearR_Ind
+   real                         :: filO2, filAbio, fks
+   real                         :: hcon, FTMoR, fta
+   logical                      :: kontroll 
+   integer, dimension(1000)     :: jiein, nkzs, flag
+   real, dimension(100)         :: ezind, qeinl
+   real, dimension(1000)        :: tempw, vo2, zooind, abszo, zexki, zexgr, zexbl, aki, agr, abl, vkigr
+   real, dimension(1000)        :: elen, ir, dzres1, dzres2, vabfl, rmuas, iras, rakr, rbar
+   real, dimension(1000)        :: CHNF, zHNF, BAC, zBAC, HNFza, algzok, algzog, algzob
+   real, dimension(50,1000)     :: akiz, agrz, ablz, algzkz, algzgz, algzbz
+   real, dimension(azSTrs,1000) :: TGZoo
+   real, parameter              :: epsilon = 1.e-8
+   real, parameter              :: Cagr    = 0.48
+   real, parameter              :: Caki    = 0.48
+   real, parameter              :: Cabl    = 0.48
+   real, parameter              :: CRot    = 0.45
+   real, parameter              :: dokrit  = 2.5
+   real, parameter              :: mormax  = 0.15            !    mormax = 0.32
+   real, parameter              :: ASSmxR  = 0.84            ! Verschoor et al. (2007)
+   real, parameter              :: respaR  = 0.203
+   real, parameter              :: Emort   = 2.
+   real, parameter              :: EASS    = 0.705           ! Verschoor et al. (2007)
+   real, parameter              :: thresR  = 1.12
+   real, parameter              :: thmorR  = 1.077
+   real, parameter              :: thIng   = 1.08
+   real, parameter              :: zqz10   = 2.23
+   real, parameter              :: ztmax   = 26.1
+   real, parameter              :: ztopt   = 22.2
+   real, parameter              :: ZellVGr = 320.
+   real, parameter              :: ZellVKi = 645.
+   real, parameter              :: ZellVBl = 1000.
+   logical, parameter           :: isTGZoo = .false.
    
    save hczoo1, hcTGZoo1
    

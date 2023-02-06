@@ -40,7 +40,16 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    !                             S. 100, Formel (6.20)
    
    use allodim
+   implicit none
    
+   
+   integer                                :: nkztot_max, mtracer, mstr, monats, ktrans
+   integer                                :: kktrans, jpoin1, izeits, iwsim, iwied
+   integer                                :: iwahld, iverfahren, itime, ithomas, itags
+   integer                                :: isub_dtx, ipo, icranickoeff, ianze_max
+   real                                   :: vx_cr, uhrz, tflie, tfliesec, tempn
+   real                                   :: temp0, sumdet, s2, s1, dx2
+   real                                   :: dx1, deltat
    integer                                :: anze, nkz, ior
    integer, dimension(azStrs)             :: iFlRi, imac
    integer, dimension(1000)               :: flag, nkzs
@@ -158,9 +167,12 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
       call lax_wendroff(U, vmitt, Uvert, elen, DeltaT, anze, flag, nkz, nkzs,ktrans,itime,isgn,mstr,iwahld,itags,monats,uhrz)
    endif
    if (iverfahren == 3) then
-      call quickest(U, vmitt, Uvert, elen, DeltaT, anze, flag, ktrans, mstr, nkz, nkzs, iwahld, isgn,uhrz, itags, monats, itime,iwsim)
+      call quickest(U, vmitt, Uvert, elen, DeltaT, anze, flag, ktrans, &
+                    mstr, nkz, nkzs, iwahld, isgn,uhrz, itags, monats, &
+                    itime, iwsim)
    endif
-   ! **Ende Gitterschleife**
+   
+   ! Ende Gitterschleife
    if (iwahlD == 1 .and. itime == izeits.and.ktrans == 1) vmittt_1(mstr,1:anze+1) = vmitt(1:anze+1)
    if (iwahlD == 2 .and. itime == izeits.and.ktrans == 1) Uvertt_1(mstr,nkz,1:anze+1) = Uvert(nkz,1:anze+1)
    
@@ -212,13 +224,21 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
                       ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
                       
    use allodim
+   implicit none
    
-   integer, dimension(1000)         :: flag, nkzs
-   integer, dimension(1000,50)      :: m, isgn
-   integer                          :: anze
-   real, dimension(1000)            :: elen, vmitt
-   real, dimension(50,1000)         :: vmittt_1, Uvert
-   real, dimension(1000,50)         :: xpoint
+   
+   integer                        :: nkz, nkztot_max, mstr, monats, ktrans
+   integer                        :: j, jpoin1, i, izeits, iwied
+   integer                        :: iwahld, itime, itags, ipo, ior
+   integer                        :: iein, ianze_max
+   real                           :: vx_cr, vx, vx1, vx0, uhrz, deltatt
+   real                           :: tfliesec, sumdet, hcondt, dxx, deltat
+   integer, dimension(1000)       :: flag, nkzs
+   integer, dimension(1000,50)    :: m, isgn
+   integer                        :: anze
+   real, dimension(1000)          :: elen, vmitt
+   real, dimension(50,1000)       :: vmittt_1, Uvert
+   real, dimension(1000,50)       :: xpoint
    real, dimension(1:azStrs,1:nkztot_max,1:ianze_max+1) :: Uvertt_1
   
    vmitt(anze+1) = vmitt(anze)
@@ -313,18 +333,25 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
       enddo
    enddo
    return
-end subroutine BasisPoint
+end subroutine basispoint
 
 subroutine Crank_Nicolson(U,elen,flag,dl,deltat,anze,temp0,icraNicKoeff,ithomas,mstr,ktrans,iwahlD,nkz,nkzs       &
                           ,itags,monats,itime,isub_dtx,isgn,uhrz)
    
    use allodim
+   implicit none
    
+   integer                            :: nkz, mstr, monats, ktrans, iwahld
+   integer                            :: itime_sub, itime, ithomas, itags, isub_dtx
+   integer                            :: ior, icranickoeff
+   real                               :: ux_nx, ux1, uhrz, temp0, deltat_z, deltat
    integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs, imarker
    integer, dimension(1000,50)        :: isgn
    real, dimension(1000)              :: r1, r2, r3, dl, elen, U
    double precision, dimension(1000)  :: a,b,c,d
+   
+   
    deltat_z = deltat
    deltat = deltat/isub_dtx
    Ux1 = U(1)
@@ -420,10 +447,17 @@ end subroutine Crank_Nicolson
 
 
 subroutine cra_NicKoeff(elen,r1,r2,r3,dl,flag,deltat,anze,nkzs,nkz,mstr,ktrans,imarker,icraNicKoeff,itags,uhrz)
-   integer                        :: anze
-   integer, dimension(1000)       :: flag, imarker, nkzs
-   real                           :: nenner
-   real, dimension(1000)          :: elen, r1, r2, r3, dl
+   
+   implicit none
+                             
+   integer                   :: nkz, mstr, ktrans, itags, ior
+   integer                   :: iein, icranickoeff, anze
+   real                      :: uhrz, dlmit, deltat, alpha
+   real                      :: nenner
+   integer, dimension(1000)  :: flag, imarker, nkzs
+   real, dimension(1000)     :: elen, r1, r2, r3, dl
+   
+   
    iein = 0
    ior = 1
    imarker(ior) = 0
@@ -464,12 +498,17 @@ end subroutine cra_NicKoeff
 !! @author Volker Kirchesch
 !! @date 23.01.1994
 subroutine trimat(a,b,c,d,anze,U,flag,mstr,ktrans,imarker,iwahlD,itags,monats,uhrz,nkz,nkzs,itime)
-   ! Koeffizienten: a,b,c
+   ! Koeffizienten: a,b,c  
+
+   implicit none
    
-   integer                          :: anze
-   integer, dimension(1000)         :: flag, imarker,nkzs
-   real, dimension(1000)            :: U
-   double precision, dimension(1000):: a, b, c, d, l, mm, y
+   
+   integer                           :: nkz, mstr, monats, ktrans, iwahld
+   integer                           :: itime, itags, ior, anze
+   real                              :: uhrz
+   integer, dimension(1000)          :: flag, imarker,nkzs
+   real,    dimension(1000)          :: U
+   double precision, dimension(1000) :: a, b, c, d, l, mm, y
    
    
    mm(1) = a(1)
@@ -504,8 +543,12 @@ subroutine trimat(a,b,c,d,anze,U,flag,mstr,ktrans,imarker,iwahlD,itags,monats,uh
 end subroutine trimat
 
 
-subroutine Thomas(a,b,c,d,anze,U,flag,mstr,ktrans,imarker,iwahlD,itags,nkz,itime)
-   integer                           :: anze
+subroutine thomas(a,b,c,d,anze,U,flag,mstr,ktrans,imarker,iwahlD,itags,nkz,itime)
+   
+   implicit none
+   
+   integer                           :: nkz, mstr, ktrans, i, iwahld
+   integer                           :: itime, itags, anze
    integer, dimension(1000)          :: imarker, flag
    real, dimension(1000)             :: U
    double precision, dimension(1000) :: a,b,c,d, bp, dp
@@ -536,7 +579,12 @@ subroutine MacCorm(U,elen,flag,dl,deltat,anze,temp0,mstr,ktrans,iwahlD,nkz,nkzs,
                    ,isub_dtx,isgn,uhrz)
    
    use allodim
+   implicit none
    
+   integer                            :: nkz, mstr, monats, ktrans, i
+   integer                            :: iwahld, itime_sub, itime, itags, isub_dtx
+   real                               :: ux_nx, ux1, uhrz, temp0, s3
+   real                               :: s2, s1, deltat_z, deltat
    integer                            :: anze
    integer, dimension(1000)           :: flag, nkzs
    integer, dimension(1000,50)        :: isgn
@@ -685,12 +733,19 @@ subroutine CIP(U, CUx, DX, DT, NX, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,
                ,iwahld,nkztot_max, ianze_max,itags,isgn,m,vx_Cr,Uhrz,monats,temp0,deltat)
 
    use allodim
+   implicit none
    
-   integer :: NX, I
-   integer, dimension(1000) :: nkzs, flag
+   integer                     :: nkz, nkztot_max, mstr, monats, m3
+   integer                     :: m2, m1, ktrans, kktrans, j
+   integer                     :: jj, iwahld, itime, itags, iein
+   real                        :: b, vx_cr, umin, umax, uhrz
+   real                        :: temp0, qmin, qmax, p, hconp
+   real                        :: dt, deltat, cx, a
+   integer                     :: NX, I, ianze_max
+   integer, dimension(1000)    :: nkzs, flag
    integer, dimension(1000,50) :: m, isgn
-   real, dimension(1000) :: DX, U,CUx, CU_neu,U_neu, Ulin
-   real, dimension(1000,50) :: xpoint
+   real,    dimension(1000)    :: DX, U,CUx, CU_neu,U_neu, Ulin
+   real,    dimension(1000,50) :: xpoint
    save CU_neu, U_neu, Ulin,a,b
    
    iein = 0
@@ -732,8 +787,13 @@ subroutine CIP(U, CUx, DX, DT, NX, xpoint, flag, nkz, nkzs,ktrans,kktrans,itime,
       !       cycle
       !    endif
       ! endif
-      U_neu(i) = a*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz))**3+b*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz))**2+CUx(m1)*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz))+U(m1)
-      CU_neu(i) = 3.*a*(-xpoint(i,nkz)*isgn(m(i,nkz),nkz))**2+2*b*(-xpoint(i,nkz)*isgn(m(i,nkz),nkz))+CUx(m1)
+      U_neu(i) = a*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz))**3    &
+               + b*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz))**2    &
+               + CUx(m1)*(-xPoint(i,nkz)*isgn(m(i,nkz),nkz)) &
+               + U(m1)
+      CU_neu(i) = 3.*a*(-xpoint(i,nkz)*isgn(m(i,nkz),nkz))**2 &
+                + 2*b*(-xpoint(i,nkz)*isgn(m(i,nkz),nkz))     &
+                + CUx(m1)
       Ulin(i) = U(m2)+((U(m1)-U(m2))/dx(m3))*(dx(m3)-xpoint(i,nkz))
       Umax = max(U(m1),U(m2))
       Umin = min(U(m1),U(m2))
@@ -784,14 +844,23 @@ end subroutine CIP
 
 
 subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itime,isgn,mstr,iwahld,itags,monats,Uhrz)
-   integer :: NX, I
-   integer, dimension(1000) :: nkzs, flag
-   integer, dimension(1000,50) :: isgn
-   real, dimension(1000) :: DX, cour,U, U_neu, phi
-   real, dimension(1000) :: vmitt
-   real, dimension(50,1000)  :: Uvert
-   real :: m1, m2
+   
+   implicit none
+   
+   integer                      :: n, nkz, mstr, monats, ktrans
+   integer                      :: j, jj, iwahld, itime, itags
+   integer                      :: NX, I
+   real                         :: uhrz, s3, s2, s1, hcon
+   real                         :: dt, cour_mit
+   integer, dimension(1000)     :: nkzs, flag
+   integer, dimension(1000,50)  :: isgn
+   real,    dimension(1000)     :: DX, cour,U, U_neu, phi
+   real,    dimension(1000)     :: vmitt
+   real,    dimension(50,1000)  :: Uvert
+   real                         :: m1, m2
    save U_neu
+   
+   
    j = 2
    jj = 0
    if (iwahlD == 1) then
@@ -929,8 +998,16 @@ end subroutine lax_wendroff
 
 subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans,mstr, nkz, nkzs, &
                     iwahlD, isgn, Uhrz, itags, monats, itime,iwsim)
+                    
+   implicit none
    
+   integer                       :: nkz, mstr, monats, i, iwsim
+   integer                       :: iwahld, itime, itags
    integer                       :: nx, ktrans
+   real                          :: uv, uhrz, term, s4, s3
+   real                          :: s2, s1, gradr, dx_stern, dx_p1
+   real                          :: dx_m1, deltat, curvr, crr2, crr1
+   real                          :: crnt, crm
    integer, dimension(1000)      :: nkzs
    integer, dimension(1000)      :: flag
    integer, dimension(1000,50)   :: isgn
