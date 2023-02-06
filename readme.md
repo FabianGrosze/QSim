@@ -2,6 +2,11 @@
 
 ## 14.09
 
+### 14.09.19
+
+* Add `implicit none` to all files
+* Fix some compiler warnings in QSim1D
+
 ### 14.09.18
 
 * Refactored `konsum.f90` (incl. `implicit none`)
