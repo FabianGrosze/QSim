@@ -29,7 +29,7 @@
 
 SHELL=/usr/bin/bash
 
-PV='qsim3d_schwermetall19'
+PV='qsim3d_schwermetall20'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
