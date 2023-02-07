@@ -21,6 +21,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     kontroll, jjj)
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
+   implicit none
    
    ! --- dummy arguments ---
    real, intent(inout)  :: vNH4_s      !< Ammonium
@@ -219,9 +220,9 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
             alpha_upN4b = hc_upN4 / (hc_upN3 + hc_upN4)
          
          case default
-            write(message,"(a,i0)"), "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
-                                     new_line('a') //                                                 &
-                                     "j_up = ", j_up
+            write(message,"(a,i0)") "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
+                                    new_line('a') //                                                 &
+                                    "j_up = ", j_up
             call qerror(message)
       end select
       

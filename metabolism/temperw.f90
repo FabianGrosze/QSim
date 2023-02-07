@@ -177,9 +177,13 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
             if (qeinlL(ieinL) <= 0.0)qeinlL(ieinL) = 0.0
             
             do nkz = 1,nkzs(ior)  ! 2D
-               if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0)tempwz(nkz,ior) = tempwz(nkz,ior)+((etempL(ieinL)-tempwz(nkz,ior))*qeinlL(ieinL)/flae(ior))*tflie*86400. ! Ki
+               if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0) then
+                  tempwz(nkz,ior) = tempwz(nkz,ior)+((etempL(ieinL)-tempwz(nkz,ior))*qeinlL(ieinL)/flae(ior))*tflie*86400. ! Ki
+               endif
             enddo
-            if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0)tempw(ior) = tempw(ior)+((etempL(ieinL)-tempw(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.  ! 1D            ! Ki
+            if (flae(ior) > 0.0 .and. etempL(ieinL) > 0.0) then
+               tempw(ior) = tempw(ior)+((etempL(ieinL)-tempw(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.  ! 1D Ki
+            endif
          endif
       enddo
    enddo

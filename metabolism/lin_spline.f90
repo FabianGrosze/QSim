@@ -29,9 +29,13 @@
 !! @author Volker Kirchesch
 !! @date 27.08.2012
 subroutine lin_spline (dz_alt,dz_neu,deltaz,n_alt_s,n_neu_s,Y, YY,i_zeiger,iaus,ior)
+   implicit none 
    
-   integer, dimension (50)              :: m
-   real, dimension(50)                  :: y, yy, aa, bb, ddx
+   integer                :: n_neu_s, n_alt_s, n_alt, n, nn
+   integer                :: i_zeiger, ior, iaus
+   real                   :: x_neu, x_alt_1, x_alt, dz_neu, dz_alt, deltaz
+   integer, dimension(50) :: m
+   real,    dimension(50) :: y, yy, aa, bb, ddx
    
    x_neu = 0.0
    x_alt = 0.0

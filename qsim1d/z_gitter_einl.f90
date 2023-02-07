@@ -29,8 +29,11 @@
 !! Gitterpunkten mit Werten von einem alten Gitter mit gleichen Gitterweiten 
 !! aber unterschiedlicher Anzahl von Gitterpunkten an Einleitungsstellen
 subroutine z_Gitter_einl(dh2D,ior,nkzs_alt,nkzs_neu,Y_alt,Y_var)
+
+   implicit none
    
-   integer             :: nkzs_alt, nkzs_neu
+   integer             :: nkz_neu, nkz_alt, nkz, ior, nkzs_alt, nkzs_neu
+   real                :: tiefe_neu, tiefe_alt, dh2d, delta_h
    real, dimension(50) :: zStern_alt, z_neu, Y_alt, Y_var
    
    Tiefe_alt = (nkzs_alt-1)*dH2D

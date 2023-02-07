@@ -37,11 +37,9 @@
 !! \ref lnk_randbedingungen , \ref lnk_extnct_rb
 
 subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
-   !!write(cpfad,'(A)')trim(modellverzeichnis)
-
    implicit none
 
-   character(500)       :: dateiname, text, modellverz
+   character(500)       :: dateiname, text
    character(255)       :: cpfad
    integer              :: io_error
    integer              :: ilamda, i

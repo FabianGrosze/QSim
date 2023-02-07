@@ -31,6 +31,14 @@
 !! @date 27.11.2015
 subroutine uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
    
+   implicit none
+   
+   integer :: m, ms, j_intern, j_aus, jcyano, ifix
+   real    :: yk, ykaus, xk, up_n2i, up_ci
+   real    :: upmxi, tflie, sup_c, sumup_n2, sumup_c
+   real    :: qmxi, qmni, halbi, dyk, deltat
+   real    :: cnaehr, abr
+
    ! Wahl der Funktion für die Abhängigkeit der Aufnahmerate von der zellinternen Konzentration
    j_intern = 1
    ms = 10

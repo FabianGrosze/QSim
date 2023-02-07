@@ -35,43 +35,54 @@ module aparam
    real, protected    :: agremi, frmuge, bsbgr, csbgr, Qmx_NG
    real, protected    :: Qmx_PG, Qmn_NG, Qmn_PG, upmxNG, upmxPG
    real, protected    :: opgrmi, opgrma, asgre, ToptG, kTemp_gr
+   
    ! Kieselalgen
    real, protected    :: akchl, akgmax, IKke, akksn, akksp
    real, protected    :: akkssi, akremi, frmuke, bsbki, csbki
    real, protected    :: Qmx_NK, Qmx_PK, Qmx_SK, Qmn_NK, Qmn_PK
    real, protected    :: Qmn_SK, upmxNK, upmxPK, upmxSK, opkimi
    real, protected    :: opkima, askie, ToptK, kTemp_Ki
+   
    ! Blaualgen
    real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
                          bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
                          upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
    integer            :: ifix
+   
    ! Rotatorien
    real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
+   
    ! Nitrosomonas
    real, protected    :: YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
    ! ynmx1e, stks1e, anitrie, bnmx1e, bnks1e
+   
    ! Nitrobacter
    real, protected    :: YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
    ! ynmx2e, stks2e, anitri2e, bnmx2e, bnks2e
+   
    ! Sediment-Flux
    real, protected    :: KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
    ! KNH4e, KapN3e, fPOC1e, fPOC2e, SorpCape, Klange, KdNh3e
+   
    ! Kohlenstoff
    real, protected    :: HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
    ! hyPe, hymxDe, KsD1e, KsD2e, KsMe, upBACe, YBACe, rsGBACe
+   
    ! Muscheln
    real, protected    :: FoptD
    ! FoptDe
+   
    ! HNF
    real, protected    :: upHNF,  BACks
    !real,  protected :: upHNFe, BACkse 
+   
    ! Wasser
    real, protected    :: alamda
-   !Hygiene
+   
+   ! coliform bacteria
    real, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
-   ! ratecde, etacde, ratecie, xnuece, ratecge, ratecse
+   
    ! Schwermetalle
    real, protected    :: c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb
    real, protected    :: c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad
@@ -295,7 +306,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    
    ! check for I/O errors
    if (io_error_sum > 0) then
-      write(message, "(a,i0)"), 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
+      write(message, "(a,i0)") 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
       call qerror(message)
    endif
    

@@ -1,4 +1,4 @@
-# --- Dateitypen ---
+# --- Main directory ---
 *.taz
 *.zip
 *.aps
@@ -7,8 +7,10 @@
 *.mod
 *.csv
 *.png
+*.log
+.Rproj.user
 
-# --- Doku ---
+# --- Documentation ---
 doku/doku_offline
 doku/dox/
 doku/exp/
@@ -24,26 +26,30 @@ backup-dokufiles/*
 doku/confi_stripped
 doku/libclang.dll
 
-
-# --- QSim 3D ---
+# --- QSim3D ---
+qsim3d/*.mod
+qsim3d/*.o
 qsim3d/*.co
 qsim3d/version.h
 qsim3d/code_source.h
+qsim3d/qsim3d_*.*.*
+
+# --- QSim1D ---
+qsim1d/*.mod
+qsim1d/*.o
+qsim1d/*.a
+qsim1d/qsim1d_*.*.*
 
 # --- Metabolism ---
-metabolism/libqsim.a
-
+metabolism/*.o
+metabolism/*/*.o
 
 # --- Visual Studio ---
 *.u2d
-/qsim1d/x64
-qsim1d/x64/*
 .vs
-qsim1d/.vs/*
+qsim1d/*.sln
+qsim1d/*.u2d
+qsim1d/*.vfproj
+qsim1d/x64/
+qsim1d/.vs/
 test/rotatorien/x64
-
-
-
-.Rproj.user
-
-
