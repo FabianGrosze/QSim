@@ -5776,7 +5776,7 @@ program qsim
          do ior = 1,anze+1
             ! metabolism
             call ph(bmw(mstr,ior),bpw(mstr,ior),bca(mstr,ior),blf(mstr,ior),btempw(mstr,ior),bph(mstr,ior),vco2s,    &
-                    tflie,rau(ior),vbm(mstr,ior),bh(mstr,ior),rhyd(ior),flae(ior),                                   &
+                    tflie,rau(ior),vbm(mstr,ior),bh(mstr,ior),rhyd(ior), bf(mstr,ior),                               &
                     wge(IDWe(mstr,ior)), WLage(mstr,ior), hWS(mstr,ior), iphy,                                       &
                     bbsbct(mstr,ior),bresdr(mstr,ior),bzres1(mstr,ior),bzres2(mstr,ior),                             &
                     bdaki(mstr,ior),bdagr(mstr,ior),bdabl(mstr,ior),bdaak(mstr,ior),bdaag(mstr,ior),bdaab(mstr,ior), &
@@ -6075,7 +6075,7 @@ program qsim
                      bdaag(mstr,ior), bdaak(mstr,ior), bdaab(mstr,ior), baberg(mstr,ior), baberk(mstr,ior),        &
                      bJO2(mstr,ior), bbsbt(mstr,ior), bdc_denw(ior), TOC_CSB, bgo2n(mstr,ior),                     &
                      bpo2p(mstr,ior), bpo2r(mstr,ior), bro2dr(mstr,ior), bro2HF(mstr,ior),                         &
-                     rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), flae(ior),                                  &
+                     rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), bf(mstr,ior),                               &
                      wlage(mstr,ior), hws(mstr,ior), wge(IDWe(mstr,ior)), btempw(mstr,ior),                        &
                      iPhy, tflie,                                                                                  &
                      bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
