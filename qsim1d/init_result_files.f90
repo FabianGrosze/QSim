@@ -39,15 +39,15 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    implicit none
    
    ! --- dummy arguments ---
-   character(len = 255), intent(in)   :: cpfad           !< path to directory for output
-   character(len = *),   intent(in)   :: modell          !< modelname (Gerris)
-   character(len = 255), intent(in)   :: cEreig          !< meta data (Gerris)
-   logical, intent(in)                :: write_csv_files !< switch to turn of .csv-outputs
+   character(len = 255), intent(in) :: cpfad           !< path to directory for output
+   character(len = *),   intent(in) :: modell          !< modelname (Gerris)
+   character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
+   logical, intent(in)              :: write_csv_files !< switch to turn of .csv-outputs
    
    ! --- local variables ---
-   character(len = 275)    :: pfadstring
-   character(len = 8)      :: versionstext
-   integer                 :: open_error
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   integer        :: open_error, u_file1
   
    
    print *, ''
@@ -112,5 +112,10 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ;&
                       &aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
    endif
+   
+   ! remove file1.err, which might still exist from previous run
+   pfadstring = trim(adjustl(cpfad)) // 'file1.err'
+   open(newunit = u_file1, file = trim(adjustl(cpfad)) // 'file1.err')
+   close(u_file1, status = "delete")
       
 end subroutine init_result_files

@@ -6231,66 +6231,60 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! Coliform
+      ! coliform bacteria
       ! -----------------------------------------------------------------------
-      1525 Continue
-      if (iwsim == 5)goto 118
-      if (iwsim /= 2)goto 1520
-      if (hcoli(mstr,1) < 0.0 .and. iwsim == 2)goto 118
-      1522 continue
-      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli                     &
-                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
-                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
-                   ,.false.,0)
+      ! Normally QSim does not simulate coliform bacteria. The user can request
+      ! a simulation with coliform bacteria. In this case `iwsim` is set to 2 and
+      ! QSim only runs coliform bacteria and temperature. All other modules for
+      ! metabolism are skipped.
+      1525 continue
       
-      if (nbuhn(mstr) == 0 .and. iwsim == 2)goto 118
-      if (nbuhn(mstr) == 0 .and. iwsim /= 2)goto 1520
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwDOSCF(ior) = DOSCF(ior)
-            zwtief(ior) = tiefe(ior)
-            zwcoli(ior) = coli(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            DOSCF(ior) = bDOSCF(mstr,ior)
-            coli(ior) = bcoli(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1522
-      endif
+      if (iwsim == 5) goto 118  ! goto transport
+      if (iwsim /= 2) goto 1520 ! goto erosion
+      if (hcoli(mstr,1) < 0.0) goto 118 ! goto transport
       
-      if (ilbuhn == 1) then
+      ! inflow from point and diffuse sources
+      call coliform_bacteria_inflow_1d(coli, doscf, mstr, colil, ecoli, ieinls, &
+                                       qeinll, qeinl, vabfl, iorle, iorla,      &
+                                       jiein, flae, anze, flag, tflie)
+      
+      ! --- metabolism in main river ---
+      do ior = 1, anze+1
+         call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior),&
+                                rau(ior), tiefe(ior), vmitt(ior), schwi(ior),       &
+                                tflie,                                              &
+                                kontroll, jjj)
+      enddo
+      
+      ! --- groyne-field ---
+      if (nbuhn(mstr) > 0) then
+         
          do ior = 1,anze+1
-            btempw(mstr,ior) = tempw(ior)
-            bh(mstr,ior) = tiefe(ior)
-            bDOSCF(mstr,ior) = DOSCF(ior)
-            bcoli(mstr,ior) = coli(ior)
+            ! metabolism
+            call coliform_bacteria(                                                            & 
+                        bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
+                        rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior),                        &
+                        tflie,                                                                 &
+                        kontroll, jjj)
             
-            tempw(ior) = zwtemp(ior)
-            DOSCF(ior) = zwDOSCF(ior)
-            tiefe(ior) = zwtief(ior)
-            coli(ior) = zwcoli(ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
-               diff1 = bcoli(mstr,ior)  - coli(ior)
-               diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
-            endif
+            ! mixing between main river and groyne-field 
+            diff1 = bcoli(mstr,ior)  - coli(ior)
+            diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               coli(ior)  = coli(ior)  + diff1 * hctau1(ior)
-               DOSCF(ior) = DOSCF(ior) + diff2 * hctau1(ior)
+               coli(ior)  = coli(ior)  + diff1 * (1.-exp(-hctau1(ior)))
+               DOSCF(ior) = DOSCF(ior) + diff2 * (1.-exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * hctau2(ior)
-               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * hctau2(ior)
+               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * (1.-exp(-hctau2(ior)))
+               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         ilbuhn = 0
       endif
-      if (iwsim == 2 .or. iwsim == 5)goto 118
+      
+      ! Skip all other metabolism
+      goto 118 ! goto transport
       
       ! -----------------------------------------------------------------------
       ! Erosion

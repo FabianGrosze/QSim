@@ -32,13 +32,15 @@ subroutine coroph_huelle(i)
    integer :: i,j
    iglob = (i+meinrang*part)
    
-   if (kontroll) then
-      print*,'coroph vorher: coro,coros = ',coro,coros
-   end if 
+   ! This module is currently turned off
    
-   call coroph(coro,coros,tempw,flae,elen,anze,ior                             &
-               ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs   &
-               ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn          &
-               ,kontroll ,iglob ) !!wy
+   ! if (kontroll) then
+      ! print*,'coroph vorher: coro,coros = ',coro,coros
+   ! end if 
+   
+   ! call coroph(coro,coros,tempw,flae,elen,anze,ior                             &
+               ! ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs   &
+               ! ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn          &
+               ! ,kontroll ,iglob ) !!wy
    return
 end subroutine coroph_huelle
