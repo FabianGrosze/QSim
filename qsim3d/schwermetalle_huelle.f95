@@ -44,6 +44,7 @@ subroutine schwermetalle_huelle(i)
    !         ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                                &
    !         ,kontroll,jjj)
    !!### Schwebstoff und ph: hssalg,hph aus vorangegangenem Zeitschritt in 3D noch nicht implementiert ###
+
    call schwermetalle_kern(                                  &
                             planktonic_variable_p( 52+npla)  &
                            ,planktonic_variable_p( 52+npla)  &
@@ -78,6 +79,8 @@ subroutine schwermetalle_huelle(i)
                            ,planktonic_variable_p( 99+npla)  &
                            ,planktonic_variable_p(100+npla)  &
                            ,planktonic_variable_p(101+npla)  &
-                           ,kontroll,iglob)
+                           ,kontroll,iglob,meinrang)
+                           
+   !if(kontroll)print*,iglob,' schwermetalle_huelle nachher: planktonic_variable_p( 81+npla)=',planktonic_variable_p( 81+npla)
    return
 end subroutine schwermetalle_huelle

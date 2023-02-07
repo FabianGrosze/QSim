@@ -34,17 +34,20 @@
 subroutine verteilungskoeff(hcSS,hcph  &
                             ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb           &
                             ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U                       &
-                            ,iformVert, kontroll)
+                            ,iformVert, kontroll,jjj,meinrang)
    
    use aparam
-   
+
    implicit none
    
    real   , intent(in)    :: hcSS, hcph
    real   , intent(out)   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
    real   , intent(out)   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-   integer, intent(in)    :: iformVert
-   integer, intent(in)    :: kontroll  !< debugging
+   integer, intent(in)    :: iformVert,jjj,meinrang
+   logical, intent(in)    :: kontroll  !< debugging
+   
+   if(kontroll)print*,meinrang,jjj,' verteilungskoeff: hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn=',  &
+                       hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
    if (iformVert == 1) then

@@ -31,59 +31,59 @@ module aparam
    !> global parameter from APARAM.txt
    
    ! Grünalgen
-   real, protected    :: agchl, aggmax, IKge, agksn, agksp
-   real, protected    :: agremi, frmuge, bsbgr, csbgr, Qmx_NG
-   real, protected    :: Qmx_PG, Qmn_NG, Qmn_PG, upmxNG, upmxPG
-   real, protected    :: opgrmi, opgrma, asgre, ToptG, kTemp_gr
+   real, public, protected    :: agchl, aggmax, IKge, agksn, agksp
+   real, public, protected    :: agremi, frmuge, bsbgr, csbgr, Qmx_NG
+   real, public, protected    :: Qmx_PG, Qmn_NG, Qmn_PG, upmxNG, upmxPG
+   real, public, protected    :: opgrmi, opgrma, asgre, ToptG, kTemp_gr
    ! Kieselalgen
-   real, protected    :: akchl, akgmax, IKke, akksn, akksp
-   real, protected    :: akkssi, akremi, frmuke, bsbki, csbki
-   real, protected    :: Qmx_NK, Qmx_PK, Qmx_SK, Qmn_NK, Qmn_PK
-   real, protected    :: Qmn_SK, upmxNK, upmxPK, upmxSK, opkimi
-   real, protected    :: opkima, askie, ToptK, kTemp_Ki
+   real, public, protected    :: akchl, akgmax, IKke, akksn, akksp
+   real, public, protected    :: akkssi, akremi, frmuke, bsbki, csbki
+   real, public, protected    :: Qmx_NK, Qmx_PK, Qmx_SK, Qmn_NK, Qmn_PK
+   real, public, protected    :: Qmn_SK, upmxNK, upmxPK, upmxSK, opkimi
+   real, public, protected    :: opkima, askie, ToptK, kTemp_Ki
    ! Blaualgen
-   real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
+   real, public, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
                          bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
                          upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
    integer            :: ifix
    ! Rotatorien
-   real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
+   real, public, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
    ! Nitrosomonas
-   real, protected    :: YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
+   real, public, protected    :: YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
    ! ynmx1e, stks1e, anitrie, bnmx1e, bnks1e
    ! Nitrobacter
-   real, protected    :: YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
+   real, public, protected    :: YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
    ! ynmx2e, stks2e, anitri2e, bnmx2e, bnks2e
    ! Sediment-Flux
-   real, protected    :: KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
+   real, public, protected    :: KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
    ! KNH4e, KapN3e, fPOC1e, fPOC2e, SorpCape, Klange, KdNh3e
    ! Kohlenstoff
-   real, protected    :: HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
+   real, public, protected    :: HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
    ! hyPe, hymxDe, KsD1e, KsD2e, KsMe, upBACe, YBACe, rsGBACe
    ! Muscheln
-   real, protected    :: FoptD
+   real, public, protected    :: FoptD
    ! FoptDe
    ! HNF
-   real, protected    :: upHNF,  BACks
+   real, public, protected    :: upHNF,  BACks
    !real,  protected :: upHNFe, BACkse 
    ! Wasser
-   real, protected    :: alamda
+   real, public, protected    :: alamda
    !Hygiene
-   real, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
+   real, public, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
    ! ratecde, etacde, ratecie, xnuece, ratecge, ratecse
    ! Schwermetalle
-   real, protected    :: c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb
-   real, protected    :: c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad
-   real, protected    :: c1Cr, e1Cr, c2Cr, e2Cr, c3Cr, e3Cr, c4Cr, e4Cr, c5Cr, e5Cr, VTKoeffDe_Cr
-   real, protected    :: c1Fe, e1Fe, c2Fe, e2Fe, c3Fe, e3Fe, c4Fe, e4Fe, c5Fe, e5Fe, VTKoeffDe_Fe
-   real, protected    :: c1Cu, e1Cu, c2Cu, e2Cu, c3Cu, e3Cu, c4Cu, e4Cu, c5Cu, e5Cu, VTKoeffDe_Cu
-   real, protected    :: c1Mn, e1Mn, c2Mn, e2Mn, c3Mn, e3Mn, c4Mn, e4Mn, c5Mn, e5Mn, VTKoeffDe_Mn
-   real, protected    :: c1Ni, e1Ni, c2Ni, e2Ni, c3Ni, e3Ni, c4Ni, e4Ni, c5Ni, e5Ni, VTKoeffDe_Ni
-   real, protected    :: c1Hg, e1Hg, c2Hg, e2Hg, c3Hg, e3Hg, c4Hg, e4Hg, c5Hg, e5Hg, VTKoeffDe_Hg
-   real, protected    :: c1U, e1U, c2U, e2U, c3U, e3U, c4U, e4U, c5U, e5U, VTKoeffDe_U
-   real, protected    :: c1Zn, e1Zn, c2Zn, e2Zn, c3Zn, e3Zn, c4Zn, e4Zn, c5Zn, e5Zn, VTKoeffDe_Zn
-   real, protected    :: c1As, e1As, c2As, e2As, c3As, e3As, c4As, e4As, c5As, e5As, VTKoeffDe_As
+   real, public, protected    :: c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb
+   real, public, protected    :: c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad
+   real, public, protected    :: c1Cr, e1Cr, c2Cr, e2Cr, c3Cr, e3Cr, c4Cr, e4Cr, c5Cr, e5Cr, VTKoeffDe_Cr
+   real, public, protected    :: c1Fe, e1Fe, c2Fe, e2Fe, c3Fe, e3Fe, c4Fe, e4Fe, c5Fe, e5Fe, VTKoeffDe_Fe
+   real, public, protected    :: c1Cu, e1Cu, c2Cu, e2Cu, c3Cu, e3Cu, c4Cu, e4Cu, c5Cu, e5Cu, VTKoeffDe_Cu
+   real, public, protected    :: c1Mn, e1Mn, c2Mn, e2Mn, c3Mn, e3Mn, c4Mn, e4Mn, c5Mn, e5Mn, VTKoeffDe_Mn
+   real, public, protected    :: c1Ni, e1Ni, c2Ni, e2Ni, c3Ni, e3Ni, c4Ni, e4Ni, c5Ni, e5Ni, VTKoeffDe_Ni
+   real, public, protected    :: c1Hg, e1Hg, c2Hg, e2Hg, c3Hg, e3Hg, c4Hg, e4Hg, c5Hg, e5Hg, VTKoeffDe_Hg
+   real, public, protected    :: c1U, e1U, c2U, e2U, c3U, e3U, c4U, e4U, c5U, e5U, VTKoeffDe_U
+   real, public, protected    :: c1Zn, e1Zn, c2Zn, e2Zn, c3Zn, e3Zn, c4Zn, e4Zn, c5Zn, e5Zn, VTKoeffDe_Zn
+   real, public, protected    :: c1As, e1As, c2As, e2As, c3As, e3As, c4As, e4As, c5As, e5As, VTKoeffDe_As
    
    
    ! Hardcoded
@@ -106,13 +106,15 @@ contains
 !!
 !! Beschreibung siehe: \ref lnk_globale_parameter
 !! Quelle: module_aparam.f90
-subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
+subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    
+   implicit none
+
    character(255), intent(in) :: cpfad
    integer, intent(in)        :: iwsim, icoli, ieros, ischwer
    
    
-   integer                    :: io_error, io_error_sum
+   integer                    :: io_error, io_error_sum, meinrang
    character(500)             :: dateiname, message
    real                       :: dummy
    logical                    :: isExistent
@@ -299,6 +301,9 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       call qerror(message)
    endif
    
+   print*,meinrang,' aparam_lesen: VTKoeffDe_Zn, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn=',  &
+                          VTKoeffDe_Zn, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn
+   
    if (iwsim == 2 .and. icoli == 0) return
    
    if (icoli /= 1) then
@@ -328,8 +333,6 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    
    return
 end subroutine aparam_lesen
-
-
 
 !> Write file `AParamParam.xml`
 !!

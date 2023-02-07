@@ -121,7 +121,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       write(cpfad,*,iostat = ierr)trim(adjustl(modellverzeichnis))
       if (ierr /= 0) call qerror('eingabe: write(cpfad went wrong')
       
-      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
+      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
       call extnct_lesen()
       call ausgabezeitpunkte()      ! reading points in time for output
       call ausgabekonzentrationen() ! reading output-values
@@ -141,6 +141,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
+   call aparam_parallel()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
    222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)
@@ -257,10 +258,11 @@ subroutine ereigg_modell()
    ! Schwebstoffe und Erosion statt. Nach Abschluss dieser Arbeiten und erfolgreichen
    ! Tests für QSim1D und QSim3D sollen die Schwermetalle auch in QSim3D wieder
    ! aktiviert werden können.
+   ! wyrwa 06feb23: implementing heavy metals
    if (iSchwer == 1) then
       print*, 'You are trying to run a simulation with heavy metals.'
-      print*, 'This is not supported by this version of QSim3D'
-      call qerror('Heavy metals not supported by this version of QSim3D')
+      !print*, 'This is not supported by this version of QSim3D'
+      !call qerror('Heavy metals not supported by this version of QSim3D')
    endif
    
    print*,'Zeile 5 von EREIGG.txt:'

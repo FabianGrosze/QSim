@@ -178,20 +178,20 @@ subroutine fortschritt(n,f)
                write(fehler,*)'tail lauf fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
             end if !
-            if (send_email) then
-               write(systemaufruf,'(7A)',iostat = errcode)'mail ',trim(email),' -s "qsim3d ',trim(modellverzeichnis)  &
-                                                  ,' fertig" < ',trim(modellverzeichnis),'lauf'
-               if (errcode /= 0)call qerror('fortschritt systemaufruf mail fertig')
-               !write(systemaufruf,*)trim(email),' -s " qsim3d_notrans hpc01 ',trim(modellverzeichnis),' fertig" < lauf'
-               call system (trim(systemaufruf),system_error)
-               if (system_error /= 0) then
-                  print*,'Email versenden fehlgeschlagen',trim(systemaufruf)
-               else
-                  print*,trim(systemaufruf), ' erfoglreich verschickt'
-               endif
-            else
-               print*,'keine Beenden-Email verschickt'
-            endif
+            ! if (send_email) then
+            !    write(systemaufruf,'(7A)',iostat = errcode)'mail ',trim(email),' -s "qsim3d ',trim(modellverzeichnis)  &
+            !                                       ,' fertig" < ',trim(modellverzeichnis),'lauf'
+            !    if (errcode /= 0)call qerror('fortschritt systemaufruf mail fertig')
+            !    !write(systemaufruf,*)trim(email),' -s " qsim3d_notrans hpc01 ',trim(modellverzeichnis),' fertig" < lauf'
+            !    call system (trim(systemaufruf),system_error)
+            !    if (system_error /= 0) then
+            !       print*,'Email versenden fehlgeschlagen',trim(systemaufruf)
+            !    else
+            !       print*,trim(systemaufruf), ' erfoglreich verschickt'
+            !    endif
+            ! else
+            !    print*,'keine Beenden-Email verschickt'
+            ! endif
             write(systemaufruf,'(3A)',iostat = errcode) 'stat ',trim(adjustl(codesource)),'/*source*.taz >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf stat codesource')
             call system(trim(systemaufruf),system_error)
@@ -227,7 +227,7 @@ subroutine fortschritt(n,f)
             if (system_error == 0) then
                print*,'zipped vtk-output'
             else
-               print*,'no archive for vtk-output'
+               print*,'no archive for vtk-output:',trim(systemaufruf)
             end if
             if (stationaer)print*,'stationaer'
             if (nur_temp)print*,'##### nur Temperatur-Simulation (itemp == 1 in EREIGG.txt) #####'

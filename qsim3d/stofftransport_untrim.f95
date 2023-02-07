@@ -298,10 +298,10 @@ subroutine stofftransport_untrim()
                   print*,'planktonic_variable_name',n, planktonic_variable_name(n)
                   print*,'self !! wicht,plankt =',wicht((j-1)*5+1),planktonic_variable(n+(j-1)*number_plankt_vari)
                   print*,'intereck((j-1)*4+k) = ',( intereck((j-1)*4+k),k = 1,4 )
-                  print*,'wicht !! neighbours = ',(wicht((j-1)*5+1+k),k=1,4)
+                  print*,'neighbours !! wicht= ',(wicht((j-1)*5+1+k),k=1,4)
                   do k = 1,4 ! all 4 neighbour (elements) if existing
                      if ( intereck((j-1)*4+k) > 0) then
-                        print*,'planktonic_variable(',k,') = '  &
+                        print*,'planktonic_variable(',k,intereck((j-1)*4+k),') = '  &
                                                              , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
                                                              ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
                      endif

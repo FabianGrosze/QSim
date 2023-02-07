@@ -139,28 +139,28 @@ subroutine stoffumsatz()
                
                call phosphate_wrapper_3d(i)
                call silicate_wrapper_3d(i)
-               !------------------------------------------------------------------------ Sauerstoff
+               !------------------------------------------------------------------------ oxygen
                call oxygen_wrapper_3d(i)
-               !------------------------------------------------------------------------ Schwebstoff-Bilanz + Sedimentation Min.
+               !------------------------------------------------------------------------ suspended matter balance (Schwebstoff-Bilanz + Sedimentation Min.)
                call schweb_huelle(i)
                
-               !------------------------------------------------------------------------ coliforme Keime
+               !------------------------------------------------------------------------ coliform bacteria
                if (iColi == 1) then
                   call coliform_huelle(i)
                else
                   planktonic_variable_p(61+(i-1)*number_plankt_vari) = 0.0
                endif
                
-               !------------------------------------------------------------------------ Erosion von Schwebstoffe
+               !------------------------------------------------------------------------ erosion of suspended matter
                if (ieros == 1)call erosion_huelle(i)
                
-               ! Schwermetalle
-               ! if (iSchwer == 1)call schwermetalle_huelle(i)
-               ! erosion
+               !------------------------------------------------------------------------ heavy metals
+               if (iSchwer == 1)call schwermetalle_huelle(i)
+
             end if ! .not. nur_temp
-         end if ! Knoten nass
-      end if ! Knotennummer existiert(letzter Prozess)
-   end do ! Alle Knoten auf diesem Prozess
-   !print*,'Stoffumsatz erledigt ',meinrang
+         end if ! discretisation point (depending on hydraulic driver nodes or element centers) wet
+      end if ! point number existing (last process)
+   end do ! all points hosted by this processor
+   !print*,'metabolism done ',meinrang
    return
 end subroutine stoffumsatz
