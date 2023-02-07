@@ -1,4 +1,4 @@
-vno3tsubroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
+subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     aki_s, agr_s, abl_s,                           &
                     Q_NK_s, Q_NG_s, Q_NB_s,                        &
                     up_NK_s, up_NG_s, up_NB_s,                     &
@@ -21,6 +21,7 @@ vno3tsubroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     kontroll, jjj)
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
+   
    implicit none
    
    ! --- dummy arguments ---
@@ -90,7 +91,7 @@ vno3tsubroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --- local variables ---
    real          :: suma, hconki, hcongr, hconbl, dzn
    real          :: ndr, ddrn
-   real          :: nwgr, nwki, nwbl, alpha_upN4, a_up, b_up, hc_upN3, hc_upN4
+   real          :: nwgr, nwki, nwbl, a_up, b_up, hc_upN3, hc_upN4
    real          :: alpha_upN4k, alpha_upN4g, alpha_upN4b
    real          :: vNH4t, delNH4
    real          :: vNO2t, delNO2

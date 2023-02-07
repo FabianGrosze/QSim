@@ -35,7 +35,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    ! --- local variables ---
    real              :: alphat, alphao, fph2n2, fph2n3, fph1n2, fph1n3, fvel
    real              :: pka, vNH3, kdn2, vhNO2, vmod, kd_n2
-   real              :: yn, vx0t, vx02t, u3, bettf, anitri 
+   real              :: yn, vx0t, vx02t, bettf, anitri 
    real              :: ust, csedn, csedn2, ceq, ceq2, sednit, sednt2
    real              :: zellv, qsgr, oc, oc0, wst
    real              :: delx0, delx2
@@ -48,7 +48,11 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    real, parameter   :: rhymo    = 0.00875
    real, parameter   :: ekx0     = 0.06
    real, parameter   :: ekx02    = 0.02
+   real, parameter   :: U3       = 300.
    real, parameter   :: g        = 9.81             !@TODO (Schönung): Define `g` globally
+   
+   ! initialise potentially unused variables to prevent compiler warning
+   kd_n2 = 0.
    
    
    ! influence of temperature (Wolf)
@@ -132,7 +136,6 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    endif
    
    ! --- Ammoniumoxidation auf Makrophyten ---
-   U3      = 300.
    if (vNH4_s + bnks1 * fph1n2 > 0. .and. tiefe_s > 0.) then
       bettf = bnmx1 * fph1n3 * (vNH4_s/(vNH4_s + bnks1 * fph1n2)) * fvel * alphaO * alphaT
       pfln1_s = (bettf * pfl_s) / (U3 * tiefe_s) * tflie
@@ -239,7 +242,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    endif
    
    ! Ausgabewerte
-   bettn_s = hJNH4_s * tflie * (1./(24. * tflie)) / tiefe_s
+   bettn_s = hJNH4_s * tflie / (24. * tiefe_s)
    
    vx0_s  = vx0t
    vx02_s = vx02t
