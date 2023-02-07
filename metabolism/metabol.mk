@@ -6,6 +6,7 @@
 
 META= ../metabolism/module_allodim.o \
 	../metabolism/module_aparam.o \
+	../metabolism/coliform_bacteria/module_coliform_bacteria.o \
 	../metabolism/organic_carbon/module_organic_carbon.o \
 	../metabolism/oxygen/module_oxygen.o \
 	../metabolism/ph/module_ph.o\
@@ -19,7 +20,6 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/algaesgr.o \
 	../metabolism/algaeski.o \
 	../metabolism/C_Chla.o \
-	../metabolism/coliform.o \
 	../metabolism/coroph.o \
 	../metabolism/dichte.o \
 	../metabolism/dreissen.o \

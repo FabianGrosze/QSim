@@ -50,6 +50,7 @@ FC = gfortran
 Q1 = module_model_settings.o \
      AdvDiff.o \
      ALBEDO.o \
+	 coliform_bacteria_inflow_1d.o \
      ctracer.o \
      EreigGParam.o \
      EreigHParam.o \

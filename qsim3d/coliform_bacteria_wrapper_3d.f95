@@ -25,22 +25,48 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine coroph_huelle(i)
+subroutine coliform_bacteria_wrapper_3d(i)
    use modell
-   use QSimDatenfelder
+   use qsimdatenfelder
+   use module_metabolism, only: coliform_bacteria
    implicit none
-   integer :: i,j
-   iglob = (i+meinrang*part)
    
-   ! This module is currently turned off
+   integer, intent(in) :: i
+   integer             :: nk
    
-   ! if (kontroll) then
-      ! print*,'coroph vorher: coro,coros = ',coro,coros
-   ! end if 
+   iglob = i + meinrang*part
+   kontroll = iglob == kontrollknoten
+   nk = (i-1)*number_plankt_vari
    
-   ! call coroph(coro,coros,tempw,flae,elen,anze,ior                             &
-               ! ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs   &
-               ! ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn          &
-               ! ,kontroll ,iglob ) !!wy
+   ! convert timestep from seconds in days
+   tflie = real(deltat)/86400 
+   tiefe(1) = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
+   rau(1) = strickler(zone(point_zone(iglob))%reib , tiefe(1))
+   
+   if (kontroll) then
+      print*, "before coliform_bacteria:"
+      print*, "   coli = ", planktonic_variable_p(61+nk)
+      print*, ""
+   endif
+   
+   call coliform_bacteria(                                             &
+      planktonic_variable_p(61+nk),                                    & ! coli
+      planktonic_variable_p(70+nk),                                    & ! doscf
+      zone(point_zone(iglob))%seditemp%extiks,                         & ! extks,
+      planktonic_variable_p(1+nk),                                     & ! tempw
+      rau(1),                                                          & ! rau,
+      tiefe(1),                                                        & ! tiefe,
+      rb_hydraul_p(1+(i-1)*number_rb_hydraul),                         & ! vmitt,
+      schwi_t(zone(point_zone(iglob))%wettstat%wetterstations_nummer), & ! schwi
+      tflie,                                                           & ! tflie
+      kontroll,                                                        & ! kontroll
+      iglob)                                                             ! jjj
+   
+
+   if (kontroll) then
+      print*, "after coliform_bacteria:"
+      print*, "   coli = ", planktonic_variable_p(61+nk)
+      print*, ""
+   endif
    return
-end subroutine coroph_huelle
+end subroutine coliform_bacteria_wrapper_3d

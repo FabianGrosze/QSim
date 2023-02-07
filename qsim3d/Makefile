@@ -116,28 +116,53 @@ QSIM_LIB     = -L../metabolism -lqsim
 SCHISM_LIB   = -L. -lschism
 
 # list of all qsim3d files
-Q3 = version.co trans_read.co \
-	module_modell.o module_QSimDatenfelder.o nachricht.o\
-	benthische_verteilungen.o uebergabe_werte.o schwebstoff_salz.o\
-	zonen.o modellg.o wetter.o ganglinien.o schnitt.o\
-	planktische_variablen.o module_suspendedMatter.o parallel.o \
-	temperw_huelle.o alter.o\
-	module_isotope.o \
-	nitrogen_wrapper_3d.o \
-	oxygen_wrapper_3d.o \
-	phosphate_wrapper_3d.o \
-	silicate_wrapper_3d.o \
-	organic_carbon_wrapper_3d.o \
-	ph_wrapper_3d.o \
-	algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
-	ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
-	eingabe.o initialisieren.o randbedingungen.o \
-	schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
-	stofftransport_casu.o \
-	stofftransport_untrim.o stofftransport.o\
-	sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
-	stoffumsatz.o \
-	QSim3D.o
+Q3 = version.co \
+   trans_read.co \
+   module_modell.o \
+   module_QSimDatenfelder.o \
+   nachricht.o\
+   benthische_verteilungen.o \
+   uebergabe_werte.o \
+   schwebstoff_salz.o\
+   zonen.o \
+   modellg.o \
+   wetter.o \
+   ganglinien.o \
+   schnitt.o\
+   planktische_variablen.o \
+   module_suspendedMatter.o \
+   parallel.o \
+   temperw_huelle.o \
+   alter.o\
+   module_isotope.o \
+   nitrogen_wrapper_3d.o \
+   oxygen_wrapper_3d.o \
+   phosphate_wrapper_3d.o \
+   silicate_wrapper_3d.o \
+   organic_carbon_wrapper_3d.o \
+   ph_wrapper_3d.o \
+   coroph_huelle.o \
+   algae_huelle.o \
+   konsum_huelle.o \
+   hnf_huelle.o \
+   dreissen_huelle.o \
+   ausgeben_casu.o \
+   ausgeben_untrim.o ausgabe.o \
+   eingabe.o \
+   initialisieren.o \
+   randbedingungen.o \
+   schwermetalle_huelle.o \
+   erosion_huelle.o \
+   schweb_huelle.o\
+   stofftransport_casu.o \
+   stofftransport_untrim.o \
+   stofftransport.o \
+   sedflux_huelle.o \
+   coliform_bacteria_wrapper_3d.o \
+   albenth_huelle.o \
+   mphyt_huelle.o\
+   stoffumsatz.o \
+   QSim3D.o
 
 # list of all metabolism files
 -include ../metabolism/metabol.mk
@@ -182,8 +207,8 @@ date:
 	@echo 'write(codesource,*) "'$(HERE)'" ' >code_source.h
 
 SC = $(SCHISM_CORE)/schism_glbl.o  $(SCHISM_CORE)/schism_msgp.o  $(SCHISM_CORE)/misc_modules.o \
-     $(SCHISM_CORE)/schism_io.o  \
-     $(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
+	$(SCHISM_CORE)/schism_io.o  \
+	$(SCHISM_HYDRO)/solver_subs.o  $(SCHISM_HYDRO)/transport_TVD.o  $(SCHISM_HYDRO)/transport_TVD_imp.o
 
 %.o: %.F90
 	$(MFC) $(FFLAGS) -I$(MPII)/include -I$(NETCDFF_HOME)/include -c -o $@  $<
