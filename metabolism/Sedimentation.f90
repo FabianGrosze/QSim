@@ -33,6 +33,13 @@ subroutine sedimentation(tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV, &
    logical, intent(in)  :: kontroll  !< debugging
    integer, intent(in)  :: jjj       !< debugging
    
+   character(100)       :: message
+   
+   if (ised < 1 .or. ised > 4) then
+      write(message, '("sedimentation.f90: Invalid sedimentation option: ",i2)') ised
+      call qerror(trim(message))
+   endif
+   
    if (jsed == 0) then
       !   Algen
       if (ised == 1) then
@@ -56,25 +63,29 @@ subroutine sedimentation(tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV, &
          prop = 0.56
       endif
    else
-      !   Algen
       if (ised == 1) then
+         !   Algen
          bsed = 2.7
          prop = 0.5
-         WsAlg = 2.0155*log10(ZellV)-11.512
-         WsAlg = 10**WsAlg
-         Ased = 0.5/(0.5*exp(-bsed*log10(WsAlg)))
-         !   BSB
+         if (ZellV > 0.) then
+            WsAlg = 2.0155 * log10(ZellV) - 11.512
+            WsAlg = 10**WsAlg
+            Ased = 1. / exp(-bsed * log10(WsAlg))
+         else
+            call qerror('sedimentation.f90: ZellV = 0.')
+         endif
       else if (ised == 2) then
+         !   BSB
          ased = 2.43E-7
          bsed = 2.5
          prop = 0.7
-         !   Gesamt-SS
       else if (ised == 3) then
+         !   Gesamt-SS
          ased = 1.55e-7
          bsed = 2.8
          prop = 0.75
-         !   Nitrifikanten
       else if (ised == 4) then
+         !   Nitrifikanten
          ASED = 2.43E-7
          BSED = 2.5
          prop = 0.7
@@ -82,25 +93,32 @@ subroutine sedimentation(tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV, &
    endif
    
    ! wsgr = 0.625*ust**2.1
-   wsgr = 0.14*ust**2+0.0054*ust+1.25e-6
-   qsgr = 1./(1+ased*exp(-bsed*alog10(wsgr)))
-   qssed = (1+qsgr)/2.
-   ws = 0.0
-   ws0 = 0.0
-   if ((qssed /= 1.0) .and. (bsed /= 0.0)) ws = (log(1./qssed-1.)-log(ased))/(-bsed)
-   if (bsed /= 0.0) ws0 = (log(1./0.5-1.)-log(ased))/(-bsed)   !ws0 - Sinkgeschwindigkeit in ruhendem Medium
-   ws = 10**ws
+   wsgr = 0.14 * ust**2 + 0.0054 * ust + 1.25e-6
+   qsgr = 1. / (1.+ ased * exp(-bsed * alog10(wsgr)))
+   qssed = 0.5 * (1. + qsgr)
+   
+   if (qssed < 1. .and. qssed > 0. .and. ased > 0. .and. abs(bsed) > 0.) then
+      ws = (log(ased) - log(1. / qssed - 1.)) / bsed
+   else
+      ws = 0.
+   endif
+   ws  = 10**ws
+   
+   if (ased > 0. .and. abs(bsed) > 0.) then
+      ws0 = log(ased) / bsed   !ws0 - Sinkgeschwindigkeit in ruhendem Medium
+   else
+      ws0 = 0.
+   endif
    ws0 = 10**ws0
    
    !      fwst = 1.14*exp(-188.2*ust)
-   fwst = exp(-604.2*ust)
-   if (ised == 3)fwst = max(1.91e-19,fwst)
-   if (fwst > 1.)fwst = 1.
+   fwst = min(1., exp(-604.2 * ust))
+   if (ised == 3) fwst = max(1.91e-19,fwst)
    
-   wst = ws*fwst
-   Oc = 1./(EXP(prop*wst*yTFLIE*86400./tiefe))
-   oc = 1.-Oc
-   Oc0 = 1./(EXP(prop*ws0*yTFLIE*86400./tiefe)) ! sedimentierter Anteil in ruhendem Medium
+   wst = ws * fwst
+   Oc  = 1. / exp(prop * wst * yTFLIE * 86400. / tiefe)
+   oc  = 1. - Oc
+   Oc0 = 1. / exp(prop * ws0 * yTFLIE * 86400. / tiefe) ! sedimentierter Anteil in ruhendem Medium
    OC0 = 1. - Oc0
    
    if (kontroll) then

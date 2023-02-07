@@ -34,7 +34,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    
    ! --- local variables ---
    real              :: alphat, alphao, fph2n2, fph2n3, fph1n2, fph1n3, fvel
-   real              :: pka, vNH3, kdn2, vhNO2, vmod, kd_n2
+   real              :: pka, vNH3, vhNO2, vmod, kd_n2
    real              :: yn, vx0t, vx02t, bettf, anitri 
    real              :: ust, csedn, csedn2, ceq, ceq2, sednit, sednt2
    real              :: zellv, qsgr, oc, oc0, wst

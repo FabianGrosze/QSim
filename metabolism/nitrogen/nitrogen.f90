@@ -293,7 +293,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
          delNO2 = vNO2t - vNO2_s
          vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
       endif
-      if (vNO2t < 0.0001) vNO2t = 0.0001
+      vNO2t = max(0.0001, vNO2t)
    endif
    
    ! --------------------------------------------------------------------------
