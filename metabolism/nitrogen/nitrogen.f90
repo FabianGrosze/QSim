@@ -1,4 +1,4 @@
-subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
+vno3tsubroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     aki_s, agr_s, abl_s,                           &
                     Q_NK_s, Q_NG_s, Q_NB_s,                        &
                     up_NK_s, up_NG_s, up_NB_s,                     &
@@ -280,25 +280,27 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --------------------------------------------------------------------------
    ! nitrite (NO2)
    ! --------------------------------------------------------------------------
+   vNO2t = 0.
    if (vx02_s > 0.0) then
       vNO2t = vNO2_s  &
             + susn_s  & ! zu Nitrit oxidiertes Ammonium (Nitrosomonas)
             + PflN1_s & ! zu Nitrit oxidiertes Ammonium (Makrophyten)
             - susn2_s & ! zu Nitrat oxidiertes Nitrit (Nitrosomonas)
             - PflN2_s   ! zu Nitrat oxidiertes Nitrit (Makrophyten)
+      
+      if (vNO2t < 0.0) then
+         delNO2 = vNO2t - vNO2_s
+         vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
+      endif
+      if (vNO2t < 0.0001) vNO2t = 0.0001
    endif
-   
-   if (vNO2t < 0.0) then
-      delNO2 = vNO2t - vNO2_s
-      vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
-   endif
-   if (vNO2t < 0.0001) vNO2t = 0.0001
    
    ! --------------------------------------------------------------------------
    ! nitrate (NO3)
    ! --------------------------------------------------------------------------
    DenWatz = bsbCt_s * (KMO_NO3 / (KMO_NO3 + vO2_s)) * (vNO3_s /(vNO3_s + KM_NO3))
    dNO3Den = 0.93 * DenWatz
+   
    
    if (vx02_s > 0.0) then
       vno3t = vno3_s                      &
