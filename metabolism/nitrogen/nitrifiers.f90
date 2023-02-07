@@ -115,7 +115,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       susn_s = vNH4_s
       vx0t = vx0_s + susn_s * ekx0
       if (vx0t > 0.0 .and. vx0_s > 0.0) then
-         yn = (log(vx0t) - log(vx0_s)) / tflie
+         yn = log(vx0t / vx0_s) / tflie
       else
          yn = 0.
       endif
@@ -212,33 +212,31 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
                       kontroll, jjj)
    
    ! --- Nitrosomonas ---
-   csedn  = vx0_s  * 0.69
-   ceq    = csedn  * qsgr
-   sednit = max(0.0, (csedn  - ceq )) * oc
-   
-   vx0t  = vx0t  - sednit
+   csedn  = vx0_s * 0.69
+   ceq    = csedn * qsgr
+   sednit = max(0.0, (csedn - ceq ) * oc)
+   vx0t  = vx0t- sednit
    
    ! sedimentierte Nitrosomonasbiomasse [µg/l] (Ausgabe)
    sedx0_s = sednit * 1000.
    
    ! --- Nitrobacter ---
    csedn2 = vx02_s * 0.69
-   ceq2 = csedn2 * qsgr
-   sednt2 = max(0.0, (CSEDN2 - ceq2)) * oc
-   
+   ceq2   = csedn2 * qsgr
+   sednt2 = max(0.0, (csedn2 - ceq2) * oc)
    vx02t = vx02t - sednt2
    
    ! -----------------------------------------------------------------------
    ! return values
    ! -----------------------------------------------------------------------
    ! O2-Verbrauch durch Nitrifikation
-   if (vx02_s <= 0.0) then
-      go2n_s  = (susn_s + pfln1_s) * 4.33
-      susno_s = go2n_s
-   else
+   if (vx02_s > 0.0) then
       go2n_s  = 3.22 * (susn_s  + pfln1_s)  &
               + 1.11 * (susn2_s + pfln2_s)
       susno_s = 3.22 * susn_s + 1.11 * susn2_s 
+   else
+      go2n_s  = (susn_s + pfln1_s) * 4.33
+      susno_s = go2n_s
    endif
    
    ! Ausgabewerte
