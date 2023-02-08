@@ -2,6 +2,9 @@
 
 ## 14.09
 
+### 14.09.21
+* bug fixes and minor refactoring in `nitrogen.f90`, `nitrifiers.f90`, `oxygen.f90` and `sedimentation.f90` to prevent division by 0, log(0) and uninitialised use of variables
+
 ### 14.09.20
 * New module for coliform bacteria
 
