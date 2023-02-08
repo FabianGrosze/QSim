@@ -29,7 +29,7 @@
 
 SHELL=/usr/bin/bash
 
-PV='qsim3d_schwermetall20'
+PV='qsim3d_schwermetall21'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -95,7 +95,8 @@ Q3 = version.co trans_read.co \
 	schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
 	stofftransport_casu.o \
 	stofftransport_untrim.o stofftransport.o\
-	sedflux_huelle.o coliform_huelle.o albenth_huelle.o mphyt_huelle.o\
+	sedflux_huelle.o albenth_huelle.o mphyt_huelle.o\
+	coliform_bacteria_wrapper_3d.o\
 	stoffumsatz.o \
 	QSim3D.o
 
@@ -195,7 +196,7 @@ taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
 	tar cvfz ../$(FN)  ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
-	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt  \
+	../qsim1d/*.f90  ../qsim1d/*.rc  \
 	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.mk \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt ../readme.md
