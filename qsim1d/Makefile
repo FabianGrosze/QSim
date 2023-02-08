@@ -48,42 +48,52 @@ FC = gfortran
 # ===================================================================
 
 Q1 = module_model_settings.o \
-     AdvDiff.o \
-     ALBEDO.o \
-	 coliform_bacteria_inflow_1d.o \
-     ctracer.o \
-     EreigGParam.o \
-     EreigHParam.o \
-     Ergeb2DParam.o \
-     ergebMFormat.o \
-     ErgebMParam.o \
-     ergebTFormat.o \
-     ErgebTParam.o \
-     E_extnctParam.o \
-     init_result_files.o \
-     km_sys.o \
-     lin_interpolation.o \
-     nitrogen_inflow_1d.o \
-     organic_carbon_inflow_1d.o \
-     oxygen_inflow_1d.o \
-     phosphate_inflow_1d.o \
-     ph_inflow_1d.o \
-     silicate_inflow_1d.o \
-     qerror.o \
-     qsim.o \
-     randbedingungen.o \
-     sysgen.o \
-     sys_gitterStrang.o \
-     sys_gitterTrans.o \
-     sys_z_gitter.o \
-     transport.o \
-     wehr.o \
-     wehrles.o \
-     WetterParam.o \
-     write_e_extnct.o \
-     write_gerris_definitions.o \
-     write_modellg_param.o \
-     z_gitter_einl.o
+    advdiff.o \
+    ALBEDO.o \
+    basispoint.o \
+    cip.o \
+    coliform_bacteria_inflow_1d.o \
+    crank_nicolson.o \
+    cra_nickoeff.o\
+    ctracer.o \
+    EreigGParam.o \
+    EreigHParam.o \
+    Ergeb2DParam.o \
+    ergebMFormat.o \
+    ErgebMParam.o \
+    ergebTFormat.o \
+    ErgebTParam.o \
+    E_extnctParam.o \
+    init_result_files.o \
+    km_sys.o \
+    lax_wendroff.o \
+    lin_interpolation.o \
+    maccorm.o \
+    nitrogen_inflow_1d.o \
+    organic_carbon_inflow_1d.o \
+    oxygen_inflow_1d.o \
+    phosphate_inflow_1d.o \
+    ph_inflow_1d.o \
+    qerror.o \
+    qsim.o \
+    quickest.o \
+    randbedingungen.o \
+    silicate_inflow_1d.o \
+    sysgen.o \
+    sys_gitterStrang.o \
+    sys_gitterTrans.o \
+    sys_z_gitter.o \
+    thomas.o\
+    transport.o \
+    trimat.o \
+    wehr.o \
+    wehrles.o \
+    WetterParam.o \
+    write_e_extnct.o \
+    write_gerris_definitions.o \
+    write_modellg_param.o \
+    z_gitter_einl.o
+    
 
 -include ../metabolism/metabol.mk
 

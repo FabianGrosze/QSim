@@ -459,6 +459,9 @@ program qsim
    real, dimension(:,:,:), allocatable     :: cchlkzt, cchlbzt, cchlgzt
    character (len = 8)                     :: versionstext, dummy
    
+   external :: algaesbl, algaesgr, algaeski, algae_start
+   external :: anztag
+   
    ! --- settings ---
    linux = .false.
    kontroll = .false.
