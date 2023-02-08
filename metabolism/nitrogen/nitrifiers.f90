@@ -148,6 +148,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    ! nitrite -> nitrate (NO2N -> NO3N)
    ! -----------------------------------------------------------------------
    if (vx02_s <= 0.0) then
+      vx02t   = 0.0
       susn2_s = 0.0
       vx02_s  = 0.0
       pfln2_s = 0.0
