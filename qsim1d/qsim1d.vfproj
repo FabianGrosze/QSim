@@ -141,6 +141,7 @@
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\mphyt.f90"/>
+		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>
 		<File RelativePath="..\metabolism\schiff.f90"/>

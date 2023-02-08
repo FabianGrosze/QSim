@@ -250,7 +250,7 @@ program qsim
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
    real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_pb, zup_nb, zq_pb, zq_nb
    real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwskmo, zww2, zwsdom
-   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwcoli, zwdoscf, zwakmor_1, zwagmor_1, zwabmor_1
+   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwakmor_1, zwagmor_1, zwabmor_1
    real, dimension(ialloc2)                :: zwgszn, zwglzn, zwgscad, zwglcad, zwgscu, zwglcu, zwgsni, zwglni
    real, dimension(ialloc2)                :: zwgsas, zwglas, zwgspb, zwglpb, zwgscr, zwglcr, zwgsfe, zwglfe
    real, dimension(ialloc2)                :: zwgshg, zwglhg, zwgsmn, zwglmn, zwgsu, zwglu, zwsseros
@@ -4283,7 +4283,7 @@ program qsim
          JDOC2(:) = 0.0
       endif 
       
-      if (nbuhn(mstr) == 0) goto 1612
+      if (nbuhn(mstr) == 0) goto 1612 ! goto konsum
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zww2(ior)    = hw2(mstr,ior)
@@ -4442,7 +4442,7 @@ program qsim
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
                   ,itags,uhrz,mstr, .false., 0)
       
-      if (nbuhn(mstr) == 0 ) goto 1415
+      if (nbuhn(mstr) == 0 ) goto 1415 ! goto coroph
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -4488,7 +4488,7 @@ program qsim
             if (iwied == 1)TGZoo(mstr,ior) = bTGZoo(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1612
+         goto 1612 ! goto konsum
       endif
       
       if (ilbuhn == 1) then
@@ -4773,7 +4773,7 @@ program qsim
       ! Kieselalgen
       ! -----------------------------------------------------------------------
       1412 continue
-      ! if(hChla(mstr,1)<0.0)goto 1513
+      ! if(hChla(mstr,1)<0.0)goto 1513 ! goto albenth
       call algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg,CHLA,ir                 &
                     ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                      &
                     ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema          &
@@ -4788,7 +4788,7 @@ program qsim
                     ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                            &
                     ,.false.,0)
       
-      if (nbuhn(mstr) == 0)goto 1413
+      if (nbuhn(mstr) == 0)goto 1413 ! goto algaesbl
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5014,7 +5014,7 @@ program qsim
                     ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                              &
                     ,.false.,0)
       
-      if (nbuhn(mstr) == 0)goto 1414
+      if (nbuhn(mstr) == 0)goto 1414 ! goto algaesgr
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5091,7 +5091,7 @@ program qsim
             abmor_1(mstr,ior) = babmor_1(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1413
+         goto 1413 ! goto algaesbl
       endif
       
       if (ilbuhn == 1) then
@@ -5191,7 +5191,7 @@ program qsim
       
       if (any(isnan(agr))) call qerror("Division by zero in subroutine algaesgr")
       
-      if (nbuhn(mstr) == 0)goto 1513
+      if (nbuhn(mstr) == 0)goto 1513 ! goto albenth
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5281,7 +5281,7 @@ program qsim
             agmor_1(mstr,ior) = bagmor_1(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1414
+         goto 1414 ! goto algaesgr
       endif
       
       if (ilbuhn == 1) then
@@ -6094,7 +6094,7 @@ program qsim
       ! -----------------------------------------------------------------------
       1518 continue
       if (ssalg(1) < 0.0) goto 1525
-      call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
+      call schweb(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
                   ,tflie,VMITT,flae,flag,elen,ior,anze,ess,ssL,qeinl,qeinlL,vabfl   &
                   ,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinLs               &
                   ,abl,zexbl,dblmor,drfaeb,jiein                                    &

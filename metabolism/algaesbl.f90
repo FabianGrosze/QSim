@@ -70,7 +70,7 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    real                             :: acmit, abr, abres, abremi, abmor
    real                             :: abmomi, abmoma, ablzt, ablt, abls
    real                             :: abksp, abksn, abgrow, abgmax, abgmaxtopt
-   real                             :: abchl_max, abchl, abbcmt, a3bl, a2bl
+   real                             :: abchl_max, abchl, abbcmt, a3bl, a2bl, ablt_old
    logical                          :: kontroll
    character (len = 255)            :: cpfad
    character (len = 275)            :: pfadstring
@@ -685,7 +685,9 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
       ablt = abl(ior)+hconql-hconsk
       dabl = abs(hconql-hconsk)
       if (ablt < 0.0) then
+         ablt_old = ablt
          ablt = (abl(ior)/(abl(ior)+dabl))*abl(ior)
+         call print_clipping("algaesbl", "ablt", ablt_old, ablt, "mg/l")
       endif
       if (ablt < 1.e-5) ablt = 1.e-5
       Chlablt = 1.e-5  !!wy prevent isnan(Chlabl)

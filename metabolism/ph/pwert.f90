@@ -39,7 +39,7 @@ subroutine pwert(mw_s, vph_s, lf_s, tempw_s, pw_s)
    
    ! --- local varibles ---
    real     :: K1,K2,MUE,lgk1,lgk2, abst, pk1, pk2, pkw, hk
-   real     :: c, ph0, ph1, ph2, delph1, delph2
+   real     :: c, ph0, ph1, ph2, delph1
    real     :: h, oh, y, y1, y2, eta
    integer  :: itera
    

@@ -80,21 +80,24 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    integer, intent(in)     :: jjj       !< debugging
    
    ! --- local variables ---
-   real     :: mwt,pwt,cat,lft
-   real     :: bbeis,abst,pk1,pk2,pkw,pkca,mue,lgk1,lgk2,lgkca,hk,k1,k2,kca
-   real     :: h,oh,beta,fco2,fhco3,fco3,moco2,mohco3,moco3
-   real     :: mgco2,mghco3,mgco3,fca
-   real     :: MOCA,c,SAETCO2,DEFCO2,HCON,DCO2O,BKCO2,CO2BSB,CO2DR
-   real     :: CO2ZOO,ALCO2M,PFCO2R,ALHCO3,CO2ALW,CO2PFW
-   real     :: GHCO31,GCO21,dca,dcah,RHCO3,RCO3,HCONTI
-   real     :: UEBCA,TIND,CUEBCA,R1,R2,DCA1,DCA2,GCO31,CAV1,PH1,PH2
-   integer  :: IITER
-   real     :: PH0,Y1,ETA,Y2,Y,DELPH
+   real     :: mwt, pwt, cat, lft
+   real     :: bbeis, abst, pk1, pk2, pkw, pkca, mue, lgk1, lgk2, lgkca, hk
+   real     :: h, oh, beta, fco2, fhco3, fco3, moco2, mohco3, moco3, k1, k2, kca
+   real     :: mgco2, mghco3, mgco3, fca
+   real     :: moca, c, saetco2, defco2, hcon, dco2o, bkco2, co2bsb, co2dr
+   real     :: co2zoo, alco2m, pfco2r, alhco3, co2alw, co2pfw
+   real     :: ghco31, gco21, dca, dcah, rhco3, rco3, hconti
+   real     :: uebca, tind, cuebca, r1, r2, dca1, dca2, gco31, cav1, ph1, ph2
+   real     :: ph0, y1, eta, y2, y
+   real     :: cat_old, mwt_old, lft_old
+   integer  :: iiter
    
    real, parameter :: mol_weight_O2   = 32.
    real, parameter :: mol_weight_CO2  = 44.
    real, parameter :: mol_weight_CO3  = 60.009
    real, parameter :: mol_weight_HCO3 = 61.02
+   
+   external :: print_clipping, belueftung_k2
    
    ! Berechnung der Kohlensäuresumme [mol/l]
    mw_s = mw_s * 1.e-3
@@ -116,7 +119,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
        + 2.76e-12 * tempw_s**2    &
        - 1.14e-14 * tempw_s**3
    
-   pkca = alog10(kca) * (-1.)
+   pkca = log10(kca) * (-1.)
    
    ! Einfluss der Ionenstärke
    lf_s  = max(0., lf_s)
@@ -386,13 +389,27 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    56 continue
    stind_s = stind_s + tflie * 1440.
    
-   pwt   = pwt  * 1000.
-   mwt   = mwt  * 1000.
-   mw_s  = mw_s * 1000.
+   pwt  = pwt  * 1000.
+   mwt  = mwt  * 1000.
+   mw_s = mw_s * 1000.
    
-   if (cat < 0.0) cat = ca_s / (ca_s + abs(cat - ca_s)) * ca_s
-   if (lft < 0.0) lft = lf_s / (lf_s + abs(lft - lf_s)) * lf_s
-   if (mwt < 0.0) mwt = mw_s / (mw_s + abs(mwt - mw_s)) * mw_s
+   if (cat < 0.0) then
+      cat_old = cat
+      cat = ca_s / (ca_s + abs(cat - ca_s)) * ca_s
+      call print_clipping("ph", "cat", cat_old, cat, "")
+   endif
+   
+   if (lft < 0.0) then  
+      lft_old = lft
+      lft = lf_s / (lf_s + abs(lft - lf_s)) * lf_s
+      call print_clipping("ph", "lft", lft_old, lft, "")
+   endif
+   
+   if (mwt < 0.0) then
+      mwt_old = mwt
+      mwt = mw_s / (mw_s + abs(mwt - mw_s)) * mw_s
+      call print_clipping("ph", "mwt", mwt_old, mwt, "")
+   endif
    
    ca_s = cat
    mw_s = mwt

@@ -90,7 +90,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    real                            :: akizt, akit, akis, akgrow, akgmax
    real                            :: akgmaxtopt, akchl_max, akchl, akbcmt, ahmit
    real                            :: agmomi, acmit, acmitk, abr, abmomi
-   real                            :: a3ki, a2ki, a1ki
+   real                            :: a3ki, a2ki, a1ki, akit_old
    character (len = 255)           :: cpfad
    character (len = 275)           :: pfadstring
    character (len = 2)             :: ckenn_vers1
@@ -992,23 +992,25 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
          !...sised-Menge an Silikat an der Gewässersohle infolge sedimentierter Algen (aufsummiert für den Simulationszeitraum)
          sised(ior) = sised(ior)+SKmor(ior)*hconoc
          
-         !
-         !....2D-Modellierung
-         !
+         
+         ! 2D-Modellierung
          do nkz = 1,nkzs(ior)
             dkmorz(nkz,ior) = akitz(nkz)*(1.-(exp(-akmor*tflie)))
          enddo
-         !     Quellen/Senken-Term
-         !     +++Kieselalgen+++
          
+         ! Quellen/Senken-Term
+         ! Kieselalgen
          hconql = dalgki(ior)+cmatki(ior)
          hconsk = dkimor(ior)+dalgak(ior)+sedalk(ior)+algzok(ior)+algdrk(ior)+algcok(ior)
          akit = aki(ior)+hconql-hconsk
          daki = abs(hconql-hconsk)
          
          if (akit < 0.0) then
+            akit_old = akit
             akit = (aki(ior)/(aki(ior)+daki))*aki(ior)
+            call print_clipping("algaeski", "akit", akit_old, akit, "mg/l")
          endif
+         
          if (akit > huge(akit)) then
             print*,'akit INF',mstr,ior,aki(ior),daki,akit
             print*,'hconql = dalgki(ior)+cmatki(ior)'
@@ -1018,6 +1020,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
          end if ! INF
          if (akit < 1.e-5) akit = 1.e-5
          chlakit = 1.e-5  !!wy prevent isnan(chlaki)
+         
          if (CChlaz(1) > 0.0) Chlakit = akit*Caki*1000./CChlaz(1)
          if (nkzs(ior) == 1) then
             dkmorz(1,ior) = dkimor(ior)

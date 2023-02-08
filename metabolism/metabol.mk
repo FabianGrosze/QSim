@@ -32,6 +32,7 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/lin_spline.o \
 	../metabolism/lin_sys.o \
 	../metabolism/mphyt.o \
+	../metabolism/print_clipping.o \
 	../metabolism/runge_kutta.o \
 	../metabolism/sasu.o \
 	../metabolism/schiff.o \

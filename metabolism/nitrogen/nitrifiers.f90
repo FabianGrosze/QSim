@@ -34,11 +34,10 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    
    ! --- local variables ---
    real              :: alphat, alphao, fph2n2, fph2n3, fph1n2, fph1n3, fvel
-   real              :: pka, vNH3, kdn2, vhNO2, vmod, kd_n2
+   real              :: pka, vNH3, vhNO2, vmod, kd_n2
    real              :: ekx0, ekx02, yn, vx0t, vx02t, u3, bettf, betn2f, anitri 
    real              :: ust, csedn, csedn2, ceq, ceq2, sednit, sednt2
-   real              :: zellv, qsgr, oc, oc0, wst
-   real              :: delx0, delx2
+   real              :: zellv, qsgr, oc, oc0, wst, vx0t_old, vx02t_old
    integer           :: ised, jsed
    
    real, parameter   :: khNO2_x1 = 5.e-5
@@ -47,6 +46,8 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    real, parameter   :: kNH3_x2  = 0.75
    real, parameter   :: rhymo    = 0.00875
    real, parameter   :: g = 9.81             !@TODO (Schönung): Define `g` globally
+   
+   external :: print_clipping, sedimentation, qerror
    
    
    ! influence of temperature (Wolf)
@@ -117,8 +118,9 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    ! timestep
    vx0t = vx0_s * exp((yn-anitri) * tflie)
    if (vx0t < 0.0) then
-      delx0 = vx0t  - vx0_s
-      vx0t = (vx0_s/(vx0_s + abs(delx0))) * vx0_s
+      vx0t_old = vx0t
+      vx0t = (vx0_s/(vx0_s + abs(vx0t - vx0_s))) * vx0_s
+      call print_clipping("nitrifiers", "vx0t", vx0t_old, vx0t, "mg/l")
    endif
    
    ! --- Ammoniumoxidation auf Makrophyten ---
@@ -157,8 +159,9 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       ! timestep
       vx02t = vx02_s * exp((yn-anitri) * tflie)
       if (vx02t < 0.0) then
-         delx2 = vx02t - vx02_s
-         vx02t = (vx02_s/(vx02_s + abs(delx2))) * vx02_s
+         vx02t_old = vx02t
+         vx02t = (vx02_s/(vx02_s + abs(vx02t - vx02_s))) * vx02_s
+         call print_clipping("nitrifiers", "vx02t", vx02t_old, vx02t, "mg/l")
       endif
       
       ! --- Makrophythen ---
