@@ -32,8 +32,14 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
    ! hnkzs:  Anzahl Gitterpunkte des neuen Gitters
    
    use allodim
+   implicit none
    
+   integer                                :: nkz, nkzs_alt, monats, i_zaehlv, i_var
+   integer                                :: i_vars, itags, istep, ire, ior
+   integer                                :: ihc_wert, ifak, ibeg
    integer                                :: azStr, nkzs, nkzs_neu, nkz_alt,mstr
+   real                                   :: hc_wert, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
+   real                                   :: dhc_wert, dh2d
    integer, dimension(azStrs)             :: mstra, hanze, iFlRi
    integer, dimension(azStrs,1000)        :: znkzs, hnkzs
    real, dimension(azStrs,50,1000)        :: htempz, ho2z, hnh4z, hno2z, hno3z, hgelPz, hSiz, hakiz, hagrz, hablz, hchlaz

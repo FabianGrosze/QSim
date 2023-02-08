@@ -34,10 +34,15 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                     kontroll, jjj)
    
    use allodim
-
+   implicit none
+   
+   integer                         :: n, ns, nschif, ms, mstr
+   integer                         :: msta, kbuhn, jsed, ised, ischif
+   real                            :: vmitt1, v6, ust, tiefe1, raun
+   real                            :: phytoc, hcon, g, gesss, fsch
+   real                            :: fom_oc, bsbc
    integer                         :: azStr
    integer, dimension(azStrs)      :: mStas, mSs, abfr, mStra, nbuhn
-   real                            :: oc, wst, tau
    real, dimension(azStrs,20)      :: aschif, eschif
    real, dimension(azStrs,1000)    :: dKorn, SedOM, raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
    logical, intent(in)             :: kontroll  !< debugging
@@ -47,10 +52,10 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
    ! fOM_OC Verhältnis organisches Material zu organischem Kohlenstoff
    fOM_OC = 1./0.378
    
-   do 30 azStr = 1,azStrs
+   do azStr = 1,azStrs
       mS = 1
       mstr = mStra(azStr)
-      do 35 mSta = 1,mStas(mstr)
+      do mSta = 1,mStas(mstr)
          ischif = 0
          if (mSs(mstr) == 0)goto 700
          if (abfr(mstr) == 1)goto 879
@@ -67,7 +72,8 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
          endif
          
          ! Kilometrierung wird zur Muendung hin groesser
-         879 if (Stakm(mstr,mSta) >= aschif(mstr,mS) .and. Stakm(mstr,mSta) <= eschif(mstr,mS)) then
+         879 continue
+         if (Stakm(mstr,mSta) >= aschif(mstr,mS) .and. Stakm(mstr,mSta) <= eschif(mstr,mS)) then
             ischif = 1
             goto 700
          endif
@@ -78,21 +84,22 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
          endif
          
          
-         700 raun = 1./raua(mstr,mSta)
+         700 continue
+         raun = 1./raua(mstr,mSta)
          g = sqrt(9.81)
          
          ! Fehlermeldung
          if (Hmq(mstr,mSta) <= 0.0) then
-            write(message, "(a,f8.3)"), "Missing MQ values at profile ", Stakm(mstr,mSta)
+            write(message, "(a,f8.3)") "Missing MQ values at profile ", Stakm(mstr,mSta)
             call qerror(message)
          endif
          
          ns = 2
          if (nbuhn(mstr) == 0)ns = 1
-         do 50 n = 1,ns
+         do n = 1,ns
             
             ! Sedimentation
-            ! sdFlu...  in g/(m3*d)
+            ! sdFlu [g/(m3*d)]
             ised = 1
             kbuhn = 1
             
@@ -117,16 +124,14 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                endif
             endif
             
-            if (vmitt1 == 0.0)vmitt1 = 0.00001
-            if (tiefe1 == 0.0)tiefe1 = 0.00001
+            if (vmitt1 == 0.0) vmitt1 = 0.00001
+            if (tiefe1 == 0.0) tiefe1 = 0.00001
             vmitt1 = abs(vmitt1)
-            !ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
-            call bottom_friction_strickler(tau,ust,raua(mstr,mSta),tiefe1,vmitt1)
-
-            ! ischif = 0 -> kein Schiffsverkehr
-            !        = 1 -> Schiffsverkehr
-            ! v6 - Schiffsgeschwindigkeit
-            !
+            ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
+            
+            ! ischif = 0: kein Schiffsverkehr
+            !        = 1: mit Schiffsverkehr
+            ! v6: Schiffsgeschwindigkeit
             if (n == 1 .or. kbuhn == 0) then
                v6 = 0.0
                fsch = 1.
@@ -135,33 +140,29 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                   fsch = -5.88*v6+1.76
                   if (fsch < 0.0)fsch = 0.0
                   if (fsch > 1.)fsch = 1.
-               else
                endif
             endif
-            !
+            
             if (n == 2 .and. kbuhn == 1) then
                fsch = 1.
                if (ischif == 1) then
                   vmitt1 = vmitt1*2.5
-                  !ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
-                  call bottom_friction_strickler(tau,ust,raua(mstr,mSta),tiefe1,vmitt1)
-
+                  ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
                else
                endif
             endif
             
             
-            BSBC = 5.  !1.9
-            PhytoC = 3.4   !1.3
-            GesSS = 55.            ! 16.
-            call Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,&
-                        dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,   &
+            BSBC = 5.     !  1.9
+            PhytoC = 3.4  !  1.3
+            GesSS = 55.   ! 16.0
+            call sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb, &
+                        dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,           &
                         kontroll,jjj)
             
-         50 continue
-      35 continue
-   30 continue
+         enddo
+      enddo
+   enddo
    
-   
-   999 return
-end
+   return
+end subroutine sediment

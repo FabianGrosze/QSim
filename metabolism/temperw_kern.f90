@@ -248,7 +248,7 @@ subroutine temperw_kern(nkz,xnkzs,xwtyp,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
                      HR = HR * ((sddw-pdltt)/sddw)*a3
                   case default
                      write(message, "(a,i0)") "subroutine temperw_kern: The &
-                        given value for 'iform_verdr' is invalid: ", iform_verdr
+                        &given value for 'iform_verdr' is invalid: ", iform_verdr
                      call qerror(message)
 
                end select

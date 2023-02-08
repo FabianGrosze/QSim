@@ -79,7 +79,7 @@ subroutine anzTag(monat, jahr, tage)
       case(12) 
          tage = 31
       case default
-         write(message, "(a,i0)"), "subroutine anztag: Given month is invalid: ", monat
+         write(message, "(a,i0)") "subroutine anztag: Given month is invalid: ", monat
          call qerror(message)
 
    end select

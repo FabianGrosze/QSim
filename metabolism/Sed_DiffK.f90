@@ -31,12 +31,23 @@ subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,po
                      ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
    
    use allodim
+   implicit none
    
-   logical, intent(in)             :: kontroll  !< debugging
-   integer, intent(in)             :: jjj       !< debugging
-   real                            :: Kappa, K, kVis, nueSternmx, nueStern, nue, nue0, nueStern_2
-   real, dimension(azStrs,1000)    :: hdKorn
-   real, dimension(1000)           :: Tiefe, vmitt,rau
+   integer                      :: monats, n, mstr, itags, ior
+   real                         :: zwdiffk2, zwdiffk1, z2stern
+   real                         :: z1stern, w, vvert, vvert2, vvert1
+   real                         :: vis_0, u, ust, uhrz, t
+   real                         :: sc, scp, sco, sc0, roh_h2o
+   real                         :: re, raun, poros, poro2, poro1
+   real                         :: hcon, h2, h1, g, dvis
+   real                         :: dkorn, difkp2, difkp1, diffmo, diffkm
+   real                         :: diffk2_2, diffk2, diffk1_2, diffk1_1, diffk1
+   real                         :: Kappa, K, kVis, nueStern, nue, nueStern_2
+   real                         :: alphao2, alphao1
+   logical, intent(in)          :: kontroll  !< debugging
+   integer, intent(in)          :: jjj       !< debugging
+   real, dimension(azStrs,1000) :: hdKorn
+   real, dimension(1000)        :: Tiefe, vmitt,rau
    
    
    raun = 1./rau(ior)
@@ -118,6 +129,13 @@ end subroutine Sed_DiffK
 
 
 subroutine SedAdv(vvert,alphaO1,alphaO2,DiffK1,DiffK2,vvert1,vvert2,H1,H2,Diffmo)
+
+   implicit none
+   
+   real    :: zvvert2, zvvert1, vvert, vvert2, vvert1
+   real    :: h2, h1, diffmo, diffk2, diffk1
+   real    :: alphao2, alphao1
+
    zvvert1 = vvert * alphaO1
    vvert1 = (vvert + zvvert1)/2.
    

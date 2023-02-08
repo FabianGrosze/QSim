@@ -32,7 +32,13 @@ subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
                             i_EstRNR, itags, monats, uhrz)
    
    use allodim
+   implicit none
    
+   integer                         :: nkz, nkzs_alt, monats, j_neu, j_alt
+   integer                         :: jnkz, i_zaehlv, i_var, i_vars, i_estrnr
+   integer                         :: itags, ior
+   real                            :: uhrz, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
+   real                            :: dh2d
    integer                         :: nkzs_neu, nkz_alt,mstr
    real, dimension(azStrs,50,2)    :: tzt, o2zt, nh4zt, no2zt, no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt
    real, dimension(azStrs,50,2)    :: chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt

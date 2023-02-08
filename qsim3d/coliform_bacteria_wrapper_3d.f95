@@ -25,49 +25,48 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Berechnung des geloesten Silikats
-!! @author Volker Kirchesch
-!! @date 24.08. 2011
-!> Berechnung des gelösten Silikats
-subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
-                    algak_s, albewk_s,               &
-                    tiefe_s, tflie,                  &
-                    kontroll, jjj)
-   use aparam, only: Qmx_SK
+subroutine coliform_bacteria_wrapper_3d(i)
+   use modell
+   use qsimdatenfelder
+   use module_metabolism, only: coliform_bacteria
    implicit none
    
-   ! --- dummy arguments ---
-   real, intent(inout)  :: si_s     !< Silikat-Silizium-Konzentration  
-   real, intent(in)     :: hJSi_s   !< Silizium-Flux aus dem Sediment
-   real, intent(in)     :: up_Si_s  !< Si-Aufnahmerate der Kieselalgen
-   real, intent(in)     :: akibr_s  !< Bruttowachstum Biomasse Kieselalgen
-   real, intent(in)     :: algak_s  !< Respirierte Biomasse Kieselalgen
-   real, intent(in)     :: albewk_s !< Wachstum benthischer Kieselalgen
-   real, intent(in)     :: tiefe_s  !< Wassertiefe [m]
-   real, intent(in)     :: tflie    !< Zeitschritt [d]
-   logical, intent(in)  :: kontroll !< debugging
-   integer, intent(in)  :: jjj      !< debugging
+   integer, intent(in) :: i
+   integer             :: nk
    
-   ! --- local variables
-   real                 :: dSiSed, akisi, sit, delSi
+   iglob = i + meinrang*part
+   kontroll = iglob == kontrollknoten
+   nk = (i-1)*number_plankt_vari
    
+   ! convert timestep from seconds in days
+   tflie = real(deltat)/86400 
+   tiefe(1) = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
+   rau(1) = strickler(zone(point_zone(iglob))%reib , tiefe(1))
    
-   ! Neuberechnung der Silikatmenge an der Gewässersohle nach Rücklösung
-   ! Änderungsrate durch Silikatfreisetzung aus dem Sediment
-   dSised = hJSi_s * tflie/ tiefe_s 
-   
-   ! Einfluss der Kieselalgen
-   akisi = - up_Si_s * (akibr_s - algak_s) &
-           - albewk_s * Qmx_SK
-   
-   ! timestep
-   sit = si_s + akisi + dSised
-   
-   if (sit < 0.0) then 
-      delSi = sit - si_s
-      sit = (si_s / (si_s + abs(delSi))) * si_s
+   if (kontroll) then
+      print*, "before coliform_bacteria:"
+      print*, "   coli = ", planktonic_variable_p(61+nk)
+      print*, ""
    endif
    
-   ! update return value
-   si_s = sit
-end subroutine silicate
+   call coliform_bacteria(                                             &
+      planktonic_variable_p(61+nk),                                    & ! coli
+      planktonic_variable_p(70+nk),                                    & ! doscf
+      zone(point_zone(iglob))%seditemp%extiks,                         & ! extks,
+      planktonic_variable_p(1+nk),                                     & ! tempw
+      rau(1),                                                          & ! rau,
+      tiefe(1),                                                        & ! tiefe,
+      rb_hydraul_p(1+(i-1)*number_rb_hydraul),                         & ! vmitt,
+      schwi_t(zone(point_zone(iglob))%wettstat%wetterstations_nummer), & ! schwi
+      tflie,                                                           & ! tflie
+      kontroll,                                                        & ! kontroll
+      iglob)                                                             ! jjj
+   
+
+   if (kontroll) then
+      print*, "after coliform_bacteria:"
+      print*, "   coli = ", planktonic_variable_p(61+nk)
+      print*, ""
+   endif
+   return
+end subroutine coliform_bacteria_wrapper_3d

@@ -29,36 +29,39 @@
 !! @author Volker Kirchesch
 !! @date 22.09.2010
 subroutine albedo(SH,REFL)
-   ! Literaturangabe !!
+   ! TODO: Literaturangabe
+   implicit none
    
-   real, dimension(15) :: ALB
+   real, dimension(15) :: alb
+   real                :: sh, shgr, refl, pi, dshgr, dalb, albint
+   integer             :: n
    
-   PI = 22./7.
-   ALB(1) = 100.0
-   ALB(2) = 70.5
-   ALB(3) = 46.0
-   ALB(4) = 32.5
-   ALB(5) = 25.0
-   ALB(6) = 20.0
-   ALB(7) = 15.4
-   ALB(8) = 12.0
-   ALB(9) = 9.5
-   ALB(10) = 8.5
-   ALB(11) = 7.5
-   ALB(12) = 7.0
-   ALB(13) = 6.5
+   pi = 22./7.
+   alb(1)  = 100.0
+   alb(2)  = 70.5
+   alb(3)  = 46.0
+   alb(4)  = 32.5
+   alb(5)  = 25.0
+   alb(6)  = 20.0
+   alb(7)  = 15.4
+   alb(8)  = 12.0
+   alb(9)  = 9.5
+   alb(10) = 8.5
+   alb(11) = 7.5
+   alb(12) = 7.0
+   alb(13) = 6.5
    
-   SHGR = SH*180/PI
-   if (SHGR > 60.0) then
-      REFL = 6.5
+   shgr = sh*180/pi
+   if (shgr > 60.0) then
+      refl = 6.5
    else
-      N = INT(SHGR/5)+1
-      DALB = ALB(N)-ALB(N+1)
-      DSHGR = SHGR-(N-1)*5
-      ALBINT = DALB/5*DSHGR
-      REFL = ALB(N)-ALBINT
+      n = int(shgr/5)+1
+      dalb = alb(n)-alb(n+1)
+      dshgr = shgr-(n-1)*5
+      albint = dalb/5*dshgr
+      refl = alb(n)-albint
    endif
-   REFL = REFL/100
-   REFL = 1-REFL
+   refl = refl/100
+   refl = 1-refl
    return
 end subroutine albedo

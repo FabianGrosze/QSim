@@ -25,7 +25,9 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine ergebMFormat
+subroutine ergebmformat
+   implicit none
+
    write(45, '(A)') '*P  01  20      MIB5     XBSB5      MXB5      MICS      XCSB      MXCS     MINH4      XNH4     MXNH4    MIVNO2     XVNO2    MXVNO2    MIVNO3     XVNO3    MXVNO3     MIGSN      XGSN     MXGSN      MIGP     XGELP      MXGP     MIGSP      XGSP     MXGSP      MISI       XSI      MXSI    MICHLA     XCHLA    MXCHLA      MIZO   XZOOIND      MXZO     MIVPH      XVPH     MXVPH      MIMW       XMW      MXMW      MICA       XCA      MXCA      MILF       XLF      MXLF      MISS       XSS      MXSS    MITEMP     XTEMP    MXTEMP      MIO2       XO2      MXO2    MICOLI     XCOLI    MXCOLI     MIKONSS     XKONSS    MXKONS    MIGSPB     XGSPB    MXGSPB    MIGLPB     XGLPB    MXGLPB   MIGSCAD    XGSCAD   MXGSCAD   MIGLCAD    XGLCAD   MXGLCAD    MIGSCR     XGSCR    MXGSCR    MIGLCR     XGLCR    MXGLCR    MIGSFE     XGSFE    MXGSFE    MIGLFE     XGLFE    MXGLFE '
    write(45, '(A)') '*P  02  20    MIGSCU     XGSCU    MXGSCU    MIGLCU     XGLCU    MXGLCU    MIGSMN     XGSMN    MXGSMN    MIGLMN     XGLMN    MXGLMN    MIGSNI     XGSNI    MXGSNI    MIGLNI     XGLNI    MXGLNI    MIGSHG     XGSHG    MXGSHG    MIGLHG     XGLHG    MXGLHG     MIGSU      XGSU     MXGSU     MIGLU      XGLU     MXGLU    MIGSZN     XGSZN    MXGSZN    MIGLZN     XGLZN    MXGLZN    MIGSAS     XGSAS    MXGSAS    MIGLAS     XGLAS    MXGLAS '
    write(45, '(A)') '*P  03  20      XPFL '
@@ -66,4 +68,4 @@ subroutine ergebMFormat
    write(45, '(A)') '*F  18  20     F10.7     F10.8     F10.8      F8.6 '
    write(45, '(A)') '*F  19  20     F10.8     F10.8 '
    write(45, '(A)') '*F  20  20     F10.8 '
-end subroutine ergebMFormat
+end subroutine ergebmformat

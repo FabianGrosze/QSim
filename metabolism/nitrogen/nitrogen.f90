@@ -22,6 +22,8 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
    
+   implicit none
+   
    ! --- dummy arguments ---
    real, intent(inout)  :: vNH4_s      !< Ammonium
    real, intent(inout)  :: vNO3_s      !< Nitrat
@@ -89,7 +91,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --- local variables ---
    real          :: suma, hconki, hcongr, hconbl, dzn
    real          :: ndr, ddrn
-   real          :: nwgr, nwki, nwbl, alpha_upN4, a_up, b_up, hc_upN3, hc_upN4
+   real          :: nwgr, nwki, nwbl, a_up, b_up, hc_upN3, hc_upN4
    real          :: alpha_upN4k, alpha_upN4g, alpha_upN4b
    real          :: vNH4t, delNH4
    real          :: vNO2t, delNO2
@@ -219,9 +221,9 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
             alpha_upN4b = hc_upN4 / (hc_upN3 + hc_upN4)
          
          case default
-            write(message,"(a,i0)"), "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
-                                     new_line('a') //                                                 &
-                                     "j_up = ", j_up
+            write(message,"(a,i0)") "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
+                                    new_line('a') //                                                 &
+                                    "j_up = ", j_up
             call qerror(message)
       end select
       
@@ -279,25 +281,27 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --------------------------------------------------------------------------
    ! nitrite (NO2)
    ! --------------------------------------------------------------------------
+   vNO2t = 0.
    if (vx02_s > 0.0) then
       vNO2t = vNO2_s  &
             + susn_s  & ! zu Nitrit oxidiertes Ammonium (Nitrosomonas)
             + PflN1_s & ! zu Nitrit oxidiertes Ammonium (Makrophyten)
             - susn2_s & ! zu Nitrat oxidiertes Nitrit (Nitrosomonas)
             - PflN2_s   ! zu Nitrat oxidiertes Nitrit (Makrophyten)
+      
+      if (vNO2t < 0.0) then
+         delNO2 = vNO2t - vNO2_s
+         vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
+      endif
+      vNO2t = max(0.0001, vNO2t)
    endif
-   
-   if (vNO2t < 0.0) then
-      delNO2 = vNO2t - vNO2_s
-      vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
-   endif
-   if (vNO2t < 0.0001) vNO2t = 0.0001
    
    ! --------------------------------------------------------------------------
    ! nitrate (NO3)
    ! --------------------------------------------------------------------------
    DenWatz = bsbCt_s * (KMO_NO3 / (KMO_NO3 + vO2_s)) * (vNO3_s /(vNO3_s + KM_NO3))
    dNO3Den = 0.93 * DenWatz
+   
    
    if (vx02_s > 0.0) then
       vno3t = vno3_s                      &

@@ -71,6 +71,10 @@
 		<File RelativePath=".\version.rc"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="metabolism">
+		<Filter Name="coliform_bacteria">
+		<File RelativePath="..\metabolism\coliform_bacteria\coliform_bacteria.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\coliform_bacteria\module_coliform_bacteria.f90"/></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -120,7 +124,6 @@
 		<File RelativePath="..\metabolism\anztag.f90"/>
 		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
 		<File RelativePath="..\metabolism\C_Chla.f90"/>
-		<File RelativePath="..\metabolism\coliform.f90"/>
 		<File RelativePath="..\metabolism\coroph.f90"/>
 		<File RelativePath="..\metabolism\Dichte.f90"/>
 		<File RelativePath="..\metabolism\dreissen.f90"/>
@@ -165,6 +168,7 @@
 		<Filter Name="qsim1d">
 		<File RelativePath=".\AdvDiff.f90"/>
 		<File RelativePath=".\ALBEDO.f90"/>
+		<File RelativePath=".\coliform_bacteria_inflow_1d.f90"/>
 		<File RelativePath=".\ctracer.f90"/>
 		<File RelativePath=".\E_extnctParam.f90"/>
 		<File RelativePath=".\EreigGParam.f90"/>

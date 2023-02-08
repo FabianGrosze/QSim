@@ -33,8 +33,13 @@
 !! Kd in m2/µE
 
 subroutine lichthemmung(dt,Ic,yK,CChl_Stern,ChlaCz,j)
-   
-   real                  :: KI, k1, k2, k3, k4
+
+   implicit none
+
+   integer               :: j, it
+   real                  :: yk, tau, taui0, psii, h
+   real                  :: fclose, dt, chl_c, chlc_stern, cchl_stern
+   real                  :: k1, k2, k3, k4
    real                  :: Ic,Kd0,Kd
    real, dimension(50)   :: ChlaCz
    

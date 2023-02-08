@@ -22,6 +22,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    use aparam,    only: Cagr, Caki, Cabl, CZoo, PZoo, NZoo,  ksm, yBAC, rsGBAC, &
                         upBAC, hymxD, hyP1, ksd1, ksd2, GRot,                   &
                         bsbbl, bsbgr, bsbki, csbbl, csbgr, csbki
+   implicit none
+   
    ! ksM    - Halbsaettigungskons. fuer die Aufnahme monomolekularer C-Verbindungen [mgC/l]
    ! YBAC   - Ertragskoeffizient
    ! upBACm - maximale Aufnahmerate 1/d

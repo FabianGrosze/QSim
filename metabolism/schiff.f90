@@ -25,7 +25,13 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 subroutine schiff(vmitt1,tiefe1,v6,ischif)
-   real :: kt
+
+   implicit none
+   
+   integer :: it, ischif
+   real    :: w, vs, vschiff, vmitt1, v6
+   real    :: v5, v4, v3, uprop, tiefe1
+   real    :: hp, h2, e, dprop, kt
    
    vschiff = 3.2
    uprop = 3.33

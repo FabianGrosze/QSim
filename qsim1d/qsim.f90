@@ -25,23 +25,161 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 program qsim
-
+   
    use allodim
    use aparam
    use module_model_settings
    use module_metabolism
-   
+   implicit none
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
-   character                               :: ckenn,cpoint
-   character (len = 2)                     :: chcon,ckenn_vers,ckenn_vers1
-   character (len = 7)                     :: cmin,cmax
-   character (len = 40)                    :: erename, modname
-   character (len = 201)                   :: ctext
-   character (len = 275)                   :: pfadstring
-   character (len = 6000)                  :: langezeile, message
-   logical                                 :: kontroll, einmalig, linux,mitsedflux, write_csv_output
-   integer                                 :: open_error, jjj
+   character       :: ckenn,cpoint
+   character(2)    :: chcon,ckenn_vers,ckenn_vers1
+   character(7)    :: cmin,cmax
+   character(40)   :: erename, modname
+   character(201)  :: ctext
+   character(275)  :: pfadstring
+   character(6000) :: langezeile, message
+   logical         :: kontroll, einmalig, linux,mitsedflux, write_csv_output
+   integer         :: open_error, jjj, iior
+   integer         :: iend, iwied, ilang, ilbuhn, jlauf
+   integer         :: jtag, iergeb, itracer_vor, nndr, jstr
+   integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
+   integer         :: mrb, iseg, mtracer, itags, monats
+   integer         :: jahrs, ij, lait1, laid1, laim1
+   integer         :: mpf, ms, md, mc, mb
+   integer         :: mu, mwe, mv, mz, ma
+   integer         :: me, ndr, iv, j, ksta
+   integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
+   integer         :: itags_schr, istr, nstr, istrs, ifhstr
+   integer         :: ianze_max, ior, itimeh, itimeb, itimea
+   integer         :: itimee, itime, i_rands, iw_max, mstrrb
+   integer         :: irb, i_k11, i_k12, i_k13, i_k14
+   integer         :: i_k15, i_k16, i_k17, i_k18, i_k19
+   integer         :: i_k110, i_k111, i_k112, i_k113, i_k114
+   integer         :: i_k115, i_k116, i_k117, i_k118, i_k119
+   integer         :: i_k120, i_k121, i_k122, i_k123, i_k124
+   integer         :: i_k125, i_k126, nkzsmx, imet, mrb_1
+   integer         :: j_ist, jj, js, iein, mrand
+   integer         :: inkzmx, mstr1, ib, nkz, kanz
+   integer         :: ista, jnkz, kanz2, jnkz2, kanz1
+   integer         :: nkzs_hc, nkzs_hc1, i_estrnr, minute, kein
+   integer         :: itstart, mstart, itmax, mmax, itend
+   integer         :: mend, istriz_neu, isim_end, nwaerm, izeits
+   integer         :: jpoin1, ico, ke, itagv, monatv
+   integer         :: jahrv, jtage, ianfan, itag_schr, i
+   real            :: lat_k, o2ein
+   real            :: mikonss, mxkonss, bxcoli,algae_biomass
+   real            :: POM_sed, BedGS, xsedvvertz
+   real            :: dh2d, geol, geob, uhrs, uhrz
+   real            :: hcmin, hcuhrz, dlmax1, dlmax2, dlmax3
+   real            :: dlmax4, coro1, fkmgit, trpmin, trpmax
+   real            :: tggbal, tgkbal, coroe, corose, pom_sedb
+   real            :: spewksx1, wuebkx1, psrefsx1, extkx1, uhrz_schr
+   real            :: hcumt, dt, fhprof, hcon, hcontm
+   real            :: sum_qeinl, hcq1, hcq2, hcq3, hcq4
+   real            :: hcq5, hcq6, hcq7, hcq8, hcq9
+   real            :: hcq10, hcq11, hcq12, hcq13, hcq14
+   real            :: hcq15, hcq16, hcq17, hcq18, hcq19
+   real            :: hcq20, hcq21, hcq22, hcq23, hcq24
+   real            :: hcq25, hcq26, hc1, hc2, hc3
+   real            :: hc4, hc5, hc6, hc7, hc8
+   real            :: hc9, hc10, hc11, hc12, hc13
+   real            :: hc14, hc15, hc16, hc17, hc18
+   real            :: hc19, hc20, hc21, hc22, hc23
+   real            :: hc24, hc25, hc26, hc27, fssgrs
+   real            :: fbsgrs, bsbzoo, hcchla, hczoos, hcnh4s
+   real            :: hcno2s, hcno3s, hcgeps, hcbsb, hccsb
+   real            :: hcvkg, hcantb, a2ki, a3ki, a1ki
+   real            :: a3bl, a2bl, a1bl, a3gr, a1gr
+   real            :: a2gr, toc_csb, cdges, cref, cpges
+   real            :: toc, dk, sa, zlk, zg
+   real            :: su, wtst, wtst_t, algb5, zoobsb
+   real            :: algcs, zoocsb, hcs1, hcs2, hcs3
+   real            :: hcs6, hcs7, hcs8, hcs9, hcs10
+   real            :: hcs20, hcs21, hcs22, hcs23, hcs24
+   real            :: hcs25, hcs26, hcs27, hcs28, hcs29
+   real            :: hcs30, hcs31, hcs32, hcs33, hcs34
+   real            :: hcs35, hcs36, hcs37, hcs38, hcs39
+   real            :: hcs40, hcs41, hcs42, hcs43, hcs44
+   real            :: hcs45, hcs46, hcs47, hcs48, hcs49
+   real            :: hcs50, hcs51, hcs52, hcs53, hcs54
+   real            :: hcs55, hcs56, hcs57, hcs58, hcs59
+   real            :: hcs60, hcs61, hcs62, hcs63, hcs64
+   real            :: hcs65, hcs66, hcs77, hcs78, hcs79
+   real            :: hcs80, hcs81, hcs82, hcs83, hcs85
+   real            :: hcs86, hcs95, hcs99, hcs100, hcs101
+   real            :: hcs102, hcs103, hcs104, hcs105, hcs106
+   real            :: hcs107, hcs108, hcs110, hcs111, hcs112
+   real            :: hcs113, hcs114, hcs115, hcs116, hcs117
+   real            :: hcs118, hcs119, hcs120, hcs121, hcs122
+   real            :: hcs123, hcs124, hcs125, hcs126, hcq
+   real            :: hmue, hk, vhplus, rmin, uhrzhm
+   real            :: sumtracer, dtmin, dtmin_mac, elenl, ust
+   real            :: alpha, cr_zahl, cr_zahl_mac, hc_alpha, hc_dl
+   real            :: dtneu, dtneu_mac, schwia, diff1, diff2
+   real            :: saettk, akrema, sbioki, saettb, pbiogr
+   real            :: pbiobl, diff3, diff4, diff5, diff6
+   real            :: diff7, diff8, diff9, diff10, diff11
+   real            :: diff12, diff13, diff14, vco2s, tiefev
+   real            :: algo, diff15, diff16, diff17, diff18
+   real            :: diff19, diff20, diff21, diff22, deltat
+   real            :: st, so2, ski, sgr, sbl
+   real            :: schl, sn4, sn2, sn3, sp
+   real            :: spges, snges, ssi, sumh, uhrsv
+   real            :: hconu, tend, vn4end, vn2end, vn3end
+   real            :: vo2end, vgpend, siend, akiend, agrend
+   real            :: ablend, chlend, uhrhm, bhnfy, sbal
+   real            :: sco, scos, salc, salw, salr
+   real            :: salm, sals, salz, sald, ztp
+   real            :: salco, cbsbab, abbau, hnfin, san
+   real            :: vx0mue, vx02mu, sabow, sabor, bakg
+   real            :: bdaw, bdar, bam, bas, baz
+   real            :: sbco, xtempw, xchnf, xbvhnf, xcd1
+   real            :: xcd2, xcp1, xcp2, xcm, xbac
+   real            :: xbsb5, xcsb, xnh4, xchla, xvkigr
+   real            :: xantbl, xaki, xagr, xabl, xchlak
+   real            :: xchlag, xchlab, xcchlk, xcchlg, xcchlb
+   real            :: xo2, xzooind, xvph, xvno3, xvno2
+   real            :: xgelp, xsi, xca, xmw, xlf
+   real            :: xcoli, xgszn, xglzn, xgscad, xglcad
+   real            :: xgscu, xglcu, xgsni, xglni, xgsas
+   real            :: xglas, xgspb, xglpb, xgscr, xglcr
+   real            :: xgsfe, xglfe, xgshg, xglhg, xgsmn
+   real            :: xglmn, xgsu, xglu, xdlarn, xss
+   real            :: xpfl, xgsp, xgsn, xcori, xcoris
+   real            :: xbal, xsusn, xbettn, xdon, xalgn
+   real            :: xalno3, xflun3, xvx0, xvx02, xsedx
+   real            :: xsedal, xalgzo, xalgdr, xalgco, xvoldr
+   real            :: xdrpfe, xabeow, xabeor, xdalg, xdalga
+   real            :: xalmor, xblmor, xsgo2n, xsdbsb, xsoein
+   real            :: xsalgo, xo2nit, xalgo, xalgao, xbsbt
+   real            :: xschlr, xbsbbe, xo2phy, xro2dr, xzooro
+   real            :: xpo2p, xpo2r, xir, xrmue, xrakr
+   real            :: xrbar, xffood, xfik, xfig, xfib
+   real            :: xnaehr, xakmua, xagmua, xabmua, xfhek
+   real            :: xfheg, xfheb, xakrau, xagrea, xabrea
+   real            :: xhnfmu, xhnfre, xhnfup, xhnfmo, xhnfex
+   real            :: xhnfdr, xhnfz, xbacmu, xhnfba, xnl0
+   real            :: xpl0, xjno3, xjnh4, xjpo4, xjo2
+   real            :: xjsi, xakigr, xchnfi, bxtemp, bxno3
+   real            :: bxno2, bxnh4, bxgelp, bxchla, bxssal
+   real            :: bxsi, bxzooi, bxbsb5, bxcsb, bxaki
+   real            :: bxagr, bxabl, bxo2, bxph, bxca
+   real            :: bxmw, bxlf, bxlarn, bxnl0, bxpl0
+   real            :: bxgsp, bxgsn, bxdalg, bxvkg, bxantb
+   real            :: bxdaa, bxamor, bxseda, bxalgz, bxaldr
+   real            :: bxalco, bxfik, bxfig, bxfib, xbnaeh
+   real            :: bxkmue, bxgmue, bxbmue, bxhek, bxheg
+   real            :: bxheb, bxkre, bxgre, bxbre, bxchlk
+   real            :: bxchlg, bxchlb, bxfln3, bxbetn, bxjno3
+   real            :: bxjnh4, bxjpo4, bxjo2, bxjsi, bmikonss
+   real            :: bxkonss, bmxkonss, bxdrpf, bxgszn, bxglzn
+   real            :: bxgscad, bxglcad, bxgscu, bxglcu, bxgsni
+   real            :: bxglni, bxgsas, bxglas, bxgspb, bxglpb
+   real            :: bxgscr, bxglcr, bxgsfe, bxglfe, bxgshg
+   real            :: bxglhg, bxgsmn, bxglmn, bxgsu, bxglu
+   real            :: bxakg, xkonss, bxmicl, bxmxcl
    character(len=50),dimension(ialloc5,ialloc1) :: cename
    character(len=40),dimension(:),allocatable   :: strname,strnumm
    integer                                 :: maus, read_error, anze, azstr, azstr_read, anzej, stunde, anzema
@@ -58,9 +196,7 @@ program qsim
    integer, dimension(:,:), allocatable    :: it_h, it_hy, iorlah, iorleh, typh, ischig, ikwsta, idwe, mstrle, istund
    integer, dimension(:,:), allocatable    :: rbtyp, weinl, nrschr, hnkzs, nkzmx, znkzs, inkzs, ibschi
    integer, dimension(:,:), allocatable    :: hflag, hjiein, hischf, estrnr
-   real                                    :: lat_k, o2ein
-   real                                    :: mikonss, mxkonss, bxcoli,algae_biomass
-   real                                    :: POM_sed, BedGS, xsedvvertz
+   
    real, dimension(2)                      :: xdrakr, xdrbar, xdrmor, xidras, xdrmas
    real, dimension(4)                      :: gwdre, zdreie, zdrese, xdrbio, xdbios, xgewdr
    real, dimension(20)                     :: glob, tlmax, tlmin, cloud, wtyp, ro, wge
@@ -187,7 +323,7 @@ program qsim
    real, dimension(:,:), allocatable       :: zdrei, hpfl, zdrel, zdresl, gewdr, hgewdr, vtyp, rzuwdr, rzuwdy
    real, dimension(:,:), allocatable       :: zdreis, cd, cp, migsp, mxgsp, migsn, mxgsn, miaki, mxaki, miagr, mxagr
    integer                                 :: ilamda
-   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al !!wy extinktionskoeffizienten von e_extnct.dat gelesen
+   real, dimension(40)                     :: eta, aw, ack, acg, acb, ah, as, al 
    real, dimension(:,:), allocatable       :: extk_lamda, hsised, hskmor, mxtemp, mitemp, mxb5, mib5, mxcs, mics, mxnh4
    real, dimension(:,:), allocatable       :: minh4, mxchla,  michla, mxo2, mio2, mizo, mxzo, misi, mxsi, mivph, mxvph
    real, dimension(:,:), allocatable       :: micoli, mxcoli, mica, mxca, mimw, mxmw, mivno3, mxvno3, migp, mxgp, mxvno2
@@ -406,8 +542,8 @@ program qsim
    nazStrs = 2 * azStrs
    allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(azStrs*2))
    allocate(strNr(nazStrs), mstra(azStrs), ieinsh(azStrs), ieinLs(azStrs), nbuhn(azStrs), iFlRi(nazStrs), isegs(azStrs))
-   allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs), hte_z(azStrs), izufluss(azStrs))
-   allocate(hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
+   allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs))
+   allocate(hte_z(azStrs), izufluss(azStrs), hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
    allocate(strname(azStrs),strnumm(azStrs))
    allocate(mPfs(azStrs), mSs(azStrs), mDs(azStrs), mCs(azStrs), mBs(azStrs), mUs(azStrs))
    allocate(mWes(azStrs), mVs(azStrs), mZs(azStrs), mAs(azStrs), itsts(azStrs), msts(azStrs), itmaxs(azStrs))
@@ -548,8 +684,10 @@ program qsim
    allocate(bfssgr(azStrs,ialloc2), bfbsgr(azStrs,ialloc2), bfrfgr(azStrs,ialloc2), bexdvk(azStrs,ialloc2))
    allocate(bexdvg(azStrs,ialloc2), bsgon(azStrs,ialloc2), bsedx0(azStrs,ialloc2), bexdvb(azStrs,ialloc2))
    allocate(bdon(azStrs,ialloc2), bsusn(azStrs,ialloc2), bbettn(azStrs,ialloc2), bsuso(azStrs,ialloc2))
-   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2), babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
-   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2), bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
+   allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2))
+   allocate(babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
+   allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2))
+   allocate(bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
    allocate(bsusn2(azstrs,ialloc2), bpfln1(azstrs,ialloc2), bpfln2(azstrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
@@ -1017,7 +1155,8 @@ program qsim
                   call qerror(message)
                endif
             
-               read(ctext,*,iostat = open_error)aEros(mstr,mE),eEros(mstr,mE),tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+               read(ctext,*,iostat = open_error) aEros(mstr,mE), eEros(mstr,mE), tausc(mstr,mE),  &
+                                                 M_eros(mstr,mE), n_eros(mstr,mE), sedroh(mstr,mE)
                if (open_error /= 0) call qerror("read error erosion parameters")
                print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
             
@@ -1304,8 +1443,9 @@ program qsim
             842 mV = mV+1
             if (mV > mVs(mstr))goto 848
             if (eVEG(mstr,mV) > fkmgit .and. mV < mVs(mstr))goto 842
-            do 843 iV = 1,14
-            843 VTYPH(mstr,mSta,iV) = VTYPA(mstr,mV,iV)
+            do iV = 1,14
+               VTYPH(mstr,mSta,iV) = VTYPA(mstr,mV,iV)
+            enddo
             VALTLH(mstr,mSta) = VALTAL(mstr,mV)
             EDUFLH(mstr,mSta) = EDUFAL(mstr,mV)
             VALTRH(mstr,mSta) = VALTAR(mstr,mV)
@@ -2071,7 +2211,7 @@ program qsim
             ! BSB5 und CSB
             if (vbsbs(mstr,mRB) < 0.0 .and. vcsbs(mstr,mRB) < 0.0) then
                call qerror("Missing values for C-BSB5 or CSB at boundary. &
-                            One of them must be given.")
+                           &One of them must be given.")
             endif
             
             ! Schwebstoffe
@@ -3648,8 +3788,8 @@ program qsim
          else !  Abfluss hcq <= 0.0
             if (ilang == 0 ) then ! Vorlauf
                write(message,*)  "Strang ",mstr, " ",trim(strnumm(mstr)),  &
-                  "  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
-                  noch einen zu ihm gerichteten Zufluss."
+                 &"  ", trim(strname(mstr)), "hat weder eine Randbedingung,&
+                 &noch einen zu ihm gerichteten Zufluss."
                call qerror(message)
             endif
             
@@ -5926,7 +6066,7 @@ program qsim
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
-            write(message, "(a,i0)"), "Division by zero in subroutine oxygen in stretch ", mstr
+            write(message, "(a,i0)") "Division by zero in subroutine oxygen in stretch ", mstr
             call qerror(message)
          endif
          
@@ -6091,66 +6231,60 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! Coliform
+      ! coliform bacteria
       ! -----------------------------------------------------------------------
-      1525 Continue
-      if (iwsim == 5)goto 118
-      if (iwsim /= 2)goto 1520
-      if (hcoli(mstr,1) < 0.0 .and. iwsim == 2)goto 118
-      1522 continue
-      call COLIFORM(tiefe,rau,vmitt,vabfl,elen,flae,flag,tflie,schwi,tempw,jiein,ecoli                     &
-                   ,qeinl,coliL,qeinlL,anze,iorLa,iorLe,ieinLs,ilbuhn,coli,DOSCF,extkS,mstr                &
-                   ,ratecd,etacd,rateci,xnuec,ratecg,ratecs                                                &
-                   ,.false.,0)
+      ! Normally QSim does not simulate coliform bacteria. The user can request
+      ! a simulation with coliform bacteria. In this case `iwsim` is set to 2 and
+      ! QSim only runs coliform bacteria and temperature. All other modules for
+      ! metabolism are skipped.
+      1525 continue
       
-      if (nbuhn(mstr) == 0 .and. iwsim == 2)goto 118
-      if (nbuhn(mstr) == 0 .and. iwsim /= 2)goto 1520
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwDOSCF(ior) = DOSCF(ior)
-            zwtief(ior) = tiefe(ior)
-            zwcoli(ior) = coli(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            DOSCF(ior) = bDOSCF(mstr,ior)
-            coli(ior) = bcoli(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1522
-      endif
+      if (iwsim == 5) goto 118  ! goto transport
+      if (iwsim /= 2) goto 1520 ! goto erosion
+      if (hcoli(mstr,1) < 0.0) goto 118 ! goto transport
       
-      if (ilbuhn == 1) then
+      ! inflow from point and diffuse sources
+      call coliform_bacteria_inflow_1d(coli, doscf, mstr, colil, ecoli, ieinls, &
+                                       qeinll, qeinl, vabfl, iorle, iorla,      &
+                                       jiein, flae, anze, flag, tflie)
+      
+      ! --- metabolism in main river ---
+      do ior = 1, anze+1
+         call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior),&
+                                rau(ior), tiefe(ior), vmitt(ior), schwi(ior),       &
+                                tflie,                                              &
+                                kontroll, jjj)
+      enddo
+      
+      ! --- groyne-field ---
+      if (nbuhn(mstr) > 0) then
+         
          do ior = 1,anze+1
-            btempw(mstr,ior) = tempw(ior)
-            bh(mstr,ior) = tiefe(ior)
-            bDOSCF(mstr,ior) = DOSCF(ior)
-            bcoli(mstr,ior) = coli(ior)
+            ! metabolism
+            call coliform_bacteria(                                                            & 
+                        bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
+                        rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior),                        &
+                        tflie,                                                                 &
+                        kontroll, jjj)
             
-            tempw(ior) = zwtemp(ior)
-            DOSCF(ior) = zwDOSCF(ior)
-            tiefe(ior) = zwtief(ior)
-            coli(ior) = zwcoli(ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
-               diff1 = bcoli(mstr,ior)  - coli(ior)
-               diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
-            endif
+            ! mixing between main river and groyne-field 
+            diff1 = bcoli(mstr,ior)  - coli(ior)
+            diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               coli(ior)  = coli(ior)  + diff1 * hctau1(ior)
-               DOSCF(ior) = DOSCF(ior) + diff2 * hctau1(ior)
+               coli(ior)  = coli(ior)  + diff1 * (1.-exp(-hctau1(ior)))
+               DOSCF(ior) = DOSCF(ior) + diff2 * (1.-exp(-hctau1(ior)))
             endif
             
             if (hctau2(ior) > 0.0) then
-               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * hctau2(ior)
-               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * hctau2(ior)
+               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * (1.-exp(-hctau2(ior)))
+               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
             endif
          enddo
-         ilbuhn = 0
       endif
-      if (iwsim == 2 .or. iwsim == 5)goto 118
+      
+      ! Skip all other metabolism
+      goto 118 ! goto transport
       
       ! -----------------------------------------------------------------------
       ! Erosion
@@ -9330,7 +9464,7 @@ program qsim
          xdrpfe = sdrpfe(mstr,iior)/itime
          xabeow = sabeow(mstr,iior)/itime
          xabeor = sabeor(mstr,iior)/itime
-         xdalg = sdalg(mstr,iior)/itime
+         xdalg  = sdalg(mstr,iior)/itime
          xdalga = sdalga(mstr,iior)/itime
          xalmor = salmor(mstr,iior)/itime
          xblmor = sblmor(mstr,iior)/itime
@@ -9339,31 +9473,31 @@ program qsim
          xsoein = ssoein(mstr,iior)/itime
          xsalgo = ssalgo(mstr,iior)/itime
          xo2nit = xsusn*4.33
-         xalgo = s2algo(mstr,iior)/itime
+         xalgo  = s2algo(mstr,iior)/itime
          xalgao = s2algao(mstr,iior)/itime
-         xbsbt = sbsbt(mstr,iior)/itime
+         xbsbt  = sbsbt(mstr,iior)/itime
          xschlr = sschlr(mstr,iior)/itime
          xbsbbe = sbsbbe(mstr,iior)/itime
          xo2phy = so2phy(mstr,iior)/itime
          xro2dr = sro2dr(mstr,iior)/itime
          xzooro = szooro(mstr,iior)/itime
-         xpo2p = spo2p(mstr,iior)/itime
-         xpo2r = spo2r(mstr,iior)/itime
-         xir = sir(mstr,iior)/itime
-         xrmue = srmue(mstr,iior)/itime
-         xrakr = srakr(mstr,iior)/itime
-         xrbar = srbar(mstr,iior)/itime
+         xpo2p  = spo2p(mstr,iior)/itime
+         xpo2r  = spo2r(mstr,iior)/itime
+         xir    = sir(mstr,iior)/itime
+         xrmue  = srmue(mstr,iior)/itime
+         xrakr  = srakr(mstr,iior)/itime
+         xrbar  = srbar(mstr,iior)/itime
          xffood = sffood(mstr,iior)/itime
-         xfik = sfik(mstr,iior)/it_hy(mstr,iior)
-         xfig = sfig(mstr,iior)/itime
-         xfib = -1.
+         xfik   = sfik(mstr,iior)/it_hy(mstr,iior)
+         xfig   = sfig(mstr,iior)/itime
+         xfib   = -1.
          xnaehr = snaehr(mstr,iior)/it_hy(mstr,iior)
          xakmua = sakmua(mstr,iior)/itime
          xagmua = sagmua(mstr,iior)/itime
          xabmua = sabmua(mstr,iior)/itime
-         xfhek = sfheka(mstr,iior)/itime
-         xfheg = sfhega(mstr,iior)/itime
-         xfheb = sfheba(mstr,iior)/itime
+         xfhek  = sfheka(mstr,iior)/itime
+         xfheg  = sfhega(mstr,iior)/itime
+         xfheb  = sfheba(mstr,iior)/itime
          xakrau = sakrau(mstr,iior)/itime
          xagrea = sagrea(mstr,iior)/itime
          xabrea = sabrea(mstr,iior)/itime
@@ -9384,32 +9518,31 @@ program qsim
          xJO2 = sJO2(mstr,iior)/itime
          xJSi = sJSi(mstr,iior)/itime
          
-         xalgdr = 0.0
-         xalgzo = 0.0
-         xdalg  = 0.0
-         xdalga = 0.0
-         xalmor = 0.0
-         xsedal = 0.0
-         xalgco = 0.0
-         xakigr = 0.0
-         xCHNFi = -1.
-         xCHNF  = -1.
-         
          if (iwsim /= 4 .and. iwsim /= 2) then
-            algae_biomass = xaki+xagr+xabl
+            algae_biomass = xaki + xagr + xabl
             if (algae_biomass > 0.0) then
                xalgdr = xalgdr * (1./tflie) / algae_biomass
                xalgzo = xalgzo * (1./tflie) / algae_biomass
                xdalg  = xdalg  * (1./tflie) / algae_biomass
-               if (xdalg < 0.00001) xdalg = 0.0
+               if (xdalg  < 0.00001) xdalg = 0.0
                xdalga = xdalga * (1./tflie) / algae_biomass
-               if (xdalga < 0.00001)xdalga = 0.0
+               if (xdalga < 0.00001) xdalga = 0.0
                xalmor = xalmor * (1./tflie) / algae_biomass
-               if (xalmor < 0.00001)xalmor = 0.0
+               if (xalmor < 0.00001) xalmor = 0.0
                xsedal = xsedal * (1./tflie) / algae_biomass
                xalgco = xalgco * (1./tflie) / algae_biomass
                xakigr = xagr*Cagr + xaki*Caki + xabl*Cabl
+            else
+               xalgdr = 0.0
+               xalgzo = 0.0
+               xdalg  = 0.0
+               xdalga = 0.0
+               xalmor = 0.0
+               xsedal = 0.0
+               xalgco = 0.0
+               xakigr = 0.0
             endif
+            
             cbsbab = xbsb5 - xaki*Caki*bsbki + xabl*Cabl*bsbbl + xagr*Cagr*bsbgr + (xzooind*GROT/1000.)*bsbzoo
             
             !     Berechnung der Abbaubarkeit
@@ -9421,7 +9554,21 @@ program qsim
                xCHNFi = xCHNF*1.e6/(xBVHNF*0.22)
                ! xCHNF in æg/l
                xCHNF = xCHNF*1000.
+            else
+               xCHNFi = -1.
+               xCHNF  = -1.
             endif
+         else
+            xalgdr = 0.0
+            xalgzo = 0.0
+            xdalg  = 0.0
+            xdalga = 0.0
+            xalmor = 0.0
+            xsedal = 0.0
+            xalgco = 0.0
+            xakigr = 0.0
+            xCHNFi = -1.
+            xCHNF  = -1.
          endif
          
          ! Buhnenfelder

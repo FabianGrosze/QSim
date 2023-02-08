@@ -30,9 +30,14 @@
 !! @date 12.08.2007
 subroutine runge_kutta(yk,xk,h,n,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,    &
                        up_N2i,abr,jcyano,ifix)
+
+   implicit none
    
-   real     :: k1,k2,k3,k4
-   
+   integer :: n, j_intern, jcyano, ifix
+   real    :: k1,k2,k3,k4
+   real    :: yk, yk0, xk, up_n2i, up_ci
+   real    :: upmxi, tflie, qmxi, qmni, h
+   real    :: halbi, cnaehr, abr
    
    j_intern = 1
    up_N2i = 0.0

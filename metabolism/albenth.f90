@@ -34,13 +34,26 @@ subroutine albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP,albewg,alberg,el
                    aggmax,agksn,agksp,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2,   &
                    vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr,                               &
                    kontroll,jjj)
+                   
+   implicit none
    
-   integer                   :: anze
-   real                      :: LNQ, kx, Igrenz, KxI
-   real, dimension(1000)     :: tempw, vno3, vnh4, gelp, albewg, alberg, vmitt, tiefe, elen, si, albewk, alberk
-   real, dimension(1000)     :: abegm2, abekm2, vabfl, flae, extk, schwi, cmatgr, cmatki
-   logical                   :: kontroll !< debugging
-   integer                   :: jjj      !< debugging
+   integer               :: mstr, ior, ilang, anze
+   real                  :: w, zperi, zperii, x, vlim
+   real                  :: vkoff2, vkoff1, veloci, topt, tmax
+   real                  :: tflie, saetbk, saetbg, roperi, respg
+   real                  :: obfli, ftchlc, fta, ftak, ftag
+   real                  :: frespl, fnk, fnk3, fnk2, fnk1
+   real                  :: fng, fng2, fng1, flicht, fik
+   real                  :: fig, chlck, chlcg, caki, cagr
+   real                  :: b2, b1, algip1, akkssi, akksp
+   real                  :: akksn, akgrow, akgmax, akchl, agksp
+   real                  :: agksn, aggrow, aggmax, agchl, abkre
+   real                  :: abgre, abeki, abekit, abegr, abegrt
+   real                  :: LNQ, kx, Igrenz, KxI
+   real, dimension(1000) :: tempw, vno3, vnh4, gelp, albewg, alberg, vmitt, tiefe, elen, si, albewk, alberk
+   real, dimension(1000) :: abegm2, abekm2, vabfl, flae, extk, schwi, cmatgr, cmatki
+   logical               :: kontroll !< debugging
+   integer               :: jjj      !< debugging
    
    if (ilang == 0) then
    else

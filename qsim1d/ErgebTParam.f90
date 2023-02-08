@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Writes `ErgebTParam.xml`
+!> Write `ErgebTParam.xml`
 subroutine ErgebTParam(cpfad1)
 
    implicit none

@@ -146,7 +146,7 @@ subroutine stoffumsatz()
                
                !------------------------------------------------------------------------ coliform bacteria
                if (iColi == 1) then
-                  call coliform_huelle(i)
+                  call coliform_bacteria_wrapper_3d(i)
                else
                   planktonic_variable_p(61+(i-1)*number_plankt_vari) = 0.0
                endif
