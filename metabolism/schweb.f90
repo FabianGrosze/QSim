@@ -57,7 +57,9 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
    real, dimension(ialloc2)             :: ssdr, drfaek, drfaeg, drfaes, fssgr, sedss, vkigr, antbl, akbcm, agbcm, abbcm
    real, dimension(azStrs,ialloc2)      :: sedSS_MQ
    real, dimension(azStrs,ialloc2)      :: tausc
-   integer, dimension(azStrs) :: ieinLs
+   integer, dimension(azStrs)           :: ieinLs
+   
+   external :: schweb_kern
    
    iein = 1
    

@@ -32,12 +32,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
                    ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max     &
                    ,ianze_max,mtracer,iwsim,uhrz)
    
-   ! Lösungsverfahren RCIP nach: F. Xiao et al., Constructing oscillation preventing
-   !                             scheme for advection equation by rational function.
-   !                             Computer Physics Communications 93, 1-12 (1996)
-   !                             
-   !                             Lax_Wendroff: High Resolution Shock-Capturing Numerical Methods
-   !                             S. 100, Formel (6.20)
+             
    
    use allodim
    implicit none
@@ -60,6 +55,8 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    real, allocatable, dimension(:,:,:)    :: Uvertt_1
    real, allocatable, dimension(:,:,:)    :: CU
    real, allocatable, dimension(:,:,:,:)  :: CUz
+   
+   external :: basispoint, cip, lax_wendroff, quickest, crank_nicolson, maccorm
    
    save CUz, vmittt_1, Uvertt_1, isgn, m, CUx, xpoint, CU
    

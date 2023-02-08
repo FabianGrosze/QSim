@@ -42,6 +42,8 @@ subroutine sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,  &
    double precision            :: sedoc,ws
    real,dimension(azStrs,1000) :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
    
+   external                    :: sedimentation
+   
    do ised = 1,3
       
       xtflie = 1.

@@ -101,6 +101,9 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    real, dimension(azStrs,1000)     :: sedAlg_MQ, agmor_1
    real, dimension(azStrs,50,1000)  :: hchlkz, hchlgz, hchlbz, hCChlgz, hQ_NGz
    real, dimension(azStrs,1000)     :: tausc
+   
+   external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
+   external :: print_clipping, qerror
    save Cchlaz, agrzt
    
    ispek = 0

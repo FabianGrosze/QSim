@@ -118,8 +118,12 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    real, dimension(azStrs,1000)    :: sedAlg_MQ, extkS, akmor_1, agmor_1, abmor_1
    real, dimension(azStrs,50,1000) :: hchlkz, hchlgz, hchlbz, hQ_NKz, hQ_NGz, hQ_NBz, hCChlkz, hCChlbz, hCChlgz
    real, dimension(azstrs,1000)    :: tausc
+   
+   external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
+   external :: print_clipping
+   
    save Cchlaz, hcakbcm, hcabbcm, hcagbcm, hcsvhemk, hcsvhemg, hcsvhemb, hcChla1, hcvkigr1, hcantbl1, hcchla1z, xmuet, akizt
-   ! TODO FG: Added the following variables here; otherwise debug run for Mittelelbe fails
+   ! FG: Added the following variables here; otherwise debug run for Mittelelbe fails
    save hcakmor_11, hcagmor_11, hcabmor_11, hcQ_PK, hcQ_NK, hcQ_SK, hcQ_PG, hcQ_NG, hcQ_PB, hcQ_NB
    save hcCChlkz, hcCChlbz, hcCChlgz, hcQ_NKz, hcQ_NGz, hcQ_NBz
    

@@ -28,8 +28,8 @@
 !> Contains settings as defined in EreigG.txt
 !! @date 20.06.2022
 module module_model_settings
+   
    implicit none
-   save
    
    character(len=255), protected  :: cpfad       !< QSim directory
    character(len=255), protected  :: cpfad1      !< Hydrax directory
@@ -72,12 +72,12 @@ contains
    subroutine get_paths(linux)
       logical, intent(in)  :: linux    !< Should paths adapt to linux?
       
-      character(len=1)     :: sep 
-      character(2)         :: bckslsh = '\\'
-      
+      character(1) :: sep 
+      character(2) :: bckslsh = '\\'
+            
       ! read program arguments
-      call GETARG(1, cpfad)
-      call GETARG(2, cpfad1)
+      call get_command_argument(1, cpfad)
+      call get_command_argument(2, cpfad1)
       if (cpfad1 == ' ') cpfad1 = cpfad
       
       
@@ -103,6 +103,8 @@ contains
       character(len=275)   :: pfadstring
       character(len=2)     :: cKenn_vers1
       integer              :: open_error, read_error
+      
+      external :: qerror
       
       
       pfadstring = trim(adjustl(cpfad)) // 'EREIGG.txt'

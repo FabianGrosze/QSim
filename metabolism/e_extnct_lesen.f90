@@ -45,6 +45,8 @@ subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
    integer              :: ilamda, i
    real, dimension(40)  :: eta, aw, ack, acg, acb, ah, as, al
    
+   external :: qerror
+   
    ! Einlesen der e_extnct.dat
    ! wird wieder aktiviert wenn Datei in Gerris erzeugt wird
    ! open(unit=101, DEFAULTFILE=cpfad, file='e_extnct.dat')

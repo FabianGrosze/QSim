@@ -49,6 +49,8 @@ subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,po
    real, dimension(azStrs,1000) :: hdKorn
    real, dimension(1000)        :: Tiefe, vmitt,rau
    
+   external                     :: sedadv
+   
    
    raun = 1./rau(ior)
    g = 9.81

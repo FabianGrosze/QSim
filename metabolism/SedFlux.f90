@@ -98,6 +98,9 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
    real, dimension(:,:), allocatable, save :: sumPOCsed, sumPONsed, sumPOPsed, sumsdSS_MQ, sumsdAlg_MQ, sumdw2, xalphals, JPOC_neu
    real, dimension(:,:), allocatable, save :: JPON_neu, JPOP_neu, bsumPOCsed, bsumPONsed, bsumPOPsed, bsumsdSS_MQ
    real, dimension(:,:), allocatable, save :: bsumsdAlg_MQ, bsumdw2, bxalphals, bJPOC_neu, bJPON_neu, bJPOP_neu,POCvert1,POCvert2
+   
+   external :: sed_diffk, lin_sys
+   
    save anzZschritt, izaehl_Str
    
    if (.not.allocated(sumPOCsed))   allocate(sumPOCsed(azStrs,1000))

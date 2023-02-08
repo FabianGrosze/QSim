@@ -47,6 +47,8 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
    real, dimension(azStrs,50,1000)        :: hCChlbz, hCChlgz
    real, dimension(50)                    :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, dzMasse
    
+   external                               :: lin_interpolation
+   
    
    do azstr = 1,azstrs  ! Strangschleife
       mstr = mstra(azStr)

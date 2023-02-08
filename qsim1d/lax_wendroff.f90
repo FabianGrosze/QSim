@@ -1,6 +1,5 @@
 subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itime,isgn,mstr,iwahld,itags,monats,Uhrz)
-! Lax_Wendroff: High Resolution Shock-Capturing Numerical Methods
-!               S. 100, Formel (6.20)   
+   
    implicit none
    
    integer                      :: n, nkz, mstr, monats, ktrans

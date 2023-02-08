@@ -151,6 +151,8 @@ subroutine temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze,etemp
    character(1000)                 :: message
    
    real                            :: density_1d
+   external                        :: dichte, einleiter_misch, temperw_quer, temperw_kern, qerror
+   
    save hctemp1,hctemp1z
    
    ! Konstanten
@@ -392,6 +394,9 @@ subroutine temperw_quer(xnkzs, xwtyp, xschwi, xextk, xhWS, xtempl, xro, xwge,  &
    real, dimension(50)   :: xtempwz, xdtemp
    logical, intent(in)   :: kontroll  !< debugging
    integer, intent(in)   :: jjj       !< debugging
+   
+   external              :: temperw_kern
+   
    tempwt = 0.0
    
    ! das Abarbeiten der einzelnen Schichten erfolgt von

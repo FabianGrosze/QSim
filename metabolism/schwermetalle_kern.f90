@@ -52,6 +52,8 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    
    logical  ,parameter  :: siebzehn = .TRUE. ! Formel 17 für Verteilungskoeffizienten aus Einleitungen
    
+   external :: sedimentbelastung, verteilungskoeff
+   
    ! Berechnung der Verteilungskoeffizienten
    ! VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi
    ! VTKoeffAs, VTKoeffPb, VTKoeffCr, VTKoeffFe

@@ -45,6 +45,8 @@ subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
    real, dimension(azStrs,50,2)    :: CChlkzt, CChlbzt, CChlgzt
    real, dimension(50)             :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, zMasse
    
+   external                        :: lin_interpolation
+   
    ! Ermittlung der Tiefe des alten Gitters
    gstiefe_alt = (j_alt-1)*dH2D
    ! Ermittlung der Tiefe des neuen Gitters

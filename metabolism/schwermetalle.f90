@@ -79,6 +79,8 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
    logical, intent(in)                 :: kontroll !< debugging
    integer, intent(in)                 :: jjj      !< debugging
    
+   external :: sedimentbelastung, verteilungskoeff, schwermetalle_kern
+   
    
    iein = 1
    if (iwied == 0) then

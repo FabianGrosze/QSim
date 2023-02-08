@@ -36,6 +36,7 @@ program qsim
    character       :: ckenn,cpoint
    character(2)    :: chcon,ckenn_vers,ckenn_vers1
    character(7)    :: cmin,cmax
+   character(8)    :: versionstext, dummy
    character(40)   :: erename, modname
    character(201)  :: ctext
    character(275)  :: pfadstring
@@ -47,8 +48,7 @@ program qsim
    integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
    integer         :: mrb, iseg, mtracer, itags, monats
    integer         :: jahrs, ij, lait1, laid1, laim1
-   integer         :: mpf, ms, md, mc, mb
-   integer         :: mu, mwe, mv, mz, ma
+   integer         :: mpf, ms, md, mc, mb,  mu, mwe, mv, mz, ma
    integer         :: me, ndr, iv, j, ksta
    integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
    integer         :: itags_schr, istr, nstr, istrs, ifhstr
@@ -457,10 +457,15 @@ program qsim
    real, dimension(:,:,:), allocatable     :: tzt, o2zt, nh4zt, no2zt, no3zt, pzt, gsizt, akizt, agrzt, ablzt
    real, dimension(:,:,:), allocatable     :: chlazt, chlkzt, chlgzt, chlbzt, gespzt, gesnzt, q_nkzt, q_nbzt, q_ngzt
    real, dimension(:,:,:), allocatable     :: cchlkzt, cchlbzt, cchlgzt
-   character (len = 8)                     :: versionstext, dummy
-   
-   external :: algaesbl, algaesgr, algaeski, algae_start
-   external :: anztag
+      
+   external :: algaesbl, algaesgr, algaeski, algae_start, ini_algae
+   external :: orgc_start, naehr_start, wehrles, wettles, wehr
+   external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
+   external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
+   external :: sys_z_gitter, strahlg, temperl, sedflux, konsum, dreissen
+   external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d, coliform_bacteria_inflow_1d
+   external :: schweb, erosion, schwermetalle, transport, sasu, nitrogen_inflow_1d
+   external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
    linux = .false.

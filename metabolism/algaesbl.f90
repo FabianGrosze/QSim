@@ -94,6 +94,10 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    real, dimension(azStrs,1000)     :: sedAlg_MQ, abmor_1
    real, dimension(azStrs,50,1000)  :: hchlbz, hQ_Nbz, hCChlbz
    real, dimension(azstrs,1000)     :: tausc
+   
+   external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
+   external :: print_clipping
+   
    save Cchlaz, ablzt
    
    iein = 1

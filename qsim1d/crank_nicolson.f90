@@ -14,6 +14,8 @@ subroutine crank_nicolson(u,elen,flag,dl,deltat,anze,temp0,icranickoeff,ithomas,
    real, dimension(1000)              :: r1, r2, r3, dl, elen, U
    double precision, dimension(1000)  :: a,b,c,d
    
+   external :: cra_nickoeff , thomas, trimat
+   
    
    deltat_z = deltat
    deltat = deltat/isub_dtx

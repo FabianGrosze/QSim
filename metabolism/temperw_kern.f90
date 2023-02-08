@@ -50,6 +50,9 @@ subroutine temperw_kern(nkz,xnkzs,xwtyp,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
    logical, intent(in)             :: kontroll  !< debugging
    integer, intent(in)             :: jjj       !< debugging
    character(1000)                 :: message
+   
+   external                        :: qerror
+   
    save  WBn, WLn1, WLn2, WRSn, WRSn1, WRSn2
    
    ! Liste der neuen Übergabeparameter

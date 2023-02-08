@@ -89,6 +89,8 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    real, parameter              :: ZellVBl = 1000.
    logical, parameter           :: isTGZoo = .false.
    
+   external :: print_clipping
+   
    save hczoo1, hcTGZoo1
    
    iein = 1

@@ -47,6 +47,8 @@ subroutine sys_gitterTrans(mstr, anze, nkzs, nkzmax, dH2D, tempwz, vo2z, vnh4z,&
    real, dimension(azStrs,50,1000) :: hCChlkz, hCChlbz, hCChlgz
    real, dimension(50)             :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, zMasse
    
+   external                        :: lin_interpolation
+   
    do ior = 1,anze + 1   ! Schleife über die longitudinalen Gitterpunkte
       if (i_point == 0) then
          j_alt = nkzs(ior)

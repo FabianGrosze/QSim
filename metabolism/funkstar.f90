@@ -106,6 +106,8 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    logical                                :: is_set_wert1, is_set_wert2
    real, parameter                        :: epsilon = 1.e-8
    
+   external :: qerror, verteilungskoeff
+   
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
    save R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
    save VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U

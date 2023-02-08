@@ -86,6 +86,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    real, dimension(:,:), allocatable      :: hkmhyd, hWSP, hrhyda, hhbu, hflbu, hbsobu, hblabu, hWFlbu, hvmbu
    character(1000)                        :: message
    
+   external                               :: qerror
+   
    if (.not.allocated(iflags)) allocate(iflags(azStrs,1000))
    if (.not.allocated(iBliak)) allocate(iBliak(azStrs,1000))
    if (.not.allocated(iBreak)) allocate(iBreak(azStrs,1000))

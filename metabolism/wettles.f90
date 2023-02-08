@@ -51,6 +51,9 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
    real, dimension(:,:,:), allocatable   :: wertw
    logical                               :: is_set_wert1, is_set_wert2
    double precision                      :: R_NRS2, R_NRS1, R_NRS
+   
+   external                              :: qerror, set_cloud_reflectance
+   
    save itagw, monatw, jahrw, uhrzw, wertw, iwetts, R_NRS2, R_NRS1, R_NRS, IWSta, mWetts
    
    ! Parameter
