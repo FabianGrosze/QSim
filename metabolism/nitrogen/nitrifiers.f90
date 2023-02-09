@@ -216,7 +216,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    csedn  = vx0_s * 0.69
    ceq    = csedn * qsgr
    sednit = max(0.0, (csedn - ceq ) * oc)
-   vx0t  = vx0t- sednit
+   vx0t  = vx0t - sednit
    
    ! sedimentierte Nitrosomonasbiomasse [µg/l] (Ausgabe)
    sedx0_s = sednit * 1000.
