@@ -154,11 +154,11 @@ subroutine stoffumsatz()
                   planktonic_variable_p(61+(i-1)*number_plankt_vari) = 0.0
                endif
                
-               ! erosion
+               !------------------------------------------------------------------------ erosion of suspended matter
                if (ieros == 1)call erosion_huelle(i)
                
-               ! heavy metals
-               ! if (iSchwer == 1)call schwermetalle_huelle(i)
+               !------------------------------------------------------------------------ heavy metals
+               if (iSchwer == 1)call schwermetalle_huelle(i)
                
             end if ! .not. nur_temp
          end if ! Knoten nass

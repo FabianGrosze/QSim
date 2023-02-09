@@ -176,7 +176,7 @@ save: taz store
 
 taz:
 	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/*.mk
+	tar cvfz $(FN) *.f90 *.rc *.h  Makefile* ../metabolism/*.f90 ../metabolism/*.mk
 
 store:
 	cp $(FN) $(MY_ARC)
