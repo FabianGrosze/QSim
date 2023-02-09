@@ -5456,6 +5456,11 @@ program qsim
       cmatgr(:) = 0.0
       cmatki(:) = 0.0
       
+      babewg(:,:) = 0.0
+      baberg(:,:) = 0.0
+      babewk(:,:) = 0.0
+      baberk(:,:) = 0.0
+      
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]
       ! -----------------------------------------------------------------------
@@ -5600,21 +5605,6 @@ program qsim
       1514 continue
       if (vnh4(1) < 0.0) goto 1515
       
-      if (nbuhn(mstr) > 0) then
-         do ior = 1,anze+1
-            babewg(mstr,ior) = albewg(ior)
-            baberg(mstr,ior) = alberg(ior)
-            babewk(mstr,ior) = albewk(ior)
-            baberk(mstr,ior) = alberk(ior)
-      
-            pfl(ior) = 0.0
-            albewg(ior) = 0.0
-            alberg(ior) = 0.0
-            albewk(ior) = 0.0
-            alberk(ior) = 0.0
-         enddo
-      endif
-      
       ! inflow from point and diffuse sources
       call nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
                               Q_NG, Q_NB, hFluN3, mstr, eNH4L, eNO2L, eNO3L,   &
@@ -5689,17 +5679,8 @@ program qsim
                           bh(mstr,ior), tflie,                                                                   &
                           bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                     &
                           bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                     &
-                          bFluN3(mstr,ior), bdc_denw(ior),                                                        &
+                          bFluN3(mstr,ior), bdc_denw(ior),                                                       &
                           kontroll, jjj)
-            
-            ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
-            ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
-            ! auf Identität getestet werden kann
-            ! Nach einem Erfolgreichen Test sollten diese Fehler hier ausgebessert werden
-            albewg(ior) = zwabwg(ior)
-            alberg(ior) = zwabrg(ior)
-            albewk(ior) = zwabwk(ior)
-            alberk(ior) = zwabrk(ior)
             
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
