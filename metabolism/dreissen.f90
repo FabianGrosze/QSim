@@ -466,17 +466,17 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          
          nrla1e = nrla1a + laid1
          
+         drrt  = 0.
+         
          drrt1 = 0.0
          drrt3 = 30.
          drrt2 = 0.5 * drrt3
          
-         if (nrs < nrla1a .or. nrs >= nrla1e) then
-            drrt  = 0.
-         else
-            drrt11 = 0.0
-            drrt33 = laid1 - drrt3
-            drrt22 = 0.5 * drrt33
-            
+         drrt11 = 0.0
+         drrt33 = laid1 - drrt3
+         drrt22 = 0.5 * drrt33
+         
+         if (nrs >= nrla1a .and. nrs < nrla1e) then
             ! Annahme Gewichtverlust der Adulten durch Reproduktion
             if (drrt > drrt3) then
                spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
