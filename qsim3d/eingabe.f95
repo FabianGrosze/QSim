@@ -141,6 +141,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
+   call aparam_parallel()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
    222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)
@@ -259,8 +260,8 @@ subroutine ereigg_modell()
    ! aktiviert werden können.
    if (iSchwer == 1) then
       print*, 'You are trying to run a simulation with heavy metals.'
-      print*, 'This is not supported by this version of QSim3D'
-      call qerror('Heavy metals not supported by this version of QSim3D')
+      !print*, 'This is not supported by this version of QSim3D'
+      !call qerror('Heavy metals not supported by this version of QSim3D')
    endif
    
    print*,'Zeile 5 von EREIGG.txt:'
