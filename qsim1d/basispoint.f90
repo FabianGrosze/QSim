@@ -3,8 +3,7 @@ subroutine basisPoint(anze,flag,deltat,vmitt,Uvert,Uvertt_1,vmittt_1,elen,xPoint
                       ,isgn,vx_Cr,nkztot_max,ianze_max,uhrz)
                       
    use allodim
-   implicit none
-   
+   implicit none           
    
    integer                        :: nkz, nkztot_max, mstr, monats, ktrans
    integer                        :: j, jpoin1, i, izeits, iwied

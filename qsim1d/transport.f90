@@ -55,7 +55,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    integer, dimension(azStrs)          :: iflRi, imac, isub_dt, isub_dt_Mac
    integer, dimension(ialloc2)         :: iore, flag, nkzs
    real                                :: mue, lgh
-   real, dimension(ialloc2)            :: x, elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
+   real, dimension(ialloc2)            :: elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
    real, dimension(ialloc2)            :: gelP, dl, obsb, ocsb, vbsb, vcsb, CHNF, BVHNF, CM, BAC, zooind, chla
    real, dimension(ialloc2)            :: aki, agr, abl, SKmor, chlaki, chlagr, chlabl, vkigr, antbl, abrzo1
    real, dimension(ialloc2)            :: ssalg, ss, svhemk, svhemg, svhemb, akbcm, agbcm, stind, abbcm, fbsgr

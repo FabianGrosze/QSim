@@ -33,11 +33,11 @@ subroutine temperw_kern(nkz,xnkzs,xwtyp,xschwi,xextk,xhWS,xtempl,xro,xwge,xcloud
                         ,kontroll ,jjj )
    implicit none
    integer                         :: nkz, itime, itimes, jiter, mSed, ilauf, iouter, iform_VerdR, xnkzs
-   real                            :: G, A, cls, stbk, tempw1, tempw2, PARSab, APARS, AntUV, expWUEB, dTWUEB
+   real                            :: G, A, cls, stbk, tempw1, tempw2, PARSab, APARS, AntUV
    real                            :: ATkor, sddw, sdtt, pdltt, fwind, fkWind, zW2, zWmess, WB, HR
    real                            :: VDW, WV, roh2o, WL, DT1D, DT2D, DT1, btiefe, tflie, hconS, sedPV
    real                            :: speWKW, sedHW, rohS, WUEBK, SPEWKS, PSREFS, dTW, TH2O
-   real                            :: WSTRWS, dTsed, SchwiSr, SCHwia, dTW2D, dTW2Du, DT1D_it, dtemp1
+   real                            :: WSTRWS, dTsed, SCHwia, dTW2D, DT1D_it, dtemp1
    real                            :: tempmt, tempmv, tempwt, WBn, WLn1, WLn2, hconP, hconL1, hconL2, WBn_1, WLn1_1
    real                            :: WLn2_1, dH2D, xDH2D, cv_t, P, gamma_t, cp_air, v, xdtemp_mit
    real                            :: AntL1, AntL2, extkL1, extkL2, slope_t, Qn, b1, a3, b3, dtempS_mit, WSTRWSmax

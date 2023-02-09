@@ -31,12 +31,8 @@
 subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sumdet,itime,izeits,mstr,iwied         &
                    ,iwahlD,nkz,nkzs,tflie,iFlRi,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max     &
                    ,ianze_max,mtracer,iwsim,uhrz)
-   
-             
-   
    use allodim
    implicit none
-   
    
    integer                                :: nkztot_max, mtracer, mstr, monats, ktrans
    integer                                :: kktrans, jpoin1, izeits, iwsim, iwied
@@ -49,7 +45,7 @@ subroutine AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn,deltat,sum
    integer, dimension(azStrs)             :: iFlRi, imac
    integer, dimension(1000)               :: flag, nkzs
    integer, dimension(1000,50)            :: m, isgn
-   real, dimension(1000)                  :: vmitt, elen, dl, U,CUx, U_lin
+   real, dimension(1000)                  :: vmitt, elen, dl, U,CUx
    real, dimension(1000,50)               :: xpoint
    real, dimension(50,1000)               :: vmittt_1,Uvert
    real, allocatable, dimension(:,:,:)    :: Uvertt_1

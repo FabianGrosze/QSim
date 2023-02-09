@@ -39,11 +39,11 @@ subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
    integer                         :: itags, ior
    real                            :: uhrz, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
    real                            :: dh2d
-   integer                         :: nkzs_neu, nkz_alt,mstr
+   integer                         :: nkzs_neu, mstr
    real, dimension(azStrs,50,2)    :: tzt, o2zt, nh4zt, no2zt, no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt
    real, dimension(azStrs,50,2)    :: chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt
    real, dimension(azStrs,50,2)    :: CChlkzt, CChlbzt, CChlgzt
-   real, dimension(50)             :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, zMasse
+   real, dimension(50)             :: y_var,  hcTiefe_neu, tiefe_neu, y_var_neu
    
    external                        :: lin_interpolation
    

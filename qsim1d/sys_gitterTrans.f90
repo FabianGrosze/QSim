@@ -40,12 +40,12 @@ subroutine sys_gitterTrans(mstr, anze, nkzs, nkzmax, dH2D, tempwz, vo2z, vnh4z,&
    integer                         :: j_alt, i_zaehlv, i_var, i_vars, i_point
    integer                         :: itags, ior
    real                            :: uhrz, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe, dh2d
-   integer                         :: anze, nkzs_neu, nkz_alt,mstr
+   integer                         :: anze, nkzs_neu, mstr
    integer,dimension(1000)         :: nkzs
-   real, dimension(50,1000)        :: tempwz, vo2z, vnh4z, vno2z, vno3z, gelPz, Siz, akiz, agrz, ablz, chlaz, Uvert, hc_array
+   real, dimension(50,1000)        :: tempwz, vo2z, vnh4z, vno2z, vno3z, gelPz, Siz, akiz, agrz, ablz, chlaz, Uvert
    real, dimension(azStrs,50,1000) :: hchlkz, hchlgz, hchlbz, hgesPz, hgesNz, hQ_NKz, hQ_NBz, hQ_NGz
    real, dimension(azStrs,50,1000) :: hCChlkz, hCChlbz, hCChlgz
-   real, dimension(50)             :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, zMasse
+   real, dimension(50)             :: y_var, hcTiefe_neu, tiefe_neu, y_var_neu
    
    external                        :: lin_interpolation
    

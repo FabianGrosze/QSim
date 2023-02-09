@@ -48,9 +48,9 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
    use allodim
    implicit none
    
-   integer                             :: azStr, anze,ieros,ilang,iformVert,ianze_max,mstr,iz
+   integer                             :: azStr, anze,ieros,ilang,iformVert,ianze_max,mstr
    integer                             :: iein,iwied,ior,m,ihcq,ior_flag,ji,j
-   real                                :: eross,hcq,hcQE,hcss,hcph
+   real                                :: hcq,hcQE,hcss,hcph
    integer, dimension(ialloc2)         :: flag, jiein
    real                                :: hcgsCad,hcglCad,hcgsZn,hcglZn,hcgsCu,hcglCu,hcgsNi,hcglNi,hcgsAs,hcglAs
    real                                :: hcgsPb,hcglPb,hcgsCr,hcglCr,hcgsFe,hcglFe,hcgsHg,hcglHg,hcgsMn,hcglMn,hcgsU,hcglU

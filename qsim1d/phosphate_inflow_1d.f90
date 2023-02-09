@@ -37,7 +37,7 @@ subroutine phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
    ! --- local variables ---
    integer             :: ieinL, ior, nkz, iein, j, ior_flag, m, ihcQ, ji
    integer             :: nkzs_alt, nkzs_neu
-   real                :: hcgelP, hcgesP, hcp10, hcQ
+   real                :: hcgelP, hcgesP, hcQ
    real                :: hcQE, hcgelpE, hcgespE, hcpl0E , hcpl0
    real, dimension(50) :: gelPz_neu, gesPz_neu, hcgelPz
    real, dimension(50) :: hcgelpEz, hcgespEz, hcgesPz

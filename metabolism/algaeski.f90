@@ -87,23 +87,21 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    real                            :: asmit, askie, alpha_chl, alamda, akres
    real                            :: akremi, akrema, akmor_1v, akmor_1t, akmor
    real                            :: akmomi, akmoma, akkssi, akksp, akksn
-   real                            :: akizt, akit, akis, akgrow, akgmax
+   real                            :: akit, akis, akgrow, akgmax
    real                            :: akgmaxtopt, akchl_max, akchl, akbcmt, ahmit
    real                            :: agmomi, acmit, acmitk, abr, abmomi
    real                            :: a3ki, a2ki, a1ki, akit_old
    character (len = 255)           :: cpfad
-   character (len = 275)           :: pfadstring
-   character (len = 2)             :: ckenn_vers1
    integer                         :: anze
    integer, dimension(1000)        :: flag, jiein, ischif, nkzs
    integer, dimension(azStrs)      :: ieinLs
    integer, dimension(azStrs,1000) :: it_h
-   real                            :: LNQ, ma, Icz,Ic0,Ic,Iprod, lamda0, IKk, IKke, kTemp_Ki, N_Cmax, Icmit
+   real                            :: LNQ, Icz, ic, lamda0, IKk, IKke, kTemp_Ki, N_Cmax
    real                            :: kTresp, Iref
    real, dimension(40)             :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
    real, dimension(50)             :: Pz, F5z, akgrwz, CChlaz, CChlazt,hcchla1z, akitz, chlakizt
-   real, dimension(50)             :: hcchlaz, Y, YY, hc_temp, xroh_Chlz, roh_Chlz, dmorChlkz, akresz
-   real, dimension(50)             :: hcCChlkz, hcCChlbz, hcCChlgz, dzMasse, Masse_neu, dzMasse0, xroh_Chl
+   real, dimension(50)             :: hcchlaz, Y, YY, hc_temp, xroh_Chlz, roh_Chlz, akresz
+   real, dimension(50)             :: hcCChlkz, hcCChlbz, hcCChlgz,  xroh_Chl
    real, dimension(50)             :: hcQ_NKz, hcQ_NGz, hcQ_NBz, Q_PKz, Q_NKz, Q_SKz
    real, dimension(100)            :: qeinl, echla, ess, eantbl, chlaL, qeinlL, evkigr, hemm
    real, dimension(1000)           :: tempw, chla, vno3, vnh4, gelp, si, ir, vco2, svhemk, svhemb, svhemg
@@ -122,7 +120,7 @@ subroutine algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP
    external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
    external :: print_clipping
    
-   save Cchlaz, hcakbcm, hcabbcm, hcagbcm, hcsvhemk, hcsvhemg, hcsvhemb, hcChla1, hcvkigr1, hcantbl1, hcchla1z, xmuet, akizt
+   save Cchlaz, hcakbcm, hcabbcm, hcagbcm, hcsvhemk, hcsvhemg, hcsvhemb, hcChla1, hcvkigr1, hcantbl1, hcchla1z, xmuet
    ! FG: Added the following variables here; otherwise debug run for Mittelelbe fails
    save hcakmor_11, hcagmor_11, hcabmor_11, hcQ_PK, hcQ_NK, hcQ_SK, hcQ_PG, hcQ_NG, hcQ_PB, hcQ_NB
    save hcCChlkz, hcCChlbz, hcCChlgz, hcQ_NKz, hcQ_NGz, hcQ_NBz

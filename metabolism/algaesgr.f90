@@ -72,21 +72,19 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    real                             :: dh2d, deltaz, dagr, cnaehr, chlagrt
    real                             :: ceq, cchl_stern, cchl0, caki, cagr
    real                             :: cabl, a, awmit, asmit, asgre
-   real                             :: alpha_chl, alamda, akremi, ahmit, agrzt
+   real                             :: alpha_chl, alamda, akremi, ahmit
    real                             :: agrt, agrs, agres, agremi, agmor
    real                             :: agmomi, agmoma, agksp, agksn, aggrow
    real                             :: aggmax, aggmaxtopt, agchl_max, agchl, agbcmt
    real                             :: acmit, acmitg, abr, a3gr, a2gr
-   real                             :: LNQ, Ihemm, Iprod, Icz, Ic, Ic0, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
-   real                             :: Icmit, kTresp, agrt_old
+   real                             :: LNQ, Icz, Ic, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
+   real                             :: kTresp, agrt_old
    logical                          :: kontroll
    character (len = 255)            :: cpfad
-   character (len = 275)            :: pfadstring
-   character (len = 2)              :: ckenn_Vers1
    integer, dimension(1000)         :: flag, jiein, ischif, nkzs
    real, dimension(40)              :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
    real, dimension(50)              :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
-   real, dimension(50)              :: Y, YY, hc_temp, Q_PGz, dmorChlgz, agresz, dzMasse, Masse_neu, dzMasse0
+   real, dimension(50)              :: Y, YY, hc_temp, Q_PGz, agresz
    real, dimension(50)              :: xroh_Chl
    real, dimension(100)             :: qeinl, evkigr, eantbl, echla, ess, hemm
    real, dimension(1000)            :: tempw, chla, ssalg, vno3, vnh4, gelp, vco2, chlaki, svhemg, dalggr
@@ -104,7 +102,8 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    
    external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
    external :: print_clipping, qerror
-   save Cchlaz, agrzt
+   
+   save Cchlaz
    
    ispek = 0
    iein = 1

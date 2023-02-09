@@ -12,7 +12,6 @@ subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, nkzs,ktrans,itim
    real,    dimension(1000)     :: DX, cour,U, U_neu, phi
    real,    dimension(1000)     :: vmitt
    real,    dimension(50,1000)  :: Uvert
-   real                         :: m1, m2
    save U_neu
    
    
