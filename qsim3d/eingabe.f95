@@ -260,8 +260,8 @@ subroutine ereigg_modell()
    ! aktiviert werden können.
    if (iSchwer == 1) then
       print*, 'You are trying to run a simulation with heavy metals.'
-      !print*, 'This is not supported by this version of QSim3D'
-      !call qerror('Heavy metals not supported by this version of QSim3D')
+      print*, 'This is not supported by this version of QSim3D'
+      call qerror('Heavy metals not supported by this version of QSim3D')
    endif
    
    print*,'Zeile 5 von EREIGG.txt:'
