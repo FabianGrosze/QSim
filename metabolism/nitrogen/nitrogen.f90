@@ -21,6 +21,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     kontroll, jjj)
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
+   
    implicit none
    
    ! --- dummy arguments ---
@@ -281,18 +282,20 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --------------------------------------------------------------------------
    ! nitrite (NO2)
    ! --------------------------------------------------------------------------
+   vNO2t = 0.
    if (vx02_s > 0.0) then
       vNO2t = vNO2_s  &
             + susn_s  & ! zu Nitrit oxidiertes Ammonium (Nitrosomonas)
             + PflN1_s & ! zu Nitrit oxidiertes Ammonium (Makrophyten)
             - susn2_s & ! zu Nitrat oxidiertes Nitrit (Nitrosomonas)
             - PflN2_s   ! zu Nitrat oxidiertes Nitrit (Makrophyten)
-   endif
-   
-   if (vno2t < 0.0) then
-      vno2t_old = vno2t
-      vno2t = (vno2_s / (vno2_s + abs( vno2t - vno2_s))) * vno2_s
-      call print_clipping("nitrogen", "vnh4t", vno2t_old, vno2t, "mgN/l")
+      
+      
+      if (vno2t < 0.0) then
+         vno2t_old = vno2t
+         vno2t = (vno2_s / (vno2_s + abs( vno2t - vno2_s))) * vno2_s
+         call print_clipping("nitrogen", "vnh4t", vno2t_old, vno2t, "mgN/l")
+      endif
    endif
    if (vNO2t < 0.0001) vNO2t = 0.0001
    
@@ -301,6 +304,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --------------------------------------------------------------------------
    DenWatz = bsbCt_s * (KMO_NO3 / (KMO_NO3 + vO2_s)) * (vNO3_s /(vNO3_s + KM_NO3))
    dNO3Den = 0.93 * DenWatz
+   
    
    if (vx02_s > 0.0) then
       vno3t = vno3_s                      &

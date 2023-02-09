@@ -238,10 +238,8 @@ program qsim
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
    real, dimension(ialloc2)                :: zwrbar, zwph, zwcsed_abb
-   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb
+   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb, zwnl0, zwpl0
    real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwcsed
-   real, dimension(ialloc2)                :: zwnl0, zwpl0
-   real, dimension(ialloc2)                :: zwabwg, zwabwk, zwabrg, zwabrk
    real, dimension(ialloc2)                :: zworgs, zwss, zwfssg, zwseds
    real, dimension(ialloc2)                :: zwtpki, zwtpgr, zwchlk, zwchlg, zwchlb
    real, dimension(ialloc2)                :: zwn4z, zwn3z, zwpz
