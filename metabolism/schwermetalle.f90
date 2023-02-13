@@ -205,7 +205,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
             call Verteilungskoeff( hcSS, hcph  &
                                   ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb   &
                                   ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U               &
-                                  ,iformVert, kontroll)
+                                  ,iformVert, kontroll,jjj,0)
             if (hcgsCadE < 0.0 .and. hcglCadE < 0.0) then
                hcgsCadE = hcgsCad
                hcglCadE = hcglCad
@@ -484,7 +484,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                               ,hgsCrt,hglCrt,hgsFet,hglFet                 &
                               ,hgsHgt,hglHgt,hgsMnt,hglMnt                 &
                               ,hgsUt,hglUt                                 &
-                              ,.true.,ior)
+                              ,.true.,ior,0)
    enddo     ! Ende Schleife longitudinale Gitterpunkte
    
 end subroutine schwermetalle

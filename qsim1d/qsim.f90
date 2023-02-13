@@ -233,7 +233,7 @@ program qsim
    real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwtsed, zwtemp, zwvm, zwtief,zwextk
    real, dimension(ialloc2)                :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk
    real, dimension(ialloc2)                :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr
-   real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
+   real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau, zwtau
    real, dimension(ialloc2)                :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
@@ -1012,7 +1012,7 @@ program qsim
    ! -------------------------------------------------------------------------
    if (iwsim == 4 .or. iwsim == 5)  goto 329
    if (iwsim == 2 .and. icoli == 0) goto 329
-   call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer)
+   call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer,0)
    
    ! --------------------------------------------------------------------------
    ! reading from e_extnct.dat
@@ -1155,10 +1155,14 @@ program qsim
                   call qerror(message)
                endif
             
-               read(ctext,*,iostat = open_error) aEros(mstr,mE), eEros(mstr,mE), tausc(mstr,mE),  &
+               read(ctext(2:len(ctext)),*,iostat = open_error) aEros(mstr,mE), eEros(mstr,mE), tausc(mstr,mE),  &
                                                  M_eros(mstr,mE), n_eros(mstr,mE), sedroh(mstr,mE)
-               if (open_error /= 0) call qerror("read error erosion parameters")
-               print*,ieros,mstr,mE,' E ModellG tau,M,n,roh = ',tausc(mstr,mE),M_eros(mstr,mE),n_eros(mstr,mE),sedroh(mstr,mE)
+               if (open_error /= 0)then
+                  print*,trim(ctext)
+                  print*,ieros,'mstr,mE=',mstr,mE,' E ModellG : aEros,eEros,tausc,M_eros,n_eros,sedroh = ',  &
+                  aEros(mstr,mE), eEros(mstr,mE), tausc(mstr,mE),M_eros(mstr,mE), n_eros(mstr,mE), sedroh(mstr,mE)
+                  call qerror("error reading erosion parameters from ModellG.txt")
+               endif
             
             case default
                call qerror("Unkown identifier in ModellG: " // ckenn)
@@ -6293,7 +6297,7 @@ program qsim
       if (ieros == 0)goto 1519
       
       call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
-                   ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &
+                   ,tflie,tiefe,rau,vmitt,htau2,anze,mstr,ilang,iwied     &
                    ,kontroll,0)
       
       if (nbuhn(mstr) == 0)goto 1519
@@ -6309,6 +6313,7 @@ program qsim
             zwsedb(ior) = sedalb(ior)
             zwSSeros(ior) = SSeros(ior)
             zwdsedH(mstr,ior) = dsedH(mstr,ior)
+            zwtau(ior) = htau2(mstr,ior)
             !tausc(mstr,ior) = btausc(mstr,ior) Sedimenteigenschaften unterscheiden sich nicht im Buhnenfeld
             tempw(ior) = btempw(mstr,ior)
             tiefe(ior) = bh(mstr,ior)
@@ -6338,6 +6343,7 @@ program qsim
             sedalb(ior) = zwsedb(ior)
             SSeros(ior) = zwSSeros(ior)
             dsedH(mstr,ior) = zwdsedH(mstr,ior)
+            htau2(mstr,ior) = zwtau(ior)
             ! btausc(mstr,ior) = tausc(mstr,ior)
             
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then

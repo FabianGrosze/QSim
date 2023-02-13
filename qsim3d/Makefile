@@ -188,10 +188,11 @@ clean:
 	rm -f ../metabolism/*.o ../metabolism/*/*.o ../metabolism/*.mod ../metabolism/*.a
 	rm -f $(SCHISM_HYDRO)/*.o $(SCHISM_CORE)/*.o
 
-FN=$(PV)_source_`date +%d%b%y`.taz 
+FN=qsim_source_`date +%d%b%y`.taz 
 
 save: taz store
 
+# QSim-Quelle immer komplett archivieren
 taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
 	tar cvfz ../$(FN)  ../qsim3d/README \

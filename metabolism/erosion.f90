@@ -28,6 +28,7 @@
 !> Bestimmung der Erosionsrate
 !! @author Volker Kirchesch Jens Wyrwa
 !! @date 01.11.2021
+
 subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,         &
                    tflie, tiefe, rau, vmitt, htau, anze, mstr, ilang, iwied,        &
                    kontroll, jjj)
@@ -47,7 +48,7 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,     
    real, dimension(azStrs,ialloc2)         :: dsedH
    
   
-   !print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2
+   print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2
    
    ! Sedimentparameter
    ! M_eros(mstr,:) = 7.5e-4      !! Eingebbar machen!     ###

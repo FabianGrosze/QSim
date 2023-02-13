@@ -36,7 +36,8 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV=qsim1d_$(QSim_version)_dev
+# PV=qsim1d_$(QSim_version)_dev
+PV='qsim1d_schwermetall22'
 
 #====================================================================
 
@@ -138,7 +139,7 @@ clean_release: clean usual
 
 clean_debug: clean debug
 
-all: usual save
+all: usual save exe
 
 HERE=`pwd -P`
 NOW=`date +"%-d%m%Y"`
@@ -163,20 +164,32 @@ qsim1d:	$(Q1)
 	$(FC) $(Q1) -L. -lmetabol -o $(PV)
 
 exe:
-	mv -pf ./$(PV) $(MY_BIN)/$(PV)
+	cp ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod *.a
 	rm -f ../metabolism/*.o ../metabolism/*/*.o
 
-FN=$(PV)_linux_source_`date +%d%b%y`.taz
+FN=qsim_linux_source_`date +%d%b%y`.taz
 
 save: taz store
 
+#taz:
+#	/bin/rm -f *_source_*.taz 
+#	tar cvfz $(FN) *.f90 Makefile* \
+#	../metabolism/*.f90 ../metabolism/../*.f90 ../metabolism/*.mk
+
+# QSim-Quelle immer komplett archivieren
 taz:
-	/bin/rm -f *_source_*.taz 
-	tar cvfz $(FN) *.f90 *.xml *.txt  Makefile* ../metabolism/*.f90 ../metabolism/*.mk
+	/bin/rm -f *_source_*.taz ../*_source_*.taz
+	tar cvfz ../$(FN)  ../qsim3d/README \
+	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
+	../qsim1d/*.f90  ../qsim1d/*.rc  \
+	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.mk \
+	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
+	../license.txt ../readme.md
+	cp ../$(FN) .
 
 store:
 	cp $(FN) $(MY_ARC)

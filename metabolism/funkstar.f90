@@ -373,7 +373,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (hcph < 0.0) hcph = 7.5
          call Verteilungskoeff(hcSS,hcph,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni                        &
                                ,VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe                                  &
-                               ,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U,iformVert, .false.)
+                               ,VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U,iformVert, .false.,0,0)
          if (gsZns(mstr,RBNR) > 0.0 .and. glZns(mstr,RBNR) <= 0.0) then
             glZns(mstr,RBNR) = gsZns(mstr,RBNR)/(1.+VTKoeff_Zn*hcSS/1000.)
          else if (gsZns(mstr,RBNR) <= 0.0 .and. glZns(mstr,RBNR) > 0.0) then
