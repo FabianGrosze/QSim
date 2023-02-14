@@ -89,23 +89,20 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    integer     :: anze, azStr
    
    ! auxiliary variables for frequently used calculations
-   ! (names based on variables that are part of each calculation)
-   real        :: lboem2_elen, bsohlm_elen
+   ! area of slope/embankment and area of river bed (m2)
+   real        :: area_slope, area_bed
    
    ! parameters
    ! TODO FG: Implementation of T dependence of respiration does not seem to make sense?
    real   , parameter :: zqz10     = 3.1       ! Q10 of T dependence of respiration
    real   , parameter :: ztmax     = 31.       ! T above which Dreissena has no additional respiration losses?
    real   , parameter :: ztopt     = 28.       ! optimal T for respiration?
-   ! real   , parameter :: do2krit   = 2.0       ! unused: critical oxygen concentration  (mg /L)
    real   , parameter :: pgr       = 1.0       ! Feeding preference for green algae
    real   , parameter :: pki       = 1.0       ! Feeding preference for diatoms
    real   , parameter :: pbl       = 0.5       ! Feeding preference for cyanobacteria (former value 0.2?)
-   ! real   , parameter :: pss       = 0.1       ! Unused: Feeding preference for suspended matter
    real   , parameter :: qres      = 0.29      ! active respiration rate (assimilation dependent) (1 / d)
    real   , parameter :: rres0     = 0.0015    ! basal respiration rate (1 / d)
    real   , parameter :: f_excrete = 0.064     ! excreted fraction of assimilated biomass
-   ! real   , parameter :: qfec      = 0.25      ! unused: Food fraction going into faeces production
    
    real   , parameter :: drCgeh    = 0.38      ! C:Biomass of Dreissena     (gC / g)
    real   , parameter :: Cagr      = 0.48      ! C:Biomass of green algae   (gC / g)
@@ -114,27 +111,29 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    real   , parameter :: fweib     = 0.5       ! fraction of female Dreissena in total population?
    real   , parameter :: fgesund   = 0.25      ! fraction of healthy Dreissena in total pop.?
    real   , parameter :: F_lim     = 0.01      ! C content at which Dreissena cease feeding
-   real   , parameter :: tdpla     = 22.       ! unclear
-   real   , parameter :: klmorg    = 8.26      ! unclear
-   real   , parameter :: flai      = 0.52      ! unclear
-   integer, parameter :: nndr      = 2         ! number of Dreissena cohorts?
+   real   , parameter :: klmorg    = 8.26      ! mortalilty of larvae over 22 days (mg) ?
+   real   , parameter :: tdpla     = 22.       ! scaling factor for mortailty rate (d)?
+   real   , parameter :: flai      = 0.52      ! fraction of weight loss attributed to egg production?
+   integer, parameter :: nndr      = 2         ! number of Dreissena cohorts (0th, 1st)
    
    save jahr_tst1, drrt, drft, stdpla, itime_hoch
+   
+   ! Some relevant information
+   ! zdrei  ... biomass on embankment (0th/1st cohort; g / m2)
+   ! zdreis ... biomass on river bed  (0th/1st cohort; g / m2)
+   ! gewdr  ... weight of a single Dreissena (mgC)
    
    if (ilang == 0) then
       dlarvn(anze+1) = dlarvn(anze)
       jahr_tst1 = jahrs
-      
       return
    endif
    
    FoptD = FoptDe
    if (FoptD == 0.0) FoptD = 1.2
    
+   ! mortailty rate of larvae (1 / d)
    klmor  = klmorg / tdpla
-   
-   ! natural mortality rate (1 / d)
-   dmorG = 0.0
    
    if (azStr == 1) then
       drrt = drrt + tflie
@@ -144,35 +143,26 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    
    do ior = 1,anze
       
-      ! calculate auxiliary variables
-      ! TODO FG: lboehm, bsohlm and elen are Hydrax-related
-      !          but exact meaning is unclear
-      lboem2_elen = 2. * lboem(ior) * elen(ior)
-      bsohlm_elen =     bsohlm(ior) * elen(ior)
+      ! calculate areas of slopes (hence, factor 2) and river bed
+      area_slope = 2. *  lboem(ior) * elen(ior)
+      area_bed   =      bsohlm(ior) * elen(ior)
       
       ! water volume
       vol = flae(ior) * elen(ior)
-      
-      do ndr = 1,nndr
-         zdrei(ior,ndr)  = max(0., zdrei(ior,ndr))
-         zdreis(ior,ndr) = max(0., zdreis(ior,ndr))
-         gewdr(ior,ndr)  = max(0., gewdr(ior,ndr))
-      enddo
       
       !Einfluss von Corophium auf die Ingest.- und Filtrierrate
       if (coroI(ior) > 0.0 .or. coroIs(ior) > 0.0) then
          fco  = max(0., min(1., 1. - (coroI(ior)  - 10000.) / 90000.))
          fcos = max(0., min(1., 1. - (coroIs(ior) - 10000.) / 90000.))
-         
-         hconc1 = lboem2_elen * coroI(ior)
-         hconc2 = bsohlm_elen * coroIs(ior)
+         hconc1 = area_slope * coroI(ior)
+         hconc2 = area_bed   * coroIs(ior)
          fcom   = (hconc1 * fco + hconc2 * fcos) / (hconc1 + hconc2)
       else
          fco  = 1.
          fcos = 1.
          fcom = 1.
       endif
-      !
+      
       exdrvz      = 0.0
       exdrvg(ior) = 0.0
       exdrvk(ior) = 0.0
@@ -202,16 +192,21 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       
       ! loop over Dreissena cohorts?
       do ndr = 1,nndr
-         ! conversion of Dreissena biomass from concentration to ?
-         zdrei(ior,ndr)  = zdrei(ior,ndr)  * lboem2_elen
-         zdreis(ior,ndr) = zdreis(ior,ndr) * bsohlm_elen
+         
+         !weight of one Dreissena
+         gewdr(ior,ndr)  = max(0., gewdr(ior,ndr))
+         
+         ! conversion of Dreissena biomass from g / m2 to g
+         zdrei(ior,ndr)  = max(0., zdrei(ior,ndr)  * area_slope)
+         zdreis(ior,ndr) = max(0., zdreis(ior,ndr) * area_bed)
          Yc  = zdrei(ior,ndr)
          Ycs = zdreis(ior,ndr)
          !
          if (aki(ior) + agr(ior) + abl(ior) > 0.0) then
             hconvk = aki(ior) * pki / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
             hconvg = agr(ior) * pgr / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
-            hconvb = abl(ior) * pbl / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
+            !hconvb = abl(ior) * pbl / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
+            hconvb = abl(ior) * pgr / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
          else
             hconvk = 0.0
             hconvg = 0.0
@@ -301,7 +296,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          dgewdr         = gewdr(ior,ndr) * drmas(ior,ndr) * tflie
          gewdr(ior,ndr) = gewdr(ior,ndr) + dgewdr
          
-         ! .Annahme: 1 mg respirierte Biomasse verbraucht 5.59 mg O2(Schneider)
+         ! Annahme: 1 mg respirierte Biomasse verbraucht 5.59 mg O2(Schneider)
          if (vol == 0.0) then
             dlarvn(anze+1) = dlarvn(anze)
             jahr_tst1 = jahrs
@@ -394,8 +389,8 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          drfaes(ior) = drfaes(ior) + drfecs(ndr)
          
          volfdr(ior) = volfdr(ior) + vofkop(ndr)
-         
          draup       = draup + adrg(ndr) + adrk(ndr) + adrb(ndr)
+         
          drHNF(ior)  = drHNF(ior) + filHNF(ndr)
       enddo
       
@@ -415,160 +410,155 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       endif
       if (drpfec(ior) == 0.) volfdr(ior) = 0.0
       
-      if (ior == 1) then
-         print*, 'algdrg = ', algdrg(ior)
-         print*, 'algdrk = ', algdrk(ior)
-         print*, 'algdrb = ', algdrb(ior)
-         print*, 'draup  = ', draup
-         print*, 'drpfec = ', drpfec(ior)
-      endif
-      
       ! Berechnung der Larvenbildung
       ddlarn = 0.0
       dlamor = 0.0
       dlafes = 0.0
-      dlmax(ior)  = dlmax(ior)  * lboem2_elen
-      dlmaxs(ior) = dlmaxs(ior) * bsohlm_elen
-      if (lait1 == 0 .and. laim1 == 0)goto 211
-      if (drft >= laid1)goto 116
-      if (ilang == 0 .or. jahr_tst1 < jahrs) then
-         drrt = 0.0
-         goto 211
+      
+      if (lait1 == 0 .and. laim1 == 0) then
+         ! start date of spawning period not set, i.e. no egg and larvae production
+         cycle
+      else
+         dlmax(ior)  = dlmax(ior)  * area_slope
+         dlmaxs(ior) = dlmaxs(ior) * area_bed
       endif
       
+      ! check if 
+      if (drft >= laid1) goto 116
+      
+      if (ilang == 0 .or. jahr_tst1 < jahrs) then
+         drrt = 0.0
+         dlmax(ior)  = dlmax(ior)  / area_slope
+         dlmaxs(ior) = dlmaxs(ior) / area_bed
+         cycle
+      endif
+      
+      ! calculate current day of year
       NRS = ITAGS + 31 * (MONATS - 1)
       if (monats > 2) NRS = NRS - INT(0.4 * real(MONATS) + 2.3)
       
+      ! calculate start and end day of spawning period (day of year)
       NRla1a = lait1 + 31 * (laim1 - 1)
       if (laim1 > 2) NRla1a = NRla1a - INT(0.4 * real(laim1) + 2.3)
       nrla1e = nrla1a + laid1
       
       if (nrs < nrla1a .or. nrs >= nrla1e) then
+         ! outside of spawning period
          drrt = 0.0
-         goto 113
-      endif
-      
-      drrt1 = 0.0
-      drrt3 = 30.
-      drrt2 = 0.5 * drrt3
-      
-      drrt11 = 0.0
-      drrt33 = laid1 - drrt3
-      drrt22 = 0.5 * drrt33
-      
-      ! Annahme Gewichtverlust der Adulten durch Reproduktion
-      if (drrt > drrt3) then
-         spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
       else
-         spwmx = 2. * flai * 0.6 / drrt3
+         drrt1 = 0.0
+         drrt3 = 30.
+         drrt2 = 0.5 * drrt3
+      
+         drrt11 = 0.0
+         drrt33 = laid1 - drrt3
+         drrt22 = 0.5 * drrt33
+      
+         ! Annahme Gewichtverlust der Adulten durch Reproduktion
+         if (dlmax(ior) == 0.0 .and. dlmaxs(ior) == 0.0) then
+            dlmax(ior)  = zdrei(ior,2)
+            dlmaxs(ior) = zdreis(ior,2)
+            gwdmax(ior) = gewdr(ior,2)
+            sgwmue(ior) = 0.0
+         endif
+      
+         if (drrt > drrt3) then
+            spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
+            drrtt = drrt - drrt3
+            if (drrtt > drrt22) then
+               fdrrt = (drrtt - drrt33)**2 / ((drrtt - drrt22)**2 + (drrtt - drrt33)**2)
+            else
+               fdrrt = (drrtt - drrt11)**2 / ((drrtt - drrt22)**2  +(drrtt - drrt11)**2)
+            endif
+         else
+            spwmx = 2. * flai * 0.6 / drrt3
+            if (drrt > drrt2) then
+               fdrrt = (drrt - drrt3)**2 / ((drrt - drrt2)**2 + (drrt - drrt3)**2)
+            else
+               fdrrt = (drrt - drrt1)**2 / ((drrt - drrt2)**2 + (drrt - drrt1)**2)
+            endif
+         endif
+         fdrrt = fdrrt * spwmx
+      
+         do ndr = 2,nndr
+            gewdr(ior,ndr) = gewdr(ior,ndr) - gwdmax(ior) * tflie * fdrrt
+         
+            ! Berechnung der gebildeten Larven im Zeitschritt aus dem Gewichtsverlust
+            ! der Weibchen
+            ! C-Gehalt einer Eizelle: 3.35e-9 g
+            dEi = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
+            dEi = dEi * 0.75
+            ddlarn = dEi * fgesund * fweib
+         
+            ! Larvenbildung aus Zuwachs im Zeitschritt
+            dEimue = max(0., (dyc + dycs) * flai / 3.35e-9 * 0.75 * fgesund * fweib)
+            ddlarn = ddlarn + dEimue
+            gewdr(ior,ndr) = gewdr(ior,ndr) - dgewdr * flai
+            dgwmue = (dyc / area_slope + dycs / area_bed) * flai
+            sgwmue(ior) = sgwmue(ior) + dgwmue
+         
+            ddlarn          = ddlarn / (vol * 1000.)
+            zdrei(ior,ndr)  = zdrei(ior,ndr)  - dlmax(ior)  * tflie * fdrrt - dyc  * flai
+            zdreis(ior,ndr) = zdreis(ior,ndr) - dlmaxs(ior) * tflie * fdrrt - dycs * flai
+         enddo
       endif
       
-      if (dlmax(ior) == 0.0 .and. dlmaxs(ior) == 0.0) then
-         dlmax(ior) = zdrei(ior,2)
-         dlmaxs(ior) = zdreis(ior,2)
-         gwdmax(ior) = gewdr(ior,2)
-         sgwmue(ior) = 0.0
-      endif
-      
-      if (drrt > drrt3)goto 221
-      
-      if (drrt > drrt2)goto 220
-      fdrrt = ((drrt-drrt1)**2)/((drrt-drrt2)**2+(drrt-drrt1)**2)
-      fdrrt = fdrrt*spwmx
-      goto 250
-      220 fdrrt = ((drrt-drrt3)**2)/((drrt-drrt2)**2+(drrt-drrt3)**2)
-      fdrrt = fdrrt*spwmx
-      goto 250
-      
-      ! zweite Kurve
-      221 drrtt = drrt-drrt3
-      if (drrtt > drrt22)goto 225
-      fdrrt = ((drrtt-drrt11)**2)/((drrtt-drrt22)**2+(drrtt-drrt11)**2)
-      fdrrt = fdrrt*spwmx
-      goto 250
-      225 fdrrt = ((drrtt-drrt33)**2)/((drrtt-drrt22)**2+(drrtt-drrt33)**2)
-      fdrrt = fdrrt*spwmx
-      
-      250 continue
-      do ndr = 2,nndr
-         gewdr(ior,ndr) = gewdr(ior,ndr) - gwdmax(ior) * tflie * fdrrt
-         
-         ! Berechnung der gebildeten Larven im Zeitschritt aus dem Gewichtsverlust
-         ! der Weibchen
-         ! C-Gehalt einer Eizelle: 3.35e-9 g
-         dEi = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
-         dEi = dEi * 0.75
-         ddlarn = dEi * fgesund * fweib
-         
-         ! Larvenbildung aus Zuwachs im Zeitschritt
-         dEimue = max(0., (dyc + dycs) * flai / 3.35e-9 * 0.75 * fgesund * fweib)
-         ddlarn = ddlarn + dEimue
-         gewdr(ior,ndr) = gewdr(ior,ndr) - dgewdr * flai
-         dgwmue = (dyc / lboem2_elen + dycs / bsohlm_elen) * flai
-         sgwmue(ior) = sgwmue(ior) + dgwmue
-         
-         ddlarn          = ddlarn / (vol * 1000.)
-         zdrei(ior,ndr)  = zdrei(ior,ndr)  - dlmax(ior)  * tflie * fdrrt - dyc  * flai
-         zdreis(ior,ndr) = zdreis(ior,ndr) - dlmaxs(ior) * tflie * fdrrt - dycs * flai
-      enddo
-      
-      113 continue
-      if (nrs >= nrla1a .and. itime_hoch == 1) stdpla = stdpla+tflie
+      ! calculate larval biomass loss due to mortality
       dlamor = dlarvn(ior) * (1. - exp(-klmor * tflie))
+      
+      ! calculate time since start of spawning period
+      if (nrs >= nrla1a .and. itime_hoch == 1) stdpla = stdpla + tflie
+      
+      ! check if time since start of spawning period is less than
+      ! development period of larvae (tdpla)
       if (stdpla < tdpla) then
+         ! no larvae yet
          drft = 0.0
          itime_hoch = 0
-         goto 114
-      endif
-      
-      if (itime_hoch == 1) then
-         drft = drft+tflie
-         itime_hoch = 0
-      endif
-      
-      if (drft > drrt3) then
-         spwmx = 2. * flai * 0.4 / (laid1-drrt3)
       else
-         spwmx = 2. * flai * 0.6 / drrt3
+         if (itime_hoch == 1) then
+            drft = drft + tflie
+            itime_hoch = 0
+         endif
+      
+         if (drft > drrt3) then
+            spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
+            drftt = drft - drrt3
+            if (drftt > drrt22) then
+               fdrrt = (drftt - drrt33)**2 / ((drftt - drrt22)**2 + (drftt - drrt33)**2)
+            else
+               fdrrt = (drftt - drrt11)**2 / ((drftt - drrt22)**2 + (drftt - drrt11)**2)
+            endif
+         else
+            spwmx = 2. * flai * 0.6 / drrt3
+            if (drft > drrt2) then
+               fdrrt = (drft - drrt3)**2 / ((drft - drrt2)**2 + (drft - drrt3)**2)
+            else
+               fdrrt = (drft - drrt1)**2 / ((drft - drrt2)**2 + (drft  -drrt1)**2)
+            endif
+         endif
+         fdrrt = fdrrt * spwmx
+      
+         ! Larvengewicht beim Festsetzen: 8.6e-8 gC; 8.6e-5 mgC
+         dlafes = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
+         dlafes = dlafes * 0.75 * fgesund * fweib
+         116 dfemue = sgwmue(ior) / tdpla * tflie
+         if (zdreis(ior,2) > 0.0 .or. zdrei(ior,2) > 0.0) then
+            sgwmue(ior) = sgwmue(ior) - dfemue
+            dfmue       = dfemue * area_slope * (zdrei(ior,2)  / (zdrei(ior,2) + zdreis(ior,2)))
+            dfmues      = dfemue * area_bed   * (zdreis(ior,2) / (zdrei(ior,2) + zdreis(ior,2)))
+            dfemue      = (dfmue + dfmues) / 3.35e-9 * 0.75 * fgesund * fweib
+         else
+            dfmue  = 0.0
+            dfmues = 0.0
+            dfemue = 0.0
+         endif
+         dlafes = dlafes + dfemue
+         dlafes = dlafes * exp(-klmorg) / (vol * 1000.)
+         
       endif
       
-      if (drft > drrt3)goto 325
-      
-      if (drft > drrt2)goto 322
-      fdrrt = ((drft-drrt1)**2)/((drft-drrt2)**2+(drft-drrt1)**2)
-      fdrrt = fdrrt*spwmx
-      goto 350
-      322 fdrrt = ((drft-drrt3)**2)/((drft-drrt2)**2+(drft-drrt3)**2)
-      fdrrt = fdrrt*spwmx
-      goto 350
-      
-      ! zweite Kurve
-      325 drftt = drft-drrt3
-      if (drftt > drrt22)goto 320
-      fdrrt = ((drftt-drrt11)**2)/((drftt-drrt22)**2+(drftt-drrt11)**2)
-      fdrrt = fdrrt*spwmx
-      goto 350
-      320 fdrrt = ((drftt-drrt33)**2)/((drftt-drrt22)**2+(drftt-drrt33)**2)
-      fdrrt = fdrrt*spwmx
-      
-      350 continue
-      ! Larvengewicht beim Festsetzen: 8.6e-8 gC; 8.6e-5 mgC
-      dlafes = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
-      dlafes = dlafes * 0.75 * fgesund * fweib
-      116 dfemue = sgwmue(ior) / tdpla * tflie
-      if (zdreis(ior,2) > 0.0 .or. zdrei(ior,2) > 0.0) then
-         sgwmue(ior) = sgwmue(ior) - dfemue
-         dfmue       = dfemue * lboem2_elen * (zdrei(ior,2)  / (zdrei(ior,2) + zdreis(ior,2)))
-         dfmues      = dfemue * bsohlm_elen * (zdreis(ior,2) / (zdrei(ior,2) + zdreis(ior,2)))
-         dfemue      = (dfmue + dfmues) / 3.35e-9 * 0.75 * fgesund * fweib
-      else
-         dfmue  = 0.0
-         dfmues = 0.0
-         dfemue = 0.0
-      endif
-      dlafes = dlafes + dfemue
-      dlafes = dlafes * exp(-klmorg) / (vol * 1000.)
-      114   dlarvn(ior) = max(0., dlarvn(ior) + ddlarn - dlamor - dlafes)
+      dlarvn(ior) = max(0., dlarvn(ior) + ddlarn - dlamor - dlafes)
       
       do ndr = 1,nndr
          ddrein = 0.0
@@ -602,9 +592,10 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             zdreis(ior,1) = 0.0
          endif
          
+         ! natural mortality rate (1 / d)
          if (gewdr(ior,ndr) < 0.0246) then
             dmorg = 0.1
-         elseif (gewdr(ior,ndr) > 0.0246) then
+         else
             dmorg = 0.0157 * gewdr(ior,ndr)**(-0.502)
          endif
          
@@ -643,16 +634,16 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       enddo
       
       do ndr = 1,nndr
-         zdrei(ior,ndr) = zdrei(ior,ndr) / lboem2_elen
-         if (bsohlm(ior) <= 0.0) then
-            zdreis(ior,ndr) = 0.0
+         zdrei(ior,ndr) = zdrei(ior,ndr) / area_slope
+         if (area_bed > 0.) then
+            zdreis(ior,ndr) = zdreis(ior,ndr) / area_bed
          else
-            zdreis(ior,ndr) = zdreis(ior,ndr) / bsohlm_elen
+            zdreis(ior,ndr) = 0.
          endif
       enddo
       
-      211 dlmax(ior) = dlmax(ior) / lboem2_elen
-      dlmaxs(ior) = dlmaxs(ior) / bsohlm_elen
+      dlmax(ior)  = dlmax(ior)  / area_slope
+      dlmaxs(ior) = dlmaxs(ior) / area_bed
       
    enddo
    
