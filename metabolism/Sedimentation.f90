@@ -32,8 +32,9 @@ subroutine sedimentation(tiefe,ised,ust,qsgr,oc,Oc0,ytflie,wst,jsed,ZellV, &
    integer              :: ised,jsed
    logical, intent(in)  :: kontroll  !< debugging
    integer, intent(in)  :: jjj       !< debugging
-   
    character(100)       :: message
+   
+   external :: qerror
    
    if (ised < 1 .or. ised > 4) then
       write(message, '("sedimentation.f90: Invalid sedimentation option: ",i2)') ised

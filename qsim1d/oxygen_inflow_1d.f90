@@ -36,6 +36,7 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
    
    ! functions
    real                              :: density_1d
+   external                          :: dichte, einleiter_misch
    
    ! --------------------------------------------------------------------------
    ! diffuse sources

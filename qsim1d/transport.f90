@@ -55,7 +55,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    integer, dimension(azStrs)          :: iflRi, imac, isub_dt, isub_dt_Mac
    integer, dimension(ialloc2)         :: iore, flag, nkzs
    real                                :: mue, lgh
-   real, dimension(ialloc2)            :: x, elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
+   real, dimension(ialloc2)            :: elen, vmitt, tempw, vo2, Ue, vnh4, vno2, vno3, vx0, U, vx02, Si
    real, dimension(ialloc2)            :: gelP, dl, obsb, ocsb, vbsb, vcsb, CHNF, BVHNF, CM, BAC, zooind, chla
    real, dimension(ialloc2)            :: aki, agr, abl, SKmor, chlaki, chlagr, chlabl, vkigr, antbl, abrzo1
    real, dimension(ialloc2)            :: ssalg, ss, svhemk, svhemg, svhemb, akbcm, agbcm, stind, abbcm, fbsgr
@@ -72,6 +72,8 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    real, dimension(azStrs,ialloc2)     :: hgsAs, hglAs, hgsPb, hglPb, hgsCr, hglCr, hgsFe, hglFe
    real, dimension(azStrs,ialloc2)     :: hgsHg, hglHg, hgsMn, hglMn, hgsU, hglU
    real, dimension(azStrs,2,ialloc2)   :: hCD, hCP
+   
+   external :: advdiff
    
    iwahlD = 1
    nkz = 1
@@ -102,7 +104,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       !      if(iflRi(mstr).eq.0)goto 911
       if (U(1) < 0.0 .and. ktrans /= 1 .and. ktrans /= 57) goto 911
       
-      call AdvDiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                  &
+      call advdiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                  &
                    ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                  &
                    ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)
       

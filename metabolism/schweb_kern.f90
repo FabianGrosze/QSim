@@ -51,14 +51,17 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    integer, intent(in)    :: jjj      !< debugging
    
    ! local variables
-   integer                :: ised, jsed
-   real                   :: ssdrs_tmp
-   real                   :: exzo, sst
-   real                   :: UST, g, v6, vges, SSSED, ZellV, hc1, hc2, delfss, fssgrv
-   real                   :: ustkri, vkrit, qsgr, oc, Oc0, wst, ceq, delss
+   integer  :: ised, jsed
+   real     :: ssdrs_tmp, exzo, sst, sss_old, fssgrs_old
+   real     :: ust, g, v6, vges, sssed, zellv, hc1, hc2, fssgrv
+   real     :: ustkri, vkrit, qsgr, oc, oc0, wst, ceq
+   
+   external :: print_clipping, schiff, sedimentation
    
    
-   if (kontroll) print*,'schweb_kern TIEFE,RAU,VMITT,tausc = ',TIEFEs,RAUs,VMITTs,tauscs
+   if (kontroll) then
+      print*,'schweb_kern tiefe,rau,vmitt,tausc = ',tiefes,raus,vmitts,tauscs
+   endif
    fssgrv = fssgrs
    g = sqrt(9.81)
    ust = (((1./raus)*g)/(tiefes**0.16667))*abs(vmitts)
@@ -77,7 +80,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    ised = 3
    jsed = 1
    ZellV = 0.0
-   call Sedimentation(tiefes,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+   call sedimentation(tiefes,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
    ceq = sssed*qsgr
    sedsss = max(0.0,(sssed-ceq)) * oc
    sedSS_MQs = sedsss
@@ -85,7 +88,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    
    exzo = zexkis+zexgrs+zexbls
    
-   !...Schwebstoffverluste durch Dreissena werden nicht beruecksichtigt
+   ! Schwebstoffverluste durch Dreissena werden nicht berücksichtigt
    ssdrs_tmp = ssdrs
    ssdrs     = 0.
    
@@ -101,7 +104,6 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    
    !     Neuberechnung des Faktors zur Berechnung der ablagerungsfreien
    !     Grenzkonzentration
-   
    hc1 = SSs-sedsss+exzo+dkimors
    hc1 = hc1+dgrmors+dblmors+abszos-ssdrs
    hc1 = hc1+dorgSSs+drfaeks+drfaegs
@@ -122,17 +124,25 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    else
       fssgrs = 0.0
    endif
-   delfss = fssgrv-fssgrs
-   if (fssgrs < 0.0)fssgrs = (fssgrv/(fssgrv+abs(delfss)))*fssgrv
-   !fssgrt = fssgrs
-   !fssgrs = fssgrv
    
-   delss = sst-sss
+   if (fssgrs < 0.0) then
+      fssgrs_old = fssgrs
+      fssgrs = (fssgrv/(fssgrv+abs(fssgrv-fssgrs)))*fssgrv
+      call print_clipping("schweb_kern", "fssgrs", fssgrs_old, fssgrs, "")
+   endif
+   ! fssgrt = fssgrs
+   ! fssgrs = fssgrv
+   
    if (sst < 0.0) then
-      sss = (sss/(sss+abs(delss)))*sss
+      sss_old = sst
+      sss = (sss/(sss+abs(sst-sss))) * sss
+      call print_clipping("schweb_kern", "sss", sss_old, sss, "mg/l")
    else
       sss = sst
    endif
-   SSALGs = SSs+agrs+akis+abls+(ZOOinds*GROT/1000.)
+   
+   ssalgs = sss                  &
+          + agrs + akis + abls   &
+          + (zooinds*grot/1000.)
    return
 end subroutine schweb_kern

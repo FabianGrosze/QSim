@@ -69,11 +69,11 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    integer     :: jjj      !< debugging
    real        :: elen(1000),tempw(1000),flae(1000),zdrei(1000,4)
    real        :: zdreis(1000,4),volfdr(1000)
-   real        :: akbcm(1000),agbcm(1000),fkmR(1000),fkm(1000)
+   real        :: akbcm(1000),agbcm(1000),fkm(1000)
    real        :: aki(1000),agr(1000),algdrk(1000),algdrg(1000)
    real        :: ro2dr(1000),vo2(1000),ssdr(1000),idras(1000,2)
    real        :: drmas(1000,2),drakr(1000,2),drbar(1000,2),drmor(1000,2)
-   real        :: lboem(1000),bsohlm(1000),ss(1000),dlarvd(1000)
+   real        :: lboem(1000),bsohlm(1000),ss(1000)
    real        :: drfaek(1000),drfaeg(1000),drfaes(1000)
    real        :: gewdr(1000,4),idr,dlarvn(1000),resdr(1000),exdrvg(1000)
    real        :: dlmax(1000),dlmaxs(1000),gwdmax(1000),exdrvk(1000)

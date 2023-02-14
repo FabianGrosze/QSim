@@ -70,14 +70,12 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    real                             :: acmit, abr, abres, abremi, abmor
    real                             :: abmomi, abmoma, ablzt, ablt, abls
    real                             :: abksp, abksn, abgrow, abgmax, abgmaxtopt
-   real                             :: abchl_max, abchl, abbcmt, a3bl, a2bl
+   real                             :: abchl_max, abchl, abbcmt, a3bl, a2bl, ablt_old
    logical                          :: kontroll
    character (len = 255)            :: cpfad
-   character (len = 275)            :: pfadstring
-   character (len = 2)              :: ckenn_Vers1
    integer                          :: anze
    integer, dimension(1000)         :: ischif, jiein, flag, nkzs
-   real                             :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic0, Ic, N_Cmax, Icmit, kTresp
+   real                             :: LNQ, Ihemm, IKb, IKbe, kTemp_Bl, Icz, Ic, N_Cmax, kTresp
    real, dimension(1000)            :: tempw, chla, vno3, elen, vnh4, gelp, ir, vco2, svhemb, dalgbl
    real, dimension(1000)            :: dalgab, vabfl, vmitt, rau, tiefe, sedalb, algzob, dblmor, fkm
    real, dimension(1000)            :: tpbl, zooind, abbcm, abl, chlabl, fibaus, abmuea, fhebas, abreau
@@ -85,7 +83,7 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    real, dimension(1000)            :: algdrb, algcob, abltbr, extk, Dz2D, sedAlb0, schwi
    real, dimension(40)              :: eta, aw, ack, acg, acb, ah,as, al, I0, Iz
    real, dimension(50)              :: chlablzt, hc_temp, Pz, F5z, abgrwz, CChlaz, CChlazt, xroh_Chlz, roh_Chlz
-   real, dimension(50)              :: Y, YY, abltz, Q_PBz, dmorChlbz, abresz, dzMasse, Masse_neu, dzMasse0
+   real, dimension(50)              :: Y, YY, abltz, Q_PBz, abresz
    real, dimension(50)              :: xroh_Chl
    real, dimension(100)             :: echla, ess, qeinl, hemm
    real, dimension(40,1000)         :: extk_lamda
@@ -94,6 +92,10 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
    real, dimension(azStrs,1000)     :: sedAlg_MQ, abmor_1
    real, dimension(azStrs,50,1000)  :: hchlbz, hQ_Nbz, hCChlbz
    real, dimension(azstrs,1000)     :: tausc
+   
+   external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
+   external :: print_clipping
+   
    save Cchlaz, ablzt
    
    iein = 1
@@ -685,7 +687,9 @@ subroutine algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,s
       ablt = abl(ior)+hconql-hconsk
       dabl = abs(hconql-hconsk)
       if (ablt < 0.0) then
+         ablt_old = ablt
          ablt = (abl(ior)/(abl(ior)+dabl))*abl(ior)
+         call print_clipping("algaesbl", "ablt", ablt_old, ablt, "mg/l")
       endif
       if (ablt < 1.e-5) ablt = 1.e-5
       Chlablt = 1.e-5  !!wy prevent isnan(Chlabl)

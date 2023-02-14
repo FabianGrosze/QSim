@@ -44,21 +44,21 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    implicit none
    
    integer                      :: ji, nkz, m, mstr, monats, jjj
-   integer                      :: lnq, j, jj, itgzoo, anze, iein, iwied
+   integer                      :: j, anze, iein, iwied
    integer                      :: itags, ior_flag, ior, ilbuhn, ihcq
    real                         :: zresge,  zooint, zass, zaki
    real                         :: zakie, zagr, zagre, zabl, zable
-   real                         :: x, w, volrot, up_crot, uhrz
+   real                         :: volrot, up_crot, uhrz
    real                         :: tgzoot, tflie, rot, rott, rotc, resprg
    real                         :: prodrot, hczoo, hczooe, hczoo1, hctgzoo
    real                         :: hctgzooe, hctgzoo1, hcq, hcqe, hconm
    real                         :: hconki, hcongr, hconf, hconbl, hcaki
-   real                         :: grot, grote, ftresr, ftmorr
+   real                         :: grot, grote, ftresr
    real                         :: irmax, irmaxe, mueRot, morRot
    real                         :: irmax_Ind, ir_F, FTing,  delZoo
    real                         :: FOPTR, FopIre, ClearR, ClearRLog, ClearR_Ind
    real                         :: filO2, filAbio, fks
-   real                         :: hcon, FTMoR, fta
+   real                         :: FTMoR, zooint_old
    logical                      :: kontroll 
    integer, dimension(1000)     :: jiein, nkzs, flag
    real, dimension(100)         :: ezind, qeinl
@@ -88,6 +88,8 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
    real, parameter              :: ZellVKi = 645.
    real, parameter              :: ZellVBl = 1000.
    logical, parameter           :: isTGZoo = .false.
+   
+   external :: print_clipping
    
    save hczoo1, hcTGZoo1
    
@@ -320,9 +322,8 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       algzog(ior) = min(agr(ior) * zagr, ir(ior) * hconGr)
       algzob(ior) = min(abl(ior) * zabl, ir(ior) * hconBl)
       
+      ! 2D-Modellierung
       if (nkzs(ior) /= 1) then
-         !          2D-Modellierung
-         
          do nkz = 1,nkzs(ior)
             if ((akiz(nkz,ior) + agrz(nkz,ior) + ablz(nkz,ior)) < epsilon) then
                hcaki = 1.e-6
@@ -340,12 +341,14 @@ subroutine konsum(vkigr,TEMPW,VO2,TFLIE                                         
       endif
       
       zooint = ROTt * 1000. / GROT
-      if (zooind(ior) < 0.0) then
+      if (zooint < 0.0) then
+         zooint_old = zooint
          delzoo = zooint - zooind(ior)
          zooint = zooind(ior) / (zooind(ior) + abs(delzoo)) * zooind(ior)
+         call print_clipping("konsum", "zooint", zooint_old, zooint, "Ind/l")
       endif
       
-      !   Ausgabeparameter
+      ! Ausgabeparameter
       rmuas(ior) = ProdRot - morRot
       rakr(ior)  = morRot   ! ras(ior)*respaR
       rbar(ior)  = respRg

@@ -166,6 +166,9 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       c1U  , e1U  , c2U  , e2U  , c3U  , e3U  , c4U  , e4U  , c5U  , e5U  , VTKoeffDe_U  ,   &
       c1Zn , e1Zn , c2Zn , e2Zn , c3Zn , e3Zn , c4Zn , e4Zn , c5Zn , e5Zn , VTKoeffDe_Zn ,   &
       c1As , e1As , c2As , e2As , c3As , e3As , c4As , e4As , c5As , e5As , VTKoeffDe_As
+      
+   external :: qerror
+   
    
    
    ! write example
@@ -346,9 +349,12 @@ end subroutine aparam_lesen
 !!
 !! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine AParamParam(cpfad1)
-   character (len = 255)       :: cpfad1
-   character (len = 275)       :: pfadstring
-   character (len = 8)         :: versionstext
+   character(255) :: cpfad1
+   
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   
+   external :: version_string
    
    call version_string(versionstext)
    

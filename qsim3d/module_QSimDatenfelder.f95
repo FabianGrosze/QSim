@@ -476,19 +476,20 @@ module QSimDatenfelder
    real agrP(50),akiP(50),ablP(50),hJPO4(50,1000),hcgelPz(50)
    real hcgelpEz(50)
    ! silikat:
-   real, dimension(50)            :: Sizt,hcSiEz,akisi,hcSiz
-   real, dimension(100)           :: esi,SiL
-   real, dimension(1000)          :: SiRuek
+   real, dimension(50)           :: Sizt,hcSiEz,akisi,hcSiz
+   real, dimension(100)          :: esi,SiL
+   real, dimension(1000)         :: SiRuek
+   
    ! oxygen
-   real, dimension(1000)      :: dalgo, dalgao, o2ein1, dO2o2D, salgo, so2ein
-   real, dimension(1000)      :: abeowg, abeorg, abeowk, abeork, ro2dr
-   real, dimension(1000)      :: zooro2, rO2HNF, vz11, saett
-   real, dimension(azStrs,1000)    :: hschlr
-   real, dimension(50,1000)   :: vo2z1, hcvo2z, vz1
-   real, dimension(50,1000)   :: algaoz
-   real, dimension(100)       :: eo2, etemp
-   real, dimension(50)        :: vo2zt, seo2, hcvo2_2D, vo2e, hco2Ez, Cpart, D
-   real    :: zwgmes
+   real, dimension(1000)         :: dalgo, dalgao, o2ein1, dO2o2D, salgo, so2ein
+   real, dimension(1000)         :: abeowg, abeorg, abeowk, abeork, ro2dr
+   real, dimension(1000)         :: zooro2, rO2HNF, vz11
+   real, dimension(azStrs,1000)  :: hschlr
+   real, dimension(50,1000)      :: vo2z1, hcvo2z, vz1
+   real, dimension(50,1000)      :: algaoz
+   real, dimension(100)          :: eo2, etemp
+   real, dimension(50)           :: vo2zt, seo2, hcvo2_2D, vo2e, hco2Ez, Cpart, D
+   real                          :: zwgmes
    !>  \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe *dC_DenW* \n
    !! im qsim hauptprogramm auf den konstanten Wert = 3.1  gesetzt. (in QSim3d ebenfalls)
    real    :: TOC_CSB

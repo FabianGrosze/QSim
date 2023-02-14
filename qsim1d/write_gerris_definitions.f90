@@ -26,10 +26,13 @@
 ! --------------------------------------------------------------------------- !
 subroutine write_gerris_definitions(cpfad1)
    use aparam, only: AParamParam
-
    implicit none
    
    character(255), intent(in) :: cpfad1
+   
+   external :: ereiggparam, e_extnctparam, ereighparam, ergeb2dparam
+   external :: ergebmparam, wetterparam, write_e_extnct, version_string
+   external :: write_modellg_param, ergebtparam
    
    print*,' Writing definitions:'
    

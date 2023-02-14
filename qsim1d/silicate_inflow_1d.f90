@@ -27,10 +27,7 @@ subroutine silicate_inflow_1d(si, q_sk, siL, esi, mstr, ieinLs,   &
    
    ! --- local variables ---
    integer                  :: ieinl, ior, j, ior_flag, m , iein, ihcq, ji
-   integer                  :: nkzs_alt, nkzs_neu, nkz
-   real                     :: hcsi, hcq, hcqe, hcsie
-   real, dimension(ialloc5) :: siz_neu, hcsiz
-   
+   real                     :: hcsi, hcq, hcqe, hcsie   
    
    ! --------------------------------------------------------------------------
    ! diffuse sources
