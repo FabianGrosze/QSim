@@ -10,7 +10,9 @@
 subroutine qerror(message)
    use iso_fortran_env,       only: error_unit, output_unit
    use module_model_settings, only: cpfad
-   use ifport,                only: sleep
+   ! TODO (Schönung, February 2023):
+   ! This is not working on HPC
+   !use ifport,                only: sleep
    implicit none
    
    character, intent(in)  :: message*(*) !< text of errormessage 
