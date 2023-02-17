@@ -36,6 +36,7 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 # set executable name
 PV=qsim3d_$(QSim_version)_dev
 
+
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -266,8 +267,8 @@ taz:
 	/bin/rm -f *_source_*.taz ../*_source_*.taz
 	tar cvfz ../$(FN)  ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
-	../qsim1d/*.f90  ../qsim1d/*.rc  ../qsim1d/*.txt ../qsim1d/*.xml \
-	../metabolism/*.f90 ../metabolism/*/*.f90 ../metabolism/*.txt ../metabolism/*.mk \
+	../qsim1d/*.f90  ../qsim1d/*.rc  \
+	../metabolism/*.f90 ../metabolism/*/*.f90  ../metabolism/*.mk  \
 	../doku/docmd/*  ../doku/Makefile   ../doku/confi   ../doku/*.html \
 	../license.txt ../readme.md
 	cp ../$(FN) .

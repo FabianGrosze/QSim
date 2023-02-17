@@ -38,6 +38,8 @@ subroutine randbedingungen(cpfad, i_Rands, iw_max)
    integer            :: mstr,i_hcon,iws_RB,itagl,iwe
    integer            :: RBNR
    
+   external           :: qerror
+   
    
    pfadstring =  trim(adjustl(cpfad)) // 'EREIGG.txt'
    open(unit = 92, file = pfadstring, iostat = open_error)

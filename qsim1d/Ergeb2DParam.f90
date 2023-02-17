@@ -31,8 +31,10 @@ subroutine Ergeb2DParam(cpfad1)
    
    character(255), intent(in)  :: cpfad1
    
-   character (len=275)         :: pfadstring
-   character (len = 8)         :: versionstext
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   
+   external :: version_string
    
    call version_string(versionstext)
    

@@ -45,7 +45,6 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    use allodim
    implicit none
    
-   
    integer                         :: jahrs, nrs, mstr, monatv, monats_tst
    integer                         :: monats, monate, j, jtage, jahrs_tst
    integer                         :: jahre, i, itagv, itags_tst, itags
@@ -70,8 +69,10 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    real, dimension(1000)           :: Schwi, Breite, VALTBL, EDUFBL, VALTBR, EDUFBR
    real, dimension(1000,14)        :: VTYP
    real, dimension(azStrs)         :: SHtest
+   character(1000)                 :: message
    
-   character(1000) :: message
+   external :: anztag, qerror
+   
    save itags_tst, monats_tst, jahrs_tst, uhrz_tst
    
    j = 0

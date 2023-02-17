@@ -45,6 +45,8 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
    real, dimension(azStrs,ialloc2)         :: sedroh !< Rohdichte des Sediments [Kg*m-3]
    real, dimension(azStrs,ialloc2)         :: dsedH
    
+   external :: erosion_kern
+   
   
    !print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2
    

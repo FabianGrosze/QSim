@@ -84,7 +84,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    real                                   :: vtkoeff_zn,vtkoeff_cu,vtkoeff_cad,vtkoeff_ni
    real                                   :: vtkoeff_as,vtkoeff_pb,vtkoeff_cr,vtkoeff_fe
    real                                   :: vtkoeff_hg,vtkoeff_mn,vtkoeff_u
-   real                                   :: nan_value
+   real                                   :: null_value
    double precision                       :: r_nrs, r_nrs2, r_nrs1
    character(200)                         :: message
    character(255)                         :: cpfad
@@ -105,6 +105,8 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    real,    dimension(:,:,:), allocatable :: werts
    logical                                :: is_set_wert1, is_set_wert2
    real, parameter                        :: epsilon = 1.e-8
+   
+   external :: qerror, verteilungskoeff
    
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
    save R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
@@ -227,12 +229,12 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          is_set_wert2 = .false.
          
          ! set fail values depending on the parameter
-         if     (ipp == 22) then
-            NaN_value = -9.99
+         if (ipp == 22) then
+            null_value = -9.99
          elseif (ipp == 27) then
-            NaN_value = -9999.9
+            null_value = -9999.9
          else
-            NaN_value = 0.
+            null_value = -1.0
          endif
          
          ! Beginn Werteschleife
@@ -257,11 +259,11 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                endif
             else
                if (R_NRS0 <= R_NRS) then
-                  if (iee1 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                  if (iee1 == -1 .and. abs(werts(ianzRB,ipp,iwe) - null_value) <= epsilon) then
                      mREC(mstr,ianzRB,ipp) = iwe
                      wert1 = werts(ianzRB,ipp,iwe)
                      is_set_wert1 = .true.
-                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
+                  else if (werts(ianzRB,ipp,iwe) - null_value > epsilon) then
                      R_NRS1 = R_NRS0
                      iee1   = 1
                      mREC(mstr,ianzRB,ipp) = iwe
@@ -269,10 +271,10 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                      is_set_wert1 = .true.
                   endif
                else
-                  if (iee2 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                  if (iee2 == -1 .and. abs(werts(ianzRB,ipp,iwe) - null_value) <= epsilon) then
                      wert2 = werts(ianzRB,ipp,iwe)
                      is_set_wert2 = .true.
-                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
+                  else if (werts(ianzRB,ipp,iwe) - null_value > epsilon) then
                      R_NRS2 = R_NRS0
                      iee2 = 1
                      wert2 = werts(ianzRB,ipp,iwe)
@@ -294,7 +296,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
             else if (is_set_wert2) then
                Ywert = wert2
             else
-               Ywert = -9999.9
+               Ywert = null_value
             endif
          else
             hcon1 = R_NRS2 - R_NRS1

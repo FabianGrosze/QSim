@@ -48,6 +48,8 @@ subroutine mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie,                    &
    real            :: pflmax(1000),schwi(1000)
    real            :: tiefe(1000),tempw(1000),pfl(1000),extk(1000)
    character(1000) :: message
+   
+   external        :: qerror
   
    if (ilang == 0) return
    

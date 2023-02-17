@@ -20,12 +20,13 @@ subroutine coliform_bacteria(coli_s, doscf_s, extks_s, tempw_s, &
    integer, intent(in)  :: jjj         !< debuggin
 
    ! --- local variables ---
-   real  :: fn, ust
-   real  :: a, xmuet, pars, tlip, vlicht, vges, parsw_j, parsw_mj, doscft
-   real  :: vrc, colit, decoli, extk
-
+   real  :: fn, ust, vrc, colit, extk, colit_old
+   real  :: xmuet, pars, tlip, vlicht, vges, parsw_j, parsw_mj, doscft
+   
    real, parameter   :: g = 9.81 
    real, parameter   :: apara = 0.45   ! Anteil des PARS Strahlung an der Globalstrahlung
+   
+   external :: print_clipping
 
 
    ! TODO (Schönung, November 2022) This subroutine must not alter extk_s!
@@ -83,8 +84,9 @@ subroutine coliform_bacteria(coli_s, doscf_s, extks_s, tempw_s, &
    colit = coli_s * (1.-(1.-exp(-rateci*doscft))**xnuec)*exp(-vrc * tflie)
 
    if (colit < 0.0) then
-     decoli = colit - coli_s
-     colit = (coli_s/(coli_s+abs(decoli)))*coli_s
+     colit_old = colit
+     colit = (coli_s/(coli_s + abs(colit - coli_s))) * coli_s
+     call print_clipping("coliform_bacteria", "colit", colit_old, colit, "")
    endif
 
    ! --------------------------------------------------------------------------
