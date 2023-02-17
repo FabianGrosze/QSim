@@ -230,7 +230,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       if (aki(ior) + agr(ior) + abl(ior) > 0.0) then
          hconvk = aki(ior) * pki / (Caki * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
          hconvg = agr(ior) * pgr / (Cagr * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
-         hconvb = abl(ior) * pgr / (Cabl * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
+         hconvb = abl(ior) * pbl / (Cabl * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
       else
          hconvk = 0.0
          hconvg = 0.0
