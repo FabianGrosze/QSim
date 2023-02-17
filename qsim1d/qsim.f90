@@ -588,7 +588,7 @@ program qsim
    allocate(hHNFex(azStrs,ialloc2), hHNFdr(azStrs,ialloc2), hHNFza(azStrs,ialloc2), hBAmua(azStrs,ialloc2))
    allocate(dlalph(azStrs,ialloc2))
    allocate(dlbeta(azStrs,ialloc2), dlgamm(azStrs,ialloc2), hdlarn(azStrs,ialloc2), midlan(azStrs,ialloc2))
-   allocate(mxdlan(azStrs,ialloc2), zdrei(ialloc2,2), hpfl(azStrs,ialloc2), zdrel(ialloc2,4))
+   allocate(mxdlan(azStrs,ialloc2), zdrei(ialloc2,4), hpfl(azStrs,ialloc2), zdrel(ialloc2,4))
    allocate(zdresl(ialloc2,4), gewdr(ialloc2,4), hgewdr(ialloc2,4), VTYP(ialloc2,14), Rzuwdr(ialloc2,4))
    allocate(Rzuwdy(ialloc2,4), zdreis(ialloc2,4), CD(2,ialloc2), CP(2,ialloc2), migsP(azStrs,ialloc2))
    allocate(mxgsP(azStrs,ialloc2), migsN(azStrs,ialloc2), mxgsN(azStrs,ialloc2), miaki(azStrs,ialloc2))

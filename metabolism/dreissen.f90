@@ -44,125 +44,139 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    
    integer     :: nrla1e, nrs, nrla1a, ndr, ilang
    integer     :: mstr, monats, lait1, laim1, laid1
-   integer     :: jahr_tst1, jahrs, itime_hoch, itags, ior
-   real        :: yc, ycs
-   real        :: x, w, vol, up, upt
-   real        :: uptm3, ups, upst, tflie
-   real        :: stdpla, spwmx, rres
-   real        :: respo2, respc, respcs, respbio
-   real        :: rescm3, qfec
+   integer     :: jahr_tst1, jahrs, itags, ior
+   real        :: x, w, water_volume
+   real        :: uptm3, tflie
+   real        :: stdpla, rres
+   real        :: respbio
+   real        :: rescm3, f_fecal
    real        :: hconvk, hconvg
    real        :: hconvb, hcont, hconf, hcond
    real        :: hconc2, hconc1, gewdts
-   real        :: fr, foptd, foptde, food
-   real        :: fki, fh2ovol, fgr
-   real        :: fdrrt, fco, fcos, fcom, fbl
-   real        :: exdr, exdrvz, exdrs, excm3, dyc
-   real        :: dycs, drrtt, drrt3, drrt33, drrt2
-   real        :: drrt22, drrt1, drrt11, drftt
+   real        :: filtration_rate, foptd, foptde, food
+   real        :: fki, filtrated_volume, fgr
+   real        :: fco, fcos, fcom, fbl
+   real        :: exdrvz, excm3
+   real        :: drrt3, drrt33, drrt2, drrt, drft
+   real        :: drrt22, drrt1, drrt11
    real        :: dreisn, dreinm, dreing, draup
    real        :: dmorg, dlamor, dlafes, dgwmue
-   real        :: dgewdr, dfmue, dfmues, dfemue, dei
-   real        :: deimue, ddrein, ddlarn
-   real        :: assr, assrs
+   real        :: dfmue, dfmues, dfemue
+   real        :: ddrein, ddlarn
+   logical     :: increment_time
    logical     :: kontroll !< debugging
    integer     :: jjj      !< debugging
    real        :: elen(1000),tempw(1000),flae(1000),zdrei(1000,4)
    real        :: zdreis(1000,4),volfdr(1000)
-   real        :: akbcm(1000),agbcm(1000),fkmR(1000),fkm(1000)
+   real        :: akbcm(1000),agbcm(1000),fkm(1000)
    real        :: aki(1000),agr(1000),algdrk(1000),algdrg(1000)
    real        :: ro2dr(1000),vo2(1000),ssdr(1000),idras(1000,2)
    real        :: drmas(1000,2),drakr(1000,2),drbar(1000,2),drmor(1000,2)
-   real        :: lboem(1000),bsohlm(1000),ss(1000),dlarvd(1000)
+   real        :: lboem(1000),bsohlm(1000),ss(1000)
    real        :: drfaek(1000),drfaeg(1000),drfaes(1000)
-   real        :: gewdr(1000,4),idr,dlarvn(1000),resdr(1000),exdrvg(1000)
+   real        :: gewdr(1000,4),ingestion_rate,dlarvn(1000),resdr(1000),exdrvg(1000)
    real        :: dlmax(1000),dlmaxs(1000),gwdmax(1000),exdrvk(1000)
    real        :: adrg(4),adrk(4),drss(4),drfeck(4),drfecg(4),drfecs(4)
-   real        :: dchlg(4),dchlk(4),filaki(4),filagr(4)
-   real        :: adrb(4),drfecb(4),filabl(4),dchlb(4)
+   real        :: filaki(4),filagr(4)
+   real        :: adrb(4),drfecb(4),filabl(4)
    real        :: filss(4),vofkop(4),filHNF(4),HNFdra(1000)
    real        :: ssalg(1000),drpfec(1000),sgwmue(1000),ffood(1000)
    real        :: coroI(1000),coroIs(1000)
    real        :: klmor,hcondb(4),hconds(4)
    real        :: CHNF(1000),drHNF(1000),drfaeb(1000)
-   real        :: abl(1000),exdrvb(1000),abbcm(1000),algdrb(1000), drrt, drft
-   integer     :: anze, azStr
-   
-   ! auxiliary variables for frequently used calculations
-   ! area of slope/embankment and area of river bed (m2)
-   real        :: area_slope, area_bed
+   real        :: abl(1000),exdrvb(1000),abbcm(1000),algdrb(1000)
+   integer     :: anze, azStr, i
    
    ! parameters
-   ! TODO FG: Implementation of T dependence of respiration does not seem to make sense?
-   real   , parameter :: zqz10     = 3.1       ! Q10 of T dependence of respiration
-   real   , parameter :: ztmax     = 31.       ! T above which Dreissena has no additional respiration losses?
-   real   , parameter :: ztopt     = 28.       ! optimal T for respiration?
-   real   , parameter :: pgr       = 1.0       ! Feeding preference for green algae
-   real   , parameter :: pki       = 1.0       ! Feeding preference for diatoms
-   real   , parameter :: pbl       = 0.5       ! Feeding preference for cyanobacteria (former value 0.2?)
-   real   , parameter :: qres      = 0.29      ! active respiration rate (assimilation dependent) (1 / d)
-   real   , parameter :: rres0     = 0.0015    ! basal respiration rate (1 / d)
-   real   , parameter :: f_excrete = 0.064     ! excreted fraction of assimilated biomass
+   real   , parameter :: zqz10        = 3.1       ! Q10 of T dependence of respiration
+   real   , parameter :: ztmax        = 31.       ! T above which Dreissena has no additional respiration losses?
+   real   , parameter :: ztopt        = 28.       ! optimal T for respiration?
+   real   , parameter :: pgr          = 1.0       ! feeding preference for green algae
+   real   , parameter :: pki          = 1.0       ! feeding preference for diatoms
+   real   , parameter :: pbl          = 0.5       ! feeding preference for cyanobacteria
+   real   , parameter :: qres         = 0.29      ! active respiration rate (assimilation dependent) (1 / d)
+   real   , parameter :: rres0        = 0.0015    ! basal respiration rate (1 / d)
+   real   , parameter :: f_excrete    = 0.064     ! excreted fraction of assimilated biomass
+   real   , parameter :: r_o2_resp    = 5.59      ! oxygen consumption per biomass (mg o2 / mg) after Schneider
    
-   real   , parameter :: drCgeh    = 0.38      ! C:Biomass of Dreissena     (gC / g)
-   real   , parameter :: Cagr      = 0.48      ! C:Biomass of green algae   (gC / g)
-   real   , parameter :: Caki      = 0.48      ! C:Biomass of diatoms       (gC / g)
-   real   , parameter :: Cabl      = 0.48      ! C:Biomass of cyanobacteria (gC / g)
-   real   , parameter :: fweib     = 0.5       ! fraction of female Dreissena in total population?
-   real   , parameter :: fgesund   = 0.25      ! fraction of healthy Dreissena in total pop.?
-   real   , parameter :: F_lim     = 0.01      ! C content at which Dreissena cease feeding
-   real   , parameter :: klmorg    = 8.26      ! mortalilty of larvae over 22 days (mg) ?
-   real   , parameter :: tdpla     = 22.       ! scaling factor for mortailty rate (d)?
-   real   , parameter :: flai      = 0.52      ! fraction of weight loss attributed to egg production?
-   integer, parameter :: nndr      = 2         ! number of Dreissena cohorts (0th, 1st)
+   real   , parameter :: C_adult      = 0.38      ! C:Biomass of Dreissena adults (gC / g)
+   real   , parameter :: C_egg        = 3.35e-9   ! C:Biomass of Dreissena eggs   (gC / g)
+   real   , parameter :: Cagr         = 0.48      ! C:Biomass of green algae      (gC / g)
+   real   , parameter :: Caki         = 0.48      ! C:Biomass of diatoms          (gC / g)
+   real   , parameter :: Cabl         = 0.48      ! C:Biomass of cyanobacteria    (gC / g)
+   real   , parameter :: f_female     = 0.5       ! fraction of female Dreissena in population
+   real   , parameter :: f_fit        = 0.25      ! fraction of fit/healthy Dreissena in population
+   real   , parameter :: f_survival   = 0.75      ! egg/larval survivability?
+   real   , parameter :: C_lim        = 0.01      ! C content at which Dreissena cease feeding
+   real   , parameter :: klmorg       = 8.26      ! mortalilty of larvae over 22 days (mg) ?
+   real   , parameter :: tdpla        = 22.       ! development period from egg to larva (d)?
+   real   , parameter :: flai         = 0.52      ! fraction of weight loss attributed to egg production?
+   integer, parameter :: nndr         = 2         ! number of Dreissena cohorts (0th, 1st)
+   ! derived parameters
+   real   , parameter :: f_production = f_survival * f_fit * f_female
    
-   save jahr_tst1, drrt, drft, stdpla, itime_hoch
+   ! newly introduced internal variables (F. Grosse)
+   real                  :: dt, dt1, dt2, dt3      ! times describing phase within spawning period (days)
+   real                  :: f_spawn, f_spawn_max   ! fraction(s) of biomass invested into egg production
+   real, dimension(nndr) :: delta_weight           ! weight loss of single Dreissena
    
-   ! Some relevant information
-   ! zdrei  ... biomass on embankment (0th/1st cohort; g / m2)
-   ! zdreis ... biomass on river bed  (0th/1st cohort; g / m2)
-   ! gewdr  ... weight of a single Dreissena (mgC)
+   ! internal variables for Dreissena on slope/embankment and river bed, respectively
+   ! index 1 - slope/embankment
+   ! index 2 - river bed
+   real, dimension(2)    :: habitat_size        ! area of slope/embankment and area of river bed (m2)
+   real, dimension(2)    :: biomass_adult       ! areal integral of biomass of adult Dreissena (g)
+   real, dimension(2)    :: uptake_rate         ! (mgC / d)
+   real, dimension(2)    :: assimilation_rate   ! (mgC / d)
+   real, dimension(2)    :: excretion_rate      ! (mgC / d)
+   real, dimension(2)    :: respiration_rate    ! (mgC / d)
+   real, dimension(2)    :: net_growth          ! (mgC)
    
+   save jahr_tst1, drrt, drft, stdpla, increment_time
+   
+   ! Some useful information (units based on Gerris stretch options menu)
+   ! zdrei  ... Dreissena biomass on embankment (0th/1st cohort; g / m2)
+   ! zdreis ... Dreissena biomass on river bed  (0th/1st cohort; g / m2)
+   ! gewdr  ... weight of a single Dreissena individual (mgC)
+   !
+   ! drrt   ... time since start of simulation
+   ! stdpla ... time since start of spawning period
+   ! drft   ... time since start of spawning period + egg development period (tdpla)
+   !
+   ! all *s quantities refer to river bed values, while those w/o 's' refer to embankment
+   
+   ! simulation forerun (no calculations)
    if (ilang == 0) then
       dlarvn(anze+1) = dlarvn(anze)
       jahr_tst1 = jahrs
       return
    endif
    
+   ! optimal food concentration (mg C / L)
    FoptD = FoptDe
    if (FoptD == 0.0) FoptD = 1.2
    
-   ! mortailty rate of larvae (1 / d)
+   ! mortality rate of larvae (1 / d)
    klmor  = klmorg / tdpla
    
+   ! drrt: time since start of simulation - only increment when handling 1st model stretch
    if (azStr == 1) then
       drrt = drrt + tflie
-      ! Schalter für Hochzählen der div. Zeiten
-      itime_hoch = 1
+      ! switch for incrementing time
+      increment_time = .true.
    endif
+   
+   ! calculate current day of year
+   NRS = ITAGS + 31 * (MONATS - 1)
+   if (monats > 2) NRS = NRS - INT(0.4 * real(MONATS) + 2.3)
+   
+   ! calculate start and end day of spawning period (day of year)
+   NRla1a = lait1 + 31 * (laim1 - 1)
+   if (laim1 > 2) NRla1a = NRla1a - INT(0.4 * real(laim1) + 2.3)
+   nrla1e = nrla1a + laid1
    
    do ior = 1,anze
       
-      ! calculate areas of slopes (hence, factor 2) and river bed
-      area_slope = 2. *  lboem(ior) * elen(ior)
-      area_bed   =      bsohlm(ior) * elen(ior)
-      
-      ! water volume
-      vol = flae(ior) * elen(ior)
-      
-      !Einfluss von Corophium auf die Ingest.- und Filtrierrate
-      if (coroI(ior) > 0.0 .or. coroIs(ior) > 0.0) then
-         fco  = max(0., min(1., 1. - (coroI(ior)  - 10000.) / 90000.))
-         fcos = max(0., min(1., 1. - (coroIs(ior) - 10000.) / 90000.))
-         hconc1 = area_slope * coroI(ior)
-         hconc2 = area_bed   * coroIs(ior)
-         fcom   = (hconc1 * fco + hconc2 * fcos) / (hconc1 + hconc2)
-      else
-         fco  = 1.
-         fcos = 1.
-         fcom = 1.
-      endif
-      
+      ! initialise output variables
       exdrvz      = 0.0
       exdrvg(ior) = 0.0
       exdrvk(ior) = 0.0
@@ -178,230 +192,236 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          cycle
       endif
       
-      ! Calculate available amount of food and food dependence of ingestion
-      fgr = agr(ior) * Cagr * pgr
-      fki = aki(ior) * Caki * pki
-      fbl = abl(ior) * Cabl * pbl
+      ! calculate areas of slopes (hence, factor 2) and river bed
+      habitat_size(1) = 2. *  lboem(ior) * elen(ior)
+      habitat_size(2) =      bsohlm(ior) * elen(ior)
+      
+      ! calculate water volume
+      water_volume = flae(ior) * elen(ior)
+      
+      ! calculate influence of Corophium on ingestion and filtration rates
+      if (coroI(ior) > 0.0 .or. coroIs(ior) > 0.0) then
+         fco  = max(0., min(1., 1. - (coroI(ior)  - 10000.) / 90000.))
+         fcos = max(0., min(1., 1. - (coroIs(ior) - 10000.) / 90000.))
+         hconc1 = habitat_size(1) * coroI(ior)
+         hconc2 = habitat_size(2) * coroIs(ior)
+         fcom   = (hconc1 * fco + hconc2 * fcos) / (hconc1 + hconc2)
+      else
+         fco  = 1.
+         fcos = 1.
+         fcom = 1.
+      endif
+      
+      ! calculate available amount of food and food dependence of ingestion
+      fgr  = agr(ior) * pgr * Cagr
+      fki  = aki(ior) * pki * Caki
+      fbl  = abl(ior) * pbl * Cabl
       food = fgr + fki + fbl
-      if (food > F_lim) then
+      
+      ! food-related Michaelis-Menten kinetics
+      if (food > C_lim) then
          hconf = min(1., food / FoptD)
       else
          hconf = 0.0
       endif
       ffood(ior) = hconf
       
-      ! loop over Dreissena cohorts?
+      ! Michaelis-Menten kinetics for algae-specific uptake (mg / mgC)
+      if (aki(ior) + agr(ior) + abl(ior) > 0.0) then
+         hconvk = aki(ior) * pki / (Caki * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
+         hconvg = agr(ior) * pgr / (Cagr * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
+         hconvb = abl(ior) * pgr / (Cabl * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
+      else
+         hconvk = 0.0
+         hconvg = 0.0
+         hconvb = 0.0
+      endif
+         
+      ! T dependence of respiration
+      ! TODO FG: This does not seem to make sense: No additional respiratory losses if T >= ztmax?
+      if (tempw(ior) < ztmax) then
+         w = log(zqz10) * (ztmax - ztopt)
+         x = (w / 20. * (1. + sqrt(1. + 40. / w)))**2
+         hcont = ((ztmax - tempw(ior)) / (ztmax - ztopt) * exp(1. - (ztmax - tempw(ior)) / (ztmax - ztopt)))**x
+      else
+         hcont = 0.0
+      endif
+      
+      ! loop over Dreissena cohorts
       do ndr = 1,nndr
          
-         !weight of one Dreissena
+         ! weight of one Dreissena (mgC according to Gerris menu)
          gewdr(ior,ndr)  = max(0., gewdr(ior,ndr))
          
-         ! conversion of Dreissena biomass from g / m2 to g
-         zdrei(ior,ndr)  = max(0., zdrei(ior,ndr)  * area_slope)
-         zdreis(ior,ndr) = max(0., zdreis(ior,ndr) * area_bed)
-         Yc  = zdrei(ior,ndr)
-         Ycs = zdreis(ior,ndr)
-         !
-         if (aki(ior) + agr(ior) + abl(ior) > 0.0) then
-            hconvk = aki(ior) * pki / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
-            hconvg = agr(ior) * pgr / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
-            !hconvb = abl(ior) * pbl / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
-            hconvb = abl(ior) * pgr / (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl)
-         else
-            hconvk = 0.0
-            hconvg = 0.0
-            hconvb = 0.0
-         endif
-         
-         ! Berechnung der Aufnahmerate gC/m2
-         if (gewdr(ior,ndr) > 0.0) then
-            !Walz
-            !      idr = (0.1105*gewdr(ior,ndr)**(-0.213))
-            !     **exp(-0.00605*(20.0-tempw(ior))**2)
-            !modifizierte Walz
-            !      idr = (0.295*gewdr(ior,ndr)**(-0.636))
-            !     **exp(-0.00605*(20.0-tempw(ior))**2)
-            !nach Schneider
-            !      idr = (0.1271*gewdr(ior,ndr)**(-0.39))
-            !     **exp(-0.00605*(20.0-tempw(ior))**2)
-            !
-            idr = 0.249 * gewdr(ior,ndr)**(-0.615) * exp(-0.00605 * (20.0 - tempw(ior))**2)
-            up  = idr * hconf * fco  * Yc
-            ups = idr * hconf * fcos * Ycs
-            idr = idr * hconf * fcom
-         else
-            idr = 0.0
-            up  = 0.0
-            ups = 0.0
-         endif
-         
-         ! ingestion rate
-         idras(ior,ndr) = idr
-         
-         ! assimilation rate
-         qfec  = 0.315 * exp(0.88 * hconf)
-         assr  = (1. - qfec) * up
-         assrs = (1. - qfec) * ups
-         
-         ! excretion rate
-         exdr  = f_excrete * assr
-         exdrs = f_excrete * assrs
-         
-         ! T dependence of respiration
-         ! TODO FG: This does not seem to make sense: No additional respiratory losses if T >= ztmax?
-         if (tempw(ior) < ztmax) then
-            w = log(zqz10) * (ztmax - ztopt)
-            x = (w / 20. * (1. + sqrt(1. + 40. / w)))**2
-            hcont = ((ztmax - tempw(ior)) / (ztmax - ztopt) * exp(1. - (ztmax - tempw(ior)) / (ztmax - ztopt)))**x
-         else
-            hcont = 0.0
-         endif
-         
-         ! Berechnung der Respirationsrate in gC/(m2Gewaesserbod.*d)
+         ! respiration of a single Dreissena (mgC / (g d))
          if (gewdr(ior,ndr) > 0.0) then
             rres = rres0 * gewdr(ior,ndr)**(-0.25)
          else
             rres = 0.0
          endif
-         respc  = rres * hcont * Yc  + qres * assr
-         respcs = rres * hcont * Ycs + qres * assrs
          
-         ! Change of Dreissena biomass in gC
-         dYc  = (assr  - respc  - exdr ) * tflie
-         Yc   = Yc  + dYc
-         dYcs = (assrs - respcs - exdrs) * tflie
-         Ycs  = Ycs + dYcs
-         zdrei(ior,ndr)  = Yc
-         zdreis(ior,ndr) = Ycs
+         ! conversion of Dreissena biomass from g / m2 to g
+         biomass_adult(1) = max(0., zdrei(ior,ndr)  * habitat_size(1))
+         biomass_adult(2) = max(0., zdreis(ior,ndr) * habitat_size(2))
          
-         ! filtration rate and filtrated volume
+         ! calculate ingestion and uptake rates (mgC / d)
          if (gewdr(ior,ndr) > 0.0) then
-            FR = 9.24 * gewdr(ior,ndr)**(-0.392)
-            FR = FR * 3.267 * exp(-0.037 * SSalg(ior))
-            FR = FR * exp(-0.00605 * (20. - tempw(ior))**2)
-            ! convert m3 / (g d)
-            FR = FR * 24. / 1000. * fcom
-            
-            ! filtrated volume (m3)
-            FH2oVol = FR * (Yc + Ycs) * tflie
+            !Walz
+            !      ingestion_rate = (0.1105*gewdr(ior,ndr)**(-0.213)) *
+            !                       exp(-0.00605*(20.0-tempw(ior))**2)
+            !modifizierte Walz
+            !      ingestion_rate = (0.295*gewdr(ior,ndr)**(-0.636)) *
+            !                       exp(-0.00605*(20.0-tempw(ior))**2)
+            !nach Schneider
+            !      ingestion_rate = (0.1271*gewdr(ior,ndr)**(-0.39)) *
+            !                       exp(-0.00605*(20.0-tempw(ior))**2)
+            !
+            ingestion_rate = 0.249 * gewdr(ior,ndr)**(-0.615) * exp(-0.00605 * (20.0 - tempw(ior))**2) * hconf
+            uptake_rate(1) = ingestion_rate * fco  * biomass_adult(1)
+            uptake_rate(2) = ingestion_rate * fcos * biomass_adult(2)
+            ingestion_rate = ingestion_rate * fcom
          else
-            ! no filtration
-            FH2oVol = 0.0
+            ingestion_rate = 0.0
+            uptake_rate(:) = 0.0
          endif
          
-         ! Weight change of one Dreissena
-         drakr(ior,ndr) = (1. - qfec) * qres * idr
-         drbar(ior,ndr) = rres * hcont
-         drmas(ior,ndr) = (1. - f_excrete) * (1. - qfec) * idr - drakr(ior,ndr) - drbar(ior,ndr)
-         dgewdr         = gewdr(ior,ndr) * drmas(ior,ndr) * tflie
-         gewdr(ior,ndr) = gewdr(ior,ndr) + dgewdr
+         ! output ingestion rate
+         idras(ior,ndr) = ingestion_rate
          
-         ! Annahme: 1 mg respirierte Biomasse verbraucht 5.59 mg O2(Schneider)
-         if (vol == 0.0) then
+         ! fraction of uptake going into fecal pellet production
+         f_fecal  = 0.315 * exp(0.88 * hconf)
+         
+         ! calculate rates (mgC / d) and net growth (mgC) for Dreissena on slopes and river bed, respectively
+         do i = 1,2
+            assimilation_rate(i) = (1. - f_fecal) * uptake_rate(i)
+            excretion_rate(i)    = f_excrete * assimilation_rate(i)
+            respiration_rate(i)  = rres * hcont * biomass_adult(i) + qres * assimilation_rate(i)
+            net_growth(i)        = (assimilation_rate(i) - respiration_rate(i) - excretion_rate(i)) * tflie
+            
+            ! change of Dreissena biomass due to net growth
+            ! TODO FG: If Gerris units are correct, this implies a summation of units g and mgC
+            biomass_adult(i) = biomass_adult(i) + net_growth(i)
+            if (i == 1) then
+               zdrei(ior,ndr)  = biomass_adult(i)
+            else
+               zdreis(ior,ndr) = biomass_adult(i)
+            endif
+         enddo
+         
+         ! calculate filtration rate (m3 / (g d)) and filtrated volume (m3)
+         if (gewdr(ior,ndr) > 0.0) then
+            filtration_rate  = 9.24  * gewdr(ior,ndr)**(-0.392)                                   *   &
+         &                     3.267 * exp(-0.037 * SSalg(ior) - 0.00605 * (20. - tempw(ior))**2) *   &
+         &                     24. / 1000. * fcom
+            filtrated_volume = filtration_rate * sum(biomass_adult) * tflie
+         else
+            ! no filtration
+            filtrated_volume = 0.0
+         endif
+         
+         ! overall weight change (mgC / d) of one Dreissena due to:
+         ! (1) ingestion/assimilation-dependent respiration
+         ! (2) basal repiration
+         drakr(ior,ndr)    = (1. - f_fecal) * qres * ingestion_rate
+         drbar(ior,ndr)    = rres * hcont
+         drmas(ior,ndr)    = (1. - f_fecal) * (1. - f_excrete) * ingestion_rate - drakr(ior,ndr) - drbar(ior,ndr)
+         delta_weight(ndr) = gewdr(ior,ndr) * drmas(ior,ndr) * tflie
+         gewdr(ior,ndr)    = gewdr(ior,ndr) + delta_weight(ndr)
+         
+         if (water_volume == 0.0) then
             dlarvn(anze+1) = dlarvn(anze)
             jahr_tst1 = jahrs
             return
          endif
          
-         rescm3 = (respc + respcs) / vol
-         excm3  = (exdr  + exdrs ) / vol
+         ! respirated and excreted biomass (mgC / L)
+         rescm3 = sum(respiration_rate) / water_volume
+         excm3  = sum(excretion_rate)   / water_volume
          
-         respbio    = rescm3 / drCgeh ! Respiration Umrechnung von C in Biomasse
-         resdr(ior) = resdr(ior) + respbio * tflie
+         ! respirated biomass (mg / L)
+         respbio    = rescm3 / C_adult * tflie
+         resdr(ior) = resdr(ior) + respbio
          
-         exdrvz      = exdrvz + excm3*tflie
-         exdrvg(ior) = exdrvz * hconvg / Cagr
-         exdrvk(ior) = exdrvz * hconvk / Caki
-         exdrvb(ior) = exdrvz * hconvb / Cabl
+         ! oxygen consumption due to respiration (mg O2 / L)
+         ro2dr(ior) = ro2dr(ior) + respbio * r_o2_resp
          
-         respo2 = respbio*5.59
-         ro2dr(ior) = ro2dr(ior)+respo2*tflie
+         ! total excreted biomass (mgC / L)
+         exdrvz      = exdrvz + excm3 * tflie
          
-         upt   = up  * tflie
-         upst  = ups * tflie
-         uptm3 = (upt + upst) / vol
+         ! excreted biomass due to grazing on the different algae (mg / L)
+         exdrvg(ior) = exdrvz * hconvg
+         exdrvk(ior) = exdrvz * hconvk
+         exdrvb(ior) = exdrvz * hconvb
          
-         fh2ovol = fh2ovol / vol
+         ! uptake of the different algae and suspended matter (mg / L)
+         uptm3 = sum(uptake_rate) / water_volume * tflie
+         adrg(ndr) = uptm3 * hconvg
+         adrk(ndr) = uptm3 * hconvk
+         adrb(ndr) = uptm3 * hconvb
+         drss(ndr) = 0.
          
-         adrg(ndr)   = uptm3 * hconvg / Cagr
-         adrk(ndr)   = uptm3 * hconvk / Caki
-         adrb(ndr)   = uptm3 * hconvb / Cabl
-         drfecg(ndr) = qfec * adrg(ndr)
-         drfeck(ndr) = qfec * adrk(ndr)
-         drfecb(ndr) = qfec * adrb(ndr)
-         drfecs(ndr) = qfec * drss(ndr)
-         vofkop(ndr) = fh2ovol * 100.
+         ! fecal pellet production (mg)
+         drfecg(ndr) = f_fecal * adrg(ndr)
+         drfeck(ndr) = f_fecal * adrk(ndr)
+         drfecb(ndr) = f_fecal * adrb(ndr)
+         drfecs(ndr) = f_fecal * drss(ndr)
          
-         ! amount of filtered alge and suspended matter (in mg / L)
-         Filaki(ndr) = aki(ior) * pki * fh2ovol
-         Filagr(ndr) = agr(ior) * pgr * fh2ovol
-         Filabl(ndr) = abl(ior) * pbl * fh2ovol
-         filss(ndr)  = ss(ior)  *       fh2ovol
+         ! volume fraction (%) filtered by 'ndr-1'-th cohort
+         filtrated_volume = filtrated_volume / water_volume
+         vofkop(ndr)      = filtrated_volume * 100.
+         
+         ! amount of filtered algae and suspended matter (in mg / L)
+         filaki(ndr) = aki(ior) * pki * filtrated_volume
+         filagr(ndr) = agr(ior) * pgr * filtrated_volume
+         filabl(ndr) = abl(ior) * pbl * filtrated_volume
+         filss(ndr)  = ss(ior)  *       filtrated_volume
          
          if (adrk(ndr) > 0.0 .and. adrk(ndr) > Filaki(ndr)) then
-            Filaki(ndr) = adrk(ndr)
+            filaki(ndr) = adrk(ndr)
             filagr(ndr) = adrg(ndr)
             filabl(ndr) = adrb(ndr)
-            vofkop(ndr) = Filaki(ndr) / (aki(ior) * pki) * 100.
+            vofkop(ndr) = filaki(ndr) / (aki(ior) * pki) * 100.
          elseif (adrg(ndr) > 0.0 .and. adrg(ndr) > Filagr(ndr)) then
-            Filaki(ndr) = adrk(ndr)
+            filaki(ndr) = adrk(ndr)
             filagr(ndr) = adrg(ndr)
             filabl(ndr) = adrb(ndr)
-            vofkop(ndr) = Filagr(ndr) / (agr(ior) * pgr) * 100.
+            vofkop(ndr) = filagr(ndr) / (agr(ior) * pgr) * 100.
          elseif (adrb(ndr) > 0.0 .and. adrb(ndr) > Filabl(ndr)) then
-            Filaki(ndr) = adrk(ndr)
+            filaki(ndr) = adrk(ndr)
             filagr(ndr) = adrg(ndr)
             filabl(ndr) = adrb(ndr)
-            vofkop(ndr) = Filabl(ndr) / (abl(ior) * pbl) * 100.
+            vofkop(ndr) = filabl(ndr) / (abl(ior) * pbl) * 100.
          endif
          
-         dchlg(ndr) = 0.0
-         dchlk(ndr) = 0.0
-         dchlb(ndr) = 0.0
-         if (agbcm(ior) > 0.0) dchlg(ndr) = filagr(ndr) * 1000. * Cagr / agbcm(ior)
-         if (akbcm(ior) > 0.0) dchlk(ndr) = filaki(ndr) * 1000. * Caki / akbcm(ior)
-         if (abbcm(ior) > 0.0) dchlb(ndr) = filabl(ndr) * 1000. * Cabl / abbcm(ior)
-         
-         filHNF(ndr) = CHNF(ior) * fh2ovol
+         ! amount of filtered HNF
+         filHNF(ndr) = CHNF(ior) * filtrated_volume
          
       enddo
       
-      algdrg(ior) = 0.0
-      algdrk(ior) = 0.0
-      algdrb(ior) = 0.0
-      ssdr(ior)   = 0.0
-      drfaek(ior) = 0.0
-      drfaeg(ior) = 0.0
-      drfaeb(ior) = 0.0
-      drfaes(ior) = 0.0
-      draup       = 0.0
-      volfdr(ior) = 0.0
-      drHNF(ior)  = 0.0
+      ! set output variables
+      algdrg(ior) = sum(filagr)
+      algdrk(ior) = sum(filaki)
+      algdrb(ior) = sum(filabl)
+      ssdr(ior)   = sum(filss)
+      drfaeg(ior) = sum(drfecg)
+      drfaek(ior) = sum(drfeck)
+      drfaeb(ior) = sum(drfecb)
+      drfaes(ior) = sum(drfecs)
+      volfdr(ior) = sum(vofkop)
+      draup       = sum(adrg) + sum(adrk) + sum(adrb)
+      drHNF(ior)  = sum(filHNF)
       
-      do ndr = 1,nndr
-         algdrg(ior) = algdrg(ior) + filagr(ndr)
-         algdrk(ior) = algdrk(ior) + filaki(ndr)
-         algdrb(ior) = algdrb(ior) + filabl(ndr)
-         ssdr(ior)   = ssdr(ior)   + filss(ndr)
-         drfaeg(ior) = drfaeg(ior) + drfecg(ndr)
-         drfaek(ior) = drfaek(ior) + drfeck(ndr)
-         drfaeb(ior) = drfaeb(ior) + drfecb(ndr)
-         drfaes(ior) = drfaes(ior) + drfecs(ndr)
-         
-         volfdr(ior) = volfdr(ior) + vofkop(ndr)
-         draup       = draup + adrg(ndr) + adrk(ndr) + adrb(ndr)
-         
-         drHNF(ior)  = drHNF(ior) + filHNF(ndr)
-      enddo
+      if (CHNF(ior) > 0.0) then
+         HNFdra(ior) = drHNF(ior) / CHNF(ior) * 24.
+      else
+         HNFdra(ior) = 0.0
+      endif
       
-      ! Ausgabe
-      HNFdra(ior) = 0.0
-      if (CHNF(ior) > 0.0)HNFdra(ior) = (drHNF(ior)/CHNF(ior))*24.
-      
-      ! Schwebstoffaufnahme durch Dreissena wird vorläufig auf Null gesetz
+      ! suspended matter uptake currently not implemented: reset to zero
       ssdr(ior) = 0.0
       
-      ! Pseudo faces fraction of Dreissena
+      ! Pseudo faeces fraction of Dreissena
+      ! TODO FG: Whatever pseudo-faeces are meant to be ...
       if (algdrg(ior) + algdrk(ior) + algdrb(ior) > 0.0 .and. draup > 0.0) then
          drpfec(ior) = 1. - draup / (algdrg(ior) + algdrk(ior) + algdrb(ior))
          drpfec(ior) = max(0., drpfec(ior) * 100.)
@@ -410,154 +430,155 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       endif
       if (drpfec(ior) == 0.) volfdr(ior) = 0.0
       
-      ! Berechnung der Larvenbildung
+      ! initialise values for larval production and losses
       ddlarn = 0.0
       dlamor = 0.0
       dlafes = 0.0
       
-      if (lait1 == 0 .and. laim1 == 0) then
-         ! start date of spawning period not set, i.e. no egg and larvae production
-         cycle
-      else
-         dlmax(ior)  = dlmax(ior)  * area_slope
-         dlmaxs(ior) = dlmaxs(ior) * area_bed
-      endif
+      ! start date of spawning period not set, i.e. no egg and larvae production
+      if (lait1 == 0 .and. laim1 == 0) cycle
+         
+      ! set maximum larvae production on slopes and bed (g)
+      dlmax(ior)  = dlmax(ior)  * habitat_size(1)
+      dlmaxs(ior) = dlmaxs(ior) * habitat_size(2)
       
-      ! check if 
-      if (drft >= laid1) goto 116
-      
-      if (ilang == 0 .or. jahr_tst1 < jahrs) then
-         drrt = 0.0
-         dlmax(ior)  = dlmax(ior)  / area_slope
-         dlmaxs(ior) = dlmaxs(ior) / area_bed
-         cycle
-      endif
-      
-      ! calculate current day of year
-      NRS = ITAGS + 31 * (MONATS - 1)
-      if (monats > 2) NRS = NRS - INT(0.4 * real(MONATS) + 2.3)
-      
-      ! calculate start and end day of spawning period (day of year)
-      NRla1a = lait1 + 31 * (laim1 - 1)
-      if (laim1 > 2) NRla1a = NRla1a - INT(0.4 * real(laim1) + 2.3)
-      nrla1e = nrla1a + laid1
-      
-      if (nrs < nrla1a .or. nrs >= nrla1e) then
-         ! outside of spawning period
-         drrt = 0.0
-      else
+      if (drft < laid1) then
+         if (ilang == 0 .or. jahr_tst1 < jahrs) then
+            drrt = 0.0
+            dlmax(ior)  = dlmax(ior)  / habitat_size(1)
+            dlmaxs(ior) = dlmaxs(ior) / habitat_size(2)
+            cycle
+         endif
+            
+         ! set points in time describing production curve during spawning period
+         ! 1st part of curve (first 30 days of spawning period, with subdivision halfway)
          drrt1 = 0.0
          drrt3 = 30.
          drrt2 = 0.5 * drrt3
-      
+         ! 2nd part of curve (30 days till end of spawning period, with subdivision halfway)
          drrt11 = 0.0
          drrt33 = laid1 - drrt3
          drrt22 = 0.5 * drrt33
-      
-         ! Annahme Gewichtverlust der Adulten durch Reproduktion
-         if (dlmax(ior) == 0.0 .and. dlmaxs(ior) == 0.0) then
-            dlmax(ior)  = zdrei(ior,2)
-            dlmaxs(ior) = zdreis(ior,2)
-            gwdmax(ior) = gewdr(ior,2)
-            sgwmue(ior) = 0.0
-         endif
-      
-         if (drrt > drrt3) then
-            spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
-            drrtt = drrt - drrt3
-            if (drrtt > drrt22) then
-               fdrrt = (drrtt - drrt33)**2 / ((drrtt - drrt22)**2 + (drrtt - drrt33)**2)
-            else
-               fdrrt = (drrtt - drrt11)**2 / ((drrtt - drrt22)**2  +(drrtt - drrt11)**2)
-            endif
+         
+         if (nrs < nrla1a .or. nrs >= nrla1e) then
+            ! outside of production period
+            drrt = 0.0
          else
-            spwmx = 2. * flai * 0.6 / drrt3
-            if (drrt > drrt2) then
-               fdrrt = (drrt - drrt3)**2 / ((drrt - drrt2)**2 + (drrt - drrt3)**2)
-            else
-               fdrrt = (drrt - drrt1)**2 / ((drrt - drrt2)**2 + (drrt - drrt1)**2)
+            ! set maximum weight loss of adults due to egg production to 1st cohorts adults' weight
+            if (dlmax(ior) == 0.0 .and. dlmaxs(ior) == 0.0) then
+               dlmax(ior)  = zdrei(ior,2)
+               dlmaxs(ior) = zdreis(ior,2)
+               gwdmax(ior) = gewdr(ior,2)
+               sgwmue(ior) = 0.0
             endif
+            
+            ! set reference times depending on current phase within spawning period
+            if (drrt <= drrt3) then
+               ! 1st part of production curve: time since start of spawning period <= 30 days
+               f_spawn_max = 0.6  ! maximum fraction of body weight invested into egg producton?
+               dt  = drrt
+               dt1 = drrt1
+               dt2 = drrt2
+               dt3 = drrt3
+            else
+               ! 2nd part of production curve: time since start of spawning period > 30 days
+               ! production is reduced relative to early reproduction phase (cf. 'spwmx')
+               f_spawn_max = 0.4  ! maximum fraction of body weight invested into egg producton?
+               dt  = drrt - drrt3
+               dt1 = drrt11
+               dt2 = drrt22
+               dt3 = drrt33
+            endif
+            ! calculate spawning factor (i.e. fraction of biomass invested in egg production)
+            f_spawn = 2. * flai / dt3 * f_spawn_max
+            if (dt > dt2) dt1 = dt3
+            f_spawn = (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2) * f_spawn
+         
+            ! NOTE: 0th cohort (ndr == 1) does not produce eggs
+            do ndr = 2,nndr
+               gewdr(ior,ndr) = gewdr(ior,ndr) - gwdmax(ior) * tflie * f_spawn
+            
+               ! larval production over time step from weight loss of females
+               ddlarn = (dlmax(ior) + dlmaxs(ior)) * tflie * f_spawn / C_egg * f_production
+               
+               ! additional larval production due to growth over time step
+               ddlarn = ddlarn + max(0., sum(net_growth) * flai / C_egg * f_production)
+               
+               ! convert to mg / L
+               ddlarn = ddlarn / (water_volume * 1000.)
+               
+               ! new weight after loss due to spawn production
+               gewdr(ior,ndr) = gewdr(ior,ndr) - delta_weight(ndr) * flai
+               
+               ! biomass change due to net growth (g / m2)
+               dgwmue = (net_growth(1) / habitat_size(1) + net_growth(2) / habitat_size(2)) * flai
+               sgwmue(ior) = sgwmue(ior) + dgwmue
+               
+               ! biomass loss due to reproduction (g)
+               zdrei(ior,ndr)  = zdrei(ior,ndr)  - dlmax(ior)  * tflie * f_spawn - net_growth(1) * flai
+               zdreis(ior,ndr) = zdreis(ior,ndr) - dlmaxs(ior) * tflie * f_spawn - net_growth(2) * flai
+            enddo
          endif
-         fdrrt = fdrrt * spwmx
-      
-         do ndr = 2,nndr
-            gewdr(ior,ndr) = gewdr(ior,ndr) - gwdmax(ior) * tflie * fdrrt
          
-            ! Berechnung der gebildeten Larven im Zeitschritt aus dem Gewichtsverlust
-            ! der Weibchen
-            ! C-Gehalt einer Eizelle: 3.35e-9 g
-            dEi = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
-            dEi = dEi * 0.75
-            ddlarn = dEi * fgesund * fweib
+         ! calculate larval biomass loss due to mortality
+         dlamor = dlarvn(ior) * (1. - exp(-klmor * tflie))
          
-            ! Larvenbildung aus Zuwachs im Zeitschritt
-            dEimue = max(0., (dyc + dycs) * flai / 3.35e-9 * 0.75 * fgesund * fweib)
-            ddlarn = ddlarn + dEimue
-            gewdr(ior,ndr) = gewdr(ior,ndr) - dgewdr * flai
-            dgwmue = (dyc / area_slope + dycs / area_bed) * flai
-            sgwmue(ior) = sgwmue(ior) + dgwmue
+         ! calculate time since start of spawning period
+         if (nrs >= nrla1a .and. increment_time) stdpla = stdpla + tflie
          
-            ddlarn          = ddlarn / (vol * 1000.)
-            zdrei(ior,ndr)  = zdrei(ior,ndr)  - dlmax(ior)  * tflie * fdrrt - dyc  * flai
-            zdreis(ior,ndr) = zdreis(ior,ndr) - dlmaxs(ior) * tflie * fdrrt - dycs * flai
-         enddo
+         ! compare time since start of spawning period to development period of larvae (tdpla)
+         if (stdpla < tdpla) then
+            ! no larvae yet
+            drft = 0.0
+            increment_time = .false.
+         else
+            ! increment time since first larvae hatched
+            if (increment_time) then
+               drft = drft + tflie
+               increment_time = .false.
+            endif
+            
+            ! set reference times depending on current phase within spawning period
+            if (drft <= drrt3) then
+               ! 1st part of production curve: time since start of spawning period <= 30 days
+               f_spawn_max = 0.6  ! maximum fraction of body weight invested into egg producton?
+               dt  = drft
+               dt1 = drrt1
+               dt2 = drrt2
+               dt3 = drrt3
+            else
+               ! 2nd part of production curve: time since start of spawning period > 30 days
+               ! production is reduced relative to early reproduction phase (cf. 'spwmx')
+               f_spawn_max = 0.4  ! 'investment' into egg production?
+               dt  = drft - drrt3
+               dt1 = drrt11
+               dt2 = drrt22
+               dt3 = drrt33
+            endif
+            if (dt > dt2) dt1 = dt3
+            ! calculate hatching factor (i.e. fraction of larvae successfully developed from eggs)
+            f_spawn = 2. * flai / dt3 * f_spawn_max
+            f_spawn = (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2) * f_spawn
+            
+            ! Larval weight when settling: 8.6e-8 gC; 8.6e-5 mgC <= not used
+            dlafes = (dlmax(ior) + dlmaxs(ior)) * tflie * f_spawn / C_egg * f_production
+         endif
       endif
       
-      ! calculate larval biomass loss due to mortality
-      dlamor = dlarvn(ior) * (1. - exp(-klmor * tflie))
-      
-      ! calculate time since start of spawning period
-      if (nrs >= nrla1a .and. itime_hoch == 1) stdpla = stdpla + tflie
-      
-      ! check if time since start of spawning period is less than
-      ! development period of larvae (tdpla)
-      if (stdpla < tdpla) then
-         ! no larvae yet
-         drft = 0.0
-         itime_hoch = 0
-      else
-         if (itime_hoch == 1) then
-            drft = drft + tflie
-            itime_hoch = 0
-         endif
-      
-         if (drft > drrt3) then
-            spwmx = 2. * flai * 0.4 / (laid1 - drrt3)
-            drftt = drft - drrt3
-            if (drftt > drrt22) then
-               fdrrt = (drftt - drrt33)**2 / ((drftt - drrt22)**2 + (drftt - drrt33)**2)
-            else
-               fdrrt = (drftt - drrt11)**2 / ((drftt - drrt22)**2 + (drftt - drrt11)**2)
-            endif
-         else
-            spwmx = 2. * flai * 0.6 / drrt3
-            if (drft > drrt2) then
-               fdrrt = (drft - drrt3)**2 / ((drft - drrt2)**2 + (drft - drrt3)**2)
-            else
-               fdrrt = (drft - drrt1)**2 / ((drft - drrt2)**2 + (drft  -drrt1)**2)
-            endif
-         endif
-         fdrrt = fdrrt * spwmx
-      
-         ! Larvengewicht beim Festsetzen: 8.6e-8 gC; 8.6e-5 mgC
-         dlafes = (dlmax(ior) + dlmaxs(ior)) * tflie * fdrrt / 3.35e-9
-         dlafes = dlafes * 0.75 * fgesund * fweib
-         116 dfemue = sgwmue(ior) / tdpla * tflie
+      ! change in larval biomass due to maturation?
+      if (drft >= laid1 .or. stdpla >= tdpla) then
+         dfemue = sgwmue(ior) / tdpla * tflie
          if (zdreis(ior,2) > 0.0 .or. zdrei(ior,2) > 0.0) then
             sgwmue(ior) = sgwmue(ior) - dfemue
-            dfmue       = dfemue * area_slope * (zdrei(ior,2)  / (zdrei(ior,2) + zdreis(ior,2)))
-            dfmues      = dfemue * area_bed   * (zdreis(ior,2) / (zdrei(ior,2) + zdreis(ior,2)))
-            dfemue      = (dfmue + dfmues) / 3.35e-9 * 0.75 * fgesund * fweib
+            dfmue       = dfemue * habitat_size(1) * (zdrei(ior,2)  / (zdrei(ior,2) + zdreis(ior,2)))
+            dfmues      = dfemue * habitat_size(2) * (zdreis(ior,2) / (zdrei(ior,2) + zdreis(ior,2)))
+            dfemue      = (dfmue + dfmues) / C_egg * f_production
          else
-            dfmue  = 0.0
-            dfmues = 0.0
             dfemue = 0.0
          endif
          dlafes = dlafes + dfemue
-         dlafes = dlafes * exp(-klmorg) / (vol * 1000.)
-         
+         dlafes = dlafes * exp(-klmorg) / (water_volume * 1000.)
       endif
-      
       dlarvn(ior) = max(0., dlarvn(ior) + ddlarn - dlamor - dlafes)
       
       do ndr = 1,nndr
@@ -568,25 +589,24 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          
          if (gewdr(ior,ndr) > 0.0) then
             dreisn = (zdrei(ior,ndr) + zdreis(ior,ndr)) * 1000. / gewdr(ior,ndr)
-            dreing = dreisn
          else
-            dreing = 0.0
             dreisn = 0.0
          endif
+         dreing = dreisn
          
          if (ndr == 1 .and. dlafes > 0.0) then
-            dreing = dreisn + dlafes * vol * 1000.
-            gewdts = (dreisn * gewdr(ior,1) + dlafes * vol * 1000.* 8.6e-5) / dreing
+            dreing = dreisn + dlafes * water_volume * 1000.
+            gewdts = (dreisn * gewdr(ior,1) + dlafes * water_volume * 1000.* 8.6e-5) / dreing
             if (gewdts > 0.0246) then
                dlafes = dlafes * exp(-2. * tflie)
-               dreing = dreisn + dlafes * vol * 1000.
-               gewdts = (dreisn * gewdr(ior,1) + dlafes * vol * 1000.* 8.6e-5) / dreing
+               dreing = dreisn + dlafes * water_volume * 1000.
+               gewdts = (dreisn * gewdr(ior,1) + dlafes * water_volume * 1000.* 8.6e-5) / dreing
             endif
             gewdr(ior,1) = gewdts
          elseif (ndr == 2 .and. gewdr(ior,1) > 1.6) then
             ddrein        = (zdrei(ior,1) + zdreis(ior,1)) * 1000. / gewdr(ior,1)
             dreing        = dreisn + ddrein
-            gewdr(ior,2)  = (dreisn * gewdr(ior,2) + ddrein * gewdr(ior,1)) / (dreisn + ddrein)
+            gewdr(ior,2)  = (dreisn * gewdr(ior,2) + ddrein * gewdr(ior,1)) / dreing
             gewdr(ior,1)  = 0.0
             zdrei(ior,1)  = 0.0
             zdreis(ior,1) = 0.0
@@ -608,7 +628,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          dreinm = dreing * (1. - exp(-dmorg * tflie))
          dreing = max(0., dreing - dreinm)
          
-         if (ndr == 1 .and. zdrei(ior,ndr)+zdreis(ior,ndr) == 0.) then
+         if (ndr == 1 .and. zdrei(ior,ndr) + zdreis(ior,ndr) == 0.) then
             if (dlafes > 0.0) then
                hcond = zdrei(ior,2) / (zdrei(ior,2) + zdreis(ior,2))
             else
@@ -633,21 +653,26 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          
       enddo
       
+      ! convert Dreissena biomass back from g to g / m2
       do ndr = 1,nndr
-         zdrei(ior,ndr) = zdrei(ior,ndr) / area_slope
-         if (area_bed > 0.) then
-            zdreis(ior,ndr) = zdreis(ior,ndr) / area_bed
+         if (habitat_size(1) > 0.) then
+            zdrei(ior,ndr) = zdrei(ior,ndr) / habitat_size(1)
+         else
+            zdrei(ior,ndr) = 0.
+         endif
+         if (habitat_size(2) > 0.) then
+            zdreis(ior,ndr) = zdreis(ior,ndr) / habitat_size(2)
          else
             zdreis(ior,ndr) = 0.
          endif
       enddo
       
-      dlmax(ior)  = dlmax(ior)  / area_slope
-      dlmaxs(ior) = dlmaxs(ior) / area_bed
+      dlmax(ior)  = dlmax(ior)  / habitat_size(1)
+      dlmaxs(ior) = dlmaxs(ior) / habitat_size(2)
       
    enddo
    
-   999 dlarvn(anze+1) = dlarvn(anze)
+   dlarvn(anze+1) = dlarvn(anze)
    jahr_tst1 = jahrs
    
    return
