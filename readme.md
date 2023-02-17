@@ -1,8 +1,10 @@
 # QSim 14
 
 ## 14.09
+
 ### 14.09.23
-	* Correct calculations in Nitrogen
+* Correct calculations in Nitrogen
+
 ### 14.09.22
 Bugfixes
 * Correct groyne fields
