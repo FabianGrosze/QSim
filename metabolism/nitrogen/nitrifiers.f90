@@ -52,9 +52,6 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    
    external :: print_clipping, sedimentation, qerror
    
-   ! initialise potentially unused variables to prevent compiler warning
-   kd_n2 = 0.
-      
    ! influence of temperature (Wolf)
    if (tempw_s < 15.) then
       alphat = 0.75 * 1.108**(tempw_s - 15.)
@@ -166,7 +163,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       
       if (susn2_s > vNO2_s) then
          susn2_s = vNO2_s
-         vx02t   = vx02_s + susn2_s * ekx0
+         vx02t   = vx02_s + susn2_s * ekx02
          if (vx02t > 0. .and. vx02_s > 0.) then
             yn = (log(vx02t) - log(vx02_s)) / tflie
          else
@@ -241,7 +238,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    endif
    
    ! Ausgabewerte
-   bettn_s = hJNH4_s * tflie / (24. * tiefe_s)
+  bettn_s = hJNH4_s / (24. * tiefe_s)
    
    vx0_s  = vx0t
    vx02_s = vx02t
