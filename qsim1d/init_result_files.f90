@@ -92,9 +92,9 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       print*, '> ausgabe156.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
-      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
+      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; iior ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
                      & gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
-      
+
       ! --- Ausgabe 157 Schwermetalle ---
       print*, '> ausgabe157_schwermetalle.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe157_schwermetall.csv'

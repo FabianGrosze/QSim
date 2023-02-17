@@ -37,7 +37,7 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 
 # set executable name
 # PV=qsim1d_$(QSim_version)_dev
-PV='qsim1d_schwermetall22'
+PV='qsim1d_schwermetall24'
 
 #====================================================================
 
@@ -51,7 +51,7 @@ FC = gfortran
 Q1 = module_model_settings.o \
      AdvDiff.o \
      ALBEDO.o \
-	 coliform_bacteria_inflow_1d.o \
+     coliform_bacteria_inflow_1d.o \
      ctracer.o \
      EreigGParam.o \
      EreigHParam.o \

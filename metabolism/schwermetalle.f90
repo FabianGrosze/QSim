@@ -484,7 +484,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                               ,hgsCrt,hglCrt,hgsFet,hglFet                 &
                               ,hgsHgt,hglHgt,hgsMnt,hglMnt                 &
                               ,hgsUt,hglUt                                 &
-                              ,.true.,ior,0)
+                              ,.false.,ior,0)
    enddo     ! Ende Schleife longitudinale Gitterpunkte
    
 end subroutine schwermetalle

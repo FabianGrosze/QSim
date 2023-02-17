@@ -146,7 +146,7 @@ program qsim
    real            :: xgscu, xglcu, xgsni, xglni, xgsas
    real            :: xglas, xgspb, xglpb, xgscr, xglcr
    real            :: xgsfe, xglfe, xgshg, xglhg, xgsmn
-   real            :: xglmn, xgsu, xglu, xdlarn, xss
+   real            :: xglmn, xgsu, xglu, xdlarn, xssalg
    real            :: xpfl, xgsp, xgsn, xcori, xcoris
    real            :: xbal, xsusn, xbettn, xdon, xalgn
    real            :: xalno3, xflun3, xvx0, xvx02, xsedx
@@ -327,7 +327,7 @@ program qsim
    real, dimension(:,:), allocatable       :: extk_lamda, hsised, hskmor, mxtemp, mitemp, mxb5, mib5, mxcs, mics, mxnh4
    real, dimension(:,:), allocatable       :: minh4, mxchla,  michla, mxo2, mio2, mizo, mxzo, misi, mxsi, mivph, mxvph
    real, dimension(:,:), allocatable       :: micoli, mxcoli, mica, mxca, mimw, mxmw, mivno3, mxvno3, migp, mxgp, mxvno2
-   real, dimension(:,:), allocatable       :: mivno2, milf, mxlf, miabl, mxabl, miss, mxss, sumte, sumb5, sumcs, sumn4
+   real, dimension(:,:), allocatable       :: mivno2, milf, mxlf, miabl, mxabl, missalg, mxssalg, sumte, sumb5, sumcs, sumn4
    real, dimension(:,:), allocatable       :: migszn, mxgszn, miglzn, mxglzn, migscad, mxgscad, miglcad, mxglcad
    real, dimension(:,:), allocatable       :: migscu, mxgscu, miglcu, mxglcu, migsni, mxgsni, miglni, mxglni
    real, dimension(:,:), allocatable       :: migsas, mxgsas, miglas, mxglas, migspb, mxgspb, miglpb, mxglpb
@@ -338,7 +338,7 @@ program qsim
    real, dimension(:,:), allocatable       :: sumgsas, sumglas, sumgspb, sumglpb, sumgscr, sumglcr, sumgsfe, sumglfe
    real, dimension(:,:), allocatable       :: sumgshg, sumglhg, sumgsmn, sumglmn, sumgsu, sumglu
    real, dimension(:,:), allocatable       :: sumsi, scm, sbac, schnf, sbvhnf, sumcak, sumcag, sumcab, summw, sumlf
-   real, dimension(:,:), allocatable       :: sumca, sumo2, sumzo, sumss, sumpfl, sumbal, sgsp, sgsn, scoli, sumvph
+   real, dimension(:,:), allocatable       :: sumca, sumo2, sumzo, sumssalg, sumpfl, sumbal, sgsp, sgsn, scoli, sumvph
    real, dimension(:,:), allocatable       :: sumno3, sumgp, szooro, sumno2, svkigr, santbl, sumabl, snaehr
    real, dimension(:,:), allocatable       :: sabmua, svx02, sumaki, sumagr, zwcd, zwcp, zwo2z, zwgpz, zwakiz, zwcors
    real, dimension(:,:), allocatable       :: zwcoro, akmb, ekmb, dlb, zwagrz, zwablz, zwchlz, tau2b, alphab, pomzb
@@ -460,10 +460,10 @@ program qsim
    character (len = 8)                     :: versionstext, dummy
    
    ! --- settings ---
-   linux = .false.
-   kontroll = .false.
-   mitsedflux = .false.    ! sediment fluxes switched off temporarily
-   write_csv_output = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
+   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
+   mitsedflux = .false.      ! sediment fluxes switched off temporarily
+   write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
    ! --- get arguments ---
    call get_paths(linux)
@@ -602,7 +602,7 @@ program qsim
    allocate(mimw(azStrs,ialloc2), mxmw(azStrs,ialloc2), mivno3(azStrs,ialloc2), mxvno3(azStrs,ialloc2))
    allocate(migp(azStrs,ialloc2), mxgp(azStrs,ialloc2), mxvno2(azStrs,ialloc2), mivno2(azStrs,ialloc2))
    allocate(milf(azStrs,ialloc2), mxlf(azStrs,ialloc2), miabl(azStrs,ialloc2), mxabl(azStrs,ialloc2))
-   allocate(miSS(azStrs,ialloc2), mxSS(azStrs,ialloc2), sumte(azStrs,ialloc2), sumb5(azStrs,ialloc2))
+   allocate(miSSalg(azStrs,ialloc2), mxSSalg(azStrs,ialloc2), sumte(azStrs,ialloc2), sumb5(azStrs,ialloc2))
    allocate(migsZn(azStrs,ialloc2), mxgsZn(azStrs,ialloc2), miglZn(azStrs,ialloc2), mxglZn(azStrs,ialloc2))
    allocate(migsCad(azStrs,ialloc2), mxgsCad(azStrs,ialloc2), miglCad(azStrs,ialloc2), mxglCad(azStrs,ialloc2))
    allocate(migsCu(azStrs,ialloc2), mxgsCu(azStrs,ialloc2), miglCu(azStrs,ialloc2), mxglCu(azStrs,ialloc2))
@@ -624,7 +624,7 @@ program qsim
    allocate(sumcs(azStrs,ialloc2), sumn4(azStrs,ialloc2),sumsi(azStrs,ialloc2), sCM(azStrs,ialloc2))
    allocate(sBAC(azStrs,ialloc2), sCHNF(azStrs,ialloc2), sBVHNF(azStrs,ialloc2), sumcak(azStrs,ialloc2))
    allocate(sumcag(azStrs,ialloc2), sumcab(azStrs,ialloc2), summw(azStrs,ialloc2), sumlf(azStrs,ialloc2))
-   allocate(sumca(azStrs,ialloc2), sumo2(azStrs,ialloc2), sumzo(azStrs,ialloc2), sumss(azStrs,ialloc2))
+   allocate(sumca(azStrs,ialloc2), sumo2(azStrs,ialloc2), sumzo(azStrs,ialloc2), sumssalg(azStrs,ialloc2))
    allocate(sumpfl(azStrs,ialloc2), sumbal(azStrs,ialloc2), sgsP(azStrs,ialloc2), sgsN(azStrs,ialloc2))
    allocate(scoli(azStrs,ialloc2), sumvph(azStrs,ialloc2), sumno3(azStrs,ialloc2), sumgp(azStrs,ialloc2))
    allocate(szooro(azStrs,ialloc2), sumno2(azStrs,ialloc2), svkigr(azStrs,ialloc2), santbl(azStrs,ialloc2))
@@ -7412,8 +7412,8 @@ program qsim
       mxcoli = 0.0
       midlan = 99999999.9
       mxdlan = 0.0
-      miSS = 99999999.9
-      mxSS = 0.0
+      miSSalg = 99999999.9
+      mxSSalg = 0.0
       migsZn = 99999999.9
       mxgsZn = 0.0
       miglZn = 99999999.9
@@ -7625,7 +7625,7 @@ program qsim
       scoIsg = 0.0
       
       sumpfl = 0.0
-      sumss = 0.0
+      sumssalg = 0.0
       sumbal = 0.0
       
       ! Raten
@@ -7798,7 +7798,8 @@ program qsim
       mSta = 0
       do iior = 1,hanze(mstr)+1                ! Beginn Knotenschleife
          if (hflag(mstr,iior) == 6) cycle
-         mSta = mSta+1
+         ! mSta = mSta+1 ! was soll das?? !!wy
+         mSta = iior
          
          tiefey(mSta) = htiefe(mstr,iior)
          tempwy(mSta) = htempw(mstr,iior)
@@ -8257,7 +8258,7 @@ program qsim
                     
             ! Write results to csv-files for debugging
             if (write_csv_output) then 
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',STRID(mstr)                      &
                                   ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
                                   ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
                                   ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
@@ -8436,9 +8437,9 @@ program qsim
          if (lfy(iior) > mxlf(mstr,iior))mxlf(mstr,iior) = lfy(iior)
          if (lfy(iior) < milf(mstr,iior))milf(mstr,iior) = lfy(iior)
          
-         sumss(mstr,iior) = sumss(mstr,iior)+ssalgy(iior)
-         if (ssalgy(iior) > mxSS(mstr,iior))mxSS(mstr,iior) = ssalgy(iior)
-         if (ssalgy(iior) < miSS(mstr,iior))miSS(mstr,iior) = ssalgy(iior)
+         sumssalg(mstr,iior) = sumssalg(mstr,iior)+ssalgy(iior)
+         if (ssalgy(iior) > mxSSalg(mstr,iior))mxSSalg(mstr,iior) = ssalgy(iior)
+         if (ssalgy(iior) < miSSalg(mstr,iior))miSSalg(mstr,iior) = ssalgy(iior)
          
          scoli(mstr,iior) = scoli(mstr,iior)+coliy(iior)
          if (coliy(iior) > mxcoli(mstr,iior))mxcoli(mstr,iior) = coliy(iior)
@@ -9432,7 +9433,7 @@ program qsim
          xglU  = sumglU(mstr,iior)/itime
          
          xdlarn = sumdln(mstr,iior)/itime
-         xss = sumss(mstr,iior)/itime
+         xssalg = sumssalg(mstr,iior)/itime
          xpfl = sumpfl(mstr,iior)/itime
          xgsP = sgsP(mstr,iior)/itime
          xgsN = sgsN(mstr,iior)/itime
@@ -9888,8 +9889,8 @@ program qsim
                        ,mxchla(mstr,iior),mizo(mstr,iior),xzooind,mxzo(mstr,iior)           &
                        ,mivph(mstr,iior),xvph,mxvph(mstr,iior),mimw(mstr,iior)              &
                        ,xmw,mxmw(mstr,iior),mica(mstr,iior),xca,mxca(mstr,iior)             &
-                       ,miLf(mstr,iior),xLf,mxLf(mstr,iior),miSS(mstr,iior),xSS             &
-                       ,mxSS(mstr,iior),mitemp(mstr,iior),xtempw,mxtemp(mstr,iior)          &
+                       ,miLf(mstr,iior),xLf,mxLf(mstr,iior),miSSalg(mstr,iior),xssalg          &
+                       ,mxSSalg(mstr,iior),mitemp(mstr,iior),xtempw,mxtemp(mstr,iior)          &
                        ,miO2(mstr,iior),xO2,mxO2(mstr,iior),miColi(mstr,iior)               &
                        ,xColi,mxColi(mstr,iior),miKonsS,xKonsS,mxKonsS,migsPb(mstr,iior)    &
                        ,xgsPb,mxgsPb(mstr,iior),miglPb(mstr,iior),xglPb,mxglPb(mstr,iior)   &
