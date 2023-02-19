@@ -75,8 +75,7 @@ module aparam
    
    ! HNF
    real, protected    :: upHNF,  BACks
-   !real,  protected :: upHNFe, BACkse 
-   
+      
    ! Wasser
    real, protected    :: alamda
    

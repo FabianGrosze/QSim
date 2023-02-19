@@ -79,7 +79,7 @@ subroutine stoffumsatz()
                call dreissen_huelle(i)
                
                ! heterotrophe Nanoflagellaten [turned off]
-               ! call hnf_huelle(i)
+               call hnf_wrapper_3d(i)
                
                ! Algen-Baustein
                do k = 1,number_plankt_vari

@@ -4741,38 +4741,32 @@ program qsim
       
       ! -----------------------------------------------------------------------
       ! heterotrophe Nanoflagelaten (HNF)
-      ! [ausgeschaltet]
+      ! [currently turned off]
       ! -----------------------------------------------------------------------
-      218 continue
-      !if (CHNF(1) <= 0.0) then
-      !   if (nbuhn(mstr) > 0) then
-      !      do ior = 1,anze+1
-      !         bro2HF(mstr,ior) = 0.0
-      !         bHNFBS(mstr,ior) = 0.0
-      !         bBSBHN(mstr,ior) = 0.0
-      !      enddo
-      !   endif
-      !   goto 1412
-      !endif
-      
-      ! call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                            &
-      !         ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl               &
-      !         ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks  &
-      !         ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz,   &
-      !          .false., 0)
-      HNFmua = 0.
-      HNFrea = 0.
-      HNFupa = 0.
-      HNFmoa = 0.
-      HNFexa = 0.
-      HNFbac = 0.
-      rO2HNF = 0.
-      bsbHNF = 0.
+      ! call hnf_inflow_1d(chnf, bvhnf, echnf, ebvhnf, qeinl, &
+      !                    vabfl, jiein, anze, flag)
+      !
+      ! do ior = 1,anze+1
+      !    call hnf(chnf(ior), bac(ior), vo2(ior), tempw(ior), drhnf(ior), &
+      !             zhnf(ior), tflie,                                      &
+      !             hnfbac(ior), hnfupa(ior), hnfrea(ior), hnfexa(ior),    & 
+      !             hnfmoa(ior), hnfmua(ior), ro2hnf(ior), bsbhnf(ior),    &
+      !             kontroll, jjj)
+      ! enddo
+      hnfbac = 0.
+      hnfupa = 0.
+      hnfrea = 0.
+      hnfexa = 0.
+      hnfmoa = 0.
+      hnfmua = 0.
+      ro2hnf = 0.
+      bsbhnf = 0.
       
       if (nbuhn(mstr) > 0) then
          bro2HF(mstr,:) = 0.
          bHNFBS(mstr,:) = 0.
          bBSBHN(mstr,:) = 0.
+         
       endif
       
       ! -----------------------------------------------------------------------

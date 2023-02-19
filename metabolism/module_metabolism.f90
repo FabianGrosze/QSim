@@ -12,6 +12,8 @@ module module_metabolism
    use module_phosphate
    use module_silicate
    
+   ! use module_hnf
+   
    implicit none
 
 contains

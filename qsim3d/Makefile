@@ -145,7 +145,7 @@ Q3 = version.co \
    coroph_huelle.o \
    algae_huelle.o \
    konsum_huelle.o \
-   hnf_huelle.o \
+   hnf_wrapper_3d.o \
    dreissen_huelle.o \
    ausgeben_casu.o \
    ausgeben_untrim.o ausgabe.o \
