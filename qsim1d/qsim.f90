@@ -4766,7 +4766,6 @@ program qsim
          bro2HF(mstr,:) = 0.
          bHNFBS(mstr,:) = 0.
          bBSBHN(mstr,:) = 0.
-         
       endif
       
       ! -----------------------------------------------------------------------
@@ -5433,17 +5432,26 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! benthische Algen
+      ! benthic algae [turned off]
       ! -----------------------------------------------------------------------
       1513 continue
-      ! call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
-      !              ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
-      !              ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
-      !              ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
-      !              ,.false.,0)
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call albenth(abegm2(ior), abekm2(ior), vnh4(ior), vno3(ior), gelp(ior),  &
+      !                    si(ior), vmitt(ior), tempw(ior), schwi(ior), extk(ior),     &
+      !                    tiefe(ior), tflie,                                          &
+      !                    albewg(ior), alberg(ior),  albewk(ior), alberk(ior),        &
+      !                    cmatgr(ior), cmatki(ior),                                   &
+      !                    kontroll, jjj)
+      !    enddo
+      ! endif
+            
+      ! benthic algae are currently turned off.
+      ! Only the return values of `subroutine albenth` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       albewg(:) = 0.0
-      albewk(:) = 0.0
       alberg(:) = 0.0
+      albewk(:) = 0.0
       alberk(:) = 0.0
       cmatgr(:) = 0.0
       cmatki(:) = 0.0
