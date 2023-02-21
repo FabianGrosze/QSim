@@ -160,7 +160,7 @@ Q3 = version.co \
    stofftransport.o \
    sedflux_huelle.o \
    coliform_bacteria_wrapper_3d.o \
-   albenth_huelle.o \
+   albenth_wrapper_3d.o \
    macrophytes_wrapper_3d.o\
    stoffumsatz.o \
    QSim3D.o

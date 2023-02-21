@@ -49,7 +49,7 @@ FC = gfortran
 
 Q1 = module_model_settings.o \
     advdiff.o \
-    ALBEDO.o \
+    albedo.o \
     basispoint.o \
     cip.o \
     coliform_bacteria_inflow_1d.o \

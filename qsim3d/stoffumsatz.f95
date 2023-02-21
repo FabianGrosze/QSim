@@ -107,7 +107,7 @@ subroutine stoffumsatz()
                end do
                
                ! benthic algae [turned off]
-               call albenth_huelle(i)
+               call albenth_wrapper_3d(i)
                
                ! macrophytes [turned off]
                call macrophytes_wrapper_3d(i)

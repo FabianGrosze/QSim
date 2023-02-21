@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine albenth_huelle(i)
+subroutine albenth_wrapper_3d(i)
    use modell
    use QSimDatenfelder
    implicit none
@@ -74,4 +74,4 @@ subroutine albenth_huelle(i)
    !    kontroll, jjj)
    
    return
-end subroutine albenth_huelle
+end subroutine albenth_wrapper_3d
