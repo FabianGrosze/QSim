@@ -559,9 +559,8 @@ module QSimDatenfelder
    real, dimension(1,1000)         :: sedalg_mq
    !> \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
    real, dimension(1,1000)         :: sedss_mq
+
    ! mphyt Makrophyten
-   !>    \anchor pfldalg pfldalg unbenutzte Variable in mphyt()
-   real :: pfldalg(1000)
    !>    \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
    !>    \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
    !      real :: sa, su

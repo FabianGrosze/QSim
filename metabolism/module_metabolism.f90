@@ -13,6 +13,7 @@ module module_metabolism
    use module_silicate
    
    ! use module_hnf
+   ! use module_macrophytes
    
    implicit none
 

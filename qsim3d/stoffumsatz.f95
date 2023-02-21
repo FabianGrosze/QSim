@@ -110,7 +110,7 @@ subroutine stoffumsatz()
                call albenth_huelle(i)
                
                ! macrophytes [turned off]
-               call mphyt_huelle(i)
+               call macrophytes_wrapper_3d(i)
                
                ! organic carbon
                call organic_carbon_wrapper_3d(i)
@@ -122,7 +122,7 @@ subroutine stoffumsatz()
                   call ph_wrapper_3d(i)
                endif
             endif ! .not. nur_temp
-         end if ! Knoten nass ... Temperw auch an trockenen Knoten !!!
+         end if ! Knoten nass ... Temperw auch an trockenen Knoten
          
          ! temperature
          call temperw_huelle(i)

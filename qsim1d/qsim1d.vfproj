@@ -80,6 +80,11 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\hnf\module_hnf.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="macrophytes">
+		<File RelativePath="..\metabolism\macrophytes\macrophytes.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -144,7 +149,6 @@
 		<File RelativePath="..\metabolism\module_allodim.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
-		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>

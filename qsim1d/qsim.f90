@@ -5464,21 +5464,27 @@ program qsim
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]
       ! -----------------------------------------------------------------------
-      ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-      !            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                   &
-      !            ,.false.,0)
-      
-      ! if (nbuhn(mstr) > 0) then
-      !    do ior = 1,anze+1
-      !       bpfl(mstr,ior) = pfl(ior)
-      !       pfl(ior) = 0.0
-      !    enddo
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call macrophytes(pfl(ior), pflmin(ior), pflmax(ior), tiefe(ior),   &
+      !                        tempw(ior), schwi(ior), extk(ior),                &
+      !                        itags, monats, itstart, mstart, itmax, mmax,      &
+      !                        itend, mend, sa, su, tflie, po2p(ior), po2r(ior), &
+      !                        kontroll, jjj)
+      !    enddo   
+      !    ! if (nbuhn(mstr) > 0) then
+      !    !    do ior = 1,anze+1
+      !    !       bpfl(mstr,ior) = pfl(ior)
+      !    !       pfl(ior) = 0.0
+      !    !    enddo
+      !    ! endif
       ! endif
       
+      ! macrophytes are currently turned off.
+      ! Only the return values of `subroutine macrophytes` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       pfl    = 0.
       pflmax = 0.
-      pflmin = 0.
       po2p   = 0.
       po2r   = 0.
       
