@@ -37,11 +37,11 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
    ! dummy arguments
    real, intent(in)    :: tflie     !< Zeitschritt [d]
    real, intent(in)    :: tiefe_s   !< Wassertiefe
-   real, intent(in)    :: rau_s     !< <i>Dokumentation fehlt noch</i>
+   real, intent(in)    :: rau_s     !< Reibungsbeiwert nach Strickler (Rauheit)
    real, intent(in)    :: vmitt_s   !< Fließgeschwindigkeit
-   real                :: SSeros_s  !< <i>Dokumentation fehlt noch</i>
-   real                :: ss_s      !< Schwebstoffe
-   real                :: ssalg_s   !< <i>Dokumentation fehlt noch</i>
+   real                :: SSeros_s  !< Schwebstofferhöhung infolge Erosion pro Zeitschritt
+   real                :: ss_s      !< Schwebstoffkonzentration ohne lebende Organismen
+   real                :: ssalg_s   !< Schwebstoffkonzentration mit lebenden Organismen
    real                :: dsedh_s   !< Sohlhöhenänderung im aktuellen Zeitschritt [mm]
    real                :: tausc_s   !< <i>Dokumentation fehlt noch</i>
    real                :: m_eros_s  !< <i>Dokumentation fehlt noch</i>

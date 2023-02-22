@@ -299,7 +299,7 @@ module modell
       !>    \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/mÂ², von MODELLG.3D Zeile E gelesen
       !>    \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
       !>    \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss , von MODELLG.3D Zeile E gelesen
-      !>    \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/mÂ³ , von MODELLG.3D Zeile E gelesen
+      !>    \anchor sed_roh zone()%erosi%sed_roh Packungs-Dichte des liegenden Sediments in kg Sediment pro Kubikmeter liegendem Bodenvolumen , von MODELLG.3D Zeile E gelesen
       real ::tau_krit, M_eros, n_eros, sed_roh
    end type Erosion
    

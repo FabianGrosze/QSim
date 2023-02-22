@@ -182,7 +182,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 9) = "            dblmor" ! Absterberate Blaualgen
       trans_quant_name(10) = "            BSBHNF" !
       trans_quant_name(11) = "            HNFBAC" !
-      trans_quant_name(12) = "      empty_twelve" !
+      trans_quant_name(12) = "            SSeros" ! Schwebstofferhöhung infolge Erosion pro Zeitschritt
       trans_quant_name(13) = "            drfaek" !
       trans_quant_name(14) = "            drfaeg" !
       trans_quant_name(15) = "            drfaeb" !
@@ -238,7 +238,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(65) = "               WGE" ! Windgeschwindigkeit
       trans_quant_name(66) = "             cloud" ! Bewölkungsdichte
       trans_quant_name(67) = "              wtyp" ! Cloud reflectane(?) derived from cloud type
-      trans_quant_name(68) = "  empty_sixtyeight" !
+      trans_quant_name(68) = "             dsedh" ! Sohlhöhenänderung im aktuellen Zeitschritt [mm]
       trans_quant_name(69) = "          empty_69" !
       trans_quant_name(70) = "          empty_70" !
       trans_quant_name(71) = "          empty_71" !

@@ -11,6 +11,14 @@ CONFIG_OFF=./confi_offline
 ADDITIONAL=/srv/cifs-mounts/u2/Projekte/QSim/Dokumentation_und_Handbuecher/QSim/QSim-Dokuportal/Dokuportal_ergaenzendes_Material
 INSTALL=~/public_html/dokuportal
 
+# momentan 1.8.5
+# DOXYGEN_EXE=/usr/bin/doxygen
+
+# 1.9.5 mittels:  module load i4/doxygen/1.9.5
+DOXYGEN_EXE=doxygen
+
+# so einfach geht es nicht:
+# DOXYGEN_EXE=/srv/cifs-mounts/u2/Projekte/QSim/Entwicklung/JensWyrwa/schwermetall/schwer_finish/doku/doxygen/doxygen-1.9.6/bin/doxygen
 
 #------------------------------------------------------------- -------
 
@@ -54,7 +62,7 @@ date:
 	@echo "jetzt $(JETZT) hier $(HIER);"
 		
 doc:	
-	@doxygen $(CONFIG)
+	@$(DOXYGEN_EXE) $(CONFIG)
 	@cp ./dox/html/index.html ./dox/html/main.html
 	@cp ./img/bfg_logo.png ./dox/html/logo.png
 	@cp ./img/qsim_logo.png ./dox/html/qsim.png

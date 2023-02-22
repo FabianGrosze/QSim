@@ -1,9 +1,9 @@
 Geschichte - QSim {#lnk_geschichte_qsim}
 =================
 
-QSim-3D basiert auf 
+Die Entwicklung von QSim startete mit der querschnittsgemittelten Version, die heute 
 <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html" target="_blank">QSim-1D</a>,
-das 1979 startete und von Volker Kirchesch programmiert wurde und wird.
+genannt wird im Jahre 1979 und wurde von Volker Kirchesch bis 2018 entwickelt und programmiert.
 
 Die ersten
 <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSim_Praxis/qsim_praxis_node.html" target="_blank">Anwendungen</a>
