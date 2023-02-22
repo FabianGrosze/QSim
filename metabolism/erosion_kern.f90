@@ -76,6 +76,9 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
       SSeros_s = (dRero_s/tiefe_s)
       ss_s = ss_s + SSeros_s*1000.
       ssalg_s = ssalg_s + SSeros_s*1000.
+   else
+      dsedh_s  = 0.
+      SSeros_s = 0.
    endif
    
    if (kontroll) then 

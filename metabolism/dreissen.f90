@@ -475,7 +475,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             ! set reference times depending on current phase within spawning period
             if (drrt <= drrt3) then
                ! 1st part of production curve: time since start of spawning period <= 30 days
-               f_spawn_max = 0.6  ! maximum fraction of body weight invested into egg producton?
+               f_spawn_max = 0.6  ! maximum fraction of body weight invested into reproducton?
                dt  = drrt
                dt1 = drrt1
                dt2 = drrt2
@@ -483,7 +483,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             else
                ! 2nd part of production curve: time since start of spawning period > 30 days
                ! production is reduced relative to early reproduction phase (cf. 'spwmx')
-               f_spawn_max = 0.4  ! maximum fraction of body weight invested into egg producton?
+               f_spawn_max = 0.4  ! maximum fraction of body weight invested into reproducton?
                dt  = drrt - drrt3
                dt1 = drrt11
                dt2 = drrt22
@@ -494,7 +494,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             if (dt > dt2) dt1 = dt3
             f_spawn = (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2) * f_spawn
          
-            ! NOTE: 0th cohort (ndr == 1) does not produce eggs
+            ! NOTE: 0th cohort (ndr == 1) does not reproduce
             do ndr = 2,nndr
                gewdr(ior,ndr) = gewdr(ior,ndr) - gwdmax(ior) * tflie * f_spawn
             
@@ -541,7 +541,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             ! set reference times depending on current phase within spawning period
             if (drft <= drrt3) then
                ! 1st part of production curve: time since start of spawning period <= 30 days
-               f_spawn_max = 0.6  ! maximum fraction of body weight invested into egg producton?
+               f_spawn_max = 0.6  ! maximum fraction of body weight invested into reproducton?
                dt  = drft
                dt1 = drrt1
                dt2 = drrt2
@@ -549,7 +549,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             else
                ! 2nd part of production curve: time since start of spawning period > 30 days
                ! production is reduced relative to early reproduction phase (cf. 'spwmx')
-               f_spawn_max = 0.4  ! 'investment' into egg production?
+               f_spawn_max = 0.4  ! maximum fraction of body weight invested into reproducton?
                dt  = drft - drrt3
                dt1 = drrt11
                dt2 = drrt22
