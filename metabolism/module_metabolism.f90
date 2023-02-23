@@ -11,6 +11,7 @@ module module_metabolism
    use module_ph
    use module_phosphate
    use module_silicate
+   use module_zooplankton
    
    ! use module_hnf
    ! use module_macrophytes

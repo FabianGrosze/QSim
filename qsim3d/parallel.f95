@@ -268,14 +268,14 @@ subroutine aparam_parallel()
    call MPI_Bcast(KTEMP_Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(ifix,1,MPI_INT,0,mpi_komm_welt,ierr)
 
-   !namelist /Rotatorien/ 
-   call MPI_Bcast(IRMAX,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(FOPTR,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(GROT,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ZRESG,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ZAKI,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ZAGR,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ZABL,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   ! namelist /Rotatorien/ 
+   call MPI_Bcast(imax_rot,  1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(km_ort,    1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(grot,      1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(resp0_rot, 1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ZAKI,      1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ZAGR,      1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ZABL,      1,MPI_FLOAT,0,mpi_komm_welt,ierr)
 
    !namelist /Nitrosomonas/ 
    call MPI_Bcast(YNMAX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr)

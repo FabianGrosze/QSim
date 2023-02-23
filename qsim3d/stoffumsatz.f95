@@ -26,17 +26,16 @@
 ! --------------------------------------------------------------------------- !
 subroutine stoffumsatz()
    use modell
-   use module_organic_carbon, only: organic_carbon
-   
+   use module_metabolism
    
    implicit none
    integer :: i, j , i1, i2, i3, n,k,nk
    logical :: printi, nix, fehler_nan
    integer :: ilast, i1last
-   real :: rlast,rcount
-   real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
-   real , allocatable , dimension (:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
-   real , allocatable , dimension (:) :: tempsed_k, tempw_k
+   real    :: rlast,rcount
+   real    :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
+   real, allocatable, dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
+   real, allocatable, dimension(:) :: tempsed_k, tempw_k
    
    
    if (meinrang == 0) print*,'stoffumsatz start'
@@ -53,24 +52,18 @@ subroutine stoffumsatz()
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             
             if (.not. nur_temp) then ! wenn nur_temp keine anderen Stoffumsätze
-               !------------------------------------------------------------------------ Wasseralter
+               ! Wasseralter
                if (nur_alter) then
                   call alter(i)
                   if (iglob == kontrollknoten) print*,'stoffumsatz: nur aufenthaltszeit (alter)'
-                  cycle ! bei nur_alter nix anderes
+                  cycle ! bei nur_alter nichts anderes
                endif
                
-               !------------------------------------------------------------------------ Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
-               !call sedflux_huelle(i)
-               !------------------------------------------------------------------------ Konsumenten / Rotatorien
-               call konsum_huelle(i)
-               do k = 1,number_trans_quant
-                  if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
-                     print*,'nach konsum_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
-                     !fehler_nan=.true.
-                  endif
-               end do
+               ! sediment fluxes [turned off]
+               ! call sedflux_huelle(i)
+               
+               ! zooplankton (rotifers)
+               call zooplankton_wrapper_3d(i)
                
                ! corophium [turend off]
                call coroph_huelle(i)

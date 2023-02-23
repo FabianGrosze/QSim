@@ -460,7 +460,7 @@ program qsim
    external :: orgc_start, naehr_start, wehrles, wettles, wehr
    external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
    external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
-   external :: sys_z_gitter, strahlg, temperl, sedflux, konsum, dreissen
+   external :: sys_z_gitter, strahlg, temperl, sedflux, dreissen
    external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d, coliform_bacteria_inflow_1d
    external :: schweb, erosion, schwermetalle, transport, sasu, nitrogen_inflow_1d
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
@@ -4439,138 +4439,54 @@ program qsim
       ! Rotatorien
       ! -----------------------------------------------------------------------
       1612  continue
-      call konsum(vkigr,TEMPW,VO2,TFLIE                                          &
-                  ,ezind,ZOOIND,abszo,ir,flag,elen,ior,anze,qeinl,vabfl          &
-                  ,jiein,FOPTR,GROT,dzres1,dzres2,ZRESG                          &
-                  ,irmax,zexki,zexgr,zexbl                                       &
-                  ,aki,agr,abl,iwied,rmuas,iras,TGZoo,BAC,zBAC                   &
-                  ,rakr,rbar,CHNF,zHNF,ilbuhn,ZAKI,ZAGR,ZABL,HNFza,algzok        &
-                  ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
-                  ,itags,uhrz,mstr, .false., 0)
+      ! inflow from point sources
+      call zooplankton_inflow_1d(zooind, ezind, qeinl, vabfl, jiein, anze, flag,   &
+                                 tflie)
       
-      if (nbuhn(mstr) == 0 ) goto 1415 ! goto coroph
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwvm(ior) = vmitt(ior)
-            zwir(ior) = ir(ior)
-            zwkigr(ior) = vkigr(ior)
-            zwantb(ior) = antbl(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwTGZoo(ior) = TGZoo(mstr,ior)
-            do nkz = 1,nkzs(ior)
-               zwakiz(nkz,ior) = akiz(nkz,ior)
-               zwagrz(nkz,ior) = agrz(nkz,ior)
-               zwablz(nkz,ior) = ablz(nkz,ior)
-               zwchlz(nkz,ior) = chlaz(nkz,ior)
-            enddo
-            zwvo2(ior) = vo2(ior)
-            zwzooi(ior) = zooind(ior)
-            zwabsz(ior) = abszo(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            zwzexk(ior) = zexki(ior)
-            zwzexg(ior) = zexgr(ior)
-            zwzexb(ior) = zexbl(ior)
-            zwrmue(ior) = rmuas(ior)
-            zwiras(ior) = iras(ior)
-            zwrakr(ior) = rakr(ior)
-            zwrbar(ior) = rbar(ior)
-            zwzok(ior) = algzok(ior)
-            zwzog(ior) = algzog(ior)
-            zwzob(ior) = algzob(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            vkigr(ior) = bvkigr(mstr,ior)
-            antbl(ior) = bantbl(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            vo2(ior) = bo2(mstr,ior)
-            zooind(ior) = bzooi(mstr,ior)
-            if (iwied == 1)TGZoo(mstr,ior) = bTGZoo(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1612 ! goto konsum
-      endif
+      ! metabolism in main river
+      do ior = 1, anze+1
+         call zooplankton(zooind(ior),                                 &
+                          aki(ior), agr(ior), abl(ior),                &
+                          tempw(ior), vo2(ior),                        &
+                          tflie,                                       &
+                          abszo(ior), ir(ior),                         &
+                          zexki(ior), zexgr(ior), zexbl(ior),          &
+                          dzres1(ior), dzres2(ior),                    &
+                          algzob(ior), algzog(ior), algzok(ior),       &
+                          rmuas(ior), rakr(ior), rbar(ior), iras(ior), &
+                          kontroll, jjj)                      
+      enddo
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bir(mstr,ior) = ir(ior)
-            bzooi(mstr,ior) = zooind(ior)
-            bTGZoo(mstr,ior) = TGZoo(mstr,ior)
-            babszo(mstr,ior) = abszo(ior)
-            bzres1(mstr,ior) = dzres1(ior)
-            bzres2(mstr,ior) = dzres2(ior)
-            bzexki(mstr,ior) = zexki(ior)
-            bzexgr(mstr,ior) = zexgr(ior)
-            bzexbl(mstr,ior) = zexbl(ior)
-            brmuas(mstr,ior) = rmuas(ior)
-            biras(mstr,ior) = iras(ior)
-            brakr(mstr,ior) = rakr(ior)
-            brbar(mstr,ior) = rbar(ior)
-            bazok(mstr,ior) = algzok(ior)
-            bazog(mstr,ior) = algzog(ior)
-            bazob(mstr,ior) = algzob(ior)
+      ! groyne-field
+      if (nbuhn(mstr) == 1) then
+         do ior = 1, anze+1
+            call zooplankton(bzooi(mstr,ior),                                                     &
+                             baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior),                      &
+                             btempw(mstr,ior), bo2(mstr,ior),                                     &
+                             tflie,                                                               &
+                             babszo(mstr,ior), bir(mstr,ior),                                     &
+                             bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                &
+                             bzres1(mstr,ior), bzres2(mstr,ior),                                  &
+                             bazob(mstr,ior), bazog(mstr,ior), bazok(mstr,ior),                   &
+                             brmuas(mstr,ior), brakr(mstr,ior), brbar(mstr,ior), biras(mstr,ior), &
+                             kontroll, jjj)
             
-            tempw(ior) = zwtemp(ior)
-            vmitt(ior) = zwvm(ior)
-            ir(ior) = zwir(ior)
-            vkigr(ior) = zwkigr(ior)
-            antbl(ior) = zwantb(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            do nkz = 1,nkzs(ior)
-               akiz(nkz,ior) = zwakiz(nkz,ior)
-               agrz(nkz,ior) = zwagrz(nkz,ior)
-               ablz(nkz,ior) = zwablz(nkz,ior)
-               chlaz(nkz,ior) = zwchlz(nkz,ior)
-            enddo
-            vo2(ior) = zwvo2(ior)
-            zooind(ior) = zwzooi(ior)
-            TGZoo(mstr,ior) = zwTGZoo(ior)
-            abszo(ior) = zwabsz(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            zexki(ior) = zwzexk(ior)
-            zexgr(ior) = zwzexg(ior)
-            zexbl(ior) = zwzexb(ior)
-            rmuas(ior) = zwrmue(ior)
-            iras(ior) = zwiras(ior)
-            rakr(ior) = zwrakr(ior)
-            rbar(ior) = zwrbar(ior)
-            algzok(ior) = zwzok(ior)
-            algzog(ior) = zwzog(ior)
-            algzob(ior) = zwzob(ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-               diff1 = bzooi(mstr,ior)  - zooind(ior)
-               diff2 = bTGZoo(mstr,ior) - TGZoo(mstr,ior)
-            endif
+            ! mixing between main river and groyne-field 
+            diff1 = bzooi(mstr,ior) - zooind(ior)
             
             if (bleb(mstr,ior) > 0.0) then
-               zooind(ior)     = zooind(ior)     + diff1 * hctau1(ior)
-               TGZoo(mstr,ior) = TGZoo(mstr,ior) + diff2 * hctau1(ior)
+               zooind(ior) = zooind(ior) + diff1 * hctau1(ior)
             endif
             
             if (hctau2(ior) > 0.0) then
                bzooi(mstr,ior)  = bzooi(mstr,ior)  - diff1 * hctau2(ior)
-               bTGZoo(mstr,ior) = bTGZoo(mstr,ior) - diff2 * hctau2(ior)
             endif
          enddo
-         
-         ilbuhn = 0
       endif
       
       ! -----------------------------------------------------------------------
       !  Chorophium
       ! -----------------------------------------------------------------------
-      1415 continue
-      
       ! if (nbuhn(mstr) == 0)goto 1440
       ! do ior = 1,anze+1
       !    do jC = 1,5

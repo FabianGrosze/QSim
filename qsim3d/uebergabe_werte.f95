@@ -356,6 +356,7 @@ subroutine broadcast_parameter()
    use QSimDatenfelder
    use aparam
    implicit none
+   
    !----------------------------------------------------------------- APARAM.txt
    call MPI_Bcast(agchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(aggmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
@@ -423,13 +424,15 @@ subroutine broadcast_parameter()
    call MPI_Bcast(ToptB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(kTemp_Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(ifix,1,MPI_INT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(IRMAX,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(FOPTR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(GROT,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZRESG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZAKI ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZAGR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZABL,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
+   
+   call MPI_Bcast(imax_rot,  1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(km_rot,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(grot,      1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(resp0_rot, 1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(ZAKI,      1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(ZAGR,      1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   call MPI_Bcast(ZABL,      1, MPI_FLOAT, 0, mpi_komm_welt, ierr) !
+   
    call MPI_Bcast(YNMAX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(STKS1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(ANITR1 ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !

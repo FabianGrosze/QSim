@@ -48,9 +48,9 @@ module aparam
                          upmxpb, opblmi, opblma, asble, toptb, ktemp_bl
    integer            :: ifix
    
-   ! Rotatorien
-   real, protected    :: irmax, foptr, grot, zresg, zaki, zagr, zabl
-   ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
+   ! zooplankton / rotifers
+   real, protected    :: imax_rot, km_rot, grot, resp0_rot, zaki, zagr, zabl
+   
    
    ! Nitrosomonas
    real, protected    :: ynmax1, stks1, anitr1, bnmx1, bnks1
@@ -135,7 +135,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       ikbe, abksn, abksp, abremi, frmube, bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb,  &
       qmn_pb, upmxnb, upmxpb, opblmi, opblma, asble, toptb, ktemp_bl, ifix
    
-   namelist /rotatorien/ irmax, foptr, grot, zresg, zaki, zagr, zabl
+   namelist /zooplankton/ imax_rot, km_rot, grot, resp0_rot, zaki, zagr, zabl
    
    namelist /nitrosomonas/ ynmax1, stks1, anitr1, bnmx1, bnks1
    
@@ -175,7 +175,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    if (io_error /= 0) call qerror("Error while opening APARAM_example.nml")
    
    write(55, nml = algae)
-   write(55, nml = rotatorien)
+   write(55, nml = zooplankton)
    write(55, nml = nitrosomonas)
    write(55, nml = nitrobacter)
    write(55, nml = kohlenstoff)
@@ -201,8 +201,8 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       read(55, nml = ALGAE, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist ALGAE from AParam.")
       
-      read(55, nml = Rotatorien, iostat = io_error)
-      if (io_error /= 0) call qerror("Error while reading namelist Rotatorien from AParam.")
+      read(55, nml = zooplankton, iostat = io_error)
+      if (io_error /= 0) call qerror("Error while reading namelist zooplankton from AParam.")
       
       read(55, nml = Nitrosomonas, iostat = io_error)
       if (io_error /= 0) call qerror("Error while reading namelist Nitrosomonas from AParam.")
@@ -261,8 +261,8 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
       read(55,*,iostat = io_error) frmube,bsbbl,csbbl,Qmx_NB,Qmx_PB         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       read(55,*,iostat = io_error) Qmn_NB,Qmn_PB,upmxNB,upmxPB,opblmi       ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       read(55,*,iostat = io_error) opblma,asble,ToptB,kTemp_Bl,ifix         ; if (io_error /= 0) io_error_sum = io_error_sum + 1
-      read(55,*,iostat = io_error) IRMAX,FOPTR,GROT,ZRESG,ZAKI              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
-      read(55,*,iostat = io_error) ZAGR,ZABL,YNMAX1,STKS1,ANITR1            ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) imax_rot, km_rot, grot, resp0_rot, zaki  ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+      read(55,*,iostat = io_error) zagr, zabl,YNMAX1,STKS1,ANITR1           ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       read(55,*,iostat = io_error) BNMX1,BNKS1,YNMAX2,STKS2,ANITR2          ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       read(55,*,iostat = io_error) BNMX2,BNKS2,KNH4,KapN3,HyP1              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
       read(55,*,iostat = io_error) hymxD,KsD1,KsD2,KsM,upBAC                ; if (io_error /= 0) io_error_sum = io_error_sum + 1
@@ -323,8 +323,15 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
          call qerror("Not all Parameters are defined in AParam.") 
       endif
       
-      if (iwsim == 3 .and. IRMAX < -1 .or. FOPTR < -1.) then
-         call qerror("Not all Parameters are defined in AParam.") 
+      ! zooplankton
+      if (iwsim == 3) then
+         if (imax_rot  < 0.0) call qerror("Missing value for imax_rot in AParam.")
+         if (km_rot    < 0.0) call qerror("Missing value for km_rot in AParam.")
+         if (grot      < 0.0) call qerror("Missing value for grot in AParam.")
+         if (resp0_rot < 0.0) call qerror("Missing value for resp0_rot in AParam.")
+         if (zaki < 0.0 .or. zaki > 1.0) call qerror ("Invalid value for zaki in AParam.")
+         if (zabl < 0.0 .or. zabl > 1.0) call qerror ("Invalid value for zabl in AParam.")
+         if (zagr < 0.0 .or. zagr > 1.0) call qerror ("Invalid value for zagr in AParam.")
       endif
       
       if (csbki < 1.) then
@@ -427,13 +434,13 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="TOPTB" Text="optimal Temperatur für Blaualgenwachstum" Unit="°C" Format="F5.2" Null="-1" Help="Fadenbildend: 23.7; Kolonienbildend: 31.8" Default="26" Min="0" Max="99.99" Gruppe="Blaualgen" Kategorie="Temperatur" />'
    write(200, '(A)') '  <Parameter Ident="KTEMP_Bl" Text="empirische Konstante KT(µ) für Temperaturabhängigkeit (Exponent)" Unit="1/°C" Format="F7.5" Null="-1" Help="µ = µmax*exp(-kT(µ)*(T-Topt)^2), Fadenbildend: 0.0069; Kolonienbildend: 0.0081" Default="0.0081" Min="0" Max="99.99" Gruppe="Blaualgen" Kategorie="Temperatur" />'
    write(200, '(A)') '  <Parameter Ident="ifix" Text="Luftstickstofffixierer (0/1)" Unit="" Format="I2" Null="-1" Help="Luftstickstofffixierer(0:Nein/1:Ja)" Default="0" Min="0" Max="1" Gruppe="Blaualgen" Kategorie="Wachstum" />'
-   write(200, '(A)') '  <Parameter Ident="IRMAX" Text="max. Gewichtsspez. Algenaufnahmerate d. Rotatorien" Unit="µgC-2/3*d-1" Format="F5.2" Null="-1" Help="Max. Ingestionsrate für Rotatorien" Default="2.9" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="FOPTR" Text="Halbsättigungskonstante für Futteraufnahme d. Rotatorien" Unit="mg/l" Format="F5.2" Null="-1" Help="Optimale Futterkonzentration für Rotatorienwachstum" Default="0.80" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="GROT" Text="Gewicht Rotatorie" Unit="µg" Format="F5.2" Null="-1" Help="Gewicht einer Rotatorie" Default="0.3" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="ZRESG" Text="Grundrespiration Rotatorien" Unit="1/d" Format="F5.3" Null="-1" Help="Grundrespiration der Rotatorien" Default="0.09" Min="0" Max="9.999" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="ZAKI" Text="Filtrierbarkeit Kieselalgen" Unit="0-1" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Kieselalgen durch Rotatorien" Default="0.6" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="ZAGR" Text="Filtrierbarkeit Grünalgen" Unit="0-1" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Grünalgen durch Rotatorien" Default="0.8" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
-   write(200, '(A)') '  <Parameter Ident="ZABL" Text="Filtrierbarkeit Blaualgen" Unit="0-1" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Blaualgen durch Rotatorien" Default="0.1" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="imax_rot" Text="max. Algeningestionsrate der Rotatorien" Unit="1/d" Format="F5.2" Null="-1" Help="max. Algeningestionsrate der Rotatorien" Default="2.9" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="km_rot" Text="Halbsättigungskonstante für Ingestion der Rotatorien" Unit="mg/l" Format="F5.2" Null="-1" Help="Halbsättigungskonstante für Ingestion der Rotatorien" Default="0.80" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="grot" Text="Gewicht Rotatorien" Unit="µg/Ind" Format="F5.2" Null="-1" Help="Gewicht einer Rotatorie" Default="0.3" Min="0" Max="99.99" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="resp0_rot" Text="Grundrespiration Rotatorien" Unit="1/d" Format="F5.3" Null="-1" Help="Grundrespiration der Rotatorien" Default="0.09" Min="0" Max="9.999" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="zaki" Text="Filtrierbarkeit Kieselalgen" Unit="-" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Kieselalgen durch Rotatorien" Default="0.6" Min="0" Max="1.00" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="zagr" Text="Filtrierbarkeit Grünalgen" Unit="-" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Grünalgen durch Rotatorien" Default="0.8" Min="0" Max="1.00" Gruppe="Rotatorien" Kategorie="Grazing" />'
+   write(200, '(A)') '  <Parameter Ident="zabl" Text="Filtrierbarkeit Blaualgen" Unit="-" Format="F5.2" Null="-1" Help="Filtrierbarkeit der Blaualgen durch Rotatorien" Default="0.1" Min="0" Max="1.00" Gruppe="Rotatorien" Kategorie="Grazing" />'
    write(200, '(A)') '  <Parameter Ident="YNMAX1" Text="Max. Wachstum Nitrosomonas" Unit="1/d" Format="F4.2" Null="-1" Help="Max. Wachstumsrate der Nitrosomonas" Default="0.58" Min="0" Max="9.99" Gruppe="Nitrosomonas" Kategorie="Wachstum" />'
    write(200, '(A)') '  <Parameter Ident="STKS1" Text="Halbsättigung Nitrosomonas" Unit="mgNH4-N/l" Format="F5.2" Null="-1" Help="Halbsättigungskonstante für Nitrosomonas" Default="0.49" Min="0" Max="99.99" Gruppe="Nitrosomonas" Kategorie="Wachstum" />'
    write(200, '(A)') '  <Parameter Ident="ANITR1" Text="Absterberate Nitrosomonas" Unit="1/d" Format="F4.2" Null="-1" Help="Absterberate für Nitrosomonas" Default="0.09" Min="0" Max="9.99" Gruppe="Nitrosomonas" Kategorie="Wachstum" />'
