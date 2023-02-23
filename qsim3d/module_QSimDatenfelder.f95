@@ -208,9 +208,6 @@ module QSimDatenfelder
    real, dimension(1000)               :: CM
    !> \ref bac Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
    real, dimension(1000)               :: BAC
-   ! !> \ref zBAC Aufnahmerate der Bakterien
-   !> zBAC: Aufnahmerate der Bakterien
-   real, dimension(1000)               :: zBAC
    !> \ref o2bsb Sauerstoff-Kohlenstoffverhältnis beim C-Abbau
    real, dimension(1000)               :: O2BSB
    !>  \ref bl01 schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent

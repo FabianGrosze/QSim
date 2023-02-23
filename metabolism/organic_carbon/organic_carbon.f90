@@ -11,7 +11,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
                           Q_NK_s, Q_NG_s, Q_NB_s,                       &
                           zexKi_s, zexGr_s, zexbl_s,                    &
                           drfaek_s, drfaeg_s, drfaeb_s,                 &
-                          ssdr_s, hnfbac_s, zBAC_s,                     &
+                          ssdr_s, hnfbac_s,                             &
                           abl_s, agr_s, aki_s, zooind_s,                &
                           bsbzoo, toc_csb, tflie,                       &
                           BAcmua_s, bsbct_s, BSBctP_s, doN_s, bsbt_s,   &
@@ -69,7 +69,6 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real, intent(in)     :: drfaeb_s     !< Ausscheidungen der Muscheln infolge Konsums von Algen
    real, intent(in)     :: ssdr_s       !< Schwebstoffaufnahme der Dreissena
    real, intent(in)     :: HNFbac_s     !< Verlust der Bakterien durch HNF-Grazing
-   real, intent(in)     :: zBAC_s       !< Konsum von BAC durch Zoopankton
    real, intent(in)     :: abl_s        !< Blaualgen [mg/l]
    real, intent(in)     :: agr_s        !< Grünalgen [mg/l]
    real, intent(in)     :: aki_s        !< Kieselalgen [mg/l]
@@ -488,7 +487,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          - sedCrf*pl0_s
    
    ! Verlust der Bakterien durch HNF-Grazing
-   BACt = max(0.00001, BACt - HNFbac_s - zbac_s)
+   BACt = max(0.00001, BACt - HNFbac_s)
    
    ! --- Neuberechnung des BSB5 ---
    BL01t = ( CD1_t                  &

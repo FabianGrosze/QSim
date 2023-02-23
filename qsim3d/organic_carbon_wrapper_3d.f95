@@ -114,7 +114,6 @@ subroutine organic_carbon_wrapper_3d(i)
             transfer_quantity_p(15+(i-1)*number_trans_quant)   , & ! drfaeb
             benthic_distribution_p( 4+(i-1)*number_benth_distr), & ! ssdr
             transfer_quantity_p(11+(i-1)*number_trans_quant)   , & ! hnfbac
-            transfer_quantity_p(91+(i-1)*number_trans_quant)   , & ! zBAC
             planktonic_variable_p(10+(i-1)*number_plankt_vari) , & ! abl
             planktonic_variable_p(9+(i-1)*number_plankt_vari)  , & ! agr
             planktonic_variable_p(8+(i-1)*number_plankt_vari)  , & ! aki

@@ -261,7 +261,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(88) = "            agreau" ! Ausgabe agbcm
       trans_quant_name(89) = "            abreau" ! Ausgabe von abbcm (Chlorophyll-a zu Kohlenstoff der blau-Algen) algaesbl()
       trans_quant_name(90) = "           dC_DenW" ! C-Abbau durch Denitrifikation in der Wassersäule
-      trans_quant_name(91) = "              zBAC" ! Aufnahmerate der Bakterien
+      trans_quant_name(91) = "          empty_91" ! Aufnahmerate der Bakterien
       trans_quant_name(92) = "          empty_92" !
       trans_quant_name(93) = "          empty_93" !
       trans_quant_name(94) = "          empty_94" !

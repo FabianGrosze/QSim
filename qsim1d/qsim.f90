@@ -224,7 +224,7 @@ program qsim
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesn, gesp, sdbsb, abszo, bsbt, bsbct, bsbctp
    real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, doscf, extk, sised
    real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, bdc_denw, fkm
-   real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zbac, ro2hnf, tpki, tpgr
+   real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, ro2hnf, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
    real, dimension(ialloc2)                :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb
@@ -5434,7 +5434,7 @@ program qsim
                Q_NK(ior), Q_NG(ior), Q_NB(ior),                                  &
                zexKi(ior), zexGr(ior), zexbl(ior),                               &
                drfaek(ior), drfaeg(ior), drfaeb(ior),                            &
-               ssdr(ior), hnfbac(ior), zBAC(ior),                                &
+               ssdr(ior), hnfbac(ior),                                           &
                abl(ior), agr(ior), aki(ior), zooind(ior),                        &
                bsbzoo, toc_csb, tflie,                                           &
                BAcmua(ior), bsbct(ior), BSBctP(ior), doN(ior), bsbt(ior),        &
@@ -5460,7 +5460,7 @@ program qsim
                      Q_NK(ior), Q_NG(ior), Q_NB(ior),                                                  &
                      bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior),                             &
                      bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior),                             &
-                     bssdr(mstr,ior), bHNFBS(mstr,ior), zBAC(ior),                                     &
+                     bssdr(mstr,ior), bHNFBS(mstr,ior),                                                &
                      babl(mstr,ior), bagr(mstr,ior), baki(mstr,ior), bzooi(mstr,ior),                  &
                      bsbzoo, toc_csb, tflie,                                                           &
                      BAcmua(ior), bbsbct(mstr,ior), bbsbcP(mstr,ior), bdoN(mstr,ior), bbsbt(mstr,ior), &
