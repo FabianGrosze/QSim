@@ -28,15 +28,15 @@
 !! files within QSim3D. At the moment, this only works for UnTRIM2/SediMorph data.
 !!
 !! In the long-term it could be expanded to include all SPM related variables and routines.
-module mod_suspendedMatter
+module mod_salinity
    use netcdf
    use modell
-   use aparam, only: GRot
+!   use aparam, only: GRot
    
    implicit none
    
    private ! default: all is private
-   public  init_suspendedMatter, step_suspendedMatter
+   public  init_salinity, step_salinity
    
    ! Module variables
    
@@ -54,13 +54,13 @@ module mod_suspendedMatter
    !!integer, parameter                    :: iZoo = 50                   !< tracer index of zooind
    !!integer, parameter                    :: nPhyto = 3                  !< number of phytoplankton groups
    !!integer, parameter, dimension(nPhyto) :: iPhyto = (/ 8, 9, 10 /)     !< tracer indices of phytoplankton groups
-   integer, parameter                    :: iSalz = 72
+   integer, parameter                    :: i_salinity = 72
    integer                               :: varid                       !< netCDF variable ID
    !!integer                               :: nClasses                    !< number of SPM fractions to be read from file (starting with finest)
    !!integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
    
    ! the following quantities are averaged over hydrodynamics output time step
-   real, allocatable, dimension(:  )     :: salz_element, salz_element_p 
+   real, allocatable, dimension(:  )     :: salt_element, salt_element_p 
    !!real, allocatable, dimension(:  )     :: spm_element, spm_element_p  !< SPM concentration (mg L-1) in water column
    !!real, allocatable, dimension(:  )     :: vol_element                 !< water column volume (m3)
    !!real, allocatable, dimension(:,:)     :: spm_classes_element         !< mass of SPM size classes (kg)
@@ -73,7 +73,7 @@ contains
    ! ========================= SUBROUTINES and FUNCTIONS =============================
    ! =================================================================================
    
-   subroutine init_salt
+   subroutine init_salinity
       ! initialise data arrays for reading Salt from file
       
       integer            :: allocStatus   ! success status of array allocation
@@ -83,57 +83,58 @@ contains
       ! data fields for NetCDF access
       if (meinrang == 0) then
          
-         if (iEros>=0) call qerror('init_salt: iEros >= 0 invalid for reading salt from file.')
-         nClasses = abs(iEros)
+   !      if (iEros>=0) call qerror('init_salinity: iEros >= 0 invalid for reading salt from file.')
+   !      nClasses = abs(iEros)
          
          select case (hydro_trieb)
             case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/SPM
                ! read number of SPM classes and check against input 'nClasses'
-               call nc_check_err( nf90_inq_dimid(ncid, 'nMesh2_suspension_classes', varid) )
-               call nc_check_err( nf90_inquire_dimension(ncid, varid, textString, nClassesFile) )
-               if (nClassesFile-1 < nClasses) then
-                  write(textString, '(a,i2,a,i2,a)') 'init_suspendedMatter_UnTRIM2: Number of selected SPM classes (',       &
-                                                    nClasses, ') exceeds number of available classes (', nClassesFile-1, ').'
-                  call qerror(trim(textString))
+               call nc_check_err( nf90_inq_dimid(ncid, 'Mesh2_face_Salzgehalt_2d', varid) )
+               call nc_check_err( nf90_inquire_dimension(ncid, varid, textString) )
+   !            if (nClassesFile-1 < nClasses) then
+   !               write(textString, '(a,i2,a,i2,a)') 'init_suspendedMatter_UnTRIM2: Number of selected SPM classes (',       &
+   !                                                 nClasses, ') exceeds number of available classes (', nClassesFile-1, ').'
+   !               call qerror(trim(textString))
                end if
                case default         ! any other hydrodynamics/SPM
-               call qerror('init_suspendedMatter: Reading SPM from file only implemented for UnTRIM2 hydrodynamics')
+               call qerror('init_salinity: Reading salt from file only implemented for UnTRIM2 hydrodynamics')
          end select
          
          ! initialize data arrays for entire domain
-         allocate ( spm_classes_element(number_plankt_point, nClasses),   &
-         vol_element(number_plankt_point)                  ,   &
-         spm_element(part * proz_anz), stat = allocStatus )
-         if (allocStatus /= 0) call qerror('init_suspendedMatter: Error allocating SPM fields for NetCDF reading.')
+   !      allocate ( spm_classes_element(number_plankt_point, nClasses),   &
+   !      vol_element(number_plankt_point)                  ,   &
+   !      spm_element(part * proz_anz), stat = allocStatus )
+         allocate (salt_element(part * proz_anz), stat = allocStatus )
+         if (allocStatus /= 0) call qerror('init_salinity: Error allocating salt for NetCDF reading.')
          
-         spm_classes_element = 0.
-         spm_element = 0.
-         vol_element = 0.
-         
+   !      spm_classes_element = 0.
+   !      spm_element = 0.
+   !      vol_element = 0.
+          salt_element = 0
       end if
       
       ! initialize data field used on MPI processes
-      allocate ( spm_element_p(part), stat = allocStatus )
-      if (allocStatus /= 0) call qerror('init_suspendedMatter: Error allocating SPM partial fields for MPI processes.')
-      spm_element_p = 0.
+      allocate ( salt_element_p(part), stat = allocStatus )
+      if (allocStatus /= 0) call qerror('init_salinity: Error allocating Salt partial fields for MPI processes.')
+      salt_element_p = 0.
       
       ! read first time step for initialisation
-      call step_suspendedMatter
-      ! gather information from parallel processes to have correct SS and SSalg available for writing of initial state
-      call gather_planktkon()
+      call step_salinity
+      ! gather information from parallel processes to have correct salinity available for writing of initial state
+ !     call gather_planktkon()
       
       ! synchronize all parallel processes
       call mpi_barrier (mpi_komm_welt, ierr)
       
-   end subroutine init_suspendedMatter
+   end subroutine init_salinity
    
    ! =====================================================================
-   subroutine step_suspendedMatter
+   subroutine step_salinity
       ! do time step for SPM, i.e., read data from file and update SS and SSalg
       
       integer             :: i, j, k         ! indices
       integer             :: iTime           ! ID of time record to be read from file
-      real                :: livingMatter    ! combined phyto- and zooplankton biomass (mg L-1)
+ !     real                :: livingMatter    ! combined phyto- and zooplankton biomass (mg L-1)
       character(len = 200):: errorMessage    ! self-explanatory
       
       ! get SPM concentrations from file and distribute them over all processes
@@ -141,29 +142,29 @@ contains
          ! get SPM data for current time step
          if (rechenzeit < transinfo_zeit(transinfo_zuord(1)) .or. &
              rechenzeit > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
-            call qerror('step_suspendedMatter: Time outside of available time period')
+            call qerror('step_salinity: Time outside of available time period')
          end if
          ! read data closest to center of current time step
          iTime = minloc(abs(transinfo_zeit - rechenzeit), 1)
          select case (hydro_trieb)
             case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/SPM
-               call get_suspendedMatter_UnTRIM2(iTime)
+               call get_salinity_UnTRIM2(iTime)
             case default         ! any other hydrodynamics/SPM
-               call qerror('step_suspendedMatter: Reading SPM from file only implemented for UnTRIM2 hydrodynamics')
+               call qerror('step_salinity: Reading salinity from file only implemented for UnTRIM2 hydrodynamics')
          end select
-         ! write SPM min/max to log file
+         ! write salinity min/max to log file
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
-               'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),        &
-               ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
+               'step_salinity: ', iTime, '-th record read from file - min = ', minval(salt_element),        &
+               ', max = ', maxval(salt_element), ', mean = ', sum(salt_element)/max(1,size(salt_element)), ' (mg/L)'
       end if
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
       
       ! distribute SPM concentrations across parallel processes
-      call mpi_scatter(spm_element, part, MPI_FLOAT,  spm_element_p, part, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      call mpi_scatter(salt_element, part, MPI_FLOAT,  salt_element_p, part, MPI_FLOAT, 0, mpi_komm_welt, ierr)
       if (ierr /= 0) then
-         write(errorMessage,'(a,i3)') 'step_suspendedMatter: mpi_scatter(spm_element) failed - ', ierr
+         write(errorMessage,'(a,i3)') 'step_salinity: mpi_scatter(salt_element) failed - ', ierr
          call qerror(trim(errorMessage))
       end if
       
@@ -172,23 +173,26 @@ contains
          iGlob = i + meinrang * part
          if (iGlob > number_plankt_point) exit
          j = (i - 1) * number_plankt_vari
-         ! sum up zooplankton (from zooind) and phytoplankton biomasses (aki, agr and abl)
-         livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * GRot
-         do k = 1,nPhyto
-            livingMatter = livingMatter + planktonic_variable_p(iPhyto(k) + j)
-         end do
+ !        ! sum up zooplankton (from zooind) and phytoplankton biomasses (aki, agr and abl)
+ !        livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * GRot
+ !        do k = 1,nPhyto
+ !           livingMatter = livingMatter + planktonic_variable_p(iPhyto(k) + j)
+ !        end do
          ! assign SS and SSalg to MPI process fields
-         planktonic_variable_p(iSS    + j) = spm_element_p(i)
-         planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
+ !        planktonic_variable_p(iSS    + j) = spm_element_p(i)
+ !        planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
+          planktonic_variable_p(i_salinity + j) = salt_element_p(i)
+          transfer_quantity_p(69+(i-1)*number_trans_quant) = salt_element_p(i)
+
       end do
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
       
-   end subroutine step_suspendedMatter
+   end subroutine step_salinity
    
    ! =====================================================================
-   subroutine get_suspendedMatter_UnTRIM2(iTime)
+   subroutine get_salinity_UnTRIM2(iTime)
       ! read SPM and volume from from UnTRIM netCDF file and convert kg to mg L-1
       
       integer, intent(in) :: iTime                  ! ID of time record to be read
@@ -196,8 +200,9 @@ contains
       real   , parameter  :: one = 1.
       
       integer             :: i                      ! loop index
+      integer nk
       integer             :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
-      integer             :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
+ !     integer             :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
       integer             :: iFill(2)               ! is fill value used (1) or not (0) in .nc file?
       
       real                :: fillValue(2)           ! fill value of netCDF variables
@@ -206,33 +211,37 @@ contains
       
       ! read data from netCDF file
       ! read mean SPM mass
-      start4 = (/                   1, 1, nClassesFile - nClasses + 1, iTime /)
-      count4 = (/ number_plankt_point, 1,                nClasses    ,     1 /)
-      call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Schwebstoffmenge_2d', varid) )
-      call nc_check_err( nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
-      call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(1), fillValue(1)) )
+ !     start4 = (/                   1, 1, nClassesFile - nClasses + 1, iTime /)
+ !     count4 = (/ number_plankt_point, 1,                nClasses    ,     1 /)
+ !     call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Schwebstoffmenge_2d', varid) )
+ !     call nc_check_err( nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
+ !     call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(1), fillValue(1)) )
       ! read mean water volume
       start3 = (/                   1, 1, iTime /)
       count3 = (/ number_plankt_point, 1,     1 /)
-      call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_mittleres_Wasservolumen_2d', varid) )
-      call nc_check_err( nf90_get_var(ncid, varid, vol_element, start3, count3 ) )
+      call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Salzgehalt_2d', varid) )
+      call nc_check_err( nf90_get_var(ncid, varid, salt_element, start3, count3 ) )
       call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(2), fillValue(2)) )
       
       ! sum up SPM masses and calculate concentration
       do i = 1,number_plankt_point
-         spm_element(i) = sum(spm_classes_element(i,:))
-         if (min(spm_element(i), vol_element(i)) <= 0. .or. &
-             (iFill(1) == 1 .and. abs(spm_element(i)/nClasses - fillValue(1)) <= one) .or. &
-             (iFill(2) == 1 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
+         !nk = (i-1)*number_plankt_vari
+ !        spm_element(i) = sum(spm_classes_element(i,:))
+         !planktonic_variable(72+nk)=salt_element(i)
+         
+         if (salt_element(i) <= 0) then                    !. .or. &
+ !            (iFill(1) == 1 .and. abs(salt_element(i)/nClasses - fillValue(1)) <= one) .or. &
+ !            (iFill(2) == 1 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
             ! set land values to 0
-            spm_element(i) = 0.
-         else
+            salt_element(i) = 0.
+ !            else
             ! [kg] -> [g/m3] = [mg/L]
-            spm_element(i) = 1.e3 * spm_element(i) / vol_element(i)
+ !           salt_element(i) = 1.e3 * spm_element(i) / vol_element(i)
+ !           salt_element(i) = salt_element(i)     
          end if
       end do
       
-   end subroutine get_suspendedMatter_UnTRIM2
+   end subroutine get_salinity_UnTRIM2
    
    ! =====================================================================
    subroutine nc_check_err(iNetCDFerror)
@@ -249,4 +258,4 @@ contains
       
    end subroutine nc_check_err
    
-end module mod_suspendedMatter
+end module mod_salinity

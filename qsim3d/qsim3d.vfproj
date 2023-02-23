@@ -152,6 +152,7 @@
 		<File RelativePath=".\module_isotope.f95"/>
 		<File RelativePath=".\module_modell.f95"/>
 		<File RelativePath=".\module_QSimDatenfelder.f95"/>
+		<File RelativePath=".\module_salinity.f90"/>
 		<File RelativePath=".\module_suspendedMatter.f90"/>
 		<File RelativePath=".\mphyt_huelle.f95"/>
 		<File RelativePath=".\nachricht.f95"/>
@@ -172,7 +173,6 @@
 		<File RelativePath=".\screen_schism_nc.f95"/>
 		<File RelativePath=".\sedflux_huelle.f95"/>
 		<File RelativePath=".\silicate_wrapper_3d.f95"/>
-		<File RelativePath=".\module_salt.f90"/>
 		<File RelativePath=".\stofftransport.f95"/>
 		<File RelativePath=".\stofftransport_casu.f95"/>
 		<File RelativePath=".\stofftransport_schism.f95"/>

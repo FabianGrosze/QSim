@@ -239,7 +239,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(66) = "             cloud" ! Bewölkungsdichte
       trans_quant_name(67) = "              wtyp" ! Cloud reflectane(?) derived from cloud type
       trans_quant_name(68) = "  empty_sixtyeight" !
-      trans_quant_name(69) = "          empty_69" !
+      trans_quant_name(69) = "              Salt" ! Salz aus Untrim eingelesen in mg/l
       trans_quant_name(70) = "          empty_70" !
       trans_quant_name(71) = "          empty_71" !
       trans_quant_name(72) = "            algzog" ! gruen-Algen-Konsum Zoo-Plankton in mg/l
