@@ -44,7 +44,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    
    integer     :: nrla1e, nrs, nrla1a, ndr, ilang
    integer     :: mstr, monats, lait1, laim1, laid1
-   integer     :: jahr_tst1, jahrs, itags, ior
+   integer     :: jahrs, itags, ior
    real        :: x, w, water_volume
    real        :: uptm3, tflie
    real        :: stdpla, rres
@@ -54,7 +54,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    real        :: hconvb, hcont, hconf, hcond
    real        :: hconc2, hconc1, gewdts
    real        :: filtration_rate, foptd, foptde, food
-   real        :: fki, filtrated_volume, fgr
+   real        :: fki, filtered_volume, fgr
    real        :: fco, fcos, fcom, fbl
    real        :: exdrvz, excm3
    real        :: drrt3, drrt33, drrt2, drrt, drft
@@ -116,38 +116,37 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    real   , parameter :: f_production = f_survival * f_fit * f_female
    
    ! newly introduced internal variables (F. Grosse)
-   real                  :: dt, dt1, dt2, dt3      ! times describing phase within spawning period (days)
-   real                  :: f_spawn, f_spawn_max   ! fraction(s) of biomass invested into egg production
-   real, dimension(nndr) :: delta_weight           ! weight loss of single Dreissena
+   real                  :: dt, dt1, dt2, dt3     ! times describing phase within reproduction period (days)
+   real                  :: f_spawn, f_spawn_max  ! fraction(s) of biomass invested into reproduction
+   real, dimension(nndr) :: delta_weight          ! weight loss of single Dreissena
    
    ! internal variables for Dreissena on slope/embankment and river bed, respectively
    ! index 1 - slope/embankment
    ! index 2 - river bed
-   real, dimension(2)    :: habitat_size        ! area of slope/embankment and area of river bed (m2)
-   real, dimension(2)    :: biomass_adult       ! areal integral of biomass of adult Dreissena (g)
-   real, dimension(2)    :: uptake_rate         ! (mgC / d)
-   real, dimension(2)    :: assimilation_rate   ! (mgC / d)
-   real, dimension(2)    :: excretion_rate      ! (mgC / d)
-   real, dimension(2)    :: respiration_rate    ! (mgC / d)
-   real, dimension(2)    :: net_growth          ! (mgC)
+   real, dimension(2)    :: habitat_size          ! area of slope/embankment and area of river bed (m2)
+   real, dimension(2)    :: biomass_adult         ! areal integral of biomass of adult Dreissena (g)
+   real, dimension(2)    :: uptake_rate           ! (mgC / d)
+   real, dimension(2)    :: assimilation_rate     ! (mgC / d)
+   real, dimension(2)    :: excretion_rate        ! (mgC / d)
+   real, dimension(2)    :: respiration_rate      ! (mgC / d)
+   real, dimension(2)    :: net_growth            ! (mgC)
    
-   save jahr_tst1, drrt, drft, stdpla, increment_time
+   save drrt, drft, stdpla, increment_time
    
-   ! Some useful information (units based on Gerris stretch options menu)
+   ! Some useful information (units based on Gerris menu for stretch options)
    ! zdrei  ... Dreissena biomass on embankment (0th/1st cohort; g / m2)
    ! zdreis ... Dreissena biomass on river bed  (0th/1st cohort; g / m2)
    ! gewdr  ... weight of a single Dreissena individual (mgC)
    !
    ! drrt   ... time since start of simulation
-   ! stdpla ... time since start of spawning period
-   ! drft   ... time since start of spawning period + egg development period (tdpla)
+   ! stdpla ... time since start of reproduction period
+   ! drft   ... time since start of reproduction period + egg development period (tdpla)
    !
    ! all *s quantities refer to river bed values, while those w/o 's' refer to embankment
    
    ! simulation forerun (no calculations)
    if (ilang == 0) then
       dlarvn(anze+1) = dlarvn(anze)
-      jahr_tst1 = jahrs
       return
    endif
    
@@ -169,7 +168,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    NRS = ITAGS + 31 * (MONATS - 1)
    if (monats > 2) NRS = NRS - INT(0.4 * real(MONATS) + 2.3)
    
-   ! calculate start and end day of spawning period (day of year)
+   ! calculate start and end day of reproduction period (day of year)
    NRla1a = lait1 + 31 * (laim1 - 1)
    if (laim1 > 2) NRla1a = NRla1a - INT(0.4 * real(laim1) + 2.3)
    nrla1e = nrla1a + laid1
@@ -313,24 +312,27 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             filtration_rate  = 9.24  * gewdr(ior,ndr)**(-0.392)                                   *   &
          &                     3.267 * exp(-0.037 * SSalg(ior) - 0.00605 * (20. - tempw(ior))**2) *   &
          &                     24. / 1000. * fcom
-            filtrated_volume = filtration_rate * sum(biomass_adult) * tflie
+            filtered_volume  = filtration_rate * sum(biomass_adult) * tflie
          else
             ! no filtration
-            filtrated_volume = 0.0
+            filtered_volume = 0.0
          endif
          
-         ! overall weight change (mgC / d) of one Dreissena due to:
-         ! (1) ingestion/assimilation-dependent respiration
-         ! (2) basal repiration
+         ! ingestion/assimilation-dependent respiration rate (1 / d)
          drakr(ior,ndr)    = (1. - f_fecal) * qres * ingestion_rate
+         
+         ! basal repiration rate (1 / d)
          drbar(ior,ndr)    = rres * hcont
+         
+         ! net growth rate ( 1 / d)
          drmas(ior,ndr)    = (1. - f_fecal) * (1. - f_excrete) * ingestion_rate - drakr(ior,ndr) - drbar(ior,ndr)
+         
+         ! overall weight change (mgC / d) of one Dreissena
          delta_weight(ndr) = gewdr(ior,ndr) * drmas(ior,ndr) * tflie
          gewdr(ior,ndr)    = gewdr(ior,ndr) + delta_weight(ndr)
          
          if (water_volume == 0.0) then
             dlarvn(anze+1) = dlarvn(anze)
-            jahr_tst1 = jahrs
             return
          endif
          
@@ -360,21 +362,21 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          adrb(ndr) = uptm3 * hconvb
          drss(ndr) = 0.
          
-         ! fecal pellet production (mg)
+         ! fecal pellet production (mg / L)
          drfecg(ndr) = f_fecal * adrg(ndr)
          drfeck(ndr) = f_fecal * adrk(ndr)
          drfecb(ndr) = f_fecal * adrb(ndr)
          drfecs(ndr) = f_fecal * drss(ndr)
          
          ! volume fraction (%) filtered by 'ndr-1'-th cohort
-         filtrated_volume = filtrated_volume / water_volume
-         vofkop(ndr)      = filtrated_volume * 100.
+         filtered_volume = filtered_volume / water_volume
+         vofkop(ndr)     = filtered_volume * 100.
          
          ! amount of filtered algae and suspended matter (in mg / L)
-         filaki(ndr) = aki(ior) * pki * filtrated_volume
-         filagr(ndr) = agr(ior) * pgr * filtrated_volume
-         filabl(ndr) = abl(ior) * pbl * filtrated_volume
-         filss(ndr)  = ss(ior)  *       filtrated_volume
+         filaki(ndr) = aki(ior) * pki * filtered_volume
+         filagr(ndr) = agr(ior) * pgr * filtered_volume
+         filabl(ndr) = abl(ior) * pbl * filtered_volume
+         filss(ndr)  = ss(ior)  *       filtered_volume
          
          if (adrk(ndr) > 0.0 .and. adrk(ndr) > Filaki(ndr)) then
             filaki(ndr) = adrk(ndr)
@@ -394,7 +396,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          endif
          
          ! amount of filtered HNF
-         filHNF(ndr) = CHNF(ior) * filtrated_volume
+         filHNF(ndr) = CHNF(ior) * filtered_volume
          
       enddo
       
@@ -435,7 +437,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       dlamor = 0.0
       dlafes = 0.0
       
-      ! start date of spawning period not set, i.e. no egg and larvae production
+      ! start date of reproduction period not set, i.e. no egg and larvae production
       if (lait1 == 0 .and. laim1 == 0) cycle
          
       ! set maximum larvae production on slopes and bed (g)
@@ -443,19 +445,19 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       dlmaxs(ior) = dlmaxs(ior) * habitat_size(2)
       
       if (drft < laid1) then
-         if (ilang == 0 .or. jahr_tst1 < jahrs) then
+         if (ilang == 0) then
             drrt = 0.0
             dlmax(ior)  = dlmax(ior)  / habitat_size(1)
             dlmaxs(ior) = dlmaxs(ior) / habitat_size(2)
             cycle
          endif
             
-         ! set points in time describing production curve during spawning period
-         ! 1st part of curve (first 30 days of spawning period, with subdivision halfway)
+         ! set points in time describing production curve during reproduction period
+         ! 1st part of curve (first 30 days of reproduction period, with subdivision halfway)
          drrt1 = 0.0
          drrt3 = 30.
          drrt2 = 0.5 * drrt3
-         ! 2nd part of curve (30 days till end of spawning period, with subdivision halfway)
+         ! 2nd part of curve (30 days till end of reproduction period, with subdivision halfway)
          drrt11 = 0.0
          drrt33 = laid1 - drrt3
          drrt22 = 0.5 * drrt33
@@ -472,16 +474,16 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
                sgwmue(ior) = 0.0
             endif
             
-            ! set reference times depending on current phase within spawning period
+            ! set reference times depending on current phase within reproduction period
             if (drrt <= drrt3) then
-               ! 1st part of production curve: time since start of spawning period <= 30 days
+               ! 1st part of production curve: time since start of reproduction period <= 30 days
                f_spawn_max = 0.6  ! maximum fraction of body weight invested into reproducton?
                dt  = drrt
                dt1 = drrt1
                dt2 = drrt2
                dt3 = drrt3
             else
-               ! 2nd part of production curve: time since start of spawning period > 30 days
+               ! 2nd part of production curve: time since start of reproduction period > 30 days
                ! production is reduced relative to early reproduction phase (cf. 'spwmx')
                f_spawn_max = 0.4  ! maximum fraction of body weight invested into reproducton?
                dt  = drrt - drrt3
@@ -489,10 +491,9 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
                dt2 = drrt22
                dt3 = drrt33
             endif
-            ! calculate spawning factor (i.e. fraction of biomass invested in egg production)
-            f_spawn = 2. * flai / dt3 * f_spawn_max
             if (dt > dt2) dt1 = dt3
-            f_spawn = (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2) * f_spawn
+            ! calculate reproduction factor (i.e. fraction of biomass invested in egg production)
+            f_spawn = 2. * flai / dt3 * f_spawn_max * (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2)
          
             ! NOTE: 0th cohort (ndr == 1) does not reproduce
             do ndr = 2,nndr
@@ -523,10 +524,10 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
          ! calculate larval biomass loss due to mortality
          dlamor = dlarvn(ior) * (1. - exp(-klmor * tflie))
          
-         ! calculate time since start of spawning period
+         ! calculate time since start of reproduction period
          if (nrs >= nrla1a .and. increment_time) stdpla = stdpla + tflie
          
-         ! compare time since start of spawning period to development period of larvae (tdpla)
+         ! compare time since start of reproduction period to development period of larvae (tdpla)
          if (stdpla < tdpla) then
             ! no larvae yet
             drft = 0.0
@@ -538,16 +539,16 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
                increment_time = .false.
             endif
             
-            ! set reference times depending on current phase within spawning period
+            ! set reference times depending on current phase within reproduction period
             if (drft <= drrt3) then
-               ! 1st part of production curve: time since start of spawning period <= 30 days
+               ! 1st part of production curve: time since start of reproduction period <= 30 days
                f_spawn_max = 0.6  ! maximum fraction of body weight invested into reproducton?
                dt  = drft
                dt1 = drrt1
                dt2 = drrt2
                dt3 = drrt3
             else
-               ! 2nd part of production curve: time since start of spawning period > 30 days
+               ! 2nd part of production curve: time since start of reproduction period > 30 days
                ! production is reduced relative to early reproduction phase (cf. 'spwmx')
                f_spawn_max = 0.4  ! maximum fraction of body weight invested into reproducton?
                dt  = drft - drrt3
@@ -557,8 +558,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
             endif
             if (dt > dt2) dt1 = dt3
             ! calculate hatching factor (i.e. fraction of larvae successfully developed from eggs)
-            f_spawn = 2. * flai / dt3 * f_spawn_max
-            f_spawn = (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2) * f_spawn
+            f_spawn = 2. * flai / dt3 * f_spawn_max * (dt - dt1)**2 / ((dt - dt2)**2 + (dt - dt1)**2)
             
             ! Larval weight when settling: 8.6e-8 gC; 8.6e-5 mgC <= not used
             dlafes = (dlmax(ior) + dlmaxs(ior)) * tflie * f_spawn / C_egg * f_production
@@ -673,7 +673,6 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    enddo
    
    dlarvn(anze+1) = dlarvn(anze)
-   jahr_tst1 = jahrs
    
    return
 end
