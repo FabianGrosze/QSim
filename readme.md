@@ -1,6 +1,9 @@
 # QSim 14
 
 ## 14.09
+### 14.09.25
+* Replace semi-implicit timesteping in oxygen with explicit timesteping.
+
 
 ### 14.09.24
 * Create modules for macrophytes and hnf
