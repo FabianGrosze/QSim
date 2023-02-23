@@ -26,57 +26,55 @@
 ! --------------------------------------------------------------------------- !
 module aparam
    implicit none
-   save
    
    !> global parameter from APARAM.txt
    
    ! Grünalgen
-   real, protected    :: agchl, aggmax, IKge, agksn, agksp
-   real, protected    :: agremi, frmuge, bsbgr, csbgr, Qmx_NG
-   real, protected    :: Qmx_PG, Qmn_NG, Qmn_PG, upmxNG, upmxPG
-   real, protected    :: opgrmi, opgrma, asgre, ToptG, kTemp_gr
+   real, protected    :: agchl, aggmax, ikge, agksn, agksp
+   real, protected    :: agremi, frmuge, bsbgr, csbgr, qmx_ng
+   real, protected    :: qmx_pg, qmn_ng, qmn_pg, upmxng, upmxpg
+   real, protected    :: opgrmi, opgrma, asgre, toptg, ktemp_gr
    
    ! Kieselalgen
-   real, protected    :: akchl, akgmax, IKke, akksn, akksp
+   real, protected    :: akchl, akgmax, ikke, akksn, akksp
    real, protected    :: akkssi, akremi, frmuke, bsbki, csbki
-   real, protected    :: Qmx_NK, Qmx_PK, Qmx_SK, Qmn_NK, Qmn_PK
-   real, protected    :: Qmn_SK, upmxNK, upmxPK, upmxSK, opkimi
-   real, protected    :: opkima, askie, ToptK, kTemp_Ki
+   real, protected    :: qmx_nk, qmx_pk, qmx_sk, qmn_nk, qmn_pk
+   real, protected    :: qmn_sk, upmxnk, upmxpk, upmxsk, opkimi
+   real, protected    :: opkima, askie, toptk, ktemp_ki
    
    ! Blaualgen
-   real, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
-                         bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
-                         upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
+   real, protected    :: abchl, abgmax, ikbe, abksn, abksp, abremi, frmube,    &
+                         bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb, qmn_pb, upmxnb, &
+                         upmxpb, opblmi, opblma, asble, toptb, ktemp_bl
    integer            :: ifix
    
    ! Rotatorien
-   real, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
+   real, protected    :: irmax, foptr, grot, zresg, zaki, zagr, zabl
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
    
    ! Nitrosomonas
-   real, protected    :: YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
+   real, protected    :: ynmax1, stks1, anitr1, bnmx1, bnks1
    ! ynmx1e, stks1e, anitrie, bnmx1e, bnks1e
    
    ! Nitrobacter
-   real, protected    :: YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
+   real, protected    :: ynmax2, stks2, anitr2, bnmx2, bnks2
    ! ynmx2e, stks2e, anitri2e, bnmx2e, bnks2e
    
    ! Sediment-Flux
-   real, protected    :: KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
+   real, protected    :: knh4, kapn3, fpoc1, fpoc2, sorpcap, klang, kdnh3
    ! KNH4e, KapN3e, fPOC1e, fPOC2e, SorpCape, Klange, KdNh3e
    
    ! Kohlenstoff
-   real, protected    :: HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
+   real, protected    :: hyp1, hymxd, ksd1, ksd2, ksm, upbac, ybac, rsgbac
    ! hyPe, hymxDe, KsD1e, KsD2e, KsMe, upBACe, YBACe, rsGBACe
    
    ! Muscheln
-   real, protected    :: FoptD
+   real, protected    :: foptd
    ! FoptDe
    
    ! HNF
-   real, protected    :: upHNF,  BACks
-   !real,  protected :: upHNFe, BACkse 
-   
+   real, protected    :: uphnf,  backs
+      
    ! Wasser
    real, protected    :: alamda
    
@@ -84,17 +82,17 @@ module aparam
    real, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
    
    ! Schwermetalle
-   real, protected    :: c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb
-   real, protected    :: c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad
-   real, protected    :: c1Cr, e1Cr, c2Cr, e2Cr, c3Cr, e3Cr, c4Cr, e4Cr, c5Cr, e5Cr, VTKoeffDe_Cr
-   real, protected    :: c1Fe, e1Fe, c2Fe, e2Fe, c3Fe, e3Fe, c4Fe, e4Fe, c5Fe, e5Fe, VTKoeffDe_Fe
-   real, protected    :: c1Cu, e1Cu, c2Cu, e2Cu, c3Cu, e3Cu, c4Cu, e4Cu, c5Cu, e5Cu, VTKoeffDe_Cu
-   real, protected    :: c1Mn, e1Mn, c2Mn, e2Mn, c3Mn, e3Mn, c4Mn, e4Mn, c5Mn, e5Mn, VTKoeffDe_Mn
-   real, protected    :: c1Ni, e1Ni, c2Ni, e2Ni, c3Ni, e3Ni, c4Ni, e4Ni, c5Ni, e5Ni, VTKoeffDe_Ni
-   real, protected    :: c1Hg, e1Hg, c2Hg, e2Hg, c3Hg, e3Hg, c4Hg, e4Hg, c5Hg, e5Hg, VTKoeffDe_Hg
-   real, protected    :: c1U, e1U, c2U, e2U, c3U, e3U, c4U, e4U, c5U, e5U, VTKoeffDe_U
-   real, protected    :: c1Zn, e1Zn, c2Zn, e2Zn, c3Zn, e3Zn, c4Zn, e4Zn, c5Zn, e5Zn, VTKoeffDe_Zn
-   real, protected    :: c1As, e1As, c2As, e2As, c3As, e3As, c4As, e4As, c5As, e5As, VTKoeffDe_As
+   real, protected    :: c1pb, e1pb, c2pb, e2pb, c3pb, e3pb, c4pb, e4pb, c5pb, e5pb, vtkoeffde_pb
+   real, protected    :: c1cad, e1cad, c2cad, e2cad, c3cad, e3cad, c4cad, e4cad, c5cad, e5cad, vtkoeffde_cad
+   real, protected    :: c1cr, e1cr, c2cr, e2cr, c3cr, e3cr, c4cr, e4cr, c5cr, e5cr, vtkoeffde_cr
+   real, protected    :: c1fe, e1fe, c2fe, e2fe, c3fe, e3fe, c4fe, e4fe, c5fe, e5fe, vtkoeffde_fe
+   real, protected    :: c1cu, e1cu, c2cu, e2cu, c3cu, e3cu, c4cu, e4cu, c5cu, e5cu, vtkoeffde_cu
+   real, protected    :: c1mn, e1mn, c2mn, e2mn, c3mn, e3mn, c4mn, e4mn, c5mn, e5mn, vtkoeffde_mn
+   real, protected    :: c1ni, e1ni, c2ni, e2ni, c3ni, e3ni, c4ni, e4ni, c5ni, e5ni, vtkoeffde_ni
+   real, protected    :: c1hg, e1hg, c2hg, e2hg, c3hg, e3hg, c4hg, e4hg, c5hg, e5hg, vtkoeffde_hg
+   real, protected    :: c1u, e1u, c2u, e2u, c3u, e3u, c4u, e4u, c5u, e5u, vtkoeffde_u
+   real, protected    :: c1zn, e1zn, c2zn, e2zn, c3zn, e3zn, c4zn, e4zn, c5zn, e5zn, vtkoeffde_zn
+   real, protected    :: c1as, e1as, c2as, e2as, c3as, e3as, c4as, e4as, c5as, e5as, vtkoeffde_as
    
    
    ! Hardcoded
@@ -128,44 +126,44 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    real                       :: dummy
    logical                    :: isExistent
    
-   namelist /ALGAE/  &
-      AGCHL, AGGMAX, IKge, AGKSN, AGKSP, AGREMI, frmuge, BSBGR, CSBGR, QMX_NG,   &
-      QMX_PG, QMN_NG, QMN_PG, UPMXNG, UPMXPG, OPGRMI, OPGRMA, ASGRE, TOPTG,      &
-      KTEMP_GR, AKCHL, AKGMAX, IKke, AKKSN, AKKSP, AKKSSI, AKREMI, frmuke,       &
-      BSBKI, CSBKI, QMX_NK, QMX_PK, QMX_SK, QMN_NK, QMN_PK, QMN_SK, UPMXNK,      &
-      UPMXPK, UPMXSK, OPKIMI, OPKIMA, ASKIE, TOPTK, KTEMP_Ki, ABCHL, ABGMAX,     &
-      IKbe, ABKSN, ABKSP, ABREMI, frmube, BSBBL, CSBBL, QMX_NB, QMX_PB, QMN_NB,  &
-      QMN_PB, UPMXNB, UPMXPB, OPBLMI, OPBLMA, ASBLE, TOPTB, KTEMP_Bl, ifix
+   namelist /algae/  &
+      agchl, aggmax, ikge, agksn, agksp, agremi, frmuge, bsbgr, csbgr, qmx_ng,   &
+      qmx_pg, qmn_ng, qmn_pg, upmxng, upmxpg, opgrmi, opgrma, asgre, toptg,      &
+      ktemp_gr, akchl, akgmax, ikke, akksn, akksp, akkssi, akremi, frmuke,       &
+      bsbki, csbki, qmx_nk, qmx_pk, qmx_sk, qmn_nk, qmn_pk, qmn_sk, upmxnk,      &
+      upmxpk, upmxsk, opkimi, opkima, askie, toptk, ktemp_ki, abchl, abgmax,     &
+      ikbe, abksn, abksp, abremi, frmube, bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb,  &
+      qmn_pb, upmxnb, upmxpb, opblmi, opblma, asble, toptb, ktemp_bl, ifix
    
-   namelist /Rotatorien/ IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
+   namelist /rotatorien/ irmax, foptr, grot, zresg, zaki, zagr, zabl
    
-   namelist /Nitrosomonas/ YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
+   namelist /nitrosomonas/ ynmax1, stks1, anitr1, bnmx1, bnks1
    
-   namelist /Nitrobacter/ YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
+   namelist /nitrobacter/ ynmax2, stks2, anitr2, bnmx2, bnks2
    
-   namelist /Kohlenstoff/ HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
+   namelist /kohlenstoff/ hyp1, hymxd, ksd1, ksd2, ksm, upbac, ybac, rsgbac
    
-   namelist /Muscheln/ FoptD
+   namelist /muscheln/ foptd
    
-   namelist /HNF/ upHNF, BACks
+   namelist /hnf/ uphnf, backs
    
-   namelist /Wasser/ ALAMDA
+   namelist /wasser/ alamda
    
-   namelist /Sediment/ KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
-   namelist /Hygiene/ ratecd, etacd, rateci, xnuec, ratecg, ratecs
+   namelist /sediment/ knh4, kapn3, fpoc1, fpoc2, sorpcap, klang, kdnh3
+   namelist /hygiene/ ratecd, etacd, rateci, xnuec, ratecg, ratecs
    
-   namelist /Schwermetalle/                                                                  &
-      c1Pb , e1Pb , c2Pb , e2Pb , c3Pb , e3Pb , c4Pb , e4Pb , c5Pb , e5Pb , VTKoeffDe_Pb ,   &
-      c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad,   &
-      c1Cr , e1Cr , c2Cr , e2Cr , c3Cr , e3Cr , c4Cr , e4Cr , c5Cr , e5Cr , VTKoeffDe_Cr ,   &
-      c1Fe , e1Fe , c2Fe , e2Fe , c3Fe , e3Fe , c4Fe , e4Fe , c5Fe , e5Fe , VTKoeffDe_Fe ,   &
-      c1Cu , e1Cu , c2Cu , e2Cu , c3Cu , e3Cu , c4Cu , e4Cu , c5Cu , e5Cu , VTKoeffDe_Cu ,   &
-      c1Mn , e1Mn , c2Mn , e2Mn , c3Mn , e3Mn , c4Mn , e4Mn , c5Mn , e5Mn , VTKoeffDe_Mn ,   &
-      c1Ni , e1Ni , c2Ni , e2Ni , c3Ni , e3Ni , c4Ni , e4Ni , c5Ni , e5Ni , VTKoeffDe_Ni ,   &
-      c1Hg , e1Hg , c2Hg , e2Hg , c3Hg , e3Hg , c4Hg , e4Hg , c5Hg , e5Hg , VTKoeffDe_Hg ,   &
-      c1U  , e1U  , c2U  , e2U  , c3U  , e3U  , c4U  , e4U  , c5U  , e5U  , VTKoeffDe_U  ,   &
-      c1Zn , e1Zn , c2Zn , e2Zn , c3Zn , e3Zn , c4Zn , e4Zn , c5Zn , e5Zn , VTKoeffDe_Zn ,   &
-      c1As , e1As , c2As , e2As , c3As , e3As , c4As , e4As , c5As , e5As , VTKoeffDe_As
+   namelist /schwermetalle/                                                                  &
+      c1pb , e1pb , c2pb , e2pb , c3pb , e3pb , c4pb , e4pb , c5pb , e5pb , vtkoeffde_pb ,   &
+      c1cad, e1cad, c2cad, e2cad, c3cad, e3cad, c4cad, e4cad, c5cad, e5cad, vtkoeffde_cad,   &
+      c1cr , e1cr , c2cr , e2cr , c3cr , e3cr , c4cr , e4cr , c5cr , e5cr , vtkoeffde_cr ,   &
+      c1fe , e1fe , c2fe , e2fe , c3fe , e3fe , c4fe , e4fe , c5fe , e5fe , vtkoeffde_fe ,   &
+      c1cu , e1cu , c2cu , e2cu , c3cu , e3cu , c4cu , e4cu , c5cu , e5cu , vtkoeffde_cu ,   &
+      c1mn , e1mn , c2mn , e2mn , c3mn , e3mn , c4mn , e4mn , c5mn , e5mn , vtkoeffde_mn ,   &
+      c1ni , e1ni , c2ni , e2ni , c3ni , e3ni , c4ni , e4ni , c5ni , e5ni , vtkoeffde_ni ,   &
+      c1hg , e1hg , c2hg , e2hg , c3hg , e3hg , c4hg , e4hg , c5hg , e5hg , vtkoeffde_hg ,   &
+      c1u  , e1u  , c2u  , e2u  , c3u  , e3u  , c4u  , e4u  , c5u  , e5u  , vtkoeffde_u  ,   &
+      c1zn , e1zn , c2zn , e2zn , c3zn , e3zn , c4zn , e4zn , c5zn , e5zn , vtkoeffde_zn ,   &
+      c1as , e1as , c2as , e2as , c3as , e3as , c4as , e4as , c5as , e5as , vtkoeffde_as
       
    external :: qerror
    
@@ -176,17 +174,17 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    open (unit = 55 , file = dateiname, action = 'write', iostat = io_error)
    if (io_error /= 0) call qerror("Error while opening APARAM_example.nml")
    
-   write(55, nml = ALGAE)
-   write(55, nml = Rotatorien)
-   write(55, nml = Nitrosomonas)
-   write(55, nml = Nitrobacter)
-   write(55, nml = Kohlenstoff)
-   write(55, nml = Muscheln)
-   write(55, nml = HNF)
-   write(55, nml = Wasser)
-   write(55, nml = Sediment)
-   write(55, nml = Hygiene)
-   write(55, nml = Schwermetalle)
+   write(55, nml = algae)
+   write(55, nml = rotatorien)
+   write(55, nml = nitrosomonas)
+   write(55, nml = nitrobacter)
+   write(55, nml = kohlenstoff)
+   write(55, nml = muscheln)
+   write(55, nml = hnf)
+   write(55, nml = wasser)
+   write(55, nml = sediment)
+   write(55, nml = hygiene)
+   write(55, nml = schwermetalle)
    close (55)
    
    

@@ -226,7 +226,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       endif
       ffood(ior) = hconf
       
-      ! Michaelis-Menten kinetics for algae-specific uptake (mg / mgC)
+      ! Michaelis-Menten food term for algae-specific uptake (mg / mgC)
       if (aki(ior) + agr(ior) + abl(ior) > 0.0) then
          hconvk = aki(ior) * pki / (Caki * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))
          hconvg = agr(ior) * pgr / (Cagr * (aki(ior) * pki + agr(ior) * pgr + abl(ior) * pbl))

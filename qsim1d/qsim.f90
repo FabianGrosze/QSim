@@ -4741,33 +4741,26 @@ program qsim
       
       ! -----------------------------------------------------------------------
       ! heterotrophe Nanoflagelaten (HNF)
-      ! [ausgeschaltet]
+      ! [currently turned off]
       ! -----------------------------------------------------------------------
-      218 continue
-      !if (CHNF(1) <= 0.0) then
-      !   if (nbuhn(mstr) > 0) then
-      !      do ior = 1,anze+1
-      !         bro2HF(mstr,ior) = 0.0
-      !         bHNFBS(mstr,ior) = 0.0
-      !         bBSBHN(mstr,ior) = 0.0
-      !      enddo
-      !   endif
-      !   goto 1412
-      !endif
-      
-      ! call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                            &
-      !         ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl               &
-      !         ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks  &
-      !         ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz,   &
-      !          .false., 0)
-      HNFmua = 0.
-      HNFrea = 0.
-      HNFupa = 0.
-      HNFmoa = 0.
-      HNFexa = 0.
-      HNFbac = 0.
-      rO2HNF = 0.
-      bsbHNF = 0.
+      ! call hnf_inflow_1d(chnf, bvhnf, echnf, ebvhnf, qeinl, &
+      !                    vabfl, jiein, anze, flag)
+      !
+      ! do ior = 1,anze+1
+      !    call hnf(chnf(ior), bac(ior), vo2(ior), tempw(ior), drhnf(ior), &
+      !             zhnf(ior), tflie,                                      &
+      !             hnfbac(ior), hnfupa(ior), hnfrea(ior), hnfexa(ior),    & 
+      !             hnfmoa(ior), hnfmua(ior), ro2hnf(ior), bsbhnf(ior),    &
+      !             kontroll, jjj)
+      ! enddo
+      hnfbac = 0.
+      hnfupa = 0.
+      hnfrea = 0.
+      hnfexa = 0.
+      hnfmoa = 0.
+      hnfmua = 0.
+      ro2hnf = 0.
+      bsbhnf = 0.
       
       if (nbuhn(mstr) > 0) then
          bro2HF(mstr,:) = 0.
@@ -5439,17 +5432,26 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! benthische Algen
+      ! benthic algae [turned off]
       ! -----------------------------------------------------------------------
       1513 continue
-      ! call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
-      !              ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
-      !              ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
-      !              ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
-      !              ,.false.,0)
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call albenth(abegm2(ior), abekm2(ior), vnh4(ior), vno3(ior), gelp(ior),  &
+      !                    si(ior), vmitt(ior), tempw(ior), schwi(ior), extk(ior),     &
+      !                    tiefe(ior), tflie,                                          &
+      !                    albewg(ior), alberg(ior),  albewk(ior), alberk(ior),        &
+      !                    cmatgr(ior), cmatki(ior),                                   &
+      !                    kontroll, jjj)
+      !    enddo
+      ! endif
+            
+      ! benthic algae are currently turned off.
+      ! Only the return values of `subroutine albenth` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       albewg(:) = 0.0
-      albewk(:) = 0.0
       alberg(:) = 0.0
+      albewk(:) = 0.0
       alberk(:) = 0.0
       cmatgr(:) = 0.0
       cmatki(:) = 0.0
@@ -5462,21 +5464,27 @@ program qsim
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]
       ! -----------------------------------------------------------------------
-      ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-      !            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                   &
-      !            ,.false.,0)
-      
-      ! if (nbuhn(mstr) > 0) then
-      !    do ior = 1,anze+1
-      !       bpfl(mstr,ior) = pfl(ior)
-      !       pfl(ior) = 0.0
-      !    enddo
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call macrophytes(pfl(ior), pflmin(ior), pflmax(ior), tiefe(ior),   &
+      !                        tempw(ior), schwi(ior), extk(ior),                &
+      !                        itags, monats, itstart, mstart, itmax, mmax,      &
+      !                        itend, mend, sa, su, tflie, po2p(ior), po2r(ior), &
+      !                        kontroll, jjj)
+      !    enddo   
+      !    ! if (nbuhn(mstr) > 0) then
+      !    !    do ior = 1,anze+1
+      !    !       bpfl(mstr,ior) = pfl(ior)
+      !    !       pfl(ior) = 0.0
+      !    !    enddo
+      !    ! endif
       ! endif
       
+      ! macrophytes are currently turned off.
+      ! Only the return values of `subroutine macrophytes` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       pfl    = 0.
       pflmax = 0.
-      pflmin = 0.
       po2p   = 0.
       po2r   = 0.
       

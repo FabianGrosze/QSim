@@ -34,24 +34,26 @@ subroutine benthic_parallel()
    !print*,meinrang,'benthic_parallel'
    call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (benthic_distribution_p(number_benth_distr*part), stat = as )
+   
    if (as /= 0) then
       write(fehler,*)' Rueckgabewert von benthic_distribution_p :', as
       call qerror(fehler)
    end if
+   
    do i = 1,part ! i
       do j = 1,number_benth_distr ! initialisierung aller konzentrationen zunächt auf 0.0 minus 1
          benthic_distribution_p(j+(i-1)*number_benth_distr) = 0.0 !!!####!-1.0
       end do
    end do
-   !if(meinrang.eq.0)then ! prozess 0 only
-   !         do i=1,number_benthic_points ! all i verticals
-   !            do j=1,number_benth_distr ! initialise
-   !               benthic_distribution(j+(i-1)*number_benth_distr)=i*100+j
-   !            end do
-   !         end do
-   !end if ! only prozessor 0
+   ! if(meinrang.eq.0)then ! prozess 0 only
+   !    do i=1,number_benthic_points ! all i verticals
+   !       do j=1,number_benth_distr ! initialise
+   !          benthic_distribution(j+(i-1)*number_benth_distr)=i*100+j
+   !       end do
+   !    end do
+   !  end if ! only prozessor 0
    call scatter_benthic()
-   !call mpi_barrier (mpi_komm_welt, ierr)
+   ! call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine benthic_parallel
 !----+-----+----

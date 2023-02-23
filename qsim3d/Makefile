@@ -145,7 +145,7 @@ Q3 = version.co \
    coroph_huelle.o \
    algae_huelle.o \
    konsum_huelle.o \
-   hnf_huelle.o \
+   hnf_wrapper_3d.o \
    dreissen_huelle.o \
    ausgeben_casu.o \
    ausgeben_untrim.o ausgabe.o \
@@ -160,8 +160,8 @@ Q3 = version.co \
    stofftransport.o \
    sedflux_huelle.o \
    coliform_bacteria_wrapper_3d.o \
-   albenth_huelle.o \
-   mphyt_huelle.o\
+   albenth_wrapper_3d.o \
+   macrophytes_wrapper_3d.o\
    stoffumsatz.o \
    QSim3D.o
 

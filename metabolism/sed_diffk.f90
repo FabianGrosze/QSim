@@ -27,7 +27,7 @@
 
 !> @ author Volker Kirchesch
 !! @date 21.04.2004
-subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,poro1,poro2,vvert,vvert1,vvert2    &
+subroutine sed_diffk(tiefe,vmitt,rau,h1,h2,hdkorn,diffk1,diffk2,difkp1,difkp2,poro1,poro2,vvert,vvert1,vvert2    &
                      ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
    
    use allodim
@@ -42,110 +42,93 @@ subroutine Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,po
    real                         :: hcon, h2, h1, g, dvis
    real                         :: dkorn, difkp2, difkp1, diffmo, diffkm
    real                         :: diffk2_2, diffk2, diffk1_2, diffk1_1, diffk1
-   real                         :: Kappa, K, kVis, nueStern, nue, nueStern_2
+   real                         :: kappa, k, kvis, nuestern, nue, nuestern_2
    real                         :: alphao2, alphao1
    logical, intent(in)          :: kontroll  !< debugging
    integer, intent(in)          :: jjj       !< debugging
-   real, dimension(azStrs,1000) :: hdKorn
-   real, dimension(1000)        :: Tiefe, vmitt,rau
+   real, dimension(azstrs,1000) :: hdkorn
+   real, dimension(1000)        :: tiefe, vmitt,rau
    
    external                     :: sedadv
    
    
    raun = 1./rau(ior)
    g = 9.81
-   poros = (poro1*H1+poro2*H2)/(H1+H2)
-   kVis = 1.e-6
-   dVis = 0.001
-   roh_H2O = 1000.
-   dKorn = hdKorn(mstr,ior)
-   ScO = 570.
-   ScP = 1827.
-   Vis_0 = 0.01 ! molekulare kinematische Viskosität von reinem Wasser in cm2/s
-   T = 1.       ! Einheit in Sekunden
-   Diffmo = (kVis/SCP)*86400.
-   if (Tiefe(ior) == 0.0 .or. abs(vmitt(ior)) == 0.0) then
-      DifKP1 = (kVis/SCP)*86400.
-      DifKP2 = (kvis/SCP)*86400.
-      DiffK1 = (kvis/SCO)*86400.
-      DiffK2 = (kvis/SCO)*86400.
+   poros = (poro1*h1+poro2*h2)/(h1+h2)
+   kvis = 1.e-6
+   dvis = 0.001
+   roh_h2o = 1000.
+   dkorn = hdkorn(mstr,ior)
+   sco = 570.
+   scp = 1827.
+   vis_0 = 0.01 ! molekulare kinematische Viskosität von reinem Wasser in cm2/s
+   t = 1.       ! Einheit in Sekunden
+   diffmo = (kvis/scp)*86400.
+   if (tiefe(ior) == 0.0 .or. abs(vmitt(ior)) == 0.0) then
+      difkp1 = (kvis/scp)*86400.
+      difkp2 = (kvis/scp)*86400.
+      diffk1 = (kvis/sco)*86400.
+      diffk2 = (kvis/sco)*86400.
    else
       ust = ((raun*sqrt(g))/(tiefe(ior)**0.16667))*abs(vmitt(ior))
-      W = Ust
-      U = Ust
-      K = 5.6e-3*poros**3*dKorn**2*g/((1.-Poros)**2*kVis)
-      kappa = K*dVis/(roh_H2O*g)
-      Re = W*kappa**0.5/kVis
-      nueStern_2 = 12.838 * Re**1.3845/(50.60846**1.3845+Re**1.3845)
-      nueStern_2 = nueStern_2/1.e3
-      Sc0 = ScO
+      w = ust
+      u = ust
+      k = 5.6e-3*poros**3*dkorn**2*g/((1.-poros)**2*kvis)
+      kappa = k*dvis/(roh_h2o*g)
+      re = w*kappa**0.5/kvis
+      nuestern_2 = 12.838 * re**1.3845/(50.60846**1.3845+re**1.3845)
+      nuestern_2 = nuestern_2/1.e3
+      sc0 = sco
       do n = 1,2
-         if (n == 2)Sc0 = ScP
-         DiffKm = (kVis/Sc0)
-         z1Stern = 0.0
-         hcon = 31.48 * exp(-z1Stern/0.291) + 3.29 * exp(-z1Stern/1.588) + 46.112 * exp(-z1Stern/0.0964) + 0.0077
-         nueStern = nueStern_2*hcon
-         nue = nueStern*U*W*T + kVis
+         if (n == 2)sc0 = scp
+         diffkm = (kvis/sc0)
+         z1stern = 0.0
+         hcon = 31.48 * exp(-z1stern/0.291) + 3.29 * exp(-z1stern/1.588) + 46.112 * exp(-z1stern/0.0964) + 0.0077
+         nuestern = nuestern_2*hcon
+         nue = nuestern*u*w*t + kvis
          
-         Sc = Sc0
-         if (Re > 10)Sc = 1.
-         DiffK1_1 = (nue/Sc)*86400.
-         z1Stern = H1/(W*T*(W/U))
-         hcon = 31.48 * exp(-z1Stern/0.291) + 3.29 * exp(-z1Stern/1.588) + 46.112 * exp(-z1Stern/0.0964) + 0.0077
-         nueStern = nueStern_2*hcon
-         nue = nueStern*U*W*T + kVis
-         Sc = Sc0
-         if (Re > 10)Sc = 1.
-         DiffK1_2 = (nue/Sc)*86400.
-         DiffK1 = (Diffk1_1 + DiffK1_2)/2.
+         sc = sc0
+         if (re > 10)sc = 1.
+         diffk1_1 = (nue/sc)*86400.
+         z1stern = h1/(w*t*(w/u))
+         hcon = 31.48 * exp(-z1stern/0.291) + 3.29 * exp(-z1stern/1.588) + 46.112 * exp(-z1stern/0.0964) + 0.0077
+         nuestern = nuestern_2*hcon
+         nue = nuestern*u*w*t + kvis
+         sc = sc0
+         if (re > 10)sc = 1.
+         diffk1_2 = (nue/sc)*86400.
+         diffk1 = (diffk1_1 + diffk1_2)/2.
          if (n == 1) then
-            zwDiffK1 = DiffK1      ! Diffusionskoeff. für Sauerstoff
-            alphaO1 = DiffK1_2/Diffk1_1
+            ! Diffusionskoeff. für Sauerstoff
+            zwdiffk1 = diffk1      
+            alphao1 = diffk1_2/diffk1_1
          endif
-         z2Stern = (H1+H2)/(W*T*(W/U))
-         hcon = 31.48 * exp(-z2Stern/0.291) + 3.29 * exp(-z2Stern/1.588) + 46.112 * exp(-z2Stern/0.0964) + 0.0077
-         nueStern = nueStern_2*hcon
-         nue = nueStern*U*W*T + kVis
-         Sc = Sc0
-         if (Re > 10)Sc = 1.
-         DiffK2_2 = (nue/Sc)*86400.
-         DiffK2 = (DiffK1_2 + DiffK2_2)/2.
+         z2stern = (h1+h2)/(w*t*(w/u))
+         hcon = 31.48 * exp(-z2stern/0.291) + 3.29 * exp(-z2stern/1.588) + 46.112 * exp(-z2stern/0.0964) + 0.0077
+         nuestern = nuestern_2*hcon
+         nue = nuestern*u*w*t + kvis
+         sc = sc0
+         if (re > 10)sc = 1.
+         diffk2_2 = (nue/sc)*86400.
+         diffk2 = (diffk1_2 + diffk2_2)/2.
          if (n == 1) then
-            zwDiffK2 = Diffk2
-            alphaO2 = DiffK2_2/DiffK1_2
+            zwdiffk2 = diffk2
+            alphao2 = diffk2_2/diffk1_2
          endif
          
       enddo  ! Ende Schleife zur Berechnung von DiffK und DiffKP
-      DifKP1 = DiffK1
-      DifKP2 = DiffK2
-      DiffK1 = zwDiffK1
-      DiffK2 = zwDiffK2
+      difkp1 = diffk1
+      difkp2 = diffk2
+      diffk1 = zwdiffk1
+      diffk2 = zwdiffk2
    endif
    vvert1 = 0.0
    vvert2 = 0.0
    
    if (vvert > 0.0) then
-      call SedAdv(vvert,alphaO1,alphaO2,DiffK1,DiffK2,vvert1,vvert2,H1,H2,Diffmo)
+      call sedadv(vvert,alphao1,alphao2,diffk1,diffk2,vvert1,vvert2,h1,h2,diffmo)
    endif
-end subroutine Sed_DiffK
+end subroutine sed_diffk
 
 
-subroutine SedAdv(vvert,alphaO1,alphaO2,DiffK1,DiffK2,vvert1,vvert2,H1,H2,Diffmo)
 
-   implicit none
-   
-   real    :: zvvert2, zvvert1, vvert, vvert2, vvert1
-   real    :: h2, h1, diffmo, diffk2, diffk1
-   real    :: alphao2, alphao1
-
-   zvvert1 = vvert * alphaO1
-   vvert1 = (vvert + zvvert1)/2.
-   
-   DiffK1 = Diffmo
-   zvvert2 = zvvert1 * alphaO2
-   vvert2 = (zvvert1 + zvvert2)/2.
-   
-   DiffK2 = Diffmo
-   DiffK1 = DiffK1 + vvert1 * H1
-   DiffK2 = DiffK2 +vvert2 * H2
-end subroutine SedAdv
