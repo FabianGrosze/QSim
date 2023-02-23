@@ -54,7 +54,8 @@ module mod_salinity
    !!integer, parameter                    :: iZoo = 50                   !< tracer index of zooind
    !!integer, parameter                    :: nPhyto = 3                  !< number of phytoplankton groups
    !!integer, parameter, dimension(nPhyto) :: iPhyto = (/ 8, 9, 10 /)     !< tracer indices of phytoplankton groups
-   integer, parameter                    :: i_salinity = 72
+   integer, parameter                    :: i_salinity = 72             !< tracer index of salt
+   integer, parameter                    :: i_trans_salinity = 69       !< tracer index of salt transfer variable
    integer                               :: varid                       !< netCDF variable ID
    !!integer                               :: nClasses                    !< number of SPM fractions to be read from file (starting with finest)
    !!integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
@@ -182,7 +183,7 @@ contains
  !        planktonic_variable_p(iSS    + j) = spm_element_p(i)
  !        planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
           planktonic_variable_p(i_salinity + j) = salt_element_p(i)
-          transfer_quantity_p(69+(i-1)*number_trans_quant) = salt_element_p(i)
+          transfer_quantity_p(i_trans_salinity + (i-1) * number_trans_quant) = salt_element_p(i)
 
       end do
       
