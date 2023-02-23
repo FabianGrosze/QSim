@@ -37,8 +37,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    real              :: pka, vNH3, vhNO2, vmod, kd_n2
    real              :: yn, vx0t, vx02t, bettf, anitri 
    real              :: ust, csedn, csedn2, ceq, ceq2, sednit, sednt2
-   real              :: zellv, qsgr, oc, oc0, wst
-   real              :: delx0, delx2
+   real              :: zellv, qsgr, oc, oc0, wst, vx0t_old, vx02t_old
    integer           :: ised, jsed
    
    real, parameter   :: khNO2_x1 = 5.e-5
@@ -51,9 +50,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    real, parameter   :: U3       = 300.
    real, parameter   :: g        = 9.81             !@TODO (Schönung): Define `g` globally
    
-   ! initialise potentially unused variables to prevent compiler warning
-   kd_n2 = 0.
-   
+   external :: print_clipping, sedimentation, qerror
    
    ! influence of temperature (Wolf)
    if (tempw_s < 15.) then
@@ -72,15 +69,13 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       fph1n3 = 1.
       fph2n3 = 1.
    else
-      ! TODO (schoenung): absolute zero is -273.15°C
-      pka = 0.09018 + (2729.92/(273.16 + tempw_s))
+      pka = 0.09018 + (2729.92/(273.15 + tempw_s))
       vNH3 = vNH4_s / (1. + 10**(pka - vph_s))
       fph1n3 = 1. / (1. + vNH3 / kNH3_X1)
       fph2n3 = 1. + vNH3 / kNH3_x2
       
       if (vx02_s > 0.0) then
-         ! TODO (schoenung): absolute zero is -273.15°C
-         KD_N2 = exp(-2300. / (273.16 + tempw_s))
+         KD_N2 = exp(-2300. / (273.15 + tempw_s))
          vhNO2 = vNO2_s / (1. + KD_N2 * 10**vph_s)
       
          fph1n2 = 1. + vhNO2 / khNO2_x1
@@ -131,8 +126,9 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    ! timestep
    vx0t = vx0_s * exp((yn - anitri) * tflie)
    if (vx0t < 0.0) then
-      delx0 = vx0t  - vx0_s
-      vx0t = (vx0_s/(vx0_s + abs(delx0))) * vx0_s
+      vx0t_old = vx0t
+      vx0t = (vx0_s/(vx0_s + abs(vx0t - vx0_s))) * vx0_s
+      call print_clipping("nitrifiers", "vx0t", vx0t_old, vx0t, "mg/l")
    endif
    
    ! --- Ammoniumoxidation auf Makrophyten ---
@@ -167,7 +163,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       
       if (susn2_s > vNO2_s) then
          susn2_s = vNO2_s
-         vx02t   = vx02_s + susn2_s * ekx0
+         vx02t   = vx02_s + susn2_s * ekx02
          if (vx02t > 0. .and. vx02_s > 0.) then
             yn = (log(vx02t) - log(vx02_s)) / tflie
          else
@@ -185,8 +181,9 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
       ! timestep
       vx02t = vx02_s * exp((yn - anitri) * tflie)
       if (vx02t < 0.0) then
-         delx2 = vx02t - vx02_s
-         vx02t = (vx02_s/(vx02_s + abs(delx2))) * vx02_s
+         vx02t_old = vx02t
+         vx02t = (vx02_s/(vx02_s + abs(vx02t - vx02_s))) * vx02_s
+         call print_clipping("nitrifiers", "vx02t", vx02t_old, vx02t, "mg/l")
       endif
       
       ! --- Makrophythen ---
@@ -241,7 +238,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    endif
    
    ! Ausgabewerte
-   bettn_s = hJNH4_s * tflie / (24. * tiefe_s)
+  bettn_s = hJNH4_s / (24. * tiefe_s)
    
    vx0_s  = vx0t
    vx02_s = vx02t

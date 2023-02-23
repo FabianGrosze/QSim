@@ -48,6 +48,8 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    character(275) :: pfadstring
    character(8)   :: versionstext
    integer        :: open_error, u_file1
+   
+   external :: version_string, qerror, ergebmformat, ergebtformat
   
    
    print *, ''

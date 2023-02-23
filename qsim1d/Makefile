@@ -36,8 +36,7 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-# PV=qsim1d_$(QSim_version)_dev
-PV='qsim1d_schwermetall24'
+PV=qsim1d_$(QSim_version)_dev
 
 #====================================================================
 
@@ -49,42 +48,52 @@ FC = gfortran
 # ===================================================================
 
 Q1 = module_model_settings.o \
-     AdvDiff.o \
-     ALBEDO.o \
-     coliform_bacteria_inflow_1d.o \
-     ctracer.o \
-     EreigGParam.o \
-     EreigHParam.o \
-     Ergeb2DParam.o \
-     ergebMFormat.o \
-     ErgebMParam.o \
-     ergebTFormat.o \
-     ErgebTParam.o \
-     E_extnctParam.o \
-     init_result_files.o \
-     km_sys.o \
-     lin_interpolation.o \
-     nitrogen_inflow_1d.o \
-     organic_carbon_inflow_1d.o \
-     oxygen_inflow_1d.o \
-     phosphate_inflow_1d.o \
-     ph_inflow_1d.o \
-     silicate_inflow_1d.o \
-     qerror.o \
-     qsim.o \
-     randbedingungen.o \
-     sysgen.o \
-     sys_gitterStrang.o \
-     sys_gitterTrans.o \
-     sys_z_gitter.o \
-     transport.o \
-     wehr.o \
-     wehrles.o \
-     WetterParam.o \
-     write_e_extnct.o \
-     write_gerris_definitions.o \
-     write_modellg_param.o \
-     z_gitter_einl.o
+    advdiff.o \
+    albedo.o \
+    basispoint.o \
+    cip.o \
+    coliform_bacteria_inflow_1d.o \
+    crank_nicolson.o \
+    cra_nickoeff.o\
+    ctracer.o \
+    EreigGParam.o \
+    EreigHParam.o \
+    Ergeb2DParam.o \
+    ergebMFormat.o \
+    ErgebMParam.o \
+    ergebTFormat.o \
+    ErgebTParam.o \
+    E_extnctParam.o \
+    init_result_files.o \
+    km_sys.o \
+    lax_wendroff.o \
+    lin_interpolation.o \
+    maccorm.o \
+    nitrogen_inflow_1d.o \
+    organic_carbon_inflow_1d.o \
+    oxygen_inflow_1d.o \
+    phosphate_inflow_1d.o \
+    ph_inflow_1d.o \
+    qerror.o \
+    qsim.o \
+    quickest.o \
+    randbedingungen.o \
+    silicate_inflow_1d.o \
+    sysgen.o \
+    sys_gitterStrang.o \
+    sys_gitterTrans.o \
+    sys_z_gitter.o \
+    thomas.o\
+    transport.o \
+    trimat.o \
+    wehr.o \
+    wehrles.o \
+    WetterParam.o \
+    write_e_extnct.o \
+    write_gerris_definitions.o \
+    write_modellg_param.o \
+    z_gitter_einl.o
+    
 
 -include ../metabolism/metabol.mk
 
@@ -139,7 +148,7 @@ clean_release: clean usual
 
 clean_debug: clean debug
 
-all: usual save exe
+all: usual save
 
 HERE=`pwd -P`
 NOW=`date +"%-d%m%Y"`
@@ -164,25 +173,20 @@ qsim1d:	$(Q1)
 	$(FC) $(Q1) -L. -lmetabol -o $(PV)
 
 exe:
-	cp ./$(PV) $(MY_BIN)/$(PV)
+	mv -pf ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."
 	rm -f *.o $(PV) *.taz *~ *.mod *.a
 	rm -f ../metabolism/*.o ../metabolism/*/*.o
 
-FN=qsim_linux_source_`date +%d%b%y`.taz
+FN=$(PV)_linux_source_`date +%d%b%y`.taz
 
 save: taz store
 
-#taz:
-#	/bin/rm -f *_source_*.taz 
-#	tar cvfz $(FN) *.f90 Makefile* \
-#	../metabolism/*.f90 ../metabolism/../*.f90 ../metabolism/*.mk
-
 # QSim-Quelle immer komplett archivieren
 taz:
-	/bin/rm -f *_source_*.taz ../*_source_*.taz
+	/bin/rm -f *_source_*.taz 
 	tar cvfz ../$(FN)  ../qsim3d/README \
 	../qsim3d/*.f95 ../qsim3d/*.h ../qsim3d/*.c ../qsim3d/*.txt ../qsim3d/Makefile* ../qsim3d/scripte/* \
 	../qsim1d/*.f90  ../qsim1d/*.rc  \

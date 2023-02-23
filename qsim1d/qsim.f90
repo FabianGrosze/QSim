@@ -36,6 +36,7 @@ program qsim
    character       :: ckenn,cpoint
    character(2)    :: chcon,ckenn_vers,ckenn_vers1
    character(7)    :: cmin,cmax
+   character(8)    :: versionstext, dummy
    character(40)   :: erename, modname
    character(201)  :: ctext
    character(275)  :: pfadstring
@@ -47,8 +48,7 @@ program qsim
    integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
    integer         :: mrb, iseg, mtracer, itags, monats
    integer         :: jahrs, ij, lait1, laid1, laim1
-   integer         :: mpf, ms, md, mc, mb
-   integer         :: mu, mwe, mv, mz, ma
+   integer         :: mpf, ms, md, mc, mb,  mu, mwe, mv, mz, ma
    integer         :: me, ndr, iv, j, ksta
    integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
    integer         :: itags_schr, istr, nstr, istrs, ifhstr
@@ -223,7 +223,7 @@ program qsim
    real, dimension(ialloc2)                :: agrtbr, dalggr, dalgki, dalgag, dalgak, albewg, alberg, albewk, alberk
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesn, gesp, sdbsb, abszo, bsbt, bsbct, bsbctp
    real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, doscf, extk, sised
-   real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, fkm
+   real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, bdc_denw, fkm
    real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zhnf, zbac, ro2hnf, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
@@ -238,10 +238,8 @@ program qsim
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
    real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
    real, dimension(ialloc2)                :: zwrbar, zwph, zwcsed_abb
-   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb
+   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb, zwnl0, zwpl0
    real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwcsed
-   real, dimension(ialloc2)                :: zwnl0, zwpl0
-   real, dimension(ialloc2)                :: zwabwg, zwabwk, zwabrg, zwabrk
    real, dimension(ialloc2)                :: zworgs, zwss, zwfssg, zwseds
    real, dimension(ialloc2)                :: zwtpki, zwtpgr, zwchlk, zwchlg, zwchlb
    real, dimension(ialloc2)                :: zwn4z, zwn3z, zwpz
@@ -250,7 +248,7 @@ program qsim
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
    real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_pb, zup_nb, zq_pb, zq_nb
    real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwskmo, zww2, zwsdom
-   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwcoli, zwdoscf, zwakmor_1, zwagmor_1, zwabmor_1
+   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwakmor_1, zwagmor_1, zwabmor_1
    real, dimension(ialloc2)                :: zwgszn, zwglzn, zwgscad, zwglcad, zwgscu, zwglcu, zwgsni, zwglni
    real, dimension(ialloc2)                :: zwgsas, zwglas, zwgspb, zwglpb, zwgscr, zwglcr, zwgsfe, zwglfe
    real, dimension(ialloc2)                :: zwgshg, zwglhg, zwgsmn, zwglmn, zwgsu, zwglu, zwsseros
@@ -291,7 +289,7 @@ program qsim
    real, dimension(ialloc2)                :: bgsasy, bglasy, bgspby, bglpby, bgscry, bglcry, bgsfey, bglfey
    real, dimension(ialloc2)                :: bgshgy, bglhgy, bgsmny, bglmny, bgsuy, bgluy, bsseros
    real, dimension(ialloc2)                :: bjdoc1, bjdoc2, btracer, abegm2, abekm2, coroi, corois
-   real, dimension(ialloc2)                :: jdoc1, jdoc2, sgwmue, dh2de, saett, sseros
+   real, dimension(ialloc2)                :: jdoc1, jdoc2, sgwmue, dh2de, sseros
    real, dimension(ialloc2,2)              :: idras, idrasy, dreiy, dreisy, gwdrly, drmas, drmasy, drakr, drakry
    real, dimension(ialloc2,2)              :: drbar, drbary, drmor, drmory
    real, dimension(ialloc2,5)              :: coro, coros
@@ -457,7 +455,15 @@ program qsim
    real, dimension(:,:,:), allocatable     :: tzt, o2zt, nh4zt, no2zt, no3zt, pzt, gsizt, akizt, agrzt, ablzt
    real, dimension(:,:,:), allocatable     :: chlazt, chlkzt, chlgzt, chlbzt, gespzt, gesnzt, q_nkzt, q_nbzt, q_ngzt
    real, dimension(:,:,:), allocatable     :: cchlkzt, cchlbzt, cchlgzt
-   character (len = 8)                     :: versionstext, dummy
+      
+   external :: algaesbl, algaesgr, algaeski, algae_start, ini_algae
+   external :: orgc_start, naehr_start, wehrles, wettles, wehr
+   external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
+   external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
+   external :: sys_z_gitter, strahlg, temperl, sedflux, konsum, dreissen
+   external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d, coliform_bacteria_inflow_1d
+   external :: schweb, erosion, schwermetalle, transport, sasu, nitrogen_inflow_1d
+   external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
    linux = .false.           ! compile for linux operating system (Windows is .false.)
@@ -4287,7 +4293,7 @@ program qsim
          JDOC2(:) = 0.0
       endif 
       
-      if (nbuhn(mstr) == 0) goto 1612
+      if (nbuhn(mstr) == 0) goto 1612 ! goto konsum
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zww2(ior)    = hw2(mstr,ior)
@@ -4446,7 +4452,7 @@ program qsim
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
                   ,itags,uhrz,mstr, .false., 0)
       
-      if (nbuhn(mstr) == 0 ) goto 1415
+      if (nbuhn(mstr) == 0 ) goto 1415 ! goto coroph
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -4492,7 +4498,7 @@ program qsim
             if (iwied == 1)TGZoo(mstr,ior) = bTGZoo(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1612
+         goto 1612 ! goto konsum
       endif
       
       if (ilbuhn == 1) then
@@ -4739,33 +4745,26 @@ program qsim
       
       ! -----------------------------------------------------------------------
       ! heterotrophe Nanoflagelaten (HNF)
-      ! [ausgeschaltet]
+      ! [currently turned off]
       ! -----------------------------------------------------------------------
-      218 continue
-      !if (CHNF(1) <= 0.0) then
-      !   if (nbuhn(mstr) > 0) then
-      !      do ior = 1,anze+1
-      !         bro2HF(mstr,ior) = 0.0
-      !         bHNFBS(mstr,ior) = 0.0
-      !         bBSBHN(mstr,ior) = 0.0
-      !      enddo
-      !   endif
-      !   goto 1412
-      !endif
-      
-      ! call HNF(CHNF,BVHNF,BAC,TEMPW,VO2,TFLIE                            &
-      !         ,echnf,eBVHNF,flag,elen,ior,anze,qeinl,vabfl               &
-      !         ,jiein,drHNF,zHNF,HNFBAC,rO2HNF,BSBHNF,HNFmua,upHNF,BACks  &
-      !         ,HNFrea,HNFupa,HNFmoa,HNFexa,fkm,mstr,itags,monats,uhrz,   &
-      !          .false., 0)
-      HNFmua = 0.
-      HNFrea = 0.
-      HNFupa = 0.
-      HNFmoa = 0.
-      HNFexa = 0.
-      HNFbac = 0.
-      rO2HNF = 0.
-      bsbHNF = 0.
+      ! call hnf_inflow_1d(chnf, bvhnf, echnf, ebvhnf, qeinl, &
+      !                    vabfl, jiein, anze, flag)
+      !
+      ! do ior = 1,anze+1
+      !    call hnf(chnf(ior), bac(ior), vo2(ior), tempw(ior), drhnf(ior), &
+      !             zhnf(ior), tflie,                                      &
+      !             hnfbac(ior), hnfupa(ior), hnfrea(ior), hnfexa(ior),    & 
+      !             hnfmoa(ior), hnfmua(ior), ro2hnf(ior), bsbhnf(ior),    &
+      !             kontroll, jjj)
+      ! enddo
+      hnfbac = 0.
+      hnfupa = 0.
+      hnfrea = 0.
+      hnfexa = 0.
+      hnfmoa = 0.
+      hnfmua = 0.
+      ro2hnf = 0.
+      bsbhnf = 0.
       
       if (nbuhn(mstr) > 0) then
          bro2HF(mstr,:) = 0.
@@ -4777,7 +4776,7 @@ program qsim
       ! Kieselalgen
       ! -----------------------------------------------------------------------
       1412 continue
-      ! if(hChla(mstr,1)<0.0)goto 1513
+      ! if(hChla(mstr,1)<0.0)goto 1513 ! goto albenth
       call algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg,CHLA,ir                 &
                     ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                      &
                     ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema          &
@@ -4792,7 +4791,7 @@ program qsim
                     ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                            &
                     ,.false.,0)
       
-      if (nbuhn(mstr) == 0)goto 1413
+      if (nbuhn(mstr) == 0)goto 1413 ! goto algaesbl
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5018,7 +5017,7 @@ program qsim
                     ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                              &
                     ,.false.,0)
       
-      if (nbuhn(mstr) == 0)goto 1414
+      if (nbuhn(mstr) == 0)goto 1414 ! goto algaesgr
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5095,7 +5094,7 @@ program qsim
             abmor_1(mstr,ior) = babmor_1(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1413
+         goto 1413 ! goto algaesbl
       endif
       
       if (ilbuhn == 1) then
@@ -5195,7 +5194,7 @@ program qsim
       
       if (any(isnan(agr))) call qerror("Division by zero in subroutine algaesgr")
       
-      if (nbuhn(mstr) == 0)goto 1513
+      if (nbuhn(mstr) == 0)goto 1513 ! goto albenth
       if (ilbuhn == 0) then
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -5285,7 +5284,7 @@ program qsim
             agmor_1(mstr,ior) = bagmor_1(mstr,ior)
          enddo
          ilbuhn = 1
-         goto 1414
+         goto 1414 ! goto algaesgr
       endif
       
       if (ilbuhn == 1) then
@@ -5437,39 +5436,59 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! benthische Algen
+      ! benthic algae [turned off]
       ! -----------------------------------------------------------------------
       1513 continue
-      ! call albenth(SCHWI,TFLIE,TEMPW,TIEFE,VMITT,VNO3,VNH4,GELP               &
-      !              ,albewg,alberg,elen,flae,ior,anze,aggmax,agksn,agksp       &
-      !              ,si,akksn,akksp,akkssi,akgmax,albewk,alberk,abegm2,abekm2  &
-      !              ,vabfl,cmatgr,cmatki,akchl,agchl,extk,ilang,mstr           &
-      !              ,.false.,0)
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call albenth(abegm2(ior), abekm2(ior), vnh4(ior), vno3(ior), gelp(ior),  &
+      !                    si(ior), vmitt(ior), tempw(ior), schwi(ior), extk(ior),     &
+      !                    tiefe(ior), tflie,                                          &
+      !                    albewg(ior), alberg(ior),  albewk(ior), alberk(ior),        &
+      !                    cmatgr(ior), cmatki(ior),                                   &
+      !                    kontroll, jjj)
+      !    enddo
+      ! endif
+            
+      ! benthic algae are currently turned off.
+      ! Only the return values of `subroutine albenth` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       albewg(:) = 0.0
-      albewk(:) = 0.0
       alberg(:) = 0.0
+      albewk(:) = 0.0
       alberk(:) = 0.0
       cmatgr(:) = 0.0
       cmatki(:) = 0.0
       
+      babewg(:,:) = 0.0
+      baberg(:,:) = 0.0
+      babewk(:,:) = 0.0
+      baberk(:,:) = 0.0
+      
       ! -----------------------------------------------------------------------
       ! macrophytes [turned off]
       ! -----------------------------------------------------------------------
-      ! call mphyt(tiefe,tempw,anze,po2p,po2r,pfldalg,tflie                    &
-      !            ,itags,monats,itstart,mstart,itmax,mmax,itend,mend,schwi    &
-      !            ,pflmin,pflmax,pfl,sa,su,ilang,extk,mstr,                   &
-      !            ,.false.,0)
-      
-      ! if (nbuhn(mstr) > 0) then
-      !    do ior = 1,anze+1
-      !       bpfl(mstr,ior) = pfl(ior)
-      !       pfl(ior) = 0.0
-      !    enddo
+      ! if (ilang == 1) then
+      !    do ior = 1, anze+1
+      !       call macrophytes(pfl(ior), pflmin(ior), pflmax(ior), tiefe(ior),   &
+      !                        tempw(ior), schwi(ior), extk(ior),                &
+      !                        itags, monats, itstart, mstart, itmax, mmax,      &
+      !                        itend, mend, sa, su, tflie, po2p(ior), po2r(ior), &
+      !                        kontroll, jjj)
+      !    enddo   
+      !    ! if (nbuhn(mstr) > 0) then
+      !    !    do ior = 1,anze+1
+      !    !       bpfl(mstr,ior) = pfl(ior)
+      !    !       pfl(ior) = 0.0
+      !    !    enddo
+      !    ! endif
       ! endif
       
+      ! macrophytes are currently turned off.
+      ! Only the return values of `subroutine macrophytes` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
       pfl    = 0.
       pflmax = 0.
-      pflmin = 0.
       po2p   = 0.
       po2r   = 0.
       
@@ -5596,21 +5615,6 @@ program qsim
       1514 continue
       if (vnh4(1) < 0.0) goto 1515
       
-      if (nbuhn(mstr) > 0) then
-         do ior = 1,anze+1
-            babewg(mstr,ior) = albewg(ior)
-            baberg(mstr,ior) = alberg(ior)
-            babewk(mstr,ior) = albewk(ior)
-            baberk(mstr,ior) = alberk(ior)
-      
-            pfl(ior) = 0.0
-            albewg(ior) = 0.0
-            alberg(ior) = 0.0
-            albewk(ior) = 0.0
-            alberk(ior) = 0.0
-         enddo
-      endif
-      
       ! inflow from point and diffuse sources
       call nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
                               Q_NG, Q_NB, hFluN3, mstr, eNH4L, eNO2L, eNO3L,   &
@@ -5685,20 +5689,8 @@ program qsim
                           bh(mstr,ior), tflie,                                                                   &
                           bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                     &
                           bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                     &
-                          bFluN3(mstr,ior), dC_DenW(ior),                                                        &
+                          bFluN3(mstr,ior), bdc_denw(ior),                                                       &
                           kontroll, jjj)
-            
-            ! TODO (Schönung)
-            ! Fehler: Das Buhnenfeld bekommt hier den Wert aus dem Hauptfeld für die Variable 'dC_DenW'
-            
-            ! Folgende Zuweisungen werden gemacht, um Fehler aus dem bisherigen Code beizubehalten.
-            ! Damit soll gewährleistet werden, dass in der Entkernung keine Unterschiede auftreten und beim Testen
-            ! auf Identität getestet werden kann
-            ! Nach einem Erfolgreichen Test sollten diese Fehler hier ausgebessert werden
-            albewg(ior) = zwabwg(ior)
-            alberg(ior) = zwabrg(ior)
-            albewk(ior) = zwabwk(ior)
-            alberk(ior) = zwabrk(ior)
             
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
@@ -5783,7 +5775,7 @@ program qsim
          do ior = 1,anze+1
             ! metabolism
             call ph(bmw(mstr,ior),bpw(mstr,ior),bca(mstr,ior),blf(mstr,ior),btempw(mstr,ior),bph(mstr,ior),vco2s,    &
-                    tflie,rau(ior),vbm(mstr,ior),bh(mstr,ior),rhyd(ior),flae(ior),                                   &
+                    tflie,rau(ior),vbm(mstr,ior),bh(mstr,ior),rhyd(ior), bf(mstr,ior),                               &
                     wge(IDWe(mstr,ior)), WLage(mstr,ior), hWS(mstr,ior), iphy,                                       &
                     bbsbct(mstr,ior),bresdr(mstr,ior),bzres1(mstr,ior),bzres2(mstr,ior),                             &
                     bdaki(mstr,ior),bdagr(mstr,ior),bdabl(mstr,ior),bdaak(mstr,ior),bdaag(mstr,ior),bdaab(mstr,ior), &
@@ -6066,7 +6058,7 @@ program qsim
                   iPhy, tflie,                                                     &
                   dalgo(ior), dalgao(ior), algo, abeowg(ior), abeowk(ior),         &
                   abeorg(ior), abeork(ior), zooro2(ior), hSchlr(mstr,ior),         &
-                  o2ein, o2ein1(ior), saett(ior),                                  &
+                  o2ein, o2ein1(ior),                                              &
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
@@ -6075,23 +6067,19 @@ program qsim
          endif
          
          if (nbuhn(mstr) > 0) then
-            ! TODO (schoenung, august 2022): Ticket #52
-            ! Folgende Größen aus dem Hauptfluss werden fehlerhafterweise an das Buhnenfeld übergeben:
-            ! * zooind: hier muss bzooi übergeben werden
-            ! * saett:  hier muss eine neue Variable für das Buhnenfeld angelegt und übergeben werden
-            call oxygen(bo2(mstr,ior), zooind(ior),                                                                &
+            call oxygen(bo2(mstr,ior), bzooi(mstr,ior),                                                            &
                      bagn4(mstr,ior), bakn4(mstr,ior), babn4(mstr,ior),                                            &
                      bagn3(mstr,ior), bakn3(mstr,ior), babn3(mstr,ior),                                            &
                      bdagr(mstr,ior), bdaki(mstr,ior), bdabl(mstr,ior), babewg(mstr,ior), babewk(mstr,ior),        &
                      bdaag(mstr,ior), bdaak(mstr,ior), bdaab(mstr,ior), baberg(mstr,ior), baberk(mstr,ior),        &
-                     bJO2(mstr,ior), bbsbt(mstr,ior), dC_DenW(ior), TOC_CSB, bgo2n(mstr,ior),                      &
+                     bJO2(mstr,ior), bbsbt(mstr,ior), bdc_denw(ior), TOC_CSB, bgo2n(mstr,ior),                     &
                      bpo2p(mstr,ior), bpo2r(mstr,ior), bro2dr(mstr,ior), bro2HF(mstr,ior),                         &
-                     rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), flae(ior),                                  &
+                     rau(ior), bh(mstr,ior), rhyd(ior), vbm(mstr,ior), bf(mstr,ior),                               &
                      wlage(mstr,ior), hws(mstr,ior), wge(IDWe(mstr,ior)), btempw(mstr,ior),                        &
                      iPhy, tflie,                                                                                  &
                      bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
                      babeorg(mstr,ior), babeork(mstr,ior), bzooro2(mstr,ior), bschlr(mstr,ior),                    &
-                     bo2ein(mstr,ior), bo2ein1(mstr,ior), saett(ior),                                              &
+                     bo2ein(mstr,ior), bo2ein1(mstr,ior),                                                          &
                      kontroll, jjj)
             
             ! Mixing of main river and groyne-fields
@@ -6105,7 +6093,7 @@ program qsim
       ! -----------------------------------------------------------------------
       1518 continue
       if (ssalg(1) < 0.0) goto 1525
-      call SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
+      call schweb(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
                   ,tflie,VMITT,flae,flag,elen,ior,anze,ess,ssL,qeinl,qeinlL,vabfl   &
                   ,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinLs               &
                   ,abl,zexbl,dblmor,drfaeb,jiein                                    &

@@ -101,7 +101,7 @@ subroutine parallel_vorbereiten()
    if ((kontroll_lokal > 0) .and. (kontroll_lokal <= part)) then
       print*,'meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal = '  &
             , meinrang,part,number_plankt_vari,kontrollknoten,kontroll_lokal
-      print*,'nach randbedingungen_parallel(): tempw,chla = ',                    &
+      print*,'nach randbedingungen_parallel(): tempw,chla = ',  &
             planktonic_variable_p( 1+(kontroll_lokal-1)*number_plankt_vari),  &
             planktonic_variable_p(11+(kontroll_lokal-1)*number_plankt_vari)
    else ! keine kontrollausgabe

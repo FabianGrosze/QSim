@@ -49,6 +49,8 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
    integer, intent(in)             :: jjj       !< debugging
    character(1000)                 :: message
    
+   external                        :: qerror, schiff, sed_pom
+   
    ! fOM_OC Verhältnis organisches Material zu organischem Kohlenstoff
    fOM_OC = 1./0.378
    

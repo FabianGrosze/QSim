@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# unix linefeed needed
+# unix linfeed needed in first line!
 
 echo "bash-script quzip saves vtk-output of qsim3d model."
 echo "call sequence >quzip /modeldirectory"

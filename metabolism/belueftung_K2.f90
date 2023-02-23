@@ -38,6 +38,8 @@ subroutine belueftung_k2(raus,tiefes,vmitts,rhyds,flaes,tempws,WLages,hwss,wges,
                             SC,Wind_Kl,bbeiw
    character(1000)       :: message
    
+   external              :: qerror
+   
    FN = 1./raus
    G = 9.81
    UST = ((FN*G**0.5)/tiefes**0.166667)*abs(vmitts)

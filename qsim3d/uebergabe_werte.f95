@@ -182,7 +182,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 9) = "            dblmor" ! Absterberate Blaualgen
       trans_quant_name(10) = "            BSBHNF" !
       trans_quant_name(11) = "            HNFBAC" !
-      trans_quant_name(12) = "      empty_twelve" !
+      trans_quant_name(12) = "            SSeros" ! Schwebstofferhöhung infolge Erosion pro Zeitschritt
       trans_quant_name(13) = "            drfaek" !
       trans_quant_name(14) = "            drfaeg" !
       trans_quant_name(15) = "            drfaeb" !
@@ -215,7 +215,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(42) = "                ir" ! Ingestionsrate der Rotatorien in mg/(l*h) | konsum()
       trans_quant_name(43) = "            zooro2" ! Sauerstoffverbrauch durch Zooplanktonrespiration
       trans_quant_name(44) = "            rO2HNF" ! Respiration HNF ???
-      trans_quant_name(45) = "             SAETT" ! Sauerstoff Sättigungs-Konzentration in mgO2/l
+      trans_quant_name(45) = "          empty_45" ! 
       trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
       trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
       trans_quant_name(48) = "            akitbr" !
@@ -238,8 +238,8 @@ subroutine ini_ueber(nk)
       trans_quant_name(65) = "               WGE" ! Windgeschwindigkeit
       trans_quant_name(66) = "             cloud" ! Bewölkungsdichte
       trans_quant_name(67) = "              wtyp" ! Cloud reflectane(?) derived from cloud type
-      trans_quant_name(68) = "  empty_sixtyeight" !
-      trans_quant_name(69) = "          empty_69" !
+      trans_quant_name(68) = "             dsedh" ! Sohlhöhenänderung im aktuellen Zeitschritt [mm]
+      trans_quant_name(69) = "              salt" ! eingelesener Salzgehalt (Untrim-Ergebnisse)
       trans_quant_name(70) = "          empty_70" !
       trans_quant_name(71) = "          empty_71" !
       trans_quant_name(72) = "            algzog" ! gruen-Algen-Konsum Zoo-Plankton in mg/l

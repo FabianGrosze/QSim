@@ -63,7 +63,9 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
 
    ! --- local variables ---
    real     :: gelpt, gespt, gelP_dr, delp, PSed, hconKi, hconGr, hconBl
-   real     :: gelP_zoo, agrP, akiP, ablP
+   real     :: gelP_zoo, agrP, akiP, ablP, gelpt_old
+   
+   external :: print_clipping
    
    !========================================================================
    ! --- Einfluss des Zooplanktons ---
@@ -112,9 +114,11 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
          + gelP_dr               ! Änderung durch Dreissena
    
    if (gelPt < 0.0) then
-      delp = gelPt - gelP_s
-      gelPt = 0.0
-      if (gelP_s + abs(delP) > 0.0) gelPt = (gelP_s / (gelP_s + abs(delp))) * gelP_s
+      gelpt_old = gelpt
+      delp = gelpt - gelp_s
+      gelpt = 0.0
+      if (gelp_s + abs(delp) > 0.0) gelpt = (gelp_s / (gelp_s + abs(delp))) * gelp_s
+      call print_clipping("phosphate", "gelpt", gelpt_old, gelpt, "mg/l")
    endif
    
    ! -----------------------------------------------------------------------

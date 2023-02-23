@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# unix linefeed needed
+# unix linfeed needed in first line!
 
 echo "bash-script qusave saves complete input of qsim3d model including code source archive if available."
 echo "call sequence >qusave /modeldirectory"

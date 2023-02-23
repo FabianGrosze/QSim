@@ -72,15 +72,16 @@ subroutine stoffumsatz()
                   endif
                end do
                
-               !------------------------------------------------------------------------ Corophium, auch ein Konsument ## in Überarbeitung
-               !call coroph_huelle(i)
-               !------------------------------------------------------------------------ Muscheln (dreissena), auch Konsumenten
+               ! corophium [turend off]
+               call coroph_huelle(i)
+               
+               ! dreissena
                call dreissen_huelle(i)
                
                ! heterotrophe Nanoflagellaten [turned off]
-               ! call hnf_huelle(i)
+               call hnf_wrapper_3d(i)
                
-               !----------------------------------------------------------------------------------------------------------- Algen-Baustein
+               ! Algen-Baustein
                do k = 1,number_plankt_vari
                   if (isnan(planktonic_variable_p(k+nk))) then
                      print*,'vor algae_huelle: isnan(planktonic_variable_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
@@ -106,45 +107,47 @@ subroutine stoffumsatz()
                end do
                
                ! benthic algae [turned off]
-               call albenth_huelle(i)
+               call albenth_wrapper_3d(i)
                
                ! macrophytes [turned off]
-               call mphyt_huelle(i)
+               call macrophytes_wrapper_3d(i)
                
-               ! organischer Kohlenstoff BSB
+               ! organic carbon
                call organic_carbon_wrapper_3d(i)
                
-               ! Stickstoff in Ammonium, Nitrit und Nitrat
+               ! nitrogen
                call nitrogen_wrapper_3d(i)
-               do k = 1,number_trans_quant
-                  if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
-                     print*,'nach wrapper_nitrogen_3d: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
-                     fehler_nan = .true.
-                  endif
-               end do
-               if (fehler_nan)call qerror("nach ncyc_huelle: isnan(transfer_quantity_p")
                
-               !------------------------------------------------------------------------ PH-Wert (falls gewünscht
-               if (ipH == 1) call ph_wrapper_3d(i)
+               if (ipH == 1) then
+                  call ph_wrapper_3d(i)
+               endif
             endif ! .not. nur_temp
-         end if ! Knoten nass ... Temperw auch an trockenen Knoten !!!
-         !------------------------------------------------------------------------ Wasser(+Sediment)-Temperatur
-         call temperw_huelle(i) !! übergeben wird die Prozess-lokale Knotennummer !!
-         if ((nur_temp) .and. (i == 1))                                                                                 &
+         end if ! Knoten nass ... Temperw auch an trockenen Knoten
+         
+         ! temperature
+         call temperw_huelle(i)
+         
+         if (nur_temp .and. i == 1) then
              print*,'stoffumsatz: nur temperatursimulation; meinrang, i, iglob, itemp, rb_hydraul_p(2 , min_tief = '  &
-             ,meinrang,i,iglob,itemp,rb_hydraul_p(2+(i-1)*number_rb_hydraul),min_tief
+                   ,meinrang,i,iglob,itemp,rb_hydraul_p(2+(i-1)*number_rb_hydraul),min_tief
+         endif
+         
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
-            if ( .not. nur_temp) then
-               
+            
+            if (.not. nur_temp) then
+               ! phosphate   
                call phosphate_wrapper_3d(i)
+               
+               ! silicate
                call silicate_wrapper_3d(i)
-               !------------------------------------------------------------------------ oxygen
+               
+               ! oxygen
                call oxygen_wrapper_3d(i)
-               !------------------------------------------------------------------------ suspended matter balance (Schwebstoff-Bilanz + Sedimentation Min.)
+               
+               ! suspend matter
                call schweb_huelle(i)
                
-               !------------------------------------------------------------------------ coliform bacteria
+               ! coliform bacteria
                if (iColi == 1) then
                   call coliform_bacteria_wrapper_3d(i)
                else
@@ -155,12 +158,12 @@ subroutine stoffumsatz()
                if (ieros == 1)call erosion_huelle(i)
                
                !------------------------------------------------------------------------ heavy metals
-               if (iSchwer == 1)call schwermetalle_huelle(i)
-
+               !if (iSchwer == 1)call schwermetalle_huelle(i)
+               
             end if ! .not. nur_temp
-         end if ! discretisation point (depending on hydraulic driver nodes or element centers) wet
-      end if ! point number existing (last process)
-   end do ! all points hosted by this processor
-   !print*,'metabolism done ',meinrang
+         end if ! Knoten nass
+      end if ! Knotennummer existiert(letzter Prozess)
+   end do ! Alle Knoten auf diesem Prozess
+   
    return
 end subroutine stoffumsatz

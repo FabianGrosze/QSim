@@ -26,64 +26,73 @@
 ! --------------------------------------------------------------------------- !
 module aparam
    implicit none
-   save
    
    !> global parameter from APARAM.txt
    
    ! Grünalgen
-   real, public, protected    :: agchl, aggmax, IKge, agksn, agksp
-   real, public, protected    :: agremi, frmuge, bsbgr, csbgr, Qmx_NG
-   real, public, protected    :: Qmx_PG, Qmn_NG, Qmn_PG, upmxNG, upmxPG
-   real, public, protected    :: opgrmi, opgrma, asgre, ToptG, kTemp_gr
+   real, protected    :: agchl, aggmax, ikge, agksn, agksp
+   real, protected    :: agremi, frmuge, bsbgr, csbgr, qmx_ng
+   real, protected    :: qmx_pg, qmn_ng, qmn_pg, upmxng, upmxpg
+   real, protected    :: opgrmi, opgrma, asgre, toptg, ktemp_gr
+   
    ! Kieselalgen
-   real, public, protected    :: akchl, akgmax, IKke, akksn, akksp
-   real, public, protected    :: akkssi, akremi, frmuke, bsbki, csbki
-   real, public, protected    :: Qmx_NK, Qmx_PK, Qmx_SK, Qmn_NK, Qmn_PK
-   real, public, protected    :: Qmn_SK, upmxNK, upmxPK, upmxSK, opkimi
-   real, public, protected    :: opkima, askie, ToptK, kTemp_Ki
+   real, protected    :: akchl, akgmax, ikke, akksn, akksp
+   real, protected    :: akkssi, akremi, frmuke, bsbki, csbki
+   real, protected    :: qmx_nk, qmx_pk, qmx_sk, qmn_nk, qmn_pk
+   real, protected    :: qmn_sk, upmxnk, upmxpk, upmxsk, opkimi
+   real, protected    :: opkima, askie, toptk, ktemp_ki
+   
    ! Blaualgen
-   real, public, protected    :: abchl, abgmax, IKbe, abksn, abksp, abremi, frmube,    &
-                         bsbbl, csbbl, Qmx_NB, Qmx_PB, Qmn_NB, Qmn_PB, upmxNB, &
-                         upmxPB, opblmi, opblma, asble, ToptB, kTemp_bl
+   real, protected    :: abchl, abgmax, ikbe, abksn, abksp, abremi, frmube,    &
+                         bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb, qmn_pb, upmxnb, &
+                         upmxpb, opblmi, opblma, asble, toptb, ktemp_bl
    integer            :: ifix
+   
    ! Rotatorien
-   real, public, protected    :: IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
+   real, protected    :: irmax, foptr, grot, zresg, zaki, zagr, zabl
    ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
+   
    ! Nitrosomonas
-   real, public, protected    :: YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
+   real, protected    :: ynmax1, stks1, anitr1, bnmx1, bnks1
    ! ynmx1e, stks1e, anitrie, bnmx1e, bnks1e
+   
    ! Nitrobacter
-   real, public, protected    :: YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
+   real, protected    :: ynmax2, stks2, anitr2, bnmx2, bnks2
    ! ynmx2e, stks2e, anitri2e, bnmx2e, bnks2e
+   
    ! Sediment-Flux
-   real, public, protected    :: KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
+   real, protected    :: knh4, kapn3, fpoc1, fpoc2, sorpcap, klang, kdnh3
    ! KNH4e, KapN3e, fPOC1e, fPOC2e, SorpCape, Klange, KdNh3e
+   
    ! Kohlenstoff
-   real, public, protected    :: HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
+   real, protected    :: hyp1, hymxd, ksd1, ksd2, ksm, upbac, ybac, rsgbac
    ! hyPe, hymxDe, KsD1e, KsD2e, KsMe, upBACe, YBACe, rsGBACe
+   
    ! Muscheln
-   real, public, protected    :: FoptD
+   real, protected    :: foptd
    ! FoptDe
+   
    ! HNF
-   real, public, protected    :: upHNF,  BACks
-   !real,  protected :: upHNFe, BACkse 
+   real, protected    :: uphnf,  backs
+      
    ! Wasser
-   real, public, protected    :: alamda
-   !Hygiene
-   real, public, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
-   ! ratecde, etacde, ratecie, xnuece, ratecge, ratecse
+   real, protected    :: alamda
+   
+   ! coliform bacteria
+   real, protected    :: ratecd, etacd, rateci, xnuec, ratecg, ratecs
+   
    ! Schwermetalle
-   real, public, protected    :: c1Pb, e1Pb, c2Pb, e2Pb, c3Pb, e3Pb, c4Pb, e4Pb, c5Pb, e5Pb, VTKoeffDe_Pb
-   real, public, protected    :: c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad
-   real, public, protected    :: c1Cr, e1Cr, c2Cr, e2Cr, c3Cr, e3Cr, c4Cr, e4Cr, c5Cr, e5Cr, VTKoeffDe_Cr
-   real, public, protected    :: c1Fe, e1Fe, c2Fe, e2Fe, c3Fe, e3Fe, c4Fe, e4Fe, c5Fe, e5Fe, VTKoeffDe_Fe
-   real, public, protected    :: c1Cu, e1Cu, c2Cu, e2Cu, c3Cu, e3Cu, c4Cu, e4Cu, c5Cu, e5Cu, VTKoeffDe_Cu
-   real, public, protected    :: c1Mn, e1Mn, c2Mn, e2Mn, c3Mn, e3Mn, c4Mn, e4Mn, c5Mn, e5Mn, VTKoeffDe_Mn
-   real, public, protected    :: c1Ni, e1Ni, c2Ni, e2Ni, c3Ni, e3Ni, c4Ni, e4Ni, c5Ni, e5Ni, VTKoeffDe_Ni
-   real, public, protected    :: c1Hg, e1Hg, c2Hg, e2Hg, c3Hg, e3Hg, c4Hg, e4Hg, c5Hg, e5Hg, VTKoeffDe_Hg
-   real, public, protected    :: c1U, e1U, c2U, e2U, c3U, e3U, c4U, e4U, c5U, e5U, VTKoeffDe_U
-   real, public, protected    :: c1Zn, e1Zn, c2Zn, e2Zn, c3Zn, e3Zn, c4Zn, e4Zn, c5Zn, e5Zn, VTKoeffDe_Zn
-   real, public, protected    :: c1As, e1As, c2As, e2As, c3As, e3As, c4As, e4As, c5As, e5As, VTKoeffDe_As
+   real, protected    :: c1pb, e1pb, c2pb, e2pb, c3pb, e3pb, c4pb, e4pb, c5pb, e5pb, vtkoeffde_pb
+   real, protected    :: c1cad, e1cad, c2cad, e2cad, c3cad, e3cad, c4cad, e4cad, c5cad, e5cad, vtkoeffde_cad
+   real, protected    :: c1cr, e1cr, c2cr, e2cr, c3cr, e3cr, c4cr, e4cr, c5cr, e5cr, vtkoeffde_cr
+   real, protected    :: c1fe, e1fe, c2fe, e2fe, c3fe, e3fe, c4fe, e4fe, c5fe, e5fe, vtkoeffde_fe
+   real, protected    :: c1cu, e1cu, c2cu, e2cu, c3cu, e3cu, c4cu, e4cu, c5cu, e5cu, vtkoeffde_cu
+   real, protected    :: c1mn, e1mn, c2mn, e2mn, c3mn, e3mn, c4mn, e4mn, c5mn, e5mn, vtkoeffde_mn
+   real, protected    :: c1ni, e1ni, c2ni, e2ni, c3ni, e3ni, c4ni, e4ni, c5ni, e5ni, vtkoeffde_ni
+   real, protected    :: c1hg, e1hg, c2hg, e2hg, c3hg, e3hg, c4hg, e4hg, c5hg, e5hg, vtkoeffde_hg
+   real, protected    :: c1u, e1u, c2u, e2u, c3u, e3u, c4u, e4u, c5u, e5u, vtkoeffde_u
+   real, protected    :: c1zn, e1zn, c2zn, e2zn, c3zn, e3zn, c4zn, e4zn, c5zn, e5zn, vtkoeffde_zn
+   real, protected    :: c1as, e1as, c2as, e2as, c3as, e3as, c4as, e4as, c5as, e5as, vtkoeffde_as
    
    
    ! Hardcoded
@@ -106,6 +115,7 @@ contains
 !!
 !! Beschreibung siehe: \ref lnk_globale_parameter
 !! Quelle: module_aparam.f90
+subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
 subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    
    implicit none
@@ -114,49 +124,53 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    integer, intent(in)        :: iwsim, icoli, ieros, ischwer
    
    
+   integer                    :: io_error, io_error_sum
    integer                    :: io_error, io_error_sum, meinrang
    character(500)             :: dateiname, message
    real                       :: dummy
    logical                    :: isExistent
    
-   namelist /ALGAE/  &
-      AGCHL, AGGMAX, IKge, AGKSN, AGKSP, AGREMI, frmuge, BSBGR, CSBGR, QMX_NG,   &
-      QMX_PG, QMN_NG, QMN_PG, UPMXNG, UPMXPG, OPGRMI, OPGRMA, ASGRE, TOPTG,      &
-      KTEMP_GR, AKCHL, AKGMAX, IKke, AKKSN, AKKSP, AKKSSI, AKREMI, frmuke,       &
-      BSBKI, CSBKI, QMX_NK, QMX_PK, QMX_SK, QMN_NK, QMN_PK, QMN_SK, UPMXNK,      &
-      UPMXPK, UPMXSK, OPKIMI, OPKIMA, ASKIE, TOPTK, KTEMP_Ki, ABCHL, ABGMAX,     &
-      IKbe, ABKSN, ABKSP, ABREMI, frmube, BSBBL, CSBBL, QMX_NB, QMX_PB, QMN_NB,  &
-      QMN_PB, UPMXNB, UPMXPB, OPBLMI, OPBLMA, ASBLE, TOPTB, KTEMP_Bl, ifix
+   namelist /algae/  &
+      agchl, aggmax, ikge, agksn, agksp, agremi, frmuge, bsbgr, csbgr, qmx_ng,   &
+      qmx_pg, qmn_ng, qmn_pg, upmxng, upmxpg, opgrmi, opgrma, asgre, toptg,      &
+      ktemp_gr, akchl, akgmax, ikke, akksn, akksp, akkssi, akremi, frmuke,       &
+      bsbki, csbki, qmx_nk, qmx_pk, qmx_sk, qmn_nk, qmn_pk, qmn_sk, upmxnk,      &
+      upmxpk, upmxsk, opkimi, opkima, askie, toptk, ktemp_ki, abchl, abgmax,     &
+      ikbe, abksn, abksp, abremi, frmube, bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb,  &
+      qmn_pb, upmxnb, upmxpb, opblmi, opblma, asble, toptb, ktemp_bl, ifix
    
-   namelist /Rotatorien/ IRMAX, FOPTR, GROT, ZRESG, ZAKI, ZAGR, ZABL
+   namelist /rotatorien/ irmax, foptr, grot, zresg, zaki, zagr, zabl
    
-   namelist /Nitrosomonas/ YNMAX1, STKS1, ANITR1, BNMX1, BNKS1
+   namelist /nitrosomonas/ ynmax1, stks1, anitr1, bnmx1, bnks1
    
-   namelist /Nitrobacter/ YNMAX2, STKS2, ANITR2, BNMX2, BNKS2
+   namelist /nitrobacter/ ynmax2, stks2, anitr2, bnmx2, bnks2
    
-   namelist /Kohlenstoff/ HyP1, hymxD, KsD1, KsD2, KsM, upBAC, YBAC, rsGBAC
+   namelist /kohlenstoff/ hyp1, hymxd, ksd1, ksd2, ksm, upbac, ybac, rsgbac
    
-   namelist /Muscheln/ FoptD
+   namelist /muscheln/ foptd
    
-   namelist /HNF/ upHNF, BACks
+   namelist /hnf/ uphnf, backs
    
-   namelist /Wasser/ ALAMDA
+   namelist /wasser/ alamda
    
-   namelist /Sediment/ KNH4, KapN3, fPOC1, fPOC2, SorpCap, Klang, KdNh3
-   namelist /Hygiene/ ratecd, etacd, rateci, xnuec, ratecg, ratecs
+   namelist /sediment/ knh4, kapn3, fpoc1, fpoc2, sorpcap, klang, kdnh3
+   namelist /hygiene/ ratecd, etacd, rateci, xnuec, ratecg, ratecs
    
-   namelist /Schwermetalle/                                                                  &
-      c1Pb , e1Pb , c2Pb , e2Pb , c3Pb , e3Pb , c4Pb , e4Pb , c5Pb , e5Pb , VTKoeffDe_Pb ,   &
-      c1Cad, e1Cad, c2Cad, e2Cad, c3Cad, e3Cad, c4Cad, e4Cad, c5Cad, e5Cad, VTKoeffDe_Cad,   &
-      c1Cr , e1Cr , c2Cr , e2Cr , c3Cr , e3Cr , c4Cr , e4Cr , c5Cr , e5Cr , VTKoeffDe_Cr ,   &
-      c1Fe , e1Fe , c2Fe , e2Fe , c3Fe , e3Fe , c4Fe , e4Fe , c5Fe , e5Fe , VTKoeffDe_Fe ,   &
-      c1Cu , e1Cu , c2Cu , e2Cu , c3Cu , e3Cu , c4Cu , e4Cu , c5Cu , e5Cu , VTKoeffDe_Cu ,   &
-      c1Mn , e1Mn , c2Mn , e2Mn , c3Mn , e3Mn , c4Mn , e4Mn , c5Mn , e5Mn , VTKoeffDe_Mn ,   &
-      c1Ni , e1Ni , c2Ni , e2Ni , c3Ni , e3Ni , c4Ni , e4Ni , c5Ni , e5Ni , VTKoeffDe_Ni ,   &
-      c1Hg , e1Hg , c2Hg , e2Hg , c3Hg , e3Hg , c4Hg , e4Hg , c5Hg , e5Hg , VTKoeffDe_Hg ,   &
-      c1U  , e1U  , c2U  , e2U  , c3U  , e3U  , c4U  , e4U  , c5U  , e5U  , VTKoeffDe_U  ,   &
-      c1Zn , e1Zn , c2Zn , e2Zn , c3Zn , e3Zn , c4Zn , e4Zn , c5Zn , e5Zn , VTKoeffDe_Zn ,   &
-      c1As , e1As , c2As , e2As , c3As , e3As , c4As , e4As , c5As , e5As , VTKoeffDe_As
+   namelist /schwermetalle/                                                                  &
+      c1pb , e1pb , c2pb , e2pb , c3pb , e3pb , c4pb , e4pb , c5pb , e5pb , vtkoeffde_pb ,   &
+      c1cad, e1cad, c2cad, e2cad, c3cad, e3cad, c4cad, e4cad, c5cad, e5cad, vtkoeffde_cad,   &
+      c1cr , e1cr , c2cr , e2cr , c3cr , e3cr , c4cr , e4cr , c5cr , e5cr , vtkoeffde_cr ,   &
+      c1fe , e1fe , c2fe , e2fe , c3fe , e3fe , c4fe , e4fe , c5fe , e5fe , vtkoeffde_fe ,   &
+      c1cu , e1cu , c2cu , e2cu , c3cu , e3cu , c4cu , e4cu , c5cu , e5cu , vtkoeffde_cu ,   &
+      c1mn , e1mn , c2mn , e2mn , c3mn , e3mn , c4mn , e4mn , c5mn , e5mn , vtkoeffde_mn ,   &
+      c1ni , e1ni , c2ni , e2ni , c3ni , e3ni , c4ni , e4ni , c5ni , e5ni , vtkoeffde_ni ,   &
+      c1hg , e1hg , c2hg , e2hg , c3hg , e3hg , c4hg , e4hg , c5hg , e5hg , vtkoeffde_hg ,   &
+      c1u  , e1u  , c2u  , e2u  , c3u  , e3u  , c4u  , e4u  , c5u  , e5u  , vtkoeffde_u  ,   &
+      c1zn , e1zn , c2zn , e2zn , c3zn , e3zn , c4zn , e4zn , c5zn , e5zn , vtkoeffde_zn ,   &
+      c1as , e1as , c2as , e2as , c3as , e3as , c4as , e4as , c5as , e5as , vtkoeffde_as
+      
+   external :: qerror
+   
    
    
    ! write example
@@ -164,17 +178,17 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    open (unit = 55 , file = dateiname, action = 'write', iostat = io_error)
    if (io_error /= 0) call qerror("Error while opening APARAM_example.nml")
    
-   write(55, nml = ALGAE)
-   write(55, nml = Rotatorien)
-   write(55, nml = Nitrosomonas)
-   write(55, nml = Nitrobacter)
-   write(55, nml = Kohlenstoff)
-   write(55, nml = Muscheln)
-   write(55, nml = HNF)
-   write(55, nml = Wasser)
-   write(55, nml = Sediment)
-   write(55, nml = Hygiene)
-   write(55, nml = Schwermetalle)
+   write(55, nml = algae)
+   write(55, nml = rotatorien)
+   write(55, nml = nitrosomonas)
+   write(55, nml = nitrobacter)
+   write(55, nml = kohlenstoff)
+   write(55, nml = muscheln)
+   write(55, nml = hnf)
+   write(55, nml = wasser)
+   write(55, nml = sediment)
+   write(55, nml = hygiene)
+   write(55, nml = schwermetalle)
    close (55)
    
    
@@ -297,7 +311,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    
    ! check for I/O errors
    if (io_error_sum > 0) then
-      write(message, "(a,i0)"), 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
+      write(message, "(a,i0)") 'Number of I/O errors while reading APARAM.txt: ', io_error_sum
       call qerror(message)
    endif
    
@@ -334,13 +348,18 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    return
 end subroutine aparam_lesen
 
+
+
 !> Write file `AParamParam.xml`
 !!
 !! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine AParamParam(cpfad1)
-   character (len = 255)       :: cpfad1
-   character (len = 275)       :: pfadstring
-   character (len = 8)         :: versionstext
+   character(255) :: cpfad1
+   
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   
+   external :: version_string
    
    call version_string(versionstext)
    
@@ -465,7 +484,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Pb" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="17.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Blei" />'
    write(200, '(A)') '  <Parameter Ident="e3Pb" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-0.023" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Blei" />'
    write(200, '(A)') '  <Parameter Ident="c4Pb" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-251483.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Blei" />'
-   write(200, '(A)') '  <Parameter Ident="e4Pb" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Blei" />'
+   write(200, '(A)') '  <Parameter Ident="e4Pb" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Blei" />'
    write(200, '(A)') '  <Parameter Ident="c5Pb" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Blei" />'
    write(200, '(A)') '  <Parameter Ident="e5Pb" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.8" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Blei" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Pb" Text="Verteilungskoeffizient für Blei" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="640." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Blei" />'
@@ -476,7 +495,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Cad" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="17.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
    write(200, '(A)') '  <Parameter Ident="e3Cad" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-0.023" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
    write(200, '(A)') '  <Parameter Ident="c4Cad" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-251483.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
-   write(200, '(A)') '  <Parameter Ident="e4Cad" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
+   write(200, '(A)') '  <Parameter Ident="e4Cad" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
    write(200, '(A)') '  <Parameter Ident="c5Cad" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
    write(200, '(A)') '  <Parameter Ident="e5Cad" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.8" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Cad" Text="Verteilungskoeffizient für Cadmium" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="130." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
@@ -487,7 +506,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Cr" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="17.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Chrom" />'
    write(200, '(A)') '  <Parameter Ident="e3Cr" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-0.023" Min="-99.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Chrom" />'
    write(200, '(A)') '  <Parameter Ident="c4Cr" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-251483.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Chrom" />'
-   write(200, '(A)') '  <Parameter Ident="e4Cr" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Chrom" />'
+   write(200, '(A)') '  <Parameter Ident="e4Cr" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Chrom" />'
    write(200, '(A)') '  <Parameter Ident="c5Cr" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Chrom" />'
    write(200, '(A)') '  <Parameter Ident="e5Cr" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.8" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Chrom" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Cr" Text="Verteilungskoeffizient für Chrom" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="290." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Chrom" />'
@@ -498,7 +517,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Fe" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="42." Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Eisen" />'
    write(200, '(A)') '  <Parameter Ident="e3Fe" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.056" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Eisen" />'
    write(200, '(A)') '  <Parameter Ident="c4Fe" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.308" Min="0.001" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Eisen" />'
-   write(200, '(A)') '  <Parameter Ident="e4Fe" Text="4. Exponent" Unit="-" Format="F6.3" Null="-9.999" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1." Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Eisen" />'
+   write(200, '(A)') '  <Parameter Ident="e4Fe" Text="4. Exponent" Unit="-" Format="F6.3" Null="-9.999" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1." Min="-9" Max="99.999" Gruppe="Schwermetalle" Kategorie="Eisen" />'
    write(200, '(A)') '  <Parameter Ident="c5Fe" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-101." Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Eisen" />'
    write(200, '(A)') '  <Parameter Ident="e5Fe" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.5" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Eisen" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Fe" Text="Verteilungskoeffizient für Eisen" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="246." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Eisen" />'
@@ -509,7 +528,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Cu" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="13." Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
    write(200, '(A)') '  <Parameter Ident="e3Cu" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.172" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
    write(200, '(A)') '  <Parameter Ident="c4Cu" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1660" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
-   write(200, '(A)') '  <Parameter Ident="e4Cu" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.459" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
+   write(200, '(A)') '  <Parameter Ident="e4Cu" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.459" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
    write(200, '(A)') '  <Parameter Ident="c5Cu" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
    write(200, '(A)') '  <Parameter Ident="e5Cu" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.2" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Cu" Text="Verteilungskoeffizient für Kupfer" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="50." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
@@ -531,7 +550,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Ni" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="63.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Nickel" />'
    write(200, '(A)') '  <Parameter Ident="e3Ni" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.205" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Nickel" />'
    write(200, '(A)') '  <Parameter Ident="c4Ni" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-294.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Nickel" />'
-   write(200, '(A)') '  <Parameter Ident="e4Ni" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.810" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Nickel" />'
+   write(200, '(A)') '  <Parameter Ident="e4Ni" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.810" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Nickel" />'
    write(200, '(A)') '  <Parameter Ident="c5Ni" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Nickel" />'
    write(200, '(A)') '  <Parameter Ident="e5Ni" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="4.2" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Nickel" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Ni" Text="Verteilungskoeffizient für Nickel" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="9." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Nickel" />'
@@ -542,7 +561,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Hg" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="17.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
    write(200, '(A)') '  <Parameter Ident="e3Hg" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-0.023" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
    write(200, '(A)') '  <Parameter Ident="c4Hg" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-251483.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
-   write(200, '(A)') '  <Parameter Ident="e4Hg" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
+   write(200, '(A)') '  <Parameter Ident="e4Hg" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="1.835" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
    write(200, '(A)') '  <Parameter Ident="c5Hg" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
    write(200, '(A)') '  <Parameter Ident="e5Hg" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.8" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Hg" Text="Verteilungskoeffizient für Quecksilber" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="170." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
@@ -553,7 +572,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3U" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="63.0" Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '  <Parameter Ident="e3U" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.205" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '  <Parameter Ident="c4U" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-294.0" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Uran" />'
-   write(200, '(A)') '  <Parameter Ident="e4U" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.810" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Uran" />'
+   write(200, '(A)') '  <Parameter Ident="e4U" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.810" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '  <Parameter Ident="c5U" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '  <Parameter Ident="e5U" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="4.2" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_U" Text="Verteilungskoeffizient für Uran" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="12." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Uran" />'
@@ -564,7 +583,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3Zn" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="42." Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Zink" />'
    write(200, '(A)') '  <Parameter Ident="e3Zn" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.056" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Zink" />'
    write(200, '(A)') '  <Parameter Ident="c4Zn" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.308" Min="0.001" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Zink" />'
-   write(200, '(A)') '  <Parameter Ident="e4Zn" Text="4. Exponent" Unit="-" Format="F6.3" Null="-9.999" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1." Min="-9.999." Max="99.999" Gruppe="Schwermetalle" Kategorie="Zink" />'
+   write(200, '(A)') '  <Parameter Ident="e4Zn" Text="4. Exponent" Unit="-" Format="F6.3" Null="-9.999" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1." Min="-9." Max="99.999" Gruppe="Schwermetalle" Kategorie="Zink" />'
    write(200, '(A)') '  <Parameter Ident="c5Zn" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-101." Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Zink" />'
    write(200, '(A)') '  <Parameter Ident="e5Zn" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.5" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Zink" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_Zn" Text="Verteilungskoeffizient für Zink" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="110." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Zink" />'
@@ -575,7 +594,7 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c3As" Text="3. Koeffizient" Unit="-" Format="F5.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="13." Min="0.1" Max="999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="e3As" Text="3. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.172" Min="0.001" Max="99.99" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="c4As" Text="4. Koeffizient" Unit="-" Format="F11.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="-1660" Min="-999999.999" Max="9999999.999" Gruppe="Schwermetalle" Kategorie="Arsen" />'
-   write(200, '(A)') '  <Parameter Ident="e4As" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.459" Min="-9.999" Max="99.999" Gruppe="Schwermetalle" Kategorie="Arsen" />'
+   write(200, '(A)') '  <Parameter Ident="e4As" Text="4. Exponent" Unit="-" Format="F6.3" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.459" Min="0.001" Max="99.999" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="c5As" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="e5As" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.2" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_As" Text="Verteilungskoeffizient für Arsen" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="282." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'

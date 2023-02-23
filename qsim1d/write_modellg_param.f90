@@ -32,8 +32,11 @@ subroutine write_modellg_param(cpfad1)
    implicit none
    character(255), intent(in) :: cpfad1
    
-   character (len=275)        :: pfadstring
-   character (len = 8)        :: versionstext
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   
+   external       :: version_string
+   
    
    call version_string(versionstext)
    
@@ -122,7 +125,7 @@ subroutine write_modellg_param(cpfad1)
    write(1, '(A)') '  <Parameter Ident="tau_krit" Text="kritische Sohlschubspannung ab der Erosion auftritt"       Unit="N/m²"      Format="F7.3" Null="-1" Help="" Max="" Default="9999.99" />'
    write(1, '(A)') '  <Parameter Ident="M_eros"   Text="Erodibilitätskonstante"                                    Unit="kg/(m²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
    write(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
-   write(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/m³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
+   write(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Sedimentmasse pro liegendem Sedimentvolumen"     Unit="kg/m³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
    write(1, '(A)') '</ParamSetDef>'
    
    write(1, '(A)') '</GerrisParam>'

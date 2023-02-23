@@ -19,25 +19,25 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/algaesbl.o \
 	../metabolism/algaesgr.o \
 	../metabolism/algaeski.o \
-	../metabolism/C_Chla.o \
+	../metabolism/c_chla.o \
 	../metabolism/coroph.o \
 	../metabolism/dichte.o \
 	../metabolism/dreissen.o \
 	../metabolism/e_extnct_lesen.o \
 	../metabolism/einleiter_misch.o \
 	../metabolism/funkstar.o \
-	../metabolism/hnf.o \
 	../metabolism/konsum.o \
 	../metabolism/lichthemmung.o \
 	../metabolism/lin_spline.o \
 	../metabolism/lin_sys.o \
-	../metabolism/mphyt.o \
+	../metabolism/print_clipping.o \
 	../metabolism/runge_kutta.o \
 	../metabolism/sasu.o \
 	../metabolism/schiff.o \
-	../metabolism/Sed_DiffK.o \
-	../metabolism/SedFlux.o \
-	../metabolism/Sedimentation.o \
+	../metabolism/sedadv.o \
+	../metabolism/sed_diffk.o \
+	../metabolism/sedflux.o \
+	../metabolism/sedimentation.o \
 	../metabolism/sediment.o \
 	../metabolism/sed_pom.o \
 	../metabolism/set_cloud_reflectance.o \
@@ -54,7 +54,7 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/wettles.o \
 	../metabolism/version_string.o \
 	../metabolism/verteilungskoeff.o \
-	../metabolism/Sedimentbelastung.o \
+	../metabolism/sedimentbelastung.o \
 	../metabolism/schwermetalle.o \
 	../metabolism/schwermetalle_kern.o \
 	../metabolism/erosion.o \

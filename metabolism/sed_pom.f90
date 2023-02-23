@@ -39,8 +39,10 @@ subroutine sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,  &
    real                        :: dichte, dichta, ceq, bsbc
    logical, intent(in)         :: kontroll  !< debugging
    integer, intent(in)         :: jjj       !< debugging
-   double precision            :: sedoc,ws
+   double precision            :: sedoc
    real,dimension(azStrs,1000) :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
+   
+   external                    :: sedimentation
    
    do ised = 1,3
       

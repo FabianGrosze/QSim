@@ -10,7 +10,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
                   iPhy, tflie,                                      &
                   dalgo_s, dalgao_s, algo_s, abeowg_s, abeowk_s,    &
                   abeorg_s, abeork_s, zooro2_s, hSchlr_s,           &
-                  o2ein_s, o2ein1_s,  saett_s,                      &
+                  o2ein_s, o2ein1_s,                                &
                   kontroll, jjj)
       
    use aparam, only : Caki, Cagr, Cabl, GRot, &
@@ -67,19 +67,20 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    real, intent(out)    :: hSchlr_s    !< Sauerstoffzehrung durch das Sediment [mgO2/(l*h)] hSchlr(mstr,ior)
    real, intent(out)    :: o2ein_s     !< potentieller Sauerstoffeintrag aus der Luft
    real, intent(out)    :: o2ein1_s    !< Sauerstoffeintrag aus der Luft
-   real, intent(out)    :: saett_s     !< Sauerstoffstättigungskonzentration [mgO2/l]
-   logical              :: kontroll    !< debugging
+   logical, intent(in)  :: kontroll    !< debugging
    integer, intent(in)  :: jjj         !< debugging
    
    ! --- local variables ---
-   real            :: opkimix, opkimax, opgrmix, opgrmax, opblmix, opblmax
-   real            :: falgog, falgok, falgob
-   real            :: ft, v, abeor, abeow, sed_o2
-   real            :: bbei, defiz, delta_oxygen
-   
+   real  :: opkimix, opkimax, opgrmix, opgrmax, opblmix, opblmax
+   real  :: falgog, falgok, falgob
+   real  :: ft, v, abeor, abeow, saett, sed_o2
+   real  :: bbei, defiz, delta_oxygen
+  
    real, parameter :: mol_weight_o2 = 32.
    real, parameter :: mol_weight_c  = 12.
    real, parameter :: mol_o2_mol_c  = mol_weight_o2 / mol_weight_c
+   
+   external :: belueftung_k2
    
    ! --------------------------------------------------------------------------
    ! Influence of Algae
@@ -179,11 +180,11 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    endif
    
    ! Sauerstoffsättigungskonzentration
-   saett_s = oxygen_saturation_concentration(tempw_s)
-   defiz   = saett_s - vO2_s
+   saett = oxygen_saturation_concentration(tempw_s)
+   defiz   = saett - vO2_s
    
    ! potentieller Sauerstoffaustausch
-   o2ein_s = saett_s * (1 - exp(-bbei * tflie))
+   o2ein_s = saett * (1 - exp(-bbei * tflie))
    
    ! tatsächlicher Sauerstoffaustausch
    ! TODO (Schoenung, august 2022): Ticket #53
@@ -195,7 +196,6 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    if (kontroll) then
       write(*,'(A)')  'oxygen Oberflaechenbelueftung:'
       write(*,'(A,F0.6)') '  vO2    = ', vO2_s
-      write(*,'(A,F0.6)') '  saett  = ', saett_s
       write(*,'(A,F0.6)') '  defiz  = ', defiz
       write(*,'(A,F0.6)') '  O2ein  = ', o2ein_s
       write(*,'(A,F0.6)') '  O2ein1 = ', o2ein1_s
