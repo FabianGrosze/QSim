@@ -2,7 +2,7 @@
 !! @author Volker Kirchesch
 !! @date 15.06.2001
 subroutine hnf(chnf_s, bac_s, vo2_s, tempw_s, drhnf_s, &
-               zhnf_s, tflie,                          &
+               tflie,                                  &
                hnfbac_s, hnfupa_s, hnfrea_s, hnfexa_s, & 
                hnfmoa_s, hnfmua_s, ro2hnf_s, bsbhnf_s, &
                kontroll, jjj)
@@ -17,7 +17,6 @@ subroutine hnf(chnf_s, bac_s, vo2_s, tempw_s, drhnf_s, &
    real,    intent(in)    :: vo2_s    !< oxygen [mg/l]
    real,    intent(in)    :: tempw_s  !< water temperature [°C]
    real,    intent(in)    :: drhnf_s  !< consumption of hnf by Dreissena
-   real,    intent(in)    :: zhnf_s   !< consumption of hnf by zooplankton
    real,    intent(in)    :: tflie    !< timestep [d]
    real,    intent(out)   :: hnfbac_s !< consumption of bacteria by hnf
    real,    intent(out)   :: hnfupa_s !<
@@ -66,8 +65,7 @@ subroutine hnf(chnf_s, bac_s, vo2_s, tempw_s, drhnf_s, &
    ! timestep
    ! --------------------------------------------------------------------------
    chnft = chnf_s * exp(hnfmua_s * tflie) & ! net growth
-         - drhnf_s                        & ! grazing dreissena
-         - zhnf_s                           ! grazing zooplankton 
+         - drhnf_s                          ! grazing dreissena
    
    if (chnft < 0.0) then
       chnf_old = chnft

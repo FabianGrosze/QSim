@@ -4659,7 +4659,7 @@ program qsim
       !
       ! do ior = 1,anze+1
       !    call hnf(chnf(ior), bac(ior), vo2(ior), tempw(ior), drhnf(ior), &
-      !             zhnf(ior), tflie,                                      &
+      !             tflie,                                                 &
       !             hnfbac(ior), hnfupa(ior), hnfrea(ior), hnfexa(ior),    & 
       !             hnfmoa(ior), hnfmua(ior), ro2hnf(ior), bsbhnf(ior),    &
       !             kontroll, jjj)

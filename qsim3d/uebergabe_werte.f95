@@ -244,7 +244,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(71) = "          empty_71" !
       trans_quant_name(72) = "            algzog" ! gruen-Algen-Konsum Zoo-Plankton in mg/l
       trans_quant_name(73) = "            algzob" ! blau-Algen-Konsum Zoo-Plankton in mg/l
-      trans_quant_name(74) = "              zHNF" ! Aufnahmerate der HNF
+      trans_quant_name(74) = "          empty_74" !
       trans_quant_name(75) = "             HNFza" ! HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
       trans_quant_name(76) = "             rmuas" !  = mueRot-respRg ! Nettowachstumsrate Rotatorien ?
       trans_quant_name(77) = "              rakr" !  = iras(ior)*respaR ! Fraßabhängige Respiration ?

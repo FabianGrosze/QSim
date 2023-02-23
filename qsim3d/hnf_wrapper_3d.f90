@@ -54,7 +54,6 @@ subroutine hnf_wrapper_3d(i)
    !    planktonic_variable_p( 2+(i-1)*number_plankt_vari), ! vo2
    !    planktonic_variable_p( 1+(i-1)*number_plankt_vari), ! tempw
    !    transfer_quantity_p(96+(i-1)*number_trans_quant),   ! drhnf
-   !    transfer_quantity_p(74+(i-1)*number_trans_quant),   ! zhnf
    !    tflie,                                              ! tflie
    !    transfer_quantity_p(11+(i-1)*number_trans_quant),   ! hnfbac
    !    hnfupa(1),                                          ! hnfupa (from module qsimdatenfelder)

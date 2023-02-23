@@ -359,7 +359,7 @@ module QSimDatenfelder
    real, dimension(50,1000)            :: agno3z, akno3z, abno3z, agrbrz, akibrz, ablbrz
    ! konsum...
    real, dimension(1000)          :: rmuas, iras, rakr, rbar
-   real, dimension(1000)          :: zHNF, HNFza, algzok, algzog, algzob
+   real, dimension(1000)          :: HNFza, algzok, algzog, algzob
    real, dimension(50,1000)       :: algzkz, algzgz, algzbz
    ! algae...
    !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref lnk_extnct_rb
