@@ -95,7 +95,7 @@
          planktonic_variable_name(73)= "         age_decay"
          planktonic_variable_name(74)= "         age_arith"
          planktonic_variable_name(75)= "        age_growth"
-         planktonic_variable_name(76)= "             TGZoo"
+         planktonic_variable_name(76)= "          empty_76"
          planktonic_variable_name(77)= "           akmor_1"
          planktonic_variable_name(78)= "           agmor_1"
          planktonic_variable_name(79)= "           abmor_1"

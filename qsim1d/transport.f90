@@ -36,7 +36,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
                      ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
                      ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
                      ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK           &
-                     ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
+                     ,Qmx_PB,Qmx_PG,hFluN3,akmor_1,agmor_1,abmor_1                                                         &
                      ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
                      ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
    
@@ -74,6 +74,13 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    real, dimension(azStrs,2,ialloc2)   :: hCD, hCP
    
    external :: advdiff
+   
+   
+   ! TODO (Schönung, February 2023):
+   ! tgzoo is not used in QSim any more and can be removed.
+   ! But I have no idea how to remove it from this subroutine without
+   ! breaking it.
+   tgzoo = 0.0
    
    iwahlD = 1
    nkz = 1

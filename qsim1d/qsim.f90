@@ -224,7 +224,7 @@ program qsim
    real, dimension(ialloc2)                :: vx0, go2n, vo2, sgo2n, vx02, gesn, gesp, sdbsb, abszo, bsbt, bsbct, bsbctp
    real, dimension(ialloc2)                :: dlmax, dlmaxs, tracer, svhemk, svhemg, doscf, extk, sised
    real, dimension(ialloc2)                :: skmor, schwi, dz2d, dc_denw, bdc_denw, fkm
-   real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zhnf, zbac, ro2hnf, tpki, tpgr
+   real, dimension(ialloc2)                :: chnf, hnfbac, bsbhnf, drhnf, bvhnf, coli, zbac, ro2hnf, tpki, tpgr
    real, dimension(ialloc2)                :: abl, antbl, abbcm, abltbr, svhemb, dblmor, tpbl, dalgbl, dalgab
    real, dimension(ialloc2)                :: sedalb, algzob, sedalb0, fibaus, abmuea, fhebas, abreau, algdrb, algcob
    real, dimension(ialloc2)                :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb
@@ -236,8 +236,8 @@ program qsim
    real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
    real, dimension(ialloc2)                :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
-   real, dimension(ialloc2)                :: zwzooi, zwabsz, zwdzr1, zwdzr2, zwzexk, zwzexg, zwrmue, zwiras, zwrakr
-   real, dimension(ialloc2)                :: zwrbar, zwph, zwcsed_abb
+   real, dimension(ialloc2)                :: zwzooi, zwabsz,  zwzexk, zwzexg
+   real, dimension(ialloc2)                :: zwph, zwcsed_abb
    real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb, zwnl0, zwpl0
    real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwcsed
    real, dimension(ialloc2)                :: zworgs, zwss, zwfssg, zwseds
@@ -248,7 +248,7 @@ program qsim
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
    real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_pb, zup_nb, zq_pb, zq_nb
    real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwskmo, zww2, zwsdom
-   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwakmor_1, zwagmor_1, zwabmor_1
+   real, dimension(ialloc2)                :: zwbso, zwjn2, zwakmor_1, zwagmor_1, zwabmor_1
    real, dimension(ialloc2)                :: zwgszn, zwglzn, zwgscad, zwglcad, zwgscu, zwglcu, zwgsni, zwglni
    real, dimension(ialloc2)                :: zwgsas, zwglas, zwgspb, zwglpb, zwgscr, zwglcr, zwgsfe, zwglfe
    real, dimension(ialloc2)                :: zwgshg, zwglhg, zwgsmn, zwglmn, zwgsu, zwglu, zwsseros
@@ -371,7 +371,7 @@ program qsim
    real, dimension(:,:), allocatable       :: bq_nb, bflun3, bdabl, bdaab, bsedab, bazob, bdbmor, babmua, bfibas, bfhbau
    real, dimension(:,:), allocatable       :: babrau, btpbl, bup_pb, bup_nb, babtbr, balgbz, balabz, bup_pk, bup_nk
    real, dimension(:,:), allocatable       :: bup_si, baktbr, bup_pg, bup_ng, bagtbr, balgkz, balakz, balggz, balagz
-   real, dimension(:,:), allocatable       :: bkn4z, bkn3z, bgn4z, bgn3z, bbn4z, bbn3z, bsedalg_mq, bsedss_mq, btgzoo
+   real, dimension(:,:), allocatable       :: bkn4z, bkn3z, bgn4z, bgn3z, bbn4z, bbn3z, bsedalg_mq, bsedss_mq
    real, dimension(:,:), allocatable       :: bste, bsno3, bsn4, bsgelp, bsno2, bschla, bsssal, bssi, bszooi, bsvbsb
    real, dimension(:,:), allocatable       :: bsvcsb, bsgsp, bsgsn, bsaki, bsagr, bsabl, bsfln3, bso2, bsmw, bslf
    real, dimension(:,:), allocatable       :: bsca, bsph, bsnl0, bspl0, bsdalg, bsvkg, bsdaa, bsseda,bsalgz, bsamor
@@ -404,7 +404,7 @@ program qsim
    real, dimension(:,:), allocatable       :: hstind, hagr, hakbcm, hagbcm, hchnf, hbvhnf, hhnfba, hfssgr, hfbsgr, hnl0
    real, dimension(:,:), allocatable       :: hq_nk, hq_pk, hq_sk, hq_ng, hq_pg, hq_nb, hq_pb, hpl0, hfrfgr, hffood
    real, dimension(:,:), allocatable       :: hdl, htau2, hgesp, hgesn, hcd1, hcd2, hcp1, hcp2, hvo2, hextk, hjno3
-   real, dimension(:,:), allocatable       :: hjnh4, hjpo4, hjsi, hjo2, hflun3,hjn2, tgzoo, akmor_1, agmor_1, abmor_1
+   real, dimension(:,:), allocatable       :: hjnh4, hjpo4, hjsi, hjo2, hflun3,hjn2, akmor_1, agmor_1, abmor_1
    integer, dimension(:,:), allocatable    :: anzzeit, banzzeit, zwanzzeit
    real, dimension(:,:), allocatable       :: hglzn, hgszn, hglcad, hgscad, hglcu, hgscu, hglni, hgsni
    real, dimension(:,:), allocatable       :: hglas, hgsas, hglpb, hgspb, hglcr, hgscr, hglfe, hgsfe
@@ -705,7 +705,7 @@ program qsim
    allocate(bpo2r(azStrs,ialloc2), bro2dr(azStrs,ialloc2), bro2HF(azStrs,ialloc2), borgSS(azStrs,ialloc2))
    allocate(bJNO3(azStrs,ialloc2), bJNH4(azStrs,ialloc2), bJSi(azStrs,ialloc2), bJPO4(azStrs,ialloc2))
    allocate(bJO2(azStrs,ialloc2), bsedSS(azStrs,ialloc2), babbcm(azStrs,ialloc2), babl(azStrs,ialloc2))
-   allocate(bchlab(azStrs,ialloc2), bantbl(azStrs,ialloc2), bsvheb(azStrs,ialloc2),bTGZoo(azStrs,ialloc2))
+   allocate(bchlab(azStrs,ialloc2), bantbl(azStrs,ialloc2), bsvheb(azStrs,ialloc2))
    allocate(bakmor_1(azStrs,ialloc2), bagmor_1(azStrs,ialloc2), babmor_1(azStrs,ialloc2))
    allocate(btpki(azStrs,ialloc2), btpgr(azStrs,ialloc2), bextk(azStrs,ialloc2), bQ_PK(azStrs,ialloc2))
    allocate(bQ_NK(azStrs,ialloc2), bQ_SK(azStrs,ialloc2), bQ_PG(azStrs,ialloc2), bQ_NG(azStrs,ialloc2))
@@ -800,7 +800,7 @@ program qsim
    allocate(habgml(azStrs,ialloc2), hlboem(azStrs,ialloc2), hbsohl(azStrs,ialloc2), hvabfl(azStrs,ialloc2))
    allocate(VALTLH(azStrs,ialloc2), EDUFLH(azStrs,ialloc2), VALTRH(azStrs,ialloc2), EDUFRH(azStrs,ialloc2))
    allocate(habkml(azStrs,ialloc2), hdlmx(azStrs,ialloc2), hdlmxs(azStrs,ialloc2), hgwdmx(azStrs,ialloc2))
-   allocate(hsgwmu(azStrs,ialloc2), hdH2De(azStrs,ialloc2), Hmax2D(azStrs,ialloc2), TGZoo(azStrs,ialloc2))
+   allocate(hsgwmu(azStrs,ialloc2), hdH2De(azStrs,ialloc2), Hmax2D(azStrs,ialloc2))
    allocate(akmor_1(azStrs,ialloc2), agmor_1(azStrs,ialloc2), abmor_1(azStrs,ialloc2))
    allocate(anzZeit(azStrs,ialloc2), banzZeit(azStrs,ialloc2), zwanzZeit(azStrs,ialloc2))
    allocate(hglZn(azStrs,ialloc2), hgsZn(azStrs,ialloc2), hglCad(azStrs,ialloc2), hgsCad(azStrs,ialloc2))
@@ -2301,9 +2301,6 @@ program qsim
             call qerror(message)
          endif
          
-         if (RBtyp(mstr,mRB) == 0) TGZoo(mstr,1) = GROT
-         if (RBtyp(mstr,mRB) == 2) TGZoo(mstr,hanze(mstr)+1) = GROT
-         
          ! Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
          ! Angabe in mgChla/mgC
          call ini_algae(akchl, abchl, agchl,    &
@@ -3314,7 +3311,6 @@ program qsim
             hcs85 = hcs85+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hSKmor(ESTRNR(istr,nstr),kanz)
             hcs86 = hcs86+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
             hcs95 = hcs95+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hFluN3(ESTRNR(istr,nstr),kanz)
-            hcs99 = hcs99+abs(hQaus(ESTRNR(istr,nstr),iSta)) * TGZoo(ESTRNR(istr,nstr),kanz)
             hcs110 = hcs110+abs(hQaus(ESTRNR(istr,nstr),iSta)) * akmor_1(ESTRNR(istr,nstr),kanz)
             hcs111 = hcs111+abs(hQaus(ESTRNR(istr,nstr),iSta)) * agmor_1(ESTRNR(istr,nstr),kanz)
             hcs112 = hcs112+abs(hQaus(ESTRNR(istr,nstr),iSta)) * abmor_1(ESTRNR(istr,nstr),kanz)
@@ -3619,7 +3615,6 @@ program qsim
                hSKmor(mstr,ior) = hcs85
                hDOSCF(mstr,ior) = hcs86
                hFluN3(mstr,ior) = hcs95
-               TGZoo(mstr,ior) = hcs99
                akmor_1(mstr,ior) = hcs110
                agmor_1(mstr,ior) = hcs111
                abmor_1(mstr,ior) = hcs112
@@ -6581,7 +6576,7 @@ program qsim
                         ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
                         ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
                         ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK           &
-                        ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
+                        ,Qmx_PB,Qmx_PG,hFluN3,akmor_1,agmor_1,abmor_1                                                         &
                         ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
                         ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
          

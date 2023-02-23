@@ -227,8 +227,6 @@ module QSimDatenfelder
    real, dimension(1000)               :: BVHNF
    !>  \ref zooind Anzahl der Rotatorien
    real, dimension(1000)               :: zooind
-   !>  *TGZoo* Gewicht einer Rotatorie
-   real, dimension(1,1000)               :: TGZoo
    !>  \ref akmor_1 akmor_1 ?? unklar ??
    real, dimension(1,1000)               :: akmor_1 !  Kiesel-Algen
    !>  \ref agmor_1 agmor_1 ?? unklar ??

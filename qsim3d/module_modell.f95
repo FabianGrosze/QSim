@@ -304,21 +304,21 @@ module modell
    end type Erosion
    
    type :: ddr
-      character(200) :: zonen_name
-      integer :: nr_zone, ini_randnr, zonen_nummer
-      real  :: reib                           ! Reibungsbeiwert Sandrauheit nach Nikuradse in m
-      type (sedimentfluss) :: sediflux        ! Z Sediment-Kenngrößen
-      type (sedimenttemperatur) :: seditemp   ! S Kenngrössen für Temperatur/Sedimenttemperatur
-      type (laichperiode) :: laich            ! L Laichperiode
-      type (schiffsverkehr) :: schiff         ! F Schiffsverkehr
-      type (dreissena) :: dreissen            ! D Dreissena
-      type (maphy) :: macrophyt               ! M Makrophyten
-      type (madi) :: macrodicht               ! P Dichte der Makrophyten
-      !type () ::                             ! C Corophium
-      type (benth_al) ::  albenthi            ! B Benthische Algen
-      type (wetterstation) :: wettstat        ! T Wetterstation
-      !type () ::                             ! O Anteil der Vegetationstypen
-      type (Erosion) :: erosi                 ! E Erosions-Parameter
+      character(200)           :: zonen_name
+      integer                  :: nr_zone, ini_randnr, zonen_nummer
+      real                     :: reib       ! Reibungsbeiwert Sandrauheit nach Nikuradse in m
+      type(sedimentfluss)      :: sediflux   ! Z Sediment-Kenngrößen
+      type(sedimenttemperatur) :: seditemp   ! S Kenngrössen für Temperatur/Sedimenttemperatur
+      type(laichperiode)       :: laich      ! L Laichperiode
+      type(schiffsverkehr)     :: schiff     ! F Schiffsverkehr
+      type(dreissena)          :: dreissen   ! D Dreissena
+      type(maphy)              :: macrophyt  ! M Makrophyten
+      type(madi)               :: macrodicht ! P Dichte der Makrophyten
+      !type()                  ::            ! C Corophium
+      type(benth_al)           ::  albenthi  ! B Benthische Algen
+      type(wetterstation)      :: wettstat   ! T Wetterstation
+      !type()                  ::            ! O Anteil der Vegetationstypen
+      type(Erosion)            :: erosi      ! E Erosions-Parameter
    end type ddr
    type(ddr) , allocatable , dimension (:) :: zone
    !-------------------------------------------------------------------------------wetter_datenfelder
@@ -405,7 +405,7 @@ module modell
    !-------------------------------------------------------------------------------planktische_variablen_datenfelder
    ! Beschreibung in planktische_variablen.f95
    !>    Anzahl der planktischen, transportierten, tiefengemittelten Variablen
-   !!    71 nur mit Leitfähigkeit !! 72 incl. salz !! 75 Alter(varianten) 76 TGzoo, 79 akmor_1,agmor_1,abmor_1
+   !!    71 nur mit Leitfähigkeit !! 72 incl. salz !! 75 Alter(varianten)  79 akmor_1,agmor_1,abmor_1
    !!    101 mit Schwermetallen,
    integer, parameter :: number_plankt_vari = 101
    
