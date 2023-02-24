@@ -6278,7 +6278,11 @@ program qsim
       ! Erosion
       ! -----------------------------------------------------------------------
       1520 continue
-      if (ieros == 0)goto 1519
+      if (ieros == 0) then
+         dsedH(mstr,:) = 0.
+         SSeros(:)     = 0.
+         goto 1519
+      endif
       
       call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
                    ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &

@@ -98,7 +98,6 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    real   , parameter :: rres0        = 0.0015    ! basal respiration rate (1 / d)
    real   , parameter :: f_excrete    = 0.064     ! excreted fraction of assimilated biomass
    real   , parameter :: r_o2_resp    = 5.59      ! oxygen consumption per biomass (mg o2 / mg) after Schneider
-   
    real   , parameter :: C_adult      = 0.38      ! C:Biomass of Dreissena adults (gC / g)
    real   , parameter :: C_egg        = 3.35e-9   ! C:Biomass of Dreissena eggs   (gC / g)
    real   , parameter :: Cagr         = 0.48      ! C:Biomass of green algae      (gC / g)

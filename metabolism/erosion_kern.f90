@@ -66,16 +66,16 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
    
    
    ! Berechnung der Sohlschubspannung
-   ust = (((g/rau_s)**0.5) / (tiefe_s**0.166667)) * abs(vmitt_s)
-   tau_s = (ust**2) * roh2o
+   ust   = (g / rau_s)**0.5 / (tiefe_s**0.166667) * abs(vmitt_s)
+   tau_s = ust**2 * roh2o
    
    if (tau_s > tausc_s .and. tausc_s > 0.0 .and. sedroh_s > 0.0 .and. tiefe_s > 0.0) then
-      dRero_s = m_eros_s*((tau_s-tausc_s)/tausc_s)**n_eros_s
-      dRero_s = dRero_s * tflie * 86400.
-      dsedh_s = 1000.0 * dRero_s/sedroh_s
-      SSeros_s = (dRero_s/tiefe_s)
-      ss_s = ss_s + SSeros_s*1000.
-      ssalg_s = ssalg_s + SSeros_s*1000.
+      dRero_s  = m_eros_s * (tau_s / tausc_s - 1.)**n_eros_s
+      dRero_s  = dRero_s * tflie * 86400.
+      dsedh_s  = 1000.0 * dRero_s / sedroh_s
+      SSeros_s = dRero_s / tiefe_s
+      ss_s     = ss_s    + SSeros_s * 1000.
+      ssalg_s  = ssalg_s + SSeros_s * 1000.
    else
       dsedh_s  = 0.
       SSeros_s = 0.
