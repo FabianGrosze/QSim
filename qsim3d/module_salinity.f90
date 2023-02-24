@@ -55,7 +55,6 @@ module mod_salinity
    !!integer, parameter                    :: nPhyto = 3                  !< number of phytoplankton groups
    !!integer, parameter, dimension(nPhyto) :: iPhyto = (/ 8, 9, 10 /)     !< tracer indices of phytoplankton groups
    integer, parameter                    :: i_salinity = 72             !< tracer index of salt
-   integer, parameter                    :: i_trans_salinity = 69       !< tracer index of salt transfer variable
    integer                               :: varid                       !< netCDF variable ID
    !!integer                               :: nClasses                    !< number of SPM fractions to be read from file (starting with finest)
    !!integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
@@ -96,7 +95,7 @@ contains
    !               write(textString, '(a,i2,a,i2,a)') 'init_suspendedMatter_UnTRIM2: Number of selected SPM classes (',       &
    !                                                 nClasses, ') exceeds number of available classes (', nClassesFile-1, ').'
    !               call qerror(trim(textString))
-               end if
+   !            end if
                case default         ! any other hydrodynamics/SPM
                call qerror('init_salinity: Reading salt from file only implemented for UnTRIM2 hydrodynamics')
          end select
@@ -183,7 +182,6 @@ contains
  !        planktonic_variable_p(iSS    + j) = spm_element_p(i)
  !        planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
           planktonic_variable_p(i_salinity + j) = salinity_element_p(i)
-          transfer_quantity_p(i_trans_salinity + (i-1) * number_trans_quant) = salinity_element_p(i)
 
       end do
       
@@ -204,9 +202,9 @@ contains
       integer nk
       integer             :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
  !     integer             :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
-      integer             :: iFill(2)               ! is fill value used (1) or not (0) in .nc file?
+      integer             :: iFill               ! is fill value used (1) or not (0) in .nc file?
       
-      real                :: fillValue(2)           ! fill value of netCDF variables
+      real                :: fillValue           ! fill value of netCDF variables
       
       character(len = 200)  :: textString    ! self-explanatory
       
@@ -222,7 +220,7 @@ contains
       count3 = (/ number_plankt_point, 1,     1 /)
       call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Salzgehalt_2d', varid) )
       call nc_check_err( nf90_get_var(ncid, varid, salinity_element, start3, count3 ) )
-      call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(2), fillValue(2)) )
+      call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill, fillValue) )
       
       ! sum up SPM masses and calculate concentration
       do i = 1,number_plankt_point
@@ -230,18 +228,9 @@ contains
  !        spm_element(i) = sum(spm_classes_element(i,:))
          !planktonic_variable(72+nk)=salinity_element(i)
          
-         if (salinity_element(i) <= 0) then                    !. .or. &
- !            (iFill(1) == 1 .and. abs(salinity_element(i)/nClasses - fillValue(1)) <= one) .or. &
- !            (iFill(2) == 1 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
-            ! set land values to 0
-            salinity_element(i) = 0.
- !            else
-            ! [kg] -> [g/m3] = [mg/L]
- !           salinity_element(i) = 1.e3 * spm_element(i) / vol_element(i)
- !           salinity_element(i) = salinity_element(i)     
-         end if
+         salinity_element(i) = max(0., salinity_element(i))
       end do
-      
+
    end subroutine get_salinity_UnTRIM2
    
    ! =====================================================================
