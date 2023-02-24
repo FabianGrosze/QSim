@@ -131,6 +131,7 @@ Q3 = version.co \
    ganglinien.o \
    schnitt.o\
    planktische_variablen.o \
+   module_salinity.o \
    module_suspendedMatter.o \
    parallel.o \
    temperw_huelle.o \

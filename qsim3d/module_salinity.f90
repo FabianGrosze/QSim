@@ -61,7 +61,7 @@ module mod_salinity
    !!integer                               :: nClassesFile                !< number of SPM fractions available in file (incl. total SPM)
    
    ! the following quantities are averaged over hydrodynamics output time step
-   real, allocatable, dimension(:  )     :: salt_element, salt_element_p 
+   real, allocatable, dimension(:  )     :: salinity_element, salinity_element_p 
    !!real, allocatable, dimension(:  )     :: spm_element, spm_element_p  !< SPM concentration (mg L-1) in water column
    !!real, allocatable, dimension(:  )     :: vol_element                 !< water column volume (m3)
    !!real, allocatable, dimension(:,:)     :: spm_classes_element         !< mass of SPM size classes (kg)
@@ -105,19 +105,19 @@ contains
    !      allocate ( spm_classes_element(number_plankt_point, nClasses),   &
    !      vol_element(number_plankt_point)                  ,   &
    !      spm_element(part * proz_anz), stat = allocStatus )
-         allocate (salt_element(part * proz_anz), stat = allocStatus )
+         allocate (salinity_element(part * proz_anz), stat = allocStatus )
          if (allocStatus /= 0) call qerror('init_salinity: Error allocating salt for NetCDF reading.')
          
    !      spm_classes_element = 0.
    !      spm_element = 0.
    !      vol_element = 0.
-          salt_element = 0
+          salinity_element = 0
       end if
       
       ! initialize data field used on MPI processes
-      allocate ( salt_element_p(part), stat = allocStatus )
+      allocate ( salinity_element_p(part), stat = allocStatus )
       if (allocStatus /= 0) call qerror('init_salinity: Error allocating Salt partial fields for MPI processes.')
-      salt_element_p = 0.
+      salinity_element_p = 0.
       
       ! read first time step for initialisation
       call step_salinity
@@ -155,17 +155,17 @@ contains
          end select
          ! write salinity min/max to log file
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
-               'step_salinity: ', iTime, '-th record read from file - min = ', minval(salt_element),        &
-               ', max = ', maxval(salt_element), ', mean = ', sum(salt_element)/max(1,size(salt_element)), ' (mg/L)'
+               'step_salinity: ', iTime, '-th record read from file - min = ', minval(salinity_element),        &
+               ', max = ', maxval(salinity_element), ', mean = ', sum(salinity_element)/max(1,size(salinity_element)), ' (mg/L)'
       end if
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
       
       ! distribute SPM concentrations across parallel processes
-      call mpi_scatter(salt_element, part, MPI_FLOAT,  salt_element_p, part, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      call mpi_scatter(salinity_element, part, MPI_FLOAT,  salinity_element_p, part, MPI_FLOAT, 0, mpi_komm_welt, ierr)
       if (ierr /= 0) then
-         write(errorMessage,'(a,i3)') 'step_salinity: mpi_scatter(salt_element) failed - ', ierr
+         write(errorMessage,'(a,i3)') 'step_salinity: mpi_scatter(salinity_element) failed - ', ierr
          call qerror(trim(errorMessage))
       end if
       
@@ -182,8 +182,8 @@ contains
          ! assign SS and SSalg to MPI process fields
  !        planktonic_variable_p(iSS    + j) = spm_element_p(i)
  !        planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
-          planktonic_variable_p(i_salinity + j) = salt_element_p(i)
-          transfer_quantity_p(i_trans_salinity + (i-1) * number_trans_quant) = salt_element_p(i)
+          planktonic_variable_p(i_salinity + j) = salinity_element_p(i)
+          transfer_quantity_p(i_trans_salinity + (i-1) * number_trans_quant) = salinity_element_p(i)
 
       end do
       
@@ -221,24 +221,24 @@ contains
       start3 = (/                   1, 1, iTime /)
       count3 = (/ number_plankt_point, 1,     1 /)
       call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Salzgehalt_2d', varid) )
-      call nc_check_err( nf90_get_var(ncid, varid, salt_element, start3, count3 ) )
+      call nc_check_err( nf90_get_var(ncid, varid, salinity_element, start3, count3 ) )
       call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(2), fillValue(2)) )
       
       ! sum up SPM masses and calculate concentration
       do i = 1,number_plankt_point
          !nk = (i-1)*number_plankt_vari
  !        spm_element(i) = sum(spm_classes_element(i,:))
-         !planktonic_variable(72+nk)=salt_element(i)
+         !planktonic_variable(72+nk)=salinity_element(i)
          
-         if (salt_element(i) <= 0) then                    !. .or. &
- !            (iFill(1) == 1 .and. abs(salt_element(i)/nClasses - fillValue(1)) <= one) .or. &
+         if (salinity_element(i) <= 0) then                    !. .or. &
+ !            (iFill(1) == 1 .and. abs(salinity_element(i)/nClasses - fillValue(1)) <= one) .or. &
  !            (iFill(2) == 1 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
             ! set land values to 0
-            salt_element(i) = 0.
+            salinity_element(i) = 0.
  !            else
             ! [kg] -> [g/m3] = [mg/L]
- !           salt_element(i) = 1.e3 * spm_element(i) / vol_element(i)
- !           salt_element(i) = salt_element(i)     
+ !           salinity_element(i) = 1.e3 * spm_element(i) / vol_element(i)
+ !           salinity_element(i) = salinity_element(i)     
          end if
       end do
       
