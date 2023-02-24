@@ -1,9 +1,11 @@
 # QSim 14
 
 ## 14.09
+### 14.09.26
+* bug fixing and partial refactoring (incl. commenting) of Dreissena routine
+
 ### 14.09.25
 * Replace semi-implicit timesteping in oxygen with explicit timesteping.
-
 
 ### 14.09.24
 * Create modules for macrophytes and hnf
@@ -16,7 +18,6 @@ Bugfixes
 * Correct groyne fields
 * Correct temperature conversions to absolute zero
 * Minimize compiler warnings
-
 
 ### 14.09.21
 * bug fixes and minor refactoring in `nitrogen.f90`, `nitrifiers.f90`, `oxygen.f90` and `sedimentation.f90` to prevent division by 0, log(0) and uninitialised use of variables
