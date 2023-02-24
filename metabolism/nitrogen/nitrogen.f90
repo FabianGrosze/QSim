@@ -22,6 +22,8 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    
    use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
    
+   implicit none
+   
    ! --- dummy arguments ---
    real, intent(inout)  :: vNH4_s      !< Ammonium
    real, intent(inout)  :: vNO3_s      !< Nitrat
@@ -89,18 +91,18 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --- local variables ---
    real          :: suma, hconki, hcongr, hconbl, dzn
    real          :: ndr, ddrn
-   real          :: nwgr, nwki, nwbl, alpha_upN4, a_up, b_up, hc_upN3, hc_upN4
+   real          :: nwgr, nwki, nwbl, a_up, b_up, hc_upN3, hc_upN4
    real          :: alpha_upN4k, alpha_upN4g, alpha_upN4b
-   real          :: vNH4t, delNH4
-   real          :: vNO2t, delNO2
-   real          :: vNO3t, delNO3
-   real          :: gesNt
+   real          :: vNH4t, vNO2t, vNO3t, gesNt
    real          :: denWatz, dNO3Den
+   real          :: vnh4t_old, vno2t_old, vno3t_old
    integer       :: j_up
    character(200):: message
    
    real, parameter :: KMO_NO3 = 0.26
    real, parameter :: KM_NO3  = 0.4
+   
+   external :: qerror, print_clipping
    
    ! =======================================================================
    ! Wahl der Formel zur Beschreibung der Interaktion zwischen NH4-N und 
@@ -219,9 +221,9 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
             alpha_upN4b = hc_upN4 / (hc_upN3 + hc_upN4)
          
          case default
-            write(message,"(a,i0)"), "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
-                                     new_line('a') //                                                 &
-                                     "j_up = ", j_up
+            write(message,"(a,i0)") "Subroutine nitrogen: Variable 'j_up' set to unknown option:" // &
+                                    new_line('a') //                                                 &
+                                    "j_up = ", j_up
             call qerror(message)
       end select
       
@@ -271,8 +273,9 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    end if
    
    if (vNH4t < 0.0) then
-      delNH4 = vNH4t - vNH4_s
-      vNH4t  = (vNH4_s / (vNH4_s + abs(delNH4))) * vNH4_s
+      vnh4t_old = vnh4t
+      vnh4t  = (vnh4_s / (vnh4_s + abs(vnh4t - vnh4_s))) * vnh4_s
+      call print_clipping("nitrogen", "vnh4t", vnh4t_old, vnh4t, "mgN/l")
    endif
    if (vNH4t < 0.0001) vNH4t = 0.0001
    
@@ -285,11 +288,14 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
             + PflN1_s & ! zu Nitrit oxidiertes Ammonium (Makrophyten)
             - susn2_s & ! zu Nitrat oxidiertes Nitrit (Nitrosomonas)
             - PflN2_s   ! zu Nitrat oxidiertes Nitrit (Makrophyten)
+   else
+      vNO2t = vNO2_s
    endif
-   
-   if (vNO2t < 0.0) then
-      delNO2 = vNO2t - vNO2_s
-      vNO2t = (vNO2_s / (vNO2_s + abs(delNO2))) * vNO2_s
+      
+   if (vno2t < 0.0) then
+      vno2t_old = vno2t
+      vno2t = (vno2_s / (vno2_s + abs( vno2t - vno2_s))) * vno2_s
+      call print_clipping("nitrogen", "vnh4t", vno2t_old, vno2t, "mgN/l")
    endif
    if (vNO2t < 0.0001) vNO2t = 0.0001
    
@@ -298,6 +304,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    ! --------------------------------------------------------------------------
    DenWatz = bsbCt_s * (KMO_NO3 / (KMO_NO3 + vO2_s)) * (vNO3_s /(vNO3_s + KM_NO3))
    dNO3Den = 0.93 * DenWatz
+   
    
    if (vx02_s > 0.0) then
       vno3t = vno3_s                      &
@@ -338,11 +345,12 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       call qerror("Variable 'vNO3t' became NaN in subroutine nitrogen.")
    end if
    
-   if (vNO3t < 0.0) then
-      delNO3 = vNO3t - vNO3_s
-      vNO3t = (vNO3_s / (vNO3_s + abs(delNO3))) * vNO3_s
+   if (vno3t < 0.0) then
+      vno3t_old = vno3t
+      vno3t = (vno3_s / (vno3_s + abs(vno3t - vno3_s))) * vno3_s
+      call print_clipping("nitrogen", "vno3t", vno3t_old, vno3t, "mgN/l")
    endif
-   if (vNO3t < 0.000002) vNO3t = 0.000002
+   if (vno3t < 0.000002) vno3t = 0.000002
    
    ! Ausgabewert des NitratFluxes Wasser/Sediment in mgN/(l*h)
    hFluN3_s = hFluN3_s + hJN2_s * tflie /tiefe_s

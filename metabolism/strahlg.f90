@@ -43,19 +43,36 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    ! CLOUD  - Bewoelkungsgrad
    
    use allodim
+   implicit none
    
-   integer                                       :: tdj, anze, azStr
-   integer, dimension(8)                         :: NRV
-   integer, dimension(azStrs,1000)               :: IDWe, it_h
-   real                                          :: maxi,lt
-   real, dimension(4)                            :: ar, br
-   real, dimension(14)                           :: EVALT, EKRBRT, EDUFER, EVDICH, ESLEN, ESLENS
-   real, dimension(20)                           :: glob, cloud
-   real, dimension(1000)                         :: Schwi, Breite, VALTBL, EDUFBL, VALTBR, EDUFBR
-   real, dimension(1000,14)                      :: VTYP
-   real, dimension(azStrs)                       :: SHtest
+   integer                         :: jahrs, nrs, mstr, monatv, monats_tst
+   integer                         :: monats, monate, j, jtage, jahrs_tst
+   integer                         :: jahre, i, itagv, itags_tst, itags
+   integer                         :: itage, isim_end, ior, imet, ij
+   integer                         :: tdj, anze, azStr, icl
+   real                            :: xr, xl, vtest2, vtest1, uhrz_tst
+   real                            :: uhrz, uhrv, uhren, tssa, time
+   real                            :: time0, thell, tflie, sw, su
+   real                            :: sh, shgr, schwia, sa, s3
+   real                            :: s2, s1, pi, hconx, hconwr
+   real                            :: hconk, hconkr, hcon1, geol, geob
+   real                            :: fdiff, evl, evaltr, evaltl, euferr
+   real                            :: euferl, etas, eslenk, eqtime, epsi
+   real                            :: ephi, emdir, emdif, ekrbrr, ekrbrl
+   real                            :: econr, econl, ebeta, ealpha, d
+   real                            :: dtsl, dk, diri, diffi, maxi, lt
+   integer, dimension(8)           :: NRV
+   integer, dimension(azStrs,1000) :: IDWe, it_h
+   real, dimension(4)              :: ar, br
+   real, dimension(14)             :: EVALT, EKRBRT, EDUFER, EVDICH, ESLEN, ESLENS
+   real, dimension(20)             :: glob, cloud
+   real, dimension(1000)           :: Schwi, Breite, VALTBL, EDUFBL, VALTBR, EDUFBR
+   real, dimension(1000,14)        :: VTYP
+   real, dimension(azStrs)         :: SHtest
+   character(1000)                 :: message
    
-   character(1000) :: message
+   external :: anztag, qerror
+   
    save itags_tst, monats_tst, jahrs_tst, uhrz_tst
    
    j = 0
@@ -239,7 +256,7 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    do ior = 1,anze+1
       ! Fehlermeldung
       if (IDWe(mstr,ior) <= 0) then
-         write(message, "(a,i0)"), "No weather station defined for stretch ", mstr
+         write(message, "(a,i0)") "No weather station defined for stretch ", mstr
          call qerror(message)
       endif
       
@@ -260,14 +277,14 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
              + VTYP(ior,13)  &
              + VTYP(ior,14)
       if (Vtest1 > 100) then
-         write(message, "(a,i0)"), "subroutine strahlg: Proportion of vegetation &
-                                    (left bank) exceeds 100% in stretch: ", mstr
+         write(message, "(a,i0)") "subroutine strahlg: Proportion of vegetation &
+                                  &(left bank) exceeds 100% in stretch: ", mstr
          call qerror(message)
       endif
       
       if (Vtest2 > 100) then
-         write(message, "(a,i0)"), "subroutine strahlg: Proportion of vegetation &
-                                    (right bank) exceeds 100% in stretch: ", mstr
+         write(message, "(a,i0)") "subroutine strahlg: Proportion of vegetation &
+                                  &(right bank) exceeds 100% in stretch: ", mstr
          call qerror(message)
       endif
       

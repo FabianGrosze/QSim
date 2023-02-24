@@ -34,6 +34,7 @@ subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
                     tiefe_s, tflie,                  &
                     kontroll, jjj)
    use aparam, only: Qmx_SK
+   implicit none
    
    ! --- dummy arguments ---
    real, intent(inout)  :: si_s     !< Silikat-Silizium-Konzentration  
@@ -47,9 +48,10 @@ subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
    logical, intent(in)  :: kontroll !< debugging
    integer, intent(in)  :: jjj      !< debugging
    
-   ! --- local variables
-   real                 :: dSiSed, akisi, sit, delSi
+   ! --- local variables ---
+   real :: dSiSed, akisi, sit, sit_old
    
+   external :: print_clipping
    
    ! Neuberechnung der Silikatmenge an der Gewässersohle nach Rücklösung
    ! Änderungsrate durch Silikatfreisetzung aus dem Sediment
@@ -63,8 +65,9 @@ subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
    sit = si_s + akisi + dSised
    
    if (sit < 0.0) then 
-      delSi = sit - si_s
-      sit = (si_s / (si_s + abs(delSi))) * si_s
+      sit_old = sit
+      sit = (si_s / (si_s + abs(sit - si_s))) * si_s
+      call print_clipping("silicate", "sit", sit_old, sit, "mg/l")
    endif
    
    ! update return value

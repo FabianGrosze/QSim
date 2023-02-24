@@ -10,10 +10,12 @@
 subroutine qerror(message)
    use iso_fortran_env,       only: error_unit, output_unit
    use module_model_settings, only: cpfad
+   ! TODO (Schönung, February 2023):
+   ! This is not working on HPC
+   !use ifport,                only: sleep
    implicit none
    
    character, intent(in)  :: message*(*) !< text of errormessage 
-   
    integer                :: file1
    
    ! --- console-output ---
@@ -22,12 +24,12 @@ subroutine qerror(message)
    flush(output_unit)
    call sleep(1)
    
-   write(error_unit,*), repeat('=', 78)
-   write(error_unit,*), repeat(' ', 32), '!!! ERROR !!!'
-   write(error_unit,*), repeat('=', 78)
-   write(error_unit,*), trim(message)
+   write(error_unit,*) repeat('=', 78)
+   write(error_unit,*) repeat(' ', 32), '!!! ERROR !!!'
+   write(error_unit,*) repeat('=', 78)
+   write(error_unit,*) trim(message)
    
-   ! --- write to file1.err (needed for Gerris) ---
+   ! --- write to file1.err ---
    ! Gerris needs this file. It reads the error message from there
    ! and displays it to the user.
    open(newunit  = file1,                               &
@@ -37,5 +39,5 @@ subroutine qerror(message)
    write(file1,*) trim(message)
    close(file1)
    
-   stop 'QSim terminated abnormally!'
+   stop 'QSim terminated with an error!'
 end subroutine qerror

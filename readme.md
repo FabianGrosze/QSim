@@ -2,6 +2,30 @@
 
 ## 14.09
 
+### 14.09.24
+* Create modules for macrophytes and hnf
+
+### 14.09.23
+* Correct calculations in Nitrogen
+
+### 14.09.22
+Bugfixes
+* Correct groyne fields
+* Correct temperature conversions to absolute zero
+* Minimize compiler warnings
+
+
+### 14.09.21
+* bug fixes and minor refactoring in `nitrogen.f90`, `nitrifiers.f90`, `oxygen.f90` and `sedimentation.f90` to prevent division by 0, log(0) and uninitialised use of variables
+
+### 14.09.20
+* New module for coliform bacteria
+
+### 14.09.19
+
+* Add `implicit none` to all files
+* Fix some compiler warnings in QSim1D
+
 ### 14.09.18
 
 * Refactored `konsum.f90` (incl. `implicit none`)

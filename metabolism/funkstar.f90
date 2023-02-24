@@ -47,35 +47,66 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,iw_max,iformVert)
    
    use allodim
+   implicit none
    
-   character (len = 255)                       :: cpfad
-   character (len = 275)                       :: pfadstring
+   integer                                :: nrs, nrsj, mstr, mstrrb, monats
+   integer                                :: manzw, jahrs, i_rand, i_rands, i
+   integer                                :: ixpp, iw_max, iwsim, iwied, iwe
+   integer                                :: itags, irec, ipp, ipps, ilang
+   integer                                :: iformvert, iee2, iee1, ianzrb, ianrbs
+   integer                                :: rbnr, read_error
+   real                                   :: uhrz, r_nrs0, hcss, hcph, hcon2
+   real                                   :: e4cu, ywert, wert2, wert1, vtkoeffde_zn
+   real                                   :: hcon1, e5zn, e5u, e5pb, e5ni
+   real                                   :: e5mn, e5hg, e5fe, e5cu, e5cr
+   real                                   :: e5cad, e5as, e4zn, e4u, e4pb
+   real                                   :: e4ni, e4mn, e4hg, e4fe, e4cr
+   real                                   :: e4cad, e4as, e3zn, e3u, e3pb
+   real                                   :: e3ni, e3mn, e3hg, e3fe, e3cu
+   real                                   :: e3cr, e3cad, e3as, e2zn, e2u
+   real                                   :: e2pb, e2ni, e2mn, e2hg, e2fe
+   real                                   :: e2cu, e2cr, e2cad, e2as, e1zn
+   real                                   :: e1u, e1pb, e1ni, e1mn, e1hg
+   real                                   :: e1fe, e1cu, e1cr, e1cad, e1as
+   real                                   :: c5zn, c5u, c5pb, c5ni, c5mn
+   real                                   :: c5hg, c5fe, c5cu, c5cr, c5cad
+   real                                   :: c5as, c4zn, c4u, c4pb, c4ni
+   real                                   :: c4mn, c4hg, c4fe, c4cu, c4cr
+   real                                   :: c4cad, c4as, c3zn, c3u, c3pb
+   real                                   :: c3ni, c3mn, c3hg, c3fe, c3cu
+   real                                   :: c3cr, c3cad, c3as, c2zn, c2u
+   real                                   :: c2pb, c2ni, c2mn, c2hg, c2fe
+   real                                   :: c2cu, c2cr, c2cad, c2as, c1zn
+   real                                   :: c1u, c1pb, c1ni, c1mn, c1hg
+   real                                   :: c1fe, c1cu, c1cr, c1cad, c1as
+   real                                   :: vtkoeffde_u, vtkoeffde_pb, vtkoeffde_ni, vtkoeffde_mn, vtkoeffde_hg
+   real                                   :: vtkoeffde_fe, vtkoeffde_cu, vtkoeffde_cr, vtkoeffde_cad, vtkoeffde_as
+   real                                   :: vtkoeff_zn,vtkoeff_cu,vtkoeff_cad,vtkoeff_ni
+   real                                   :: vtkoeff_as,vtkoeff_pb,vtkoeff_cr,vtkoeff_fe
+   real                                   :: vtkoeff_hg,vtkoeff_mn,vtkoeff_u
+   real                                   :: null_value
+   double precision                       :: r_nrs, r_nrs2, r_nrs1
+   character(200)                         :: message
+   character(255)                         :: cpfad
+   character(275)                         :: pfadstring
+   integer, dimension(40000)              :: imstr, irbnr, ianzw
+   integer, dimension(azstrs,100)         :: istund, rbtyp, nrschr
+   integer, dimension(200,40000)          :: itagl, monatl, jahrl
+   integer, intent(in)                    :: icoli, ischwer
+   integer, dimension(:,:,:), allocatable :: mrec
+   real,    dimension(azstrs,100)         :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesns, vx0s, vx02s
+   real,    dimension(azstrs,100)         :: gelps, gesps, sis, chlas, waers
+   real,    dimension(azstrs,100)         :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
+   real,    dimension(azstrs,100)         :: tempws, vo2s, chnfs, bvhnfs, colis, doscfs, abfls
+   real,    dimension(azstrs,100)         :: glzns,gszns,glcads,gscads,glcus,gscus,glnis,gsnis
+   real,    dimension(azstrs,100)         :: glass,gsass,glpbs,gspbs,glcrs,gscrs,glfes,gsfes
+   real,    dimension(azstrs,100)         :: glhgs,gshgs,glmns,gsmns,glus,gsus
+   real,    dimension(200,40000)          :: uhrl
+   real,    dimension(:,:,:), allocatable :: werts
+   logical                                :: is_set_wert1, is_set_wert2
+   real, parameter                        :: epsilon = 1.e-8
    
-   integer                                     :: RBNR, read_error
-   integer, dimension(40000)                   :: imstr, iRBNR, ianzW
-   integer, dimension(azStrs,100)              :: istund, RBtyp, NRSchr
-   integer, dimension(200,40000)               :: itagl, monatl, jahrl
-   integer, intent(in)                         :: iColi, iSchwer
-   integer, dimension(:,:,:), allocatable      :: mREC
-   real                                        :: VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
-   real                                        :: VTKoeff_As,VTKoeff_Pb,VTKoeff_Cr,VTKoeff_Fe
-   real                                        :: VTKoeff_Hg,VTKoeff_Mn,VTKoeff_U
-   real, dimension(azStrs,100)                 :: vbsbs,vcsbs, vnh4s, vno2s, vno3s, gesNs, vx0s, vx02s
-   real, dimension(azStrs,100)                 :: gelps, gesPs, sis, chlas, waers
-   real, dimension(azStrs,100)                 :: vkigrs, antbls, zooins, vphs, mws, cas, lfs, ssalgs
-   real, dimension(azStrs,100)                 :: tempws, vo2s, CHNFs, BVHNFs, colis, DOSCFs, abfls
-   real, dimension(azStrs,100)                 :: glZns,gsZns,glCads,gsCads,glCus,gsCus,glNis,gsNis
-   real, dimension(azStrs,100)                 :: glAss,gsAss,glPbs,gsPbs,glCrs,gsCrs,glFes,gsFes
-   real, dimension(azStrs,100)                 :: glHgs,gsHgs,glMns,gsMns,glUs,gsUs
-   real, dimension(200,40000)                  :: uhrl
-   real, dimension(:,:,:), allocatable         :: werts
-   real                                        :: NaN_value
-   logical                                     :: is_set_wert1, is_set_wert2
-   character(len = 200)                        :: message
-   
-   real, parameter                             :: epsilon = 1.e-8
-   
-   double precision                            :: R_NRS, R_NRS2, R_NRS1
+   external :: qerror, verteilungskoeff
    
    save ianRBs, mREC, werts, ianzW, itagl, monatl,jahrl, Uhrl, iRBNR, imstr,R_NRS
    save R_NRS2, R_NRS1, VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni
@@ -198,12 +229,12 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          is_set_wert2 = .false.
          
          ! set fail values depending on the parameter
-         if     (ipp == 22) then
-            NaN_value = -9.99
+         if (ipp == 22) then
+            null_value = -9.99
          elseif (ipp == 27) then
-            NaN_value = -9999.9
+            null_value = -9999.9
          else
-            NaN_value = 0.
+            null_value = -1.0
          endif
          
          ! Beginn Werteschleife
@@ -228,11 +259,11 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                endif
             else
                if (R_NRS0 <= R_NRS) then
-                  if (iee1 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                  if (iee1 == -1 .and. abs(werts(ianzRB,ipp,iwe) - null_value) <= epsilon) then
                      mREC(mstr,ianzRB,ipp) = iwe
                      wert1 = werts(ianzRB,ipp,iwe)
                      is_set_wert1 = .true.
-                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
+                  else if (werts(ianzRB,ipp,iwe) - null_value > epsilon) then
                      R_NRS1 = R_NRS0
                      iee1   = 1
                      mREC(mstr,ianzRB,ipp) = iwe
@@ -240,10 +271,10 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                      is_set_wert1 = .true.
                   endif
                else
-                  if (iee2 == -1 .and. abs(werts(ianzRB,ipp,iwe) - NaN_value) <= epsilon) then
+                  if (iee2 == -1 .and. abs(werts(ianzRB,ipp,iwe) - null_value) <= epsilon) then
                      wert2 = werts(ianzRB,ipp,iwe)
                      is_set_wert2 = .true.
-                  else if (werts(ianzRB,ipp,iwe) - NaN_value > epsilon) then
+                  else if (werts(ianzRB,ipp,iwe) - null_value > epsilon) then
                      R_NRS2 = R_NRS0
                      iee2 = 1
                      wert2 = werts(ianzRB,ipp,iwe)
@@ -255,44 +286,17 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          
          enddo ! Ende Werteschleife
          
-         if       (iee1 == 1 .and. iee2 == -1) then
+         if (iee1 == 1 .and. iee2 == -1) then
             Ywert = wert1
          else if (iee1 == -1 .and. iee2 == 1) then
             Ywert = wert2
          else if (iee1 == -1 .and. iee2 == -1) then
-            ! TODO FG: introduced switches to prevent uninitialised use of wert1
-            if      (is_set_wert1) then
+            if (is_set_wert1) then
                Ywert = wert1
             else if (is_set_wert2) then
                Ywert = wert2
             else
-               Ywert = -9999.9
-               ! report if boundary values are missing (abort simulation if required)
-               ! TODO FG: Parts on HNF in if-condition below need to be adapted once HNF is operational again.
-               if (iwied == 0) then
-                  if (         ipp /= 24 .and. ipp /= 25  .and.     &  ! Heterotrophic nanoflagellates (HNF)
-                      .not.(iColi   == 1 .and. ipp == 26) .and.     &  ! Coliform bacteria inactive
-                      .not.(iwsim   == 4 .and. ipp == 28) .and.     &  ! Passive tracer inactive
-                      .not.(iwsim   == 5 .and. ipp == 29) .and.     &  ! Conservative substances inactive
-                      .not.(iSchwer == 1 .and. ipp >= 30)      ) then  ! Heavy metals inactive
-                     write(*, '("funkstar.f90: No valid data for parameter nr. ",i3," at boundary nr. ",i3,".")') ipp, RBNR
-                  elseif (ipp /= 24 .and. ipp /= 25) then
-                     if (iColi == 1 .and. ipp == 26) then
-                        ! Coliform bacteria active
-                        write(message, '("funkstar.f90: No valid data for colis at boundary nr. ",i3,".")') RBNR
-                     elseif (iwsim   == 4 .and. ipp == 28) then
-                        ! Passive tracer active
-                        write(message, '("funkstar.f90: No valid data for tracer at boundary nr. ",i3,".")') RBNR
-                     elseif (iwsim   == 5 .and. ipp == 29) then
-                        ! Conservative substances active
-                        write(message, '("funkstar.f90: No valid data for conservative substance at boundary nr. ",i3,".")') RBNR
-                     elseif (iSchwer == 1 .and. ipp >= 30) then
-                        ! Heavy metals active
-                        write(message, '("funkstar.f90: No valid data for heavy metal (ipp =",i3,") at boundary nr. ",i3,".")') ipp, RBNR
-                     endif
-                     call qerror(trim(message))
-                  endif
-               endif
+               Ywert = null_value
             endif
          else
             hcon1 = R_NRS2 - R_NRS1

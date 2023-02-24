@@ -10,7 +10,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
                   iPhy, tflie,                                      &
                   dalgo_s, dalgao_s, algo_s, abeowg_s, abeowk_s,    &
                   abeorg_s, abeork_s, zooro2_s, hSchlr_s,           &
-                  o2ein_s, o2ein1_s,  saett_s,                      &
+                  o2ein_s, o2ein1_s,                                &
                   kontroll, jjj)
       
    use aparam, only : Caki, Cagr, Cabl, GRot, &
@@ -67,33 +67,49 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    real, intent(out)    :: hSchlr_s    !< Sauerstoffzehrung durch das Sediment [mgO2/(l*h)] hSchlr(mstr,ior)
    real, intent(out)    :: o2ein_s     !< potentieller Sauerstoffeintrag aus der Luft
    real, intent(out)    :: o2ein1_s    !< Sauerstoffeintrag aus der Luft
-   real, intent(out)    :: saett_s     !< Sauerstoffstättigungskonzentration [mgO2/l]
-   logical              :: kontroll    !< debugging
+   logical, intent(in)  :: kontroll    !< debugging
    integer, intent(in)  :: jjj         !< debugging
    
    ! --- local variables ---
    real  :: opkimix, opkimax, opgrmix, opgrmax, opblmix, opblmax
    real  :: falgog, falgok, falgob
-   real  :: ft, v, abeor, abeow
+   real  :: ft, v, abeor, abeow, saett, sed_o2
    real  :: bbei, defiz, delta_oxygen
+  
+   real, parameter :: mol_weight_o2 = 32.
+   real, parameter :: mol_weight_c  = 12.
+   real, parameter :: mol_o2_mol_c  = mol_weight_o2 / mol_weight_c
+   
+   external :: belueftung_k2
    
    ! --------------------------------------------------------------------------
    ! Influence of Algae
    ! --------------------------------------------------------------------------
    ! Umrechnung von RQ [molC/molO2] und PQ [molO2/molC] in mg O2/mg Bio
-   opkimix = ((1./opkimi) * 32./12.) * Caki
-   opgrmix = ((1./opgrmi) * 32./12.) * Cagr
-   opblmix = ((1./opblmi) * 32./12.) * Cabl
-
-   opkimax = (opkima * 32./12.) * Caki
-   opgrmax = (opgrma * 32./12.) * Cagr
-   opblmax = (opblma * 32./12.) * Cabl
+   if (opkimi > 0.) then
+      opkimix = mol_o2_mol_C / opkimi * Caki
+   else
+      opkimix = 0.
+   endif
+   if (opgrmi > 0.) then
+      opgrmix = mol_o2_mol_C / opgrmi * Cagr
+   else
+      opgrmix = 0.
+   endif
+   if (opblmi > 0.) then
+      opblmix = mol_o2_mol_C / opblmi * Cabl
+   else
+      opblmix = 0.
+   endif
+   opkimax = opkima * mol_o2_mol_C * Caki
+   opgrmax = opgrma * mol_o2_mol_C * Cagr
+   opblmax = opblma * mol_o2_mol_C * Cabl
    
    ! Grünagen
-   if (agrNH4_s == 0.0) then 
-      falgog = agrno3_s / 0.00001
-   else
+   if (agrNH4_s > 0.0) then 
       falgog = agrno3_s / agrNH4_s
+   else
+      falgog = agrno3_s / 0.00001
    endif
    falgog = (opgrmix + falgog * opgrmax) / (1. + falgog)
 
@@ -101,10 +117,10 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    abeowg_s = albewg_s * falgog
 
    ! Kieselalgen
-   if (akiNH4_s == 0.0) then
-      falgok = akiNO3_s / 0.00001
-   else
+   if (akiNH4_s > 0.0) then
       falgok = akiNO3_s / akiNH4_s
+   else
+      falgok = akiNO3_s / 0.00001
    endif
    falgok = (opkimix + falgok * opkimax) / (1. + falgok)
 
@@ -112,12 +128,12 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    abeowk_s = albewk_s * falgok
 
    ! Blaualgen
-   if (ablNH4_s == 0.0) then
-      falgob = ablNO3_s / 0.00001
-   else
+   if (ablNH4_s > 0.0) then
       falgob = ablNO3_s / ablNH4_s
+   else
+      falgob = ablNO3_s / 0.00001
    endif
-   falgob = (opblmix + falgob * opblmax) / (1.+falgob)
+   falgob = (opblmix + falgob * opblmax) / (1. + falgob)
 
    
    ! --- Sauerstoffproduktion --- 
@@ -127,7 +143,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
            + dalgbl_s * falgob
    
    ! benthische Grün- und Kieselalgen
-   abeow = abeowg_s + abeowk_s        
+   abeow = abeowg_s + abeowk_s
    
    ! --- Sauerstoffrespiration ---
    ! Grün-, Kiesel-, und Blaualgen
@@ -138,9 +154,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    ! benthische Grün- und Kieselalgen
    abeorg_s = alberg_s * opgrmix
    abeork_s = alberk_s * opkimix
-
-   abeor = abeorg_s + abeork_s
-   
+   abeor    = abeorg_s + abeork_s
    
    ! Netto Sauerstoffproduktion der Algen
    algo_s = dalgo_s - dalgao_s
@@ -149,10 +163,8 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    ! Influence of Zooplankton
    ! --------------------------------------------------------------------------
    ft = 1.047**(tempw_s - 20.)
-
    zooro2_s = 13.08 * GRot**0.716 * 24. * 1.e-6  ! mgO2/Ind/d (Galkovskaya 1995)
    zooro2_s = zooro2_s * zooind_s * ft * tflie
-   
    
    ! --------------------------------------------------------------------------
    ! oxygen exchange at water surface
@@ -168,11 +180,11 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    endif
    
    ! Sauerstoffsättigungskonzentration
-   saett_s = oxygen_saturation_concentration(tempw_s)
-   defiz = saett_s - vO2_s
+   saett = oxygen_saturation_concentration(tempw_s)
+   defiz   = saett - vO2_s
    
    ! potentieller Sauerstoffaustausch
-   o2ein_s = saett_s * (1 - exp(-bbei * tflie))
+   o2ein_s = saett * (1 - exp(-bbei * tflie))
    
    ! tatsächlicher Sauerstoffaustausch
    ! TODO (Schoenung, august 2022): Ticket #53
@@ -182,34 +194,41 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    o2ein1_s = defiz * (1 - exp(-bbei * tflie))
    
    if (kontroll) then
-      write(*,'(A)'),  'oxygen Oberflaechenbelueftung:'
-      write(*,'(A,F0.6)'), '  vO2    = ', vO2_s
-      write(*,'(A,F0.6)'), '  saett  = ', saett_s
-      write(*,'(A,F0.6)'), '  defiz  = ', defiz
-      write(*,'(A,F0.6)'), '  O2ein  = ', o2ein_s
-      write(*,'(A,F0.6)'), '  O2ein1 = ', o2ein1_s
-      write(*,'(A,F0.6)'), '  tempw  = ', tempw_s
-      write(*,'(A,F0.6)'), '  rau    = ', rau_s
-      write(*,'(A,F0.6)'), '  tiefe  = ', tiefe_s
-      write(*,'(A,F0.6)'), '  vmitt  = ', vmitt_s
-      write(*,'(A,F0.6)'), '  rhyd   = ', rhyd_s
-      write(*,'(A,F0.6)'), '  flae   = ', flae_s
-      write(*,'(A,F0.6)'), '  WLage  = ', WLage_s
-      write(*,'(A,F0.6)'), '  hws    = ', hws_s
-      write(*,'(A,F0.6)'), '  wge    = ', wge_s
-      write(*,'(A,F0.6)'), '  bbei   = ', bbei
-      write(*,'(A,I0)'),   '  iPhy   = ', iphy
+      write(*,'(A)')  'oxygen Oberflaechenbelueftung:'
+      write(*,'(A,F0.6)') '  vO2    = ', vO2_s
+      write(*,'(A,F0.6)') '  defiz  = ', defiz
+      write(*,'(A,F0.6)') '  O2ein  = ', o2ein_s
+      write(*,'(A,F0.6)') '  O2ein1 = ', o2ein1_s
+      write(*,'(A,F0.6)') '  tempw  = ', tempw_s
+      write(*,'(A,F0.6)') '  rau    = ', rau_s
+      write(*,'(A,F0.6)') '  tiefe  = ', tiefe_s
+      write(*,'(A,F0.6)') '  vmitt  = ', vmitt_s
+      write(*,'(A,F0.6)') '  rhyd   = ', rhyd_s
+      write(*,'(A,F0.6)') '  flae   = ', flae_s
+      write(*,'(A,F0.6)') '  WLage  = ', WLage_s
+      write(*,'(A,F0.6)') '  hws    = ', hws_s
+      write(*,'(A,F0.6)') '  wge    = ', wge_s
+      write(*,'(A,F0.6)') '  bbei   = ', bbei
+      write(*,'(A,I0)')   '  iPhy   = ', iphy
+   endif
+   
+   ! Sauerstoffzehrung des Sediments
+   if (tiefe_s > 0.) then
+      sed_o2 = hJO2_s * tflie / tiefe_s
+   else
+      sed_o2 = 0.
    endif
    
    ! --------------------------------------------------------------------------
    ! oxygen balance
    ! --------------------------------------------------------------------------
+   
    v = dalgo_s                         &  ! Sauerstoffproduktion der Algen
      - dalgao_s                        &  ! Sauerstoffrespiration der Algen
      - go2n_s                          &  ! Sauerstoffverbrauch bei Stickstoffoxidation
      - (bsbt_s - dC_DenW_s * TOC_CSB)  &  ! Sauerstoffverbrauch durch Kohlenstoffabbau
      - zooro2_s                        &  ! Sauerstoffverbrauch der Rotatorien
-     - (hJO2_s * tflie / tiefe_s)      &  ! Sauerstoffzehrung des Sediments
+     - sed_o2                          &  ! Sauerstoffzehrung des Sediments
      + po2p_s                          &  ! Sauerstoffproduktion der Makrophyten
      - po2r_s                          &  ! Sauerstoffrespiration der Makrophyten
      + abeow                           &  ! Sauerstoffproduktion der benthischen Algen
@@ -226,8 +245,12 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    ! update return values
    ! --------------------------------------------------------------------------
    ! Ausgabe Sedimentflux [mgO2/l/h]
-   hSchlr_s = hJO2_s / (tiefe_s * 24.)
+   if (tiefe_s > 0.) then
+      hSchlr_s = hJO2_s / (tiefe_s * 24.)
+   else
+      hSchlr_s = 0.
+   endif
    
-   vo2_s = vo2_s + delta_oxygen
-   if (vo2_s < 0.01) vo2_s = 0.01
+   vo2_s = max(vo2_s + delta_oxygen, 0.01)
+   
 end subroutine oxygen

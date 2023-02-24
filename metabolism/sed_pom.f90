@@ -29,11 +29,20 @@ subroutine sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,  &
                    kontroll ,jjj)
    
    use allodim
+   implicit none
    
-   logical, intent(in)             :: kontroll  !< debugging
-   integer, intent(in)             :: jjj       !< debugging
-   real,dimension(azStrs,1000)     :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
-   double precision                :: sedoc,ws
+   integer                     :: n, mstr, msta, jsed, ised, ior
+   real                        :: fsch, zellv, xtflie, xsedom, wst
+   real                        :: w2z, ust, tiefe1, sedomz, sdflus
+   real                        :: sdflub, sdflua, qsgr, phytoc, oc
+   real                        :: oc0, gesss, fom_oc, dkornz, dichto
+   real                        :: dichte, dichta, ceq, bsbc
+   logical, intent(in)         :: kontroll  !< debugging
+   integer, intent(in)         :: jjj       !< debugging
+   double precision            :: sedoc
+   real,dimension(azStrs,1000) :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
+   
+   external                    :: sedimentation
    
    do ised = 1,3
       

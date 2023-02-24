@@ -141,6 +141,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
    end if ! only prozessor 0
+   call aparam_parallel()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
    222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)

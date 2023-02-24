@@ -38,18 +38,39 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
                   ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
    
    use allodim
+   implicit none
    
-   character (len = 2)                    :: cwertv
+   integer                                :: nndr, mu, ms, mstr, mstrl
+   integer                                :: monats, lboemz, khyd, jz, jsgn
+   integer                                :: jieinz, i, iw, iwsim, iverfahren
+   integer                                :: itst, itags, isum_str, iseg, isegst
+   integer                                :: ischif, ilang, ij, ihydr, ifhstr
+   integer                                :: ie, ies, ieros, ieinsy, ieab
+   integer                                :: id, ianzt, ianze_max, i6
+   integer                                :: anze, SCHRNR, azStr, dummy
+   real                                   :: vabst, wuebkz, wspl, wsplz, wflbz1
+   real                                   :: w2z, vmittz, vbumz, u, uhrz
+   real                                   :: tstkm, tiefz, tflie, testh, tau2_0
+   real                                   :: tau2m, swflbu, sw2, svbu, sumx
+   real                                   :: sumt, sumt1, sumbt1, spewksz, shbu
+   real                                   :: sflbu, sedvvertzz, sbw2, sbsobu, sbsdom
+   real                                   :: sblabu, sbkorn, rh, rhydz, rauz1
+   real                                   :: qsausz, psrefsz, h, hcon, hbumz
+   real                                   :: fl, flbumz, flaez, fkmneu, fkm1
+   real                                   :: fhprof, fhconh, extksz, elenz, dx1
+   real                                   :: dt, dtv, dt2, dt1, dlm
+   real                                   :: dlalpm, cour, courmx, bw2nz, bvabst
+   real                                   :: bsoz1, bsomnz, bsohl, bsobz1, blbumz
+   real                                   :: bedgkz, bdknz, asedvvert, akornz, aisch
+   real                                   :: aischz, adkorn, ks, lboe
    character (len = 255)                  :: cpfad
    character (len = 275)                  :: pfadstring
-   integer                                :: anze, SCHRNR, azStr, read_error, dummy
    integer, dimension(azStrs)             :: STRiz, nbuhn, mSs, mStra, isegs, mUs, abfr, mStas, mRBs
    integer, dimension(1000)               :: flag, jiein
    integer, dimension(azStrs,100)         :: RBtyp
-   real                                   :: ks, lboe
    real, dimension(100)                   :: einlk
    real, dimension(1000)                  :: elen, tiefe, rau, vmitt, rhyd, fkm, flae, WS, qsaus, aischl, sedvvertz, lboea,lboem
-   real, dimension(1000)                  :: bsohlm, flaea, rhyda, absta, tiefea, vunt, vob, fkmhyd, BedGK, dKornz
+   real, dimension(1000)                  :: bsohlm, flaea, rhyda, absta, tiefea, vunt, vob, fkmhyd, BedGK
    real, dimension(1000)                  :: dKornn, Qaus, WSP, hbum, flbum, bsobum, blbum, WFlbum, vbum, flbu
    real, dimension(1000)                  :: WFlbu, hbu, blabu, bsobu, vmbu, bSdOMn, bw2n, bKornn, w2n
    real, dimension(azStrs)                :: startkm, STRdt, wsp_UW, wsp_OW
@@ -63,6 +84,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    integer, dimension(:,:), allocatable   :: iflags, iBliak, iBreak, ieinse
    real, dimension(:,:), allocatable      :: hkmhyd, hWSP, hrhyda, hhbu, hflbu, hbsobu, hblabu, hWFlbu, hvmbu
    character(1000)                        :: message
+   
+   external                               :: qerror
    
    if (.not.allocated(iflags)) allocate(iflags(azStrs,1000))
    if (.not.allocated(iBliak)) allocate(iBliak(azStrs,1000))
@@ -172,7 +195,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          print*, '   kmhyd = ', hkmhyd(mstrl,khyd)
          print*, '   WSP   = ', hWSP(mstrl,khyd)
          print*, '   Q     = ', hQaus(mstrl,khyd)
-         write(message, "(2(a,i0))"), "Subroutine sysgen: Water depth is less &
+         write(message, "(2(a,i0))") "Subroutine sysgen: Water depth is less &
                            &or equal 0 in stretch ", mstrl, ", profile ", hkmhyd(mstrl,khyd)
          call qerror(message)
       endif
@@ -298,13 +321,14 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       ,2x,i2,2x,i2)
       
       ieinsy = 1
-      do 55 ie = 1,mRBs(mstr)
-         if (RBtyp(mstr,ie) == 0)goto 55
+      do ie = 1,mRBs(mstr)
+         if (RBtyp(mstr,ie) == 0) cycle
          einlk(ie) = RBkm(mstr,ie)
          
          if (abfr(mstr) == 0 .and. einlk(ie) >= startkm(mstr)) ieinsy = ieinsy+1
          if (abfr(mstr) == 1 .and. einlk(ie) <= startkm(mstr)) ieinsy = ieinsy+1
-      55 continue
+      enddo
+      
       ies = ie-1
       ie = 0
       if (ies > 0)ie = ieinsy
@@ -1048,7 +1072,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          tau2_0 = tau2m
          if (tau2_0 <= 0.0) then
             call qerror("Missing Value for 'tau2b' (Exchangetime between &
-                         groyne field and main river)")
+                        &groyne field and main river)")
          endif
          tau2m = tau2_0/(1.+qsaus(i)/400.)
          

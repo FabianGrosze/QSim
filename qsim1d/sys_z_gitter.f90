@@ -32,14 +32,22 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
    ! hnkzs:  Anzahl Gitterpunkte des neuen Gitters
    
    use allodim
+   implicit none
    
-   integer                                :: azStr, nkzs, nkzs_neu, nkz_alt,mstr
+   integer                                :: nkz, nkzs_alt, monats, i_zaehlv, i_var
+   integer                                :: i_vars, itags, istep, ire, ior
+   integer                                :: ihc_wert, ifak, ibeg
+   integer                                :: azStr, nkzs_neu, mstr
+   real                                   :: hc_wert, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
+   real                                   :: dhc_wert, dh2d
    integer, dimension(azStrs)             :: mstra, hanze, iFlRi
    integer, dimension(azStrs,1000)        :: znkzs, hnkzs
    real, dimension(azStrs,50,1000)        :: htempz, ho2z, hnh4z, hno2z, hno3z, hgelPz, hSiz, hakiz, hagrz, hablz, hchlaz
    real, dimension(azStrs,50,1000)        :: hchlkz, hchlgz, hchlbz, hgesPz, hgesNz, hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz
    real, dimension(azStrs,50,1000)        :: hCChlbz, hCChlgz
-   real, dimension(50)                    :: y_var, hcTiefe, hcTiefe_neu, tiefe_neu, y_var_neu, dzMasse
+   real, dimension(50)                    :: y_var,  hcTiefe_neu, tiefe_neu, y_var_neu
+   
+   external                               :: lin_interpolation
    
    
    do azstr = 1,azstrs  ! Strangschleife

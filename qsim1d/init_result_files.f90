@@ -39,15 +39,17 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    implicit none
    
    ! --- dummy arguments ---
-   character(len = 255), intent(in)   :: cpfad           !< path to directory for output
-   character(len = *),   intent(in)   :: modell          !< modelname (Gerris)
-   character(len = 255), intent(in)   :: cEreig          !< meta data (Gerris)
-   logical, intent(in)                :: write_csv_files !< switch to turn of .csv-outputs
+   character(len = 255), intent(in) :: cpfad           !< path to directory for output
+   character(len = *),   intent(in) :: modell          !< modelname (Gerris)
+   character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
+   logical, intent(in)              :: write_csv_files !< switch to turn of .csv-outputs
    
    ! --- local variables ---
-   character(len = 275)    :: pfadstring
-   character(len = 8)      :: versionstext
-   integer                 :: open_error
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   integer        :: open_error, u_file1
+   
+   external :: version_string, qerror, ergebmformat, ergebtformat
   
    
    print *, ''
@@ -93,7 +95,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
       write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
-                       gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
+                     & gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
       
       ! --- Ausgabe 157 Schwermetalle ---
       print*, '> ausgabe157_schwermetalle.csv'
@@ -101,16 +103,21 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
       open(unit = 157, file = pfadstring, iostat = open_error)
       
       write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
-                       glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
-                       SSeros; sedalk; sedalg; sedalb; sedss'
+                     & glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
+                     & SSeros; sedalk; sedalg; sedalb; sedss'
       
       ! --- Ausagbe 158 Algae ---
       print*, '> ausgabe158_algae.csv'
       pfadstring = trim(adjustl(cpfad)) // 'ausgabe158_algae.csv'
       open(unit = 158, file = pfadstring, iostat = open_error)
       
-      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ; aki ; agr ; abl ; chlak ; chlag ; chlab ; &
-                       ssalg ; ss'
+      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ;&
+                      &aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
    endif
+   
+   ! remove file1.err, which might still exist from previous run
+   pfadstring = trim(adjustl(cpfad)) // 'file1.err'
+   open(newunit = u_file1, file = trim(adjustl(cpfad)) // 'file1.err')
+   close(u_file1, status = "delete")
       
 end subroutine init_result_files

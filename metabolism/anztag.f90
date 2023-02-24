@@ -31,12 +31,16 @@
 subroutine anzTag(monat, jahr, tage) 
    implicit none
    
+   ! --- dummy arguments ---
    integer, intent(in)     :: monat !< zu bestimmender Monat
    integer, intent(in)     :: jahr  !< zu bestimmendes Jahr
    integer, intent(out)    :: tage  !< Anzahl der Tage
    
-   integer                 :: schalttag
-   character(1000)         :: message
+   ! --- local variables ---
+   integer         :: schalttag
+   character(1000) :: message
+   
+   external :: qerror
    
    ! --- auf Schaltjahr prüfen ---
    ! Ein Jahr ist ein Schaltjahr, wenn es durch 4 teilbar ist.
@@ -79,7 +83,7 @@ subroutine anzTag(monat, jahr, tage)
       case(12) 
          tage = 31
       case default
-         write(message, "(a,i0)"), "subroutine anztag: Given month is invalid: ", monat
+         write(message, "(a,i0)") "subroutine anztag: Given month is invalid: ", monat
          call qerror(message)
 
    end select

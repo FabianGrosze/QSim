@@ -40,23 +40,42 @@ subroutine wehr(wehrh, wehrb, ho2, hQaus, O2zt, htempw, ho2_z, ho2z_z, hlf,   &
                 kanz, inkzmx, iSta, nstr, istr, jnkz, iflRi, jlWO2, CChlkzt,  &
                 hCChlkz_z, CChlbzt, hCChlbz_z, CChlgzt, hCChlgz_z, janzWS,    &
                 janzWt, hnkzs, mwehr, mstr, WSP_UW, WSP_OW, iB)
-   ! CO2-Austrag müss noch geändert werden
+   
+   ! TODO: CO2-Austrag muss noch geändert werden
    
    use allodim
+   implicit none
    
-   integer, dimension(azStrs)             :: iflRi, janzWS, janzWt, mWehr, jlwo2
-   integer, dimension(2*azStrs,azStrs)    :: ESTRNR
-   integer, dimension(azStrs,1000)        :: hnkzs
-   real                                   :: mue, mwW, lfW, lgk1, lgk2, k1, k2, lgh, lgoh, moco2, mohco3
-   real                                   :: moco3, mgco2, molgco
-   real, dimension(azStrs)                :: wehrh, wehrb, ho2_z, hte_z, hph_z, wsp_UW, WSP_OW
-   real, dimension(azStrs,50)             :: ho2z_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hNh4z_z, hNO3z_z,hPz_z
-   real, dimension(azStrs,50)             :: hchlkz_z, hchlgz_z, hchlbz_z, hNO2z_z, hSiz_z, htez_z, hgesPz_z, hgesNz_z
-   real, dimension(azStrs,50)             :: hQ_NKz_z, hQ_NBz_z, hQ_NGz_z, hCChlkz_z, hCChlbz_z, hCChlgz_z
-   real, dimension(azStrs,50,2)           :: o2zt, tzt, chlazt, chlkzt, chlgzt, chlbzt, akizt, agrzt, ablzt, NH4zt, NO2zt
-   real, dimension(azStrs,50,2)           :: NO3zt, Pzt, gSizt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt
-   real, dimension(azStrs,50,2)           :: CChlbzt, CChlgzt
-   real, dimension(azStrs,1000)           :: hQaus, ho2, htempw, hlf, hpw, hmw, hph
+   integer                             :: nstr, nkz, mstr, mstep0, kanz
+   integer                             :: jnkz, istr, ista, iph, inkzmx
+   integer                             :: ilwo2, iiter, ib
+   real                                :: hcono2, y, y2, y1, vphw, abst
+   real                                :: tempww, sumt, sumsi, sumq_nk, sumq_ng
+   real                                :: sumq_nb, sump, sumo2, sumn4, sumn3
+   real                                :: sumn2, sumh, sumgesp, sumgesn, sumchl
+   real                                :: sumchlk, sumchlg, sumchlb, sumcchlk, sumcchlg
+   real                                :: sumcchlb, sumaki, sumagr, sumabl, str
+   real                                :: step0, so2, saettw, saetco2, reyn
+   real                                :: realy2, realy1, pww, poh, pkw
+   real                                :: pk2, pk1, ph2, ph1, ph0
+   real                                :: oh, oein, o2neu, h, hk
+   real                                :: hcon, hconwb, hcont, hconte, hconr
+   real                                :: hcon2, hcon1, froude, fhco3, fco3
+   real                                :: fco2, fallhoehe, eta, dh2d, delph
+   real                                :: defco2, dco2w, dco2o, c, beta
+   real                                :: mue, mwW, lfW, lgk1, lgk2, k1, k2, lgh, lgoh, moco2, mohco3
+   real                                :: moco3, mgco2, molgco
+   integer, dimension(azStrs)          :: iflRi, janzWS, janzWt, mWehr, jlwo2
+   integer, dimension(2*azStrs,azStrs) :: ESTRNR
+   integer, dimension(azStrs,1000)     :: hnkzs
+   real, dimension(azStrs)             :: wehrh, wehrb, ho2_z, hte_z, hph_z, wsp_UW, WSP_OW
+   real, dimension(azStrs,50)          :: ho2z_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hNh4z_z, hNO3z_z,hPz_z
+   real, dimension(azStrs,50)          :: hchlkz_z, hchlgz_z, hchlbz_z, hNO2z_z, hSiz_z, htez_z, hgesPz_z, hgesNz_z
+   real, dimension(azStrs,50)          :: hQ_NKz_z, hQ_NBz_z, hQ_NGz_z, hCChlkz_z, hCChlbz_z, hCChlgz_z
+   real, dimension(azStrs,50,2)        :: o2zt, tzt, chlazt, chlkzt, chlgzt, chlbzt, akizt, agrzt, ablzt, NH4zt, NO2zt
+   real, dimension(azStrs,50,2)        :: NO3zt, Pzt, gSizt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt
+   real, dimension(azStrs,50,2)        :: CChlbzt, CChlgzt
+   real, dimension(azStrs,1000)        :: hQaus, ho2, htempw, hlf, hpw, hmw, hph
    
    ilwo2 = 0
    oein = 0.0
@@ -196,7 +215,7 @@ subroutine wehr(wehrh, wehrb, ho2, hQaus, O2zt, htempw, ho2_z, ho2z_z, hlf,   &
    vphW = hph(ESTRNR(istr,nstr),kanz)
    
    ! Berechnung der absoluten Temperatur
-   abst = htempw(ESTRNR(istr,nstr),kanz)+273.16
+   abst = htempw(ESTRNR(istr,nstr),kanz) + 273.15
    tempwW = htempw(ESTRNR(istr,nstr),kanz)
    
    ! Berechnung der negativen Logarithmen der Dissoziationskonstantenl

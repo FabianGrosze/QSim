@@ -32,18 +32,27 @@ subroutine wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, mStra,   &
                    jlWO2, janzWt, janzWs, cpfad, iwied)
    
    use allodim
+   implicit none
    
-   character (len = 1)                     :: cwert
-   character (len = 40)                    :: MODNAME, ERENAME
-   character (len = 255)                   :: cpfad
-   character (len = 275)                   :: pfadstring
-   integer                                 :: azStr, read_error
-   integer,dimension(azStrs)               :: io2Ws, ISWEHR, janzWs, janzWt, mstra, jlwo2
-   integer,dimension(:,:), allocatable     :: itagr, monatr, jahrr
-   
-   real,dimension(azStrs)                  :: wehrb, wehrh
-   real, dimension(:,:,:), allocatable     :: wertwe
-   real, dimension(:,:), allocatable       :: uhrzr
+   integer                                :: nrs, nrsj, mstr_mx, mstr, monats
+   integer                                :: jw, jahrs, iwied, iwe, itags
+   integer                                :: ipwe, ipwes, io2w, ihcon, iee2
+   integer                                :: iee1, ianz_mx
+   integer                                :: azStr, read_error
+   real                                   :: hcon1, ywert, wert2, wert1, uhr_dz
+   real                                   :: uhrz, tempww, str, saettw, r_nrs
+   real                                   :: r_nrs2, r_nrs1, r_nrs0, reyn, qwehr
+   real                                   :: o2uw, o2ow, hcont, hconr, hcon2
+   real                                   :: froude, do2w, dhcon
+   character(1)                           :: cwert
+   character(40)                          :: MODNAME, ERENAME
+   character(255)                         :: cpfad
+   character(275)                         :: pfadstring
+   integer, dimension(azStrs)             :: io2Ws, ISWEHR, janzWs, janzWt, mstra, jlwo2
+   integer, dimension(:,:),   allocatable :: itagr, monatr, jahrr
+   real,    dimension(azStrs)             :: wehrb, wehrh
+   real,    dimension(:,:,:), allocatable :: wertwe
+   real,    dimension(:,:),   allocatable :: uhrzr
    save uhrzr, itagr, monatr, jahrr, wertwe
    
    

@@ -26,10 +26,16 @@
 ! --------------------------------------------------------------------------- !
 
 subroutine einleiter_misch(ns,i,C,Cpart,hcQ,hcQE,CE,rohE,D,dH2D)
-   integer, dimension(1000)        :: ns
-   real                            :: Masseg, Massep, Masse_neu
-   real, dimension(50)             :: Cg, Cpart, dMassep, D
-   real , dimension(50,1000)       :: C
+
+   implicit none
+   
+   integer                    :: n, j, jneu, i
+   real                       :: rohe, qp, qep, hcq, hcqe
+   real                       :: dh2d, ce
+   integer, dimension(1000)   :: ns
+   real                       :: Masseg, Massep
+   real, dimension(50)        :: Cg, Cpart, D
+   real , dimension(50,1000)  :: C
    
    Masseg = 0.0
    Massep = 0.0

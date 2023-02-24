@@ -30,6 +30,7 @@ subroutine km_sys(mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, &
                   iorLeh,mstrLe,abfr,cpfad)
    
    use allodim
+   implicit none
    
    character (len = 255)             :: cpfad
    character (len = 275)             :: pfadstring
@@ -41,6 +42,8 @@ subroutine km_sys(mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs,mWehr,mStas,iorLah, &
    real, dimension(1000)             :: RBkma
    real, dimension(azStrs,100)       :: RBkm, RBkmLe
    real, dimension(azStrs,1000)      :: StaKm
+   integer                           :: mstr, mrb, kk, j, js, ieinl
+   real                              :: hcon1, hcon2
    
    
    pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'

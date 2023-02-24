@@ -215,7 +215,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(42) = "                ir" ! Ingestionsrate der Rotatorien in mg/(l*h) | konsum()
       trans_quant_name(43) = "            zooro2" ! Sauerstoffverbrauch durch Zooplanktonrespiration
       trans_quant_name(44) = "            rO2HNF" ! Respiration HNF ???
-      trans_quant_name(45) = "             SAETT" ! Sauerstoff Sättigungs-Konzentration in mgO2/l
+      trans_quant_name(45) = "          empty_45" ! 
       trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
       trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
       trans_quant_name(48) = "            akitbr" !

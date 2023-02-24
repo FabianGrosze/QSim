@@ -22,6 +22,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    use aparam,    only: Cagr, Caki, Cabl, CZoo, PZoo, NZoo,  ksm, yBAC, rsGBAC, &
                         upBAC, hymxD, hyP1, ksd1, ksd2, GRot,                   &
                         bsbbl, bsbgr, bsbki, csbbl, csbgr, csbki
+   implicit none
+   
    ! ksM    - Halbsaettigungskons. fuer die Aufnahme monomolekularer C-Verbindungen [mgC/l]
    ! YBAC   - Ertragskoeffizient
    ! upBACm - maximale Aufnahmerate 1/d
@@ -78,7 +80,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real, intent(out)    :: BACmua_s     !<
    real, intent(out)    :: bsbct_s      !< mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
    real, intent(out)    :: BSBctP_s     !< Phosphorfreisetzung beim Abbau organischer Kohlenstoffverbidungen
-   real, intent(out)    :: doN_s        !< mineralisierter N-Gehalt in der Wassersäule ; Ammoniumfreisetzung beim Abbau org. C-Verbindungen
+   real, intent(out)    :: doN_s        !< mineralisierter N-Gehalt der Wassersäule; Ammoniumfreisetzung beim Abbau org. C-Verbindungen
    real, intent(out)    :: BSBt_s       !< Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt
    real, intent(out)    :: BSBbet_s     !< Sauerstoffverbrauch durch Organismen auf Makrophyten; Ausgabevariable für bsbtb
    real, intent(out)    :: orgCsd0_s    !< sedimentiertes organisches Material
@@ -99,19 +101,17 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real     :: ddCM1, ddCM2, hyD1, hyD2
    real     :: hupBAC, dCM, resBAC, dBAC, BACt, bsbts
    real     :: fluxd1, fluxd2, fvcb, hconpf
-   real     :: fluxO2, BSBtb
+   real     :: fluxO2, BSBtb, hc1, hc2, fbsgrt, frfgrt
    real     :: g, ust, aSedC, bSedC, CP1sd, CP2sd, BACsd, Crfsd, zellv, qsgr, oc, oc0, wst
    real     :: ceq1, ceq2, ceq3, ceq4, sedCP1, sedCP2, sedBAC, sedCrf
-   integer  :: ised, jsed
    real     :: dCD1t, dCD2t, dCP1t, dCP2t, Creft
    real     :: dorgP, dorgN, orgPn, orgNn
-   real     :: sumC, fakCref
-   real     :: bl01t, bl02t, bl01, bl02, bl0t, bl0 
-   real     :: deltat, hc_wert, k_bsb, obsbt
-   real     :: hc1, hc2, fbsgrt, frfgrt
-   real     :: delbsg, delfrg, delbs, delcs, delCD1, delCD2, delCP1, delCP2, delCM, delBAC
+   real     :: sumC, fakCref, bl01t, bl02t, bl01, bl02, bl0t, bl0 
+   real     :: deltat, hc_wert, k_bsb, obsbt, bact_old, ocsbt_old
+   real     :: obsbt_old, cd1_t_old, cd2_t_old, cp1_t_old, cp2_t_old, cmt_old
    real     :: algb51, algb52, algb53, algb5, algcs1, algcs2, algcs3, algcs
    real     :: zoobsb, zoocsb, ocsbt
+   integer  :: ised, jsed
   
    real, parameter :: bk1 = 0.51
    real, parameter :: bk2 = 0.02
@@ -120,6 +120,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real, parameter :: famP1 = 0.1
    real, parameter :: famP2 = 0.3
    real, parameter :: famR  = 0.1
+   
+   external :: sedimentation, print_clipping
    
    ! =======================================================================
    ! start
@@ -612,22 +614,49 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    frfgrt = 0.0
    if (hc1 > 0.0) frfgrt = max(0.0,min(0.9,(hc2/hc1)))
    
-   delbsg = fbsgr_s - fbsgrt
-   delfrg = frfgr_s - frfgrt
-   delbs  = obsbt   - obsb_s
-   delCD1 = CD1_t   - CD1_s
-   delCD2 = CD2_t   - CD2_s
-   delCP1 = CP1_t   - CP1_s
-   delCP2 = CP2_t   - CP2_s
-   delCM  = CMt     - CM_s
-   delBAC = BACt    - bac_s
-   if (obsbt < 0.0) obsbt = max(0.0, (obsb_s/(obsb_s + abs(delbs )))*obsb_s )
-   if (CD1_t < 0.0) CD1_t = max(0.0, (CD1_s /(CD1_s  + abs(delCD1)))*CD1_s  )
-   if (CD2_t < 0.0) CD2_t = max(0.0, (CD2_s /(CD2_s  + abs(delCD2)))*CD2_s  )
-   if (CP1_t < 0.0) CP1_t = max(0.0, (CP1_s /(CP1_s  + abs(delCP1)))*CP1_s  )
-   if (CP2_t < 0.0) CP2_t = max(0.0, (CP2_s /(CP2_s  + abs(delCP2)))*CP2_s  )
-   if (CMt   < 0.0) CMt   = max(0.0, (CM_s  /(CM_s   + abs(delCM )))*CM_s   )
-   if (BACt  < 0.0) BACt  = max(0.0, (bac_s /(bac_s  + abs(delBAC)))*bac_s  )
+   
+   ! TODO (Schönung, february 2023): Add units in print_clipping
+   if (obsbt < 0.0) then 
+      obsbt_old = obsbt
+      obsbt = max(0.0, (obsb_s/(obsb_s + abs(obsbt - obsb_s))) * obsb_s)
+      call print_clipping("organic_carbon", "obsbt", obsbt_old, obsbt, "")
+   endif
+   
+   if (cd1_t < 0.0) then
+      cd1_t_old = cd1_t
+      cd1_t = max(0.0, (cd1_s /(cd1_s + abs(cd1_t - cd1_s))) * cd1_s)
+      call print_clipping("organic_carbon", "cd1_t", cd1_t_old, cd1_t, "")
+   endif   
+      
+   if (cd2_t < 0.0) then 
+      cd2_t_old = cd2_t
+      cd2_t = max(0.0, (cd2_s /(cd2_s + abs(cd2_t - cd2_s))) * cd2_s)
+      call print_clipping("organic_carbon", "cd2_t", cd2_t_old, cd2_t, "")
+   endif
+   
+   if (cp1_t < 0.0) then
+      cp1_t_old = cp1_t
+      cp1_t = max(0.0, (cp1_s /(cp1_s + abs(cp1_t - cp1_s))) * cp1_s)
+      call print_clipping("organic_carbon", "cp1_t", cp1_t_old, cp1_t, "")
+   endif
+   
+   if (cp2_t < 0.0) then
+      cp2_t_old = cp2_t
+      cp2_t = max(0.0, (cp2_s /(cp2_s + abs(cp2_t - cp2_s))) * cp2_s)
+      call print_clipping("organic_carbon", "cp2_t", cp2_t_old, cp2_t, "")
+   endif
+   
+   if (cmt   < 0.0) then
+      cmt_old = cmt
+      cmt   = max(0.0, (cm_s  /(cm_s + abs(cmt - cm_s))) * cm_s)
+      call print_clipping("organic_carbon", "cmt", cmt_old, cmt, "")
+   endif
+   
+   if (bact  < 0.0) then
+      bact_old = bact
+      bact  = max(0.0, (bac_s /(bac_s + abs(bact - bac_s))) * bac_s)
+      call print_clipping("organic_carbon", "bact", bact_old, bact, "")
+   endif
    
    ocsbt = Creft              &
          + CD1_t + CD2_t      &
@@ -636,8 +665,10 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + (1. - famR) * (BACt + chnf_s)
    ocsbt = ocsbt * TOC_CSB
    if (ocsbt < 0.0) then
-      delcs = ocsbt - ocsb_s
-      ocsbt = max(0.0, ocsb_s / (ocsb_s + abs(delcs)) *ocsb_s)
+      ocsbt_old = ocsbt
+      ocsbt = max(0.0, ocsb_s / (ocsb_s + abs(ocsbt - ocsb_s)) *ocsb_s)
+      ! TODO (Schönung, february 2023): Add unit
+      call print_clipping("organic_carbon", "ocsbt", ocsbt_old, ocsbt, "")
    endif
    
    ! Neuberechnung von pl0 und nl0

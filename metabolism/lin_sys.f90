@@ -26,7 +26,10 @@
 ! --------------------------------------------------------------------------- !
 subroutine lin_sys(a11,a12,a21,a22,b1,b2,x1,x2)
    
-   double precision       :: s,a11,a12,a21,a22,b1,b2,det
+   implicit none
+   
+   double precision  :: a11,a12,a21,a22,b1,b2,det
+   real              :: x1, x2
    
    det = (a11*a22-a12*a21)
    if (det /= 0.0) then

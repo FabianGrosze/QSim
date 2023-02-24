@@ -25,40 +25,35 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Bestimmug des Reflektionsanteils der direkten Sonnenstrahlung an der Gewässeroberfläche
+!>Berechnung der Chla-Bildung im Zeitschritt
 !! @author Volker Kirchesch
-!! @date 22.09.2010
-subroutine albedo(SH,REFL)
-   ! Literaturangabe !!
+!! @date 12.11.2015
+subroutine c_chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, C_Bio,         &
+                  CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+                  
+   implicit none
    
-   real, dimension(15) :: ALB
+   integer             :: nkz, isyn, iaus
+   real                :: xup_n, xchla, xakres, xagrow, xac
+   real                :: up_n, tflie, pchl, hconz, hconv
+   real                :: hconn, dchl, c_bio, chla_neu, cchl_stern
+   real, dimension(50) :: roh_Chlz, CChlaz
    
-   PI = 22./7.
-   ALB(1) = 100.0
-   ALB(2) = 70.5
-   ALB(3) = 46.0
-   ALB(4) = 32.5
-   ALB(5) = 25.0
-   ALB(6) = 20.0
-   ALB(7) = 15.4
-   ALB(8) = 12.0
-   ALB(9) = 9.5
-   ALB(10) = 8.5
-   ALB(11) = 7.5
-   ALB(12) = 7.0
-   ALB(13) = 6.5
    
-   SHGR = SH*180/PI
-   if (SHGR > 60.0) then
-      REFL = 6.5
-   else
-      N = INT(SHGR/5)+1
-      DALB = ALB(N)-ALB(N+1)
-      DSHGR = SHGR-(N-1)*5
-      ALBINT = DALB/5*DSHGR
-      REFL = ALB(N)-ALBINT
+   up_N = xup_N/C_Bio
+   ! up_N Umrechnung von Std. auf sec.
+   PChl = roh_Chlz(nkz)*up_N/(tflie*86400.)
+   hconz = exp(PChl * tflie*86400.)
+   hconN = exp(xakres*tflie)
+   
+   if (isyn == 1) then     ! Geider (1997)
+      hconV = 1./CChl_Stern
+      dChl = hconV*xaC*1000.*(exp(xagrow*roh_Chlz(nkz)*tflie)-1.)
+      chla_neu = xchla + dChl
+      hconz = chla_neu/xChla
+      hconz = exp((log(chla_neu) -log(xChla)))
    endif
-   REFL = REFL/100
-   REFL = 1-REFL
-   return
-end subroutine albedo
+   CChlaz(nkz) = (hconz/hconN)*(1./CChlaz(nkz))
+   CChlaz(nkz) = max(CChl_Stern,1./CChlaz(nkz))
+
+end subroutine c_chla

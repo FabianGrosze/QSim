@@ -49,6 +49,8 @@ subroutine sasu(itags, monats, geob, geol, sa, su, zg, zlk, dk, tdj)
    ! TODO (Schönung): Define pi globally
    real, parameter :: pi = 22./7.
    
+   external :: qerror, tage
+   
    if (geoB < -90.0  .or. geoB > 90.0 .or. &
        geoL < -180.0 .or. geoL > 180.0) then
       print "(a,f0.2)", "latitude  = ", geob
