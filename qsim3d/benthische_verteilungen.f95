@@ -91,6 +91,7 @@ subroutine gather_benthic()
    !call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine gather_benthic
+
 !----+-----+----
 !> Initialisierung der lokalen Konzentrationen.
 !! \n\n
@@ -98,17 +99,19 @@ subroutine ini_benthic0(nk)
    use modell
    implicit none
    integer nk,j,i, as
+   
    if (meinrang == 0) then ! prozess 0 only
       number_benthic_points = nk
+      
       do j = 1,number_benth_distr ! initialise
          write(benth_distr_name(j),'(18x)')
       end do
+      
       benth_distr_name( 1) = "              tsed"
       benth_distr_name( 2) = "             sised"
       benth_distr_name( 3) = "               pfl"
       benth_distr_name( 4) = "              ssdr"
-      benth_distr_name( 5) = "            Ks_rau"
-      !!! ( 5)= "Nikuradse Sandrauheit in m, Sohlreibungsbeiwert (Rauheit)"
+      benth_distr_name( 5) = "            Ks_rau" ! Nikuradse Sandrauheit in m, Sohlreibungsbeiwert (Rauheit)
       benth_distr_name( 6) = "            orgCsd" ! Gesamtmasse Kohlenstoff, die je Zeitschritt sedimentiert
       benth_distr_name( 7) = "            bsbbet" ! Ausgabekonzentration Sauerstoffverbrauch durch Organismen auf Makrophyten
       benth_distr_name( 8) = "              hJO2" ! Sauerstoffzehrung des Sediments gO2/m² und Zeitschritt
@@ -120,7 +123,7 @@ subroutine ini_benthic0(nk)
       benth_distr_name(14) = "            albewk" ! Wachstum benthischer kiesel-Algen
       benth_distr_name(15) = "             resdr" ! Respirationsrate benthischer Filtrierer (Dreissena-Muscheln)
       benth_distr_name(16) = "            hschlr" ! Sauerstoffzehrung durch das Sediments, Ausgabe in mgO2/(l*h)
-      benth_distr_name(17) = "            so2ein" ! potentieller Sauerstoffeintrag aus der Luft (Ausgabe) [mgO2/l/h]
+      benth_distr_name(17) = "          empty_17" 
       benth_distr_name(18) = "            dO2o2D" ! Beiwert Oberflächenbelüftung ? (oxygen) war bbei2D
       benth_distr_name(19) = "            o2ein1" ! Sauerstoffeintrag aus der Luft (Ausgabe)
       benth_distr_name(20) = "            abeowg" ! Sauerstoffproduktion benthischer Grünalgen
@@ -184,19 +187,23 @@ subroutine ini_benthic0(nk)
       !benth_distr_name(47)= "           uedau35" ! Überstaudauer 35-unendl.
       !benth_distr_name()= "            " !
       !allocate (benthic_distribution(number_benth_distr*number_benthic_points), stat = as )
-      allocate (benthic_distribution(number_benth_distr*part*proz_anz), stat = as )
+      allocate(benthic_distribution(number_benth_distr*part*proz_anz), stat = as)
+      
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate benthic_distribution :', as
          call qerror(fehler)
       end if
+      
       do i = 1,number_benthic_points ! all i verticals
          do j = 1,number_benth_distr ! initialise
-            benthic_distribution(j+(i-1)*number_benth_distr) = 0.0 !!!####!0.0
+            benthic_distribution(j+(i-1)*number_benth_distr) = 0.0
          end do
       end do
+      
       do j = 1,number_benth_distr ! default no output
          output_benth_distr(j) = .false.
       end do
+      
       ! vorbelegen
       !do i=1,number_benthic_points !
       !benthic_distribution(1,k)=  4.0 !! Sediment-Temperatur Elbe-Ästuar Jahresanfang 2006

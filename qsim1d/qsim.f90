@@ -68,7 +68,7 @@ program qsim
    integer         :: mend, istriz_neu, isim_end, nwaerm, izeits
    integer         :: jpoin1, ico, ke, itagv, monatv
    integer         :: jahrv, jtage, ianfan, itag_schr, i
-   real            :: lat_k, o2ein
+   real            :: lat_k
    real            :: mikonss, mxkonss, bxcoli,algae_biomass
    real            :: POM_sed, BedGS, xsedvvertz
    real            :: dh2d, geol, geob, uhrs, uhrz
@@ -361,7 +361,7 @@ program qsim
    real, dimension(:,:), allocatable       :: bfhgau, bagrau, babszo, bzres1, bzres2, bzexki, bzexgr, brmuas, bzexbl
    real, dimension(:,:), allocatable       :: biras, brakr, brbar, bfssgr, bfbsgr, bfrfgr, bexdvk, bexdvg, bsgon, bsedx0
    real, dimension(:,:), allocatable       :: bexdvb, bdon, bsusn, bbettn, bsuso, bagn4, bakn4, bagn3, babn4, babn3
-   real, dimension(:,:), allocatable       :: bdalgo, bdalgao,babeowg, babeowk, babeorg, babeork, bzooro2, bo2ein, bo2ein1, balgo
+   real, dimension(:,:), allocatable       :: bdalgo, bdalgao,babeowg, babeowk, babeorg, babeork, bzooro2, bo2ein1, balgo
    real, dimension(:,:), allocatable       :: bsusn2, bpfln1, bpfln2
    real, dimension(:,:), allocatable       :: bakn3, bsedn, bbvhnf, bsdbsb, bbsbbe, bdfaek, bdfaeg, bdfaeb, bdfaes
    real, dimension(:,:), allocatable       :: bssdr, borgcs, borgcs_abb, bbsbct, bbsbcp, bcm, bbac, bhnfbs, bbsbhn
@@ -693,7 +693,7 @@ program qsim
    allocate(bdalgo(azStrs,ialloc2), bdalgao(azStrs,ialloc2), babeowg(azStrs,ialloc2))
    allocate(babeowk(azStrs,ialloc2), balgo(azStrs,ialloc2))
    allocate(babeorg(azStrs,ialloc2), babeork(azStrs,ialloc2), bzooro2(azStrs,ialloc2))
-   allocate(bo2ein(azStrs,ialloc2), bo2ein1(azStrs,ialloc2))
+   allocate(bo2ein1(azStrs,ialloc2))
    allocate(bsusn2(azstrs,ialloc2), bpfln1(azstrs,ialloc2), bpfln2(azstrs,ialloc2))
    allocate(bagn4(azStrs,ialloc2), bakn4(azStrs,ialloc2), bagn3(azStrs,ialloc2), babn4(azStrs,ialloc2))
    allocate(babn3(azStrs,ialloc2), bakn3(azStrs,ialloc2), bsedn(azStrs,ialloc2), bBVHNF(azStrs,ialloc2))
@@ -6054,7 +6054,7 @@ program qsim
                   iPhy, tflie,                                                     &
                   dalgo(ior), dalgao(ior), algo, abeowg(ior), abeowk(ior),         &
                   abeorg(ior), abeork(ior), zooro2(ior), hSchlr(mstr,ior),         &
-                  o2ein, o2ein1(ior),                                              &
+                  o2ein1(ior),                                                     &
                   kontroll, jjj)
          
          if (isnan(vo2(ior))) then
@@ -6075,7 +6075,7 @@ program qsim
                      iPhy, tflie,                                                                                  &
                      bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
                      babeorg(mstr,ior), babeork(mstr,ior), bzooro2(mstr,ior), bschlr(mstr,ior),                    &
-                     bo2ein(mstr,ior), bo2ein1(mstr,ior),                                                          &
+                     bo2ein1(mstr,ior),                                                                            &
                      kontroll, jjj)
             
             ! Mixing of main river and groyne-fields
