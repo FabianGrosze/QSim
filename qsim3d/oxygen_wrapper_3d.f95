@@ -114,7 +114,6 @@ subroutine oxygen_wrapper_3d(i)
                benthic_distribution_p(23+(i-1)*number_benth_distr),  & ! abeork_s
                transfer_quantity_p(43+(i-1)*number_trans_quant),     & ! zooro2_s
                benthic_distribution_p(16+(i-1)*number_benth_distr),  & ! hSchlr_s
-               benthic_distribution_p(17+(i-1)*number_benth_distr),  & ! o2ein
                benthic_distribution_p(19+(i-1)*number_benth_distr),  & ! O2ein1_s
                kontroll, iglob)
    

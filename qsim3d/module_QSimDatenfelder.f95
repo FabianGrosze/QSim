@@ -277,14 +277,17 @@ module QSimDatenfelder
    real, dimension(1000)               :: SKmor
    !>  \ref doscf
    real, dimension(1000)               :: DOSCF
-   !                                       Übergabekonzentrationen Konzentrationen
+   
+   
+   ! Übergabekonzentrationen
    real, dimension(50,1000)            :: up_NKz, up_NGz, up_NBz, up_Siz, up_PKz, up_PGz, up_PBz, up_N2z
    real, dimension(1000)               :: bsbt, bsbctP, doN, BACmua
    real, dimension(1000)               :: abszo, dkimor, dgrmor, dblmor, BSBHNF, HNFBAC
    real, dimension(1000)               :: drfaek, drfaeg, drfaeb, zexki, zexgr, zexbl
    real, dimension(1000)               :: dorgSS, dalgki, dalggr, dalgbl, dalgak, dalgag, dalgab
    real, dimension(1000)               :: vco2, dzres1, dzres2, susn
-   !                                       benthische Verteilungen
+   
+   ! benthische Verteilungen
    real, dimension(1000)               :: tsed    ! Temperatur des Sediments
    !>  \ref sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
    real, dimension(1000)               :: sised   ! Menge an Silikat an der Gewässersohle infolge sedimentierter Algen (aufsummiert für den Simulationszeitraum) in algaeski()
@@ -306,8 +309,8 @@ module QSimDatenfelder
    real, dimension(50,1000)            :: hJO2    ! Sauerstoffverbrauch des Sediments (in allen Schichten ???)
    real, dimension(1000)               :: cmatki  ! Abspülung benthischer kiesel-Algen
    real, dimension(1000)               :: cmatgr  ! Abspülung benthischer gruen-Algen
-   !!--------------------------------------------------------------------------------------------
-   !    integer                             :: ieros, iph !!jetzt in module::modell
+   
+   
    !>  \anchor ieinls =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
    integer, dimension(50)              :: ieinLs
    !>  \anchor iorla =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
@@ -456,45 +459,51 @@ module QSimDatenfelder
    real    :: frfgrs
    !>  \anchor fbsgrs = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real    :: fbsgrs
-   ! ph:
-   real, dimension(100)       :: eph,emw,elf,eca
-   real, dimension(100)       :: elfL, caL ! Linienenleitung?
-   real, dimension(20)        :: wge
-   real(kind = 8)               :: oh,h,k1,k2 !!wy
-   real                       :: MUE,lgk1,lgk2,lgkca,lgh,lgoh,moco2,mohco3,moco3
-   real                       :: mwv,mwt,lft, mgco2,mghco3,mgco3,kca,moca,lfv
-   real, dimension(1000)      :: po2p,po2r
-   integer, dimension(azStrs,ialloc2)            :: IDWe
-   character(2)               :: cwert
-   ! po4s:
-   real ep(100)
-   real egesP(100)
-   real epl0(100)
-   real gPL(100),gesPL(100)
-   real gelpz1(50,1000)
-   real gelpzt(50),segelP(50)
-   real agrP(50),akiP(50),ablP(50),hJPO4(50,1000),hcgelPz(50)
-   real hcgelpEz(50)
-   ! silikat:
-   real, dimension(50)           :: Sizt,hcSiEz,akisi,hcSiz
-   real, dimension(100)          :: esi,SiL
-   real, dimension(1000)         :: SiRuek
+   
+   ! ph
+   real, dimension(100)               :: eph,emw,elf,eca
+   real, dimension(100)               :: elfL, caL 
+   real, dimension(20)                :: wge
+   real(kind = 8)                     :: oh,h,k1,k2 !!wy
+   real                               :: MUE,lgk1,lgk2,lgkca,lgh,lgoh,moco2,mohco3,moco3
+   real                               :: mwv,mwt,lft, mgco2,mghco3,mgco3,kca,moca,lfv
+   real, dimension(1000)              :: po2p,po2r
+   integer, dimension(azStrs,ialloc2) :: IDWe
+   character(2)                       :: cwert
+   
+   ! phosphor
+   real, dimension(100)         :: ep
+   real, dimension(100)         :: egesp
+   real, dimension(100)         :: epl0
+   real, dimension(100)         :: gpl, gespl
+   real, dimension(50,1000)     :: gelpz1
+   real, dimension(50)          :: gelpzt, segelp
+   real, dimension(50)          :: agrp, akip, ablp
+   real, dimension(50,1000)     :: hjpo4
+   real, dimension(50)          :: hcgelpz
+   real, dimension(50)          :: hcgelpez
+   
+   ! silicate
+   real, dimension(50)          :: sizt, hcsiez, akisi, hcsiz
+   real, dimension(100)         :: esi,sil
+   real, dimension(1000)        :: siruek
    
    ! oxygen
-   real, dimension(1000)         :: dalgo, dalgao, o2ein1, dO2o2D, salgo, so2ein
-   real, dimension(1000)         :: abeowg, abeorg, abeowk, abeork, ro2dr
-   real, dimension(1000)         :: zooro2, rO2HNF, vz11
-   real, dimension(azStrs,1000)  :: hschlr
-   real, dimension(50,1000)      :: vo2z1, hcvo2z, vz1
-   real, dimension(50,1000)      :: algaoz
-   real, dimension(100)          :: eo2, etemp
-   real, dimension(50)           :: vo2zt, seo2, hcvo2_2D, vo2e, hco2Ez, Cpart, D
-   real                          :: zwgmes
+   real, dimension(1000)        :: dalgo, dalgao, o2ein1, do2o2d, salgo, so2ein
+   real, dimension(1000)        :: abeowg, abeorg, abeowk, abeork, ro2dr
+   real, dimension(1000)        :: zooro2, ro2hnf, vz11
+   real, dimension(azstrs,1000) :: hschlr
+   real, dimension(50,1000)     :: vo2z1, hcvo2z, vz1
+   real, dimension(50,1000)     :: algaoz
+   real, dimension(100)         :: eo2, etemp
+   real, dimension(50)          :: vo2zt, seo2, hcvo2_2d, vo2e, hco2ez, cpart, d
+   real                         :: zwgmes
    !>  \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe *dC_DenW* \n
    !! im qsim hauptprogramm auf den konstanten Wert = 3.1  gesetzt. (in QSim3d ebenfalls)
-   real    :: TOC_CSB
+   real                          :: TOC_CSB
+   
    ! temperw
-   !! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten !!
+   ! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten
    real                        :: lagem
    real, dimension(20)         :: ro, wtyp, cloud, glob
    real, dimension(1000)       :: templ,fluxT1
@@ -507,7 +516,7 @@ module QSimDatenfelder
    real, dimension(azStrs,1000)    :: hWS
    real, dimension(azStrs,1000)    :: htempw
    real, dimension(azStrs,50,1000) :: htempz
-   ! bisher implizit definiert:
+   
    integer                     :: irhkw, nwaerm
    real                        :: sonnenaufgang, sonnenuntergang
    ! ### ilang = 0 : Vorlauf (1d) wird nicht abgelegt, danach ilang = 1 ###
@@ -533,13 +542,15 @@ module QSimDatenfelder
    real, dimension(azStrs,50,1000) :: hgesPz
    !> Silizium-Flux aus dem Sediment
    real, dimension(1,1000)   :: hJSi
+   
    !> Stickstoffflüsse
-   real, dimension(azStrs,1000)   :: hFluN3, hJN2
-   real, dimension(1000) ::dC_DenW! C-Abbau durch Denitrifikation in der Wassersäule
+   real, dimension(azStrs,1000)    :: hFluN3, hJN2
+   real, dimension(1000)           :: dC_DenW! C-Abbau durch Denitrifikation in der Wassersäule
    real, dimension(azStrs,50,1000) :: hgesNz
-   real, dimension(1000)         :: JDOC1, JDOC2
-   real, dimension(1000)         :: orgCsd0
-   real, dimension(1,1000)       :: orgCsd_abb
+   real, dimension(1000)           :: JDOC1, JDOC2
+   real, dimension(1000)           :: orgCsd0
+   real, dimension(1,1000)         :: orgCsd_abb
+   
    ! Sediment-bezogenes
    !> \anchor hsedom hSedOM ,SedOM <- POMz, Anteil des organischen Materials im Sediment (0-1)
    real, dimension(azStrs,1000)   :: hSedOM
@@ -560,17 +571,19 @@ module QSimDatenfelder
    !> \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
    real, dimension(1,1000)         :: sedss_mq
 
-   ! mphyt Makrophyten
-   !>    \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
-   !>    \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
-   !      real :: sa, su
-   !>    \anchor itstart itstart = *starttag*
-   !>    \anchor mstart mstart = *startmonat*
-   !>    \anchor itmax itmax = *maxtag*
-   !>    \anchor mmax mmax = *maxmonat*
-   !>    \anchor itend itend = *endtag*
-   !>    \anchor mend mend = *endmonat*
-   integer :: itstart,mstart,itmax,mmax,itend,mend
+   ! macrophytes
+   !> \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
+   !> \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
+   !   real :: sa, su
+   !> \anchor itstart itstart = *starttag*
+   !> \anchor mstart mstart = *startmonat*
+   !> \anchor itmax itmax = *maxtag*
+   !> \anchor mmax mmax = *maxmonat*
+   !> \anchor itend itend = *endtag*
+   !> \anchor mend mend = *endmonat*
+   integer :: itstart, mstart, itmax, mmax, itend, mend
+   
+   
    !! aus temperw_module.f95\n
    !!<table >
    !!<tr><th>Variablen-Name</th><th> Daten-Typ, Feld-Dimension   </th><th>   Beschreibung                     </th></tr>
