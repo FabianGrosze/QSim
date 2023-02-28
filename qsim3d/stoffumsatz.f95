@@ -73,7 +73,7 @@ subroutine stoffumsatz()
                end do
                
                ! corophium [turend off]
-               call coroph_huelle(i)
+               call corophium_wrapper_3d(i)
                
                ! dreissena
                call dreissen_huelle(i)
