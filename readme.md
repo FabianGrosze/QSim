@@ -1,6 +1,9 @@
 # QSim 14
 
 ## 14.09
+### 14.09.28
+* Create module and corefunction for corophium (note this module is currently turned off)
+
 ### 14.09.27
 * fixed initialisation of photoinhibition of cyanobacteria in groyne field
 
