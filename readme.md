@@ -1,6 +1,9 @@
 # QSim 14
 
 ## 14.09
+### 14.09.27
+* fixed initialisation of photoinhibition of cyanobacteria in groyne field
+
 ### 14.09.26
 * bug fixing and partial refactoring (incl. commenting) of Dreissena routine
 

@@ -7755,6 +7755,7 @@ program qsim
          bsbmue(mstr,:) = 0.0
          bshek(mstr,:) = 0.0
          bsheg(mstr,:) = 0.0
+         bsheb(mstr,:) = 0.0
          bskre(mstr,:) = 0.0
          bsgre(mstr,:) = 0.0
          bsbre(mstr,:) = 0.0
