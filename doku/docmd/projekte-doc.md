@@ -29,7 +29,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   verschiedenen stationären Strömungen simuliert. So können im Ereignisfall, 
   z.B. einer unfallbedingten Ableitung aus einem Kernkraftwerk, 
   Konzentrationserhöhungen und -durchgänge prognostiziert werden. \n
-  Ansprechpartnerin: Rike Völpel (voelpel[at]bafg.de) 
+  Ansprechperson: Rike Völpel (voelpel[at]bafg.de) 
   
   \n
 
@@ -42,7 +42,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Blaualgen genannt) im Zusammenhang mit dem Klimawandel.
   <a href="https://www.bmvi-expertennetzwerk.de/DE/Home/home_node.html"> 
   BMDV Expertennetzwerk </a>  \n 
-  Ansprechpartnerin: Mayra Ishikawa (Ishikawa[at]bafg.de); 
+  Ansprechpersonen: Mayra Ishikawa (Ishikawa[at]bafg.de); 
   Marieke Frassl (frassl[at]bafg.de)
   
   \n
@@ -59,7 +59,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   prognostiziert. Die Daten werden auf dem 
   <a href="https://ws-klimaportal.bafg.de"> WS-Klimaportal </a> 
   der BfG zur Verfügung gestellt. \n
-  Ansprechpartnerin: Marieke Frassl (frassl[at]bafg.de); Benjamin Schima 
+  Ansprechpersonen: Marieke Frassl (frassl[at]bafg.de); Benjamin Schima 
   (schima[at]bafg.de)
   
   \n
@@ -75,10 +75,25 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   sowie kontinuierliche Beobachtung und Dokumentation der Auswirkungen des 
   Temperaturanstiegs und ggf. Sauerstoffmangels anhand gemeinsam erarbeiteter 
   Kennwerte.  \n
-  Ansprechpartnerinnen: Tanja Bergfeld-Wiedemann (Bergfeld-Wiedemann[at]bafg.de); 
+  Ansprechpersonen: Tanja Bergfeld-Wiedemann (Bergfeld-Wiedemann[at]bafg.de); 
   Marieke Frassl (frassl[at]bafg.de)
    
   \n 
+  
+* __FAP__ - Modellierung des Sauerstoffhaushalts der Tideelbe im Rahmen der
+  Beweissicherung zur Fahrrinnenanpassung (2023-2025) \n 
+  Im Rahmen der Beweissicherung zur Fahrrinnenanpassung (FAP) wird unter 
+  Verwendung von hydrodynamischen Antriebsdaten aus UnTRIM² (Modell der 
+  Bundesanstalt für Wasserbau) und des lateral aufgelösten, tiefengemittelten 
+  QSim3D die Sauerstoffdynamik der Tideelbe über einen Zeitraum von ein bis zwei 
+  Dekaden simuliert. Die Modellergebnisse werden hinsichtlich der natürlichen
+  Variabilität des Systems und der Sauerstoffbedingungen im Ästuar analysiert, 
+  um mögliche mit der FAP einhergegangene Veränderungen im Vergleich zu
+  zwischenjährlichen Schwankungen aufgrund weiterer Einflussfaktoren 
+  einzuordnen. \n
+  Ansprechperson: Fabian Große, (grosse[at]bafg.de)
+  
+  \n  
 
 * __Fluxam__ - Dynamik der Wasser- und Stoffströme in Flüssen – Re-Analyse und 
   Vorhersage (2022 - 2024) \n
@@ -94,8 +109,8 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Daraus ergeben sich Hinweise auf Adsorption, Desorption, Umsetzung oder 
   Remobilisierung im Einzugsgebiet. Modellgestützt wird auch eine Vorhersage 
   von Stoffkonzentrationen angestrebt. \n
-  Ansprechpartner/-innen: Daniel Schwandt (schwandt[at]bafg.de), Rike Völpel, 
-  Gerd Hübner, Tanja Bergfeld-Wiedemann, Annika Linkhorst
+  Ansprechpersonen: Daniel Schwandt (schwandt[at]bafg.de), Rike Völpel, 
+  Gerd Hübner, Tanja Bergfeld-Wiedemann, Annika Linkhorst, Manoj Sanyasee
   
   \n
   
@@ -112,7 +127,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021/2021_11_15_schoenung.html?nn=169148">  
   Vortrag: Verwendung von simulierten Gewässergütedaten in der  
   Habitatmodellierung </a> \n
-  Ansprechpartner/-in: Michael Schönung (schoenung[at]bafg.de), 
+  Ansprechpersonen: Michael Schönung (schoenung[at]bafg.de),
   Nele Oncken (Oncken[at]bafg.de)
 
   \n
@@ -131,7 +146,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   <a href="https://www.bafg.de/DE/05_Wissen/02_Veranst/2021/2021_11_15_schima.html?nn=169148"> 
   Vortrag: Integrationspotenzial in der Modelllandschaft der BfG am Beispiel 
   der Schwebstoffmodellierung </a>
-  Ansprechpartnerin: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
+  Ansprechpersonen: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
   \n\n
 
 ## External projects ##
