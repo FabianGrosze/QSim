@@ -115,7 +115,6 @@ contains
 !!
 !! Beschreibung siehe: \ref lnk_globale_parameter
 !! Quelle: module_aparam.f90
-subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
 subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    
    implicit none
@@ -124,7 +123,6 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    integer, intent(in)        :: iwsim, icoli, ieros, ischwer
    
    
-   integer                    :: io_error, io_error_sum
    integer                    :: io_error, io_error_sum, meinrang
    character(500)             :: dateiname, message
    real                       :: dummy

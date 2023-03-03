@@ -58,7 +58,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
       print*,'gl=',glZns,glCads,glCus,glNis,glAss,glPbs,glCrs,glFes,glHgs,glMns,glUs
    endif
    
-   external :: sedimentbelastung, verteilungskoeff
+   !external :: sedimentbelastung, verteilungskoeff
    
    ! Berechnung der Verteilungskoeffizienten
    ! VTKoeffZn, VTKoeffCu, VTKoeffCad, VTKoeffNi

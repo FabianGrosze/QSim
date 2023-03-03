@@ -65,7 +65,7 @@ subroutine ErgebTParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="CHNF" Text="Heterotrophe Nanoflagellaten" Unit="Ind/ml" Format="F8.1" Help="Heterotrophe Nanoflagellaten" Group="1" Quantity="CHNF" />'
    write(1, '(A)') '  <Parameter Ident="COLIY" Text="Fäkalcoliforme Bakterien" Unit="Ind/100 ml" Format="E9.2" Help="Fäkalcoliforme Bakterien" Group="1" Quantity="COLIY" />'
    write(1, '(A)') '  <Parameter Ident="DLY" Text="longitudinale Dispersion" Unit="m/s2" Format="F7.2" Help="longitudinale Dispersion" Group="1" Quantity="DLY" />'
-   write(1, '(A)') '  <Parameter Ident="SEDHG" Text="Sedimentdicke" Unit="mm" Format="F12.6" Help="Sedimentdicke" Group="1" Quantity="SEDHG" />'
+   write(1, '(A)') '  <Parameter Ident="SEDHG" Text="not in use any more" Unit="-" Format="F12.6" Help="not in use any more" Group="1" Quantity="SEDHG" />'
    write(1, '(A)') '  <Parameter Ident="TRACER" Text="Tracerkonzentration" Unit="µg/l" Format="F9.3" Help="" Group="1" Quantity="TRACER" />'
    write(1, '(A)') '  <Parameter Ident="BSBtY" Text="Sauerstoffverbrauch d. Kohlenstoffabbau in der Wassersäule" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'
    write(1, '(A)') '  <Parameter Ident="susNOy" Text="Sauerstoffverbr. d. Nitrifik. in der Wassersäule" Unit="mgO2/(l*h)" Format="F8.6" Help="" Group="Raten (O2)" Quantity="" />'

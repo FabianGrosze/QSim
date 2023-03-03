@@ -41,14 +41,14 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
    real, intent(in)    :: vmitt_s   !< Fließgeschwindigkeit [m/s]
    real                :: tau_s     !< aktuelle Sohlschubspannung [kg/m*s²]
    real                :: SSeros_s  !< Erosionsmassenstrom [kg/(m²*s)]
-   real                :: ss_s      !< Schwebstoff ohne Algen(Lebewesen) [mg/l]
-   real                :: ssalg_s   !< Schwebstoff mit Algen [mg/l]
+   real                :: ss_s      !< Schwebstoff ohne Lebewesen [mg/l]
+   real                :: ssalg_s   !< Schwebstoff mit Algen+Konsumenten [mg/l]
    real                :: dsedh_s   !< Sohlhöhenänderung im aktuellen Zeitschritt [mm]
    real                :: tausc_s   !< kritische Sohlschubspannung[kg/m*s²]
    real                :: m_eros_s  !< Erodibilitätsparameter [kg/m²*s] 
    real                :: n_eros_s  !< empirischer Erosionsexponent [-]
-   real                :: sedroh_s  !< Rohdichte des Sediments [kg/m3]
-   real                :: dRero_s   !< Erosionsrate je Zeitschritt [kg/m²]
+   real                :: sedroh_s  !< Sedimentmasse im liegenden Sedimentvolumen [kg/m3]
+   real                :: dRero_s   !< Zwischengröße
    logical, intent(in) :: kontroll  !< debugging
    integer, intent(in) :: ior,mstr  !< debugging
    
@@ -66,12 +66,15 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
    !tau_s = (ust**2) * roh2o
    
    if (tau_s > tausc_s .and. tausc_s > 0.0 .and. sedroh_s > 0.0 .and. tiefe_s > 0.0) then
-      dRero_s = m_eros_s*((tau_s-tausc_s)/tausc_s)**n_eros_s ! Erosionsmassenstrom [kg/(m²*s)]
-      dRero_s = dRero_s * tflie * 86400.                     ! erodierte Masse je m² und Zeitschritt [kg/m²]
-      dsedh_s = 1000.0 * dRero_s/sedroh_s                    ! Sohlhöhenänderung im aktuellen Zeitschritt [mm]
-      SSeros_s = ((dRero_s*1000.)/tiefe_s)                   ! Schwebstoffkonzentrationszunahme je Zeitschritt [mg/l]
-      ss_s = ss_s + SSeros_s                                 ! aktualisierte Schwebstoffkonzentration [mg/l]
-      ssalg_s = ssalg_s + SSeros_s
+      SSeros_s = m_eros_s*((tau_s-tausc_s)/tausc_s)**n_eros_s ! Erosionsmassenstrom [kg/(m²*s)]
+      dRero_s = 1000.0 * SSeros_s * tflie * 86400.            ! erodierte Masse je m² und Zeitschritt [g/m²]
+      dsedh_s = dRero_s/sedroh_s                              ! Sohlhöhenänderung im aktuellen Zeitschritt [mm]
+      dRero_s = dRero_s/tiefe_s                               ! Schwebstoffkonzentrationszunahme je Zeitschritt [mg/l]
+      ss_s = ss_s + dRero_s                                   ! aktualisierte Schwebstoffkonzentration [mg/l]
+      ssalg_s = ssalg_s + dRero_s
+   else
+      dsedh_s = 0.0
+      SSeros_s = 0.0
    endif
    
 !   if ((kontroll).or.(ior==5)) then 
@@ -79,7 +82,6 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
 !      print*, 'tau_s,ust,vmitt_s, tflie = ',tau_s,ust,vmitt_s, tflie
 !      print*, 'rau_s,tausc_s,m_eros_s,n_eros_s = ',rau_s,tausc_s,m_eros_s,n_eros_s
 !   endif
-   
 end subroutine erosion_kern
 
 !> bottom friction and friction velocity (Strickler-Formula, kst=1/n  n=Mannings-n)

@@ -29,7 +29,7 @@
 
 SHELL=/usr/bin/bash
 
-PV='qsim3d_schwermetall21'
+PV='qsim3d_schwermetall27'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -89,13 +89,19 @@ Q3 = version.co trans_read.co \
 	silicate_wrapper_3d.o \
 	organic_carbon_wrapper_3d.o \
 	ph_wrapper_3d.o \
-	algae_huelle.o konsum_huelle.o hnf_huelle.o dreissen_huelle.o \
+	algae_huelle.o \
+	konsum_huelle.o \
+	hnf_wrapper_3d.o \
+	dreissen_huelle.o \
+	coroph_huelle.o \
 	ausgeben_casu.o ausgeben_untrim.o ausgabe.o \
 	eingabe.o initialisieren.o randbedingungen.o \
 	schwermetalle_huelle.o erosion_huelle.o schweb_huelle.o\
 	stofftransport_casu.o \
 	stofftransport_untrim.o stofftransport.o\
-	sedflux_huelle.o albenth_huelle.o mphyt_huelle.o\
+	sedflux_huelle.o  \
+	albenth_wrapper_3d.o \
+	macrophytes_wrapper_3d.o\
 	coliform_bacteria_wrapper_3d.o\
 	stoffumsatz.o \
 	QSim3D.o

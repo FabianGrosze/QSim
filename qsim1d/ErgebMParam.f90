@@ -272,7 +272,7 @@ subroutine ErgebMParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="XZOORO" Text="Sauerstoffverbrauch durch Zooplankter" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="ZOORO" />'
    write(1, '(A)') '  <Parameter Ident="XPO2P" Text="Sauerstoffproduktion durch Makrophyten" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="PO2P" />'
    write(1, '(A)') '  <Parameter Ident="XPO2R" Text="Sauerstoffverbrauch durch Makrophyten" Unit="mgO2/(l*h)" Format="F7.4" Help="" Group="Bio" Quantity="PO2R" />'
-   write(1, '(A)') '  <Parameter Ident="SEDHY" Text="Sedimenthöhe" Unit="mm" Format="F12.6" Help="" Group="Sediment" Quantity="SEDHY" />'
+   write(1, '(A)') '  <Parameter Ident="SEDHY" Text="not in use any more" Unit="-" Format="F12.6" Help="" Group="Sediment" Quantity="SEDHY" />'
    write(1, '(A)') '  <Parameter Ident="BMIBSB" Text="C-BSB5 im Buhnenfeld, Tages-Minimum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Minimum" Group="Buhne" Quantity="BBSB5" Aggregat="Min" />'
    write(1, '(A)') '  <Parameter Ident="BXBSB5" Text="C-BSB5 im Buhnenfeld, Tagesmittelwert" Unit="mg/l" Format="F6.2" Help=" C-BSB5 im Buhnenfeld, Tagesmittelwert" Group="Buhne" Quantity="BBSB5" Aggregat="Avg" />'
    write(1, '(A)') '  <Parameter Ident="BMXBSB" Text="C-BSB5 im Buhnenfeld, Tages-Maximum" Unit="mg/l" Format="F6.2" Help="C-BSB5 im Buhnenfeld, Tages-Maximum" Group="Buhne" Quantity="BBSB5" Aggregat="Max" />'
