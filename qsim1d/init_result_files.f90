@@ -35,15 +35,20 @@
 !! * ausgabe158_algae.csv (optional)
 !! @author Michael Schönung
 !! @date 20.06.2022
-subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
+subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+!subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
+
+   use allodim
    implicit none
    
    ! --- dummy arguments ---
    character(len = 255), intent(in) :: cpfad           !< path to directory for output
    character(len = *),   intent(in) :: modell          !< modelname (Gerris)
    character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
-   logical, intent(in)              :: write_csv_files !< switch to turn of .csv-outputs
-   
+   logical, intent(in)              :: write_csv_output !< switch to turn of .csv-outputs
+   integer, dimension(output_crossections) :: output_strang, output_querprofil
+   integer                                 :: anz_csv_output
+
    ! --- local variables ---
    character(275) :: pfadstring
    character(8)   :: versionstext
@@ -88,8 +93,11 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    pfadstring =  trim(adjustl(cpfad)) // 'ERGEB2D.txt'
    open(unit = 255, file = pfadstring, iostat = open_error)
    close(255)
+
    
-   if (write_csv_files) then 
+   if (write_csv_output) then 
+      call ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+   
       ! --- Ausgabe 156 ---
       print*, '> ausgabe156.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
@@ -121,3 +129,91 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
    close(u_file1, status = "delete")
       
 end subroutine init_result_files
+
+!> reads ausgabe_querprofile.txt in order to restrict output to certain cross-sections
+!! Jens Wyrwa 2022
+!!
+subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+
+   use allodim
+   implicit none
+   character(275) :: pfadstring,fehler
+   character(len = 255), intent(in) :: cpfad           !< path to directory for output
+   character(len = *),   intent(in) :: modell          !< modelname (Gerris)
+   character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
+   logical, intent(in)              :: write_csv_output !< switch to turn of .csv-outputs
+   character (len = 2000) :: ctext
+
+   ! --- local variables ---
+   integer        :: open_error, ionumber, nn, alloc_status, io_error
+   integer, dimension(output_crossections) :: output_strang, output_querprofil
+   integer                                 :: anz_csv_output
+   logical zeile
+
+   anz_csv_output=0
+   nn = 0
+   ionumber = 777
+
+   pfadstring =  trim(adjustl(cpfad)) // 'ausgabe_querprofile.txt'
+   open ( unit = ionumber , file = pfadstring, status = 'old', action = 'read ', iostat = open_error )
+   if (open_error /= 0) then
+      print*,'keine ausgabe_querprofile.txt'
+      return
+   end if ! open_error.ne.0
+   
+   do while ( zeile(ionumber,ctext)) !! zunächst Anzahl der Ganglinien feststellen
+      anz_csv_output = anz_csv_output+1
+      read(ctext,*,iostat = io_error)nn
+      if (io_error /= 0) then
+         write(fehler,*)'nn nicht richtig aus ausgabe_querprofile.txt gelesen'
+         call qerror(fehler)
+      end if ! io_error.ne.0
+   end do ! zeile
+   print*,anz_csv_output,' querprofile aus ausgabe_querprofile.txt gelesen'
+
+   if(anz_csv_output > output_crossections)then
+      write(fehler,*)'ausgabe_querprofil too many cross-sections anz_csv_output>output_crossections:',anz_csv_output,output_crossections
+      call qerror(fehler)
+   endif
+
+   rewind (ionumber) ! ausgabe_querprofile.txt zurückspulen
+   nn=0
+   output_strang=0
+   output_querprofil=0
+   do while ( zeile(ionumber,ctext)) !! all lines
+      nn = nn+1
+      if (nn > anz_csv_output) then
+         write(fehler,*)'Fehler bei ausgabe_querprofile.txt nochmal lesen ',nn,anz_csv_output
+         call qerror(fehler)
+      end if
+      read(ctext,*,iostat = io_error)output_strang(nn), output_querprofil(nn)
+      if (io_error /= 0) then
+         write(fehler,*)'reading output_strang, output_querprofil failed  nn,alloc_status= ',nn,alloc_status
+         call qerror(fehler)
+      end if !
+   end do ! alle zeilen
+   close (ionumber) ! ausgabe_querprofile.txt wieder geschlossen
+   print*,' ausgabe_querprofil finished | anz_csv_output = ',anz_csv_output
+
+end subroutine ausgabe_querprofil
+
+   !----+-----+----
+   !> Dient dem Einlesen der nächsten nicht-#-Kommentar Zeile \n\n
+   !! \n\n
+   logical function zeile(ion,ctext)
+      implicit none
+      character (len = 2000) :: ctext
+      integer :: io_error, ion
+      zeile = .FALSE.
+      do
+         read(ion, '(A)', iostat = io_error ) ctext
+         if (io_error /= 0) then
+            !!print*,'io_error SUBROUTINE zeile'
+            zeile = .FALSE.
+            return
+         end if ! io_error.ne.0
+         if (ctext(1:1) /= '#') exit
+      end do ! alle Zeilen
+      zeile = .TRUE.
+      return
+   end function zeile

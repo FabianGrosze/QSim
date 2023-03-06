@@ -90,6 +90,13 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
   \n
   
+* __Möhne__
+  Effect of deep water from reservoirs on the water quality of downstream river reaches using the example of Möhne River
+  Master Thesis, Lisa Burghardt, RWTH Aachen, in Cooperation with Ruhrverband Essen
+  Ansprechpartnerin: Jens Wyrwa (Wyrwa[at]bafg.de)
+
+  \n
+  
 * __MUG__ - Einzugsgebietsweite Integration von Wasser- und Stoffflussmodellen
   der BfG (2020 - 2023) \n
   Das Projekt „Einzugsgebietsweite Integration von Wasser- und 
@@ -105,7 +112,28 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   Vortrag: Integrationspotenzial in der Modelllandschaft der BfG am Beispiel 
   der Schwebstoffmodellierung </a>
   Ansprechpartnerin: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
-  \n\n
+
+  \n
+  
+* __QUESTOSI__ - Querschnittsaufgabe Stofftransport-Simulationen am Beispiel der Weiterentwicklung von Verfahren und Anwendungsfällen zur integrierten Modellierung der Nebenräume von Ästuaren
+  der BfG (2023 - 2025) \n
+  In QUESTOSI soll die Transportmodellierung im Gewässergütemodell QSim
+  unter Miteinbeziehung der Stoffumsatzmodule für die Anwendung in Nebenräumen
+  von Ästuaren weiterentwickelt werden. Dies ist erforderlich, um die
+  ökologischen Auswirkungen zukünftig notwendiger Unterhaltungsmaßnahmen
+  auf die Nebenräume besser bewerten zu können.
+  Ansprechpartnerin: Jens Wyrwa (Wyrwa[at]bafg.de); Fabian Große (Grosse[at]bafg.de)
+
+  \n
+  
+* Effect of reduced reservoir discharge in the __Ruhr__ catchment area
+  Untersuchung der Gewässergüte-Änderungen in der Ruhr hervorgerufen durch verringerte Talsperrenabflüsse. 
+  Modellanwendung des Ruhrverbandes.
+  Ansprechpartnerin: Jens Wyrwa (Wyrwa[at]bafg.de); Tanja Bergfeld-Wiedemann (Bergfeld-Wiedemann[at]bafg.de)
+
+  \n
+  
+  \n
 
 ## Vergangene Projekte ##
 * Expertennetzwerk 1.0 \n

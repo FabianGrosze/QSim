@@ -41,7 +41,10 @@ program qsim
    character(201)  :: ctext
    character(275)  :: pfadstring
    character(6000) :: langezeile, message
-   logical         :: kontroll, einmalig, linux,mitsedflux, write_csv_output
+   logical         :: kontroll, einmalig, linux,mitsedflux
+   logical         :: write_csv_output,ausdruck
+   integer, dimension(output_crossections) :: output_strang, output_querprofil
+   integer                                 :: anz_csv_output, iji
    integer         :: open_error, jjj, iior
    integer         :: iend, iwied, ilang, ilbuhn, jlauf
    integer         :: jtag, iergeb, itracer_vor, nndr, jstr
@@ -466,7 +469,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   linux = .true.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -1686,8 +1689,9 @@ program qsim
    ! =========================================================================
    ! initialize result files
    ! =========================================================================
-   call init_result_files(cpfad, modell, cEreig, write_csv_output)
-   
+   !call init_result_files(cpfad, modell, cEreig, write_csv_output)
+   call init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+
    ! ==========================================================================
    ! ABLAUF.txt vorbereiten
    ! ==========================================================================
@@ -8245,15 +8249,20 @@ program qsim
                            ,tracer(iior)
                     
             ! Write results to csv-files for debugging
-            if (write_csv_output) then 
+            ausdruck=.true.
+            do iji=1,anz_csv_output
+               ausdruck=.false.
+               if((output_strang(iji)==mstr).and.(output_querprofil(iji)==iior))then
+                  ausdruck=.true.
+               end if ! output_km
+            end do !iji
+            if (write_csv_output.and.ausdruck) then 
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',STRID(mstr)                      &
                                   ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
                                   ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
                                   ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
                                   ,';',dsedH(mstr,iior),';',tracer(iior)
                write(156,'(a)')adjustl(trim(langezeile))
-               
-               
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
                                   ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                   ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
@@ -8266,7 +8275,7 @@ program qsim
                                   ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
                                   ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
                write(158,'(a)')adjustl(trim(langezeile))
-            endif
+            endif !write_csv_output
             
             write(155,5205)(bsbty(iior)*hcUmt),(susNOy(iior)*hcUmt),(O2ei1y(iior)*hcUmt)                           &
                            ,(dalgoy(iior)*hcUmt),(cchlky(iior)*hcUmt),(cchlgy(iior)*hcUmt),(cchlby(iior)*hcUmt)    &

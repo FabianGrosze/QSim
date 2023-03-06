@@ -43,7 +43,8 @@ module allodim
    integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im strang?
    integer , parameter :: ialloc4 = 250  !> \anchor ialloc4 Sedimentschichten ?
    integer , parameter :: ialloc5 = 50   !> \anchor ialloc5 Tiefenschichtenanzahl
-   
+   integer , parameter :: output_crossections = 700 !> \anchor output_crossections max number output cross-sections
+
 contains
 
    subroutine set_azstrs(azstrs_in)

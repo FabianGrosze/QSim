@@ -36,7 +36,8 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV=qsim1d_$(QSim_version)_dev
+#PV=qsim1d_$(QSim_version)_dev
+PV=qsim1d_schwermetall29
 
 #====================================================================
 
@@ -148,7 +149,7 @@ clean_release: clean usual
 
 clean_debug: clean debug
 
-all: usual save
+all: usual exe save
 
 HERE=`pwd -P`
 NOW=`date +"%-d%m%Y"`
@@ -173,7 +174,7 @@ qsim1d:	$(Q1)
 	$(FC) $(Q1) -L. -lmetabol -o $(PV)
 
 exe:
-	mv -pf ./$(PV) $(MY_BIN)/$(PV)
+	mv ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."
