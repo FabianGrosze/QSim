@@ -469,7 +469,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .true.           ! compile for linux operating system (Windows is .false.)
+   linux = .false.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -8249,13 +8249,13 @@ program qsim
                            ,tracer(iior)
                     
             ! Write results to csv-files for debugging
-            ausdruck=.true.
+            ausdruck=.false.
             do iji=1,anz_csv_output
-               ausdruck=.false.
                if((output_strang(iji)==mstr).and.(output_querprofil(iji)==iior))then
                   ausdruck=.true.
                end if ! output_km
             end do !iji
+            if(anz_csv_output<1)ausdruck=.true.
             if (write_csv_output.and.ausdruck) then 
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',STRID(mstr)                      &
                                   ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
