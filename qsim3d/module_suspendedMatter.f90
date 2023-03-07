@@ -197,7 +197,7 @@ contains
       integer             :: i                      ! loop index
       integer             :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
       integer             :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
-      integer             :: iFill(2)               ! is fill value used (1) or not (0) in .nc file?
+      integer             :: iFill(2)               ! is fill value used (0) or not (1) in .nc file?
       
       real                :: fillValue(2)           ! fill value of netCDF variables
       
@@ -221,8 +221,8 @@ contains
       do i = 1,number_plankt_point
          spm_element(i) = sum(spm_classes_element(i,:))
          if (min(spm_element(i), vol_element(i)) <= 0. .or. &
-             (iFill(1) == 1 .and. abs(spm_element(i)/nClasses - fillValue(1)) <= one) .or. &
-             (iFill(2) == 1 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
+             (iFill(1) == 0 .and. abs(spm_element(i)/nClasses - fillValue(1)) <= one) .or. &
+             (iFill(2) == 0 .and. abs(vol_element(i)          - fillValue(2)) <= one)      ) then
             ! set land values to 0
             spm_element(i) = 0.
          else
