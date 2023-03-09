@@ -12,7 +12,7 @@ subroutine set_cloud_reflectance(cloud_type, cloud_reflectance)
    external             :: qerror
    
    if (cloud_type > 9) then
-      write(message, '(a,i3)') "set_cloud_reflectance.f90: Invalid cloud type - ", cloud_type
+      write(message, '(a,i)') "set_cloud_reflectance.f90: Invalid cloud type - ", cloud_type
       call qerror(trim(message))
    endif
    

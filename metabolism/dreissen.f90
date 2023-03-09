@@ -168,25 +168,26 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    if (monats > 2) NRS = NRS - INT(0.4 * real(MONATS) + 2.3)
    
    ! calculate start and end day of reproduction period (day of year)
-   NRla1a = lait1 + 31 * (laim1 - 1)
-   if (laim1 > 2) NRla1a = NRla1a - INT(0.4 * real(laim1) + 2.3)
+   nrla1a = lait1 + 31 * (laim1 - 1)
+   if (laim1 > 2) nrla1a = nrla1a - int(0.4 * real(laim1) + 2.3)
    nrla1e = nrla1a + laid1
    
    do ior = 1,anze
       
       ! initialise output variables
-      exdrvz      = 0.0
-      exdrvg(ior) = 0.0
-      exdrvk(ior) = 0.0
-      exdrvb(ior) = 0.0
-      resdr(ior)  = 0.0
-      ro2dr(ior)  = 0.0
+      exdrvz      = 0.
+      exdrvg(ior) = 0.
+      exdrvk(ior) = 0.
+      exdrvb(ior) = 0.
+      resdr(ior)  = 0.
+      ro2dr(ior)  = 0.
+      drpfec(ior) = 0.
       
-      if (elen(ior) == 0.0) then
-         algdrg(ior) = 0.0
-         algdrk(ior) = 0.0
-         algdrb(ior) = 0.0
-         volfdr(ior) = 0.0
+      if (elen(ior) == 0.) then
+         algdrg(ior) = 0.
+         algdrk(ior) = 0.
+         algdrb(ior) = 0.
+         volfdr(ior) = 0.
          cycle
       endif
       
