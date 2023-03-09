@@ -24,6 +24,12 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
+   ! Sedimentparameter ehedem:
+   ! M_eros(mstr,:) = 7.5e-4      !! Eingebbar machen!     ###
+   ! n_eros(mstr,:) = 3.2         !! Eingebbar machen!     ###
+   ! tausc(mstr,:)  = 1.25        !! Eingebbar machen!     ###
+   ! sedroh(mstr,:) = 1450.       !! Eingebbar machen!     ###
+   
 
 !> Bestimmung der Erosionsrate
 !! @author Volker Kirchesch Jens Wyrwa
@@ -39,7 +45,7 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
    real, intent(in)    :: tiefe_s   !< mittlere Wassertiefe [m]
    real, intent(in)    :: rau_s     !< Reibungsbeiwert nach Gauckler/Manning/Strickler "Rauhigkeit" [m^1/3/s]
    real, intent(in)    :: vmitt_s   !< Fließgeschwindigkeit [m/s]
-   real                :: tau_s     !< aktuelle Sohlschubspannung [kg/m*s²]
+   real                :: tau_s,tau     !< aktuelle Sohlschubspannung [kg/m*s²]
    real                :: SSeros_s  !< Erosionsmassenstrom [kg/(m²*s)]
    real                :: ss_s      !< Schwebstoff ohne Lebewesen [mg/l]
    real                :: ssalg_s   !< Schwebstoff mit Algen+Konsumenten [mg/l]
@@ -61,9 +67,14 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
    ! --------------------------------------------------------------------------
    
    ! Berechnung der Sohlschubspannung
-   call bottom_friction_strickler(tau_s,ust,rau_s,tiefe_s,vmitt_s)
+   call bottom_friction_strickler(tau,ust,rau_s,tiefe_s,vmitt_s)
    !ust = (((g/rau_s)**0.5) / (tiefe_s**0.166667)) * abs(vmitt_s)
    !tau_s = (ust**2) * roh2o
+      ! 2 316  ! 979-663   ! Elbe-Km 474,5
+      if((mstr==2).and.(ior==316))print*,'erosion_kern Elbe-Km 474,5 htau2,tau=', tau_s,tau
+      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
+      if((mstr==2).and.(ior==512))print*,'erosion_kern Elbe-Km 585,05 htau2,tau=', tau_s,tau
+   tau_s = tau
    
    if (tau_s > tausc_s .and. tausc_s > 0.0 .and. sedroh_s > 0.0 .and. tiefe_s > 0.0) then
       SSeros_s = m_eros_s*((tau_s-tausc_s)/tausc_s)**n_eros_s ! Erosionsmassenstrom [kg/(m²*s)]

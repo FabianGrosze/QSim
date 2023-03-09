@@ -42,7 +42,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                          ,hglHg,hgsHg,egsHg,eglHg,HgSed       &
                          ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
                          ,hglU,hgsU,egsU,eglU,USed            &
-                         ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros       &
+                         ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,hSSeros       &
                          ,ilang,iwied,kontroll,jjj)
    use aparam
    use allodim
@@ -62,8 +62,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
    real                                :: VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
    real, dimension(ialloc1)            :: qeinl, eph, ess
    real, dimension(ialloc2)            :: vabfl, sedss, SSalg, vph, sedalk, sedalb, sedalg
-   real, dimension(azStrs,ialloc2)     :: hssalg, hph
-   real, dimension(ialloc2)            :: SSeros
+   real, dimension(azStrs,ialloc2)     :: hssalg, hph,hSSeros
    real, dimension(azStrs,ialloc1)     :: egsZn, eglZn, egsCad, eglCad, egsCu, eglCu, egsNi, eglNi
    real, dimension(azStrs,ialloc1)     :: egsAs, eglAs, egsPb, eglPb, egsCr, eglCr, egsFe, eglFe
    real, dimension(azStrs,ialloc1)     :: egsHg, eglHg, egsMn, eglMn, egsU, eglU
@@ -112,7 +111,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                                 ,hgsHg(mstr,ior),hglHg(mstr,ior),HgSed(mstr,ior)    &
                                 ,hgsMn(mstr,ior),hglMn(mstr,ior),MnSed(mstr,ior)    &
                                 ,hgsU(mstr,ior),hglU(mstr,ior),USed(mstr,ior)       &
-                                ,anzZeit(mstr,ior),SSeros(ior)                      &
+                                ,anzZeit(mstr,ior),hSSeros(mstr,ior)                &
                                 ,kontroll ,jjj)
       enddo ! ior = 1,anze+1
    endif ! iwied==0
@@ -120,7 +119,6 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
    do j = 1,anze+1 ! Schleife longitudinale Gitterpunkte
       ior = j
       
-      if (ieros == 0)SSeros(ior) = 0.0
       if (ilang == 1) then
          call Sedimentbelastung(SSalg(ior)                                                &
                                 ,hgsZn(mstr,ior),hglZn(mstr,ior),ZnSed(mstr,ior)          &
@@ -134,7 +132,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                                 ,hgsHg(mstr,ior),hglHg(mstr,ior),HgSed(mstr,ior)          &
                                 ,hgsMn(mstr,ior),hglMn(mstr,ior),MnSed(mstr,ior)          &
                                 ,hgsU(mstr,ior),hglU(mstr,ior),USed(mstr,ior)             &
-                                ,anzZeit(mstr,ior),SSeros(ior)   &
+                                ,anzZeit(mstr,ior),hSSeros(mstr,ior)                      &
                                 ,kontroll ,jjj)
       endif
       ior_flag = 0
@@ -478,7 +476,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
       hgsUt = hgsU(mstr,ior)
       
       !if(ior.eq.1)print*,'schwermetalle_kern mstr=',mstr
-      call schwermetalle_kern(hssalg(mstr,ior),SSalg(ior),hph(mstr,ior),vph(ior),SSeros(ior),iformVert &
+      call schwermetalle_kern(hssalg(mstr,ior),SSalg(ior),hph(mstr,ior),vph(ior),hSSeros(mstr,ior),iformVert &
                               ,anzZeit(mstr,ior),sedss(ior),sedalk(ior),sedalg(ior),sedalb(ior)        &
                               ,hgsZnt,hglZnt,hgsCadt,hglCadt               &
                               ,hgsCut,hglCut,hgsNit,hglNit                 &

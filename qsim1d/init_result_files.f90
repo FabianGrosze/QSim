@@ -169,7 +169,6 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
          call qerror(fehler)
       end if ! io_error.ne.0
    end do ! zeile
-   print*,anz_csv_output,' querprofile aus ausgabe_querprofile.txt gelesen'
 
    if(anz_csv_output > output_crossections)then
       write(fehler,*)'ausgabe_querprofil too many cross-sections anz_csv_output>output_crossections:',anz_csv_output,output_crossections
@@ -193,7 +192,7 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
       end if !
    end do ! alle zeilen
    close (ionumber) ! ausgabe_querprofile.txt wieder geschlossen
-   print*,' ausgabe_querprofil finished | anz_csv_output = ',anz_csv_output
+   print*,anz_csv_output,' cross-sections read from ausgabe_querprofile.txt (restricted output)'
 
 end subroutine ausgabe_querprofil
 

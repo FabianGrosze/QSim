@@ -37,7 +37,7 @@ module allodim
    
    public
 
-   integer , protected :: azstrs         !< \anchor azstrs Stranganzahl
+   integer , protected :: azstrs        !< \anchor azstrs Stranganzahl
    integer , parameter :: ialloc1 = 100  !> \anchor ialloc1 Einleiter pro Strang
    integer , parameter :: ialloc2 = 1000 !> \anchor ialloc2 Querprofile im Strang
    integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im strang?

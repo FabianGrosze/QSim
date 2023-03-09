@@ -30,7 +30,7 @@
 !! @date 01.11.2021
 
 subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,         &
-                   tflie, tiefe, rau, vmitt, htau, anze, mstr, ilang, iwied,        &
+                   tflie, tiefe, rau, vmitt, htau2, anze, mstr, ilang, iwied,        &
                    kontroll, jjj)
    use allodim
    implicit none
@@ -41,7 +41,7 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,     
    real, dimension(ialloc2)                :: tiefe, ss, ssalg, SSeros
    real, dimension(ialloc2)                :: vmitt, rau
    real, dimension(azStrs,ialloc2)         :: tausc
-   real, dimension(azStrs,ialloc2)         :: htau
+   real, dimension(azStrs,ialloc2)         :: htau2
    real, dimension(azStrs,ialloc2)         :: M_eros
    real, dimension(azStrs,ialloc2)         :: n_eros
    real, dimension(azStrs,ialloc2)         :: sedroh !< Rohdichte des Sediments [Kg*m-3]
@@ -49,8 +49,7 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,     
    
    external :: erosion_kern
    
-  
-   print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2
+   !print*,mstr,' erosion',size(tausc,1),azStrs,size(tausc,2),ialloc2
    
    ! Sedimentparameter
    ! M_eros(mstr,:) = 7.5e-4      !! Eingebbar machen!     ###
@@ -67,11 +66,14 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,     
    do ior = 1,anze+1
       !if(ilang==0)exit
       
-      call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior)  &
+      call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau2(mstr,ior)  &
                         ,SSeros(ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
-      
+      ! 2 316  ! 979-663   ! Elbe-Km 474,5
+      if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
+      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
+      if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
    enddo
    
    if(kontroll) then 

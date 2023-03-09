@@ -12,7 +12,7 @@
 !                                                                             !
 !  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
 !  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
-!  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        !
+!  implizite Garantie der Marktreife oder der Verwendbarkeit für einen        !
 !  bestimmten Zweck.                                                          !
 !                                                                             !
 !  Details finden Sie in der GNU General Public License.                      !
@@ -303,7 +303,7 @@ program qsim
    real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, uvert, dalgkz, dalgbz, dalggz
    real, dimension(ialloc5,ialloc2)        :: cchlakzy,cchlabzy,cchlagzy
    real, dimension(ialloc5,ialloc2)        :: up_nkz, up_pkz, up_siz, up_n2z, up_ngz, up_pgz, up_nbz, up_pbz
-   real, dimension(:,:),  allocatable      :: tausc, m_eros, n_eros, sedroh, aeros, eeros, dsedh, zwdsedh ,btausc
+   real, dimension(:,:),  allocatable      :: tausc, m_eros, n_eros, sedroh, aeros, eeros, dsedh,bdsedH ,btausc
    real, dimension(:),    allocatable      :: t1e,m1e,n1e,r1e
    real, dimension(:),    allocatable      :: strdt, fzeit, ho2_z, hte_z, hph_z, wsp_uw, wsp_ow, wehrh, wehrb
    real, dimension(:),    allocatable      :: qstrang_1, startkm, endkm
@@ -406,7 +406,7 @@ program qsim
    real, dimension(:,:), allocatable       :: habrz1, hssalg, hss, hgelp, hmw, hpw, hca, hlf, hph, hvbsb, hvcsb, haki
    real, dimension(:,:), allocatable       :: hstind, hagr, hakbcm, hagbcm, hchnf, hbvhnf, hhnfba, hfssgr, hfbsgr, hnl0
    real, dimension(:,:), allocatable       :: hq_nk, hq_pk, hq_sk, hq_ng, hq_pg, hq_nb, hq_pb, hpl0, hfrfgr, hffood
-   real, dimension(:,:), allocatable       :: hdl, htau2, hgesp, hgesn, hcd1, hcd2, hcp1, hcp2, hvo2, hextk, hjno3
+   real, dimension(:,:), allocatable       :: hdl, hgesp, hgesn, hcd1, hcd2, hcp1, hcp2, hvo2, hextk, hjno3
    real, dimension(:,:), allocatable       :: hjnh4, hjpo4, hjsi, hjo2, hflun3,hjn2, tgzoo, akmor_1, agmor_1, abmor_1
    integer, dimension(:,:), allocatable    :: anzzeit, banzzeit, zwanzzeit
    real, dimension(:,:), allocatable       :: hglzn, hgszn, hglcad, hgscad, hglcu, hgscu, hglni, hgsni
@@ -448,6 +448,7 @@ program qsim
    real, dimension(:,:), allocatable       :: ho2z_z, htez_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hnh4z_z, hno2z_z
    real, dimension(:,:), allocatable       :: hno3z_z, hpz_z, hsiz_z, hchlkz_z, hchlgz_z, hchlbz_z, hgespz_z, hgesnz_z
    real, dimension(:,:), allocatable       :: hq_nkz_z, hq_nbz_z, hq_ngz_z, hcchlkz_z, hcchlbz_z, hcchlgz_z
+   real, dimension(:,:), allocatable       :: htau2,bhtau2
    real, dimension(:,:,:), allocatable     :: bcd, bcp, hcd, hcp, cdl, cpl, zdrs, zdrss, gwdrs, vtypa
    real, dimension(:,:,:), allocatable     :: sidras, sdrmas, sdrakr, sdrbar, sdrmor, szdrg, szdrsg, sgwdrg, wstand
    real, dimension(:,:,:), allocatable     :: hzdrel, hzdrsl, hgwdrl, vtyph
@@ -469,7 +470,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   linux = .true.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -568,7 +569,7 @@ program qsim
    allocate(nstrs(azStrs*2), nnstrs(azStrs))
    allocate(STRdt(azStrs), FZeit(azStrs), yWlage(azStrs,ialloc3), Wlage(azStrs,ialloc2), ymax(azStrs,ialloc4))
    allocate(tausc(azStrs,ialloc2), M_eros(azStrs,ialloc2), n_eros(azStrs,ialloc2), sedroh(azStrs,ialloc2) ,btausc(azStrs,ialloc2) )
-   allocate(dsedH(azStrs,ialloc2), zwdsedH(azStrs,ialloc2) )
+   allocate(dsedH(azStrs,ialloc2), bdsedH(azStrs,ialloc2) )
    allocate(t1e(ialloc2), m1e(ialloc2), n1e(ialloc2), r1e(ialloc2) )
    allocate(Ymin(azStrs,ialloc4), vmq(azStrs,ialloc2), Hmq(azStrs,ialloc2), boeamq(azStrs,ialloc2))
    allocate(segkm(azStrs,ialloc2), clado(10,ialloc2), hClado(azStrs,5,ialloc2), bclado(azStrs,5,ialloc2))
@@ -789,7 +790,9 @@ program qsim
    allocate(hfbsgr(azStrs,ialloc2), hnl0(azStrs,ialloc2), hQ_NK(azStrs,ialloc2), hQ_PK(azStrs,ialloc2))
    allocate(hQ_SK(azStrs,ialloc2), hQ_NG(azStrs,ialloc2), hQ_PG(azStrs,ialloc2), hQ_NB(azStrs,ialloc2))
    allocate(hQ_PB(azStrs,ialloc2), hpl0(azStrs,ialloc2), hfrfgr(azStrs,ialloc2), hffood(azStrs,ialloc2))
-   allocate(hdl(azStrs,ialloc2), htau2(azStrs,ialloc2), hgesP(azStrs,ialloc2), hgesN(azStrs,ialloc2))
+   allocate(hdl(azStrs,ialloc2))
+   allocate(htau2(azStrs,ialloc2),bhtau2(azStrs,ialloc2))
+   allocate(hgesP(azStrs,ialloc2), hgesN(azStrs,ialloc2))
    allocate(hCD1(azStrs,ialloc2), hCD2(azStrs,ialloc2), hCP1(azStrs,ialloc2), hCP2(azStrs,ialloc2))
    allocate(hvo2(azStrs,ialloc2), hextk(azStrs,ialloc2), hJNO3(azStrs,ialloc2), hJNH4(azStrs,ialloc2))
    allocate(hJPO4(azStrs,ialloc2), hJSi(azStrs,ialloc2), hJO2(azStrs,ialloc2), hFluN3(azStrs,ialloc2))
@@ -916,6 +919,8 @@ program qsim
                  STRID(mstr),     & ! veraltet
                  strnumm(mstr),   & ! Gerris-ID des Strangs
                  strname(mstr)      ! Name des Strangs
+      print*,mstr,azStr,' -ter Strang:',trim(strnumm(mstr)),trim(strname(mstr)),  &
+             ' hat Querprofile,Randbedingunge=',mStas(mstr),mRBs(mstr)
       mstra(azStr) = mstr
       isumAnzSta = isumAnzSta+mStas(mstr)
       do mSta = 1,mStas(mstr)
@@ -6286,79 +6291,55 @@ program qsim
       ! Erosion
       ! -----------------------------------------------------------------------
       1520 continue
-      if (ieros == 0)goto 1519
+      if (ieros == 0)then
+         hSSeros(mstr,:) = 0.0
+         dsedH(mstr,:)= 0.0
+      else ! erosion active
       
-      call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
-                   ,tflie,tiefe,rau,vmitt,htau2,anze,mstr,ilang,iwied     &
-                   ,kontroll,0)
+         !call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
+         !             ,tflie,tiefe,rau,vmitt,htau2,anze,mstr,ilang,iwied     &
+         !             ,kontroll,0)
       
-      if (nbuhn(mstr) == 0)goto 1519
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwvm(ior) = vmitt(ior)
-            zwtief(ior) = tiefe(ior)
-            zwss(ior) = ss(ior)
-            zwssa(ior) = ssalg(ior)
-            zwsedS(ior) = sedss(ior)
-            zwsedk(ior) = sedalk(ior)
-            zwsedg(ior) = sedalg(ior)
-            zwsedb(ior) = sedalb(ior)
-            zwSSeros(ior) = SSeros(ior)
-            zwdsedH(mstr,ior) = dsedH(mstr,ior)
-            zwtau(ior) = htau2(mstr,ior)
-            !tausc(mstr,ior) = btausc(mstr,ior) Sedimenteigenschaften unterscheiden sich nicht im Buhnenfeld
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            ss(ior) = bss(mstr,ior)
-            ssalg(ior) = bssalg(mstr,ior)
-            sedalk(ior) = bsedak(mstr,ior)
-            sedalg(ior) = bsedag(mstr,ior)
-            sedalb(ior) = bsedab(mstr,ior)
-            sedss(ior) = bsedss(mstr,ior)
+         ! --- in main river ---
+         do ior = 1, anze+1
+            call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau2(mstr,ior)  &
+                        ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
+                        ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
+                        ,kontroll,ior,mstr)
+            ! 2 316  ! 979-663   ! Elbe-Km 474,5
+            if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau2(mstr,ior),tausc(mstr,ior)
+            ! 2 512  ! 1175-663  ! Elbe-Km 585,05
+            if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau2(mstr,ior),tausc(mstr,ior)
          enddo
-         ilbuhn = 1
-         goto 1520
-      endif
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bss(mstr,ior) = ss(ior)
-            bssalg(mstr,ior) = ssalg(ior)
-            bSSeros(ior) = SSeros(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            ss(ior) = zwss(ior)
-            ssalg(ior) = zwssa(ior)
-            sedss(ior) = zwsedS(ior)
-            sedalk(ior) = zwsedk(ior)
-            sedalg(ior) = zwsedg(ior)
-            sedalb(ior) = zwsedb(ior)
-            SSeros(ior) = zwSSeros(ior)
-            dsedH(mstr,ior) = zwdsedH(mstr,ior)
-            htau2(mstr,ior) = zwtau(ior)
-            ! btausc(mstr,ior) = tausc(mstr,ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-               diff1 = bssalg(mstr,ior) - ssalg(ior)
-               diff2 = bss(mstr,ior)    - ss(ior)
-               diff3 = bfssgr(mstr,ior) - fssgr(ior)
-            endif
-            
-            if (bleb(mstr,ior) > 0.0) then
-               ssalg(ior) = ssalg(ior) + diff1 * hctau1(ior)
-               ss(ior)    = ss(ior)    + diff2 * hctau1(ior)
-               fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bssalg(mstr,ior) = bssalg(mstr,ior) - diff1 * hctau2(ior)
-               bss(mstr,ior)    = bss(mstr,ior)    - diff2 * hctau2(ior)
-               bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
-            endif
-         enddo
-         ilbuhn = 0
-      endif
       
+         ! --- groyne-field ---
+         if (nbuhn(mstr) > 0) then
+            do ior = 1,anze+1
+               ! metabolism
+               call erosion_kern(tflie,bh(mstr,ior),RAU(ior),vbm(mstr,ior),bhtau2(mstr,ior)  &
+                        ,bSSeros(ior),bss(mstr,ior),bssalg(mstr,ior),bdsedH(mstr,ior)  &
+                        ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
+                        ,kontroll,ior,mstr)
+            
+               ! mixing between main river and groyne-field 
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1 = bssalg(mstr,ior) - ssalg(ior)
+                  diff2 = bss(mstr,ior)    - ss(ior)
+               endif
+            
+               if (bleb(mstr,ior) > 0.0) then
+                  ssalg(ior) = ssalg(ior) + diff1 * hctau1(ior)
+                  ss(ior)    = ss(ior)    + diff2 * hctau1(ior)
+               endif
+            
+               if (hctau2(ior) > 0.0) then
+                  bssalg(mstr,ior) = bssalg(mstr,ior) - diff1 * hctau2(ior)
+                  bss(mstr,ior)    = bss(mstr,ior)    - diff2 * hctau2(ior)
+               endif
+            enddo
+         endif ! groyne-field
+      endif ! erosion active
+
       ! -----------------------------------------------------------------------
       ! Schwermetalle
       ! -----------------------------------------------------------------------
@@ -6378,13 +6359,12 @@ program qsim
                            ,hglHg,hgsHg,egsHg,eglHg,HgSed       &
                            ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
                            ,hglU,hgsU,egsU,eglU,USed            &
-                           ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros      &
+                           ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,hSSeros      &
                            ,ilang,iwied                        &
                            ,.false., 0)
          if (nbuhn(mstr) == 0)goto 118
          if (ilbuhn == 0) then
             do ior = 1,anze+1
-               hSSeros(mstr,ior) = SSeros(ior)
                hsedalk(mstr,ior) = sedalk(ior)
                hsedalg(mstr,ior) = sedalg(ior)
                hsedalb(mstr,ior) = sedalb(ior)
@@ -6656,11 +6636,16 @@ program qsim
          hgsU(mstr,:) = 0.0
          hglU(mstr,:) = 0.0
       endif ! ischwer==1
-      
+
       ! -----------------------------------------------------------------------
       ! transportation
       ! -----------------------------------------------------------------------
       118 continue
+      
+      ! 2 316  ! 979-663   ! Elbe-Km 474,5
+      if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau2(mstr,316),tausc(mstr,316)
+      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
+      if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau2(mstr,512),tausc(mstr,512)
       
       if (iwsim == 4 .and. ilang == 0 .or. itracer_vor == 1) then
       else
@@ -7222,6 +7207,12 @@ program qsim
          znkzs(mstr,ior) = hnkzs(mstr,ior)
          
       enddo ! Ende Hauptschleife
+
+      ! 2 316  ! 979-663   ! Elbe-Km 474,5
+      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 474,5 hsseros,htau,tausc', hSSeros(mstr,316),htau2(mstr,316),tausc(mstr,316)
+      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
+      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 585,05 hsseros,htau,tausc',hSSeros(mstr,512),htau2(mstr,512),tausc(mstr,512)
+
       
    enddo ! Ende Strangschleife
    

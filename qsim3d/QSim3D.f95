@@ -12,7 +12,7 @@
 !                                                                             !
 !  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
 !  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
-!  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        !
+!  implizite Garantie der Marktreife oder der Verwendbarkeit für einen        !
 !  bestimmten Zweck.                                                          !
 !                                                                             !
 !  Details finden Sie in der GNU General Public License.                      !
