@@ -448,7 +448,7 @@ program qsim
    real, dimension(:,:), allocatable       :: ho2z_z, htez_z, hchlaz_z, hakiz_z, hagrz_z, hablz_z, hnh4z_z, hno2z_z
    real, dimension(:,:), allocatable       :: hno3z_z, hpz_z, hsiz_z, hchlkz_z, hchlgz_z, hchlbz_z, hgespz_z, hgesnz_z
    real, dimension(:,:), allocatable       :: hq_nkz_z, hq_nbz_z, hq_ngz_z, hcchlkz_z, hcchlbz_z, hcchlgz_z
-   real, dimension(:,:), allocatable       :: htau2,bhtau2
+   real, dimension(:,:), allocatable       :: htau,bhtau,htau2,bhtau2
    real, dimension(:,:,:), allocatable     :: bcd, bcp, hcd, hcp, cdl, cpl, zdrs, zdrss, gwdrs, vtypa
    real, dimension(:,:,:), allocatable     :: sidras, sdrmas, sdrakr, sdrbar, sdrmor, szdrg, szdrsg, sgwdrg, wstand
    real, dimension(:,:,:), allocatable     :: hzdrel, hzdrsl, hgwdrl, vtyph
@@ -791,7 +791,7 @@ program qsim
    allocate(hQ_SK(azStrs,ialloc2), hQ_NG(azStrs,ialloc2), hQ_PG(azStrs,ialloc2), hQ_NB(azStrs,ialloc2))
    allocate(hQ_PB(azStrs,ialloc2), hpl0(azStrs,ialloc2), hfrfgr(azStrs,ialloc2), hffood(azStrs,ialloc2))
    allocate(hdl(azStrs,ialloc2))
-   allocate(htau2(azStrs,ialloc2),bhtau2(azStrs,ialloc2))
+   allocate(htau(azStrs,ialloc2),bhtau(azStrs,ialloc2),htau2(azStrs,ialloc2),bhtau2(azStrs,ialloc2))
    allocate(hgesP(azStrs,ialloc2), hgesN(azStrs,ialloc2))
    allocate(hCD1(azStrs,ialloc2), hCD2(azStrs,ialloc2), hCP1(azStrs,ialloc2), hCP2(azStrs,ialloc2))
    allocate(hvo2(azStrs,ialloc2), hextk(azStrs,ialloc2), hJNO3(azStrs,ialloc2), hJNH4(azStrs,ialloc2))
@@ -6302,21 +6302,21 @@ program qsim
       
          ! --- in main river ---
          do ior = 1, anze+1
-            call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau2(mstr,ior)  &
+            call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior)  &
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
-            if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau2(mstr,ior),tausc(mstr,ior)
+            if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-            if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau2(mstr,ior),tausc(mstr,ior)
+            if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
          enddo
       
          ! --- groyne-field ---
          if (nbuhn(mstr) > 0) then
             do ior = 1,anze+1
                ! metabolism
-               call erosion_kern(tflie,bh(mstr,ior),RAU(ior),vbm(mstr,ior),bhtau2(mstr,ior)  &
+               call erosion_kern(tflie,bh(mstr,ior),RAU(ior),vbm(mstr,ior),bhtau(mstr,ior)  &
                         ,bSSeros(ior),bss(mstr,ior),bssalg(mstr,ior),bdsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
@@ -6643,9 +6643,9 @@ program qsim
       118 continue
       
       ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau2(mstr,316),tausc(mstr,316)
+      if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau2(mstr,512),tausc(mstr,512)
+      if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
       
       if (iwsim == 4 .and. ilang == 0 .or. itracer_vor == 1) then
       else
@@ -7209,9 +7209,9 @@ program qsim
       enddo ! Ende Hauptschleife
 
       ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 474,5 hsseros,htau,tausc', hSSeros(mstr,316),htau2(mstr,316),tausc(mstr,316)
+      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 474,5 hsseros,htau,tausc', hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 585,05 hsseros,htau,tausc',hSSeros(mstr,512),htau2(mstr,512),tausc(mstr,512)
+      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 585,05 hsseros,htau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
 
       
    enddo ! Ende Strangschleife
@@ -8260,7 +8260,7 @@ program qsim
                                   ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
                                   ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
                                   ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';'           &
-                                  ,hsedss(mstr,iior),';',htau2(mstr,iior),';',tausc(mstr,iior)
+                                  ,hsedss(mstr,iior),';',htau(mstr,iior),';',tausc(mstr,iior)
                write(157,'(a)')adjustl(trim(langezeile))
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
                                   ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
