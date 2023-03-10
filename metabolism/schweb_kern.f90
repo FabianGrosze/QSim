@@ -61,6 +61,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    
    if (kontroll) then
       print*,'schweb_kern tiefe,rau,vmitt,tausc = ',tiefes,raus,vmitts,tauscs
+      write(*, '(*(g0,1x))') 'Before schweb_kern: SS =', SSs
    endif
    fssgrv = fssgrs
    g = sqrt(9.81)
@@ -102,6 +103,21 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
        + drfaeks + drfaegs + drfaebs  &
        + drfaess
    
+   if (kontroll) then
+      write(*, '(*(g0,1x))') 'sedss   =', sedsss
+      write(*, '(*(g0,1x))') 'exzo    =', exzo
+      write(*, '(*(g0,1x))') 'dkimors =', dkimors
+      write(*, '(*(g0,1x))') 'dgrmors =', dgrmors
+      write(*, '(*(g0,1x))') 'dblmors =', dblmors
+      write(*, '(*(g0,1x))') 'abszos  =', abszos
+      write(*, '(*(g0,1x))') 'ssdrs   =', ssdrs
+      write(*, '(*(g0,1x))') 'dorgSSs =', dorgSSs
+      write(*, '(*(g0,1x))') 'drfaeks =', drfaeks
+      write(*, '(*(g0,1x))') 'drfaegs =', drfaegs
+      write(*, '(*(g0,1x))') 'drfaebs =', drfaebs
+      write(*, '(*(g0,1x))') 'drfaess =', drfaess
+    endif
+   
    !     Neuberechnung des Faktors zur Berechnung der ablagerungsfreien
    !     Grenzkonzentration
    hc1 = SSs-sedsss+exzo+dkimors
@@ -140,6 +156,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    else
       sss = sst
    endif
+   if (kontroll) write(*, '(*(g0,1x))') 'After schweb_kern: SS =', SSs
    
    ssalgs = sss                  &
           + agrs + akis + abls   &

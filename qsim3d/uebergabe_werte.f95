@@ -182,7 +182,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 9) = "            dblmor" ! Absterberate Blaualgen
       trans_quant_name(10) = "            BSBHNF" !
       trans_quant_name(11) = "            HNFBAC" !
-      trans_quant_name(12) = "      empty_twelve" !
+      trans_quant_name(12) = "            SSeros" ! amount of resuspended matter
       trans_quant_name(13) = "            drfaek" !
       trans_quant_name(14) = "            drfaeg" !
       trans_quant_name(15) = "            drfaeb" !

@@ -236,7 +236,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    if (vo2t < 0.0) then
       vo2t_old = vo2t
       vo2t = (vo2_s / (vo2_s + abs(vo2t - vo2_s))) * vo2_s
-      call print_clipping("oxygen", "vno2t", vo2t_old, vo2t, "mg/l")
+      call print_clipping("oxygen", "vo2t", vo2t_old, vo2t, "mg/l")
    endif
    
    ! --------------------------------------------------------------------------
