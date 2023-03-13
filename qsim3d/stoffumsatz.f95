@@ -177,7 +177,7 @@ subroutine stoffumsatz()
                   ! write 'after' values and deltas to log file
                   write(*, '(a)') 'Planktonic variables after stoffumsatz'
                   do k = 1,number_plankt_vari
-                     write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E20.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
+                     write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E17.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
                                                                                 planktonic_variable_p(k + nk) - planktonic_variable_before(k)
                   enddo
                   deallocate( planktonic_variable_before )
