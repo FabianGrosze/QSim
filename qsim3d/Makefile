@@ -143,7 +143,7 @@ Q3 = version.co \
    silicate_wrapper_3d.o \
    organic_carbon_wrapper_3d.o \
    ph_wrapper_3d.o \
-   coroph_huelle.o \
+   corophium_wrapper_3d.o \
    algae_huelle.o \
    konsum_huelle.o \
    hnf_wrapper_3d.o \

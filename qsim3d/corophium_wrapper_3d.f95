@@ -25,22 +25,20 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine coroph_huelle(i)
+subroutine corophium_wrapper_3d(i)
    use modell
    use QSimDatenfelder
+   ! use module_metabolism, only: corophium
+   
    implicit none
-   integer :: i,j
-   iglob = (i+meinrang*part)
+   
+   integer, intent(in) :: i
+   integer             :: j
+   
+   iglob = i + meinrang * part
    
    ! This module is currently turned off
+   ! call corophium(...)
    
-   ! if (kontroll) then
-   !   print*,'coroph vorher: coro,coros = ',coro,coros
-   ! end if 
-   
-   ! call coroph(coro,coros,tempw,flae,elen,anze,ior                             &
-   !             ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI,coroIs   &
-   !             ,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn          &
-   !             ,kontroll ,iglob ) !!wy
    return
-end subroutine coroph_huelle
+end subroutine corophium_wrapper_3d

@@ -12,6 +12,8 @@ module module_metabolism
    use module_phosphate
    use module_silicate
    
+   ! These modules are currently turned off:
+   ! use module_corophium
    ! use module_hnf
    ! use module_macrophytes
    

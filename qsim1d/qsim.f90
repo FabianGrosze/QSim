@@ -30,7 +30,9 @@ program qsim
    use aparam
    use module_model_settings
    use module_metabolism
+   
    implicit none
+   
    ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
    character       :: ckenn,cpoint
@@ -284,7 +286,7 @@ program qsim
    real, dimension(ialloc2)                :: badrky, badrgy, bacoky, bacogy, bgmuay, bfigay, bfhgay, bgray, bzooiy
    real, dimension(ialloc2)                :: bfibay, bantby, bextky, bdably, bdaaby, bsedby, bazoby, bbmory, badrby
    real, dimension(ialloc2)                :: bacoby, bbmuay, bfhbay, bbray, bchlby, bfln3y, bbetny, bjno3y, bjnh4y
-   real, dimension(ialloc2)                :: bjpo4y, bjsiy, bjo2y, bcoliy, volfco, algcok, algcog, algcky, algcgy
+   real, dimension(ialloc2)                :: bjpo4y, bjsiy, bjo2y, bcoliy, algcok, algcog, algcky, algcgy
    real, dimension(ialloc2)                :: bgszny, bglzny, bgscady, bglcady, bgscuy, bglcuy, bgsniy, bglniy
    real, dimension(ialloc2)                :: bgsasy, bglasy, bgspby, bglpby, bgscry, bglcry, bgsfey, bglfey
    real, dimension(ialloc2)                :: bgshgy, bglhgy, bgsmny, bglmny, bgsuy, bgluy, bsseros
@@ -594,7 +596,7 @@ program qsim
    allocate(hHNFex(azStrs,ialloc2), hHNFdr(azStrs,ialloc2), hHNFza(azStrs,ialloc2), hBAmua(azStrs,ialloc2))
    allocate(dlalph(azStrs,ialloc2))
    allocate(dlbeta(azStrs,ialloc2), dlgamm(azStrs,ialloc2), hdlarn(azStrs,ialloc2), midlan(azStrs,ialloc2))
-   allocate(mxdlan(azStrs,ialloc2), zdrei(ialloc2,2), hpfl(azStrs,ialloc2), zdrel(ialloc2,4))
+   allocate(mxdlan(azStrs,ialloc2), zdrei(ialloc2,4), hpfl(azStrs,ialloc2), zdrel(ialloc2,4))
    allocate(zdresl(ialloc2,4), gewdr(ialloc2,4), hgewdr(ialloc2,4), VTYP(ialloc2,14), Rzuwdr(ialloc2,4))
    allocate(Rzuwdy(ialloc2,4), zdreis(ialloc2,4), CD(2,ialloc2), CP(2,ialloc2), migsP(azStrs,ialloc2))
    allocate(mxgsP(azStrs,ialloc2), migsN(azStrs,ialloc2), mxgsN(azStrs,ialloc2), miaki(azStrs,ialloc2))
@@ -4448,151 +4450,167 @@ program qsim
                   ,algzog,algzob,akiz,agrz,ablz,algzkz,algzgz,algzbz,nkzs,monats &
                   ,itags,uhrz,mstr, .false., 0)
       
-      if (nbuhn(mstr) == 0 ) goto 1415 ! goto coroph
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwvm(ior) = vmitt(ior)
-            zwir(ior) = ir(ior)
-            zwkigr(ior) = vkigr(ior)
-            zwantb(ior) = antbl(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwTGZoo(ior) = TGZoo(mstr,ior)
-            do nkz = 1,nkzs(ior)
-               zwakiz(nkz,ior) = akiz(nkz,ior)
-               zwagrz(nkz,ior) = agrz(nkz,ior)
-               zwablz(nkz,ior) = ablz(nkz,ior)
-               zwchlz(nkz,ior) = chlaz(nkz,ior)
+      if (nbuhn(mstr) > 0 ) then
+         if (ilbuhn == 0) then
+            do ior = 1,anze+1
+               zwtemp(ior) = tempw(ior)
+               zwvm(ior) = vmitt(ior)
+               zwir(ior) = ir(ior)
+               zwkigr(ior) = vkigr(ior)
+               zwantb(ior) = antbl(ior)
+               zwaki(ior) = aki(ior)
+               zwagr(ior) = agr(ior)
+               zwabl(ior) = abl(ior)
+               zwTGZoo(ior) = TGZoo(mstr,ior)
+               do nkz = 1,nkzs(ior)
+                  zwakiz(nkz,ior) = akiz(nkz,ior)
+                  zwagrz(nkz,ior) = agrz(nkz,ior)
+                  zwablz(nkz,ior) = ablz(nkz,ior)
+                  zwchlz(nkz,ior) = chlaz(nkz,ior)
+               enddo
+               zwvo2(ior) = vo2(ior)
+               zwzooi(ior) = zooind(ior)
+               zwabsz(ior) = abszo(ior)
+               zwdzr1(ior) = dzres1(ior)
+               zwdzr2(ior) = dzres2(ior)
+               zwzexk(ior) = zexki(ior)
+               zwzexg(ior) = zexgr(ior)
+               zwzexb(ior) = zexbl(ior)
+               zwrmue(ior) = rmuas(ior)
+               zwiras(ior) = iras(ior)
+               zwrakr(ior) = rakr(ior)
+               zwrbar(ior) = rbar(ior)
+               zwzok(ior) = algzok(ior)
+               zwzog(ior) = algzog(ior)
+               zwzob(ior) = algzob(ior)
+               
+               tempw(ior) = btempw(mstr,ior)
+               vmitt(ior) = vbm(mstr,ior)
+               vkigr(ior) = bvkigr(mstr,ior)
+               antbl(ior) = bantbl(mstr,ior)
+               aki(ior) = baki(mstr,ior)
+               agr(ior) = bagr(mstr,ior)
+               abl(ior) = babl(mstr,ior)
+               vo2(ior) = bo2(mstr,ior)
+               zooind(ior) = bzooi(mstr,ior)
+               if (iwied == 1)TGZoo(mstr,ior) = bTGZoo(mstr,ior)
             enddo
-            zwvo2(ior) = vo2(ior)
-            zwzooi(ior) = zooind(ior)
-            zwabsz(ior) = abszo(ior)
-            zwdzr1(ior) = dzres1(ior)
-            zwdzr2(ior) = dzres2(ior)
-            zwzexk(ior) = zexki(ior)
-            zwzexg(ior) = zexgr(ior)
-            zwzexb(ior) = zexbl(ior)
-            zwrmue(ior) = rmuas(ior)
-            zwiras(ior) = iras(ior)
-            zwrakr(ior) = rakr(ior)
-            zwrbar(ior) = rbar(ior)
-            zwzok(ior) = algzok(ior)
-            zwzog(ior) = algzog(ior)
-            zwzob(ior) = algzob(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            vkigr(ior) = bvkigr(mstr,ior)
-            antbl(ior) = bantbl(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            vo2(ior) = bo2(mstr,ior)
-            zooind(ior) = bzooi(mstr,ior)
-            if (iwied == 1)TGZoo(mstr,ior) = bTGZoo(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1612 ! goto konsum
-      endif
-      
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bir(mstr,ior) = ir(ior)
-            bzooi(mstr,ior) = zooind(ior)
-            bTGZoo(mstr,ior) = TGZoo(mstr,ior)
-            babszo(mstr,ior) = abszo(ior)
-            bzres1(mstr,ior) = dzres1(ior)
-            bzres2(mstr,ior) = dzres2(ior)
-            bzexki(mstr,ior) = zexki(ior)
-            bzexgr(mstr,ior) = zexgr(ior)
-            bzexbl(mstr,ior) = zexbl(ior)
-            brmuas(mstr,ior) = rmuas(ior)
-            biras(mstr,ior) = iras(ior)
-            brakr(mstr,ior) = rakr(ior)
-            brbar(mstr,ior) = rbar(ior)
-            bazok(mstr,ior) = algzok(ior)
-            bazog(mstr,ior) = algzog(ior)
-            bazob(mstr,ior) = algzob(ior)
-            
-            tempw(ior) = zwtemp(ior)
-            vmitt(ior) = zwvm(ior)
-            ir(ior) = zwir(ior)
-            vkigr(ior) = zwkigr(ior)
-            antbl(ior) = zwantb(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            do nkz = 1,nkzs(ior)
-               akiz(nkz,ior) = zwakiz(nkz,ior)
-               agrz(nkz,ior) = zwagrz(nkz,ior)
-               ablz(nkz,ior) = zwablz(nkz,ior)
-               chlaz(nkz,ior) = zwchlz(nkz,ior)
-            enddo
-            vo2(ior) = zwvo2(ior)
-            zooind(ior) = zwzooi(ior)
-            TGZoo(mstr,ior) = zwTGZoo(ior)
-            abszo(ior) = zwabsz(ior)
-            dzres1(ior) = zwdzr1(ior)
-            dzres2(ior) = zwdzr2(ior)
-            zexki(ior) = zwzexk(ior)
-            zexgr(ior) = zwzexg(ior)
-            zexbl(ior) = zwzexb(ior)
-            rmuas(ior) = zwrmue(ior)
-            iras(ior) = zwiras(ior)
-            rakr(ior) = zwrakr(ior)
-            rbar(ior) = zwrbar(ior)
-            algzok(ior) = zwzok(ior)
-            algzog(ior) = zwzog(ior)
-            algzob(ior) = zwzob(ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-               diff1 = bzooi(mstr,ior)  - zooind(ior)
-               diff2 = bTGZoo(mstr,ior) - TGZoo(mstr,ior)
-            endif
-            
-            if (bleb(mstr,ior) > 0.0) then
-               zooind(ior)     = zooind(ior)     + diff1 * hctau1(ior)
-               TGZoo(mstr,ior) = TGZoo(mstr,ior) + diff2 * hctau1(ior)
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bzooi(mstr,ior)  = bzooi(mstr,ior)  - diff1 * hctau2(ior)
-               bTGZoo(mstr,ior) = bTGZoo(mstr,ior) - diff2 * hctau2(ior)
-            endif
-         enddo
+            ilbuhn = 1
+            goto 1612 ! goto konsum
+         endif
          
-         ilbuhn = 0
+         if (ilbuhn == 1) then
+            do ior = 1,anze+1
+               bir(mstr,ior) = ir(ior)
+               bzooi(mstr,ior) = zooind(ior)
+               bTGZoo(mstr,ior) = TGZoo(mstr,ior)
+               babszo(mstr,ior) = abszo(ior)
+               bzres1(mstr,ior) = dzres1(ior)
+               bzres2(mstr,ior) = dzres2(ior)
+               bzexki(mstr,ior) = zexki(ior)
+               bzexgr(mstr,ior) = zexgr(ior)
+               bzexbl(mstr,ior) = zexbl(ior)
+               brmuas(mstr,ior) = rmuas(ior)
+               biras(mstr,ior) = iras(ior)
+               brakr(mstr,ior) = rakr(ior)
+               brbar(mstr,ior) = rbar(ior)
+               bazok(mstr,ior) = algzok(ior)
+               bazog(mstr,ior) = algzog(ior)
+               bazob(mstr,ior) = algzob(ior)
+               
+               tempw(ior) = zwtemp(ior)
+               vmitt(ior) = zwvm(ior)
+               ir(ior) = zwir(ior)
+               vkigr(ior) = zwkigr(ior)
+               antbl(ior) = zwantb(ior)
+               aki(ior) = zwaki(ior)
+               agr(ior) = zwagr(ior)
+               abl(ior) = zwabl(ior)
+               do nkz = 1,nkzs(ior)
+                  akiz(nkz,ior) = zwakiz(nkz,ior)
+                  agrz(nkz,ior) = zwagrz(nkz,ior)
+                  ablz(nkz,ior) = zwablz(nkz,ior)
+                  chlaz(nkz,ior) = zwchlz(nkz,ior)
+               enddo
+               vo2(ior) = zwvo2(ior)
+               zooind(ior) = zwzooi(ior)
+               TGZoo(mstr,ior) = zwTGZoo(ior)
+               abszo(ior) = zwabsz(ior)
+               dzres1(ior) = zwdzr1(ior)
+               dzres2(ior) = zwdzr2(ior)
+               zexki(ior) = zwzexk(ior)
+               zexgr(ior) = zwzexg(ior)
+               zexbl(ior) = zwzexb(ior)
+               rmuas(ior) = zwrmue(ior)
+               iras(ior) = zwiras(ior)
+               rakr(ior) = zwrakr(ior)
+               rbar(ior) = zwrbar(ior)
+               algzok(ior) = zwzok(ior)
+               algzog(ior) = zwzog(ior)
+               algzob(ior) = zwzob(ior)
+               
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1 = bzooi(mstr,ior)  - zooind(ior)
+                  diff2 = bTGZoo(mstr,ior) - TGZoo(mstr,ior)
+               endif
+               
+               if (bleb(mstr,ior) > 0.0) then
+                  zooind(ior)     = zooind(ior)     + diff1 * hctau1(ior)
+                  TGZoo(mstr,ior) = TGZoo(mstr,ior) + diff2 * hctau1(ior)
+               endif
+               
+               if (hctau2(ior) > 0.0) then
+                  bzooi(mstr,ior)  = bzooi(mstr,ior)  - diff1 * hctau2(ior)
+                  bTGZoo(mstr,ior) = bTGZoo(mstr,ior) - diff2 * hctau2(ior)
+               endif
+            enddo
+            
+            ilbuhn = 0
+         endif
       endif
-      
       ! -----------------------------------------------------------------------
-      !  Chorophium
+      !  Chorophium [turned off]
       ! -----------------------------------------------------------------------
-      1415 continue
-      
-      ! if (nbuhn(mstr) == 0)goto 1440
-      ! do ior = 1,anze+1
-      !    do jC = 1,5
-      !       zwcoro(ior,jC) = coro(ior,jC)
-      !       Coro(ior,jC) = 0.0
+      ! if (ilang == 1) then
+      !    
+      !    if (nbuhn(mstr) > 0) then
+      !       bcoro(ior,:) = coro(ior,:)
+      !       bcoros(ior,:) = 0.0
+      !       coro(ior,:) = 0.0
+      !    endif 
+      !    
+      !    
+      !    do ior = 1, anze+1
+      !       ! main river
+      !       call corophium(                                                       &
+      !                   coro(ior,:), coros(ior,:), aki(ior), agr(ior), abl(ior),  &
+      !                   flae(ior), elen(ior), bsohlm(ior), lboem(ior),            &
+      !                   itags, monats, uhrz, tflie,                               &
+      !                   coroi(ior), corois(ior),                                  &
+      !                   algcok(ior), algcog(ior), algcob(ior),                    &
+      !                   kontroll, jjj)
+      !       
+      !       ! groyne field
+      !       call corophium(                                                                          &
+      !                   bcoro(ior,:), bcoros(ior,:), baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior), &
+      !                   bf(mstr,ior), elen(ior), bsohlm(ior), blb(mstr,ior),                         &
+      !                   itags, monats, uhrz, tflie,                                                  &
+      !                   coroi(ior), corois(ior),                                                     &
+      !                   bacok(mstr,ior), bacog(mstr,ior), bacob(mstr,ior),                           &
+      !                   kontroll, jjj)
       !    enddo
-      ! enddo
-      ! 
-      ! 1440 continue
-      ! call coroph(coro,coros,tempw,flae,elen,anze,ior                                  &
-      !            ,volfco,aki,agr,algcok,algcog,tflie,bsohlm,lboem,coroI                &
-      !            ,coroIs,abl,algcob,mstr,itags,monats,jahrs,ilang,nbuhn,ilbuhn,        &
-      !            .false., 0)
-      !
-      coro(:,:)  = 0.0
-      coros(:,:) = 0.0
-      volfco(:)  = 0.0
-      algcok(:)  = 0.0
-      algcog(:)  = 0.0
-      coroI(:)   = 0.0
-      coroIs(:)  = 0.0
-      algcob(:)  = 0.0
+      ! endif
+      
+      ! corophium is currently turned off.
+      ! Only the return values of `subroutine corophium` will be given values here
+      ! to avoid potential conflicts with other modules that may use these variables
+      coro   = 0.0
+      coros  = 0.0
+      coroI  = 0.0
+      coroIs = 0.0
+      algcok = 0.0
+      algcog = 0.0
+      algcob = 0.0
       
       if (nbuhn(mstr) > 0) then
          bacok(mstr,:) = 0.0
@@ -4600,60 +4618,10 @@ program qsim
          bacob(mstr,:) = 0.0
       endif
       
-      ! if (nbuhn(mstr) == 0)goto 1441
-      ! if (ilbuhn == 0) then
-      !    do ior = 1,anze+1
-      !       zwtemp(ior) = tempw(ior)
-      !       zwflae(ior) = flae(ior)
-      !       zwlboe(ior) = lboem(ior)
-      !       zwaki(ior) = aki(ior)
-      !       zwagr(ior) = agr(ior)
-      !       zwabl(ior) = abl(ior)
-      !       zwacok(ior) = algcok(ior)
-      !       zwacog(ior) = algcog(ior)
-      !       zwacob(ior) = algcob(ior)
-      !       zwCoIs(ior) = coroIs(ior)
-      !       zwcors(ior,1:5) = coros(ior,1:5)
-      !       Coros(ior,1:5) = 0.0
-      !       coro(ior,1:5) = zwcoro(ior,1:5)
-      !
-      !       flae(ior) = bf(mstr,ior)
-      !       lboem(ior) = blb(mstr,ior)
-      !       tempw(ior) = btempw(mstr,ior)
-      !       aki(ior) = baki(mstr,ior)
-      !       agr(ior) = bagr(mstr,ior)
-      !       abl(ior) = babl(mstr,ior)
-      !    enddo
-      !    ilbuhn = 1
-      !    goto 1440
-      ! endif
-      
-      ! if (ilbuhn == 1) then
-      !    do ior = 1,anze+1
-      !       bacok(mstr,ior) = algcok(ior)
-      !       bacog(mstr,ior) = algcog(ior)
-      !       bacob(mstr,ior) = algcob(ior)
-      ! 
-      !       flae(ior) = zwflae(ior)
-      !       lboem(ior) = zwlboe(ior)
-      !       tempw(ior) = zwtemp(ior)
-      !       CoroIs(ior) = zwCoIs(ior)
-      !       coros(ior,1:5) = zwcors(ior,1:5)
-      !       aki(ior) = zwaki(ior)
-      !       agr(ior) = zwagr(ior)
-      !       abl(ior) = zwabl(ior)
-      !       algcok(ior) = zwacok(ior)
-      !       algcog(ior) = zwacog(ior)
-      !       algcob(ior) = zwacob(ior)
-      !    enddo
-      !    ilbuhn = 0
-      ! endif
       
       ! -----------------------------------------------------------------------
       ! Dreissena
       ! -----------------------------------------------------------------------
-      1441 continue
-      
       if (nbuhn(mstr) > 0) then ! Annahme: Dreissena nur im Buhnenfeld
          do ior = 1,anze+1
             zwtemp(ior) = tempw(ior)
@@ -6278,7 +6246,11 @@ program qsim
       ! Erosion
       ! -----------------------------------------------------------------------
       1520 continue
-      if (ieros == 0)goto 1519
+      if (ieros == 0) then
+         dsedH(mstr,:) = 0.
+         SSeros(:)     = 0.
+         goto 1519
+      endif
       
       call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
                    ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &
@@ -7751,6 +7723,7 @@ program qsim
          bsbmue(mstr,:) = 0.0
          bshek(mstr,:) = 0.0
          bsheg(mstr,:) = 0.0
+         bsheb(mstr,:) = 0.0
          bskre(mstr,:) = 0.0
          bsgre(mstr,:) = 0.0
          bsbre(mstr,:) = 0.0

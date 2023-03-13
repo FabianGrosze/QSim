@@ -75,6 +75,11 @@
 		<File RelativePath="..\metabolism\coliform_bacteria\coliform_bacteria.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\coliform_bacteria\module_coliform_bacteria.f90"/></Filter>
+		<Filter Name="corophium">
+		<File RelativePath="..\metabolism\corophium\corophium.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\corophium\module_corophium.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="hnf">
 		<File RelativePath="..\metabolism\hnf\hnf.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
@@ -134,7 +139,6 @@
 		<File RelativePath="..\metabolism\anztag.f90"/>
 		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
 		<File RelativePath="..\metabolism\c_chla.f90"/>
-		<File RelativePath="..\metabolism\coroph.f90"/>
 		<File RelativePath="..\metabolism\dichte.f90"/>
 		<File RelativePath="..\metabolism\dreissen.f90"/>
 		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
