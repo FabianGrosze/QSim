@@ -37,7 +37,7 @@ subroutine stoffumsatz()
    real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
    real , allocatable , dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
    real , allocatable , dimension(:) :: tempsed_k, tempw_k
-   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before
+   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before process calculations
    
    
    if (meinrang == 0) print*,'stoffumsatz start'
