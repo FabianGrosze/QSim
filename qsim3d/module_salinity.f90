@@ -46,14 +46,14 @@ module mod_salinity
    !    routine that checketh the modell options and seteth all tracer variable indices,
    !    then a dimension of the glorious new tracer array.
    !    QSim is dead, long live QSim!
-   integer, parameter                    :: hydro_UnTRIM2 = 2           !< identifier of UnTRIM2 hydrodynamics
-   integer, parameter                    :: i_salinity = 72             !< tracer index of salt
-   integer                               :: varid                       !< netCDF variable ID
+   integer, parameter                    :: hydro_UnTRIM2 = 2                    !< identifier of UnTRIM2 hydrodynamics
+   integer, parameter                    :: i_salinity    = 72                   !< tracer index of salinity
+   integer                               :: varid                                !< netCDF variable ID
  
    ! the following quantities are averaged over hydrodynamics output time step
    real, allocatable, dimension(:  )     :: salinity_element, salinity_element_p !< Salinity (psu) in water column
    
-   logical, parameter                    :: debug = .true.              !<s turn debugging on/off
+   logical, parameter                    :: debug       = .true.                 !< turn debugging on/off
    
 contains
    
@@ -64,29 +64,29 @@ contains
    subroutine init_salinity
       ! initialise data arrays for reading Salinity from file
       
-      integer            :: allocStatus   ! success status of array allocation
+      integer              :: alloc_status   ! success status of array allocation
       
-      character(len = 200) :: textString    ! self-explanatory
+      character(len = 200) :: text_string    ! self-explanatory
       
       ! data fields for NetCDF access
       if (meinrang == 0) then         
          select case (hydro_trieb)
          case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/SPM
-            call nc_check_err( nf90_inq_dimid(ncid, 'Mesh2_face_Salzgehalt_2d', varid) )
-            call nc_check_err( nf90_inquire_dimension(ncid, varid, textString) )
+            call nc_check_err(nf90_inq_dimid(ncid, 'Mesh2_face_Salzgehalt_2d', varid))
+            call nc_check_err(nf90_inquire_dimension(ncid, varid, text_string))
          case default         ! any other hydrodynamics/SPM
             call qerror('init_salinity: Reading salinity from file only implemented for UnTRIM2 hydrodynamics')
          end select
          
          ! initialize data arrays for entire domain
-         allocate (salinity_element(part * proz_anz), stat = allocStatus )
-         if (allocStatus /= 0) call qerror('init_salinity: Error allocating salinity for NetCDF reading.')
+         allocate (salinity_element(part * proz_anz), stat = alloc_status)
+         if (alloc_status /= 0) call qerror('init_salinity: Error allocating salinity for NetCDF reading.')
          salinity_element = 0
       end if
       
       ! initialize data field used on MPI processes
-      allocate ( salinity_element_p(part), stat = allocStatus )
-      if (allocStatus /= 0) call qerror('init_salinity: Error allocating Salinity partial fields for MPI processes.')
+      allocate (salinity_element_p(part), stat = alloc_status)
+      if (alloc_status /= 0) call qerror('init_salinity: Error allocating Salinity partial fields for MPI processes.')
       salinity_element_p = 0.
       
       ! read first time step for initialisation
@@ -95,7 +95,7 @@ contains
       call gather_planktkon()
       
       ! synchronize all parallel processes
-      call mpi_barrier (mpi_komm_welt, ierr)
+      call mpi_barrier(mpi_komm_welt, ierr)
       
    end subroutine init_salinity
    
@@ -103,9 +103,9 @@ contains
    subroutine step_salinity
       ! do time step for Salinity
       
-      integer             :: i, j, k         ! indices
-      integer             :: iTime           ! ID of time record to be read from file
-      character(len = 200):: errorMessage    ! self-explanatory
+      integer             :: i, j, k          ! indices
+      integer             :: i_time           ! ID of time record to be read from file
+      character(len = 200):: error_message    ! self-explanatory
       
       ! get Salinity from file and distribute it over all processes
       if (meinrang == 0) then
@@ -115,16 +115,16 @@ contains
             call qerror('step_salinity: Time outside of available time period')
          end if
          ! read data closest to center of current time step
-         iTime = minloc(abs(transinfo_zeit - rechenzeit), 1)
+         i_time = minloc(abs(transinfo_zeit - rechenzeit), 1)
          select case (hydro_trieb)
             case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/Salinity
-               call get_salinity_UnTRIM2(iTime)
+               call get_salinity_UnTRIM2(i_time)
             case default         ! any other hydrodynamics/Salinity
                call qerror('step_salinity: Reading salinity from file only implemented for UnTRIM2 hydrodynamics')
          end select
          ! write salinity min/max to log file
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
-               'step_salinity: ', iTime, '-th record read from file - min = ', minval(salinity_element),        &
+               'step_salinity: ', i_time, '-th record read from file - min = ', minval(salinity_element),          &
                ', max = ', maxval(salinity_element), ', mean = ', sum(salinity_element)/max(1,size(salinity_element)), ' (psu)'
       end if
       
@@ -134,8 +134,8 @@ contains
       ! distribute Salinity across parallel processes
       call mpi_scatter(salinity_element, part, MPI_FLOAT, salinity_element_p, part, MPI_FLOAT, 0, mpi_komm_welt, ierr)
       if (ierr /= 0) then
-         write(errorMessage,'(a,i3)') 'step_salinity: mpi_scatter(salinity_element) failed - ', ierr
-         call qerror(trim(errorMessage))
+         write(error_message,'(a,i3)') 'step_salinity: mpi_scatter(salinity_element) failed - ', ierr
+         call qerror(trim(error_message))
       end if
       
       ! Copy salinity variable to parallel transfer variable
@@ -155,27 +155,27 @@ contains
    subroutine get_salinity_UnTRIM2(iTime)
       ! read Salinity from from UnTRIM netCDF file
       
-      integer, intent(in) :: iTime                  ! ID of time record to be read
+      integer, intent(in)   :: i_time                 ! ID of time record to be read
       
-      real   , parameter  :: one = 1.
+      real, parameter       :: one = 1.
       
-      integer             :: i                      ! loop index
-      integer             :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
-      integer             :: iFill                  ! is fill value used (0) or not (1) in .nc file?
+      integer               :: i                      ! loop index
+      integer               :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
+      integer               :: i_fill                 ! is fill value used (0) or not (1) in .nc file?
       
-      real                :: fillValue              ! fill value of netCDF variables
+      real                  :: fill_value             ! fill value of netCDF variables
       
-      character(len = 200)  :: textString    ! self-explanatory
+      character(len = 200)  :: text_string            ! self-explanatory
       
       ! read data from netCDF file
-      start3 = (/                   1, 1, iTime /)
-      count3 = (/ number_plankt_point, 1,     1 /)
-      call nc_check_err( nf90_inq_varid(ncid, 'Mesh2_face_Salzgehalt_2d', varid) )
-      call nc_check_err( nf90_get_var(ncid, varid, salinity_element, start3, count3 ) )
-      call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill, fillValue) )
+      start3 = (/                   1, 1, i_time /)
+      count3 = (/ number_plankt_point, 1,      1 /)
+      call nc_check_err(nf90_inq_varid    (ncid, 'Mesh2_face_Salzgehalt_2d', varid))
+      call nc_check_err(nf90_get_var      (ncid, varid, salinity_element, start3, count3))
+      call nc_check_err(nf90_inq_var_fill (ncid, varid, iFill, fill_value))
       
       do i = 1,number_plankt_point
-         if (iFill == 0 .and. abs(salinity_element(i) - fillValue) <= one) then
+         if (i_fill == 0 .and. abs(salinity_element(i) - fill_value) <= one) then
             ! set land values to 0
             salinity_element(i) = 0.
          else
