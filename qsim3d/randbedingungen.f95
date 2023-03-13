@@ -361,7 +361,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
    !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
    if (kontroll) then
-      print*, 'randbedingungen_ergaenzen: vor orgc_start'
+      print*, 'randbedingungen_ergaenzen: before orgc_start'
       print*, ' aki    = ', planktonic_variable( 8+nk)
       print*, ' agr    = ', planktonic_variable( 9+nk)
       print*, ' abl    = ', planktonic_variable(10+nk)
@@ -406,6 +406,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                    CPges, CDges, Cref, TOC )          ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
    
    if (kontroll) then
+      print*, 'randbedingungen_ergaenzen: after orgc_start'
       print*, ' aki    = ', planktonic_variable( 8+nk)
       print*, ' agr    = ', planktonic_variable( 9+nk)
       print*, ' abl    = ', planktonic_variable(10+nk)
