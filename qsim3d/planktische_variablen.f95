@@ -131,10 +131,12 @@ subroutine ini_planktkon0(nk)
          write(planktonic_variable_name(j),'(18x)')
       end do
       include "planktonic_variable_name.h"
+      planktonic_variable_name = adjustl(planktonic_variable_name)
       
       do j = 1,number_plankt_vari ! zunächst nix ausgeben
          output_plankt(j) = .false.
       end do
+      
       !!!!!!!!! allocate and initialize planktonic_variable
       print*,"ini_planktkon0 going to: allocate (planktonic_variable( "  &
       ,"part*proz_anz,part,proz_anz,number_plankt_point,number_plankt_vari = " &
@@ -160,6 +162,8 @@ subroutine ini_planktkon0(nk)
          write(plankt_vari_vert_name(j),'(18x)')
       end do
       include "plankt_vari_vert_name.h"
+      plankt_vari_vert_name = adjustl(plankt_vari_vert_name)
+      
       ! allocate and initialize plankt_vari_vert
       allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*part*proz_anz), stat = as )
       !allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*number_plankt_point), stat = as )
@@ -185,22 +189,33 @@ subroutine ini_planktkon0(nk)
          call qerror(fehler)
       end if
       select case (hydro_trieb)
-         case(1) ! casu-transinfo
-            do ini = 1,number_plankt_point
-               point_zone(ini) = knoten_zone(ini)
-            end do
-         case(2) ! Untrim² netCDF
-            do ini = 1,number_plankt_point
-               point_zone(ini) = element_zone(ini)
-            end do
-         case(3) ! SCHISM netCDF (doch noch von zone.gr3)
-            do ini = 1,number_plankt_point
-               point_zone(ini) = element_zone(ini)
-            end do
-            !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
-            case default
-            call qerror('ini_planktkon0: unknown hydraulic driver')
+      case(1) ! casu-transinfo
+         do ini = 1,number_plankt_point
+            point_zone(ini) = knoten_zone(ini)
+         end do
+      case(2) ! Untrim² netCDF
+         do ini = 1,number_plankt_point
+            point_zone(ini) = element_zone(ini)
+         end do
+      case(3) ! SCHISM netCDF (doch noch von zone.gr3)
+         do ini = 1,number_plankt_point
+            point_zone(ini) = element_zone(ini)
+         end do
+         !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
+      case default
+         call qerror('ini_planktkon0: unknown hydraulic driver')
       end select
       
    end if !! nur prozessor 0
+   
+   ! make names available to all processes (e.g. for logging)
+   call mpi_barrier(mpi_komm_welt, ierr)
+   do k = 1,number_plankt_vari
+      call mpi_bcast(planktonic_variable_name(k), len(planktonic_variable_name(k)), MPI_CHAR, 0, mpi_komm_welt, ierr)
+   enddo
+   do k = 1,number_plankt_vari_vert
+      call mpi_bcast(plankt_vari_vert_name(k)   , len(plankt_vari_vert_name(k))   , MPI_CHAR, 0, mpi_komm_welt, ierr)
+   enddo
+   call mpi_barrier(mpi_komm_welt, ierr)
+   
 end subroutine ini_planktkon0

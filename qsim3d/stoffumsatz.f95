@@ -35,8 +35,9 @@ subroutine stoffumsatz()
    integer :: ilast, i1last
    real :: rlast,rcount
    real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
-   real , allocatable , dimension (:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
-   real , allocatable , dimension (:) :: tempsed_k, tempw_k
+   real , allocatable , dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
+   real , allocatable , dimension(:) :: tempsed_k, tempw_k
+   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before
    
    
    if (meinrang == 0) print*,'stoffumsatz start'
@@ -58,6 +59,18 @@ subroutine stoffumsatz()
                   call alter(i)
                   if (iglob == kontrollknoten) print*,'stoffumsatz: nur aufenthaltszeit (alter)'
                   cycle ! bei nur_alter nix anderes
+               endif
+               
+               if (iglob == kontrollknoten) then
+                  ! keep variables values from before process calculations
+                  allocate ( planktonic_variable_before(number_plankt_vari) )
+                  planktonic_variable_before(:) = planktonic_variable_p([(k, k = nk + 1, nk + number_plankt_vari)])
+                  
+                  ! write 'before' values to log file
+                  write(*, '(a)') 'Planktonic variables before stoffumsatz'
+                  do k = 1,number_plankt_vari
+                     write(*, '(i3,": ",a10," = ",E17.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_before(k)
+                  enddo
                endif
                
                !------------------------------------------------------------------------ Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
@@ -85,7 +98,7 @@ subroutine stoffumsatz()
                do k = 1,number_plankt_vari
                   if (isnan(planktonic_variable_p(k+nk))) then
                      print*,'vor algae_huelle: isnan(planktonic_variable_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
+                     if (meinrang == 0)print*,'planktonic_variable_name:', trim(planktonic_variable_name(k))
                   endif
                end do
                
@@ -102,7 +115,7 @@ subroutine stoffumsatz()
                do k = 1,number_plankt_vari
                   if (isnan(planktonic_variable_p(k+nk))) then
                      print*,'nach algae_huelle: isnan(planktonic_variable_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
+                     if (meinrang == 0)print*,'planktonic_variable_name:', trim(planktonic_variable_name(k))
                   endif
                end do
                
@@ -118,9 +131,9 @@ subroutine stoffumsatz()
                ! nitrogen
                call nitrogen_wrapper_3d(i)
                
-               if (ipH == 1) then
-                  call ph_wrapper_3d(i)
-               endif
+               ! pH
+               if (ipH == 1) call ph_wrapper_3d(i)
+               
             endif ! .not. nur_temp
          end if ! Knoten nass ... Temperw auch an trockenen Knoten
          
@@ -159,6 +172,16 @@ subroutine stoffumsatz()
                
                !------------------------------------------------------------------------ heavy metals
                !if (iSchwer == 1)call schwermetalle_huelle(i)
+               
+               if (iglob == kontrollknoten) then
+                  ! write 'after' values and deltas to log file
+                  write(*, '(a)') 'Planktonic variables after stoffumsatz'
+                  do k = 1,number_plankt_vari
+                     write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E20.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
+                                                                                planktonic_variable_p(k + nk) - planktonic_variable_before(k)
+                  enddo
+                  deallocate( planktonic_variable_before )
+               endif
                
             end if ! .not. nur_temp
          end if ! Knoten nass

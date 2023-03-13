@@ -54,14 +54,14 @@ subroutine randbedingungen_setzen()
       
       do j = 1,number_plankt_point ! nur bei casu=knotenanzahl2D
          select case (hydro_trieb)
-            case(1) ! casu-transinfo
-               RB_zaehl = knoten_rand(j)
-            case(2) ! Untrim² netCDF
-               RB_zaehl = element_rand(j)
-            case(3) ! SCHISM
-               RB_zaehl = knoten_rand(j)
-               case default
-               call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
+         case(1) ! casu-transinfo
+            RB_zaehl = knoten_rand(j)
+         case(2) ! Untrim² netCDF
+            RB_zaehl = element_rand(j)
+         case(3) ! SCHISM
+            RB_zaehl = knoten_rand(j)
+         case default
+            call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
          
          if ( (RB_zaehl > 0) .and. (RB_zaehl < 100000) ) then !! Alle Knoten, deren RB's bedient werden:
@@ -101,7 +101,7 @@ subroutine randbedingungen_setzen()
    call scatter_BC()
    call scatter_planktkon()
    
-   j = kontrollknoten-(meinrang*part)
+   j = kontrollknoten - meinrang * part
    if (j >= 1 .and. j <= part) then
       print*,'nach randbedingungen_setzen am Kontrollknoten:',kontrollknoten,meinrang,part,j
       print*,'Tiefe  = ', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
@@ -373,7 +373,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
       print*, ' CP2    = ', planktonic_variable(40+nk)
       print*, ' CM     = ', planktonic_variable(41+nk)
       print*, ' BAC    = ', planktonic_variable(42+nk)
-      print*, ' O2BSB  = ', planktonic_variable(43+nk)
       print*, ' BSB    = ', planktonic_variable(46+nk)
       print*, ' CSB    = ', planktonic_variable(47+nk)
       print*, ' CHNF   = ', planktonic_variable(48+nk)
@@ -418,7 +417,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
       print*, ' CP2    = ', planktonic_variable(40+nk)
       print*, ' CM     = ', planktonic_variable(41+nk)
       print*, ' BAC    = ', planktonic_variable(42+nk)
-      print*, ' O2BSB  = ', planktonic_variable(43+nk)
       print*, ' BSB    = ', planktonic_variable(46+nk)
       print*, ' CSB    = ', planktonic_variable(47+nk)
       print*, ' CHNF   = ', planktonic_variable(48+nk)
