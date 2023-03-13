@@ -339,10 +339,9 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    !     if(j.eq.1)print*,'randbedingungen_ergaenzen'
    nk = (j-1)*number_plankt_vari
    kontroll = .false.
-   if (j == kontrollknoten)kontroll = .true.
+   if (j == kontrollknoten) kontroll = .true.
    !     ini_algae in initialisieren() initialisieren.f95
-   call algae_start(                                 &
-                    planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
+   call algae_start(planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
                     planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB)
                     planktonic_variable(20+nk),      & ! ANTBL antbls(mstr,mRB)
                     planktonic_variable( 1+nk),      & ! tempws Tempw temperw()
@@ -361,13 +360,29 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    ! qsim.f90:!...Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
    !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
-   if (kontroll)print*,'randbedingungen_ergaenzen: vor orgc_start'  &
-       ,' OBSB = ',planktonic_variable(17+nk)  &
-       ,' OCSB = ',planktonic_variable(18+nk)  &
-       ,' O2BSB = ',planktonic_variable(43+nk)
-
-   call orgc_start(                                 &
-                   TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
+   if (kontroll) then
+      print*, 'randbedingungen_ergaenzen: vor orgc_start'
+      print*, ' aki    = ', planktonic_variable( 8+nk)
+      print*, ' agr    = ', planktonic_variable( 9+nk)
+      print*, ' abl    = ', planktonic_variable(10+nk)
+      print*, ' OBSB   = ', planktonic_variable(17+nk)
+      print*, ' OCSB   = ', planktonic_variable(18+nk)
+      print*, ' CD1    = ', planktonic_variable(37+nk)
+      print*, ' CD2    = ', planktonic_variable(38+nk)
+      print*, ' CP1    = ', planktonic_variable(39+nk)
+      print*, ' CP2    = ', planktonic_variable(40+nk)
+      print*, ' CM     = ', planktonic_variable(41+nk)
+      print*, ' BAC    = ', planktonic_variable(42+nk)
+      print*, ' O2BSB  = ', planktonic_variable(43+nk)
+      print*, ' BSB    = ', planktonic_variable(46+nk)
+      print*, ' CSB    = ', planktonic_variable(47+nk)
+      print*, ' CHNF   = ', planktonic_variable(48+nk)
+      print*, ' zooind = ', planktonic_variable(50+nk)
+      print*, ' SSalg  = ', planktonic_variable(52+nk)
+      print*, ' frfgr  = ', planktonic_variable(56+nk)
+   endif
+   
+   call orgc_start(TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable( 8+nk),      & ! aki | akis
                    planktonic_variable(10+nk),      & ! abl | abls
                    planktonic_variable( 9+nk),      & ! agr | agrs
@@ -388,14 +403,30 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                    planktonic_variable(56+nk),      & ! frfgr | frfgrs
                    planktonic_variable(42+nk),      & ! BAC   | BACs
                    planktonic_variable(48+nk),      & ! CHNF  | CHNFs,
-                   CPges,CDges,Cref,TOC )             ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
-   if (kontroll)print*,'nach orgc_start'       &
-       ,' OBSB = ',planktonic_variable(17+nk)  &
-       ,' OCSB = ',planktonic_variable(18+nk)  &
-       ,' O2BSB = ',planktonic_variable(43+nk)
+                   CPges, CDges, Cref, TOC )          ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
    
-   call naehr_start(                                 &
-                    planktonic_variable( 8+nk),      & ! aki | akis
+   if (kontroll) then
+      print*, ' aki    = ', planktonic_variable( 8+nk)
+      print*, ' agr    = ', planktonic_variable( 9+nk)
+      print*, ' abl    = ', planktonic_variable(10+nk)
+      print*, ' OBSB   = ', planktonic_variable(17+nk)
+      print*, ' OCSB   = ', planktonic_variable(18+nk)
+      print*, ' CD1    = ', planktonic_variable(37+nk)
+      print*, ' CD2    = ', planktonic_variable(38+nk)
+      print*, ' CP1    = ', planktonic_variable(39+nk)
+      print*, ' CP2    = ', planktonic_variable(40+nk)
+      print*, ' CM     = ', planktonic_variable(41+nk)
+      print*, ' BAC    = ', planktonic_variable(42+nk)
+      print*, ' O2BSB  = ', planktonic_variable(43+nk)
+      print*, ' BSB    = ', planktonic_variable(46+nk)
+      print*, ' CSB    = ', planktonic_variable(47+nk)
+      print*, ' CHNF   = ', planktonic_variable(48+nk)
+      print*, ' zooind = ', planktonic_variable(50+nk)
+      print*, ' SSalg  = ', planktonic_variable(52+nk)
+      print*, ' frfgr  = ', planktonic_variable(56+nk)
+   endif
+   
+   call naehr_start(planktonic_variable( 8+nk),      & ! aki | akis
                     planktonic_variable(10+nk),      & ! abl | abls
                     planktonic_variable( 9+nk),      & ! agr | agrs
                     planktonic_variable( 3+nk),      & ! VNH4 | vnh4s,
