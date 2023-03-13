@@ -152,7 +152,7 @@ contains
    end subroutine step_salinity
    
    ! =====================================================================
-   subroutine get_salinity_UnTRIM2(iTime)
+   subroutine get_salinity_UnTRIM2(i_time)
       ! read Salinity from from UnTRIM netCDF file
       
       integer, intent(in)   :: i_time                 ! ID of time record to be read
@@ -172,7 +172,7 @@ contains
       count3 = (/ number_plankt_point, 1,      1 /)
       call nc_check_err(nf90_inq_varid    (ncid, 'Mesh2_face_Salzgehalt_2d', varid))
       call nc_check_err(nf90_get_var      (ncid, varid, salinity_element, start3, count3))
-      call nc_check_err(nf90_inq_var_fill (ncid, varid, iFill, fill_value))
+      call nc_check_err(nf90_inq_var_fill (ncid, varid, i_fill, fill_value))
       
       do i = 1,number_plankt_point
          if (i_fill == 0 .and. abs(salinity_element(i) - fill_value) <= one) then
