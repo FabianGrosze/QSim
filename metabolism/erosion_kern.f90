@@ -71,9 +71,9 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, tau_s, SSeros_s, ss_s,  
    !ust = (((g/rau_s)**0.5) / (tiefe_s**0.166667)) * abs(vmitt_s)
    !tau_s = (ust**2) * roh2o
       ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if((mstr==2).and.(ior==316))print*,'erosion_kern Elbe-Km 474,5 htau2,tau=', tau_s,tau
+      !if((mstr==2).and.(ior==316))print*,'erosion_kern Elbe-Km 474,5 htau2,tau=', tau_s,tau
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if((mstr==2).and.(ior==512))print*,'erosion_kern Elbe-Km 585,05 htau2,tau=', tau_s,tau
+      !if((mstr==2).and.(ior==512))print*,'erosion_kern Elbe-Km 585,05 htau2,tau=', tau_s,tau
    tau_s = tau
    
    if (tau_s > tausc_s .and. tausc_s > 0.0 .and. sedroh_s > 0.0 .and. tiefe_s > 0.0) then

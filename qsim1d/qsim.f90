@@ -470,7 +470,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .true.           ! compile for linux operating system (Windows is .false.)
+   linux = .false.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -1240,7 +1240,7 @@ program qsim
                M_eros(mstr,mSta) = m1e(j)
                n_eros(mstr,mSta) = n1e(j)
                sedroh(mstr,mSta) = r1e(j)
-               print*,mstr,mSta,' Erosion an km = ',fkmgit
+               !print*,mstr,mSta,' Erosion an km = ',fkmgit
             endif
          enddo  ! alle Profile im Strang
       enddo  ! alle Erosionsabschnitte im Strang
@@ -6307,9 +6307,9 @@ program qsim
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
-            if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
+            !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-            if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
+            !if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
          enddo
       
          ! --- groyne-field ---
@@ -6643,9 +6643,9 @@ program qsim
       118 continue
       
       ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
+      !if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
+      !if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
       
       if (iwsim == 4 .and. ilang == 0 .or. itracer_vor == 1) then
       else
@@ -7208,11 +7208,15 @@ program qsim
          
       enddo ! Ende Hauptschleife
 
-      ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 474,5 hsseros,htau,tausc', hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if(mstr==2)print*,'erosion Ende Hauptschleife Elbe-Km 585,05 hsseros,htau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
-
+      ! 1 450  ! Elbe-Km 214
+      !if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 214 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
+      !hsedalk(mstr,450),';',hsedalg(mstr,450),';',hsedalb(mstr,450),';',                                &
+      !hsedss(mstr,450),';',hSSeros(mstr,450),';',htau(mstr,450),';',tausc(mstr,450)
+      ! 2 316  ! 979-663   ! Elbe-Km 474,5
+      !if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 474,5 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
+      !hsedalk(mstr,316),';',hsedalg(mstr,316),';',hsedalb(mstr,316),';',                                &
+      !hsedss(mstr,316),';',hSSeros(mstr,316),';',htau(mstr,316),';',tausc(mstr,316)
       
    enddo ! Ende Strangschleife
    
@@ -8248,13 +8252,13 @@ program qsim
             end do !iji
             if(anz_csv_output<1)ausdruck=.true.
             if (write_csv_output.and.ausdruck) then 
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',STRID(mstr)                      &
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',iior                      &
                                   ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
                                   ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
                                   ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
                                   ,';',dsedH(mstr,iior),';',tracer(iior)
                write(156,'(a)')adjustl(trim(langezeile))
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',iior,';'                &
                                   ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                   ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
                                   ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
@@ -8262,7 +8266,7 @@ program qsim
                                   ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';'           &
                                   ,hsedss(mstr,iior),';',htau(mstr,iior),';',tausc(mstr,iior)
                write(157,'(a)')adjustl(trim(langezeile))
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',iior,';'                  &
                                   ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
                                   ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
                write(158,'(a)')adjustl(trim(langezeile))

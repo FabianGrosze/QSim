@@ -102,7 +102,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
       print*, '> ausgabe156.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
-      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; iior ; Stakm ; STRID ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
+      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; iior ; Stakm ; ior ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
                      & gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
 
       ! --- Ausgabe 157 Schwermetalle ---
@@ -110,7 +110,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe157_schwermetall.csv'
       open(unit = 157, file = pfadstring, iostat = open_error)
       
-      write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
+      write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; ior ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
                      & glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
                      & SSeros; sedalk; sedalg; sedalb; sedss; tau; tausc'
       
@@ -119,7 +119,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
       pfadstring = trim(adjustl(cpfad)) // 'ausgabe158_algae.csv'
       open(unit = 158, file = pfadstring, iostat = open_error)
       
-      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; STRID ; O2 ; chla ;&
+      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; ior ; O2 ; chla ;&
                       &aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
    endif
    

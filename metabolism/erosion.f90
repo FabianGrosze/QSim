@@ -71,9 +71,9 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,     
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
       ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
+      !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
       ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
+      !if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',SSeros(ior),htau2(mstr,ior),tausc(mstr,ior)
    enddo
    
    if(kontroll) then 
