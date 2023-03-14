@@ -62,7 +62,7 @@ subroutine stoffumsatz()
                endif
                
                if (iglob == kontrollknoten) then
-                  ! keep variables values from before process calculations
+                  ! keep variable values from before process calculations
                   allocate ( planktonic_variable_before(number_plankt_vari) )
                   planktonic_variable_before(:) = planktonic_variable_p([(k, k = nk + 1, nk + number_plankt_vari)])
                   
