@@ -34,7 +34,7 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV=qsim3d_$(QSim_version)_dev
+PV=qsim3d_$(QSim_version)_salinity_dev
 
 
 # set additional libraries
@@ -131,6 +131,7 @@ Q3 = version.co \
    ganglinien.o \
    schnitt.o\
    planktische_variablen.o \
+   module_salinity.o \
    module_suspendedMatter.o \
    parallel.o \
    temperw_huelle.o \

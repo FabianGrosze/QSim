@@ -33,6 +33,7 @@ program QSim3D
    use modell
    use QSimDatenfelder
    use mod_suspendedMatter, only: step_suspendedMatter
+   use mod_salinity, only: step_salinity
    !use netcdf
    !use mpi
    
@@ -67,7 +68,9 @@ program QSim3D
       call mpi_barrier (mpi_komm_welt, ierr)
       !------------------------------------------------- set Boundary-Conditions (incl. Weather and Flow)
       call randbedingungen_setzen()
-      !-------------------------------------------------- suspended matter module
+      !------------------------------------------------- salinity module
+      call step_salinity
+	  !-------------------------------------------------- suspended matter module
       if (iEros>=0) then
          call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
