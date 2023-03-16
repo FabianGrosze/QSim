@@ -22,7 +22,7 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
 
 *(alphabetically sorted)*
 
-* __Ausbreitungsprognosen zur Überwachung der Umweltradioaktivität__
+* __Ausbreitungsprognosen zur Überwachung der Umweltradioaktivität__ \n
   Im Rahmen des Strahlenschutzgesetzes (StrlSchG §161) erstellt das Referat G4 
   Ausbreitungsprognosen radioaktiver Stoffe an Bundeswasserstraßen. Mit QSim 
   wird der Transport und die Verteilung der Radionuklide im Flusslauf bei 
@@ -148,8 +148,28 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   der Schwebstoffmodellierung </a>
   Ansprechpersonen: Tinh Vu (vu[at]bafg.de); Benjamin Schima (schima[at]bafg.de)
   \n\n
+  
+* __QUESTOSI__ - Querschnittsaufgabe Stofftransport-Simulationen (2023 - 2025) \n
+  In QUESTOSI soll die Transportmodellierung im Gewässergütemodell QSim
+  unter Miteinbeziehung der Stoffumsatzmodule für die Anwendung in Nebenräumen
+  von Ästuaren weiterentwickelt werden. Dies ist erforderlich, um die
+  ökologischen Auswirkungen zukünftig notwendiger Unterhaltungsmaßnahmen
+  auf die Nebenräume besser bewerten zu können.
+  Ansprechperson: Michael Schönung (schoenung[at]bafg.de); 
+  Jens Wyrwa (Wyrwa[at]bafg.de); Fabian Große (Grosse[at]bafg.de)
+  \n\n
+
+  \n
 
 ## External projects ##
+
+* __Effect of reduced reservoir discharge in the Ruhr catchment area__ \n
+  Untersuchung der Gewässergüte-Änderungen in der Ruhr hervorgerufen durch 
+  verringerte Talsperrenabflüsse. \n
+  Modellanwendung des Ruhrverbandes. \n
+  Ansprechpersonen: Jens Wyrwa (Wyrwa[at]bafg.de); Tanja Bergfeld-Wiedemann
+  (Bergfeld-Wiedemann[at]bafg.de)
+  \n\n
 
 * __KLIWA Sensitivitätsstudie Main__ (seit 2020) \n
   Die Kooperation [KLIWA](https://www.kliwa.de/) „Klimaveränderung und 
@@ -162,7 +182,18 @@ es keinen Ärger mit Spam gibt? Z.B. qsim_at_bafg.de (oder so ähnlich -->
   bayerischen Abschnitt des Mains. Dabei wird das Gewässergütemodell QSim 
   eingesetzt und von U2 fachlich begleitet. \n
   Ansprechpersonen im LfU: Maria Foltyn und Ulrich Kaul
+    \n\n
 
+* __Möhne__ \n
+  Analyse the effect of deep water withdrawal and release from reservoirs on 
+  the water quality of downstream river reaches using the example of River
+  Möhne.\n 
+  Master Thesis by Lisa Burghardt, RWTH Aachen, in Cooperation with the 
+  Ruhrverband Essen \n
+  Ansprechperson: Jens Wyrwa (Wyrwa[at]bafg.de)
+  \n\n
+
+  \n
   
 ## Past projects ##
 * Expertennetzwerk 1.0 \n
