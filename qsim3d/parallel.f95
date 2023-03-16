@@ -59,6 +59,7 @@ subroutine parallel_vorbereiten()
    use modell
    use QSimDatenfelder
    use mod_suspendedMatter, only: init_suspendedMatter
+   use mod_salinity, only: init_salinity
    !!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
    implicit none
    integer kontroll_lokal
@@ -86,6 +87,7 @@ subroutine parallel_vorbereiten()
    call mpi_barrier (mpi_komm_welt, ierr)
    
    ! initialize SPM (and salinity)
+   call init_salinity
    if (iEros>=0) then
       call schwebstoff_salz_parallel()
       !print*,meinrang," schwebstoff_salz_parallel() ... danach"

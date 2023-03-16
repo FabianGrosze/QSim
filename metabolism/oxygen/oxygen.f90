@@ -10,7 +10,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
                   iPhy, tflie,                                      &
                   dalgo_s, dalgao_s, algo_s, abeowg_s, abeowk_s,    &
                   abeorg_s, abeork_s, zooro2_s, hSchlr_s,           &
-                  o2ein_s, o2ein1_s,                                &
+                  o2ein1_s,                                         &
                   kontroll, jjj)
       
    use aparam, only : Caki, Cagr, Cabl, GRot, &
@@ -18,69 +18,68 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
                       opkima, opgrma, opblma
    implicit none
    ! --- dummy arguments ---           
-   real, intent(inout)  :: vO2_s       !< Sauerstoffgehalt
-   real, intent(in)     :: zooind_s    !< Rotatorien
-   real, intent(in)     :: agrNH4_s    !< Ammoniumaufnahme der Grünalgen    agrnh4z(nkz,ior)
-   real, intent(in)     :: akiNH4_s    !< Ammoniumaufnahme der Kieselalgen  akinh4z(nkz,ior)
-   real, intent(in)     :: ablNH4_s    !< Ammoniumaufnahme der Blaualgen    ablnh4z(nkz,ior)
-   real, intent(in)     :: agrNO3_s    !< Nitrataufnahme der Grünalgen      agrNO3z(nkz,ior)
-   real, intent(in)     :: akiNO3_s    !< Nitrataufnahme der Kieselalgen    akiNO3z(nkz,ior)
-   real, intent(in)     :: ablNO3_s    !< Nitrataufnahme der Blaualgen      ablNO3z(nkz,ior)
-   real, intent(in)     :: dalggr_s    !< Zuwachs Grünalgen
-   real, intent(in)     :: dalgki_s    !< Zuwachs Kieselalgen
-   real, intent(in)     :: dalgbl_s    !< Zuwachs Blaualgen
-   real, intent(in)     :: albewg_s    !< Wachstum benthischer Grünalgen
-   real, intent(in)     :: albewk_s    !< Wachstum benthischer Kieselalgen
-   real, intent(in)     :: dalgag_s    !< Respiration Grünalgen  algagz(nkz,ior)
-   real, intent(in)     :: dalgak_s    !< Respiration Kieselagen algakz(nkz,ior)
-   real, intent(in)     :: dalgab_s    !< Respiration Blaualgen  algabz(nkz,ior)
-   real, intent(in)     :: alberg_s    !< Respiration benthischer Grünalgen
-   real, intent(in)     :: alberk_s    !< Respiration bentischer Kieselagen
-   real, intent(in)     :: tempw_s     !< Wassertemperatur
-   real, intent(in)     :: hJO2_s      !< Sauerstoffzehrung des Sediments je Zeitschritt [gO2/m2]
-   real, intent(in)     :: bsbt_s      !< Sauerstoffverbrauch durch Kohlenstoffabbau
-   real, intent(in)     :: dC_DenW_s   !< C-Abbau durch Denitrifikation in der Wassersäule
-   real, intent(in)     :: TOC_CSB     !< Berechnung der BSB-Komponenten am oberen Rand
-   real, intent(in)     :: gO2n_s      !< für die Stickstoffoxidation verbrauchte Sauerstoffmenge
-   real, intent(in)     :: pO2p_s      !< Sauerstoffproduktion durch Makrophyten je Zeitschritt [mgO2/l]
-   real, intent(in)     :: pO2r_s      !< Sauerstoffverbrauch durch Makrophyten je Zeitschritt[mgO2/l]
-   real, intent(in)     :: rO2dr_s     !< Respiration Dreissena-Muscheln je Zeitschritt [mgO2/9]
-   real, intent(in)     :: rO2hnf_s    !< Respiration HNF
-   real, intent(in)     :: rau_s       !< Strickler Reibungsbeiwert
-   real, intent(in)     :: tiefe_s     !< Wassertiefe
-   real, intent(in)     :: rhyd_s      !< hydraulischer Radius
-   real, intent(in)     :: vmitt_s     !< Geschwindigkeitsbetrag
-   real, intent(in)     :: flae_s      !<
-   real, intent(in)     :: wlage_s     !< Höhenlage der zugehörigen Wetterstation [mNHN]   !< WLage(mstr,ior)
-   real, intent(in)     :: hws_s       !< Wasserspiegellage hws(mstr,ior)
-   real, intent(in)     :: wge_s       !< Windgeschwindigkeit   !< wge(IDWe(mstr,ior))
-   integer, intent(in)  :: iPhy        !< Nummer der Belüftungsformel
-   real, intent(in)     :: tflie       !< Zeitschritt [d]
-   real, intent(out)    :: dalgo_s     !< Sauerstoffproduktion der Grün-, Kiesel-, und Blaualgen  dalgoz(nkz,ior)
-   real, intent(out)    :: dalgao_s    !< Respiration (Sauerstoffverbrauch) der Grün-, Kiesel-, und Blaualgen
-   real, intent(out)    :: algo_s      !< Netto-Sauerstoffproduktion der Algen
-   real, intent(out)    :: abeowg_s    !< Sauerstoffproduktion benthischer Grünalgen
-   real, intent(out)    :: abeowk_s    !< Sauerstoffproduktion benthischer Kieselalgen 
-   real, intent(out)    :: abeorg_s    !< Sauerstoffverbrauch benthischer Grünalgen
-   real, intent(out)    :: abeork_s    !< Sauerstoffverbrauch benthishcer Kieselalagen 
-   real, intent(out)    :: zooro2_s    !< Sauerstoffverbrauch durch Zooplanktonrespiration (Rückgabewert)
-   real, intent(out)    :: hSchlr_s    !< Sauerstoffzehrung durch das Sediment [mgO2/(l*h)] hSchlr(mstr,ior)
-   real, intent(out)    :: o2ein_s     !< potentieller Sauerstoffeintrag aus der Luft
-   real, intent(out)    :: o2ein1_s    !< Sauerstoffeintrag aus der Luft
-   logical, intent(in)  :: kontroll    !< debugging
-   integer, intent(in)  :: jjj         !< debugging
+   real,    intent(inout) :: vO2_s       !< Sauerstoffgehalt
+   real,    intent(in)    :: zooind_s    !< Rotatorien
+   real,    intent(in)    :: agrNH4_s    !< Ammoniumaufnahme der Grünalgen    agrnh4z(nkz,ior)
+   real,    intent(in)    :: akiNH4_s    !< Ammoniumaufnahme der Kieselalgen  akinh4z(nkz,ior)
+   real,    intent(in)    :: ablNH4_s    !< Ammoniumaufnahme der Blaualgen    ablnh4z(nkz,ior)
+   real,    intent(in)    :: agrNO3_s    !< Nitrataufnahme der Grünalgen      agrNO3z(nkz,ior)
+   real,    intent(in)    :: akiNO3_s    !< Nitrataufnahme der Kieselalgen    akiNO3z(nkz,ior)
+   real,    intent(in)    :: ablNO3_s    !< Nitrataufnahme der Blaualgen      ablNO3z(nkz,ior)
+   real,    intent(in)    :: dalggr_s    !< Zuwachs Grünalgen
+   real,    intent(in)    :: dalgki_s    !< Zuwachs Kieselalgen
+   real,    intent(in)    :: dalgbl_s    !< Zuwachs Blaualgen
+   real,    intent(in)    :: albewg_s    !< Wachstum benthischer Grünalgen
+   real,    intent(in)    :: albewk_s    !< Wachstum benthischer Kieselalgen
+   real,    intent(in)    :: dalgag_s    !< Respiration Grünalgen  algagz(nkz,ior)
+   real,    intent(in)    :: dalgak_s    !< Respiration Kieselagen algakz(nkz,ior)
+   real,    intent(in)    :: dalgab_s    !< Respiration Blaualgen  algabz(nkz,ior)
+   real,    intent(in)    :: alberg_s    !< Respiration benthischer Grünalgen
+   real,    intent(in)    :: alberk_s    !< Respiration bentischer Kieselagen
+   real,    intent(in)    :: tempw_s     !< Wassertemperatur
+   real,    intent(in)    :: hJO2_s      !< Sauerstoffzehrung des Sediments je Zeitschritt [gO2/m2]
+   real,    intent(in)    :: bsbt_s      !< Sauerstoffverbrauch durch Kohlenstoffabbau
+   real,    intent(in)    :: dC_DenW_s   !< C-Abbau durch Denitrifikation in der Wassersäule
+   real,    intent(in)    :: TOC_CSB     !< Berechnung der BSB-Komponenten am oberen Rand
+   real,    intent(in)    :: gO2n_s      !< für die Stickstoffoxidation verbrauchte Sauerstoffmenge
+   real,    intent(in)    :: pO2p_s      !< Sauerstoffproduktion durch Makrophyten je Zeitschritt [mgO2/l]
+   real,    intent(in)    :: pO2r_s      !< Sauerstoffverbrauch durch Makrophyten je Zeitschritt[mgO2/l]
+   real,    intent(in)    :: rO2dr_s     !< Respiration Dreissena-Muscheln je Zeitschritt [mgO2/9]
+   real,    intent(in)    :: rO2hnf_s    !< Respiration HNF
+   real,    intent(in)    :: rau_s       !< Strickler Reibungsbeiwert
+   real,    intent(in)    :: tiefe_s     !< Wassertiefe
+   real,    intent(in)    :: rhyd_s      !< hydraulischer Radius
+   real,    intent(in)    :: vmitt_s     !< Geschwindigkeitsbetrag
+   real,    intent(in)    :: flae_s      !<
+   real,    intent(in)    :: wlage_s     !< Höhenlage der zugehörigen Wetterstation [mNHN]   !< WLage(mstr,ior)
+   real,    intent(in)    :: hws_s       !< Wasserspiegellage hws(mstr,ior)
+   real,    intent(in)    :: wge_s       !< Windgeschwindigkeit   !< wge(IDWe(mstr,ior))
+   integer, intent(in)    :: iPhy        !< Nummer der Belüftungsformel
+   real,    intent(in)    :: tflie       !< Zeitschritt [d]
+   real,    intent(out)   :: dalgo_s     !< Sauerstoffproduktion der Grün-, Kiesel-, und Blaualgen  dalgoz(nkz,ior)
+   real,    intent(out)   :: dalgao_s    !< Respiration (Sauerstoffverbrauch) der Grün-, Kiesel-, und Blaualgen
+   real,    intent(out)   :: algo_s      !< Netto-Sauerstoffproduktion der Algen
+   real,    intent(out)   :: abeowg_s    !< Sauerstoffproduktion benthischer Grünalgen
+   real,    intent(out)   :: abeowk_s    !< Sauerstoffproduktion benthischer Kieselalgen 
+   real,    intent(out)   :: abeorg_s    !< Sauerstoffverbrauch benthischer Grünalgen
+   real,    intent(out)   :: abeork_s    !< Sauerstoffverbrauch benthishcer Kieselalagen 
+   real,    intent(out)   :: zooro2_s    !< Sauerstoffverbrauch durch Zooplanktonrespiration (Rückgabewert)
+   real,    intent(out)   :: hSchlr_s    !< Sauerstoffzehrung durch das Sediment [mgO2/(l*h)] hSchlr(mstr,ior)
+   real,    intent(out)   :: o2ein1_s    !< Sauerstoffeintrag aus der Luft
+   logical, intent(in)    :: kontroll    !< debugging
+   integer, intent(in)    :: jjj         !< debugging
    
    ! --- local variables ---
    real  :: opkimix, opkimax, opgrmix, opgrmax, opblmix, opblmax
    real  :: falgog, falgok, falgob
-   real  :: ft, v, abeor, abeow, saett, sed_o2
-   real  :: bbei, defiz, delta_oxygen
+   real  :: ft, abeor, abeow, saett, sed_o2
+   real  :: bbei, defiz, vo2t_old, vo2t
   
    real, parameter :: mol_weight_o2 = 32.
    real, parameter :: mol_weight_c  = 12.
    real, parameter :: mol_o2_mol_c  = mol_weight_o2 / mol_weight_c
    
-   external :: belueftung_k2
+   external :: belueftung_k2, print_clipping
    
    ! --------------------------------------------------------------------------
    ! Influence of Algae
@@ -91,16 +90,19 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    else
       opkimix = 0.
    endif
+   
    if (opgrmi > 0.) then
       opgrmix = mol_o2_mol_C / opgrmi * Cagr
    else
       opgrmix = 0.
    endif
+   
    if (opblmi > 0.) then
       opblmix = mol_o2_mol_C / opblmi * Cabl
    else
       opblmix = 0.
    endif
+   
    opkimax = opkima * mol_o2_mol_C * Caki
    opgrmax = opgrma * mol_o2_mol_C * Cagr
    opblmax = opblma * mol_o2_mol_C * Cabl
@@ -160,12 +162,21 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    algo_s = dalgo_s - dalgao_s
    
    ! --------------------------------------------------------------------------
-   ! Influence of Zooplankton
+   ! oxygen consumption of zooplankton
    ! --------------------------------------------------------------------------
    ft = 1.047**(tempw_s - 20.)
    zooro2_s = 13.08 * GRot**0.716 * 24. * 1.e-6  ! mgO2/Ind/d (Galkovskaya 1995)
    zooro2_s = zooro2_s * zooind_s * ft * tflie
    
+   ! --------------------------------------------------------------------------
+   ! oxygen consumption in sediment
+   !---------------------------------------------------------------------------
+   if (tiefe_s > 0.) then
+      sed_o2 = hJO2_s * tflie / tiefe_s
+   else
+      sed_o2 = 0.
+   endif
+      
    ! --------------------------------------------------------------------------
    ! oxygen exchange at water surface
    ! --------------------------------------------------------------------------
@@ -181,23 +192,15 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    
    ! Sauerstoffsättigungskonzentration
    saett = oxygen_saturation_concentration(tempw_s)
-   defiz   = saett - vO2_s
+   defiz = saett - vO2_s
    
-   ! potentieller Sauerstoffaustausch
-   o2ein_s = saett * (1 - exp(-bbei * tflie))
-   
-   ! tatsächlicher Sauerstoffaustausch
-   ! TODO (Schoenung, august 2022): Ticket #53
-   ! Hier wird ein implizites Eulerverfahren benutzt. In der Sauerstoffbilanz weiter unten
-   ! wird hingegen ein semi-implizites Verfahren benutzt. Damit untescheiden sich der Ausgabewert
-   ! `o2ein1_s` und der tatsächlich in der Bilanz verwendete Wert voneinander.
-   o2ein1_s = defiz * (1 - exp(-bbei * tflie))
-   
+   ! oxygen exchange
+   o2ein1_s = defiz * bbei * tflie
+      
    if (kontroll) then
       write(*,'(A)')  'oxygen Oberflaechenbelueftung:'
       write(*,'(A,F0.6)') '  vO2    = ', vO2_s
       write(*,'(A,F0.6)') '  defiz  = ', defiz
-      write(*,'(A,F0.6)') '  O2ein  = ', o2ein_s
       write(*,'(A,F0.6)') '  O2ein1 = ', o2ein1_s
       write(*,'(A,F0.6)') '  tempw  = ', tempw_s
       write(*,'(A,F0.6)') '  rau    = ', rau_s
@@ -212,45 +215,40 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
       write(*,'(A,I0)')   '  iPhy   = ', iphy
    endif
    
-   ! Sauerstoffzehrung des Sediments
-   if (tiefe_s > 0.) then
-      sed_o2 = hJO2_s * tflie / tiefe_s
-   else
-      sed_o2 = 0.
+   ! --------------------------------------------------------------------------
+   ! timestep
+   ! --------------------------------------------------------------------------
+   vo2t = vo2_s                           &
+        + dalgo_s                         &  ! Sauerstoffproduktion der Algen
+        - dalgao_s                        &  ! Sauerstoffrespiration der Algen
+        - go2n_s                          &  ! Sauerstoffverbrauch bei Stickstoffoxidation
+        - (bsbt_s - dC_DenW_s * TOC_CSB)  &  ! Sauerstoffverbrauch durch Kohlenstoffabbau
+        - zooro2_s                        &  ! Sauerstoffverbrauch der Rotatorien
+        - sed_o2                          &  ! Sauerstoffzehrung des Sediments
+        + po2p_s                          &  ! Sauerstoffproduktion der Makrophyten
+        - po2r_s                          &  ! Sauerstoffrespiration der Makrophyten
+        + abeow                           &  ! Sauerstoffproduktion der benthischen Algen
+        - abeor                           &  ! Sauerstoffrespiration der benthischen Algen
+        - ro2dr_s                         &  ! Sauerstoffrespiration der Dreissena
+        - rO2HNF_s                        &  ! Sauerstoffrespiration der HNF
+        + o2ein1_s                           ! oxygen exchange at water surface 
+   
+   if (vo2t < 0.0) then
+      vo2t_old = vo2t
+      vo2t = (vo2_s / (vo2_s + abs(vo2t - vo2_s))) * vo2_s
+      call print_clipping("oxygen", "vno2t", vo2t_old, vo2t, "mg/l")
    endif
-   
-   ! --------------------------------------------------------------------------
-   ! oxygen balance
-   ! --------------------------------------------------------------------------
-   
-   v = dalgo_s                         &  ! Sauerstoffproduktion der Algen
-     - dalgao_s                        &  ! Sauerstoffrespiration der Algen
-     - go2n_s                          &  ! Sauerstoffverbrauch bei Stickstoffoxidation
-     - (bsbt_s - dC_DenW_s * TOC_CSB)  &  ! Sauerstoffverbrauch durch Kohlenstoffabbau
-     - zooro2_s                        &  ! Sauerstoffverbrauch der Rotatorien
-     - sed_o2                          &  ! Sauerstoffzehrung des Sediments
-     + po2p_s                          &  ! Sauerstoffproduktion der Makrophyten
-     - po2r_s                          &  ! Sauerstoffrespiration der Makrophyten
-     + abeow                           &  ! Sauerstoffproduktion der benthischen Algen
-     - abeor                           &  ! Sauerstoffrespiration der benthischen Algen
-     - ro2dr_s                         &  ! Sauerstoffrespiration der Dreissena
-     - rO2HNF_s                           ! Sauerstoffrespiration der HNF
-   
-   ! Weil die Belüftungsrate vom Sauerstoffgehalt selbst abhängig ist, wird hier 
-   ! eine semi-implizite Diskretisierung zur Berechnung des Sauerstoffgehaltes 
-   ! zum Zeitpunkt t+Δt verwendet:
-   delta_oxygen = (v + bbei * tflie * defiz) / (1. + bbei * tflie * 0.5)
    
    ! --------------------------------------------------------------------------
    ! update return values
    ! --------------------------------------------------------------------------
    ! Ausgabe Sedimentflux [mgO2/l/h]
    if (tiefe_s > 0.) then
-      hSchlr_s = hJO2_s / (tiefe_s * 24.)
+      hschlr_s = hjo2_s / (tiefe_s * 24.)
    else
-      hSchlr_s = 0.
+      hschlr_s = 0.
    endif
    
-   vo2_s = max(vo2_s + delta_oxygen, 0.01)
+   vo2_s = vo2t
    
 end subroutine oxygen

@@ -1,6 +1,20 @@
 # QSim 14
 
 ## 14.09
+### 14.09.29
+* New module for reading of salinity from UnTRIM hydrodynamics in QSim3D
+
+### 14.09.28
+* Create module and corefunction for corophium (note this module is currently turned off)
+
+### 14.09.27
+* fixed initialisation of photoinhibition of cyanobacteria in groyne field
+
+### 14.09.26
+* bug fixing and partial refactoring (incl. commenting) of Dreissena routine
+
+### 14.09.25
+* Replace semi-implicit timesteping in oxygen with explicit timesteping.
 
 ### 14.09.24
 * Create modules for macrophytes and hnf
@@ -13,7 +27,6 @@ Bugfixes
 * Correct groyne fields
 * Correct temperature conversions to absolute zero
 * Minimize compiler warnings
-
 
 ### 14.09.21
 * bug fixes and minor refactoring in `nitrogen.f90`, `nitrifiers.f90`, `oxygen.f90` and `sedimentation.f90` to prevent division by 0, log(0) and uninitialised use of variables

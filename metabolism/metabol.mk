@@ -20,7 +20,6 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/algaesgr.o \
 	../metabolism/algaeski.o \
 	../metabolism/c_chla.o \
-	../metabolism/coroph.o \
 	../metabolism/dichte.o \
 	../metabolism/dreissen.o \
 	../metabolism/e_extnct_lesen.o \

@@ -175,7 +175,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
       trans_quant_name( 3) = "               doN" ! Stickstofffreisetzung orgc
       trans_quant_name( 4) = "            BACmua" ! Ausgabekonzentration Summe Aufnahme+Respirationsrate heterotrophe Bakterien
-      trans_quant_name( 5) = "        empty_five" !
+      trans_quant_name( 5) = "          empty_05" !
       trans_quant_name( 6) = "             abszo" ! Absterberate Zooplankton
       trans_quant_name( 7) = "            dkimor" ! Absterberate Kieselalgen
       trans_quant_name( 8) = "            dgrmor" ! Absterberate Grünlalgen
