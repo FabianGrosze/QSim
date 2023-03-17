@@ -97,7 +97,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real     :: vcb, cref, orgN, orgP
    real     :: topt, dti, ftemp
    real     :: hymxD1, hymxD2, hhyp1, hhyp2
-   real     :: dCD1, dCD2, CD1_t, CD2_t, CP1_t, CP2_t, CMt
+   real     :: dCD1, dCD2, CD1_t, CD2_t, CP1_t, CP2_t, CMt, TOC
    real     :: ddCM1, ddCM2, hyD1, hyD2
    real     :: hupBAC, dCM, resBAC, dBAC, BACt, bsbts
    real     :: fluxd1, fluxd2, fvcb, hconpf
@@ -108,18 +108,19 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real     :: dorgP, dorgN, orgPn, orgNn
    real     :: sumC, fakCref, bl01t, bl02t, bl01, bl02, bl0t, bl0 
    real     :: deltat, hc_wert, k_bsb, obsbt, bact_old, ocsbt_old
-   real     :: obsbt_old, cd1_t_old, cd2_t_old, cp1_t_old, cp2_t_old, cmt_old
+   real     :: obsbt_old, cd1_t_old, cd2_t_old, cp1_t_old, cp2_t_old, cmt_old, cref_old
    real     :: algb51, algb52, algb53, algb5, algcs1, algcs2, algcs3, algcs
    real     :: zoobsb, zoocsb, ocsbt
    integer  :: ised, jsed
   
-   real, parameter :: bk1 = 0.51
-   real, parameter :: bk2 = 0.02
+   real, parameter :: bk1   = 0.51
+   real, parameter :: bk2   = 0.02
    real, parameter :: famD1 = 0.3
    real, parameter :: famD2 = 0.2
    real, parameter :: famP1 = 0.1
    real, parameter :: famP2 = 0.3
    real, parameter :: famR  = 0.1
+   real, parameter :: c_min = 0.00001      ! minimum concentration of organic C components
    
    external :: sedimentation, print_clipping
    
@@ -134,52 +135,48 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       HNF_N_C = 0.0
    endif
    
-   if (ocsb_s > 0.0) then 
-      vcb = obsb_s/ocsb_s
-   else
-      vcb = 0.0
-   endif
-   
-   if (TOC_CSB > 0.0) then
-      Cref = (ocsb_s / TOC_CSB)  &
-           - CD1_s - CD2_s       &
-           - CP1_s - CP2_s       &
-           - CM_s                &
-           - (1.-famR) * bac_s   &
-           - (1.-famR) * chnf_s
+   ! calculate amounf of refractory organic C at start of time step
+   if (TOC_CSB > 0.0 .and. ocsb_s > 0.) then
+      Cref = ocsb_s / TOC_CSB      &
+           - CD1_s - CD2_s         &
+           - CP1_s - CP2_s         &
+           - CM_s                  &
+           - (1. - famR) * bac_s   &
+           - (1. - famR) * chnf_s
       if (Cref < 0.) then
-         Cref_old = Cref
+         cref_old = Cref
          Cref     = 0.
-         call print_clipping("organic_carbon", "cref", Cref_old, Cref, "")
+         call print_clipping("organic_carbon", "cref", cref_old, Cref, "")
       endif
    else
       Cref = 0.0
    endif
    
-   orgN = ( Cref                 &
-           + CD1_s + CD2_s       &
-           + CP1_s + CP2_s       &
-           + CM_s                &
-           + (1.-famR) * bac_s   &
-           + (1.-famR) * chnf_s  &
-          ) * nl0_s
-        
-   orgP = ( Cref                  &
-           + CD1_s + CD2_s        &
-           + CP1_s + CP2_s        &
-           + CM_s                 &
-           + (1.-famR) * bac_s    &
-           + (1.-famR) * chnf_s   &
-          ) * pl0_s
+   ! recalculate total organic C and O-CSB and start of time step
+   TOC = cref  + CM_s  +                 &
+         CD1_s + CD2_s +                 &
+         CP1_s + CP2_s +                 &
+         (1. - famR) * (bac_s + chnf_s)
+   
+   ocsb_s = TOC * TOC_CSB
+   
+   ! calculate organic N and P at start of time step
+   orgN = TOC * nl0_s
+   orgP = TOC * pl0_s
    
    ! Temperaturabhaengigkeit
    Topt = 25.
    dti  = 15.
    ftemp = exp(-((tempw_s-Topt)**2) / (dti**2))
    
+   if (ocsb_s > 0.0) then 
+      vcb = obsb_s / ocsb_s
+   else
+      vcb = 0.0
+   endif
+   
    hymxD1 = hymxD
-   hymxD2 = 0.474*vcb**(-1.346)
-   if (hymxD2 > 6.) hymxD2 = 6.
+   hymxD2 = min(6., 0.474 * vcb**(-1.346))
    
    hhyP1 = hyP1
    hhyP2 = 1.51 * vcb**2.31
@@ -198,98 +195,87 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ddCM1 = 0.0
    ddCM2 = 0.0
    
-   if ((CD1_t+ksD1) > 0.0) then 
-      hyD1 = hymxD1*(CD1_t/(CD1_t + ksD1))
+   if (CD1_t + ksD1 > 0.0) then 
+      hyD1 = hymxD1 * CD1_t / (CD1_t + ksD1)
    else
       hyD1 = 0.0
    endif
    
    ddCM1 = hyD1 * ftemp * bac_s * tflie
-   if (ddCM1 > CD1_t) ddCM1 = CD1_t - 0.00001
+   if (ddCM1 > CD1_t) ddCM1 = CD1_t - c_min
    
-   if ((CD2_t + ksD2) > 0.0) then
-      hyD2 = hymxD2 * (CD2_t /(CD2_t + ksD2))
+   if (CD2_t + ksD2 > 0.0) then
+      hyD2 = hymxD2 * CD2_t / (CD2_t + ksD2)
    else
       hyD2 = 0.0
    endif
    
    ddCM2 = hyD2 * ftemp * bac_s * tflie
-   if (ddCM2 > CD2_t) ddCM2 = CD2_t - 0.00001
+   if (ddCM2 > CD2_t) ddCM2 = CD2_t - c_min
    
-   
-   CD1_t = CD1_t - ddCM1
-   CD2_t = CD2_t - ddCM2
-   if (CD1_t < 0.00001) CD1_t = 0.00001
-   if (CD2_t < 0.00001) CD2_t = 0.00001
-   
-   CMt = CM_s + ddCM1 + ddCM2
+   CD1_t = max(c_min, CD1_t - ddCM1)
+   CD2_t = max(c_min, CD2_t - ddCM2)
+   CMt   = CM_s + ddCM1 + ddCM2
    
    ! --- Bakterien ---
    ! Wachstum
-   if ((CMt+ksM) > 0.0) then 
-      hupBAC = upBAC * ftemp * (CMt/(CMt+ksM))
+   if (CMt + ksM > 0.0) then 
+      hupBAC = upBAC * ftemp * CMt / (CMt + ksM)
    else
       hupBAC = 0.0
    endif
    
    dCM = bac_s * (exp(hupBAC * tflie) - 1.)
-   if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt > 0.00001) then
+   if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt > c_min) then
       hupBAC = 0.0
-      if (tflie > 0.0) hupBAC = (log(bac_s+CMt-0.00001)-log(bac_s))/tflie
-      dCM = bac_s*(exp(hupBAC*tflie)-1.)
+      if (tflie > 0.0) hupBAC = (log(bac_s + CMt - c_min) - log(bac_s)) / tflie
+      dCM = bac_s * (exp(hupBAC * tflie) - 1.)
    endif
    
    ! Respiration
    resBAC = max(0., rsGBAC * ftemp + hupBAC * (1. - yBAC))
-   dBAC = bac_s * (exp((hupBAC - resBAC)*tflie) - 1.)
+   dBAC = bac_s * (exp((hupBAC - resBAC) * tflie) - 1.)
    BACt = bac_s + dBAC
    BACmua_s = hupBAC - resBAC     ! Ausgabewert
    
-   CMt = CMt - dCM
-   if (CMt < 0.00001)CMt = 0.00001
-   bsbct_s = bac_s * (1.-exp(-resBAC*tflie))
-   bsbts  = bsbct_s * TOC_CSB
+   CMt = max(c_min, CMt - dCM)
+   bsbct_s = bac_s * (1. - exp(-resBAC * tflie))
+   bsbts   = bsbct_s * TOC_CSB
    
    ! --- Einfluss der sessilen Organismen ---
    ! FLUX in g/(m2*d)
    ! Änderung der gel. C-Verbindungen durch Organismen auf Makrophyten
    ! wird überarbeitet
    
-   FluxD1 = 0.62 * (CD1_s+CD2_s)**0.817
+   FluxD1 = 0.62 * (CD1_s + CD2_s)**0.817
    if (vcb > 0.) then
       fvcb = 0.62 * log(vcb) + 2.2
    else
       fvcb = 0.0
    endif
-  
    FluxD1 = FluxD1 * fvcb
    
-   FluxD2 = 0.56*(CD1_s+CD2_s)**0.916
-   fvcb = -3.11*vcb+1.407
-   FluxD2 = FluxD2*fvcb
+   FluxD2 = 0.56 * (CD1_s + CD2_s)**0.916
+   fvcb = -3.11* vcb +1.407
+   FluxD2 = FluxD2 * fvcb
    
    ! Umrechnung auf g/(m3*d)
    if (tiefe_s > 0.0) then 
-      hconPf = pfl_s/(300.*tiefe_s)
+      hconPf = pfl_s / (300.*tiefe_s)
    else
       hconPf = 0.0
    endif
    
-   CD1_t = CD1_t - FluxD1 * hconPf  *ftemp * tflie
-   if (CD1_t < 0.00001) CD1_t = 0.00001
+   CD1_t = max(c_min, CD1_t - FluxD1 * hconPf  *ftemp * tflie)
+   CD2_t = max(c_min, CD2_t - FluxD2 * hconPf * ftemp * tflie)
    
-   CD2_t = CD2_t - FluxD2 * hconPf * ftemp * tflie
-   if (CD2_t < 0.00001) CD2_t = 0.00001
-   
-   bsbct_s = bsbct_s + (FLuxD1+FluxD2) * hconPf * ftemp * tflie
+   bsbct_s = bsbct_s + (FLuxD1 + FluxD2) * hconPf * ftemp * tflie
    
    ! --- Einfluss des Sediments ---
    if (tiefe_s > 0.0) then
-      CD1_t = CD1_t + jDOC1_s * tflie / tiefe_s
-      CD2_t = CD2_t + jDOC2_s * tflie / tiefe_s
+      CD1_t = max(c_min, CD1_t + jDOC1_s * tflie / tiefe_s)
+      CD2_t = max(c_min, CD2_t + jDOC2_s * tflie / tiefe_s)
    endif
-   if (CD1_t < 0.00001) CD1_t = 0.00001
-   if (CD2_t < 0.00001) CD2_t = 0.00001
    
    ! bsbct_s - mineralisierter Kohlenstoffgehalt in der Wassersäule(einschli
    ! doN_s   - mineralisierter N-Gehalt in der Wassersäule (einschließlich
@@ -297,19 +283,20 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    doN_s    = bsbct_s * nl0_s
    
    ! Sauerstoffverbrauch durch Organismen auf Makrophyten
-   FluxO2 = 0.758*(CD1_s+CD2_s) + 0.21
-   fvcb = -5.476*(vcb**2) + 2.256*vcb + 0.789
+   FluxO2 =  0.758 * (CD1_s + CD2_s) + 0.21
+   fvcb   = -5.476 * vcb**2 + 2.256 * vcb + 0.789
    FluxO2 = FluxO2 * fvcb
  
-   bsbtb = FluxO2 * hconPf * ftemp * tflie
-   bsbt_s = bsbts + bsbtb
+   bsbtb    = FluxO2 * hconPf * ftemp * tflie
+   bsbt_s   = bsbts + bsbtb
    BSBbet_s = bsbtb        !  Ausgabewert
  
    ! --- Einfluss der Sedimentation ---
-   g = sqrt(9.81)
-   ust = 0.0
    if (rau_s > 0.0 .and. tiefe_s > 0.0) then
-      ust = (((1/rau_s)*g)/(tiefe_s**0.16667))*abs(vmitt_s)
+      g = sqrt(9.81)
+      ust = (g * abs(vmitt_s)) / (rau_s * tiefe_s**0.16667)
+   else
+      ust = 0.0
    endif
  
    ASEDC = 1.44E-6
@@ -319,20 +306,20 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    BACsd = fbsgr_s * bac_s
    Crfsd = frfgr_s * Cref
  
-   ised = 2
-   jsed = 1
+   ised  = 2
+   jsed  = 1
    ZellV = 0.0
-   call sedimentation(tiefe_s,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV, &
-                 kontroll,jjj)
+   call sedimentation(tiefe_s,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,   &
+                      kontroll,jjj)
    Ceq1 = CP1sd * qsgr
    Ceq2 = CP2sd * qsgr
    Ceq3 = BACsd * qsgr
    Ceq4 = Crfsd * qsgr
  
-   sedCP1 = (CP1sd-Ceq1) * oc
-   sedCP2 = (CP2sd-Ceq2) * oc
-   sedBAC = (BACsd-Ceq3) * oc
-   sedCrf = (Crfsd-Ceq4) * oc
+   sedCP1 = (CP1sd - Ceq1) * oc
+   sedCP2 = (CP2sd - Ceq2) * oc
+   sedBAC = (BACsd - Ceq3) * oc
+   sedCrf = (Crfsd - Ceq4) * oc
    
    orgCsd0_s = CP1sd * oc0    &
              + CP2sd * oc0    &
@@ -345,10 +332,10 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
             + sedBAC          &
             + sedCrf
    
-   ! sedimentiertes biologisch abbaubares organ.Material
+   ! sedimentiertes biologisch abbaubares organ. Material
    orgCsd_abb_s = sedCP1 + sedCP2 + sedBAC 
    
-   ! Änderung der Fraktionen durch abgstorbene HNF,Zooplankter und Algen
+   ! Änderung der Fraktionen durch abgstorbene HNF, Zooplankton und Algen
    dCD1t = famD1 * bsbHNF_s         &
          + famD1 * dKimor_s * Caki  &
          + famD1 * dGrmor_s * Cagr  &
@@ -363,21 +350,21 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + famD2 * abszo_s  * Czoo
    CD2_t = CD2_t + dCD2t
    
-   dCP1t = famP1 * bsbHNF_s       &
+   dCP1t = famP1 * bsbHNF_s         &
          + famP1 * dKimor_s * Caki  &
          + famP1 * dGrmor_s * Cagr  &
          + famP1 * dBlmor_s * Cabl  &
          + famP1 * abszo_s  * Czoo
    CP1_t = CP1_t + dCP1t
    
-   dCP2t = famP2 * bsbHNF_s       &
+   dCP2t = famP2 * bsbHNF_s         &
          + famP2 * dKimor_s * Caki  &
          + famP2 * dGrmor_s * Cagr  &
          + famP2 * dBlmor_s * Cabl  &
          + famP2 * abszo_s  * Czoo
    CP2_t = CP2_t + dCP2t
    
-   Creft = Creft                  &
+   Creft = Creft                    &
          + famR * bsbHNF_s          &
          + famR * dKimor_s * Caki   &
          + famR * dGrmor_s * Cagr   &
@@ -400,7 +387,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    orgPn = orgP + dorgP - bsbctP_s
    orgNn = orgN + dorgN - doN_s
    
-   ! Erhöhung durch Faces-Bildung von Zooplankter und Dreissena
+   ! Erhöhung durch Faeces-Bildung von Zooplankton und Dreissena
    CD1_t = CD1_t                    &
          + famD1 * zexKi_s  * Caki  &
          + famD1 * zexGr_s  * Cagr  &
@@ -441,7 +428,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          + famR * zexBl_s  * Cabl   &
          + famR * drfaeb_s * Cabl
    
-   ! Änderung ses orgP und orgN-Gehaltes
+   ! Änderung des orgP und orgN-Gehaltes
    dorgP = zexKi_s  * Q_PK_s        &
          + zexGr_s  * Q_PG_s        &
          + drfaek_s * Q_PK_s        &
@@ -463,26 +450,27 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! Annahmen:
    !  Anteil organisches Material 30%
    !  Anteil orgC 40%
-   !  Anteil partikuläres refakteres C ergibt sich aus Verhältnis CPges/CDges+CPges)
+   !  Anteil partikuläres refraktaeres C ergibt sich aus Verhältnis CPges/CDges+CPges)
+   !  TODO FG: previous comment not clear - why is that so?
    sumc = CP1_s + CP2_s + CD1_s + CD2_s
    if (sumc > 0.0) then 
-      fakCref = (CP1_s+CP2_s)/sumc
+      fakCref = (CP1_s + CP2_s) / sumc
    else
       fakCref = 0.0
    endif
    
    sumc = CP1_s + CP2_s + fakCref * Cref
    if (sumc > 0.0) then 
-      CP1_t = CP1_t - ssdr_s*0.3*0.4*(CP1_s/ sumc )
-      CP2_t = CP2_t - ssdr_s*0.3*0.4*(CP2_s/ sumc )
-      Creft = Creft - ssdr_s*0.3*0.4*(cref/ sumc )
+      CP1_t = CP1_t - ssdr_s * 0.3 * 0.4 * CP1_s / sumc
+      CP2_t = CP2_t - ssdr_s * 0.3 * 0.4 * CP2_s / sumc
+      Creft = Creft - ssdr_s * 0.3 * 0.4 * cref  / sumc
    endif
    
    ! Beruecksichtigung der Sedimentation
    CP1_t = CP1_t - sedCP1
    CP2_t = CP2_t - sedCP2
    BACt  = BACt  - sedBAC
-   Creft = Cref  - sedCrf
+   Creft = Creft - sedCrf
    orgNn = orgNn        &
          - sedCP1*nl0_s &
          - sedCP2*nl0_s &
@@ -493,44 +481,44 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
          - sedCrf*pl0_s
    
    ! Verlust der Bakterien durch HNF-Grazing
-   BACt = max(0.00001, BACt - HNFbac_s - zbac_s)
+   BACt = max(c_min, BACt - HNFbac_s - zbac_s)
    
    ! --- Neuberechnung des BSB5 ---
-   BL01t = ( CD1_t                  &
-           + CP1_t                  &
-           + (famD1+famP1) * BACt   &
-           + CMt                    &
-           + (famD1+famP1)*chnf_s   &
+   BL01t = ( CD1_t                      &
+           + CP1_t                      &
+           + (famD1 + famP1) * BACt     &
+           + CMt                        &
+           + (famD1 + famP1) * chnf_s   &
          ) * TOC_CSB
          
-   BL02t = ( CD2_t                  &
-           + CP2_t                  &
-           + (famD2+famP2) * BACt   &
-           + (famD2+famP2) * chnf_s &
+   BL02t = ( CD2_t                      &
+           + CP2_t                      &
+           + (famD2 + famP2) * BACt     &
+           + (famD2 + famP2) * chnf_s   &
          ) * TOC_CSB
          
-   BL01 = ( CD1_s                   &
-          + CP1_s                   &
-          + (famD1+famP1) * bac_s   &
-          + CM_s                    &
-          + (famD1+famP1) * chnf_s  &
+   BL01 = ( CD1_s                       &
+          + CP1_s                       &
+          + (famD1 + famP1) * bac_s     &
+          + CM_s                        &
+          + (famD1 + famP1) * chnf_s    &
         ) * TOC_CSB
         
-   BL02 = ( CD2_s                   &
-          + CP2_s                   &
-          + (famD2+famP2) * bac_s   &
-          + (famD2+famP2) * chnf_s  &
+   BL02 = ( CD2_s                       &
+          + CP2_s                       &
+          + (famD2 + famP2) * bac_s     &
+          + (famD2 + famP2) * chnf_s    &
         ) * TOC_CSB
         
    BL0t = BL01t + BL02t
    BL0  = BL01  + Bl02
    
    deltat = 5.
-   hc_wert = min(0.95,obsb_s/Bl0)
+   hc_wert = min(0.95, obsb_s / Bl0)
    
    ! Abbaurate 1. Ordnung berechnet aus dem alten Zeitschritt
-   k_BSB = (-1.*log(1.-hc_wert))/deltat
-   obsbt = BL0t*(1.-exp(-k_BSB*deltat))
+   k_BSB = -log(1. - hc_wert) / deltat
+   obsbt = BL0t * (1. - exp(-k_BSB * deltat))
    
    
    ! Neuberechnung des Faktors zur Berechnung der ablagerungsfreien Grenzkonzentration
@@ -542,125 +530,119 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
        + famP2 * bsbHNF_s           &
        + famP2 * dKimor_s * Caki    &
        + famP2 * dGrmor_s * Cagr    &
-       + famP2 * dBlmor_s * Cabl 
-   
-   hc1 = hc1                        &
-       + famP2 * abszo_s * Czoo
-      
-   hc1 = hc1                        &
+       + famP2 * dBlmor_s * Cabl    &
+       + famP2 * abszo_s  * Czoo    &
        + famP2 * zexKi_s  * Caki    &
        + famP2 * zexGr_s  * Cagr    &
        + famP2 * drfaek_s * Caki    &
-       + famP2 * drfaeg_s * Cagr
-      
-   hc1 = hc1                        &
+       + famP2 * drfaeg_s * Cagr    &
        + famP2 * zexBl_s  * Cabl    &
        + famP2 * drfaeb_s * Cabl
    
-   if (sumc > 0.0) hc1 = hc1 - (ssdr_s * 0.3 * 0.4 * (CP2_s/ sumc ))
-   
-   hc2 = CP2sd                      &
-       - sedCP2                     &
+   hc2 = CP2sd - sedCP2             &
        + famP2 * bsbHNF_s           &
        + famP2 * dKimor_s * Caki    &
        + famP2 * dGrmor_s * Cagr    &
-       + famP2 * dBlmor_s * Cabl
-   hc2 = hc2                        &
-       + famP2 * abszo_s  * Czoo
-   hc2 = hc2                        &
+       + famP2 * dBlmor_s * Cabl    &
+       + famP2 * abszo_s  * Czoo    &
        + famP2 * zexKi_s  * Caki    &
        + famP2 * zexGr_s  * Cagr    &
        + famP2 * drfaek_s * Caki    &
-       + famP2 * drfaeg_s * Cagr
-   hc2 = hc2                        &
+       + famP2 * drfaeg_s * Cagr    &
        + famP2 * zexBl_s  * Cabl    &
        + famP2 * drfaeb_s * Cabl
-   if (sumc > 0.0) hc2 = hc2 - (ssdr_s * 0.3 * 0.4 * (CP2_s/ sumc ))
+   
+   if (sumc > 0.0) then
+      hc1 = hc1 - ssdr_s * 0.3 * 0.4 * CP2_s / sumc
+      hc2 = hc2 - ssdr_s * 0.3 * 0.4 * CP2_s / sumc
+   endif
    
    fbsgrt = 0.0
-   if (hc1 > 0.0) fbsgrt = max(0.0,min(0.9,(hc2/hc1)))
+   if (hc1 > 0.0) fbsgrt = max(0.0, min(0.9, hc2 / hc1))
    
-   hc1 = Cref                       &
-       - sedCrf                     &
+   hc1 = Cref - sedCrf              &
        + famR * bsbHNF_s            &
        + famR * dKimor_s * Caki     &
        + famR * dGrmor_s * Cagr     &
-       + famR * dBlmor_s * Cabl
-   hc1 = hc1                        &
-       + famR * abszo_s  * Czoo
-   hc1 = hc1                        &
+       + famR * dBlmor_s * Cabl     &
+       + famR * abszo_s  * Czoo     &
        + famR * zexKi_s  * Caki     &
        + famR * zexGr_s  * Cagr     &
        + famR * drfaek_s * Caki     &
-       + famR * drfaeg_s * Cagr
-   hc1 = hc1                        &
+       + famR * drfaeg_s * Cagr     &
        + famR * zexBl_s  * Cabl     &
        + famR * drfaeb_s * Cabl
-   if (sumc > 0.0) hc1 = hc1 - (ssdr_s * 0.3 * 0.4 * (cref/ sumc ))
    
    hc2 = Crfsd                      &
        - sedCrf                     &
        + famR * bsbHNF_s            &
        + famR * dKimor_s * Caki     &
        + famR * dGrmor_s * Cagr     &
-       + famR * dBlmor_s * Cabl
-   hc2 = hc2                        &
-       + famR * abszo_s  * Czoo
-   hc2 = hc2                        &
+       + famR * dBlmor_s * Cabl     &
+       + famR * abszo_s  * Czoo     &
        + famR * zexKi_s  * Caki     &
        + famR * zexGr_s  * Cagr     &
        + famR * drfaek_s * Caki     &
-       + famR * drfaeg_s * Cagr
-   hc2 = hc2                        &
+       + famR * drfaeg_s * Cagr     &
        + famR * zexBl_s  * Cabl     &
        + famR * drfaeb_s * Cabl
-   if (sumc > 0.0) hc2 = hc2 - (ssdr_s * 0.3 * 0.4 * (cref/ sumc ))
+   
+   if (sumc > 0.0) then
+      hc1 = hc1 - ssdr_s * 0.3 * 0.4 * cref / sumc
+      hc2 = hc2 - ssdr_s * 0.3 * 0.4 * cref / sumc
+   endif
        
    frfgrt = 0.0
-   if (hc1 > 0.0) frfgrt = max(0.0,min(0.9,(hc2/hc1)))
+   if (hc1 > 0.0) frfgrt = max(0.0, min(0.9, hc2 / hc1))
    
    
    ! TODO (Schönung, february 2023): Add units in print_clipping
    if (obsbt < 0.0) then 
       obsbt_old = obsbt
-      obsbt = max(0.0, (obsb_s/(obsb_s + abs(obsbt - obsb_s))) * obsb_s)
+      obsbt     = max(0.0, (obsb_s/(obsb_s + abs(obsbt - obsb_s))) * obsb_s)
       call print_clipping("organic_carbon", "obsbt", obsbt_old, obsbt, "")
    endif
    
    if (cd1_t < 0.0) then
       cd1_t_old = cd1_t
-      cd1_t = max(0.0, (cd1_s /(cd1_s + abs(cd1_t - cd1_s))) * cd1_s)
+      cd1_t     = max(0.0, (cd1_s /(cd1_s + abs(cd1_t - cd1_s))) * cd1_s)
       call print_clipping("organic_carbon", "cd1_t", cd1_t_old, cd1_t, "")
    endif   
       
    if (cd2_t < 0.0) then 
       cd2_t_old = cd2_t
-      cd2_t = max(0.0, (cd2_s /(cd2_s + abs(cd2_t - cd2_s))) * cd2_s)
+      cd2_t     = max(0.0, (cd2_s /(cd2_s + abs(cd2_t - cd2_s))) * cd2_s)
       call print_clipping("organic_carbon", "cd2_t", cd2_t_old, cd2_t, "")
    endif
    
    if (cp1_t < 0.0) then
       cp1_t_old = cp1_t
-      cp1_t = max(0.0, (cp1_s /(cp1_s + abs(cp1_t - cp1_s))) * cp1_s)
+      cp1_t     = max(0.0, (cp1_s /(cp1_s + abs(cp1_t - cp1_s))) * cp1_s)
       call print_clipping("organic_carbon", "cp1_t", cp1_t_old, cp1_t, "")
    endif
    
    if (cp2_t < 0.0) then
       cp2_t_old = cp2_t
-      cp2_t = max(0.0, (cp2_s /(cp2_s + abs(cp2_t - cp2_s))) * cp2_s)
+      cp2_t     = max(0.0, (cp2_s /(cp2_s + abs(cp2_t - cp2_s))) * cp2_s)
       call print_clipping("organic_carbon", "cp2_t", cp2_t_old, cp2_t, "")
    endif
    
    if (cmt   < 0.0) then
       cmt_old = cmt
-      cmt   = max(0.0, (cm_s  /(cm_s + abs(cmt - cm_s))) * cm_s)
+      cmt     = max(0.0, (cm_s  /(cm_s + abs(cmt - cm_s))) * cm_s)
       call print_clipping("organic_carbon", "cmt", cmt_old, cmt, "")
    endif
    
    if (bact  < 0.0) then
       bact_old = bact
-      bact  = max(0.0, (bac_s /(bac_s + abs(bact - bac_s))) * bac_s)
+      bact     = max(0.0, (bac_s /(bac_s + abs(bact - bac_s))) * bac_s)
       call print_clipping("organic_carbon", "bact", bact_old, bact, "")
+   endif
+   
+   if (creft < 0.0) then
+      cref_old = creft
+      creft    = max(0.0, (cref /(cref + abs(creft - cref))) * cref)
+      call print_clipping("organic_carbon", "creft", cref_old, creft, "")
    endif
    
    ocsbt = Creft              &
@@ -678,14 +660,12 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    ! Neuberechnung von pl0 und nl0
    if (ocsbt > 0.0) then
-      pl0_s = orgPn * TOC_CSB / ocsbt
-      nl0_s = orgNn * TOC_CSB / ocsbt
+      nl0_s = max(0., min(0.02, orgNn * TOC_CSB / ocsbt))
+      pl0_s = max(0., min(0.2 , orgPn * TOC_CSB / ocsbt))
    else
       nl0_s = 0.0
       pl0_s = 0.0
    endif
-   nl0_s = max(0.0, min(0.2 ,nl0_s))
-   pl0_s = max(0.0, min(0.02,pl0_s))
    
    ! --- Einfluss der lebenden Organismus auf BSB5 und CSB ---
    ! Algen
@@ -706,19 +686,19 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! wird dadurch beruecksichtigt, dass die gesamte Algenbioma
    ! zum BSB5 beitraegt.
    ! In 5d verbraucht 1 mg Zooplanktonbiomasse 1.6 mg O2
-   zoobsb = (zooind_s * GRot/1000.)        * bsbZoo
-   zooCSB = (zooind_s * GRot/1000. * Czoo) * TOC_CSB
-   
+   zoobsb = zooind_s * GRot / 1000.        * bsbZoo
+   zooCSB = zooind_s * GRot / 1000. * Czoo * TOC_CSB
+
    vbsb_s = obsbt + algb5 + zoobsb
    vCSB_s = ocsbt + algcs + zooCSB
    
    ! --- Veraenderung der org SS beim C-Abbau (dorgSS) ---
-   dorgSS_s = (CP1_t + sedCP1 - CP1_s)          &
-            + (CP2_t + sedCP2 - CP2_s)          &
-            + (BACt  + sedBAC - bac_s)          &
-            + (Creft + sedCrf - Cref) * fakCref
+   dorgSS_s = (CP1_t + sedCP1 - CP1_s)           &
+            + (CP2_t + sedCP2 - CP2_s)           &
+            + (BACt  + sedBAC - bac_s)           &
+            + (Creft + sedCrf - Cref ) * fakCref
    ! Umrechnung in TG
-   dorgSS_s = dorgSS_s/0.45
+   dorgSS_s = dorgSS_s / 0.45
    
    ! -----------------------------------------------------------------------
    ! update values
