@@ -127,28 +127,33 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! start
    ! =======================================================================
    if (bvHNF_s > 0.0) then
-     HNF_P_C = 0.004 * bvHNF_s**0.367
-     HNF_N_C = 0.183 * bvHNF_s**0.0361
+      HNF_P_C = 0.004 * bvHNF_s**0.367
+      HNF_N_C = 0.183 * bvHNF_s**0.0361
    else
-     HNF_P_C = 0.0
-     HNF_N_C = 0.0
+      HNF_P_C = 0.0
+      HNF_N_C = 0.0
    endif
    
    if (ocsb_s > 0.0) then 
-     vcb = obsb_s/ocsb_s
+      vcb = obsb_s/ocsb_s
    else
-     vcb = 0.0
+      vcb = 0.0
    endif
    
    if (TOC_CSB > 0.0) then
-     Cref = (ocsb_s / TOC_CSB)  &
-          - CD1_s - CD2_s       &
-          - CP1_s - CP2_s       &
-          - CM_s                &
-          - (1.-famR) * bac_s   &
-          - (1.-famR) * chnf_s
+      Cref = (ocsb_s / TOC_CSB)  &
+           - CD1_s - CD2_s       &
+           - CP1_s - CP2_s       &
+           - CM_s                &
+           - (1.-famR) * bac_s   &
+           - (1.-famR) * chnf_s
+      if (Cref < 0.) then
+         Cref_old = Cref
+         Cref     = 0.
+         call print_clipping("organic_carbon", "cref", Cref_old, Cref, "")
+      endif
    else
-     Cref = 0.0
+      Cref = 0.0
    endif
    
    orgN = ( Cref                 &
@@ -194,18 +199,18 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ddCM2 = 0.0
    
    if ((CD1_t+ksD1) > 0.0) then 
-     hyD1 = hymxD1*(CD1_t/(CD1_t + ksD1))
+      hyD1 = hymxD1*(CD1_t/(CD1_t + ksD1))
    else
-     hyD1 = 0.0
+      hyD1 = 0.0
    endif
    
    ddCM1 = hyD1 * ftemp * bac_s * tflie
    if (ddCM1 > CD1_t) ddCM1 = CD1_t - 0.00001
    
    if ((CD2_t + ksD2) > 0.0) then
-     hyD2 = hymxD2 * (CD2_t /(CD2_t + ksD2))
+      hyD2 = hymxD2 * (CD2_t /(CD2_t + ksD2))
    else
-     hyD2 = 0.0
+      hyD2 = 0.0
    endif
    
    ddCM2 = hyD2 * ftemp * bac_s * tflie
@@ -222,16 +227,16 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! --- Bakterien ---
    ! Wachstum
    if ((CMt+ksM) > 0.0) then 
-     hupBAC = upBAC * ftemp * (CMt/(CMt+ksM))
+      hupBAC = upBAC * ftemp * (CMt/(CMt+ksM))
    else
-     hupBAC = 0.0
+      hupBAC = 0.0
    endif
    
    dCM = bac_s * (exp(hupBAC * tflie) - 1.)
    if (dCM > CMt .and. bac_s > 0. .and. bac_s + CMt > 0.00001) then
-     hupBAC = 0.0
-     if (tflie > 0.0) hupBAC = (log(bac_s+CMt-0.00001)-log(bac_s))/tflie
-     dCM = bac_s*(exp(hupBAC*tflie)-1.)
+      hupBAC = 0.0
+      if (tflie > 0.0) hupBAC = (log(bac_s+CMt-0.00001)-log(bac_s))/tflie
+      dCM = bac_s*(exp(hupBAC*tflie)-1.)
    endif
    
    ! Respiration
@@ -265,9 +270,9 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    ! Umrechnung auf g/(m3*d)
    if (tiefe_s > 0.0) then 
-     hconPf = pfl_s/(300.*tiefe_s)
+      hconPf = pfl_s/(300.*tiefe_s)
    else
-     hconPf = 0.0
+      hconPf = 0.0
    endif
    
    CD1_t = CD1_t - FluxD1 * hconPf  *ftemp * tflie
@@ -280,8 +285,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    ! --- Einfluss des Sediments ---
    if (tiefe_s > 0.0) then
-     CD1_t = CD1_t + jDOC1_s * tflie / tiefe_s
-     CD2_t = CD2_t + jDOC2_s * tflie / tiefe_s
+      CD1_t = CD1_t + jDOC1_s * tflie / tiefe_s
+      CD2_t = CD2_t + jDOC2_s * tflie / tiefe_s
    endif
    if (CD1_t < 0.00001) CD1_t = 0.00001
    if (CD2_t < 0.00001) CD2_t = 0.00001
@@ -304,7 +309,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    g = sqrt(9.81)
    ust = 0.0
    if (rau_s > 0.0 .and. tiefe_s > 0.0) then
-     ust = (((1/rau_s)*g)/(tiefe_s**0.16667))*abs(vmitt_s)
+      ust = (((1/rau_s)*g)/(tiefe_s**0.16667))*abs(vmitt_s)
    endif
  
    ASEDC = 1.44E-6
@@ -461,16 +466,16 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    !  Anteil partikuläres refakteres C ergibt sich aus Verhältnis CPges/CDges+CPges)
    sumc = CP1_s + CP2_s + CD1_s + CD2_s
    if (sumc > 0.0) then 
-     fakCref = (CP1_s+CP2_s)/sumc
+      fakCref = (CP1_s+CP2_s)/sumc
    else
-     fakCref = 0.0
+      fakCref = 0.0
    endif
    
    sumc = CP1_s + CP2_s + fakCref * Cref
    if (sumc > 0.0) then 
-     CP1_t = CP1_t - ssdr_s*0.3*0.4*(CP1_s/ sumc )
-     CP2_t = CP2_t - ssdr_s*0.3*0.4*(CP2_s/ sumc )
-     Creft = Creft - ssdr_s*0.3*0.4*(cref/ sumc )
+      CP1_t = CP1_t - ssdr_s*0.3*0.4*(CP1_s/ sumc )
+      CP2_t = CP2_t - ssdr_s*0.3*0.4*(CP2_s/ sumc )
+      Creft = Creft - ssdr_s*0.3*0.4*(cref/ sumc )
    endif
    
    ! Beruecksichtigung der Sedimentation
@@ -673,11 +678,11 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    ! Neuberechnung von pl0 und nl0
    if (ocsbt > 0.0) then
-     pl0_s = orgPn * TOC_CSB / ocsbt
-     nl0_s = orgNn * TOC_CSB / ocsbt
+      pl0_s = orgPn * TOC_CSB / ocsbt
+      nl0_s = orgNn * TOC_CSB / ocsbt
    else
-     nl0_s = 0.0
-     pl0_s = 0.0
+      nl0_s = 0.0
+      pl0_s = 0.0
    endif
    nl0_s = max(0.0, min(0.2 ,nl0_s))
    pl0_s = max(0.0, min(0.02,pl0_s))
@@ -730,4 +735,5 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    frfgr_s = frfgrt
    
    return
+   
 end subroutine organic_carbon

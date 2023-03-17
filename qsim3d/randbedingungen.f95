@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 ! hier enthalten:
-! randbedingungen_setzen() ; randwert_planctonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ;
+! randbedingungen_setzen() ; randwert_planktonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ;
 ! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; ereigg_Randbedingungen_lesen() ;
 ! extnct_lesen() ;  alloc_hydraul_BC()
 
@@ -64,15 +64,16 @@ subroutine randbedingungen_setzen()
             call qerror('randbedingungen_setzen: Hydraulischer Antrieb unbekannt')
          end select
          
-         if ( (RB_zaehl > 0) .and. (RB_zaehl < 100000) ) then !! Alle Knoten, deren RB's bedient werden:
-            if (j == kontrollknoten)print*,'Konrollstelle #',j,' ist Rand mit RB_zaehl = ',RB_zaehl
+         if ( RB_zaehl > 0 .and. RB_zaehl < 100000 ) then !! Alle Knoten, deren RB's bedient werden:
+            if (j == kontrollknoten) print*,'Konrollstelle #',j,' ist Rand mit RB_zaehl = ',RB_zaehl
             if (inflow(j)) then !! alle Zufluss-Knoten
                if (j == kontrollknoten)print*,'Konrollstelle #',j,' ist inflow Rand mit ',inflow(j)
-               call randwert_planctonic(j,RB_zaehl,einmalig)
-               if (j == kontrollknoten)  &
-                   print*,'RB gesetzt tracer = ',planktonic_variable(71+(j-1)*number_plankt_vari)  &
-                   ,'tempw = ',planktonic_variable(1+(j-1)*number_plankt_vari)   &
-                   ,'obsb = ',planktonic_variable(17+(j-1)*number_plankt_vari)
+               call randwert_planktonic(j,RB_zaehl,einmalig)
+               if (j == kontrollknoten) then
+                   print*,'RB gesetzt tracer = ', planktonic_variable(71+(j-1)*number_plankt_vari),  &
+                                     'tempw = ' , planktonic_variable(1+(j-1)*number_plankt_vari),   &
+                                     'obsb = '  , planktonic_variable(17+(j-1)*number_plankt_vari)
+               endif
                call randbedingungen_ergaenzen(j,einmalig)
                call tiefenprofil(j)
                !if(j .eq. kontrollknoten)then ! Ausgabe
@@ -162,7 +163,7 @@ subroutine scatter_rb_hydraul()
 end subroutine scatter_rb_hydraul
 !----+-----+----
 !
-subroutine randwert_planctonic(jjj,zaehl,logi)
+subroutine randwert_planktonic(jjj,zaehl,logi)
    use modell
    use QSimDatenfelder
    use aparam
@@ -171,13 +172,13 @@ subroutine randwert_planctonic(jjj,zaehl,logi)
    integer :: jjj, zaehl, nk, i, l
    logical logi
    if (meinrang > 0) then !! nur prozessor 0
-      write(fehler,*)' 789 subroutine randwert_planctonic darf nur auf prozess 0'
+      write(fehler,*)' 789 subroutine randwert_planktonic darf nur auf prozess 0'
       call qerror(fehler)
    endif
-   if (jjj > number_plankt_point)call qerror('randwert_planctonic: jjj > number_plankt_point')
+   if (jjj > number_plankt_point)call qerror('randwert_planktonic: jjj > number_plankt_point')
    nk = (jjj-1)*number_plankt_vari
    if (nk+number_plankt_vari > number_plankt_vari*number_plankt_point) then
-      print*,'randwert_planctonic: jjj,zaehl = ',jjj,zaehl, number_plankt_vari, number_plankt_point
+      print*,'randwert_planktonic: jjj,zaehl = ',jjj,zaehl, number_plankt_vari, number_plankt_point
       call qerror('planktonic_variable unterdimensioniert')
    endif
    if (zaehl > 0) then !! Randbedingung zu dieser Nummer vorhanden
@@ -253,7 +254,6 @@ subroutine randwert_planctonic(jjj,zaehl,logi)
       planktonic_variable(69+nk) = 0.0 ! SKmor, Silizium in schwebenden, abgestorbenen Kieselalgen, algaeski<->silikat
       planktonic_variable(70+nk) = 0.0 ! DOSCF siehe COLIFORM()
       planktonic_variable(71+nk) = rabe(zaehl)%wert_jetzt(28) !  tracer (neu QSim-3D)
-      !planktonic_variable(71+nk)= 1.0 !  tracer ##### test untrim
       planktonic_variable(72+nk) = 0.0 ! Salz (neu QSim-3D)
       planktonic_variable(73+nk) = 0.0 ! alter_decay
       planktonic_variable(74+nk) = 0.0 ! alter_arith
@@ -282,18 +282,18 @@ subroutine randwert_planctonic(jjj,zaehl,logi)
       planktonic_variable(97+nk) = rabe(zaehl)%wert_jetzt(45) ! Quecksilber gelöst
       planktonic_variable(98+nk) = rabe(zaehl)%wert_jetzt(40) ! Mangan gesamt
       if (isNaN(rabe(zaehl)%wert_jetzt(41))) then
-         print*,'randwert_planctonic isNaN 41 jjj,zaehl = ',jjj,zaehl
+         print*,'randwert_planktonic isNaN 41 jjj,zaehl = ',jjj,zaehl
          call qerror("isNaN(rabe(zaehl)%wert_jetzt(41))Mangan gelöst")
       endif
       planktonic_variable(99+nk) = rabe(zaehl)%wert_jetzt(41) ! Mangan gelöst
       planktonic_variable(100+nk) = rabe(zaehl)%wert_jetzt(46) ! Uran gesamt
       planktonic_variable(101+nk) = rabe(zaehl)%wert_jetzt(47) ! Uran gelöst
-      !                  if(jjj.eq.kontrollknoten)print*,"randwert_planctonic: OBSB=",planktonic_variable(17+nk)  &
+      !                  if(jjj.eq.kontrollknoten)print*,"randwert_planktonic: OBSB=",planktonic_variable(17+nk)  &
       !     &                                           ," OCSB=",planktonic_variable(18+nk)
       if (nur_alter .and. (wie_altern == 2))call alter_rand(jjj)
    end if !! RandbedingungsNummer größer 0
    return
-end subroutine randwert_planctonic
+end subroutine randwert_planktonic
 !----+-----+----
 !> bisher plankt_vari_vert konstant über die Tiefe d.h. 2D tiefengemittelt
 !! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
@@ -332,14 +332,17 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    use QSimDatenfelder
    use aparam
    use module_ph, only: pwert
+   
    implicit none
    integer :: j,nk
    real :: CPges,CDges,Cref,TOC
    logical einmalig
-   !     if(j.eq.1)print*,'randbedingungen_ergaenzen'
+   
    nk = (j-1)*number_plankt_vari
+   
    kontroll = .false.
    if (j == kontrollknoten) kontroll = .true.
+   
    !     ini_algae in initialisieren() initialisieren.f95
    call algae_start(planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
                     planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB)
@@ -357,9 +360,11 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(12+nk),      & ! chlaki chlaks(mstr,mRB)
                     planktonic_variable(14+nk),      & ! chlabl chlabs(mstr,mRB)
                     planktonic_variable(13+nk))        ! chlagr chlags(mstr,mRB)
+   
    ! qsim.f90:!...Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
    !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
+   
    if (kontroll) then
       print*, 'randbedingungen_ergaenzen: before orgc_start'
       print*, ' aki    = ', planktonic_variable( 8+nk)
@@ -594,42 +599,43 @@ subroutine RB_werte_aktualisieren(t)
          end do ! alle Zeitintervalle in dieser Randbedingung
          if (vor_da .and. nach_da) then
             a = real(t-zeit_vor)/real(zeit_nach-zeit_vor)
-            rabe(n)%wert_jetzt(k) = (1.0-a)*wert_vor + a*wert_nach
-            if ((k == 22) .and. (kontrollknoten > 0)) &
-                print*,'Rand',n,' t,zeit_vor,zeit_nach,wert_vor,wert_nach,a,rabe(n)%wert_jetzt(k) = '  &
-                ,t,zeit_vor,zeit_nach,wert_vor,wert_nach,a,rabe(n)%wert_jetzt(k)
-         endif
-         if (vor_da .and. ( .not. nach_da)) then
+            rabe(n)%wert_jetzt(k) = (1.0 - a)*wert_vor + a*wert_nach
+            if (kontrollknoten > 0) then
+               print*, 'Rand', n, ' t,zeit_vor,zeit_nach,wert_vor,wert_nach,a,k,rabe(n)%wert_jetzt(k) = ',  &
+                       t, zeit_vor, zeit_nach, wert_vor, wert_nach, a, k, rabe(n)%wert_jetzt(k)
+            endif
+         elseif (vor_da) then
             rabe(n)%wert_jetzt(k) = wert_vor
-            if (k == 22)print*,'Rand',n,' t,zeit_vor,wert_vor,rabe(n)%wert_jetzt(k) = '  &
-                ,t,zeit_vor,wert_vor,rabe(n)%wert_jetzt(k)
-         endif
-         if (( .not. vor_da) .and. nach_da) then
+            if (kontrollknoten > 0) then
+               print*, 'Rand',n,' t,zeit_vor,wert_vor,k,rabe(n)%wert_jetzt(k) = ',  &
+                       t, zeit_vor, wert_vor, k, rabe(n)%wert_jetzt(k)
+            endif
+         elseif (nach_da) then
             rabe(n)%wert_jetzt(k) = wert_nach
-            if ((k == 22) .and. (kontrollknoten > 0))  &
-                print*,'Rand',n,' t,zeit_nach,wert_nach,rabe(n)%wert_jetzt(k) = '  &
-                ,t,zeit_nach,wert_nach,rabe(n)%wert_jetzt(k)
-         endif
-         if (( .not. vor_da) .and. ( .not. nach_da)) then ! no valid value
+            if (kontrollknoten > 0) then
+                print*, 'Rand', n,' t,zeit_nach,wert_nach,k,rabe(n)%wert_jetzt(k) = ',  &
+                        t, zeit_nach, wert_nach, k, rabe(n)%wert_jetzt(k)
+            endif
+         else ! no valid value
             select case (k) ! which value
-               case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
-                  rabe(n)%wert_jetzt(k) = 0.0
-                  !case (22) ! Wassertemperatur
-               case (24) ! CHNF Heterotrophe Nanoflagelaten, not present
-                  rabe(n)%wert_jetzt(k) = 0.0
-               case (25) ! BVHNF Biovolumen der HNF, not present
-                  rabe(n)%wert_jetzt(k) = 0.0
-               case (26) ! COLI Fäkalcoliforme Bakterien, not present
-                  rabe(n)%wert_jetzt(k) = 0.0
-                  !case (27) ! EWAERM Wärmeeinleitung ### egal
-                  !case (28) ! Tracer ### egal
-                  case default ! alle anderen
-                  print*,'rabe(n)%punkt(j)%zeil%werts(k)',(rabe(n)%punkt(j)%zeil%werts(k),j = 1,rabe(n)%anz_rb)
-                  print*,'ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt',ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt
-                  print*,'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable ',k,' an Rand ',n, ' für Zeitpunkt ',t
-                  write(fehler,*)'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable '  &
-                  ,k,' an Rand ',n, ' für Zeitpunkt ',t
-                  call qerror(fehler)
+            case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
+               rabe(n)%wert_jetzt(k) = 0.0
+               !case (22) ! Wassertemperatur
+            case (24) ! CHNF Heterotrophe Nanoflagelaten, not present
+               rabe(n)%wert_jetzt(k) = 0.0
+            case (25) ! BVHNF Biovolumen der HNF, not present
+               rabe(n)%wert_jetzt(k) = 0.0
+            case (26) ! COLI Fäkalcoliforme Bakterien, not present
+               rabe(n)%wert_jetzt(k) = 0.0
+               !case (27) ! EWAERM Wärmeeinleitung ### egal
+               !case (28) ! Tracer ### egal
+            case default ! alle anderen
+               print*,'rabe(n)%punkt(j)%zeil%werts(k)',(rabe(n)%punkt(j)%zeil%werts(k),j = 1,rabe(n)%anz_rb)
+               print*,'ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt',ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt
+               print*,'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable ',k,' an Rand ',n, ' für Zeitpunkt ',t
+               write(fehler,*)'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable '  &
+               ,k,' an Rand ',n, ' für Zeitpunkt ',t
+               call qerror(fehler)
             end select ! k
          endif ! no valid value
       end do ! alle k werte

@@ -106,7 +106,7 @@ subroutine initialisieren()
             call qerror(fehler)
          end if
          !if(j.eq.kontrollknoten)then
-         !   print*,'vor randwert_planctonic ini_randnr(',nuzo,')=',zone(nuzo)%ini_randnr
+         !   print*,'vor randwert_planktonic ini_randnr(',nuzo,')=',zone(nuzo)%ini_randnr
          !   print*,'rabe(',zone(nuzo)%ini_randnr,')%wert_jetzt(22)='  &
          !         , rabe(  zone(nuzo)%ini_randnr  )%wert_jetzt(22)
          !endif
@@ -116,9 +116,9 @@ subroutine initialisieren()
          !planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari), &
          !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari), &
          !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
-         call randwert_planctonic(j, irn,einmal)
+         call randwert_planktonic(j, irn,einmal)
          !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                       &
-         !print*,'initialisieren randwert_planctonic: tempw,chla,glMn=',   &
+         !print*,'initialisieren randwert_planktonic: tempw,chla,glMn=',   &
          !planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),   &
          !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),   &
          !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
