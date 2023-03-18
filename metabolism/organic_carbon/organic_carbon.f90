@@ -24,71 +24,71 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
                         bsbbl, bsbgr, bsbki, csbbl, csbgr, csbki
    implicit none
    
-   ! ksM    - Halbsaettigungskons. fuer die Aufnahme monomolekularer C-Verbindungen [mgC/l]
-   ! YBAC   - Ertragskoeffizient
-   ! upBACm - maximale Aufnahmerate 1/d
+   ! ksM    - half-sauraton constant for uptake of mono-molecular C compounds (mgC / L)
+   ! YBAC   - yield coefficient of bacteria
+   ! upBAC  - maxmum uptake rate of bacteria (1 / d)
    ! --- dummy arguments ---
    ! TODO (schoenung, june 2022): descriptions need to be completed.
-   real, intent(inout)  :: ocsb_s       !< chemical oxgen demand
-   real, intent(inout)  :: obsb_s       !< biochemical oxygen demand
-   real, intent(inout)  :: cd1_s        !< leicht abbaubare gelöste organische C-Verbindungen
-   real, intent(inout)  :: cd2_s        !< schwer abbaubare gelöste organische C-Verbindungen
-   real, intent(inout)  :: cp1_s        !< leicht abbaubare partikuläre organische C-Verbindungen
-   real, intent(inout)  :: cp2_s        !< schwer abbaubare partikuläre organische C-Verbindungen
-   real, intent(inout)  :: CM_s         !< monomolekularen organischen C-Verbindungen
-   real, intent(inout)  :: bac_s        !< C-biomass of bacteria
+   real, intent(inout)  :: ocsb_s       !< chemical oxgen demand (COD)
+   real, intent(inout)  :: obsb_s       !< biological oxygen demand (BOD)
+   real, intent(inout)  :: cd1_s        !< dissolved organic C (DOC; mgC / L), readily biodegradable
+   real, intent(inout)  :: cd2_s        !< dissolved organic C (DOC; mgC / L), hardly biodegradable
+   real, intent(inout)  :: cp1_s        !< particulate organic C (POC; mgC / L), readily biodegradable
+   real, intent(inout)  :: cp2_s        !< particulate organic C (POC; mgC / L), hardly biodegradable
+   real, intent(inout)  :: CM_s         !< mono-molecular C (mgC / L)
+   real, intent(inout)  :: bac_s        !< bacterial biomass (mg C / L)
    real, intent(inout)  :: fbsgr_s      !< ablagerungsfreien Grenzkonzentration zehrungsfähig/refraktär
    real, intent(inout)  :: frfgr_s      !< ablagerungsfreien Grenzkonzentration zehrungsfähig/refraktär
-   real, intent(inout)  :: nl0_s        !< N:C ratio
-   real, intent(inout)  :: pl0_s        !< P:C ratio
-   real, intent(in)     :: cHNF_s       !< C-biomass of HNF
-   real, intent(in)     :: bvHNF_s      !< biovolume HNF
+   real, intent(inout)  :: nl0_s        !< organic N:C ratio
+   real, intent(inout)  :: pl0_s        !< organic P:C ratio
+   real, intent(in)     :: cHNF_s       !< biomass HNF (mgC / L)
+   real, intent(in)     :: bvHNF_s      !< HNF biovolume (L?)
    real, intent(in)     :: tempw_s      !< water temperature [°C]
-   real, intent(in)     :: tiefe_s      !< water depth [m]
-   real, intent(in)     :: pfl_s        !< macrophytes [gTG/m2]
-   real, intent(in)     :: jdoc1_s      !< Flux gelöster org. Kohlenstoffe aus dem Sediment, leicht abbaubar
-   real, intent(in)     :: jdoc2_s      !< Flux gelöster org. Kohlenstoffe aus dem Sediment, schwer abbaubar
-   real, intent(in)     :: rau_s        !< friction
+   real, intent(in)     :: tiefe_s      !< water depth (m)
+   real, intent(in)     :: pfl_s        !< C uptake by organisms on macrophytes (gTG / m2)
+   real, intent(in)     :: jdoc1_s      !< flux of readily biodegradable DOC from the sediment
+   real, intent(in)     :: jdoc2_s      !< flux of hardly biodegradable DOC from the sediment
+   real, intent(in)     :: rau_s        !< bottom friction
    real, intent(in)     :: vmitt_s      !< flow velocity
-   real, intent(in)     :: BSBhnf_s     !< Absterben und Exkretion Heterotropher Naloflagelaten
-   real, intent(in)     :: dKiMor_s     !< mortalityrate algae
-   real, intent(in)     :: dGrMor_s     !< mortalityrate algae
-   real, intent(in)     :: dBlMor_s     !< mortalityrate algae
-   real, intent(in)     :: absZo_s      !<
-   real, intent(in)     :: Q_PK_s       !< Phosphoranteil der Kieselalgenbiomasse
-   real, intent(in)     :: Q_PG_s       !< Phosphoranteil der Grünalgenbiomasse
-   real, intent(in)     :: Q_PB_s       !< Phosphoranteil der Blaualgenbiomasse
-   real, intent(in)     :: Q_NK_s       !< Stickstoffanteil der Kieselalgenbiomasse
-   real, intent(in)     :: Q_NG_s       !< Stickstoffanteil der Grünalgenbiomasse
-   real, intent(in)     :: Q_NB_s       !< Stickstoffanteil der Blaualgenbiomasse
-   real, intent(in)     :: zexKi_s      !< excretion of algae [mg/l]
-   real, intent(in)     :: zexGr_s      !< excretion of algae [mg/l]
-   real, intent(in)     :: zexbl_s      !< excretion of algae [mg/l]
-   real, intent(in)     :: drfaek_s     !< Ausscheidungen der Muscheln infolge Konsums von Algen
-   real, intent(in)     :: drfaeg_s     !< Ausscheidungen der Muscheln infolge Konsums von Algen
-   real, intent(in)     :: drfaeb_s     !< Ausscheidungen der Muscheln infolge Konsums von Algen
-   real, intent(in)     :: ssdr_s       !< Schwebstoffaufnahme der Dreissena
-   real, intent(in)     :: HNFbac_s     !< Verlust der Bakterien durch HNF-Grazing
-   real, intent(in)     :: zBAC_s       !< Konsum von BAC durch Zoopankton
-   real, intent(in)     :: abl_s        !< Blaualgen [mg/l]
-   real, intent(in)     :: agr_s        !< Grünalgen [mg/l]
-   real, intent(in)     :: aki_s        !< Kieselalgen [mg/l]
-   real, intent(in)     :: zooind_s     !< rotatoria [Ind/l]
-   real, intent(in)     :: bsbzoo       !<
-   real, intent(in)     :: toc_csb      !<
-   real, intent(in)     :: tflie        !< timestep [d]
-   real, intent(out)    :: BACmua_s     !<
-   real, intent(out)    :: bsbct_s      !< mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
-   real, intent(out)    :: BSBctP_s     !< Phosphorfreisetzung beim Abbau organischer Kohlenstoffverbidungen
-   real, intent(out)    :: doN_s        !< mineralisierter N-Gehalt der Wassersäule; Ammoniumfreisetzung beim Abbau org. C-Verbindungen
-   real, intent(out)    :: BSBt_s       !< Kohlenstoffbürtige Sauerstoffzehrung je Zeitschritt
-   real, intent(out)    :: BSBbet_s     !< Sauerstoffverbrauch durch Organismen auf Makrophyten; Ausgabevariable für bsbtb
-   real, intent(out)    :: orgCsd0_s    !< sedimentiertes organisches Material
-   real, intent(out)    :: orgCsd_s     !< Gesamtmasse Kohlenstoff, die je Zeitschritt sedimentiert
-   real, intent(out)    :: orgCsd_abb_s !< sedimentiertes biologisch abbaubares organisches Material
-   real, intent(out)    :: dorgSS_s     !< Veraenderung der org SS beim C-Abbau
-   real, intent(out)    :: vBSB_s       !<
-   real, intent(out)    :: vCSB_s       !<
+   real, intent(in)     :: BSBhnf_s     !< mortality and excretion of HNF
+   real, intent(in)     :: dKiMor_s     !< mortality of diatoms (mg / L)
+   real, intent(in)     :: dGrMor_s     !< mortality of green algae (mg / L)
+   real, intent(in)     :: dBlMor_s     !< mortality of cyanobacteria (mg / L)
+   real, intent(in)     :: absZo_s      !< mortality of zooplankton (mg / L)
+   real, intent(in)     :: Q_PK_s       !< P:biomass quota of diatoms (gP / g)
+   real, intent(in)     :: Q_PG_s       !< P:biomass quota of green algae (gP / g)
+   real, intent(in)     :: Q_PB_s       !< P:biomass quota of cyanobacteria (gP / g)
+   real, intent(in)     :: Q_NK_s       !< N:biomass quota of diatoms (gN / g)
+   real, intent(in)     :: Q_NG_s       !< N:biomass quota of green algae (gN / g)
+   real, intent(in)     :: Q_NB_s       !< N:biomass quota of cyanobacteria (gN / g)
+   real, intent(in)     :: zexKi_s      !< excretion of diatoms (mg / L)
+   real, intent(in)     :: zexGr_s      !< excretion of green algae (mg / L)
+   real, intent(in)     :: zexbl_s      !< excretion of cyanobacteria (mg / L)
+   real, intent(in)     :: drfaek_s     !< fecal pellet production of Dreissena due to grazing on diatoms (mg / L)
+   real, intent(in)     :: drfaeg_s     !< fecal pellet production of Dreissena due to grazing on green algae (mg / L)
+   real, intent(in)     :: drfaeb_s     !< fecal pellet production of Dreissena due to grazing on cyanobacteria (mg / L)
+   real, intent(in)     :: ssdr_s       !< suspended matter uptake by Dreissena (mg / L)
+   real, intent(in)     :: HNFbac_s     !< HNF grazing on bacteria (mg / L)
+   real, intent(in)     :: zBAC_s       !< zooplankton grazin on bacteria (mg / L)
+   real, intent(in)     :: abl_s        !< cynaobacteria biomass (mg / L)
+   real, intent(in)     :: agr_s        !< green algae biomass (mg / L)
+   real, intent(in)     :: aki_s        !< diatom biomass (mg / L)
+   real, intent(in)     :: zooind_s     !< zooplankton aboundance (Ind / L)
+   real, intent(in)     :: bsbzoo       !< change in BOD due to zooplankton (mg / L)
+   real, intent(in)     :: toc_csb      !< COD:TOC ratio
+   real, intent(in)     :: tflie        !< time step (d)
+   real, intent(out)    :: BACmua_s     !< bacteria net growth rate (1 / d)
+   real, intent(out)    :: bsbct_s      !< mineralised C content in water column (mgC / L)
+   real, intent(out)    :: BSBctP_s     !< P release during degradation of organic C (mgP / L)
+   real, intent(out)    :: doN_s        !< N release during degradation of organic C (mgN / L)
+   real, intent(out)    :: BSBt_s       !< C borne O2 consumption (mgO2 / L)
+   real, intent(out)    :: BSBbet_s     !< O2 consumption by organisms on macrophytes (mgO2 / L)
+   real, intent(out)    :: orgCsd0_s    !< sedimented organic C (mg / L)
+   real, intent(out)    :: orgCsd_s     !< TOC sedimented per time step (mgC / L)
+   real, intent(out)    :: orgCsd_abb_s !< sedimented biologically available organic C (mgC / L)
+   real, intent(out)    :: dorgSS_s     !< change in organic suspended matter due to C degradation (mg / L)
+   real, intent(out)    :: vBSB_s       !< BOD at end of time step (mgO2 / L)
+   real, intent(out)    :: vCSB_s       !< COD at end of time step (mgO2 / L)
    logical, intent(in)  :: kontroll     !< debugging
    integer, intent(in)  :: jjj          !< debugging
       
@@ -126,7 +126,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! start
    ! =======================================================================
    
-   ! calculate amount of refractory organic C at start of time step
+   ! calculate amount of refractory organic C
    if (TOC_CSB > 0.0 .and. ocsb_s > 0.) then
       Cref = ocsb_s / TOC_CSB - CM_s          -   &
              CD1_s - CD2_s - CP1_s - CP2_s    -   &
@@ -139,7 +139,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    endif
    Creft = Cref
    
-   ! recalculate TOC and CSB
+   ! recalculate TOC and COD
    TOC = cref  + CM_s  +                   &
          CD1_s + CD2_s +                   &
          CP1_s + CP2_s +                   &
@@ -147,22 +147,23 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    ocsb_s = TOC * TOC_CSB
    
-   ! calculate organic N and P at start of time step
+   ! calculate organic N and P
    orgN = TOC * nl0_s
    orgP = TOC * pl0_s
    
-   ! Temperaturabhaengigkeit
+   ! temperature dependence
    Topt = 25.
    dti  = 15.
    ftemp = exp(-((tempw_s - Topt) / dti)**2)
    
+   ! BOD/COD dependence
    if (ocsb_s > 0.0) then 
       vcb = obsb_s / ocsb_s
    else
       vcb = 0.0
    endif
    
-   ! Änderung der gelösten organischen C-Verbindungen aus partikulaeren C-Verbindungen
+   ! degradation of particulate C compounds into dissolved C compounds
    dC    = hyP1 * ftemp * CP1_s * tflie
    CD1_t = CD1_s + dC
    CP1_t = CP1_s - dC
@@ -171,7 +172,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    CD2_t = CD2_s + dC
    CP2_t = CP2_s - dC
    
-   ! Änderung der Konz. an monomolekularen C-Verbindungen
+   ! degradation of dissolved C compounds into mono-C compounds
    CMt = CM_s
    
    if (CD1_t + ksD1 > 0.0) then
@@ -188,8 +189,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       CMt   = CMt   + dC
    endif
    
-   ! --- Bakterien ---
-   ! Wachstum
+   ! --- bacteria ---
+   ! uptake/growth
    hupBAC = 0.
    dC     = 0.
    if (CMt + ksM > 0. .and. upBAC * ftemp * CMt > 0.) then 
@@ -204,36 +205,34 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       endif
    endif
    
-   ! Respiration
+   ! respiration
    resBAC   = max(0., rsGBAC * ftemp + hupBAC * (1. - yBAC))
    BACt     = bac_s * exp((hupBAC - resBAC) * tflie)
-   BACmua_s = hupBAC - resBAC     ! Ausgabewert
+   BACmua_s = hupBAC - resBAC     ! output
    
    CMt     = CMt - dC
    bsbct_s = bac_s * (1. - exp(-resBAC * tflie))
    bsbts   = bsbct_s * TOC_CSB
    
-   ! --- Einfluss der sessilen Organismen ---
-   ! FLUX in g/(m2*d)
-   ! Änderung der gel. C-Verbindungen durch Organismen auf Makrophyten
-   ! wird überarbeitet
-   
-   FluxD1 = 0.62 * (CD1_s + CD2_s)**0.817
+   ! --- Influence of sessile organisms ---
+   ! fluxes in g / (m2 d)
+   ! change in dissolved C compounds by organisms on macrophytes
    if (vcb > 0.) then
       fvcb = 0.62 * log(vcb) + 2.2
    else
       fvcb = 0.0
    endif
+   FluxD1 = 0.62 * (CD1_s + CD2_s)**0.817
    FluxD1 = FluxD1 * fvcb
    
-   FluxD2 = 0.56 * (CD1_s + CD2_s)**0.916
    fvcb = -3.11 * vcb +1.407
+   FluxD2 = 0.56 * (CD1_s + CD2_s)**0.916
    FluxD2 = FluxD2 * fvcb
    
-   ! Umrechnung auf g/(m3*d)
+   ! convert to flux in g / m3
    hconPf = 0.
    if (tiefe_s > 0.0) then 
-      hconPf = pfl_s * ftemp * tflie / (300. * tiefe_s)
+      hconPf = pfl_s / (300. * tiefe_s) * ftemp * tflie
       if (hConPf > 0.) then
          ! ensure that CD1 and CD2 > c_min by correcting flux values if necessary
          if (FluxD1 * hconPf > CD1_t - c_min) FluxD1 = (CD1_t - c_min) / hconPf
@@ -254,21 +253,22 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       CD2_t = max(c_min, CD2_t + jDOC2_s * tflie / tiefe_s)
    endif
    
-   ! bsbct_s - mineralisierter Kohlenstoffgehalt in der Wassersäule(einschli
-   ! doN_s   - mineralisierter N-Gehalt in der Wassersäule (einschließlich
+   ! bsbct_s  - mineralised C content in the water column
+   ! bsbctP_s - mineralised P content in the water column
+   ! doN_s    - mineralised N content in the water column
    bsbctP_s = bsbct_s * pl0_s
    doN_s    = bsbct_s * nl0_s
    
-   ! Sauerstoffverbrauch durch Organismen auf Makrophyten
+   ! O2 consumption by organisms on macrophytes
    FluxO2 =  0.758 * (CD1_s + CD2_s) + 0.21
    fvcb   = -5.476 * vcb**2 + 2.256 * vcb + 0.789
    FluxO2 = FluxO2 * fvcb
  
    bsbtb    = FluxO2 * hconPf
    bsbt_s   = bsbts + bsbtb
-   BSBbet_s = bsbtb        !  Ausgabewert
+   BSBbet_s = bsbtb        !  output
  
-   ! --- Einfluss der Sedimentation ---
+   ! --- sedimentation ---
    if (rau_s * tiefe_s > 0.) then
       ust = (sqrt(g) * abs(vmitt_s)) / (rau_s * tiefe_s**0.16667)
    else
@@ -299,7 +299,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! sedimented, biologically available organic matter
    orgCsd_abb_s = sedCP1 + sedCP2 + sedBAC
    
-   ! Änderung der Fraktionen durch abgstorbene HNF, Zooplankton und Algen
+   ! change of dissolved and particulate fractions due to HNF
+   ! and mortality of phyto- and zooplankton
    dC = bsbHNF_s        +     &
         dKimor_s * Caki +     &
         dGrmor_s * Cagr +     &
@@ -312,7 +313,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    CP2_t = CP2_t + f_cp2  * dC
    Creft = Creft + f_cref * dC
        
-   ! Änderung des orgN und orgP-Gehalt
+   ! corresponding chnage in organic P and N
    HNF_P_C = 0.004 * bvHNF_s**0.367
    dorgP = bsbHNF_s * HNF_P_C +      &
            dKimor_s * Q_PK_s  +      &
@@ -330,7 +331,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    orgPn = orgP + dorgP - bsbctP_s
    orgNn = orgN + dorgN - doN_s
    
-   ! Erhöhung durch Faeces-Bildung von Zooplankton und Dreissena
+   ! change due to fecal pellet production by zooplanton and Dreissena
    dC =  Caki * (zexKi_s + drfaek_s) +    &
          Cagr * (zexGr_s + drfaeg_s) +    &
          Cabl * (zexBl_s + drfaeb_s)
@@ -341,21 +342,22 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    CP2_t = CP2_t + f_cp2  * dC
    Creft = Creft + f_cref * dC
    
-   ! Änderung des orgP und orgN-Gehaltes
+   ! corresponding change in organic P and N
    dorgP = Q_PK_s * (zexKi_s + drfaek_s) +   &
            Q_PG_s * (zexGr_s + drfaeg_s) +   &
            Q_PB_s * (zexBl_s + drfaeb_s)
-   orgPn = orgPn + dorgP
    
    dorgN = Q_NK_s * (zexKi_s + drfaek_s) +   &
            Q_NG_s * (zexGr_s + drfaeg_s) +   &
            Q_NB_s * (zexBl_s + drfaeb_s)
+   
+   orgPn = orgPn + dorgP
    orgNn = orgNn + dorgN
    
-   ! Änderung der partik. C-Verbindungen durch Schwebstoffaufnahme der Dreissena
-   ! Annahmen:
-   !  Anteil partikuläres refraktäres C ergibt sich aus Verhältnis CPges / (CDges+CPges)
-   !  TODO FG: previous comment not clear - why is that so?
+   ! change in particulate C compounds due to filtration by Dreissena
+   ! assumptions:
+   !  fraction of refractory particluate matter derived from CP / (CD + CP)
+   !  TODO FG: previous comment not clear - why is that so? Why not use Cref directly?
    sumc = CP1_s + CP2_s + CD1_s + CD2_s
    if (sumc > 0.0) then 
       fakCref = (CP1_s + CP2_s) / sumc
@@ -370,7 +372,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       Creft = Creft - ssdr_s * f_org * f_orgC * cref  / sumc
    endif
    
-   ! Beruecksichtigung der Sedimentation
+   ! applying sedimentation fluxes
+   ! TODO FG: Why is this not done directly after the calculation of sedimentation?
    CP1_t = CP1_t - sedCP1
    CP2_t = CP2_t - sedCP2
    BACt  = BACt  - sedBAC
@@ -379,10 +382,10 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    orgNn = orgNn - nl0_s * (sedCP1 + sedCP2 + sedCrf)
    orgPn = orgPn - pl0_s * (sedCP1 + sedCP2 + sedCrf)
    
-   ! Verlust der Bakterien durch HNF-Grazing
+   ! HNF grazing on bacteria
    BACt = max(c_min, BACt - HNFbac_s - zbac_s)
    
-   ! --- Neuberechnung des BSB5 ---
+   ! --- recalculate BOD ---
    BL01t = ( CD1_t + CP1_t + CMt +                         &
             (f_cd1 + f_cp1) * (BACt  + chnf_s)) * TOC_CSB
    BL01  = ( CD1_s + CP1_s + CM_s +                        &
@@ -396,7 +399,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    BL0t = BL01t + BL02t
    BL0  = BL01  + Bl02
    
-   ! Abbaurate 1. Ordnung berechnet aus dem alten Zeitschritt
+   ! 1st order BOD degradation rate at start of time step
    hc_wert = min(0.95, obsb_s / BL0)
    ! TODO FG: old calculation
    ! deltat = 5.
@@ -405,9 +408,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ! TODO FG: simplified calculation
    obsbt = BL0t * hc_wert
    
-   ! Neuberechnung des Faktors zur Berechnung der ablagerungsfreien Grenzkonzentration
-   sumc = CP1_s + CP2_s + fakCref * Cref
-   
+   ! recalculation of factor for sedimentation-free boundary concentration
    dC = bsbHNF_s                               +   &
         Caki * (dKimor_s + zexKi_s + drfaek_s) +   &
         Cagr * (dGrmor_s + zexGr_s + drfaeg_s) +   &
@@ -416,6 +417,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    
    hc1 = CP2_s - sedCP2 + f_cp2 * dC
    hc2 = CP2sd - sedCP2 + f_cp2 * dC
+   
+   sumc = CP1_s + CP2_s + fakCref * Cref
    if (sumc > 0.0) then
       hc1 = hc1 - ssdr_s * f_org * f_orgC * CP2_s / sumc
       hc2 = hc2 - ssdr_s * f_org * f_orgC * CP2_s / sumc
@@ -495,7 +498,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       call print_clipping("organic_carbon", "ocsbt", ocsbt_old, ocsbt, "")
    endif
    
-   ! Neuberechnung von pl0 und nl0
+   ! recalculate organic N:C and P:C ratios
    if (ocsbt > 0.0) then
       nl0_s = max(0., min(0.02, orgNn * TOC_CSB / ocsbt))
       pl0_s = max(0., min(0.2 , orgPn * TOC_CSB / ocsbt))
@@ -504,8 +507,8 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
       pl0_s = 0.0
    endif
    
-   ! --- Einfluss der lebenden Organismus auf BSB5 und CSB ---
-   ! Algen
+   ! --- influence of organisms on BOD5 und COD ---
+   ! algae
    algb51 = aki_s * Caki * bsbki
    algb52 = agr_s * Cagr * bsbgr
    algb53 = abl_s * Cabl * bsbbl
@@ -516,25 +519,24 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    algcs3 = abl_s * Cabl * csbbl
    algcs  = algcs1 + algcs2 + algcs3
    
-   ! --- Rotatorien ---
-   ! Annahme
-   ! nur die vorhandenen Zooplankter tragen zum BSB5 bei.
-   ! moegliches Hinzuwachsen der Zooplankter in der BSB-Flasch
-   ! wird dadurch beruecksichtigt, dass die gesamte Algenbioma
-   ! zum BSB5 beitraegt.
-   ! In 5d verbraucht 1 mg Zooplanktonbiomasse 1.6 mg O2
+   ! --- zooplankton ---
+   ! assumptions:
+   !  - only zooplankton present at start of time step contribute to BOD5
+   !  - increase of zooplankton during time step is accounted for by
+   !    including all phytoplankton (i.e. increase in zoo = loss in phyto)
+   !  - 1 mg zooplankton consumes 1.6 mg O2 in 5 days
    zoobsb = zooind_s * GRot / 1000.        * bsbZoo
    zooCSB = zooind_s * GRot / 1000. * Czoo * TOC_CSB
 
    vbsb_s = obsbt + algb5 + zoobsb
    vCSB_s = ocsbt + algcs + zooCSB
    
-   ! --- Veraenderung der org SS beim C-Abbau (dorgSS) ---
+   ! --- cchange in organic suspended matter due to C degradation ---
    dorgSS_s = (CP1_t + sedCP1 - CP1_s)           &
             + (CP2_t + sedCP2 - CP2_s)           &
             + (BACt  + sedBAC - bac_s)           &
             + (Creft + sedCrf - Cref ) * fakCref
-   ! Umrechnung in TG
+   ! conversion to dry weight
    dorgSS_s = dorgSS_s / 0.45
    
    ! -----------------------------------------------------------------------
