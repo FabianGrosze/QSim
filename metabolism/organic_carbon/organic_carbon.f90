@@ -196,12 +196,13 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    if (CMt + ksM > 0. .and. upBAC * ftemp * CMt > 0.) then 
       hupBAC = upBAC * ftemp * CMt / (CMt + ksM)
       dC     = bac_s * (exp(hupBAC * tflie) - 1.)
-      if (dC > CMt - c_min .and. bac_s > 0. .and. c_min - CMt > bac_s .and. tflie > 0.) then
-         hupBAC = log(1. + (CMt - c_min) / bac_s) / tflie
-         dC     = bac_s * (exp(hupBAC * tflie) - 1.)
-      else
+      if (dC > CMt - c_min) then
          hupBAC = 0.
          dC     = 0.
+         if (bac_s > 0. .and. c_min - CMt < bac_s .and. tflie > 0.) then
+            hupBAC = log(1. + (CMt - c_min) / bac_s) / tflie
+            dC = bac_s * (exp(hupBAC * tflie) - 1.)
+         endif
       endif
    endif
    
