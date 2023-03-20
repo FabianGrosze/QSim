@@ -1,6 +1,13 @@
 # QSim 14
 
 ## 14.09
+
+### 14.09.30
+* Bug fix and some refactoring of organic_carbon.f90: preventing negative concentrations of refractory C (Cref)
+
+### 14.09.29
+* New module for reading of salinity from UnTRIM hydrodynamics in QSim3D
+
 ### 14.09.28
 * Create module and corefunction for corophium (note this module is currently turned off)
 

@@ -98,8 +98,6 @@
 		<File RelativePath="..\metabolism\belueftung_K2.f90"/>
 		<File RelativePath="..\metabolism\C_Chla.f90"/>
 		<File RelativePath="..\metabolism\cbsb5.f90"/>
-		<File RelativePath="..\metabolism\coliform.f90"/>
-		<File RelativePath="..\metabolism\coroph.f90"/>
 		<File RelativePath="..\metabolism\dichte.f90"/>
 		<File RelativePath="..\metabolism\dreissen.f90"/>
 		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
@@ -107,7 +105,6 @@
 		<File RelativePath="..\metabolism\erosion.f90"/>
 		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
-		<File RelativePath="..\metabolism\hnf.f90"/>
 		<File RelativePath="..\metabolism\konsum.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>
@@ -116,7 +113,6 @@
 		<File RelativePath="..\metabolism\module_allodim.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
-		<File RelativePath="..\metabolism\mphyt.f90"/>
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>
@@ -168,6 +164,7 @@
 		<File RelativePath=".\module_isotope.f95"/>
 		<File RelativePath=".\module_modell.f95"/>
 		<File RelativePath=".\module_QSimDatenfelder.f95"/>
+		<File RelativePath=".\module_salinity.f90"/>
 		<File RelativePath=".\module_suspendedMatter.f90"/>
 		<File RelativePath=".\nachricht.f95"/>
 		<File RelativePath=".\nitrogen_wrapper_3d.f95"/>

@@ -176,7 +176,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
       trans_quant_name( 3) = "               doN" ! Stickstofffreisetzung orgc
       trans_quant_name( 4) = "            BACmua" ! Ausgabekonzentration Summe Aufnahme+Respirationsrate heterotrophe Bakterien
-      trans_quant_name( 5) = "        empty_five" !
+      trans_quant_name( 5) = "          empty_05" !
       trans_quant_name( 6) = "             abszo" ! Absterberate Zooplankton
       trans_quant_name( 7) = "            dkimor" ! Absterberate Kieselalgen
       trans_quant_name( 8) = "            dgrmor" ! Absterberate Grünlalgen
@@ -239,8 +239,8 @@ subroutine ini_ueber(nk)
       trans_quant_name(65) = "               WGE" ! Windgeschwindigkeit
       trans_quant_name(66) = "             cloud" ! Bewölkungsdichte
       trans_quant_name(67) = "              wtyp" ! Cloud reflectane(?) derived from cloud type
-      trans_quant_name(68) = "  empty_sixtyeight" !
-      trans_quant_name(69) = "          empty_69" !
+      trans_quant_name(68) = "          empty_68" !
+      trans_quant_name(69) = "          empty_69" ! 
       trans_quant_name(70) = "          empty_70" !
       trans_quant_name(71) = "          empty_71" !
       trans_quant_name(72) = "            algzog" ! gruen-Algen-Konsum Zoo-Plankton in mg/l
