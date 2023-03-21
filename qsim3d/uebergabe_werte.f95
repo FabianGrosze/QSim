@@ -158,6 +158,7 @@ subroutine ini_ueber(nk)
       !algae_huelle.f95:      saettb = transfer_value_p(9)    ! ???
       !trans_val_name()= "               " !
       
+      trans_val_name = adjustl(trans_val_name)
       
       ! values
       ! transfer_value_p(6)=     ! saettk  [Rückgabewert Algen]
@@ -182,7 +183,7 @@ subroutine ini_ueber(nk)
       trans_quant_name( 9) = "            dblmor" ! Absterberate Blaualgen
       trans_quant_name(10) = "            BSBHNF" !
       trans_quant_name(11) = "            HNFBAC" !
-      trans_quant_name(12) = "          empty_12" !
+      trans_quant_name(12) = "            SSeros" ! amount of resuspended matter
       trans_quant_name(13) = "            drfaek" !
       trans_quant_name(14) = "            drfaeg" !
       trans_quant_name(15) = "            drfaeb" !
@@ -271,6 +272,7 @@ subroutine ini_ueber(nk)
       trans_quant_name(98) = "             pfln1" ! ammonium, which is oxidised to nitrite by nitrifiers (on macrophytes)
       trans_quant_name(99) = "             pfln2" ! nitrite, which is oxidised to nitrate by nitrifiers(on macrophytes)
       
+      trans_quant_name = adjustl(trans_quant_name)
       
       ! allocate transfer_quantity and initialise
       !!! allocate (transfer_quantity(number_trans_quant*number_trans_quant_points), stat = as )
@@ -328,6 +330,9 @@ subroutine ini_ueber(nk)
       trans_quant_vert_name(26) = "            algzkz" ! Kiesel-Algen-Konsum durch Zoo-Plankton in mg/l
       trans_quant_vert_name(27) = "            algzgz" ! Grün-Algen-Konsum durch Zoo-Plankton in mg/l
       trans_quant_vert_name(28) = "            algzbz" ! Blau-Algen-Konsum durch Zoo-Plankton in mg/l
+      
+      trans_quant_vert_name = adjustl(trans_quant_vert_name)
+      
       allocate (trans_quant_vert(part*proz_anz*number_trans_quant_vert*num_lev_trans), stat = as )
       !allocate (trans_quant_vert(number_trans_quant*number_trans_quant_points*num_lev_trans), stat = as )
       if (as /= 0) then
@@ -348,6 +353,20 @@ subroutine ini_ueber(nk)
          output_trans_quant_vert(j) = .false.
       end do
    end if !! nur prozessor 0
+   
+   ! make names available to all processes (e.g. for logging)
+   call mpi_barrier(mpi_komm_welt, ierr)
+   do k = 1,number_trans_val
+      call mpi_bcast(trans_val_name(k)       , len(trans_val_name(k))       , MPI_CHAR, 0, mpi_komm_welt, ierr)
+   enddo
+   do k = 1,number_trans_quant
+      call mpi_bcast(trans_quant_name(k)     , len(trans_quant_name(k))     , MPI_CHAR, 0, mpi_komm_welt, ierr)
+   enddo
+   do k = 1,number_trans_quant_vert
+      call mpi_bcast(trans_quant_vert_name(k), len(trans_quant_vert_name(k)), MPI_CHAR, 0, mpi_komm_welt, ierr)
+   enddo
+   call mpi_barrier(mpi_komm_welt, ierr)
+   
 end subroutine ini_ueber
 !----+-----+----
 

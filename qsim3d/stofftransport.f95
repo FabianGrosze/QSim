@@ -29,12 +29,35 @@
 subroutine stofftransport()
    use modell
    implicit none
-   integer :: i, n, j
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = i + meinrang * part
-      if (kontrollknoten == iglob)print*,iglob,meinrang,i,part," vor ph2hplus lf,ph = ",  &
-          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
-   end do
+   
+   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before transport
+   integer                           :: i, j, k, nk
+
+   call mpi_barrier(mpi_komm_welt, ierr)
+   if (kontrollknoten > 0) then
+      do i = 1,part ! all i elements/nodes on this process
+         iglob = i + meinrang * part
+         if (kontrollknoten == iglob) then
+            print*,iglob,meinrang,i,part," vor ph2hplus lf,ph = ",  &
+                   planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+            
+            ! keep variable values from before transport calculations
+            nk = (i - 1) * number_plankt_vari
+            allocate ( planktonic_variable_before(number_plankt_vari) )
+            planktonic_variable_before(:) = planktonic_variable_p([(k, k = nk + 1, nk + number_plankt_vari)])
+            
+            ! write 'before' values to log file
+            write(*, '(a)') 'Planktonic variables before stofftransport'
+            do k = 1,number_plankt_vari
+               write(*, '(i3,": ",a10," = ",E17.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_before(k)
+            enddo
+            
+            ! control point reached
+            exit
+         endif
+      enddo
+   endif
+   
    call ph2hplus()
    call mpi_barrier (mpi_komm_welt, ierr)
    
@@ -69,11 +92,28 @@ subroutine stofftransport()
    call hplus2ph()
    call mpi_barrier (mpi_komm_welt, ierr)
    call gather_planktkon() ! syncronize non-parallel fields to paralell ones again
-   do i = 1,part ! all i elements/nodes on this process
-      iglob = (i+meinrang*part)
-      if (kontrollknoten == iglob)print*,iglob,meinrang,i,part," nach hplus2ph lf,ph = ",  &
-          planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
-   end do
+
+   if (kontrollknoten > 0) then
+      do i = 1,part ! all i elements/nodes on this process
+         iglob = i + meinrang * part
+         if (kontrollknoten == iglob) then
+            
+            print*,iglob,meinrang,i,part," nach hplus2ph lf,ph = ",  &
+                   planktonic_variable_p(65+(i-1)*number_plankt_vari),planktonic_variable_p(66+(i-1)*number_plankt_vari)
+            
+            write(*, '(a)') 'Planktonic variables after stofftransport'
+            do k = 1,number_plankt_vari
+               write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E17.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
+                                                                          planktonic_variable_p(k + nk) - planktonic_variable_before(k)
+            enddo
+            deallocate( planktonic_variable_before )
+            
+            ! control point reached
+            exit
+         endif
+      enddo
+   endif
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    if (meinrang == 0) then !! nur prozessor 0
       do j = 1,number_plankt_point ! alle j Knoten

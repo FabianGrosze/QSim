@@ -335,7 +335,7 @@ end subroutine alter_ausgabe
 !----+-----+----
 
 !> Randbedingungen setzen für die Altersberechnung
-!! in       SUBROUTINE randwert_planctonic(j,zaehl)
+!! in       SUBROUTINE randwert_planktonic(j,zaehl)
 !! nicht hier !!
 !! läuft nur auf prozessor 0 ???
 subroutine alter_rand(j)

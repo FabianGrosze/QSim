@@ -64,6 +64,11 @@ subroutine organic_carbon_wrapper_3d(i)
    if (kontroll) then
       print*, 'before organic_carbon'
       print*, '   CHNFs = ', CHNFs
+      print*, '   CD1   = ', planktonic_variable_p(37+(i-1)*number_plankt_vari)
+      print*, '   CD2   = ', planktonic_variable_p(38+(i-1)*number_plankt_vari)
+      print*, '   CP1   = ', planktonic_variable_p(39+(i-1)*number_plankt_vari)
+      print*, '   CP2   = ', planktonic_variable_p(40+(i-1)*number_plankt_vari)
+      print*, '   CM    = ', planktonic_variable_p(41+(i-1)*number_plankt_vari)
       print*, '   BAC   = ', planktonic_variable_p(42+(i-1)*number_plankt_vari)
       print*, '   obsb  = ', planktonic_variable_p(17+(i-1)*number_plankt_vari)
       print*, '   ocsb  = ', planktonic_variable_p(18+(i-1)*number_plankt_vari)
@@ -140,6 +145,11 @@ subroutine organic_carbon_wrapper_3d(i)
    if (kontroll) then
       print*, 'after organic_carbon'
       print*, '   CHNFs = ', CHNFs
+      print*, '   CD1   = ', planktonic_variable_p(37+(i-1)*number_plankt_vari)
+      print*, '   CD2   = ', planktonic_variable_p(38+(i-1)*number_plankt_vari)
+      print*, '   CP1   = ', planktonic_variable_p(39+(i-1)*number_plankt_vari)
+      print*, '   CP2   = ', planktonic_variable_p(40+(i-1)*number_plankt_vari)
+      print*, '   CM    = ', planktonic_variable_p(41+(i-1)*number_plankt_vari)
       print*, '   BAC   = ', planktonic_variable_p(42+(i-1)*number_plankt_vari)
       print*, '   obsb  = ', planktonic_variable_p(17+(i-1)*number_plankt_vari)
       print*, '   ocsb  = ', planktonic_variable_p(18+(i-1)*number_plankt_vari)

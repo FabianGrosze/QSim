@@ -212,7 +212,14 @@ subroutine wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge,   &
             else if (is_set_wert2) then
                Ywert = wert2
             else
-               call qerror("wettles.f90: Neither 'wert1' nor 'wert2' set.")
+               ! if no valid values are found before and after and error is thrown.
+               ! ipw == 7 (cloud type) is an exception. For some station no such data
+               ! is available, so it is accepted for timeseries to have no values at all.
+               if (ipw == 7) then
+                  call set_cloud_reflectance(-1, Ywert)
+               else
+                  call qerror("wettles.f90: Neither 'wert1' nor 'wert2' set.")
+               endif
             endif
          else
             hcon1 = R_NRS2 - R_NRS1

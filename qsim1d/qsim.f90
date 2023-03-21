@@ -2519,6 +2519,13 @@ program qsim
    endif
    
    ! ==========================================================================
+   ! Initialisation of otherwise potentially uninitialised variables
+   ! ==========================================================================
+   ! Coliphorm bacteria
+   hcoli(:,:)  = -1.
+   hDOSCF(:,:) = -1.
+   
+   ! ==========================================================================
    ! Strangschleife für alle Straenge
    ! Einlesen der Einleiterdaten und Randbedingungen
    ! ==========================================================================
@@ -6642,6 +6649,7 @@ program qsim
                         ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
          
          ! Aufsummierung der Tracermasse
+         ! TODO FG: sumTracer is not used elsewhere => remove?
          if (iwsim == 4) then
             do ior = 1, anze
                sumTracer = sumTracer + ((tempw(ior)+tempw(ior+1))/2.) * vabfl(ior)
@@ -8255,13 +8263,12 @@ program qsim
                bcay(iior)   = -1.
                blfy(iior)   = -1.
                bssaly(iior) = -1.
-               btempy(iior) = -1.
                bo2y(iior)   = -1.
                if (nbuhn(mstr) == 0)tau2y(iior) = -1.
             endif
             
             bcoliy = -1.
-            bHNFy = -1.
+            bHNFy  = -1.
             if (nbuhn(mstr) /= 1 .or. iwsim /= 4) btracer(iior) = -1.
             
             write(155,5115)bvbsby(iior),bvcsby(iior),bnh4y(iior)                          &

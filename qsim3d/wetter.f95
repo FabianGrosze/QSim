@@ -629,7 +629,7 @@ subroutine wettles_wetter()
             ! ipw == 7 (Wolkentyp) is an exception. For some station no such data
             ! is available, so it is accepted for timeseries to have no values at all.
             if (ipw == 7) then
-               ywert = w1
+               call set_cloud_reflectance(-1, Ywert)
             else
                write(fehler,*)'wettles_wetter: no valid data at weather station ',i,' for value ',ipw,"  ",w1
                call qerror(fehler)

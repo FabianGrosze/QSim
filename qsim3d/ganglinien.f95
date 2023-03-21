@@ -354,7 +354,7 @@ subroutine ganglinien_schliessen()
          if (output_plankt(i)) then ! planktic output conc.
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//planktonic_variable_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(planktonic_variable_name(i))//spalte//"|"
             !print*,"output_plankt:",i,ngnu,trim(beschriftung)
          end if
       end do
@@ -362,7 +362,7 @@ subroutine ganglinien_schliessen()
          if (output_plankt_vert(i)) then ! planktic_vert output conc.
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//plankt_vari_vert_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(plankt_vari_vert_name(i))//spalte//"|"
             !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
          end if
       end do
@@ -371,7 +371,7 @@ subroutine ganglinien_schliessen()
          if (output_benth_distr(i)) then ! benth. distr. output
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//benth_distr_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(benth_distr_name(i))//spalte//"|"
             !print*,"output_benth_distr:",i,ngnu,trim(beschriftung)
          end if
       end do
@@ -380,7 +380,7 @@ subroutine ganglinien_schliessen()
          if (output_trans_val(i)) then ! globale Übergabe Werte
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//trans_val_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(trans_val_name(i))//spalte//"|"
             !print*,"output_trans_val:",i,ngnu,trim(beschriftung)
          end if
       end do
@@ -388,7 +388,7 @@ subroutine ganglinien_schliessen()
          if (output_trans_quant(i)) then ! exchange con. output
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//trans_quant_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(trans_quant_name(i))//spalte//"|"
             !print*,"output_trans_quant:",i,ngnu,trim(beschriftung)
          end if
       end do
@@ -396,7 +396,7 @@ subroutine ganglinien_schliessen()
          if (output_trans_quant_vert(i)) then ! exchange con. output
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//trans_quant_vert_name(i)//spalte//"|"
+            beschriftung = trim(beschriftung)//adjustr(trans_quant_vert_name(i))//spalte//"|"
             !print*,"output_trans_quant_vert:",i,ngnu,trim(beschriftung)
          end if
       end do
