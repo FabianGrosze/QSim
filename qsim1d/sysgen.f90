@@ -30,26 +30,29 @@
 !! Segmentlaenge variabel, Zeitschritt fest gleich 60 min
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
-subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
+subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                         &
                   ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                   ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                   ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
                   ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
-                  ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
+                  ,itags,monats,Jahrs,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros, isumanzsta)
    
    use allodim
    implicit none
    
-   integer                                :: nndr, mu, ms, mstr, mstrl
-   integer                                :: monats, lboemz, khyd, jz, jsgn
-   integer                                :: jieinz, i, iw, iwsim, iverfahren
-   integer                                :: itst, itags, isum_str, iseg, isegst
+   integer                                :: nndr, mu, ms, mstr, mstrl, isumanzsta
+   integer                                :: itags, monats, Jahrs
+   integer                                :: itag_Schr, monat_Schr, Jahr_Schr
+   integer                                :: lboemz, khyd, jz, jsgn
+   integer                                :: jieinz, i, iw, iwsim, iverfahren, izi
+   integer                                :: itst, isum_str, iseg, isegst
    integer                                :: ischif, ilang, ij, ihydr, ifhstr
    integer                                :: ie, ies, ieros, ieinsy, ieab
    integer                                :: id, ianzt, ianze_max, i6
    integer                                :: anze, SCHRNR, azStr, dummy
+   integer                                :: i_ereigh
    real                                   :: vabst, wuebkz, wspl, wsplz, wflbz1
-   real                                   :: w2z, vmittz, vbumz, u, uhrz
+   real                                   :: w2z, vmittz, vbumz, u, uhrz, Uhrz_Schr
    real                                   :: tstkm, tiefz, tflie, testh, tau2_0
    real                                   :: tau2m, swflbu, sw2, svbu, sumx
    real                                   :: sumt, sumt1, sumbt1, spewksz, shbu
@@ -63,44 +66,46 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    real                                   :: bsoz1, bsomnz, bsohl, bsobz1, blbumz
    real                                   :: bedgkz, bdknz, asedvvert, akornz, aisch
    real                                   :: aischz, adkorn, ks, lboe
-   character (len = 255)                  :: cpfad
+   character (len = 255)                  :: cpfad,text
    character (len = 275)                  :: pfadstring
+   character(2)                           :: ckenn_vers1
+   character(40)                          :: erename, modname
    integer, dimension(azStrs)             :: STRiz, nbuhn, mSs, mStra, isegs, mUs, abfr, mStas, mRBs
-   integer, dimension(1000)               :: flag, jiein
-   integer, dimension(azStrs,100)         :: RBtyp
-   real, dimension(100)                   :: einlk
-   real, dimension(1000)                  :: elen, tiefe, rau, vmitt, rhyd, fkm, flae, WS, qsaus, aischl, sedvvertz, lboea,lboem
-   real, dimension(1000)                  :: bsohlm, flaea, rhyda, absta, tiefea, vunt, vob, fkmhyd, BedGK
-   real, dimension(1000)                  :: dKornn, Qaus, WSP, hbum, flbum, bsobum, blbum, WFlbum, vbum, flbu
-   real, dimension(1000)                  :: WFlbu, hbu, blabu, bsobu, vmbu, bSdOMn, bw2n, bKornn, w2n
+   integer, dimension(ialloc2)               :: flag, jiein
+   integer, dimension(azStrs,ialloc1)         :: RBtyp
+   real, dimension(ialloc1)                   :: einlk
+   real, dimension(ialloc2)                  :: elen, tiefe, rau, vmitt, rhyd, fkm, flae, WS, qsaus, aischl, sedvvertz, lboea,lboem
+   real, dimension(ialloc2)                  :: bsohlm, flaea, rhyda, absta, tiefea, vunt, vob, fkmhyd, BedGK
+   real, dimension(ialloc2)                  :: dKornn, Qaus, WSP, hbum, flbum, bsobum, blbum, WFlbum, vbum, flbu
+   real, dimension(ialloc2)                  :: WFlbu, hbu, blabu, bsobu, vmbu, bSdOMn, bw2n, bKornn, w2n
    real, dimension(azStrs)                :: startkm, STRdt, wsp_UW, wsp_OW
-   real, dimension(azStrs,100)            :: RBkm
-   real, dimension(azStrs,20)             :: eschif, aschif
-   real, dimension(azStrs,100)            :: akmB, ekmB, DLB, tau2B, alphaB
-   real, dimension(azStrs,1000)           :: segkm, SedOM, BedGSed, sedvvert, dKorn, hQaus, hVF, hFlaea, htiefa
-   real, dimension(azStrs,1000)           :: hlboea, raua, bsohla
-   real, dimension(azStrs,1000)           :: boeamq, SedOMb, w2,w2b, dKornb, SPEWKSuS, WUEBKuS, PSREFSuS, SPEWKSS, WUEBKS
-   real, dimension(azStrs,1000)           :: PSREFSS,extkuS, extkS, HMQ, bvMQ, bHMQ
+   real, dimension(azStrs,ialloc1)            :: RBkm
+   real, dimension(azStrs,ialloc3)             :: eschif, aschif
+   real, dimension(azStrs,ialloc1)            :: akmB, ekmB, DLB, tau2B, alphaB
+   real, dimension(azStrs,ialloc2)           :: segkm, SedOM, BedGSed, sedvvert, dKorn, hQaus, hVF, hFlaea, htiefa
+   real, dimension(azStrs,ialloc2)           :: hlboea, raua, bsohla
+   real, dimension(azStrs,ialloc2)           :: boeamq, SedOMb, w2,w2b, dKornb, SPEWKSuS, WUEBKuS, PSREFSuS, SPEWKSS, WUEBKS
+   real, dimension(azStrs,ialloc2)           :: PSREFSS,extkuS, extkS, HMQ, bvMQ, bHMQ
    integer, dimension(:,:), allocatable   :: iflags, iBliak, iBreak, ieinse
    real, dimension(:,:), allocatable      :: hkmhyd, hWSP, hrhyda, hhbu, hflbu, hbsobu, hblabu, hWFlbu, hvmbu
    character(1000)                        :: message
    
    external                               :: qerror
    
-   if (.not.allocated(iflags)) allocate(iflags(azStrs,1000))
-   if (.not.allocated(iBliak)) allocate(iBliak(azStrs,1000))
-   if (.not.allocated(iBreak)) allocate(iBreak(azStrs,1000))
-   if (.not.allocated(ieinse)) allocate(ieinse(azStrs,1000))
+   if (.not.allocated(iflags)) allocate(iflags(azStrs,ialloc2))
+   if (.not.allocated(iBliak)) allocate(iBliak(azStrs,ialloc2))
+   if (.not.allocated(iBreak)) allocate(iBreak(azStrs,ialloc2))
+   if (.not.allocated(ieinse)) allocate(ieinse(azStrs,ialloc2))
    
-   if (.not.allocated(hkmhyd)) allocate(hkmhyd(azStrs,1000))
-   if (.not.allocated(hWSP))   allocate(hWSP(azStrs,1000))
-   if (.not.allocated(hrhyda)) allocate(hrhyda(azStrs,1000))
-   if (.not.allocated(hhbu))   allocate(hhbu(azStrs,1000))
-   if (.not.allocated(hflbu))  allocate(hflbu(azStrs,1000))
-   if (.not.allocated(hbsobu)) allocate(hbsobu(azStrs,1000))
-   if (.not.allocated(hblabu)) allocate(hblabu(azStrs,1000))
-   if (.not.allocated(hWFlbu)) allocate(hWFlbu(azStrs,1000))
-   if (.not.allocated(hvmbu))  allocate(hvmbu(azStrs,1000))
+   if (.not.allocated(hkmhyd)) allocate(hkmhyd(azStrs,ialloc2))
+   if (.not.allocated(hWSP))   allocate(hWSP(azStrs,ialloc2))
+   if (.not.allocated(hrhyda)) allocate(hrhyda(azStrs,ialloc2))
+   if (.not.allocated(hhbu))   allocate(hhbu(azStrs,ialloc2))
+   if (.not.allocated(hflbu))  allocate(hflbu(azStrs,ialloc2))
+   if (.not.allocated(hbsobu)) allocate(hbsobu(azStrs,ialloc2))
+   if (.not.allocated(hblabu)) allocate(hblabu(azStrs,ialloc2))
+   if (.not.allocated(hWFlbu)) allocate(hWFlbu(azStrs,ialloc2))
+   if (.not.allocated(hvmbu))  allocate(hvmbu(azStrs,ialloc2))
    
    write(pfadstring,'(2A)')trim(adjustl(cpfad)),'sysgenou'
    open(unit = 11, file = pfadstring)
@@ -169,12 +174,44 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    enddo
    close(391)
    
+   ! read EREIGH.txt
+   rewind(i_ereigh)
+   read(i_ereigh,'(A2)')ckenn_vers1
+   if (ckenn_vers1 /= '*V') then
+      read(i_ereigh,'(A40)')ERENAME
+   else
+      rewind(i_ereigh)
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(A40)')MODNAME
+      read(i_ereigh,'(A40)')ERENAME
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
+   endif
+   do  ! find suitable timestep in EREIGH.txt
+      read(i_ereigh,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! read timestep numberr
+      if (itags == itag_Schr .and. monats == monat_Schr .and. Jahrs == Jahr_Schr .and.  &
+                                                   (uhrz-Uhrz_Schr <= 2.*epsilon(uhrz))) then  
+          backspace(unit = i_ereigh)
+         exit
+      endif
+      do izi = 1,isumAnzSta
+         read(i_ereigh,'(2x)')
+      enddo
+      cycle
+   enddo
+   9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
+   read(i_ereigh,'(A)')text
+   print*,'sysgen going to read hydraulic timestep:',trim(text),' from EREIGH.txt'
+   read(text,'(I5)')SCHRNR
+   !print*,'SCHRNR,itags,monats,Jahrs,uhrz=',SCHRNR,itags,monats,Jahrs,uhrz
+
    ! Systemgenerierung der einzelnen Stränge
-   read(110,'(I5)')SCHRNR
-   
+   ! reading all hydraulic information for all azStrs branches
    do azStr = 1,azStrs
       khyd = 1
-      read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
+      read(i_ereigh,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
            ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd), dummy   &
            ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)      &
            ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)         &
@@ -221,8 +258,10 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       233 continue
       
+      print*,'sysgen fetching branch #',mstrl,' with ',mStas(mstrl),' cross-sections (Berechnungsstützstellen)'
+      
       do khyd = 2,mStas(mstrl)
-         read(110,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
+         read(i_ereigh,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
               ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd), dummy   &
               ,htiefa(mstrl,khyd),hrhyda(mstrl,khyd),hlboea(mstrl,khyd)      &
               ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)         &
@@ -270,10 +309,22 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          hbsobu(mstrl,khyd) = bsohla(mstrl,khyd)
          hvmbu(mstrl,khyd) = hVF(mstrl,khyd)
       enddo
+      
+      if(ilang==0)then
+         do khyd = 1,mStas(mstrl)
+            print*,mstrl,khyd,' sysgen hkmhyd=',hkmhyd(mstrl,khyd)
+         enddo
+      endif
+
       Wsp_UW(mstrl) = hwsp(mstrl,1)
       Wsp_OW(mstrl) = hwsp(mstrl,mStas(mstrl))
-   enddo
+   enddo ! loop over all azStr branches 
+      
+   1111 format(I5,2x,f8.3,2x,F9.4,2x,F13.6,2x,F8.5,2x,F7.1,I10,2x,f7.4,2x    &
+   ,f7.3,2x,f7.2,2x,F7.1,2x,F7.1,2x,F7.4,2x,F6.2,2x,F6.2,2x,F8.5             &
+   ,2x,i2,2x,i2)
    
+   ! loop over all branches 
    do azStr = 1,azStrs
       jz = 0
       i6 = 0  ! anzahl der "6-flags"
@@ -281,11 +332,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       
       iseg = 1
       
-      do khyd = 1,mStas(mstr)-1
-         vob(khyd) = hVF(mstr,khyd)
-         vunt(khyd) = hVF(mstr,khyd+1)
-         absta(khyd) = abs(hkmhyd(mstr,khyd)-hkmhyd(mstr,khyd+1))*1000.
-         
+      ! all cross sections gotten from EREIGH.txt
+      do khyd = 1,mStas(mstr)
          WSP(khyd) = hWSP(mstr,khyd)
          Qaus(khyd) = hQaus(mstr,khyd)
          Flaea(khyd) = hFlaea(mstr,khyd)
@@ -300,25 +348,11 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          bsobu(khyd) = hbsobu(mstr,khyd)
          vmbu(khyd) = hvmbu(mstr,khyd)
       enddo
-      
-      !      khyd = khyd+1
-      WSP(khyd) = hWSP(mstr,khyd)
-      Qaus(khyd) = hQaus(mstr,khyd)
-      Flaea(khyd) = hFlaea(mstr,khyd)
-      tiefea(khyd) = htiefa(mstr,khyd)
-      rhyda(khyd) = hrhyda(mstr,khyd)
-      lboea(khyd) = hlboea(mstr,khyd)
-      fkmhyd(khyd) = hkmhyd(mstr,khyd)
-      flbu(khyd) = hflbu(mstr,khyd)
-      WFlbu(khyd) = hWFlbu(mstr,khyd)
-      hbu(khyd) = hhbu(mstr,khyd)
-      blabu(khyd) = hblabu(mstr,khyd)
-      bsobu(khyd) = hbsobu(mstr,khyd)
-      vmbu(khyd) = hvmbu(mstr,khyd)
-      
-      1111 format(I5,2x,f8.3,2x,F9.4,2x,F13.6,2x,F8.5,2x,F7.1,I10,2x,f7.4,2x    &
-      ,f7.3,2x,f7.2,2x,F7.1,2x,F7.1,2x,F7.4,2x,F6.2,2x,F6.2,2x,F8.5             &
-      ,2x,i2,2x,i2)
+      do khyd = 1,mStas(mstr)-1
+         absta(khyd) = abs(hkmhyd(mstr,khyd)-hkmhyd(mstr,khyd+1))*1000.
+         vob(khyd) = hVF(mstr,khyd)
+         vunt(khyd) = hVF(mstr,khyd+1)
+      enddo
       
       ieinsy = 1
       do ie = 1,mRBs(mstr)
@@ -333,11 +367,11 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       ie = 0
       if (ies > 0)ie = ieinsy
       
+      ! start inserting additional cross-sections
       khyd = 0
-      
-      20 continue
+      20 continue ! come back for next original cross-section
       khyd = khyd+1
-      if (khyd > (mStas(mstr)-1))goto 999
+      if (khyd > (mStas(mstr)-1))goto 999 ! no further original cross-sections
       
       if (flaea(khyd) > 99999.90)flaea(khyd) = -1.0
       if (abfr(mstr) == 0 .and. fkmhyd(khyd) > startkm(mstr)) then
@@ -367,7 +401,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       if (vabst < 0.0)jsgn = -1
       if (abs(vabst) < 0.0001)vabst = 0.0001*jsgn
       
-      30 dx1 = abs(vabst)*dt1
+      30 dx1 = abs(vabst)*dt1  ! come back to insert new cross-section
       if (iseg > isegs(mstr))goto 130
       
       if (i == 0) then
@@ -452,11 +486,15 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       if (i > 1000) then
          write(message, "(a,i0)") "Number of nodes exceeds 1000 in stretch ", mstr
          call qerror(message)
+      else
+         if(ilang==0)print*,mstr,' sysgen i,khyd=',i,khyd
       endif
       
       elen(i) = sumx
       if (elen(i) <= 0.001)elen(i) = 0.001
       vmitt(i) = u/sumt1
+      !print*,i,mstr,khyd,'=i,mstr,khyd | vmitt,VF,hkmhyd=',vmitt(i),hVF(mstr,khyd),hkmhyd(mstr,khyd)
+      !vmitt(i) = hVF(mstr,khyd)!!wy
       rau(i) = ks/sumt1
       tiefe(i) = h/sumt1
       rhyd(i) = rh/sumt1
@@ -664,7 +702,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          goto 41
       endif
       if (absta(khyd) < 0.01)goto 20
-      goto 30
+      goto 30 
       
       ! --- Ende der Systemgenerierung ---
       999 continue
@@ -982,6 +1020,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       sumbt1 = 0.0
       if (dtv > 0.0)dt = dtv
       
+      ! writing into sysgenou
       ie = ieinsy
       isum_Str = 0.0
       write(11,2000)anze
@@ -1084,7 +1123,21 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
                        ,lboem(i),bsohlm(i),qsaus(i),hbum(i),flbum(i),bsobum(i)                                 &
                        ,blbum(i),WFlbum(i),dlm,tau2m,vbum(i),bSdOMn(i),bw2n(i),bKornn(i)                       &
                        ,dlalpm
-      enddo
+         !print*,i,anze,' sysgen write(11',fkm(i),flag(i),jiein(i),elen(i),vmitt(i),tiefe(i)
+      enddo ! all i 
+      
+      !if (flag(i) == 6)print*,i,anze,azStr,mstr,' flag(i) == 6 vmitt,tiefe,fkm,Q,A,v,vf',  &
+      !   vmitt(i),tiefe(i),fkm(i),hQaus(mstr,i),hFlaea(mstr,i),hQaus(mstr,i)/hFlaea(mstr,i),hVF(mstr,i)
+
+      !if(mstr==1)print*,azStr,' sysgen write(11 Elbe-Km  94,40 vmitt,tiefe,rau,rhyd(202),fkm,flag',  &
+      !               vmitt(202),tiefe(202),rau(202),rhyd(202),fkm(202),flag(202)
+      !if(mstr==1)print*,' sysgen write(11 Elbe-Km  94,40 Q,A,v,vf',  &
+      !               hQaus(mstr,202),hFlaea(mstr,202),hQaus(mstr,202)/hFlaea(mstr,202),hVF(mstr,202)
+                     
+      !if(mstr==2)print*,azStr,' sysgen write(11 Elbe-Km 585,05 vmitt,tiefe,rau,rhyd(512),fkm,flag',  &
+      !               vmitt(512),tiefe(512),rau(512),rhyd(512),fkm(512),flag(512)
+      !if(mstr==2)print*,' sysgen write(11 Elbe-Km 585,05 Q,A,v,vf',  &
+      !               hQaus(mstr,512),hFlaea(mstr,512),hQaus(mstr,512)/hFlaea(mstr,512),hVF(mstr,512)
       
       2000 format(i4)
       
@@ -1131,7 +1184,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       courmx = 0.0
       
       if ((anze+1) > ianze_max)ianze_max = anze + 1
-   enddo
+   enddo ! all azStr/mstr branches
    
    close (11)
    

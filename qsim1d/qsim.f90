@@ -71,6 +71,7 @@ program qsim
    integer         :: mend, istriz_neu, isim_end, nwaerm, izeits
    integer         :: jpoin1, ico, ke, itagv, monatv
    integer         :: jahrv, jtage, ianfan, itag_schr, i
+   integer         :: i_ereigh
    real            :: lat_k, o2ein
    real            :: mikonss, mxkonss, bxcoli,algae_biomass
    real            :: POM_sed, BedGS, xsedvvertz
@@ -267,7 +268,9 @@ program qsim
    real, dimension(ialloc2)                :: lboem, bsohlm, cmatgr, cmatki, ffood, fssgr, fbsgr, frfgr, sedss
    real, dimension(ialloc2)                :: lfy, akiy, agry, iry, tempwy, vbsby, vcsby, vnh4y, tiefey, vx02y
    real, dimension(ialloc2)                :: vo2y, vno3y, vno2y, vx0y, siy, vkigry, cmy, bacy, chnfy, bvhnfy, dly
-   real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby, ssalgy, zooiny, gelpy, coliy, tau2y, gspy
+   real, dimension(ialloc2)                :: chlay, chlaky, chlagy, chlaby
+   real, dimension(ialloc2)                :: ssalgy, ssy, sedssy, SSerosy, dsedHy, tauy ,tauscy, sedalky, sedalgy, sedalby
+   real, dimension(ialloc2)                :: zooiny, gelpy, coliy, tau2y, gspy
    real, dimension(ialloc2)                :: mwy, cay, vphy, tpkiy, tpgry, gsny, orgcsd0, susny, bettny, dony
    real, dimension(ialloc2)                :: agrn4y, akin4y, flun3y, sedx0y, susnoy, sedagy, sedaky, algzgy, alno3y
    real, dimension(ialloc2)                :: algzky, algdgy, algdky, volfdy, abowgy, abowky, aborgy, aborky, dalggy
@@ -470,7 +473,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   linux = .true.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -1668,23 +1671,23 @@ program qsim
    ! ==========================================================================
    ! reading EREIGH.txt
    ! ==========================================================================
-   pfadstring = trim(adjustl(cpfad1)) // 'EREIGH.txt'
-   open(unit = 110, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) call qerror("Could not open EreigH.txt")
+   pfadstring = trim(adjustl(cpfad1)) // 'EREIGH.txt' ; i_ereigh=110
+   open(unit = i_ereigh, file = pfadstring, iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open EREIGH.txt")
    
-   rewind (110)
-   read(110,'(A2)')ckenn_vers1
+   rewind (i_ereigh)
+   read(i_ereigh,'(A2)')ckenn_vers1
    if (ckenn_vers1 /= '*V') then
-      read(110,'(A40)')ERENAME
+      read(i_ereigh,'(A40)')ERENAME
    else
-      rewind (110)
-      read(110,'(2x)')
-      read(110,'(2x)')
-      read(110,'(2x)')
-      read(110,'(A40)')MODNAME
-      read(110,'(A40)')ERENAME
-      read(110,'(2x)')
-      read(110,'(2x)')
+      rewind (i_ereigh)
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(A40)')MODNAME
+      read(i_ereigh,'(A40)')ERENAME
+      read(i_ereigh,'(2x)')
+      read(i_ereigh,'(2x)')
    endif
    
    ! Festlegung der max. Tiefenschichtenanzahl für jeden Ortspunkt bei 2D
@@ -1745,6 +1748,7 @@ program qsim
    ! ==========================================================================
    9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
+   print*,'--- 9999---Zeitschritt:',ij,itime,'--------Zeitpunkt:',itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
    
    !---------------------------------------------------------------------------
    ! read from Ablauf.txt
@@ -1776,12 +1780,12 @@ program qsim
    ! --------------------------------------------------------------------------
    ! Einteilung der Flussstrecke in Segmente
    ! --------------------------------------------------------------------------
-   call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
+   call sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                         &
                ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
                ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
-               ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
+               ,itags,monats,Jahrs,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros, isumanzsta)
    
    pfadstring = trim(adjustl(cpfad)) // 'sysgenou'
    open(unit = 11, file = pfadstring, iostat = open_error)
@@ -1804,14 +1808,30 @@ program qsim
               ,hbsohl(mstr,ior),hvabfl(mstr,ior),bh(mstr,ior),bf(mstr,ior),bso(mstr,ior),blb(mstr,ior)              &
               ,bleb(mstr,ior),hdl(mstr,ior),htau2(mstr,ior),vbm(mstr,ior),bSedOM(mstr,ior),bw2(mstr,ior)            &
               ,bdKorn(mstr,ior),dlalph(mstr,ior)
-         
+
+
+!         write(11,2010)fkm(i),flag(i),jiein(i),elen(i),vmitt(i),tiefe(i)                                       &
+!                       ,rau(i),rhyd(i),aischl(i),w2n(i),BedGK(i),sedvvertz(i),dKornn(i),flae(i),WS(i),ischif   &
+!                       ,lboem(i),bsohlm(i),qsaus(i),hbum(i),flbum(i),bsobum(i)                                 &
+!                       ,blbum(i),WFlbum(i),dlm,tau2m,vbum(i),bSdOMn(i),bw2n(i),bKornn(i)                       &
+!                       ,dlalpm
+
+
          if (hrhyd(mstr,ior) <= 0.0)hrhyd(mstr,ior) = htiefe(mstr,ior)
       enddo
+      
+      if(ilang==0)then
+         do ior = 1,hanze(mstr)
+            print*,mstr,ior,' sysgenou hfkm,hflag=',hfkm(mstr,ior),hflag(mstr,ior)
+         enddo
+      endif
       
       QStrang_1(mstr) = hvabfl(mstr,1)
       
       hSedOM(mstr,hanze(mstr)+1) = hSedOM(mstr,hanze(mstr))
       bSedOM(mstr,hanze(mstr)+1) = bSedOM(mstr,hanze(mstr))
+      
+      
       
    enddo
    close (11)
@@ -2524,6 +2544,8 @@ program qsim
    ! Ermittlung der Wetterdaten für den Zeitschritt
    ! ==========================================================================
    9191 continue
+   print*,'---------- 9191---------',ij,itime,'------------ iwied,ilang,iwsim',iwied,ilang,iwsim
+
    if (iwsim /= 4 .and. iwsim /= 5) then
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
                    cloud, wtyp, imet, iwied, cpfad, ckenn_vers1)
@@ -3835,6 +3857,7 @@ program qsim
       mstr = mstra(azStr)
       
       read(11,1000)hanze(mstr)
+      print*,azStr,mstr,' reading from sysgenou hanze(mstr)=',hanze(mstr)
       1000 format(i4)
       do ior = 1,hanze(mstr)
          read(11,1010)hfkm(mstr,ior),hflag(mstr,ior)                                &
@@ -6306,12 +6329,18 @@ program qsim
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
+            !print*,mstr,ior,' erosion_kern ',TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior),hSSeros(mstr,ior),ss(ior),ssalg(ior)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
             !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
             !if((mstr==2) .and. (ior==512))print*,'erosion Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
+      !if(mstr==1)print*,azStr,' sysgen write(11 Elbe-Km  94,40 vmitt,tiefe,rau,rhyd(202),fkm,flag',  &
+      !               vmitt(202),tiefe(202),rau(202),rhyd(202),fkm(202),flag(202)
+      !if(mstr==1)print*,' sysgen write(11 Elbe-Km  94,40 Q,A,v,vf',  &
+      !               hQaus(mstr,202),hFlaea(mstr,202),hQaus(mstr,202)/hFlaea(mstr,202),hVF(mstr,202)
          enddo
-      
+         print*,mstr,' erosion_kern called for anze+1=',anze+1,' cross-sections'
+
          ! --- groyne-field ---
          if (nbuhn(mstr) > 0) then
             do ior = 1,anze+1
@@ -7217,7 +7246,10 @@ program qsim
       !if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 474,5 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
       !hsedalk(mstr,316),';',hsedalg(mstr,316),';',hsedalb(mstr,316),';',                                &
       !hsedss(mstr,316),';',hSSeros(mstr,316),';',htau(mstr,316),';',tausc(mstr,316)
-      
+	   if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 94.40 TIEFE,rau,VMITT,tau,tausc',  &
+					htiefe(mstr,202),hrau(mstr,202),hvmitt(mstr,202),htau(mstr,202),tausc(mstr,202)
+	   if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 585,05 TIEFE,rau,VMITT,tau,tausc',  &
+					htiefe(mstr,512),hrau(mstr,512),hvmitt(mstr,512),htau(mstr,512),tausc(mstr,512)
    enddo ! Ende Strangschleife
    
    7777 continue
@@ -7257,8 +7289,10 @@ program qsim
    ! Vorlauf ilang = 0; Werte werden nicht abgelegt
    if (ilang == 0 .and. ij < itime) then
       print "(a,i0,a,i0,a)", " Vorlauf (", ij, "/", itime ,")"
+      !print*,'iwied=',iwied
       ij = ij+1
       istr = 0
+      !print*,'Rücksprung 9191 ilang == 0 .and. ij < itime iwied,itime',iwied,itime
       goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
    endif
    
@@ -7271,33 +7305,34 @@ program qsim
       ianfan = 1
       ij = 1
       if (iwsim == 4)itracer_vor = 1
-      rewind(110)
-      read(110,'(A2)')ckenn_vers1
+      rewind(i_ereigh)
+      read(i_ereigh,'(A2)')ckenn_vers1
       if (ckenn_vers1 /= '*V') then
-         read(110,'(A40)')ERENAME
+         read(i_ereigh,'(A40)')ERENAME
       else
-         rewind(110)
-         read(110,'(2x)')
-         read(110,'(2x)')
-         read(110,'(2x)')
-         read(110,'(A40)')MODNAME
-         read(110,'(A40)')ERENAME
-         read(110,'(2x)')
-         read(110,'(2x)')
+         rewind(i_ereigh)
+         read(i_ereigh,'(2x)')
+         read(i_ereigh,'(2x)')
+         read(i_ereigh,'(2x)')
+         read(i_ereigh,'(A40)')MODNAME
+         read(i_ereigh,'(A40)')ERENAME
+         read(i_ereigh,'(2x)')
+         read(i_ereigh,'(2x)')
       endif
       do  ! Suchen des Ereignisbeginns in ereigh.txt
-         read(110,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! Lesen der Zeitschritt-Nummer
+         read(i_ereigh,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! Lesen der Zeitschritt-Nummer
          if (itags == itag_Schr .and. monats == monat_Schr.and.Jahrs == Jahr_Schr.and.uhrsv == Uhrz_Schr) then
-            backspace(unit = 110)
+            backspace(unit = i_ereigh)
             exit
          endif
          do i = 1,isumAnzSta
-            read(110,'(2x)')
+            read(i_ereigh,'(2x)')
          enddo
          cycle
       enddo
       9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
-      
+      print*,'ereigh.txt vorspulen bis: nr,tag,monat,jahr,Uhr=',SCHRNR,itag_Schr,monat_Schr,Jahr_Schr,Uhrz_Schr
+
       rewind (97)
       read(97,'(A2)')ckenn_vers1
       if (ckenn_vers1 /= '*V') then
@@ -7324,6 +7359,7 @@ program qsim
    if (ilang == 1 .and. jlauf == 0) then
       jlauf = 1
       istr = 0
+      !print*,'Rücksprung 9999 iwied,itime',iwied,itime
       goto 9999      ! Lesen neuer Randbedingungen
    endif
    
@@ -7331,7 +7367,8 @@ program qsim
       ilang = 1
       jtag = 1
       print '(" Vorlauf (",I0,"/",I0,")")', iTime, iTime
-      print*, repeat('-', 78)
+      !print*, repeat('-', 78)
+      !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
       goto 9191  ! Es werden keine neuen Randwerte gelesen
    endif
    
@@ -7784,9 +7821,16 @@ program qsim
       mstr = mstra(azStr)
       mSta = 0
       do iior = 1,hanze(mstr)+1                ! Beginn Knotenschleife
-         if (hflag(mstr,iior) == 6) cycle
-         ! mSta = mSta+1 ! was soll das?? !!wy
-         mSta = iior
+         mSta = mSta+1 ! was soll das?? !!wy
+         !mSta = iior
+         if (hflag(mstr,iior) == 6)then
+            !print*,azStr,mstr,' hflag(mstr,iior) == 6 | iior,mSta,hflag,Stakm,fkm(iior),fkm(mSta)',  &
+            !    iior,mSta,hflag(mstr,iior),Stakm(mstr,iior),fkm(iior),fkm(mSta)
+            cycle
+         !else
+            !print*,azStr,mstr,' Belegung des Ausgabegitters | iior,mSta,hflag,Stakm,fkm',  &
+            !      iior,mSta,hflag(mstr,iior),Stakm(mstr,iior),fkm(iior)
+         endif
          
          tiefey(mSta) = htiefe(mstr,iior)
          tempwy(mSta) = htempw(mstr,iior)
@@ -7858,6 +7902,15 @@ program qsim
                       + hcos2(mstr,iior,5)
          
          ssalgy(mSta) = hssalg(mstr,iior)
+         ssy(msta)=hss(mstr,iior)
+         sedssy(msta)=hsedss(mstr,iior)
+         SSerosy(msta)=hSSeros(mstr,iior)
+         dsedHy(msta)=dsedH(mstr,iior)
+         tauy(msta)=htau(mstr,iior)
+         tauscy(msta)=tausc(mstr,iior)
+         sedalky(msta)=hsedalk(mstr,iior)
+         sedalgy(msta)=hsedalg(mstr,iior)
+         sedalby(msta)=hsedalb(mstr,iior)
          zooiny(mSta) = hzooi(mstr,iior)
          gelpy(mSta) = hgelp(mstr,iior)
          mwy(mSta) = hmw(mstr,iior)
@@ -8215,6 +8268,7 @@ program qsim
                cay(iior)    = -1.
                lfy(iior)    = -1.
                ssalgy(iior) = -1.
+               ssy(iior)    = -1.
                vo2y(iior)   = -1.
                CHNFy(iior)  = -1.
                coliy(iior)  = -1.
@@ -8240,8 +8294,7 @@ program qsim
                            ,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
                            ,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
                            ,mwy(iior),cay(iior),lfy(iior),ssalgy(iior),tempwy(iior)          &
-                           ,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior),dsedH(mstr,iior)    &
-                           ,tracer(iior)
+                           ,vo2y(iior),CHNFy(iior),coliy(iior),Dly(iior)
                     
             ! Write results to csv-files for debugging
             ausdruck=.false.
@@ -8252,23 +8305,24 @@ program qsim
             end do !iji
             if(anz_csv_output<1)ausdruck=.true.
             if (write_csv_output.and.ausdruck) then 
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior),';',iior                      &
-                                  ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
-                                  ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
-                                  ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
-                                  ,';',dsedH(mstr,iior),';',tracer(iior)
+               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior)                      &
+                                  ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior)                 &
+                                  ,';',gsNy(iior),';',gelpy(iior)                                                                  &
+                                  ,';',gsPy(iior),';',Siy(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
+                                  ,';',lfy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)
                write(156,'(a)')adjustl(trim(langezeile))
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',iior,';'                &
                                   ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
                                   ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
                                   ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
-                                  ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
-                                  ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';'           &
-                                  ,hsedss(mstr,iior),';',htau(mstr,iior),';',tausc(mstr,iior)
+                                  ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior),';     '                                 &
+                                  ,ssalgy(iior),';',ssy(iior),';',sedssy(iior),';',SSerosy(iior),';',dsedhy(iior),';'                    &
+                                  ,tauy(iior),';',tauscy(iior)
                write(157,'(a)')adjustl(trim(langezeile))
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',iior,';'                  &
-                                  ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &
-                                  ,hchlak(mstr,iior),';',hchlag(mstr,iior),';',hchlab(mstr,iior),';',hssalg(mstr,iior),';',hss(mstr,iior)
+                                  ,chlay(iior),';',akiy(iior),';',agry(iior),';',ably(iior),';'                     &
+                                  ,chlaky(iior),';',chlagy(iior),';',chlaby(iior),';'                                              &
+                                  ,sedalky(iior),';',sedalgy(iior),';',sedalby(iior)
                write(158,'(a)')adjustl(trim(langezeile))
             endif !write_csv_output
             

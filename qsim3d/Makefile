@@ -29,7 +29,7 @@
 
 SHELL=/usr/bin/bash
 
-PV='qsim3d_schwermetall27'
+PV='qsim3d_schwermetall31'
 
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -178,7 +178,7 @@ qsim3d: $(Q3)
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
-	mv -f $(PV) $(MY_BIN)/$(PV)
+	cp -rp $(PV) $(MY_BIN)/$(PV)
 	cp -f ./scripte/* $(MY_BIN)
 
 KT = version.co trans_read.co \
