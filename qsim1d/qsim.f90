@@ -44,8 +44,9 @@ program qsim
    logical         :: kontroll, einmalig, linux,mitsedflux
    logical         :: write_csv_output,ausdruck
    integer, dimension(output_crossections) :: output_strang, output_querprofil
+   real, dimension(output_crossections)    :: output_km
    integer                                 :: anz_csv_output, iji
-   integer         :: open_error, jjj, iior
+   integer         :: open_error, jjj, iior, nn
    integer         :: iend, iwied, ilang, ilbuhn, jlauf
    integer         :: jtag, iergeb, itracer_vor, nndr, jstr
    integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
@@ -1698,7 +1699,7 @@ program qsim
    ! initialize result files
    ! =========================================================================
    !call init_result_files(cpfad, modell, cEreig, write_csv_output)
-   call init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+   call init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
 
    ! ==========================================================================
    ! ABLAUF.txt vorbereiten
@@ -1822,7 +1823,7 @@ program qsim
       
       if(ilang==0)then
          do ior = 1,hanze(mstr)
-            print*,mstr,ior,' sysgenou hfkm,hflag=',hfkm(mstr,ior),hflag(mstr,ior)
+            !print*,mstr,ior,' sysgenou hfkm,hflag=',hfkm(mstr,ior),hflag(mstr,ior)
          enddo
       endif
       
@@ -6324,12 +6325,14 @@ program qsim
          !             ,kontroll,0)
       
          ! --- in main river ---
+         !if(ilang/=0)call qerror('test stop after erosion_kern')
          do ior = 1, anze+1
             call erosion_kern(tflie,TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior)  &
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
-            !print*,mstr,ior,' erosion_kern ',TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior),hSSeros(mstr,ior),ss(ior),ssalg(ior)
+            !print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern h,Ks,v,tau,ss,ssalg,sseros=',   &
+            !       TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior),ss(ior),ssalg(ior),hSSeros(mstr,ior)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
             !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
@@ -6338,6 +6341,10 @@ program qsim
       !               vmitt(202),tiefe(202),rau(202),rhyd(202),fkm(202),flag(202)
       !if(mstr==1)print*,' sysgen write(11 Elbe-Km  94,40 Q,A,v,vf',  &
       !               hQaus(mstr,202),hFlaea(mstr,202),hQaus(mstr,202)/hFlaea(mstr,202),hVF(mstr,202)
+            do nn=1,anz_csv_output
+               if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'erosion_kern output_km==hfkm,ssalg' &
+                                                                ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
+            enddo
          enddo
          print*,mstr,' erosion_kern called for anze+1=',anze+1,' cross-sections'
 
@@ -6391,6 +6398,13 @@ program qsim
                            ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,hSSeros      &
                            ,ilang,iwied                        &
                            ,.false., 0)
+         do ior = 1,anze+1
+            do nn=1,anz_csv_output
+               if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
+                                                                ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
+            enddo
+         enddo
+            
          if (nbuhn(mstr) == 0)goto 118
          if (ilbuhn == 0) then
             do ior = 1,anze+1
@@ -6692,7 +6706,8 @@ program qsim
                         ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
                         ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
                         ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
-         
+         print*,mstr,' done Transport at',itags,monats,jahrs,Uhrz
+
          ! Aufsummierung der Tracermasse
          if (iwsim == 4) then
             do ior = 1, anze
@@ -7246,7 +7261,7 @@ program qsim
       !if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 474,5 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
       !hsedalk(mstr,316),';',hsedalg(mstr,316),';',hsedalb(mstr,316),';',                                &
       !hsedss(mstr,316),';',hSSeros(mstr,316),';',htau(mstr,316),';',tausc(mstr,316)
-	   if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 94.40 TIEFE,rau,VMITT,tau,tausc',  &
+	   if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 94,40 TIEFE,rau,VMITT,tau,tausc',  &
 					htiefe(mstr,202),hrau(mstr,202),hvmitt(mstr,202),htau(mstr,202),tausc(mstr,202)
 	   if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 585,05 TIEFE,rau,VMITT,tau,tausc',  &
 					htiefe(mstr,512),hrau(mstr,512),hvmitt(mstr,512),htau(mstr,512),tausc(mstr,512)
@@ -8289,7 +8304,7 @@ program qsim
             Uhrhm = Stunde+rmin
             
             write(155,5103)itags,monats,jahrs,uhrhm,mstr,Stakm(mstr,iior),STRID(mstr)
-            
+            if(iior==1)print*,mstr,'ausgabe 155 für',itags,monats,jahrs,uhrhm
             write(155,5105)vbsby(iior),vcsby(iior)                                           &
                            ,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
                            ,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
@@ -8303,7 +8318,7 @@ program qsim
                   ausdruck=.true.
                end if ! output_km
             end do !iji
-            if(anz_csv_output<1)ausdruck=.true.
+            if(anz_csv_output<1)ausdruck=.true. !! all profiles when ausgabe_querprofile.txt is missing
             if (write_csv_output.and.ausdruck) then 
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',iior,';',Stakm(mstr,iior)                      &
                                   ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior)                 &

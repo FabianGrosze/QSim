@@ -35,7 +35,7 @@
 !! * ausgabe158_algae.csv (optional)
 !! @author Michael Schönung
 !! @date 20.06.2022
-subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
 !subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
 
    use allodim
@@ -47,6 +47,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
    character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
    logical, intent(in)              :: write_csv_output !< switch to turn of .csv-outputs
    integer, dimension(output_crossections) :: output_strang, output_querprofil
+   real, dimension(output_crossections) :: output_km
    integer                                 :: anz_csv_output
 
    ! --- local variables ---
@@ -96,7 +97,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
 
    
    if (write_csv_output) then 
-      call ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+      call ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
    
       ! --- Ausgabe 156 ---
       print*, '> ausgabe156.csv'
@@ -132,7 +133,7 @@ end subroutine init_result_files
 !> reads ausgabe_querprofile.txt in order to restrict output to certain cross-sections
 !! Jens Wyrwa 2022
 !!
-subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
 
    use allodim
    implicit none
@@ -146,6 +147,7 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
    ! --- local variables ---
    integer        :: open_error, ionumber, nn, alloc_status, io_error
    integer, dimension(output_crossections) :: output_strang, output_querprofil
+   real, dimension(output_crossections) :: output_km
    integer                                 :: anz_csv_output
    logical zeile
 
@@ -178,13 +180,14 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
    nn=0
    output_strang=0
    output_querprofil=0
+   output_km=0
    do while ( zeile(ionumber,ctext)) !! all lines
       nn = nn+1
       if (nn > anz_csv_output) then
          write(fehler,*)'Fehler bei ausgabe_querprofile.txt nochmal lesen ',nn,anz_csv_output
          call qerror(fehler)
       end if
-      read(ctext,*,iostat = io_error)output_strang(nn), output_querprofil(nn)
+      read(ctext,*,iostat = io_error)output_strang(nn), output_querprofil(nn), output_km(nn)
       if (io_error /= 0) then
          write(fehler,*)'reading output_strang, output_querprofil failed  nn,alloc_status= ',nn,alloc_status
          call qerror(fehler)

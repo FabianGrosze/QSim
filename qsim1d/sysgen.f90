@@ -170,6 +170,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       read(391,'(I5,2x,I5)')mstr,isegs(mstr)
       do iseg = 1,isegs(mstr)
          read(391,'(f9.4,2x,i1,2x,I2)')segkm(mstr,iseg),iflags(mstr,iseg),ieinse(mstr,iseg)
+         if(iflags(mstr,iseg)==4)print*,mstr,iseg,'(mstr,iseg) ; km_sys.dat,iflags==4 ; segkm=',segkm(mstr,iseg)
       enddo
    enddo
    close(391)
@@ -312,7 +313,8 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       
       if(ilang==0)then
          do khyd = 1,mStas(mstrl)
-            print*,mstrl,khyd,' sysgen hkmhyd=',hkmhyd(mstrl,khyd)
+            !print*,mstrl,khyd,' sysgen km,WSP,Q,v,A,h=',hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)  &
+            !       ,hQaus(mstrl,khyd),hVF(mstrl,khyd),hFlaea(mstrl,khyd),htiefa(mstrl,khyd)
          enddo
       endif
 
@@ -370,17 +372,19 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       ! start inserting additional cross-sections
       khyd = 0
       20 continue ! come back for next original cross-section
-      khyd = khyd+1
+      khyd = khyd+1 ! ; print*,'20 continue i,khyd,flag(i+1)=',i,khyd,flag(i+1)
       if (khyd > (mStas(mstr)-1))goto 999 ! no further original cross-sections
       
       if (flaea(khyd) > 99999.90)flaea(khyd) = -1.0
       if (abfr(mstr) == 0 .and. fkmhyd(khyd) > startkm(mstr)) then
          if (einlk(ie) >= fkmhyd(khyd))ie = ie+1
+         ! print*,'goto 20 380'
          goto 20
       endif
       
       if (abfr(mstr) == 1 .and. fkmhyd(khyd) < startkm(mstr)) then
          if (einlk(ie) <= fkmhyd(khyd))ie = ie+1
+         ! print*,'goto 20 386'
          goto 20
       endif
       
@@ -401,7 +405,9 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       if (vabst < 0.0)jsgn = -1
       if (abs(vabst) < 0.0001)vabst = 0.0001*jsgn
       
-      30 dx1 = abs(vabst)*dt1  ! come back to insert new cross-section
+      30 continue   ! come back to insert new cross-section ???
+      ! print*,'30 continue i,khyd,flag=',i,khyd,flag(i)
+      dx1 = abs(vabst)*dt1
       if (iseg > isegs(mstr))goto 130
       
       if (i == 0) then
@@ -449,6 +455,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          sumx = sumx+absta(khyd)
          sumt = sumt+dt2
          sumt1 = sumt1+dt2
+         ! print*,'goto 20 457'
          goto 20
       endif
       
@@ -480,14 +487,12 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       138 sumx = sumx+dx1
       sumt = sumt+dt2
       sumt1 = sumt1+dt2
-      i = i+1
+      i = i+1 !; if(ilang==0)print*,'489 i = i+1 | i,khyd,mstr,flag=',i,khyd,mstr,flag(i)
       
       ! --- Fehlermeldung ---
       if (i > 1000) then
          write(message, "(a,i0)") "Number of nodes exceeds 1000 in stretch ", mstr
          call qerror(message)
-      else
-         if(ilang==0)print*,mstr,' sysgen i,khyd=',i,khyd
       endif
       
       elen(i) = sumx
@@ -577,7 +582,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          qsaus(i) = qsaus(i-1)
          i = i+1
          jiein(i) = jieinz
-         fkm(i) = fkm(i-1)
+         fkm(i) = fkm(i-1) ; print*,'583 i = i+1 | i,khyd,mstr,fkm=',i,khyd,mstr,fkm(i),'flag(i) = 4'
          elen(i) = elenz
          flag(i) = 4
          vmitt(i) = vmittz
@@ -610,7 +615,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bKornn(i) = bdKnz
       else if (flag(i) == 4 .and. qsaus(i) < 0.0) then
          ! Q an der Einleitstelle <0.0
-         i = i+1
+         i = i+1 ; print*,'613 i = i+1 | i,khyd,mstr=',i,khyd,mstr
          jiein(i) = 0
          fkm(i) = fkm(i-1)
          elen(i) = elen(i-1)
@@ -689,7 +694,9 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       ! flag(i) = 2
       if (abfr(mstr) == 0)fkmneu = fkm(i)-elen(i)/1000.
       if (abfr(mstr) == 1)fkmneu = fkm(i)+elen(i)/1000.
-      if (abs(fkmneu-segkm(mstr,iseg)) < 0.01) flag(i+1) = iflags(mstr,iseg)
+      if (abs(fkmneu-segkm(mstr,iseg)) < 0.01)then
+        flag(i+1) = iflags(mstr,iseg) ! ; print*,i+1,'=i+1 ; flag(i+1) = iflags(mstr,iseg)',flag(i+1),iflags(mstr,iseg),mstr,iseg
+      endif
       
       jiein(i+1) = ieinse(mstr,iseg)
       itst = 1
@@ -699,10 +706,13 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       if (khyd == (mStas(mstr)-1) .and. absta(khyd) < 0.001) then
          ! flag(i) = 2
          if (i == 1)flag(i) = 1
+         !print*,'goto 41 706'
          goto 41
       endif
+      
+      !goto 20 !!wy
       if (absta(khyd) < 0.01)goto 20
-      goto 30 
+      goto 30
       
       ! --- Ende der Systemgenerierung ---
       999 continue
@@ -761,7 +771,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          goto 41
       endif
       
-      i = i+1
+      i = i+1 ; print*,'766 i = i+1 | i,khyd,mstr=',i,khyd,mstr
       
       if (abfr(mstr) == 0)fkm(i) = fkm(i-1)-elen(i-1)/1000.
       if (abfr(mstr) == 1)fkm(i) = fkm(i-1)+elen(i-1)/1000.
@@ -873,7 +883,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bKornn(i) = bKornn(i-1)
          flag(i) = 6
          jiein(i) = 0
-         i = i+1
+         i = i+1 ; print*,'878 i = i+1 | i,khyd,mstr=',i,khyd,mstr
          fkm(i) = fkm(i-1)
          elen(i) = elenz
          flag(i) = 4
@@ -905,14 +915,15 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bw2n(i) = bw2nz
          bKornn(i) = bdKnz
       endif
-      41 continue
-      
+      ! 41 continue
+      41 print*,'41 i,khyd,flag=',i,khyd,flag(i)
+
       if (iflags(mstr,isegs(mstr)) == 4 .and. qsaus(i)>=0.0) then
          if (flag(i) == 4) then
             jiein(i) = jiein(i)+ieinse(mstr,isegs(mstr))
          else
             flag(i) = 6
-            i = i+1
+            i = i+1 ; print*,'917 i = i+1 | i,khyd,mstr=',i,khyd,mstr
             ! jiein(i) = jiein(i)+1
             elen(i) = elen(i-1)
             qsaus(i) = qsaus(i-1)
@@ -953,7 +964,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          else
             flag(i) = 4
             jiein(i) = ieinse(mstr,isegs(mstr))
-            i = i+1
+            i = i+1 ! ; print*,'958 i = i+1 | i,khyd,mstr=',i,khyd,mstr
             flag(i) = 6
             elen(i) = elen(i-1)
             qsaus(i) = qsaus(i)

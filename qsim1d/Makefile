@@ -37,7 +37,7 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 
 # set executable name
 #PV=qsim1d_$(QSim_version)_dev
-PV=qsim1d_schwermetall33
+PV=qsim1d_heavy_pure1
 
 #====================================================================
 
