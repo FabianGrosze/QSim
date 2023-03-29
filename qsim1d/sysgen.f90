@@ -170,7 +170,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       read(391,'(I5,2x,I5)')mstr,isegs(mstr)
       do iseg = 1,isegs(mstr)
          read(391,'(f9.4,2x,i1,2x,I2)')segkm(mstr,iseg),iflags(mstr,iseg),ieinse(mstr,iseg)
-         if(iflags(mstr,iseg)==4)print*,mstr,iseg,'(mstr,iseg) ; km_sys.dat,iflags==4 ; segkm=',segkm(mstr,iseg)
+         !if(iflags(mstr,iseg)==4)print*,mstr,iseg,'(mstr,iseg) ; km_sys.dat,iflags==4 ; segkm=',segkm(mstr,iseg)
       enddo
    enddo
    close(391)
@@ -582,7 +582,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          qsaus(i) = qsaus(i-1)
          i = i+1
          jiein(i) = jieinz
-         fkm(i) = fkm(i-1) ; print*,'583 i = i+1 | i,khyd,mstr,fkm=',i,khyd,mstr,fkm(i),'flag(i) = 4'
+         fkm(i) = fkm(i-1) !; print*,'583 i = i+1 | i,khyd,mstr,fkm=',i,khyd,mstr,fkm(i),'flag(i) = 4'
          elen(i) = elenz
          flag(i) = 4
          vmitt(i) = vmittz
@@ -615,7 +615,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bKornn(i) = bdKnz
       else if (flag(i) == 4 .and. qsaus(i) < 0.0) then
          ! Q an der Einleitstelle <0.0
-         i = i+1 ; print*,'613 i = i+1 | i,khyd,mstr=',i,khyd,mstr
+         i = i+1 ! ; print*,'613 i = i+1 | i,khyd,mstr=',i,khyd,mstr
          jiein(i) = 0
          fkm(i) = fkm(i-1)
          elen(i) = elen(i-1)
@@ -771,7 +771,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          goto 41
       endif
       
-      i = i+1 ; print*,'766 i = i+1 | i,khyd,mstr=',i,khyd,mstr
+      i = i+1 !; print*,'766 i = i+1 | i,khyd,mstr=',i,khyd,mstr
       
       if (abfr(mstr) == 0)fkm(i) = fkm(i-1)-elen(i-1)/1000.
       if (abfr(mstr) == 1)fkm(i) = fkm(i-1)+elen(i-1)/1000.
@@ -883,7 +883,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bKornn(i) = bKornn(i-1)
          flag(i) = 6
          jiein(i) = 0
-         i = i+1 ; print*,'878 i = i+1 | i,khyd,mstr=',i,khyd,mstr
+         i = i+1 !; print*,'878 i = i+1 | i,khyd,mstr=',i,khyd,mstr
          fkm(i) = fkm(i-1)
          elen(i) = elenz
          flag(i) = 4
@@ -923,7 +923,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
             jiein(i) = jiein(i)+ieinse(mstr,isegs(mstr))
          else
             flag(i) = 6
-            i = i+1 ; print*,'917 i = i+1 | i,khyd,mstr=',i,khyd,mstr
+            i = i+1 !; print*,'917 i = i+1 | i,khyd,mstr=',i,khyd,mstr
             ! jiein(i) = jiein(i)+1
             elen(i) = elen(i-1)
             qsaus(i) = qsaus(i-1)

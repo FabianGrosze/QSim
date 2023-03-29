@@ -1749,7 +1749,8 @@ program qsim
    ! ==========================================================================
    9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
-   print*,'--- 9999---Zeitschritt:',ij,itime,'--------Zeitpunkt:',itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
+   print*,'--- 9999---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
    
    !---------------------------------------------------------------------------
    ! read from Ablauf.txt
@@ -2545,7 +2546,8 @@ program qsim
    ! Ermittlung der Wetterdaten für den Zeitschritt
    ! ==========================================================================
    9191 continue
-   print*,'---------- 9191---------',ij,itime,'------------ iwied,ilang,iwsim',iwied,ilang,iwsim
+   print*,'--- 9191---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
 
    if (iwsim /= 4 .and. iwsim /= 5) then
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
@@ -3845,6 +3847,8 @@ program qsim
    
    ! ==========================================================================
    9998 continue  ! Sprungziel nach Ablegen der Werte für jeden Ortspunkt
+   print*,'--- 9998---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
    ! ==========================================================================
    
    
@@ -3951,9 +3955,8 @@ program qsim
    endif
    rmin = minute/100.
    Uhrzhm = Stunde+rmin
-   
    ! Bildschirmausgabe
-   write(*,6163)ij,itags,monats,jahrs,Uhrzhm 
+   !write(*,6163)ij,itags,monats,jahrs,Uhrzhm 
    6163 format(2x,'Zeitschritt: ',I4,2x,I0.2,'.',I0.2,'.',I4,2x,F5.2)
    
    ! TODO (schoenung, june 2022): I tried to print dates differently in the console.
@@ -7280,7 +7283,6 @@ program qsim
    endif
    
    if (jlauf == 0) then ! Berechnung der neuen Uhrzeit und des neuen Datums
-      
       Uhrz = Uhrz+tflie*24.
       if ((24.-Uhrz) < 0.0001)Uhrz = 24.
       if (Uhrz>=24.) then
@@ -7297,21 +7299,21 @@ program qsim
          monats = 1.
          jahrs = jahrs+1
       endif
+      print*,'Berechnung der neuen Zeit: jahrs,monats,itags,jtag,Uhrz=',jahrs,monats,itags,jtag,Uhrz
    endif
-   
    
    
    ! Vorlauf ilang = 0; Werte werden nicht abgelegt
    if (ilang == 0 .and. ij < itime) then
-      print "(a,i0,a,i0,a)", " Vorlauf (", ij, "/", itime ,")"
-      !print*,'iwied=',iwied
       ij = ij+1
       istr = 0
       !print*,'Rücksprung 9191 ilang == 0 .and. ij < itime iwied,itime',iwied,itime
+      print "(a,i0,a,i0,a)", " Vorlauf (", ij, "/", itime ,")"
       goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
    endif
    
-   if (ilang == 0 .and. ij == itime) then
+   if (ilang == 0 .and. ij == itime) then 
+      print*,' Ende Vorlauf ij,itime=',ij,itime
       itracer_vor = 0
       itags = itagv
       monats = monatv
@@ -7381,7 +7383,7 @@ program qsim
    if (ilang == 0) then
       ilang = 1
       jtag = 1
-      print '(" Vorlauf (",I0,"/",I0,")")', iTime, iTime
+      print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
       !print*, repeat('-', 78)
       !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
       goto 9191  ! Es werden keine neuen Randwerte gelesen
@@ -7397,7 +7399,6 @@ program qsim
    endif
    
    if (ij > itime)maus = 1
-   
    
    
    ! ==========================================================================
@@ -7836,15 +7837,18 @@ program qsim
       mstr = mstra(azStr)
       mSta = 0
       do iior = 1,hanze(mstr)+1                ! Beginn Knotenschleife
-         mSta = mSta+1 ! was soll das?? !!wy
-         !mSta = iior
+         ! leave out doubled inflow cross-sections
          if (hflag(mstr,iior) == 6)then
-            !print*,azStr,mstr,' hflag(mstr,iior) == 6 | iior,mSta,hflag,Stakm,fkm(iior),fkm(mSta)',  &
-            !    iior,mSta,hflag(mstr,iior),Stakm(mstr,iior),fkm(iior),fkm(mSta)
+         !   print*,azStr,mstr,'=azStr,mstr hflag(mstr,iior) == 6 | iior,mSta,hflag,Stakm,ssalg=',  &
+         !       iior,mSta,hflag(mstr,iior),Stakm(mstr,mSta),hssalg(mstr,iior)
+         !   print*,azStr,mstr,' hflag(mstr,iior) == 6 | iior,mSta,hflag,Stakm,fkm(iior),fkm(mSta)',  &
+         !       iior,mSta,hflag(mstr,iior),Stakm(mstr,iior),fkm(iior),fkm(mSta)
+         !   print*,'hssalg(mstr,iior)=',hssalg(mstr,iior)
             cycle
-         !else
-            !print*,azStr,mstr,' Belegung des Ausgabegitters | iior,mSta,hflag,Stakm,fkm',  &
-            !      iior,mSta,hflag(mstr,iior),Stakm(mstr,iior),fkm(iior)
+         else
+            mSta = mSta+1 
+         !   print*,azStr,mstr,'=azStr,mstr Belegung des Ausgabegitters | iior,mSta,hflag,Stakm,ssalg=',  &
+         !       iior,mSta,hflag(mstr,iior),Stakm(mstr,mSta),hssalg(mstr,iior)
          endif
          
          tiefey(mSta) = htiefe(mstr,iior)
@@ -10079,7 +10083,8 @@ program qsim
       enddo
    enddo
    
-   if (iend == 1)goto 999
+   if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)goto 999
+   !if (iend == 1)goto 999
    itime = itimeh
    goto 9998
    
