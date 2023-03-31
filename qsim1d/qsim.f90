@@ -41,7 +41,7 @@ program qsim
    character(201)  :: ctext
    character(275)  :: pfadstring
    character(6000) :: langezeile, message
-   logical         :: kontroll, einmalig, linux,mitsedflux
+   logical         :: kontroll, einmalig, linux,mitsedflux, last_step, stop_loop
    logical         :: write_csv_output,ausdruck
    integer, dimension(output_crossections) :: output_strang, output_querprofil
    real, dimension(output_crossections)    :: output_km
@@ -513,7 +513,8 @@ program qsim
    maus = 0
    iend = 0
    iwied = 0
-   ilang = 0
+   !ilang = 0
+   ilang = 1 ! kein Vorlauf mehr !!wy23
    ilbuhn = 0
    jlauf = 0
    jtag = 0
@@ -1025,19 +1026,21 @@ program qsim
    monats = monat_start
    jahrs  = jahr_start
    uhrs   = uhr_start
-   ! --------------------------------------------------------------------------
-   ! reading parameters from AParam
-   ! -------------------------------------------------------------------------
-   if (iwsim == 4 .or. iwsim == 5)  goto 329
-   if (iwsim == 2 .and. icoli == 0) goto 329
-   call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer,0)
    
-   ! --------------------------------------------------------------------------
-   ! reading from e_extnct.dat
-   ! --------------------------------------------------------------------------
-   ! jetzt ausserhalb der Algenroutinen und der Zeitschleife
-   call e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
+   !if (iwsim == 4 .or. iwsim == 5)  goto 329
+   !if (iwsim == 2 .and. icoli == 0) goto 329 
+   if(.not.((iwsim == 4 .or. iwsim == 5).or.(iwsim == 2 .and. icoli == 0)))then
+      ! --------------------------------------------------------------------------
+      ! reading parameters from AParam
+      ! -------------------------------------------------------------------------
+      call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer,0)
    
+      ! --------------------------------------------------------------------------
+      ! reading from e_extnct.dat
+      ! --------------------------------------------------------------------------
+      ! jetzt ausserhalb der Algenroutinen und der Zeitschleife
+      call e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
+   end if
    
    329 continue
    if (uhrs <= 0.0)uhrz = 0.0
@@ -1746,10 +1749,15 @@ program qsim
       bagmor_1 = 0.
    endif
    
+   last_step = .false. ; stop_loop = .false.
    ! ==========================================================================
-   9999 continue ! Rücksprunglabel Zeitschleife
+   !9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
-   print*,'--- 9999---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+!do while (.not. last_step)
+do while (.not. stop_loop)
+   if(last_step)stop_loop=.true.
+
+   print*,'---9999---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
           itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
    
    !---------------------------------------------------------------------------
@@ -1873,10 +1881,9 @@ program qsim
    if (iwied == 0) then 
       print *, ''
       print *, repeat('=', 78)
-      print *, repeat(' ',34), 'boundaries'
-      print *, repeat('=', 78)
-      
+      print *, repeat(' ',34), 'boundaries  iwied,ilang=',iwied,ilang
       call randbedingungen(cpfad, i_Rands, iw_max)
+      print *, repeat('=', 78)
    endif
    
    istr = 0
@@ -1898,6 +1905,7 @@ program qsim
                  ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                                     &
                  ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands                      &
                  ,iw_max,iformVert)
+   !print*,'funkstar done'
    
    ! Berücksichtigung von Einleitern am 1. Ortspunks eines Stranges mit Vorsträngen 1D-Fall
    do azStr = 1,azStrs !Strangschleife ANFANG
@@ -2242,7 +2250,10 @@ program qsim
             
             if (iph == 1) then
                ! ph
-               if (vphs(mstr,mRB) <= 0.0) call qerror("Missing values for pH at boundary.")
+               ! print*,' -2251- vphs(mstr,mRB)=',vphs(mstr,mRB),mstr,mRB
+               if (vphs(mstr,mRB) <= 0.0)then
+                  call qerror("Missing values for pH at boundary.")
+               endif
                ! m-value
                if( mws(mstr,mRB)  <= 0.0) call qerror("Missing values for m-value at boundary.")
                ! calcium
@@ -2546,8 +2557,8 @@ program qsim
    ! Ermittlung der Wetterdaten für den Zeitschritt
    ! ==========================================================================
    9191 continue
-   print*,'--- 9191---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
-          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
+   ! print*,'--- 9191---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+   !        itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
 
    if (iwsim /= 4 .and. iwsim /= 5) then
       call wettles(itags, monats, jahrs, uhrz, glob, tlmax, tlmin, ro, wge, &
@@ -3843,12 +3854,12 @@ program qsim
    enddo ! Ende Schleife ueber alle Straenge
    
    ! Ablegen der berechneten Werte aus dem Zeitschritt t-1 und den Randbedingungen zum Zeitpunkt
-   if (jlauf == 1) goto 7777 
+   !if (jlauf == 1) goto 7777 
    
    ! ==========================================================================
    9998 continue  ! Sprungziel nach Ablegen der Werte für jeden Ortspunkt
-   print*,'--- 9998---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
-          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
+   !print*,'--- 9998---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
+   !       itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
    ! ==========================================================================
    
    
@@ -6344,10 +6355,10 @@ program qsim
       !               vmitt(202),tiefe(202),rau(202),rhyd(202),fkm(202),flag(202)
       !if(mstr==1)print*,' sysgen write(11 Elbe-Km  94,40 Q,A,v,vf',  &
       !               hQaus(mstr,202),hFlaea(mstr,202),hQaus(mstr,202)/hFlaea(mstr,202),hVF(mstr,202)
-            do nn=1,anz_csv_output
-               if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'erosion_kern output_km==hfkm,ssalg' &
-                                                                ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
-            enddo
+            !do nn=1,anz_csv_output
+            !   if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'erosion_kern output_km==hfkm,ssalg' &
+            !                                                    ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
+            !enddo
          enddo
          print*,mstr,' erosion_kern called for anze+1=',anze+1,' cross-sections'
 
@@ -6401,13 +6412,22 @@ program qsim
                            ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,hSSeros      &
                            ,ilang,iwied                        &
                            ,.false., 0)
-         do ior = 1,anze+1
-            do nn=1,anz_csv_output
-               if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
+         if (ilbuhn == 0)then
+            do ior = 1,anze+1
+               do nn=1,anz_csv_output
+                  if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
                                                                 ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
+               enddo
             enddo
-         enddo
-            
+            print*,mstr,anze+1,'last profile',hfkm(mstr,anze+1),ssalg(anze+1)
+            !do nn=1,anz_csv_output
+            !   if(mstr==output_strang(nn))then
+            !      print*,nn,output_strang(nn), output_querprofil(nn),' nach Schwermetalle output_km,hfkm,ssalg' ,  &
+            !             output_km(nn),hfkm(output_strang(nn),output_querprofil(nn)),ssalg(output_querprofil(nn))
+            !   endif
+            !enddo
+         endif
+         
          if (nbuhn(mstr) == 0)goto 118
          if (ilbuhn == 0) then
             do ior = 1,anze+1
@@ -7255,15 +7275,6 @@ program qsim
          
       enddo ! Ende Hauptschleife
 
-      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      ! 1 450  ! Elbe-Km 214
-      !if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 214 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
-      !hsedalk(mstr,450),';',hsedalg(mstr,450),';',hsedalb(mstr,450),';',                                &
-      !hsedss(mstr,450),';',hSSeros(mstr,450),';',htau(mstr,450),';',tausc(mstr,450)
-      ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      !if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 474,5 sedalk,sedalg,sedalb,sedss,SSeros,tau,tausc=',  &
-      !hsedalk(mstr,316),';',hsedalg(mstr,316),';',hsedalb(mstr,316),';',                                &
-      !hsedss(mstr,316),';',hSSeros(mstr,316),';',htau(mstr,316),';',tausc(mstr,316)
 	   if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 94,40 TIEFE,rau,VMITT,tau,tausc',  &
 					htiefe(mstr,202),hrau(mstr,202),hvmitt(mstr,202),htau(mstr,202),tausc(mstr,202)
 	   if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 585,05 TIEFE,rau,VMITT,tau,tausc',  &
@@ -7282,33 +7293,14 @@ program qsim
       iwied = 1
    endif
    
-   if (jlauf == 0) then ! Berechnung der neuen Uhrzeit und des neuen Datums
-      Uhrz = Uhrz+tflie*24.
-      if ((24.-Uhrz) < 0.0001)Uhrz = 24.
-      if (Uhrz>=24.) then
-         Uhrz = Uhrz-24.
-         if (jtag /= 1)itags = itags+1
-      endif
-      
-      call anztag(monats,jahrs,jtage)
-      if (itags > jtage) then
-         itags = 1
-         monats = monats+1
-      endif
-      if (monats > 12) then
-         monats = 1.
-         jahrs = jahrs+1
-      endif
-      print*,'Berechnung der neuen Zeit: jahrs,monats,itags,jtag,Uhrz=',jahrs,monats,itags,jtag,Uhrz
-   endif
-   
+   ! if (jlauf == 0) then ! Berechnung der neuen Uhrzeit und des neuen Datums ### war hier
    
    ! Vorlauf ilang = 0; Werte werden nicht abgelegt
    if (ilang == 0 .and. ij < itime) then
       ij = ij+1
       istr = 0
       !print*,'Rücksprung 9191 ilang == 0 .and. ij < itime iwied,itime',iwied,itime
-      print "(a,i0,a,i0,a)", " Vorlauf (", ij, "/", itime ,")"
+      print "(a,i0,a,i0,a)", " ij = ij+1 Vorlauf (", ij, "/", itime ,")"
       goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
    endif
    
@@ -7369,25 +7361,28 @@ program qsim
       enddo
    endif
    
-   
+   print*,ij,itime,jlauf,ilang,'=ij,itime,jlauf,ilang -7369- itage,monate,jahre,uhren=', &
+          itage,monate,jahre,uhren,' itags,monats,jahrs,Uhrz=',itags,monats,jahrs,Uhrz
+
    if (ij == 1 .and. jlauf == 0) then
       if (itags == itage .and. monats == monate.and.jahrs == jahre)itime = itimee
    endif
-   if (ilang == 1 .and. jlauf == 0) then
-      jlauf = 1
-      istr = 0
-      !print*,'Rücksprung 9999 iwied,itime',iwied,itime
-      goto 9999      ! Lesen neuer Randbedingungen
-   endif
    
-   if (ilang == 0) then
-      ilang = 1
-      jtag = 1
-      print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
-      !print*, repeat('-', 78)
-      !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
-      goto 9191  ! Es werden keine neuen Randwerte gelesen
-   endif
+   !if (ilang == 1 .and. jlauf == 0) then
+   !   jlauf = 1
+   !   istr = 0
+   !   !print*,'Rücksprung 9999 iwied,itime',iwied,itime
+   !   goto 9999      ! Lesen neuer Randbedingungen
+   !endif
+   
+   !if (ilang == 0) then
+   !   ilang = 1
+   !   jtag = 1
+   !   print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
+   !   !print*, repeat('-', 78)
+   !   !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
+   !   goto 9191  ! Es werden keine neuen Randwerte gelesen
+   !endif
    
    if (jlauf == 1) then
       ij = ij+1
@@ -7396,6 +7391,7 @@ program qsim
       hconU = abs(uhren-uhrz)
       if (hconU < 0.001)Uhrz = uhren
       if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)iend = 1
+      print*,ij,itime,'ij = ij+1 7397 iend=',iend
    endif
    
    if (ij > itime)maus = 1
@@ -9423,8 +9419,28 @@ program qsim
    enddo                 ! Ende Strangschleife
    
    if (maus == 1)goto 105
-   goto 9998
+!   goto 9998
+
+   print*,' statt goto 9998 ilang,jlauf,ij,itime=',ilang,jlauf,ij,itime,' itags,monats,jahrs=',itags,monats,jahrs
    
+   if (ilang == 1 .and. jlauf == 0) then
+      jlauf = 1
+      istr = 0
+      !print*,'Rücksprung 9999 iwied,itime',iwied,itime
+      !call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage)
+      !goto 9999      ! Lesen neuer Randbedingungen
+   endif
+   
+   if (ilang == 0) then
+      ilang = 1
+      jtag = 1
+      print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
+      !print*, repeat('-', 78)
+      !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
+      !call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage)
+      !goto 9191  ! Es werden keine neuen Randwerte gelesen
+   endif
+
    
    ! --------------------------------------------------------------------------
    ! Ausgabe der Mittelwerte
@@ -10083,10 +10099,13 @@ program qsim
       enddo
    enddo
    
-   if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)goto 999
+   !if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)goto 999
    !if (iend == 1)goto 999
    itime = itimeh
-   goto 9998
+   !goto 9998
+   
+   call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage,itage,monate,jahre,uhren,last_step)
+end do ! do while .not. last_step
    
    ! --------------------------------------------------------------------------
    ! Ausschreiben der Min/Max-Blöcke zur grafischen Darstellung in Gerris
@@ -10507,7 +10526,38 @@ program qsim
    close(157)
    close(158)
    
-   write(*,*) 'Success.'
-   write(*,*) 'End of Simulation'
+   write(*,*) 'Successfull End of Simulation'
    
 end program qsim
+
+!!------------------------------------------------------------------------
+   ! Berechnung der neuen Uhrzeit und des neuen Datums
+   subroutine step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage,itage,monate,jahre,uhren,last_step)
+
+      implicit none
+      integer jahrs,monats,jtag,itags,jtage,itage,monate,jahre
+      real tflie,Uhrz,uhren
+      logical last_step
+      
+      Uhrz = Uhrz+tflie*24.
+      if ((24.-Uhrz) < 0.0001)Uhrz = 24.
+      if (Uhrz>=24.) then
+         Uhrz = Uhrz-24.
+         if (jtag /= 1)itags = itags+1
+      endif
+      
+      call anztag(monats,jahrs,jtage)
+      if (itags > jtage) then
+         itags = 1
+         monats = monats+1
+      endif
+      if (monats > 12) then
+         monats = 1.
+         jahrs = jahrs+1
+      endif
+      print*,'step_time to: jahrs,monats,itags,jtag,Uhrz=',jahrs,monats,itags,jtag,Uhrz
+      
+      last_step = (itags >= itage) .and. (monats >= monate) .and. (jahrs >= jahre) .and. (uhrz >= uhren)
+      if (last_step)print*,'last_step'
+      
+   end subroutine step_time

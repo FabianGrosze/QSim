@@ -123,8 +123,11 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    if (.not. allocated(werts)) allocate(werts(1:i_Rands,1:ipps,1:iw_max))
    if (.not. allocated(mREC))  allocate(mREC(1:azStrs,1:i_Rands,1:ipps))
    
-   ! Einlesen aus EREIGG
-   if (ilang == 0) then
+   ! read from EREIGG only in first timestep
+   !if (ilang == 0) then
+   if (iwied == 0) then
+   print*,'doing funkstar'
+
       close (92)
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt'
       open(unit = 92, file = pfadstring)
@@ -479,11 +482,16 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
       !...Fehlermeldung
       if (ischwer == 1) then
          if (isnan(gszns(mstr,rbnr)) .or. isnan(glzns(mstr,rbnr))) then
-            if (vphs(mstr,RBNR) <= 0.0)   call qerror("Missing values for pH in inflow.")
+            if (vphs(mstr,RBNR) <= 0.0)then
+               call qerror("Missing values for pH in inflow.")
+            endif
             if (ssalgs(mstr,RBNR) <= 0.0) call qerror("Missing values for suspended matter in inflow.")
             exit
          endif
       endif
+      
+      ! print*,'funkstar mstr,RBNR=',mstr,RBNR,'vphs=',vphs(mstr,RBNR)
+
    enddo ! Ende Randbedingungsschleife
    ! deallocate(mREC)
    ! deallocate(werts)

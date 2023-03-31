@@ -259,7 +259,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       
       233 continue
       
-      print*,'sysgen fetching branch #',mstrl,' with ',mStas(mstrl),' cross-sections (Berechnungsstützstellen)'
+      print*,'sysgen fetching branch #',mstrl,' with ',mStas(mstrl),' cross-sections'
       
       do khyd = 2,mStas(mstrl)
          read(i_ereigh,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &
@@ -915,8 +915,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          bw2n(i) = bw2nz
          bKornn(i) = bdKnz
       endif
-      ! 41 continue
-      41 print*,'41 i,khyd,flag=',i,khyd,flag(i)
+      41 continue ! print*,'41 i,khyd,flag=',i,khyd,flag(i)
 
       if (iflags(mstr,isegs(mstr)) == 4 .and. qsaus(i)>=0.0) then
          if (flag(i) == 4) then
