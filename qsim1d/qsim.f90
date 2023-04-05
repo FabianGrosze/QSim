@@ -1256,7 +1256,7 @@ program qsim
                M_eros(mstr,mSta) = m1e(j)
                n_eros(mstr,mSta) = n1e(j)
                sedroh(mstr,mSta) = r1e(j)
-               !print*,mstr,mSta,' Erosion an km = ',fkmgit
+               print*,mstr,mSta,' Erosion an km,,tausc = ',fkmgit,tausc(mstr,mSta)
             endif
          enddo  ! alle Profile im Strang
       enddo  ! alle Erosionsabschnitte im Strang
@@ -1761,13 +1761,13 @@ program qsim
    ! ==========================================================================
    !9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
-!do while (.not. last_step)
-do while (.not. stop_loop)
+do while (.not. last_step)
+!do while (.not. stop_loop)
    if(last_step)stop_loop=.true.
 
-   print*,'---------------',ij,'-ter Zeitschritt von',itime,' Zeitpunkt:',  &
-          itags,monats,Jahrs,uhrz,'  iwied,iwsim=',iwied,iwsim,'---------------'
-   
+   write(*,6165)ij,itime,itags,monats,Jahrs,uhrz
+   6165 format('--------------- timestep',I3,' in day with',I3,'    date/time:  ',I0.2,'.',I0.2,'.',I4,2x,F5.2,' --------------- ')
+   if(iwied==0)print*,'first timestep in simulation of type iwsim=',iwsim
    !---------------------------------------------------------------------------
    ! read from Ablauf.txt
    !---------------------------------------------------------------------------
@@ -1889,7 +1889,7 @@ do while (.not. stop_loop)
    if (iwied == 0) then 
       print *, ''
       print *, repeat('=', 78)
-      print *, repeat(' ',34), 'boundaries  iwied=',iwied
+      print *, repeat(' ',34), 'boundaries'
       call randbedingungen(cpfad, i_Rands, iw_max)
       print *, repeat('=', 78)
    endif
@@ -6354,8 +6354,8 @@ do while (.not. stop_loop)
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
-            !print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern h,Ks,v,tau,ss,ssalg,sseros=',   &
-            !       TIEFE(ior),RAU(ior),VMITT(ior),htau(mstr,ior),ss(ior),ssalg(ior),hSSeros(mstr,ior)
+            print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern ssalg,tausc,M_eros,n_eros,sedroh=',   &
+                   ssalg(ior),tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
             !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
@@ -6713,7 +6713,8 @@ do while (.not. stop_loop)
       endif ! ischwer==1
       118 continue
       
-      print*,'done metabolism in branch ',mstr
+      !print*,'done metabolism in branch ',mstr
+      if(azStr==azStrs)print*,'metabolism done'
 
       ! -----------------------------------------------------------------------
       ! transportation
@@ -6735,7 +6736,9 @@ do while (.not. stop_loop)
                         ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
                         ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
                         ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
-         print*,mstr,' done Transport at',itags,monats,jahrs,Uhrz
+                        
+         
+         if(azStr==azStrs)print*,'transport done'
 
          ! Aufsummierung der Tracermasse
          if (iwsim == 4) then
@@ -7302,7 +7305,7 @@ do while (.not. stop_loop)
    ! * Ausschreiben von Ergebnissen
    ! ==========================================================================
    if (ij < 2) then ! first timestep in day
-      print*,' initialize daily mean, min. and max.',ij
+      !print*,' initialize daily mean, min. and max.',ij
       ! Minimums- und Maximumswerte initieren
       mitemp = 999999.9
       mxtemp = 0.0
@@ -8204,7 +8207,9 @@ do while (.not. stop_loop)
             Uhrhm = Stunde+rmin
             
             write(155,5103)itags,monats,jahrs,uhrhm,mstr,Stakm(mstr,iior),STRID(mstr)
-            if(iior==1)print*,mstr,'ausgabe 155 für',itags,monats,jahrs,uhrhm
+            
+            if((iior==1).and.(azStr==azStrs))print*,'timestep output' !,itags,monats,jahrs,uhrhm
+
             write(155,5105)vbsby(iior),vcsby(iior)                                           &
                            ,vnh4y(iior),vno2y(iior),vno3y(iior),gsNy(iior),gelpy(iior)       &
                            ,gsPy(iior),Siy(iior),chlay(iior),zooiny(iior),vphy(iior)         &
@@ -8302,7 +8307,7 @@ do while (.not. stop_loop)
          
          ! --------------------------------------------------------------------
          ! Summenbildung fuer Ausgabe
-         if(iior == mStas(mstr))print*,mstr,'Summenbildung fuer Ausgabe'
+         !if(iior == mStas(mstr))print*,mstr,'Summenbildung fuer Ausgabe'
          ! --------------------------------------------------------------------
          sumte(mstr,iior) = sumte(mstr,iior)+tempwy(iior)
          if (tempwy(iior) > mxtemp(mstr,iior)) mxtemp(mstr,iior) = tempwy(iior)
@@ -9347,7 +9352,7 @@ do while (.not. stop_loop)
    ! --------------------------------------------------------------------------
 
 if (ij==itime)then ! last timestep of day  ij==itime
-   print*,' output daily means ',ij,itime
+   print*,'output daily means' ! ,ij,itime
    ! it_hy - Anzahl der Zeitschritt in der Hellphase
    do azStr = 1,azStrs
       mstr = mstra(azStr)
@@ -9918,7 +9923,7 @@ if (ij==itime)then ! last timestep of day  ij==itime
                        ,xro2dr,xzooro,xpo2p,xpo2r
          
          write(45,4018)dsedH(mstr,iior)
-         if(iior==mStas(mstr))print*,mstr,iior,' write(45 miO2,xO2,mxO2=',miO2(mstr,iior),xO2,mxO2(mstr,iior)
+         !if(iior==mStas(mstr))print*,mstr,iior,' write(45 miO2,xO2,mxO2=',miO2(mstr,iior),xO2,mxO2(mstr,iior)
          
          bxmicl = bxcoli
          bxmxcl = bxcoli
@@ -10013,7 +10018,9 @@ end do ! do while .not. last_step
    ! Ausschreiben der Min/Max-Blöcke zur grafischen Darstellung in Gerris
    ! --------------------------------------------------------------------------
    999 continue
-   
+
+   write(*,*) 'output min/max in this simulation'
+
    do azStr = 1,azStrs
       mstr = mstra(azStr)
       if (Ymin(mstr,20) > 0.0)Ymin(mstr,20) = Ymin(mstr,20)*1000.
@@ -10469,10 +10476,10 @@ subroutine step_time(tflie,ij,itime,jahrs,monats,Uhrz,itags,jtage,itage,monate,j
    ij = ij+1            ! Zeitschrittzähler weitersetzen
    if (ij>itime)ij=1
 
-   print*,'step_time to: jahrs,monats,itags,jtag,Uhrz,ij,itime=',jahrs,monats,itags,Uhrz,ij,itime
+   !print*,'step_time to: jahrs,monats,itags,jtag,Uhrz,ij,itime=',jahrs,monats,itags,Uhrz,ij,itime
    
    last_step = (itags >= itage) .and. (monats >= monate) .and. (jahrs >= jahre) .and. (uhrz >= uhren)
-   if (last_step)print*,'last_step'
-   if (last_order)print*,'last_order'
+   !if (last_step)print*,'last_step'
+   !if (last_order)print*,'last_order'
 
 end subroutine step_time

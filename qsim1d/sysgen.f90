@@ -213,7 +213,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
    enddo
    9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
    read(i_ereigh,'(A)')text
-   print*,'sysgen going to read hydraulic timestep:',trim(text),' from EREIGH.txt'
+   print*,'fetching hydraulic timestep: ',trim(text),' from file EREIGH.txt'
    read(text,'(I5)')SCHRNR
    !print*,'SCHRNR,itags,monats,Jahrs,uhrz=',SCHRNR,itags,monats,Jahrs,uhrz
 
