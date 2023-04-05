@@ -50,7 +50,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
    integer                                :: ie, ies, ieros, ieinsy, ieab
    integer                                :: id, ianzt, ianze_max, i6
    integer                                :: anze, SCHRNR, azStr, dummy
-   integer                                :: i_ereigh
+   integer                                :: i_ereigh, read_error
    real                                   :: vabst, wuebkz, wspl, wsplz, wflbz1
    real                                   :: w2z, vmittz, vbumz, u, uhrz, Uhrz_Schr
    real                                   :: tstkm, tiefz, tflie, testh, tau2_0
@@ -66,6 +66,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
    real                                   :: bsoz1, bsomnz, bsohl, bsobz1, blbumz
    real                                   :: bedgkz, bdknz, asedvvert, akornz, aisch
    real                                   :: aischz, adkorn, ks, lboe
+   real                                   :: rdummy, dthyd
    character (len = 255)                  :: cpfad,text
    character (len = 275)                  :: pfadstring
    character(2)                           :: ckenn_vers1
@@ -180,6 +181,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
    read(i_ereigh,'(A2)')ckenn_vers1
    if (ckenn_vers1 /= '*V') then
       read(i_ereigh,'(A40)')ERENAME
+      dthyd = 1.0 ! hoffentlich richtig
    else
       rewind(i_ereigh)
       read(i_ereigh,'(2x)')
@@ -188,14 +190,21 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       read(i_ereigh,'(A40)')MODNAME
       read(i_ereigh,'(A40)')ERENAME
       read(i_ereigh,'(2x)')
-      read(i_ereigh,'(2x)')
+      read(i_ereigh,*)rdummy,rdummy,rdummy,rdummy,  dthyd
    endif
+   dthyd=dthyd/60  ! ; print*,'EREIGH.txt  Zeitschrittweite=',dthyd,' Stunden'
    do  ! find suitable timestep in EREIGH.txt
-      read(i_ereigh,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! read timestep numberr
-      if (itags == itag_Schr .and. monats == monat_Schr .and. Jahrs == Jahr_Schr .and.  &
-                                                   (uhrz-Uhrz_Schr <= 2.*epsilon(uhrz))) then  
-          backspace(unit = i_ereigh)
-         exit
+      read(i_ereigh,9708,iostat = read_error)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! read timestep number
+      if (read_error /= 0)then
+         print*,'itags,itag_Schr,monats,monat_Schr,Jahrs,Jahr_Schr,uhrz,Uhrz_Schr=',  &
+                 itags,itag_Schr,monats,monat_Schr,Jahrs,Jahr_Schr,uhrz,Uhrz_Schr
+         call qerror('cannot find suitable timestep in EREIGH.txt')
+      endif
+      if (itags == itag_Schr .and. monats == monat_Schr .and. Jahrs == Jahr_Schr)then
+         if (abs(uhrz-Uhrz_Schr)<dthyd) then
+            backspace(unit = i_ereigh)
+            exit
+         endif
       endif
       do izi = 1,isumAnzSta
          read(i_ereigh,'(2x)')
@@ -259,7 +268,7 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
       
       233 continue
       
-      print*,'sysgen fetching branch #',mstrl,' with ',mStas(mstrl),' cross-sections'
+      !print*,'sysgen fetching branch #',mstrl,' with ',mStas(mstrl),' cross-sections'
       
       do khyd = 2,mStas(mstrl)
          read(i_ereigh,1111)mstrl,hkmhyd(mstrl,khyd),hWSP(mstrl,khyd)             &

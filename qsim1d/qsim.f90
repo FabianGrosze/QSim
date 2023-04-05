@@ -31,7 +31,7 @@ program qsim
    use module_model_settings
    use module_metabolism
    implicit none
-   ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime
+   ! izdt Einheiten min oder Stunden Beruecksichtigung bei itime ???
    ! Bei Tracerrechnung wird für die Variable tempw mit der Tracermenge belegt
    character       :: ckenn,cpoint
    character(2)    :: chcon,ckenn_vers,ckenn_vers1
@@ -41,7 +41,7 @@ program qsim
    character(201)  :: ctext
    character(275)  :: pfadstring
    character(6000) :: langezeile, message
-   logical         :: kontroll, einmalig, linux,mitsedflux, last_step, stop_loop
+   logical         :: kontroll, einmalig, linux,mitsedflux, last_step, stop_loop, last_order
    logical         :: write_csv_output,ausdruck
    integer, dimension(output_crossections) :: output_strang, output_querprofil
    real, dimension(output_crossections)    :: output_km
@@ -509,15 +509,18 @@ program qsim
    print*, '   ', trim(cpfad1)
    
    
-   ! Vorbelegungen
-   maus = 0
-   iend = 0
-   iwied = 0
+   ! Vorbelegungen / Ablaufsteuerung
+   maus = 0    ! Ausgabe not used any more 
+   iend = 0    ! Ende ?? not used any more 
+   iwied = 0   ! first timestep reads boundary conditions iwied = 1 afterwards
    !ilang = 0
-   ilang = 1 ! kein Vorlauf mehr !!wy23
-   ilbuhn = 0
-   jlauf = 0
-   jtag = 0
+   ilang = 1   ! kein Vorlauf mehr !!wy23
+   ilbuhn = 0  ! ohne Buhnen - without groins
+   jlauf = 0   ! 
+   jtag = 0    ! noch dieser Tag ??
+   last_step=.false. ! letzter Schritt
+   stop_loop=.false. ! Zeit-Schleifenende nach letztem Schritt
+
    dH2D = 0.25
    iergeb = 0
    itracer_vor = 0
@@ -1026,6 +1029,14 @@ program qsim
    monats = monat_start
    jahrs  = jahr_start
    uhrs   = uhr_start
+   itime  = nint (1.0/tflie) ! number of timesteps in day
+   if(((itime*tflie)-1.0)>0.01)then
+      print*,tflie*24.0,'=timestep in h ; Day not divisible without rest'
+      call qerror('timestep does not fit into day')
+   endif
+   ij = 1 + itime - nint((24.0-uhrs)/(tflie*24.0)) ! number of timesteps in day
+   print*,itime,' timesteps per day starting with ',ij
+
    
    !if (iwsim == 4 .or. iwsim == 5)  goto 329
    !if (iwsim == 2 .and. icoli == 0) goto 329 
@@ -1050,8 +1061,6 @@ program qsim
    hcmin = (Uhrz-int(Uhrz))*100./60.
    hcUhrz = int(uhrz)+hcmin
    Uhrz = hcUhrz
-   ij = 1
-   
    
    ! -------------------------------------------------------------------------
    ! Erstellung des Gitters für ortsfeste Kenngrößen und Organismen
@@ -1749,7 +1758,6 @@ program qsim
       bagmor_1 = 0.
    endif
    
-   last_step = .false. ; stop_loop = .false.
    ! ==========================================================================
    !9999 continue ! Rücksprunglabel Zeitschleife
    ! ==========================================================================
@@ -1757,8 +1765,8 @@ program qsim
 do while (.not. stop_loop)
    if(last_step)stop_loop=.true.
 
-   print*,'---9999---Zeitschritt: ij,itime,jlauf=',ij,itime,jlauf,'--------Zeitpunkt:',  &
-          itags,monats,Jahrs,uhrz,'------------- iwied,ilang,iwsim=',iwied,ilang,iwsim
+   print*,'---------------',ij,'-ter Zeitschritt von',itime,' Zeitpunkt:',  &
+          itags,monats,Jahrs,uhrz,'  iwied,iwsim=',iwied,iwsim,'---------------'
    
    !---------------------------------------------------------------------------
    ! read from Ablauf.txt
@@ -1881,7 +1889,7 @@ do while (.not. stop_loop)
    if (iwied == 0) then 
       print *, ''
       print *, repeat('=', 78)
-      print *, repeat(' ',34), 'boundaries  iwied,ilang=',iwied,ilang
+      print *, repeat(' ',34), 'boundaries  iwied=',iwied
       call randbedingungen(cpfad, i_Rands, iw_max)
       print *, repeat('=', 78)
    endif
@@ -3873,7 +3881,7 @@ do while (.not. stop_loop)
       mstr = mstra(azStr)
       
       read(11,1000)hanze(mstr)
-      print*,azStr,mstr,' reading from sysgenou hanze(mstr)=',hanze(mstr)
+      !print*,'going to read ',hanze(mstr),' cross-sections for branch',mstr,' of ',azStrs,' from sysgenou'
       1000 format(i4)
       do ior = 1,hanze(mstr)
          read(11,1010)hfkm(mstr,ior),hflag(mstr,ior)                                &
@@ -4299,6 +4307,7 @@ do while (.not. stop_loop)
                      ,VALTBL,EDUFBL,VALTBR,EDUFBR,breite,anze,it_h,ij,jahrs,itage,monate,jahre,uhren        &
                      ,isim_end,azStr)
          call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
+         !print*,'nach strahlg,temperl ij,iwsim,mstr=',ij,iwsim,mstr
       endif
       
       ! Berechnung der Austauschraten zwischen Hauptstrom und Buhnenfelder
@@ -6360,7 +6369,7 @@ do while (.not. stop_loop)
             !                                                    ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
             !enddo
          enddo
-         print*,mstr,' erosion_kern called for anze+1=',anze+1,' cross-sections'
+         !print*,mstr,' erosion_kern called for anze+1=',anze+1,' cross-sections'
 
          ! --- groyne-field ---
          if (nbuhn(mstr) > 0) then
@@ -6413,13 +6422,13 @@ do while (.not. stop_loop)
                            ,ilang,iwied                        &
                            ,.false., 0)
          if (ilbuhn == 0)then
-            do ior = 1,anze+1
-               do nn=1,anz_csv_output
-                  if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
-                                                                ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
-               enddo
-            enddo
-            print*,mstr,anze+1,'last profile',hfkm(mstr,anze+1),ssalg(anze+1)
+            !do ior = 1,anze+1
+            !   do nn=1,anz_csv_output
+            !      if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
+            !                                                    ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
+            !   enddo
+            !enddo
+            print*,mstr,anze+1,'last cross-section Schwermetalle hfkm,ssalg=',hfkm(mstr,anze+1),ssalg(anze+1)
             !do nn=1,anz_csv_output
             !   if(mstr==output_strang(nn))then
             !      print*,nn,output_strang(nn), output_querprofil(nn),' nach Schwermetalle output_km,hfkm,ssalg' ,  &
@@ -6702,18 +6711,15 @@ do while (.not. stop_loop)
          hgsU(mstr,:) = 0.0
          hglU(mstr,:) = 0.0
       endif ! ischwer==1
+      118 continue
+      
+      print*,'done metabolism in branch ',mstr
 
       ! -----------------------------------------------------------------------
       ! transportation
       ! -----------------------------------------------------------------------
-      118 continue
       
-      ! 2 316  ! 979-663   ! Elbe-Km 474,5
-      !if(mstr==2)print*,'erosion vor transport Elbe-Km 474,50 sseros,tau,tausc',hSSeros(mstr,316),htau(mstr,316),tausc(mstr,316)
-      ! 2 512  ! 1175-663  ! Elbe-Km 585,05
-      !if(mstr==2)print*,'erosion vor transport Elbe-Km 585,05 sseros,tau,tausc',hSSeros(mstr,512),htau(mstr,512),tausc(mstr,512)
-      
-      if (iwsim == 4 .and. ilang == 0 .or. itracer_vor == 1) then
+      if (iwsim == 4 .and. ilang == 0 .or. itracer_vor == 1) then ! no transport
       else
          izeits = STRiz(mstr)
          deltat = STRdt(mstr)
@@ -7275,13 +7281,10 @@ do while (.not. stop_loop)
          
       enddo ! Ende Hauptschleife
 
-	   if(mstr==1)print*,'Ende Hauptschleife Elbe-Km 94,40 TIEFE,rau,VMITT,tau,tausc',  &
-					htiefe(mstr,202),hrau(mstr,202),hvmitt(mstr,202),htau(mstr,202),tausc(mstr,202)
-	   if(mstr==2)print*,'Ende Hauptschleife Elbe-Km 585,05 TIEFE,rau,VMITT,tau,tausc',  &
-					htiefe(mstr,512),hrau(mstr,512),hvmitt(mstr,512),htau(mstr,512),tausc(mstr,512)
    enddo ! Ende Strangschleife
    
    7777 continue
+   !print*,'--------------7777---------------'
    
    ! iwied = 0 : allererster Zeitschritt, danach iwied = 1
    ! ilang = 0 : Vorlauf (1d) wird nicht abgelegt, danach ilang = 1
@@ -7293,116 +7296,13 @@ do while (.not. stop_loop)
       iwied = 1
    endif
    
-   ! if (jlauf == 0) then ! Berechnung der neuen Uhrzeit und des neuen Datums ### war hier
-   
-   ! Vorlauf ilang = 0; Werte werden nicht abgelegt
-   if (ilang == 0 .and. ij < itime) then
-      ij = ij+1
-      istr = 0
-      !print*,'Rücksprung 9191 ilang == 0 .and. ij < itime iwied,itime',iwied,itime
-      print "(a,i0,a,i0,a)", " ij = ij+1 Vorlauf (", ij, "/", itime ,")"
-      goto 9191  ! Beim Vorlauf werden keine neuen Randwerte gelesen
-   endif
-   
-   if (ilang == 0 .and. ij == itime) then 
-      print*,' Ende Vorlauf ij,itime=',ij,itime
-      itracer_vor = 0
-      itags = itagv
-      monats = monatv
-      jahrs = jahrv
-      itime = itimea
-      ianfan = 1
-      ij = 1
-      if (iwsim == 4)itracer_vor = 1
-      rewind(i_ereigh)
-      read(i_ereigh,'(A2)')ckenn_vers1
-      if (ckenn_vers1 /= '*V') then
-         read(i_ereigh,'(A40)')ERENAME
-      else
-         rewind(i_ereigh)
-         read(i_ereigh,'(2x)')
-         read(i_ereigh,'(2x)')
-         read(i_ereigh,'(2x)')
-         read(i_ereigh,'(A40)')MODNAME
-         read(i_ereigh,'(A40)')ERENAME
-         read(i_ereigh,'(2x)')
-         read(i_ereigh,'(2x)')
-      endif
-      do  ! Suchen des Ereignisbeginns in ereigh.txt
-         read(i_ereigh,9708)SCHRNR,itag_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! Lesen der Zeitschritt-Nummer
-         if (itags == itag_Schr .and. monats == monat_Schr.and.Jahrs == Jahr_Schr.and.uhrsv == Uhrz_Schr) then
-            backspace(unit = i_ereigh)
-            exit
-         endif
-         do i = 1,isumAnzSta
-            read(i_ereigh,'(2x)')
-         enddo
-         cycle
-      enddo
-      9708 format(I5,2x,i2,2x,i2,2x,i4,2x,f5.2)
-      print*,'ereigh.txt vorspulen bis: nr,tag,monat,jahr,Uhr=',SCHRNR,itag_Schr,monat_Schr,Jahr_Schr,Uhrz_Schr
 
-      rewind (97)
-      read(97,'(A2)')ckenn_vers1
-      if (ckenn_vers1 /= '*V') then
-         read(97,'(A40)')ERENAME
-         read(97,'(I5)')SCHRNR
-      else
-         read(97,'(A40)')MODNAME
-         read(97,'(A40)')ERENAME
-         !              read(97,'(I5)')SCHRNR
-      endif
-      do  ! Suchen des Ereignisbeginns in Ablauf.txt
-         read(97,9705,iostat = read_error)SCHRNR,jkenn,itags_Schr, monat_Schr, Jahr_Schr, Uhrz_Schr  ! Lesen der Zeitschritt-Nummer
-         if (jkenn == 99) then
-            if (itags == itags_Schr .and. monats == monat_Schr.and.Jahrs == Jahr_Schr.and.uhrsv == Uhrz_Schr)exit
-            cycle
-         endif
-      enddo
-   endif
-   
-   print*,ij,itime,jlauf,ilang,'=ij,itime,jlauf,ilang -7369- itage,monate,jahre,uhren=', &
-          itage,monate,jahre,uhren,' itags,monats,jahrs,Uhrz=',itags,monats,jahrs,Uhrz
-
-   if (ij == 1 .and. jlauf == 0) then
-      if (itags == itage .and. monats == monate.and.jahrs == jahre)itime = itimee
-   endif
-   
-   !if (ilang == 1 .and. jlauf == 0) then
-   !   jlauf = 1
-   !   istr = 0
-   !   !print*,'Rücksprung 9999 iwied,itime',iwied,itime
-   !   goto 9999      ! Lesen neuer Randbedingungen
-   !endif
-   
-   !if (ilang == 0) then
-   !   ilang = 1
-   !   jtag = 1
-   !   print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
-   !   !print*, repeat('-', 78)
-   !   !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
-   !   goto 9191  ! Es werden keine neuen Randwerte gelesen
-   !endif
-   
-   if (jlauf == 1) then
-      ij = ij+1
-      jlauf = 0
-      jtag = 0
-      hconU = abs(uhren-uhrz)
-      if (hconU < 0.001)Uhrz = uhren
-      if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)iend = 1
-      print*,ij,itime,'ij = ij+1 7397 iend=',iend
-   endif
-   
-   if (ij > itime)maus = 1
-   
-   
    ! ==========================================================================
    ! * Summenbildung Minimum und Maximum beim Hauptlauf
    ! * Ausschreiben von Ergebnissen
    ! ==========================================================================
-   if (ij <= 2) then
-   
+   if (ij < 2) then ! first timestep in day
+      print*,' initialize daily mean, min. and max.',ij
       ! Minimums- und Maximumswerte initieren
       mitemp = 999999.9
       mxtemp = 0.0
@@ -8402,6 +8302,7 @@ do while (.not. stop_loop)
          
          ! --------------------------------------------------------------------
          ! Summenbildung fuer Ausgabe
+         if(iior == mStas(mstr))print*,mstr,'Summenbildung fuer Ausgabe'
          ! --------------------------------------------------------------------
          sumte(mstr,iior) = sumte(mstr,iior)+tempwy(iior)
          if (tempwy(iior) > mxtemp(mstr,iior)) mxtemp(mstr,iior) = tempwy(iior)
@@ -9418,38 +9319,35 @@ do while (.not. stop_loop)
       enddo               ! Ende Stationenschleife
    enddo                 ! Ende Strangschleife
    
-   if (maus == 1)goto 105
+!   if (maus == 1)goto 105
 !   goto 9998
-
-   print*,' statt goto 9998 ilang,jlauf,ij,itime=',ilang,jlauf,ij,itime,' itags,monats,jahrs=',itags,monats,jahrs
-   
-   if (ilang == 1 .and. jlauf == 0) then
-      jlauf = 1
-      istr = 0
+   !if (ilang == 1 .and. jlauf == 0) then
+   !   jlauf = 1
+   !   istr = 0
       !print*,'Rücksprung 9999 iwied,itime',iwied,itime
       !call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage)
       !goto 9999      ! Lesen neuer Randbedingungen
-   endif
-   
-   if (ilang == 0) then
-      ilang = 1
-      jtag = 1
-      print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
+   !endif
+   !if (ilang == 0) then
+   !   ilang = 1
+   !   jtag = 1
+   !   print '("letzter Vorlauf (",I0,"/",I0,")")', ij, iTime
       !print*, repeat('-', 78)
       !print*,'Rücksprung 9191 ilang == 0 iwied,itime',iwied,itime
       !call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage)
       !goto 9191  ! Es werden keine neuen Randwerte gelesen
-   endif
+   !endif
+   !105 continue
+   ! itime = itimeh
+   !maus = 0
+   !ij = 1
 
-   
    ! --------------------------------------------------------------------------
    ! Ausgabe der Mittelwerte
    ! --------------------------------------------------------------------------
-   105 continue
-   ! itime = itimeh
-   maus = 0
-   ij = 1
-   
+
+if (ij==itime)then ! last timestep of day  ij==itime
+   print*,' output daily means ',ij,itime
    ! it_hy - Anzahl der Zeitschritt in der Hellphase
    do azStr = 1,azStrs
       mstr = mstra(azStr)
@@ -10020,6 +9918,7 @@ do while (.not. stop_loop)
                        ,xro2dr,xzooro,xpo2p,xpo2r
          
          write(45,4018)dsedH(mstr,iior)
+         if(iior==mStas(mstr))print*,mstr,iior,' write(45 miO2,xO2,mxO2=',miO2(mstr,iior),xO2,mxO2(mstr,iior)
          
          bxmicl = bxcoli
          bxmxcl = bxcoli
@@ -10098,13 +9997,16 @@ do while (.not. stop_loop)
          
       enddo
    enddo
-   
+endif ! (ij==itime) (last_order)then ! last timestep of day
+
    !if (itags == itage .and. monats == monate.and.jahrs == jahre.and.uhren == uhrz.and.ilang == 1)goto 999
    !if (iend == 1)goto 999
-   itime = itimeh
+   !itime = itimeh
    !goto 9998
    
-   call step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage,itage,monate,jahre,uhren,last_step)
+   call step_time(tflie,ij,itime,jahrs,monats,Uhrz,itags,jtage,itage,monate,jahre,uhren,last_step,last_order)
+   !if(last_order)print*,'last_order'
+   !print*,'last_step,last_order',last_step,last_order
 end do ! do while .not. last_step
    
    ! --------------------------------------------------------------------------
@@ -10531,33 +10433,46 @@ end do ! do while .not. last_step
 end program qsim
 
 !!------------------------------------------------------------------------
-   ! Berechnung der neuen Uhrzeit und des neuen Datums
-   subroutine step_time(tflie,jahrs,monats,Uhrz,jtag,itags,jtage,itage,monate,jahre,uhren,last_step)
+! Berechnung der neuen Uhrzeit und des neuen Datums
+subroutine step_time(tflie,ij,itime,jahrs,monats,Uhrz,itags,jtage,itage,monate,jahre,uhren,last_step,last_order)
 
-      implicit none
-      integer jahrs,monats,jtag,itags,jtage,itage,monate,jahre
-      real tflie,Uhrz,uhren
-      logical last_step
-      
-      Uhrz = Uhrz+tflie*24.
-      if ((24.-Uhrz) < 0.0001)Uhrz = 24.
-      if (Uhrz>=24.) then
-         Uhrz = Uhrz-24.
-         if (jtag /= 1)itags = itags+1
-      endif
-      
-      call anztag(monats,jahrs,jtage)
-      if (itags > jtage) then
-         itags = 1
-         monats = monats+1
-      endif
-      if (monats > 12) then
-         monats = 1.
-         jahrs = jahrs+1
-      endif
-      print*,'step_time to: jahrs,monats,itags,jtag,Uhrz=',jahrs,monats,itags,jtag,Uhrz
-      
-      last_step = (itags >= itage) .and. (monats >= monate) .and. (jahrs >= jahre) .and. (uhrz >= uhren)
-      if (last_step)print*,'last_step'
-      
-   end subroutine step_time
+   implicit none
+   real tflie                    ! timestep in days
+   integer jahrs,monats,itags    ! current date y m d
+   real Uhrz                     ! current hour of day
+   integer jtage                 ! days in this month 
+   integer ij                    ! timestep counter within day
+   integer itime                 ! number of timesteps per day
+   integer itage,monate,jahre    ! date of simulation end
+   real uhren                    ! hour of simulation end
+   logical last_step             ! last timestep in simulation 
+   logical last_order            ! last timestep of the day
+
+   Uhrz = Uhrz+tflie*24.
+   if ((24.-Uhrz) < 0.0001)Uhrz = 24.
+   if (Uhrz>=24.) then
+      Uhrz = Uhrz-24.
+      itags = itags+1
+   endif
+   
+   last_order = (Uhrz+tflie*24.) >= 24.0
+   
+   call anztag(monats,jahrs,jtage)
+   if (itags > jtage) then
+      itags = 1
+      monats = monats+1
+   endif
+   if (monats > 12) then
+      monats = 1.
+      jahrs = jahrs+1
+   endif
+   ij = ij+1            ! Zeitschrittzähler weitersetzen
+   if (ij>itime)ij=1
+
+   print*,'step_time to: jahrs,monats,itags,jtag,Uhrz,ij,itime=',jahrs,monats,itags,Uhrz,ij,itime
+   
+   last_step = (itags >= itage) .and. (monats >= monate) .and. (jahrs >= jahre) .and. (uhrz >= uhren)
+   if (last_step)print*,'last_step'
+   if (last_order)print*,'last_order'
+
+end subroutine step_time
