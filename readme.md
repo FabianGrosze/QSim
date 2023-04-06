@@ -1,6 +1,8 @@
 # QSim 14
 
 ## 14.09
+### 14.09.31
+* Better descriptions for Dreissena in Gerris "Strangoptionen"
 
 ### 14.09.30
 * Bug fix and some refactoring of organic_carbon.f90: preventing negative concentrations of refractory C (Cref)
