@@ -588,7 +588,6 @@ subroutine sysgen(i_ereigh,ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs  
          ! vmitt(i) = vmitt(i-1)  ! dies ist neu
          ! aischl(i) = aischl(i-1)
          ! qsaus(i) = qsaus(i-i6-1)
-         qsaus(i) = qsaus(i-1)
          i = i+1
          jiein(i) = jieinz
          fkm(i) = fkm(i-1) !; print*,'583 i = i+1 | i,khyd,mstr,fkm=',i,khyd,mstr,fkm(i),'flag(i) = 4'

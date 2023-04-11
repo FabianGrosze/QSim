@@ -1232,38 +1232,7 @@ program qsim
    jjj   = 0
    vtyph = 0.0
    
-   
-   ! Erosions-Abschnitte
-   do azStr = 1,azStrs ! alle Stränge
-      mstr = mstra(azStr)
-      mE = mEs(mstr)
-      ! umspeichern
-      t1e(1:mE) = tausc(mstr,1:mE)
-      m1e(1:mE) = M_eros(mstr,1:mE)
-      n1e(1:mE) = n_eros(mstr,1:mE)
-      r1e(1:mE) = sedroh(mstr,1:mE)
-      ! initialisieren = keine Erosion
-      tausc(mstr,:) = 99999.99
-      M_eros(mstr,:) = 0.0
-      n_eros(mstr,:) = 1.0
-      sedroh(mstr,:) = 2650.0
-      do j = 1,mE ! alle Erosionsabschnitte im Strang
-         do mSta = 1,mStas(mstr) ! alle Profile/Stationen im Strang
-            fkmgit = Stakm(mstr,mSta)
-            ! wenn aktueller km im Abschnitt
-            if (aEros(mstr,mE) <= fkmgit .and. eEros(mstr,mE) >= fkmgit) then
-               tausc(mstr,mSta) = t1e(j)
-               M_eros(mstr,mSta) = m1e(j)
-               n_eros(mstr,mSta) = n1e(j)
-               sedroh(mstr,mSta) = r1e(j)
-               print*,mstr,mSta,' Erosion an km,,tausc = ',fkmgit,tausc(mstr,mSta)
-            endif
-         enddo  ! alle Profile im Strang
-      enddo  ! alle Erosionsabschnitte im Strang
-   enddo    ! alle Stränge
-   
-   
-   do azStr = 1,azStrs
+   do azStr = 1,azStrs ! all branches get applied properties
       mstr = mstra(azStr)
       
       mSta = 1
@@ -1280,11 +1249,48 @@ program qsim
       mA = 1
       mE = 1
       
+      ! erosion segments
+      mE = mEs(mstr)
+      ! regroup
+      t1e(1:mE) = tausc(mstr,1:mE)
+      m1e(1:mE) = M_eros(mstr,1:mE)
+      n1e(1:mE) = n_eros(mstr,1:mE)
+      r1e(1:mE) = sedroh(mstr,1:mE)
+      ! initialize no erosion
+      tausc(mstr,:) = 99999.99
+      M_eros(mstr,:) = 0.0
+      n_eros(mstr,:) = 1.0
+      sedroh(mstr,:) = 2650.0
+      
       do kSta = 0,isegs(mstr)
          if (kSta /= 0) then
             fkmgit = segkm(mstr,kSta)
             mSta = mSta+1
          endif
+         
+         ! erosion 
+         do j = 1,mE ! all erosion segments in this branch
+            ! wenn aktueller km im Abschnitt
+            if (aEros(mstr,j) <= fkmgit .and. eEros(mstr,j) >= fkmgit) then
+               tausc (mstr,mSta) = t1e(j)
+               M_eros(mstr,mSta) = m1e(j)
+               n_eros(mstr,mSta) = n1e(j)
+               sedroh(mstr,mSta) = r1e(j)
+               if (kSta > 0)then
+                  if (hflag(mstr,kSta) == 4) then ! care for doubled cross-section 
+                  ! if (hflag(mstr,mSta) == 6)
+                     tausc (mstr,mSta+1) = t1e(j)
+                     M_eros(mstr,mSta+1) = m1e(j)
+                     n_eros(mstr,mSta+1) = n1e(j)
+                     sedroh(mstr,mSta+1) = r1e(j)
+                     print*,mstr,kSta,mSta,hflag(mstr,kSta),j,' Erosion an km,tausc = ',fkmgit,tausc(mstr,mSta),tausc(mstr,mSta+1)
+                  endif
+               endif
+               !print*,mstr,mSta,hflag(mstr,kSta),j,' Erosion an km,tausc = ',fkmgit,tausc(mstr,mSta)
+            endif
+         enddo  ! all erosion segments
+         
+         ! plants
          trpmin = 0.0
          trpmax = 0.0
          if (mPfs(mstr) == 0 .or. mPf > mPfs(mstr))goto 140
@@ -1661,14 +1667,11 @@ program qsim
             hcos2(mstr,mSta,1) = corose
             hcoro2(mstr,mSta,2:5) = coro1
             hcos2(mstr,mSta,2:5) = coro1
-            
          endif
-         
-         ! fkmgit = fkmgn
-         
       enddo
+      print*,mstr,mSta,isegs(mstr),'=mstr,mSta,isegs(mstr) 1667'
    enddo
-   
+
    ! ==========================================================================
    ! Berechnung der Sedimentkenngrößen
    ! ==========================================================================
@@ -1827,7 +1830,8 @@ do while (.not. last_step)
               ,bleb(mstr,ior),hdl(mstr,ior),htau2(mstr,ior),vbm(mstr,ior),bSedOM(mstr,ior),bw2(mstr,ior)            &
               ,bdKorn(mstr,ior),dlalph(mstr,ior)
 
-
+         !if(hflag(mstr,ior)==6 .or. hflag(mstr,ior)==4)print*,mstr,ior,'sysgenou hfkm,hflag,idwe',  &
+         !                                                      hfkm(mstr,ior),hflag(mstr,ior),idwe(mstr,ior)
 !         write(11,2010)fkm(i),flag(i),jiein(i),elen(i),vmitt(i),tiefe(i)                                       &
 !                       ,rau(i),rhyd(i),aischl(i),w2n(i),BedGK(i),sedvvertz(i),dKornn(i),flae(i),WS(i),ischif   &
 !                       ,lboem(i),bsohlm(i),qsaus(i),hbum(i),flbum(i),bsobum(i)                                 &
@@ -1836,6 +1840,9 @@ do while (.not. last_step)
 
 
          if (hrhyd(mstr,ior) <= 0.0)hrhyd(mstr,ior) = htiefe(mstr,ior)
+      enddo
+      do ior = 1,hanze(mstr)+1
+         print*,mstr,ior,'sysgenou hfkm,hflag,idwe,tausc=',hfkm(mstr,ior),hflag(mstr,ior),idwe(mstr,ior),tausc(mstr,ior)
       enddo
       
       if(ilang==0)then
@@ -6354,8 +6361,8 @@ do while (.not. last_step)
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
-            print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern ssalg,tausc,M_eros,n_eros,sedroh=',   &
-                   ssalg(ior),tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)
+            print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern ssalg,tausc,M_eros,n_eros,sedroh,IDWe=',   &
+                   ssalg(ior),tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior),IDWe(mstr,ior)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
             !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
