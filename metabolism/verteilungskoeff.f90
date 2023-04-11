@@ -34,7 +34,8 @@
 subroutine verteilungskoeff(hcSS,hcph  &
                             ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb           &
                             ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U                       &
-                            ,iformVert, kontroll,jjj,meinrang)
+                            ,iformVert,iformSalt,kontroll,jjj,meinrang,b_Zn,b_Cad,b_Cu,b_Ni               &
+                            ,b_As,b_Pb,b_Cr,b_Fe,b_Hg,b_Mn,b_U)
    
    use aparam
 
@@ -43,8 +44,9 @@ subroutine verteilungskoeff(hcSS,hcph  &
    real   , intent(in)    :: hcSS, hcph
    real   , intent(out)   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
    real   , intent(out)   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-   integer, intent(in)    :: iformVert,jjj,meinrang
+   integer, intent(in)    :: iformVert,iformSalt,jjj,meinrang
    logical, intent(in)    :: kontroll  !< debugging
+   real                   :: b_Zn, b_Cad, b_Cu, b_Ni, b_As, b_Pb, b_Cr, b_Fe, b_Hg, b_Mn, b_U
    
    if(kontroll)print*,meinrang,jjj,' verteilungskoeff: hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn=',  &
                        hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn
@@ -92,5 +94,20 @@ subroutine verteilungskoeff(hcSS,hcph  &
       VTKoeff_Hg  = VTkoeffDe_Hg
       VTKoeff_Mn  = VTkoeffDe_Mn
       VTKoeff_U   = VTkoeffDe_U
+   endif
+   
+   if (iformSalt == 1) then
+      ! Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss
+      VTKoeff_Zn  = EXP(LOG(VTKoeff_Zn)  + b_Zn  * (LOG(i_salinity + 1))
+      VTKoeff_Cu  = EXP(LOG(VTKoeff_Cu)  + b_Cu  * (LOG(i_salinity + 1))
+      VTKoeff_Cad = EXP(LOG(VTKoeff_Cad) + b_Cad * (LOG(i_salinity + 1))
+      VTKoeff_Ni  = EXP(LOG(VTKoeff_Ni)  + b_Ni  * (LOG(i_salinity + 1))
+      VTKoeff_As  = EXP(LOG(VTKoeff_As)  + b_As  * (LOG(i_salinity + 1))
+      VTKoeff_Pb  = EXP(LOG(VTKoeff_Pb)  + b_Pb  * (LOG(i_salinity + 1))
+      VTKoeff_Cr  = EXP(LOG(VTKoeff_Cr)  + b_Cr  * (LOG(i_salinity + 1))
+      VTKoeff_Fe  = EXP(LOG(VTKoeff_Fe)  + b_Fe  * (LOG(i_salinity + 1))
+      VTKoeff_Hg  = EXP(LOG(VTKoeff_Hg)  + b_Hg  * (LOG(i_salinity + 1))
+      VTKoeff_Mn  = EXP(LOG(VTKoeff_Mn)  + b_Mn  * (LOG(i_salinity + 1))
+      VTKoeff_U   = EXP(LOG(VTKoeff_U)   + b_U   * (LOG(i_salinity + 1))
    endif
 end subroutine verteilungskoeff
