@@ -93,6 +93,7 @@ module aparam
    real, protected    :: c1u, e1u, c2u, e2u, c3u, e3u, c4u, e4u, c5u, e5u, vtkoeffde_u
    real, protected    :: c1zn, e1zn, c2zn, e2zn, c3zn, e3zn, c4zn, e4zn, c5zn, e5zn, vtkoeffde_zn
    real, protected    :: c1as, e1as, c2as, e2as, c3as, e3as, c4as, e4as, c5as, e5as, vtkoeffde_as
+   real, protected    :: b_Zn, b_Cd, b_Cu, b_Ni, b_As, b_Pb, b_Cr, b_Fe, b_Hg, b_Mn, b_U
    
    
    ! Hardcoded
@@ -165,7 +166,8 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
       c1hg , e1hg , c2hg , e2hg , c3hg , e3hg , c4hg , e4hg , c5hg , e5hg , vtkoeffde_hg ,   &
       c1u  , e1u  , c2u  , e2u  , c3u  , e3u  , c4u  , e4u  , c5u  , e5u  , vtkoeffde_u  ,   &
       c1zn , e1zn , c2zn , e2zn , c3zn , e3zn , c4zn , e4zn , c5zn , e5zn , vtkoeffde_zn ,   &
-      c1as , e1as , c2as , e2as , c3as , e3as , c4as , e4as , c5as , e5as , vtkoeffde_as
+      c1as , e1as , c2as , e2as , c3as , e3as , c4as , e4as , c5as , e5as , vtkoeffde_as ,   &
+      b_Zn, b_Cd, b_Cu, b_Ni, b_As, b_Pb, b_Cr, b_Fe, b_Hg, b_Mn, b_U 
       
    external :: qerror
    
@@ -302,7 +304,10 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
          read(55,*,iostat = io_error) e2Zn,c3Zn,e3Zn,c4Zn,e4Zn              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) c5Zn,e5Zn,VTKoeffDe_Zn,c1As,e1As      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) c2As,e2As,c3As,e3As,c4As              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
-         read(55,*,iostat = io_error) e4As,c5As,e5As,VTKoeffDe_As           ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) e4As,c5As,e5As,VTKoeffDe_As,b_Zn      ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) b_Cd,b_Cu,b_Ni,b_As,b_Pb              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         read(55,*,iostat = io_error) b_Cr,b_Fe,b_Hg,b_Mn,b_U               ; if (io_error /= 0) io_error_sum = io_error_sum + 1
+         
       endif
       close (55)
    endif 
@@ -596,6 +601,17 @@ subroutine AParamParam(cpfad1)
    write(200, '(A)') '  <Parameter Ident="c5As" Text="5. Koeffizient" Unit="-" Format="F7.1" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="0.0" Min="-9999.9" Max="99999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="e5As" Text="5. Exponent" Unit="-" Format="F5.2" Null="-1" Help="Berechnung des Verteilungskoeffizient nach ATV" Default="3.2" Min="0.01" Max="99.99" Gruppe="Schwermetalle" Kategorie="Arsen" />'
    write(200, '(A)') '  <Parameter Ident="VTKoeffDe_As" Text="Verteilungskoeffizient für Arsen" Unit="l/g" Format="F6.1" Null="-1" Help="Verteilungskoeffizient nach Deltares" Default="282." Min="0.1" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'
+   write(200, '(A)') '  <Parameter Ident="b_Zn" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Zn" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Zink" />'
+   write(200, '(A)') '  <Parameter Ident="b_Cd" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Cd" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Cadmium" />'
+   write(200, '(A)') '  <Parameter Ident="b_Cu" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Cu" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Kupfer" />'
+   write(200, '(A)') '  <Parameter Ident="b_Ni" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Ni" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Nickel" />'
+   write(200, '(A)') '  <Parameter Ident="b_As" Text="Einflussparameter Salinität auf Verteilungskoeffizient für As" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Arsen" />'
+   write(200, '(A)') '  <Parameter Ident="b_Pb" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Pb" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Blei" />'
+   write(200, '(A)') '  <Parameter Ident="b_Cr" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Cr" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Chrom" />'
+   write(200, '(A)') '  <Parameter Ident="b_Fe" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Fe" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Eisen" />'
+   write(200, '(A)') '  <Parameter Ident="b_Hg" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Hg" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Quecksilber" />'
+   write(200, '(A)') '  <Parameter Ident="b_Mn" Text="Einflussparameter Salinität auf Verteilungskoeffizient für Mn" Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Mangan" />'
+   write(200, '(A)') '  <Parameter Ident="b_U"  Text="Einflussparameter Salinität auf Verteilungskoeffizient für U"  Unit="-" Format="F6.1" Null="-1" Help="-" Default="282." Min="0.001" Max="9999.9" Gruppe="Schwermetalle" Kategorie="Uran" />'
    write(200, '(A)') '</ParamSetDef>'
    write(200, '(A)') '</GerrisParam>'
   

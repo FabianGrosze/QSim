@@ -106,6 +106,8 @@ module modell
    integer :: iphy
    !> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010
    integer :: iformVert
+   !> \anchor iformSalinity  Schalter für die erweiterung der Verteilungskoeffizienten um Salzeinfluss, Eingabe über EREIGG.txt 
+   integer :: iformSalinity   
    !> \anchor IFORM_VERDR:   Schalter für die Auswahl der Verdunstungsformeln in temperw_kern.f90 \n
    !!    iform_VerdR==1 ! WMO (FGSM-Handbuch)
    !!    iform_VerdR==2 ! Sweers (1976) over Land

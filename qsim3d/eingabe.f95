@@ -248,7 +248,7 @@ subroutine ereigg_modell()
    rechenzeit = startzeitpunkt
    if ( .not. zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
-        ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
+        ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iformSalinity,iform_verdr
    
    ! Schönung, November 2022
    ! Schwermetalle sind noch nicht ausreichend getestet unter QSim3D
@@ -266,8 +266,8 @@ subroutine ereigg_modell()
    endif
    
    print*,'Zeile 5 von EREIGG.txt:'
-   print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
-   print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
+   print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iformSalinity,iform_verdr'
+   print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iformSalinity,iform_verdr
    if (read_error /= 0) then
       print*,'EREIGG.txt Zeilentext: ',trim(ctext)
       write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'

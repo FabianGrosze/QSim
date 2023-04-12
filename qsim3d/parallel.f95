@@ -166,6 +166,7 @@ subroutine modell_parallel()
    call MPI_Bcast(iSchwer,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iphy,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iformVert,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(iformSalinity,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(iform_verdr,1,MPI_INT,0,mpi_komm_welt,ierr)
    !call MPI_Bcast(min_tief,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    !print*,meinrang," modell_parallel() min_tief,n_elemente=", min_tief,n_elemente
@@ -462,6 +463,17 @@ subroutine aparam_parallel()
    call MPI_Bcast(c5As,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(e5As,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(VTKoeffDe_As,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   
+
+   call MPI_Bcast(b_Zn,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Cd,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Cu,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Ni,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_As,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Pb,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Cr,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Fe,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Hg,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_Mn,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(b_U, 1,MPI_FLOAT,0,mpi_komm_welt,ierr)   
    return
 end subroutine aparam_parallel

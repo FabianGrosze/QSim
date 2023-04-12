@@ -43,8 +43,9 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,c1Hg,e1Hg,c2Hg,e2Hg,c3Hg,e3Hg,c4Hg,e4Hg,c5Hg,e5Hg,VTKoeffDe_Hg                                          &
                     ,c1Mn,e1Mn,c2Mn,e2Mn,c3Mn,e3Mn,c4Mn,e4Mn,c5Mn,e5Mn,VTKoeffDe_Mn                                          &
                     ,c1U,e1U,c2U,e2U,c3U,e3U,c4U,e4U,c5U,e5U,VTKoeffDe_U                                                     &
+                    ,b_Zn,b_Cd,b_Cu,b_Ni,b_As,b_Pb,b_Cr,b_Fe,b_Hg,b_Mn,b_U                                                   &
                     ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands                      &
-                    ,iw_max,iformVert)
+                    ,iw_max,iformVert,iformSalinity)
    
    use allodim
    implicit none
@@ -84,6 +85,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    real                                   :: vtkoeff_zn,vtkoeff_cu,vtkoeff_cad,vtkoeff_ni
    real                                   :: vtkoeff_as,vtkoeff_pb,vtkoeff_cr,vtkoeff_fe
    real                                   :: vtkoeff_hg,vtkoeff_mn,vtkoeff_u
+   real                                   :: b_Zn, b_Cd, b_Cu, b_Ni, b_As, b_Pb, b_Cr, b_Fe, b_Hg, b_Mn, b_U
    real                                   :: null_value
    double precision                       :: r_nrs, r_nrs2, r_nrs1
    character(200)                         :: message
