@@ -38,7 +38,7 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 # set executable name
 # PV=qsim1d_$(QSim_version)_dev
 # PV=qsim1d_heavy_pure03
-PV=qsim1d_heavy_rearr09b
+PV=qsim1d_heavy_nice01
 
 #====================================================================
 
@@ -133,8 +133,8 @@ DEBUG_FLAGS = -O0 -g -c -ffree-line-length-none -fcheck=all,array-temps -fmax-er
               #-Wdo-subscript -Winteger-division
 # ========================================================================================================
 # STANDARD MODE
-# CFLAGS = -O -g -fcheck=bounds
-CFLAGS = -O3 # run fast
+CFLAGS = -O -g -fcheck=bounds
+# CFLAGS = -O3 # run fast
 FFLAGS = $(CFLAGS) -c -ffree-line-length-none -finit-local-zero
 # ========================================================================================================
 

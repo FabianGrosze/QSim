@@ -63,6 +63,12 @@ module module_model_settings
    integer, protected             :: iWSim       !< defines kind of simulation
    
    real, protected                :: tflie       !< timestep [d]
+   integer, protected             :: itime       !< number of timesteps in day
+   integer                        :: ij          !< timestep counter
+   integer                        :: itags       !< day of simulation
+   integer                        :: monats      !< month of simulation
+   integer                        :: jahrs       !< year of simulation
+   real                           :: uhrs        !< time of simulation
    
    public :: read_ereigg_settings, get_paths
 
@@ -176,8 +182,24 @@ contains
       print '("  simulation start: ", I0.4,"-",I0.2,"-",I0.2," ",f5.2," UTC+1")', jahr_start,monat_start,itag_start,uhr_start
       print '("  simulation end:   ", I0.4,"-",I0.2,"-",I0.2," ",f5.2," UTC+1")', jahre,monate,itage,uhren
       print '("  timestep        = ", I0, " minutes (", f5.4," days)")', izdt, tflie
-      print *, ''
       
+      itags  = itag_start
+      monats = monat_start
+      jahrs  = jahr_start
+      uhrs   = uhr_start
+      itime  = nint (1.0/tflie) ! number of timesteps in day
+      if(((itime*tflie)-1.0)>0.01)then
+         print*,tflie*24.0,'=timestep in h ; Day not divisible without rest'
+         call qerror('timestep does not fit into day')
+      endif
+      ij = 1 + itime - nint((24.0-uhrs)/(tflie*24.0)) ! number of timesteps in day
+      if( ((ij-1)*tflie*24.0-uhrs) > 0.01)then
+         print*,tflie*24.0,'=timestep in h ; time not divisible without rest; ij,uhrs=',ij,uhrs
+         call qerror('starting hour does not fit into time stepping of day')
+      endif
+      print '(I5,A,I3)',itime,' timesteps per day starting with ',ij
+      
+      print *, ''
       print '(a,i1)',   '  iMitt       = ', imitt
       print '(a,i1)',   '  ipH         = ', iph
       print '(a,i1)',   '  idl         = ', idl
@@ -195,7 +217,9 @@ contains
       print '(a,i1)',   '  iFormVert   = ', iformVert
       print '(a,i1)',   '  iForm_VerdR = ', iform_VerdR
       print '(a,i1)',   '  iWSim       = ', iwsim
-      
+      print *, ''
+      print *, repeat('=', 78)
+
    end subroutine read_ereigg_settings
 
 end module module_model_settings

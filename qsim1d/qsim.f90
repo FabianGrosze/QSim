@@ -50,14 +50,14 @@ program qsim
    integer         :: iend, iwied, ilang, ilbuhn, jlauf
    integer         :: jtag, iergeb, itracer_vor, nndr, jstr
    integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
-   integer         :: mrb, iseg, mtracer, itags, monats
-   integer         :: jahrs, ij, lait1, laid1, laim1
+   integer         :: mrb, iseg, mtracer
+   integer         :: lait1, laid1, laim1
    integer         :: mpf, ms, md, mc, mb,  mu, mwe, mv, mz, ma
    integer         :: me, ndr, iv, j, ksta
    integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
    integer         :: itags_schr, istr, nstr, istrs, ifhstr
    integer         :: ianze_max, ior, itimeh, itimeb, itimea
-   integer         :: itimee, itime, i_rands, iw_max, mstrrb
+   integer         :: itimee, i_rands, iw_max, mstrrb
    integer         :: irb, i_k11, i_k12, i_k13, i_k14
    integer         :: i_k15, i_k16, i_k17, i_k18, i_k19
    integer         :: i_k110, i_k111, i_k112, i_k113, i_k114
@@ -76,7 +76,7 @@ program qsim
    real            :: lat_k, o2ein
    real            :: mikonss, mxkonss, bxcoli,algae_biomass
    real            :: POM_sed, BedGS, xsedvvertz
-   real            :: dh2d, geol, geob, uhrs, uhrz
+   real            :: dh2d, geol, geob, uhrz
    real            :: hcmin, hcuhrz, dlmax1, dlmax2, dlmax3
    real            :: dlmax4, coro1, fkmgit, trpmin, trpmax
    real            :: tggbal, tgkbal, coroe, corose, pom_sedb
@@ -1024,20 +1024,7 @@ program qsim
    else
       mtracer = 1
    endif
-   
-   itags  = itag_start
-   monats = monat_start
-   jahrs  = jahr_start
-   uhrs   = uhr_start
-   itime  = nint (1.0/tflie) ! number of timesteps in day
-   if(((itime*tflie)-1.0)>0.01)then
-      print*,tflie*24.0,'=timestep in h ; Day not divisible without rest'
-      call qerror('timestep does not fit into day')
-   endif
-   ij = 1 + itime - nint((24.0-uhrs)/(tflie*24.0)) ! number of timesteps in day
-   print*,itime,' timesteps per day starting with ',ij
-
-   
+  
    !if (iwsim == 4 .or. iwsim == 5)  goto 329
    !if (iwsim == 2 .and. icoli == 0) goto 329 
    if(.not.((iwsim == 4 .or. iwsim == 5).or.(iwsim == 2 .and. icoli == 0)))then
@@ -1074,12 +1061,12 @@ program qsim
    
    print *, ''
    print *, repeat('=', 78)
-   print *, repeat(' ', 33), 'ModellG.txt'
+   print *, repeat(' ', 33), 'MODELLG.txt'
    print *, repeat('=', 78)
    
    pfadstring = trim(adjustl(cpfad)) // 'MODELLG.txt'
    open(unit = 103, file = pfadstring, iostat = open_error)
-   if (open_error /= 0) call qerror ("Could not open ModellG.txt")
+   if (open_error /= 0) call qerror ("Could not open MODELLG.txt")
    rewind(103)
 
    ! file header
@@ -1283,7 +1270,7 @@ program qsim
                      M_eros(mstr,mSta+1) = m1e(j)
                      n_eros(mstr,mSta+1) = n1e(j)
                      sedroh(mstr,mSta+1) = r1e(j)
-                     print*,mstr,kSta,mSta,hflag(mstr,kSta),j,' Erosion an km,tausc = ',fkmgit,tausc(mstr,mSta),tausc(mstr,mSta+1)
+                     !print*,mstr,kSta,mSta,hflag(mstr,kSta),j,' Erosion an km,tausc = ',fkmgit,tausc(mstr,mSta),tausc(mstr,mSta+1)
                   endif
                endif
                !print*,mstr,mSta,hflag(mstr,kSta),j,' Erosion an km,tausc = ',fkmgit,tausc(mstr,mSta)
@@ -1669,7 +1656,9 @@ program qsim
             hcos2(mstr,mSta,2:5) = coro1
          endif
       enddo
-      print*,mstr,mSta,isegs(mstr),'=mstr,mSta,isegs(mstr) 1667'
+      print"(A,I4,A,I4,A,I5,A,I4,A,I4,A)",   &
+            'Branch #',mstr,'  extended to ',mSta,' cross sections from originally ',isegs(mstr),  &
+            ' ; with ',mEs(mstr),' erosion sections and ',mWes(mstr),' weather stations'
    enddo
 
    ! ==========================================================================
@@ -1838,25 +1827,15 @@ do while (.not. last_step)
 !                       ,blbum(i),WFlbum(i),dlm,tau2m,vbum(i),bSdOMn(i),bw2n(i),bKornn(i)                       &
 !                       ,dlalpm
 
-
          if (hrhyd(mstr,ior) <= 0.0)hrhyd(mstr,ior) = htiefe(mstr,ior)
       enddo
-      do ior = 1,hanze(mstr)+1
-         print*,mstr,ior,'sysgenou hfkm,hflag,idwe,tausc=',hfkm(mstr,ior),hflag(mstr,ior),idwe(mstr,ior),tausc(mstr,ior)
-      enddo
-      
-      if(ilang==0)then
-         do ior = 1,hanze(mstr)
-            !print*,mstr,ior,' sysgenou hfkm,hflag=',hfkm(mstr,ior),hflag(mstr,ior)
-         enddo
-      endif
+      !do ior = 1,hanze(mstr)+1
+      !   print*,mstr,ior,'sysgenou hfkm,hflag,idwe,tausc=',hfkm(mstr,ior),hflag(mstr,ior),idwe(mstr,ior),tausc(mstr,ior)
+      !enddo
       
       QStrang_1(mstr) = hvabfl(mstr,1)
-      
       hSedOM(mstr,hanze(mstr)+1) = hSedOM(mstr,hanze(mstr))
       bSedOM(mstr,hanze(mstr)+1) = bSedOM(mstr,hanze(mstr))
-      
-      
       
    enddo
    close (11)
@@ -1884,7 +1863,7 @@ do while (.not. last_step)
          itimeh = itimee
       endif
       
-      itime = itimeb
+      !itime = itimeb
    endif
    
    
@@ -6361,8 +6340,8 @@ do while (.not. last_step)
                         ,hSSeros(mstr,ior),ss(ior),ssalg(ior),dsedH(mstr,ior)  &
                         ,tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior)  &
                         ,kontroll,ior,mstr)
-            print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern ssalg,tausc,M_eros,n_eros,sedroh,IDWe=',   &
-                   ssalg(ior),tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior),IDWe(mstr,ior)
+            !print*,mstr,ior,hfkm(mstr,ior),flag(ior),'=..km,flag erosion_kern ssalg,tausc,M_eros,n_eros,sedroh,IDWe=',   &
+            !       ssalg(ior),tausc(mstr,ior),M_eros(mstr,ior),n_eros(mstr,ior),sedroh(mstr,ior),IDWe(mstr,ior)
             ! 2 316  ! 979-663   ! Elbe-Km 474,5
             !if((mstr==2) .and. (ior==316))print*,'erosion Elbe-Km 474,5 sseros,tau,tausc',hSSeros(mstr,ior),htau(mstr,ior),tausc(mstr,ior)
             ! 2 512  ! 1175-663  ! Elbe-Km 585,05
@@ -6429,13 +6408,14 @@ do while (.not. last_step)
                            ,ilang,iwied                        &
                            ,.false., 0)
          if (ilbuhn == 0)then
+            !print*,mstr,anze+1,'last cross-section Schwermetalle hfkm,ssalg=',hfkm(mstr,anze+1),ssalg(anze+1)
+
             !do ior = 1,anze+1
             !   do nn=1,anz_csv_output
             !      if(abs(output_km(nn)-hfkm(mstr,ior))<0.01)print*,mstr,ior,nn,'Schwermetalle output_km==hfkm,ssalg' &
             !                                                    ,output_km(nn),hfkm(mstr,ior),ssalg(ior)
             !   enddo
             !enddo
-            print*,mstr,anze+1,'last cross-section Schwermetalle hfkm,ssalg=',hfkm(mstr,anze+1),ssalg(anze+1)
             !do nn=1,anz_csv_output
             !   if(mstr==output_strang(nn))then
             !      print*,nn,output_strang(nn), output_querprofil(nn),' nach Schwermetalle output_km,hfkm,ssalg' ,  &
