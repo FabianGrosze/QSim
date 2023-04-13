@@ -51,7 +51,7 @@ subroutine schwermetalle_huelle(i)
                            ,planktonic_variable_p( 66+npla)  &
                            ,planktonic_variable_p( 66+npla)  &
                            ,transfer_quantity_p(12+ntra)     &
-                           ,iformVert                        &
+                           ,iformVert,iformSalinity          &
                            ,anzZeit                          &
                            ,transfer_quantity_p( 5+ntra)     &
                            ,benthic_distribution_p(26+nben)  &
@@ -79,7 +79,7 @@ subroutine schwermetalle_huelle(i)
                            ,planktonic_variable_p( 99+npla)  &
                            ,planktonic_variable_p(100+npla)  &
                            ,planktonic_variable_p(101+npla)  &
-                           ,kontroll,iglob,meinrang)
+                           ,kontroll,iglob,meinrang,planktonic_variable_p(72+npla))
                            
    !if(kontroll)print*,iglob,' schwermetalle_huelle nachher: planktonic_variable_p( 81+npla)=',planktonic_variable_p( 81+npla)
    return

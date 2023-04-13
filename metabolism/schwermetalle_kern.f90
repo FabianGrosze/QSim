@@ -26,14 +26,14 @@
 ! --------------------------------------------------------------------------- !
 !> balance of heavy metal concentrations
 !! file: schwermetalle_kern.f90 zurück: \ref lnk_schwermetalle
-subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert             &
+subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert,iformSalinity                     &
                               ,anzZeits,sedsss,sedalks,sedalgs,sedalbs                                     &
                               ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs   &
                               ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                   &
-                              ,kontroll,jjj,meinrang)
+                              ,kontroll,jjj,meinrang,salinity)
    
    implicit none
-   integer               :: anzZeits,iformVert,meinrang
+   integer               :: anzZeits,iformVert,iformSalinity,meinrang
    real                  :: hssalgs,SSalgs,hphs,vphs,SSeross
    real                  :: sedsss,sedalks,sedalbs,sedalgs
    real                  :: glZns, gsZns, glCads, gsCads, glCus, gsCus, glNis, gsNis
@@ -46,6 +46,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    real                  :: ZnSeds,CadSeds,CuSeds,NiSeds,AsSeds,PbSeds
    real                  :: CrSeds,FeSeds,Hgseds,MnSeds,USeds
    real                  :: Css,ph
+   real                  :: salinity
    
    logical, intent(in)   :: kontroll !< debugging
    integer, intent(in)   :: jjj      !< debugging
@@ -71,13 +72,13 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    call Verteilungskoeff(Css,ph  &
                          ,VTKoeffZn(1),VTKoeffCu(1),VTKoeffCad(1),VTKoeffNi(1),VTKoeffAs(1),VTKoeffPb(1)    &
                          ,VTKoeffCr(1),VTKoeffFe(1),VTKoeffHg(1) ,VTKoeffMn(1), VTKoeffU(1)                 &
-                         ,iformVert,kontroll,jjj,meinrang)
+                         ,iformVert,iformSalinity,kontroll,jjj,meinrang,salinity)
    Css = min(100.,SSalgs)
    ph = max(4.,vphs)
    call Verteilungskoeff(Css,ph  &
                          ,VTKoeffZn(2),VTKoeffCu(2),VTKoeffCad(2),VTKoeffNi(2),VTKoeffAs(2),VTKoeffPb(2)    &
                          ,VTKoeffCr(2),VTKoeffFe(2),VTKoeffHg(2) ,VTKoeffMn(2), VTKoeffU(2)                 &
-                         ,iformVert,kontroll,jjj,meinrang)
+                         ,iformVert,iformSalinity,kontroll,jjj,meinrang,salinity)
                          
    if(kontroll)print*,jjj,'schwermetalle_kern Verteilungskoeff: Css,ph,VTKoeffZn(1,2)='  &
                                                     ,Css,ph,VTKoeffZn(1),VTKoeffZn(2)
