@@ -54,7 +54,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    integer                                :: manzw, jahrs, i_rand, i_rands, i
    integer                                :: ixpp, iw_max, iwsim, iwied, iwe
    integer                                :: itags, irec, ipp, ipps, ilang
-   integer                                :: iformvert, iee2, iee1, ianzrb, ianrbs
+   integer                                :: iformvert, iformSalinity, iee2, iee1, ianzrb, ianrbs
    integer                                :: rbnr, read_error
    real                                   :: uhrz, r_nrs0, hcss, hcph, hcon2
    real                                   :: e4cu, ywert, wert2, wert1, vtkoeffde_zn

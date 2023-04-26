@@ -96,17 +96,18 @@ subroutine verteilungskoeff(hcSS,hcph  &
    endif
    
    if (iformSalinity == 1) then
+      print*,'Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss'
       ! Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss
-      VTKoeff_Zn  = EXP(LOG(VTKoeff_Zn)  + b_Zn  * (LOG(salinity + 1))
-      VTKoeff_Cu  = EXP(LOG(VTKoeff_Cu)  + b_Cu  * (LOG(salinity + 1))
-      VTKoeff_Cad = EXP(LOG(VTKoeff_Cad) + b_Cd  * (LOG(salinity + 1))
-      VTKoeff_Ni  = EXP(LOG(VTKoeff_Ni)  + b_Ni  * (LOG(salinity + 1))
-      VTKoeff_As  = EXP(LOG(VTKoeff_As)  + b_As  * (LOG(salinity + 1))
-      VTKoeff_Pb  = EXP(LOG(VTKoeff_Pb)  + b_Pb  * (LOG(salinity + 1))
-      VTKoeff_Cr  = EXP(LOG(VTKoeff_Cr)  + b_Cr  * (LOG(salinity + 1))
-      VTKoeff_Fe  = EXP(LOG(VTKoeff_Fe)  + b_Fe  * (LOG(salinity + 1))
-      VTKoeff_Hg  = EXP(LOG(VTKoeff_Hg)  + b_Hg  * (LOG(salinity + 1))
-      VTKoeff_Mn  = EXP(LOG(VTKoeff_Mn)  + b_Mn  * (LOG(salinity + 1))
-      VTKoeff_U   = EXP(LOG(VTKoeff_U)   + b_U   * (LOG(salinity + 1))
+      VTKoeff_Zn  = EXP(LOG(VTKoeff_Zn)  + b_Zn  * LOG(salinity + 1))
+      VTKoeff_Cu  = EXP(LOG(VTKoeff_Cu)  + b_Cu  * LOG(salinity + 1))
+      VTKoeff_Cad = EXP(LOG(VTKoeff_Cad) + b_Cd  * LOG(salinity + 1))
+      VTKoeff_Ni  = EXP(LOG(VTKoeff_Ni)  + b_Ni  * LOG(salinity + 1))
+      VTKoeff_As  = EXP(LOG(VTKoeff_As)  + b_As  * LOG(salinity + 1))
+      VTKoeff_Pb  = EXP(LOG(VTKoeff_Pb)  + b_Pb  * LOG(salinity + 1))
+      VTKoeff_Cr  = EXP(LOG(VTKoeff_Cr)  + b_Cr  * LOG(salinity + 1))
+      VTKoeff_Fe  = EXP(LOG(VTKoeff_Fe)  + b_Fe  * LOG(salinity + 1))
+      VTKoeff_Hg  = EXP(LOG(VTKoeff_Hg)  + b_Hg  * LOG(salinity + 1))
+      VTKoeff_Mn  = EXP(LOG(VTKoeff_Mn)  + b_Mn  * LOG(salinity + 1))
+      VTKoeff_U   = EXP(LOG(VTKoeff_U)   + b_U   * LOG(salinity + 1))
    endif
 end subroutine verteilungskoeff

@@ -33,6 +33,8 @@ subroutine schwermetalle_huelle(i)
    use aparam
    implicit none
    integer :: i,npla,ntra,nben
+
+   !if (i == 1) print *, iformSalinity, '= iformSalinity in schwermetalle_huelle'
    iglob = (i+meinrang*part)
    kontroll = iglob == kontrollknoten  ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen

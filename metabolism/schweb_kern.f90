@@ -128,7 +128,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    if (fssgrs < 0.0) then
       fssgrs_old = fssgrs
       fssgrs = (fssgrv/(fssgrv+abs(fssgrv-fssgrs)))*fssgrv
-      call print_clipping("schweb_kern", "fssgrs", fssgrs_old, fssgrs, "")
+      !call print_clipping("schweb_kern", "fssgrs", fssgrs_old, fssgrs, "")
    endif
    ! fssgrt = fssgrs
    ! fssgrs = fssgrv
@@ -136,7 +136,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    if (sst < 0.0) then
       sss_old = sst
       sss = (sss/(sss+abs(sst-sss))) * sss
-      call print_clipping("schweb_kern", "sss", sss_old, sss, "mg/l")
+      !call print_clipping("schweb_kern", "sss", sss_old, sss, "mg/l")
    else
       sss = sst
    endif

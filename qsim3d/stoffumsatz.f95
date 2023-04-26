@@ -43,6 +43,9 @@ subroutine stoffumsatz()
    !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stoffumsätze parallelisiert
    do i = 1,part ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
+
+      if (i == 1) print *, iformSalinity, '= iformSalinity in stoffumsatz'
+
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
       
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
