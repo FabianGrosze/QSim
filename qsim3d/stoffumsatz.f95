@@ -44,7 +44,7 @@ subroutine stoffumsatz()
    do i = 1,part ! Alle Knoten auf diesem Prozessor
       iglob = (i+meinrang*part)
 
-      if (i == 1) print *, iformSalinity, '= iformSalinity in stoffumsatz'
+      !if (i == 1) print *, iformSalinity, '= iformSalinity in stoffumsatz'
 
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
       
@@ -161,7 +161,7 @@ subroutine stoffumsatz()
                if (ieros == 1)call erosion_huelle(i)
                
                !------------------------------------------------------------------------ heavy metals
-               !if (iSchwer == 1)call schwermetalle_huelle(i)
+               if (iSchwer == 1)call schwermetalle_huelle(i)
                
             end if ! .not. nur_temp
          end if ! Knoten nass
