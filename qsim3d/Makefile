@@ -29,8 +29,13 @@
 
 SHELL=/usr/bin/bash
 
-PV='qsim3d_schwermetall27'
+# get QSim version from version_string.f90
+QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
+# set executable name
+PV=qsim3d_$(QSim_version)_testfile2_schwermetall_salinity_dev
+
+# set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
 
@@ -132,6 +137,16 @@ Q3 = version.co \
 #--------------------------------------------------------------------
 
 usual: check date metabolism qsim3d
+
+debug: set_debug_options usual
+
+set_debug_options:
+	$(eval PV=$(PV)_debug)
+	$(eval FFLAGS=$(DEBUG_FLAGS))
+
+clean_release: clean usual
+
+clean_debug: clean debug
 
 check:
 	@if [ `hostname` != "oss-cln51" ]; then \
