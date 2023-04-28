@@ -1,55 +1,57 @@
-Sauerstoff {#lnk_sauerstoff}
+Oxygen {#lnk_sauerstoff}
 =========
 
-Der Sauerstoffgehalt in einem Gewässer ist ein lebenswichtiger Faktor für viele 
-Gewässerorganismen und deren Besiedlung der Gewässer, er prägt außerdem den 
-Stoffumsatz. Der im Wasser gelöste Sauerstoff (dissolved oxygen) dient als 
-Indikator für den Zustand eines Gewässers, auch für die Qualität des Gewässers 
-als Lebensraum für verschiedene Organismen. 
-Die Sauerstoffsättigungskonzentration ist von der Wassertemperatur abhängig, da 
-die physikalische Löslichkeit des Sauerstoffs im Wasser mit der Zunahme der 
-Temperatur sinkt. Daneben wirken sich weitere Komponenten auf die 
-Sauerstoffkonzentration im Gewässer aus, die in einem zweistufigen 
-Berechnungsverfahren bilanziert werden. 
+The oxygen dissolved in the water (dissolved oxygen) serves as an 
+indicator for the condition of a water body. Since oxygen is a vital factor for 
+many organisms, oxygen concentration also is a proxy for the quality of a water 
+body. The oxygen concentration of a water body determines the potential for 
+colonization of this habitat by various organisms.
 
-In jedem Zeitschritt wird in einer ersten Stufe ein Zwischenwert des 
-Sauerstoffgehalts infolge von biochemischen Zehrungs- und Produktionsprozessen 
-berechnet. Folgende Prozesse führen in QSim zu einer Veränderung im 
-Sauerstoffgehalt:
+Dissolved oxygen also affects matter turnover and mass balances, e.g. of 
+nutrients.  
+
+Oxygen concentration depends on water temperature, as the physical solubility 
+of oxygen in water decreases with an increase in temperature. Further components 
+affect the oxygen concentration in a water body, which in QSim are balanced in a 
+two-stage calculation procedure.
+
+In every time step, an interim value for the oxygen concentration ist calculated 
+as a consequence of biochemical oxygen consumption and production. \n
+The following processes are included in this step:
 
 <!-- in Liste Links einfügen via * [Wort](\ref lnk_prozess); -->
-* die Sauerstoffproduktion durch die Photosyntheseleistungen von 
-  Kiesel-, Grün- und Blaualgen und Makrophyten
-* der Sauerstoffverbrauch durch die Respiration von Kiesel-, Grün- und Blaualgen 
-  und Makrophyten
-* der Sauerstoffverbrauch durch mikrobielle Oxidation organischer 
-  Kohlenstoffverbindungen 
-* der Sauerstoffverbrauch durch die Nitrifikation in der Wassersäule
-* der Sauerstoffverbrauch durch die Respiration des Zooplanktonplanktons 
-  (Rotatorien) und der benthischen Filtrierer (Dreissena) 
-* der Sauerstoffverbrauch im Sediment
-<!-- früher noch in der Liste: Respiration HNF, der Baustein ist aber abgeschaltet -->
+* oxygen production due to photosynthesis by diatoms, green algae and cyanobacteria
+* oxygen consumption due to respiration by diatoms, green algae and cyanobacteria
+* oxygen consumption due to microbial oxidation of organic matter
+* oxygen consumption due to nitrification in the water body
+* oxygen consumption due to respiration by zooplankton (rotifers) and benthic 
+  filter feeders (Dreissena) 
+<!-- früher noch in der Liste: Sauerstoffverbrauch im Sediment, Photosynthese 
+durch Makrophyten, Respiration HNF; Bausteine derzeit abgeschaltet -->
 
-In einer zweiten Stufe wird ausgehend von dem Zwischenwert die Be- bzw. 
-Entlüftung über die Gewässeroberfläche ermittelt. Dies geschieht auf Grundlage 
-der temperaturabhängigen Sauerstoffsättigungskonzentration und dem als 
-Zwischenwert ermittelten Sauerstoffgehalt. An Gewässern mit Wehren wird im Falle 
-eines Wehrüberfalls zudem der Einfluss dieser Bauwerke auf den Sauerstoffgehalt 
-mitberechnet. Die Veränderungen im Sauerstoffgehalt aus punktförmigen Quellen 
-werden wie in allen Bausteinen über die Mischungsrechnungen an den 
-Einleitstellen berücksichtigt.
+In a second step, (de-)oxygenation at the water surface is calculated. This 
+oxygen exchange across the water surface is calculated based on 
+the temperature dependent oxygen saturation concentration and the previously 
+calculated interim value of oxygen concentration in the water body.
 
-Details zum Sauerstoff-Modul sind in den folgenden Abschnitten beschrieben:
+In water bodies with weirs and weir spillways, additionally, the impact of 
+these constructions is included in the calculation of dissolved oxygen.
 
-- \subpage lnk_sauerstoff_prozesse : Erläuterung der im Algen-Baustein 
-implementierten Prozesse 
+The change in oxygen concentration due to point sources is calculated via the 
+mixing of two volumes at the inflow point.
 
-- \subpage lnk_sauerstoff_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+Further Information:
 
-- \subpage lnk_sauerstoff_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_sauerstoff_prozesse : Explanation of the processes implemented 
+   within the module
+
+- \subpage lnk_sauerstoff_vars : List of formula symbols and variables 
+
+- \subpage lnk_sauerstoff_umsetzung : Details on the code and its numeric 
+   implementation 
 
 \n\n 
 
 Text source: sauerstoff-doc.md; Code sources: module_oxygen.f90, oxygen.f90, 
-oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95; 
+oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95; \n
 go back to: \ref index
