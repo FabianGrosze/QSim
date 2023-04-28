@@ -96,9 +96,11 @@ subroutine verteilungskoeff(hcSS,hcph  &
    endif
    
    if (iformSalinity == 1) then
-      print*,'Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss'
+      !print*,'Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss'
       ! Berechnung der Verteilungskoeffizienten modifiziert mit dem Salinitätseinfluss
+      !print*,VTKoeff_Zn, '=VTKoeff_Zn vor Salinity Modifikation'
       VTKoeff_Zn  = EXP(LOG(VTKoeff_Zn)  + b_Zn  * LOG(salinity + 1))
+      !print*,VTKoeff_Zn, '=VTKoeff_Zn nach Salinity Modifikation'
       VTKoeff_Cu  = EXP(LOG(VTKoeff_Cu)  + b_Cu  * LOG(salinity + 1))
       VTKoeff_Cad = EXP(LOG(VTKoeff_Cad) + b_Cd  * LOG(salinity + 1))
       VTKoeff_Ni  = EXP(LOG(VTKoeff_Ni)  + b_Ni  * LOG(salinity + 1))
