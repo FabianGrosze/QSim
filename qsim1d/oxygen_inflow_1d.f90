@@ -90,7 +90,7 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
             hcvo2z(nkz,ior) = vo2z(nkz,ior-m)
          enddo
       
-      do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
+         do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
             hcQE = max(0.0,qeinl(iein))
             hco2E = eo2(iein)
             if (hco2E < 0.0) then

@@ -54,11 +54,12 @@ subroutine stoffumsatz()
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             
             if (.not. nur_temp) then ! wenn nur_temp keine anderen Stoffumsätze
-               !------------------------------------------------------------------------ Wasseralter
+               
+               ! Wasseralter
                if (nur_alter) then
                   call alter(i)
                   if (iglob == kontrollknoten) print*,'stoffumsatz: nur aufenthaltszeit (alter)'
-                  cycle ! bei nur_alter nix anderes
+                  cycle ! bei nur_alter nichts anderes
                endif
                
                if (iglob == kontrollknoten) then
@@ -73,25 +74,17 @@ subroutine stoffumsatz()
                   enddo
                endif
                
-               !------------------------------------------------------------------------ Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
-               !call sedflux_huelle(i)
-               !------------------------------------------------------------------------ Konsumenten / Rotatorien
-               call konsum_huelle(i)
-               do k = 1,number_trans_quant
-                  if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
-                     print*,'nach konsum_huelle: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
-                     if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
-                     !fehler_nan=.true.
-                  endif
-               end do
+               ! Stofflüsse in/aus Sediment ## unklar ## in Überarbeitung
+               ! call sedflux_huelle(i)
                
-               ! corophium [turend off]
+               call zooplankton_wrapper_3d(i)
+                             
+               ! corophium is currently turned off
                call corophium_wrapper_3d(i)
                
-               ! dreissena
                call dreissen_huelle(i)
                
-               ! heterotrophe Nanoflagellaten [turned off]
+               ! HNF is currently turned off
                call hnf_wrapper_3d(i)
                
                ! Algen-Baustein
@@ -101,8 +94,7 @@ subroutine stoffumsatz()
                      if (meinrang == 0)print*,'planktonic_variable_name:', trim(planktonic_variable_name(k))
                   endif
                end do
-               
-               
+                              
                call algae_huelle(i)
                
                do k = 1,number_trans_quant
@@ -119,19 +111,14 @@ subroutine stoffumsatz()
                   endif
                end do
                
-               ! benthic algae [turned off]
+               ! benthic algae is currently turned off
                call albenth_wrapper_3d(i)
                
-               ! macrophytes [turned off]
+               ! macrophytes is currently turned off
                call macrophytes_wrapper_3d(i)
                
-               ! organic carbon
                call organic_carbon_wrapper_3d(i)
-               
-               ! nitrogen
                call nitrogen_wrapper_3d(i)
-               
-               ! pH
                if (ipH == 1) call ph_wrapper_3d(i)
                
             endif ! .not. nur_temp
@@ -148,16 +135,10 @@ subroutine stoffumsatz()
          if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             
             if (.not. nur_temp) then
-               ! phosphate   
+               
                call phosphate_wrapper_3d(i)
-               
-               ! silicate
                call silicate_wrapper_3d(i)
-               
-               ! oxygen
                call oxygen_wrapper_3d(i)
-               
-               ! suspend matter
                call schweb_huelle(i)
                
                ! coliform bacteria
@@ -167,20 +148,19 @@ subroutine stoffumsatz()
                   planktonic_variable_p(61+(i-1)*number_plankt_vari) = 0.0
                endif
                
-               !------------------------------------------------------------------------ erosion of suspended matter
                if (ieros == 1)call erosion_huelle(i)
                
-               !------------------------------------------------------------------------ heavy metals
                !if (iSchwer == 1)call schwermetalle_huelle(i)
                
                if (iglob == kontrollknoten) then
                   ! write 'after' values and deltas to log file
                   write(*, '(a)') 'Planktonic variables after stoffumsatz'
                   do k = 1,number_plankt_vari
-                     write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E17.10)') k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
+                     write(*, '(i3,": ",a10," = ",E17.10,", delta = ",E17.10)') &
+                        k, trim(planktonic_variable_name(k)), planktonic_variable_p(k + nk), &
                                                                                 planktonic_variable_p(k + nk) - planktonic_variable_before(k)
                   enddo
-                  deallocate( planktonic_variable_before )
+                  deallocate(planktonic_variable_before)
                endif
                
             end if ! .not. nur_temp

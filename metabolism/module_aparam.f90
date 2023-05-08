@@ -48,25 +48,20 @@ module aparam
                          upmxpb, opblmi, opblma, asble, toptb, ktemp_bl
    integer            :: ifix
    
-   ! Rotatorien
+   ! zooplankton
    real, protected    :: irmax, foptr, grot, zresg, zaki, zagr, zabl
-   ! irmaxe,FopIRe,GRote,zresge,zakie,zagre,zable
-   
+      
    ! Nitrosomonas
    real, protected    :: ynmax1, stks1, anitr1, bnmx1, bnks1
-   ! ynmx1e, stks1e, anitrie, bnmx1e, bnks1e
    
    ! Nitrobacter
    real, protected    :: ynmax2, stks2, anitr2, bnmx2, bnks2
-   ! ynmx2e, stks2e, anitri2e, bnmx2e, bnks2e
    
    ! Sediment-Flux
    real, protected    :: knh4, kapn3, fpoc1, fpoc2, sorpcap, klang, kdnh3
-   ! KNH4e, KapN3e, fPOC1e, fPOC2e, SorpCape, Klange, KdNh3e
    
    ! Kohlenstoff
    real, protected    :: hyp1, hymxd, ksd1, ksd2, ksm, upbac, ybac, rsgbac
-   ! hyPe, hymxDe, KsD1e, KsD2e, KsMe, upBACe, YBACe, rsGBACe
    
    ! Muscheln
    real, protected    :: foptd
@@ -336,7 +331,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
           xnuec  < 0.0 .or. ratecg < 0.0 .or. ratecs < 0.0) then
          call qerror("Parameters for coliform bacteria are missing or wrong in AParam.")
       endif
-   endif 
+   endif
    
    return
 end subroutine aparam_lesen

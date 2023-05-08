@@ -11,6 +11,7 @@ module module_metabolism
    use module_ph
    use module_phosphate
    use module_silicate
+   use module_zooplankton
    
    ! These modules are currently turned off:
    ! use module_corophium

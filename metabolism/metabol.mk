@@ -13,6 +13,7 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/phosphate/module_phosphate.o \
 	../metabolism/silicate/module_silicate.o \
 	../metabolism/nitrogen/module_nitrogen.o \
+	../metabolism/zooplankton/module_zooplankton.o \
 	../metabolism/module_metabolism.o \
 	../metabolism/set_cloud_reflectance.o \
 	../metabolism/albenth.o \
@@ -25,7 +26,6 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/e_extnct_lesen.o \
 	../metabolism/einleiter_misch.o \
 	../metabolism/funkstar.o \
-	../metabolism/konsum.o \
 	../metabolism/lichthemmung.o \
 	../metabolism/lin_spline.o \
 	../metabolism/lin_sys.o \

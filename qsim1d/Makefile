@@ -92,7 +92,8 @@ Q1 = module_model_settings.o \
     write_e_extnct.o \
     write_gerris_definitions.o \
     write_modellg_param.o \
-    z_gitter_einl.o
+    z_gitter_einl.o\
+    zooplankton_inflow_1d.o
     
 
 -include ../metabolism/metabol.mk

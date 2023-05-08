@@ -145,7 +145,7 @@ Q3 = version.co \
    ph_wrapper_3d.o \
    corophium_wrapper_3d.o \
    algae_huelle.o \
-   konsum_huelle.o \
+   zooplankton_wrapper_3d.o \
    hnf_wrapper_3d.o \
    dreissen_huelle.o \
    ausgeben_casu.o \

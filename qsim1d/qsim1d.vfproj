@@ -90,6 +90,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="zooplankton">
+		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
+		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -146,7 +150,6 @@
 		<File RelativePath="..\metabolism\erosion.f90"/>
 		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
-		<File RelativePath="..\metabolism\konsum.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
@@ -227,5 +230,6 @@
 		<File RelativePath=".\write_e_extnct.f90"/>
 		<File RelativePath=".\write_gerris_definitions.f90"/>
 		<File RelativePath=".\write_modellg_param.f90"/>
-		<File RelativePath=".\z_gitter_einl.f90"/></Filter></Filter></Files>
+		<File RelativePath=".\z_gitter_einl.f90"/>
+		<File RelativePath=".\zooplankton_inflow_1d.f90"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>
