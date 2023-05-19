@@ -3,6 +3,10 @@ References  {#lnk_literatur}
 
 # BfG publications {#lnk_wiss_veroeffentlichung}
 
+ - [Hübner, G., Schwandt, D. und Wyrwa, J. 2023](pdf/Huebner_Schwandt_Wyrwa_2023_DGL_Jahrestagung_Konstanz_Textbeitrag.pdf) 
+    Modellierung von Schwermetallen und Arsen in der Elbe bei extremem Niedrigwasser. 
+	Deutsche Gesellschaft der Limnologie. Ergebnisse der Jahrestagung 2022.
+
  - <a href="http://doi.bafg.de/BfG/2015/BfG_QSim.pdf" target="_blank">
      Kirchesch et al. 2019. </a> QSim - das Gewässergütemodell der BfG: ein 
 	 Instrument zur Simulation und Prognose des Stoffhaushalts und der 
