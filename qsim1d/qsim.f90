@@ -474,7 +474,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .true.           ! compile for linux operating system (Windows is .false.)
+   linux = .false.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -6392,6 +6392,11 @@ do while (.not. last_step)
       if (ischwer == 1) then
          
          1521 continue
+         kontroll=.false.
+         if ((ilbuhn == 0)) then
+            print*,mstr,anze+1,' ========== going to call Schwermetalle ========== '
+            if(mstr==1)kontroll=.true.
+         endif
          call Schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,iformVert,ianze_max      &
                            ,hglZn,hgsZn,egsZn,eglZn,ZnSed       &
                            ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
@@ -6406,7 +6411,7 @@ do while (.not. last_step)
                            ,hglU,hgsU,egsU,eglU,USed            &
                            ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,hSSeros      &
                            ,ilang,iwied                        &
-                           ,.false., 0)
+                           ,kontroll, ior)
          if (ilbuhn == 0)then
             !print*,mstr,anze+1,'last cross-section Schwermetalle hfkm,ssalg=',hfkm(mstr,anze+1),ssalg(anze+1)
 
@@ -8208,6 +8213,8 @@ do while (.not. last_step)
             do iji=1,anz_csv_output
                if((output_strang(iji)==mstr).and.(output_querprofil(iji)==iior))then
                   ausdruck=.true.
+                  if(Stakm(mstr,iior)/=output_km(iji))print*,'Stakm(mstr,iior)/=output_km(iji)',   &
+                                                              Stakm(mstr,iior),mstr,iior,output_km(iji),iji
                end if ! output_km
             end do !iji
             if(anz_csv_output<1)ausdruck=.true. !! all profiles when ausgabe_querprofile.txt is missing

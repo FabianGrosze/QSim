@@ -321,14 +321,17 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
    if (icoli /= 1) then
       if (IKge < 0.0 .or. IKke  < 0.0 .or. KNH4  < 0.0 .or. KapN3 < 0.0 .or. &
           HyP1 < 0.0 .or. ToptG < 0.0 .or. Klang < 0.0 .or. ifix < 0) then
-         call qerror("Not all Parameters are defined in AParam.") 
+         print*,'IKge,IKke,KNH4,KapN3,HyP1,ToptG,Klang,ifix=',IKge,IKke,KNH4,KapN3,HyP1,ToptG,Klang,ifix
+         !!!###!!! call qerror("these Parameters in AParam must not be less than Zero") 
       endif
       
       if (kTemp_Gr < 0.0 .or. kTemp_Ki < 0.0 .or. kTemp_Bl < 0.0) then
-         call qerror("Not all Parameters are defined in AParam.") 
+         print*,'kTemp_Gr,kTemp_Ki,kTemp_Bl=',kTemp_Gr,kTemp_Ki,kTemp_Bl
+         call qerror("Parameters wrong in AParam.") 
       endif
       
       if (iwsim == 3 .and. IRMAX < -1 .or. FOPTR < -1.) then
+         print*,'iwsim,IRMAX,FOPTR=',iwsim,IRMAX,FOPTR
          call qerror("Not all Parameters are defined in AParam.") 
       endif
       

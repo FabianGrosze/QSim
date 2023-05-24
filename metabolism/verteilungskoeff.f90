@@ -46,8 +46,8 @@ subroutine verteilungskoeff(hcSS,hcph  &
    integer, intent(in)    :: iformVert,jjj,meinrang
    logical, intent(in)    :: kontroll  !< debugging
    
-   if(kontroll)print*,meinrang,jjj,' verteilungskoeff: hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn=',  &
-                       hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn
+   !if(kontroll)print*,meinrang,jjj,' verteilungskoeff: hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn=',  &
+   !                    hcSS,hcph, c1Zn,e1Zn,c2Zn,e2Zn,c3Zn,e3Zn,c4Zn,e4Zn,c5Zn,e5Zn
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
    if (iformVert == 1) then
@@ -93,4 +93,7 @@ subroutine verteilungskoeff(hcSS,hcph  &
       VTKoeff_Mn  = VTkoeffDe_Mn
       VTKoeff_U   = VTkoeffDe_U
    endif
+   
+   if(kontroll .and.(jjj==316))print*,'316 VTKoeff_Fe=',VTKoeff_Fe
+   
 end subroutine verteilungskoeff
