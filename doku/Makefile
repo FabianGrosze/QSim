@@ -56,7 +56,7 @@ date:
 doc:	
 	@doxygen $(CONFIG)
 	@cp ./dox/html/index.html ./dox/html/main.html
-	@cp ./img/bfg_logo.png ./dox/html/logo.png
+	@cp ./img/BfG_Logo_Standard_EN.png ./dox/html/logo.png
 	@cp ./img/qsim_logo.png ./dox/html/qsim.png
 	@cp ./img/qsim_t.ico ./dox/html/qsim.ico
 	@cp -r ./img ./dox/html
