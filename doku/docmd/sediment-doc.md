@@ -1,44 +1,49 @@
-Sediment-Flüsse {#lnk_sediment}
+Sediment fluxes {#lnk_sediment}
 ===============
 
-\warning Momentan ist das Modul ausgeschaltet, das heißt, ein 
-Stoffaustausch mit dem Sediment findet nicht statt. Der Text stammt aus einer 
-früheren Version der Dokumentation.
+\warning At the moment, this module is switched off. That is, there is no 
+nutrient flux between the water column and the sediment. The text is from 
+an older version of the QSim documentation.
 
+The sediment module `sedflux()` which has been included in the water quality 
+model since QSim version 12.30 (2010) onwards describes the nutrient fluxes 
+between sediment and water body and the and the oxygen consumption in the 
+sediment of a waterway. It is based on the the model of DITORO (2001).
+According to this model, the description of a sediment flux model includes 
+three sub-processes, namely the deposition of particulate organic matter 
+(carbon, nitrogen and phosphorus) from the water column, 
+mineralisation (diagenesis) of the deposited material, and finally the reaction 
+of the resulting intermediate products in the sediment, and 
+a partial flow of the substances back into the overlying water.
 
-Das ab QSim-Version 12.30 (2010) im Gewässergütemodell enthaltene Sediment-Modul 
-sedflux() beschreibt die Nährstoffflüsse zwischen Sediment und Wasserkörper 
-sowie den Sauerstoffverbrauch im Sediment eines Fließgewässers. Es basiert auf 
-dem Modell von DITORO (2001). Danach beinhaltet die Beschreibung eines 
-Sediment-Stoffflux-Modells drei Teilprozesse, nämlich die Ablagerung von 
-partikulärem organischem Material (Kohlenstoff, Stickstoff und Phosphor) aus 
-der Wassersäule, die Mineralisation (Diagenese) des abgelagerten Materials und 
-schließlich die Reaktion der so entstandenen Zwischenprodukte im Sediment sowie 
-einen Teilfluss der Stoffe zurück in das überliegende Wasser. Ferner 
-beeinflussen die Diffusion von gelösten organischen Verbindungen in das 
-Sediment und ihre Oxidation die Nährstoffflüsse und den Sauerstoffverbrauch im 
-Sediment. Das in QSim integrierte Sediment-Modul teilt das Sediment in zwei 
-Schichten, eine aerobe Schicht H1, deren Dicke sich aus dem Sauerstoffverbrauch 
-in dieser Schicht ergibt und meist nur wenige Millimeter dick ist, und eine 
-darunterliegende anaerobe Schicht H2 (konstant 10 cm). Das Modul ist ausführlich 
-im BfG-Bericht 1843 (2016, DOI: 10.5675/BfG-1843) beschrieben.
+Furthermore the diffusion of dissolved organic compounds into the sediment and 
+their oxidation influence the nutrient fluxes and oxygen consumption in the 
+sediment. The sediment module integrated into QSim divides the sediment into two 
+layers: an aerobic layer H1, the thickness of which is determined by the oxygen 
+consumption in this layer and which is usually only a few millimetres thick, 
+and an underlying anaerobic layer H2 with a constant thickness of 10 cm. 
+The module is described in detail in 
+BfG Report 1843 (2016, DOI: 10.5675/BfG-1843).
 
-Nachstehend das Beispiel der gelösten organischen 
-Kohlenstoffverbindungen:
+Given below is an example of the dissolved organic carbon compounds:
 
 <center>
  \image html Sedi_orgC.png ""
 </center>
 
-Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
+Further details on the module are described in the following sections:
 
-- \subpage lnk_sediment_prozesse : Erläuterung der im Schwermetall-Baustein 
-implementierten Prozesse 
+- \subpage lnk_sediment_prozesse : Explanation of the processes implemented 
+   within the module
 
-- \subpage lnk_sediment_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_sediment_vars : List of formula symbols and variables
 
-- \subpage lnk_sediment_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_sediment_umsetzung : Details on the code and its numeric 
+   implementation 
 
 
-Textquelle: sediment-doc.md; Codesource: SedFlux.f90, sedflux_huelle.f95; 
-zurück: \ref index 
+Text source: sediment-doc.md; Code sources: SedFlux.f90, sedflux_huelle.f95; 
+go back: \ref lnk_weitere_stoffe or \ref index 
+
+<!-- #todo: search for and add reference Ditoro, 2001 to the reference list -->
+<!-- #todo: BfG Bericht verlinken --> 

@@ -1,25 +1,26 @@
-Kontakt {#lnk_kontakt}
+Contact {#lnk_kontakt}
 =======
 
-QSim wird in der Bundesanstalt für Gewässerkunde ([BfG](www.bafg.de)) entwickelt.
+QSim is being developed within the Federal Institute of Hydrology 
+([BfG](www.bafg.de)).
 
-### QSim auf den Seiten der BfG
+### QSim on the website of the BfG
 
-[QSim](https://www.bafg.de/DE/08_Ref/U2/QSIM/qsim_node.html) in der 
-Bundesanstalt für Gewässerkunde und im Referat U2.
+[QSim](https://www.bafg.de/DE/08_Ref/U2/QSIM/qsim_node.html) within the 
+Federal Institut of Hydrology and within the department of microbial ecology, U2.
 
 
-### Kontakt
+### Contact
 
 [Jens Wyrwa](http://www.bafg.de/DE/08_Ref/U2/05_Mitarbeiter/wyrwa_j/wyrwa_node.html): \n
-Modellentwicklung, QSim-Support 
+model development, QSim-Support 
 
 [Annette Becker](https://www.bafg.de/DE/08_Ref/U2/05_Mitarbeiter/becker_a/becker_node.html): \n
-Support QSim und Gerris
+Support QSim and Gerris
 
 [Marieke Frassl](https://www.bafg.de/DE/08_Ref/U2/05_Mitarbeiter/frassl_m/frassl_node.html): \n
-Anmerkungen/Fragen zum Dokumentationsportal. 
+Documentation portal 
 
 <!-- Frage: wer soll auf die Kontaktseite? -->
 
-aus Datei: kontakt-doc.md
+Text source: kontakt-doc.md
