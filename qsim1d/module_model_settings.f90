@@ -86,6 +86,7 @@ contains
       call get_command_argument(2, cpfad1)
       if (cpfad1 == ' ') cpfad1 = cpfad
       
+      !print*,trim(cpfad),' get_paths ',trim(cpfad1)
       
       ! add file seperator
       if (linux) then 
@@ -94,9 +95,12 @@ contains
          sep = bckslsh(1:1)
       endif
       
-      if (cpfad /= '/F') cpfad = trim(cpfad) // sep
-      cpfad1 = trim(cpfad1) // sep
-      
+      !if (cpfad /= '/F') cpfad = trim(cpfad) // sep
+      if (cpfad1 /= 'DEFINITION')then
+         cpfad1 = trim(cpfad1) // sep
+      endif
+      cpfad = trim(cpfad) // sep
+
    end subroutine get_paths
    
    

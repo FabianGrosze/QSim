@@ -235,7 +235,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
       
       close (55)
       
-   else ! APARAM.nml does not exist
+   else ! APARAM.nml does not exist (is not used yet)
       
       ! check existence of APARAM.txt
       dateiname = trim(adjustl(cpfad)) // 'APARAM.txt'
@@ -322,7 +322,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer,meinrang)
       if (IKge < 0.0 .or. IKke  < 0.0 .or. KNH4  < 0.0 .or. KapN3 < 0.0 .or. &
           HyP1 < 0.0 .or. ToptG < 0.0 .or. Klang < 0.0 .or. ifix < 0) then
          print*,'IKge,IKke,KNH4,KapN3,HyP1,ToptG,Klang,ifix=',IKge,IKke,KNH4,KapN3,HyP1,ToptG,Klang,ifix
-         !!!###!!! call qerror("these Parameters in AParam must not be less than Zero") 
+         call qerror("these Parameters in AParam must not be less than Zero") 
       endif
       
       if (kTemp_Gr < 0.0 .or. kTemp_Ki < 0.0 .or. kTemp_Bl < 0.0) then

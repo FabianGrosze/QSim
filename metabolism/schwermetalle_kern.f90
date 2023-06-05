@@ -50,7 +50,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    logical, intent(in)   :: kontroll !< debugging
    integer, intent(in)   :: jjj      !< debugging
    
-   logical  ,parameter  :: siebzehn = .TRUE. ! Formel 17 für Verteilungskoeffizienten aus Einleitungen ! .FALSE.
+   logical  ,parameter  :: siebzehn = .FALSE. ! .TRUE. ! Formel 17 für Verteilungskoeffizienten aus Einleitungen ! .FALSE.
 
    if(kontroll.and.(jjj==316))then
       print*,jjj,'schwermetalle_kern vorher SSalg,pH=',hSSalgs,vphs,'Zn,Cad,Cu,Ni,As,Pb,Cr,Fe,Hg,Mn,U'

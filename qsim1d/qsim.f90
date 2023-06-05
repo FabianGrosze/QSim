@@ -474,7 +474,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   linux = .true.           ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -486,8 +486,10 @@ program qsim
    ! DEFINITION RUN
    ! writing parameter definition for GUI GERRIS
    ! ==========================================================================
-   if (cpfad == '/F') then
-      call write_gerris_definitions(cpfad1)
+   !if (cpfad == '/F') then
+   if (cpfad1 == 'DEFINITION') then
+      call write_gerris_definitions(cpfad)
+      print*,'stopping after writing GERRIS file format definitions'
       stop
    endif
    
