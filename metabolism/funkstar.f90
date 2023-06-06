@@ -169,8 +169,9 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
             read(zeile,*,iostat = read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
                  ,(werts(ianzRB,ixpp,iwe),ixpp = 1,ipps)
             if (read_error < 0)then
+               print*,trim(zeile)
                print*,iwe,mstr,RBNR,read_error,'=iwe,mstr,RBNR,read_error ; funkstar reading EREIGG.txt'
-               call qerror("werts error while reading zeile")
+               call qerror("werts error while reading zeile from EREIGG.txt")
             endif
             if (iwsim == 4) werts(ianzRB,28,iwe) = max(0., werts(ianzRB,28,iwe))  ! tracer
             ! Umrechnung der "Messwert-Uhrzeit" in Dezimalschreibweise
