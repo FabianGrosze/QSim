@@ -474,7 +474,7 @@ program qsim
    external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
    
    ! --- settings ---
-   linux = .false.           ! compile for linux operating system (Windows is .false.)
+   linux = .false.          ! compile for linux operating system (Windows is .false.)
    kontroll = .false.        ! control-point option used in 3D for extended output at one simulation point
    mitsedflux = .false.      ! sediment fluxes switched off temporarily
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
@@ -6395,10 +6395,10 @@ do while (.not. last_step)
          
          1521 continue
          kontroll=.false.
-         if ((ilbuhn == 0)) then
-            print*,mstr,anze+1,' ========== going to call Schwermetalle ========== '
-            if(mstr==1)kontroll=.true.
-         endif
+         !if ((ilbuhn == 0)) then
+         !   print*,mstr,anze+1,' ========== going to call Schwermetalle ========== '
+         !   if(mstr==1)kontroll=.true.
+         !endif
          call Schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,iformVert,ianze_max      &
                            ,hglZn,hgsZn,egsZn,eglZn,ZnSed       &
                            ,hglCad,hgsCad,egsCad,eglCad,CadSed  &
@@ -8216,7 +8216,8 @@ do while (.not. last_step)
                if((output_strang(iji)==mstr).and.(output_querprofil(iji)==iior))then
                   ausdruck=.true.
                   if(Stakm(mstr,iior)/=output_km(iji))print*,'Stakm(mstr,iior)/=output_km(iji)',   &
-                                                              Stakm(mstr,iior),mstr,iior,output_km(iji),iji
+                                                              Stakm(mstr,iior),mstr,iior,output_km(iji),iji,  &
+                                                              'Kilometerangabe in ausgabe_querprofile.txt falsch'
                end if ! output_km
             end do !iji
             if(anz_csv_output<1)ausdruck=.true. !! all profiles when ausgabe_querprofile.txt is missing
@@ -10431,7 +10432,7 @@ end do ! do while .not. last_step
    close(157)
    close(158)
    
-   write(*,*) 'Successfull End of Simulation'
+   write(*,*) 'Successfull End of Simulation; Version= ',trim(versionstext)
    
 end program qsim
 

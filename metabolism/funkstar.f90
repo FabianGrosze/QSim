@@ -359,7 +359,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (ipp == 30) gsPbs(mstr,RBNR)  = ywert
          if (ipp == 31)then
             glPbs(mstr,RBNR)  = ywert
-            print*,mstr,RBNR,' funkstar gsPb,glPb =',gsPbs(mstr,RBNR),glPbs(mstr,RBNR)
+            !print*,mstr,RBNR,' funkstar gsPb,glPb =',gsPbs(mstr,RBNR),glPbs(mstr,RBNR)
          endif
          if (ipp == 32) gsCads(mstr,RBNR) = ywert
          if (ipp == 33) glCads(mstr,RBNR) = ywert
@@ -368,7 +368,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (ipp == 36) gsFes(mstr,RBNR)  = ywert
          if (ipp == 37)then
             glFes(mstr,RBNR)  = ywert
-            print*,mstr,RBNR,' funkstar gsFe,glFe =',gsFes(mstr,RBNR),glFes(mstr,RBNR)
+            !print*,mstr,RBNR,' funkstar gsFe,glFe =',gsFes(mstr,RBNR),glFes(mstr,RBNR)
          endif
          if (ipp == 38) gsCus(mstr,RBNR)  = ywert
          if (ipp == 39) glCus(mstr,RBNR)  = ywert
@@ -383,7 +383,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (ipp == 48) gsZns(mstr,RBNR)  = ywert
          if (ipp == 49)then
             glZns(mstr,RBNR)  = ywert
-            print*,mstr,RBNR,' funkstar gsZn,glZn =',gsZns(mstr,RBNR),glZns(mstr,RBNR)
+            !print*,mstr,RBNR,' funkstar gsZn,glZn =',gsZns(mstr,RBNR),glZns(mstr,RBNR)
          endif
          if (ipp == 50) gsAss(mstr,RBNR)  = ywert
          if (ipp == 51) glAss(mstr,RBNR)  = ywert
