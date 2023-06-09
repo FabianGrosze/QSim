@@ -138,8 +138,8 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                v6 = 0.0
                fsch = 1.
                if (ischif == 1) then
-                  call schiff(vmitt1,tiefe1,v6,nschif)
-                  fsch = -5.88*v6+1.76
+                  call schiff(vmitt1, tiefe1, nschif, v6)
+                  fsch = -5.88 * v6 + 1.76
                   if (fsch < 0.0)fsch = 0.0
                   if (fsch > 1.)fsch = 1.
                endif

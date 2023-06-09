@@ -143,15 +143,10 @@ subroutine algae_huelle(i)
    antbl(1) = planktonic_variable_p(20+(i-1)*number_plankt_vari) ! Anteil der Blaualgen am Gesamt-Chlorophyll-a
    antbl(2) = antbl(1)
    eantbl(1) = 0.0  ! Einleitungswert (keine Einleitungen in T-QSim)
-   ! akchl, agchl, abchl ; Biomasse/Chlorophyll Verhältnis in Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! akgmax, aggmax, abgmax ; Max. Wachstumsate d. Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! akksn, agksn, abksn ; N-Halbsättigung Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! akksp, agksp, abksp; P-Halbsättigung Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! akkssi ; Si-Halbsättigung Kieselalgen, direkt aus QSimDatenfelder | Aparam.txt
+
    saettk = transfer_value_p(6)    ! Rückgabewert ???
    saettg = transfer_value_p(8)    ! ???
    saettb = transfer_value_p(9)    ! ???
-   ! akremi, agremi, abremi ; Grundrespiration d. Algen, direkt aus QSimDatenfelder | Aparam.txt
    akrema = 0.0 ! unbenutzt
    !if(kontroll)print*,'algae_huelle: PCmax =',(akgmax+akremi)/(1.-frmuke) ! max C-spezifische Photosyntheserate bei optimal Temperatur
    sbioki = 0.0 ! unbenutzt
@@ -228,8 +223,6 @@ subroutine algae_huelle(i)
    ischif = zone(point_zone(iglob))%schiff%schifffahrts_zone ! schifffahrt in dieser module::zonen ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
    ilbuhn = 0          ! keine Buhnen
    ieros_flag = ieros ! Erosionsflag unbenutzt
-   ! zakie,zagre,zable ! Filtrierbarkeit der Algen in den Algenroutinen unbenutzt
-   ! askie, ASGRE, asble, Sedimentierbarer Anteil der Algen; jetzt direkt aus QSimDatenfelder | APARAM.txt
    cmatki(1) = benthic_distribution_p(9+(i-1)*number_benth_distr) ! Abspülung benthischer kiesel-Algen
    cmatki(2) = cmatki(1)
    cmatgr(1) = benthic_distribution_p(10+(i-1)*number_benth_distr) ! Abspülung benthischer grün-Algen
@@ -309,20 +302,9 @@ subroutine algae_huelle(i)
       up_PBz(j,1) = trans_quant_vert_p(j+(7-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! P (Phosphor) Aufnahmerate der blau-Algen
       up_PBz(j,2) = up_PBz(j,1)
    end do
-   ! Qmx_PK, Qmx_PG, Qmx_PB ; max. Phosphoranteil Algenbiomasse, direkt aus QSimDatenfelder | APARAM.txt
-   ! Qmn_PK, Qmn_PG, Qmn_PB ; min. Phosphoranteil Algenbiomasse, direkt aus QSimDatenfelder | Aparam.txt
-   ! upmxPK, upmxPG, upmxPB ; max. P-Aufnahmerate der Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! Qmx_NK, Qmx_NG, Qmx_NB ; ! max. Stickstoffanteil Algenbiomasse, direkt aus QSimDatenfelder | APARAM.txt
-   ! Qmn_NK, Qmn_NG, Qmn_NB ; ! min. Stickstoffanteil Algenbiomasse, direkt aus QSimDatenfelder | Aparam.txt
-   ! upmxNK, upmxNG, upmxNB ; ! max. N-Aufnahmerate der Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! Qmx_SK ! max. Siliziumanteil der Kiesel-Algenbiomasse, direkt aus QSimDatenfelder aus APARAM.txt
-   ! Qmn_SK ! min. Siliziumanteil der Kiesel-Algenbiomasse, direkt aus QSimDatenfelder | Aparam.txt
-   ! upmxSK ! max. Si-Aufnahmerate der Kieselalgen, direkt aus QSimDatenfelder | Aparam.txt
+
    Skmor(1) = planktonic_variable_p(69+nk)  ! Silizium in schwebenden, abgestorbenen Kieselalgen
    Skmor(2) = Skmor(1)
-   ! IKke, IKge, IKbe ; ! Lichtsättigung für Photosynthese der Algen, direkt aus QSimDatenfelder | Aparam.txt
-   ! frmuke, frmuge, frmube ; ! Anteil der vom Wachstum abhängigigen Respiration, direkt aus QSimDatenfelder | Aparam.txt
-   !alamda ! Absorptionskoeff. für Gelbstoffe bei 440 nm, direkt aus QSimDatenfelder | APARAM.txt
    akitbr(1) = transfer_quantity_p(48+(i-1)*number_trans_quant) ! Kieselalgen ??
    akitbr(2) = akitbr(1)
    !if(iglob.eq.kontrollknoten)print*,'vor algaeski; akitbr=',akitbr(1)
@@ -395,10 +377,6 @@ subroutine algae_huelle(i)
    Dz2D(1:2) = transfer_quantity_p(61+(i-1)*number_trans_quant) ! vertikalen Dispersionskoeffizient aus k_eps()
    ! vorsichtshalber:
    Dz2D(1:2) = 0.0
-   !ToptK, ToptG, ToptB ; ! Optimal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
-   !TmaxK, TmaxG, TmaxB ; ! Letal-Temperatur für Kieselalgenwachstum, direkt aus QSimDatenfelder | APARAM.txt
-   !TkTemp_Ki  ! empirische Konstante KT(µ) für Temperaturabhängigkeit (Exponent), direkt aus QSimDatenfelder | APARAM.txt
-   ifix = 1 ! neu in runge-kutta ???
    sedAlg_MQ(1,1) = benthic_distribution_p(52+(i-1)*number_benth_distr) ! ?? wird aus sedflux kommen
    sedAlg_MQ(1,2) = sedAlg_MQ(1,1)
    if (kontroll) print*,'vor algaeski: sedAlg_MQ = ', sedAlg_MQ(1,1)
@@ -410,11 +388,9 @@ subroutine algae_huelle(i)
       hQ_NBz(1,j,1) = plankt_vari_vert_p(j+(19-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! blau
       hQ_NBz(1,j,2) = hQ_NBz(1,j,1)
    end do
-   !     Für die Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
-   !     Angabe in mgChla/mgC  ; in ini_algae() gesetzt in . Variablendefinition in module QSimDatenfelder
-   !a1Ki = -0.059
-   !a2Ki = 0.28
-   !a3Ki = 0.076
+   ! Für die Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
+   ! Angabe in mgChla/mgC  ; in ini_algae() gesetzt in . Variablendefinition in module QSimDatenfelder
+   
    EXTKS(1,1:2) = zone(point_zone(iglob))%seditemp%extiks ! Extinktionskoeffizient für PARS ((nicht mehr)nur bei Temperaturmodellierung erforderlich!)
    akmor_1(1,1:2) = planktonic_variable_p(77+nk) ! ?? Kiesel-Algen
    agmor_1(1,1:2) = planktonic_variable_p(78+nk) ! ?? Gruen-Algen
@@ -446,59 +422,47 @@ subroutine algae_huelle(i)
    ! ==========================================================================
    ! Algenaufruf in genau der Reihenfolge Kiesel, Blau, Grün
    ! Grünalgen zuletzt, weil dort zusammengefasst wird   sonst nachfolgende zusammenfassung:
-   ! version  Stoffumsatzroutinen aus der QSim1D Version 13_40 vom 15. Oktober 2018 in QSim3D
-   call algaeski(SCHWI,TFLIE,TEMPW,tempwz                                       &
-                 ,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg      &
-                 ,CHLA,ir                                                       &
-                 ,SI,dalgki,dalgak,flag,elen,ior,anze                           &
-                 ,sedalk,algzok,echla,qeinl,vabfl                               &
-                 ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl                    &
-                 ,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema          &
-                 ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda &
-                 ,ilamda,eta,aw,ack,acg,acb,ah,as,al                            &
-                 ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus              &
-                 ,akraus,tauscs,ischif,ilbuhn,ieros,askie,cmatki,algdrk         &
-                 ,algcok,ess,zooind,GROT,SS,Q_PK,Q_NK,Q_SK                      &
-                 ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad                  &
-                 ,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                     &
-                 ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke   &
-                 ,alamda,akitbr,chlaz,akibrz,akiz                               &
-                 ,chlaL,qeinlL,ieinLs,algakz,algzkz,ablz,agrz                   &
-                 ,Chlaki,hchlkz,hchlgz,hchlbz                                   &
-                 ,hCChlkz,hCChlbz,hCChlgz                                       &
-                 ,Dz2D,ToptK                                                    &
-                 ,kTemp_Ki                                                      &
-                 ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz    &
-                 ,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB                             &
-                 ,mstr,it_h,itags,monats,isim_end                               &
-                 ,extkS                                                         &
-                 ,akmor_1,agmor_1,abmor_1                                       &
-                 ,kontroll,iglob)
    
-   call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                       & 
-                 ,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl,abchl,abgmax,abksn,abksp,saettb,abremi   &
-                 ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tauscs,ischif,ilbuhn,ieros&
-                 ,ZAKI,ZAGR,ZABL,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GROT,SS,extk             &
-                 ,extk_lamda                                                                                     &
-                 ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                             &
-                 ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                    &
-                 ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz             &
-                 ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ          &
-                 ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                             &
-                 ,kontroll ,iglob )
+   call algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4,   &
+                 gelp, svhemk, svhemb, svhemg, chla, si, dalgki, dalgak, flag, &
+                 elen, anze, sedalk, algzok, echla, qeinl, vabfl, dkimor,      &
+                 jiein, evkigr, vkigr, antbl, eantbl, saettk, akbcm, abbcm,    &
+                 agbcm, aki, abl, agr, extk, extk_lamda, ilamda, eta, aw, ack, &
+                 acg, acb, ah, as, al, sised, tpki, iwied, akmuea, ftaaus,     &
+                 fiaus, fheaus, akraus, tauscs, ischif, ilbuhn, cmatki, algdrk,&
+                 algcok, zooind, grot, ss, q_pk, q_nk, q_sk, vnh4z, vno3z,     &
+                 gelpz, siz, dalgkz, nkzs, dh2d, up_pkz, up_nkz, up_siz, skmor,&
+                 akitbr, chlaz, akibrz, akiz, algakz, algzkz, ablz, agrz,      &
+                 chlaki, hchlkz, hchlgz, hchlbz, hcchlkz, hcchlbz, hcchlgz,    &
+                 dz2d, chlabl, chlagr, a1ki, sedalg_mq, sedalk0, hq_nkz,       &
+                 hq_ngz, hq_nbz, q_pg, q_ng, q_pb, q_nb, mstr, it_h, isim_end, &
+                 extks, akmor_1, agmor_1, abmor_1,                             &
+                 kontroll, iglob)
    
-   call algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                   &
-                 ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl   &
-                 ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr       &
-                 ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                              &
-                 ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                &
-                 ,tpgr,uhrz,iwied,algcog                                                                            &
-                 ,figaus,agmuea,fhegas,agreau,tauscs,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GROT,Q_PG,Q_NG   &
-                 ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG            &
-                 ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                &
-                 ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0,hQ_NGz&
-                 ,a1Gr,a2Gr,a3Gr, isim_end,agmor_1                                                                  &
-                 ,kontroll,iglob)
+   call algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,     &
+                 svhemb, chla, dalgbl, dalgab, anze, sedalb, algzob,           & 
+                 dblmor, saettb,                                               &
+                 vkigr, abbcm, abl, tpbl, fibaus, abmuea, fhebas, abreau,      &
+                 tauscs, ischif, ilbuhn, ieros, algdrb, algcob,                &
+                 antbl, extk, extk_lamda, ilamda, ack, acg, acb, al,           &
+                 vnh4z, vno3z, gelpz, dalgbz, nkzs, dh2d, tempwz, up_pbz,      &
+                 up_nbz,                                                       &
+                 q_nb, q_pb,  abltbr, ablbrz, up_n2z, ablz,                    &
+                 chlabl, a1bl, hchlbz, hcchlbz, algabz,                        &
+                 algzbz, dz2d,  sedalg_mq,                                     &
+                 sedalb0, hq_nbz, mstr, isim_end, abmor_1,                     &
+                 kontroll, iglob)
+   
+   call algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,     &
+                 svhemg, chla, dalggr, dalgag, anze, sedalg, algzog, dgrmor,   &
+                 vkigr, chlaki, chlagr, algdrg, agbcm, agr, cmatgr, antbl,     &
+                 chlabl, extk, extk_lamda, ilamda, eta, aw, ack, acg, acb, ah, &
+                 as, al, tpgr, algcog, figaus, agmuea, fhegas, agreau, tauscs, &
+                 ischif, ilbuhn, q_pg, q_ng, vnh4z, vno3z, gelpz, dalggz, nkzs,&
+                 dh2d, tempwz, mstr, up_pgz, up_ngz, agrtbr, agrbrz, agrz,     &
+                 chlaz, hchlkz, hchlgz, hchlbz, hcchlgz, algagz, algzgz, dz2d, &
+                 sedalg_mq, sedalg0, hq_ngz, a1gr,  isim_end, agmor_1,         &
+                 kontroll, iglob)
    
    ! vkigr(ior) = chlaki(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
    ! antbl(ior) = chlabl(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
@@ -650,8 +614,7 @@ subroutine algae_huelle(i)
    ! Kontrolle und Prüfung auf NaN
    ! ==========================================================================
    if (num_lev_trans > nkzs(1)) call qerror('algae_huelle Tiefenschichtung trans_quant_vert passt nicht')
-   !if(kontroll) print*,'aki(1),chla(1),akiz(1,1),up_NKz(1,1)',aki(1),chla(1),akiz(1,1),up_NKz(1,1)
-   !call ini_algae() !! ### algae_huelle zu Testzwecken überbrückt
+
    do k = 1,number_plankt_vari
       if (isnan(planktonic_variable_p(k+nk))) then
          print*,'nach algaes**: isnan(planktonic_variable_p  node#',iglob,' variable# ',k

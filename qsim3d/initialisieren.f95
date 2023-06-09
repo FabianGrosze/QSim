@@ -80,7 +80,10 @@ subroutine initialisieren()
       do i = 1,zonen_anzahl ! alle i zonen
          print*,'initialisieren: ini_randnr(',i,') = ',zone(i)%ini_randnr
       end do ! alle i zonen
-      call ini_algae(akchl,abchl,agchl,Cagr,Caki,Cabl,CZoo,a1Ki,a2Ki,a3Ki,a1Bl,a2Bl,a3Bl,a1Gr,a2Gr,a3Gr) ! Konstanten aus QSimDatenfelder für Algen belegen
+      
+      ! Konstanten für Algen belegen
+      call ini_algae(akchl, abchl, agchl, a1Ki, a1Bl, a1Gr)
+      
       do i = 1,zonen_anzahl ! alle i zonen
          print*,'initialisieren nach ini_algae: ini_randnr(',i,') = ',zone(i)%ini_randnr
       end do ! alle i zonen

@@ -90,10 +90,6 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
-		<Filter Name="zooplankton">
-		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
-		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90">
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -136,6 +132,10 @@
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="zooplankton">
+		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
+		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<File RelativePath="..\metabolism\albenth.f90"/>
 		<File RelativePath="..\metabolism\algaesbl.f90"/>
 		<File RelativePath="..\metabolism\algaesgr.f90"/>
@@ -157,7 +157,6 @@
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
-		<File RelativePath="..\metabolism\runge_kutta.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>
 		<File RelativePath="..\metabolism\schiff.f90"/>
 		<File RelativePath="..\metabolism\schweb.f90"/>
@@ -218,7 +217,6 @@
 		<File RelativePath=".\randbedingungen.f90"/>
 		<File RelativePath=".\silicate_inflow_1d.f90"/>
 		<File RelativePath=".\sys_gitterStrang.f90"/>
-		<File RelativePath=".\sys_gitterTrans.f90"/>
 		<File RelativePath=".\sys_z_gitter.f90"/>
 		<File RelativePath=".\sysgen.f90"/>
 		<File RelativePath=".\thomas.f90"/>

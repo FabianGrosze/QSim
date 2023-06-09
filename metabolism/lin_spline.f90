@@ -28,48 +28,65 @@
 !> Berechnung eines linearen Splines
 !! @author Volker Kirchesch
 !! @date 27.08.2012
-subroutine lin_spline (dz_alt,dz_neu,deltaz,n_alt_s,n_neu_s,Y, YY,i_zeiger,iaus,ior)
+subroutine lin_spline(dz_alt, dz_neu, deltaz, n_alt_s, n_neu_s, y, yy, i_zeiger)
    implicit none 
    
-   integer                :: n_neu_s, n_alt_s, n_alt, n, nn
-   integer                :: i_zeiger, ior, iaus
-   real                   :: x_neu, x_alt_1, x_alt, dz_neu, dz_alt, deltaz
-   real,    dimension(50) :: y, yy
+   ! --- dummy arguments ---
+   real,    intent(inout)              :: dz_alt
+   real,    intent(inout)              :: dz_neu
+   real,    intent(in)                 :: deltaz
+   integer, intent(in)                 :: n_alt_s
+   integer, intent(in)                 :: n_neu_s
+   real,    intent(in),  dimension(50) :: y
+   real,    intent(out), dimension(50) :: yy
+   integer, intent(in)                 :: i_zeiger
    
-   x_neu = 0.0
-   x_alt = 0.0
-   if (i_zeiger == 0) then  !  i_zeiger=0: altes Gitter dz = 0.25
+   ! --- local variables ----
+   integer :: n_alt, n, nn
+   real    :: x_neu, x_alt_1, x_alt 
+   
+   if (i_zeiger == 0) then  
+      ! altes Gitter dz = 0.25
+      x_neu = 0.0
       n_alt = 2
-   else             !  i_zeiger=1: neues Gitter dz = 0.25
+   else       
+      ! neues Gitter dz = 0.25
       x_neu = -dz_neu
       n_alt = 1
    endif
    
-   do n = 1,n_neu_s  ! Schleife neues Gitter
-      if (i_zeiger == 0 .and. n == n_neu_s)dz_neu = deltaz
+   ! Schleife neues Gitter
+   x_alt = 0.0
+   do n = 1, n_neu_s  
+      if (i_zeiger == 0 .and. n == n_neu_s) dz_neu = deltaz
       x_neu = x_neu + dz_neu
-      do nn = n_alt,n_alt_s ! Schleife altes Gitter
+      
+      ! Schleife altes Gitter
+      do nn = n_alt,n_alt_s 
          if (i_zeiger == 1 .and. nn == n_alt_s)dz_alt = deltaz
-         if (nn > 1)x_alt_1 = x_alt
+         
+         if (nn > 1) x_alt_1 = x_alt
          x_alt = x_alt + dz_alt
+         
          if (x_neu <= x_alt .and. nn > 1) then
-            YY(n) = Y(nn-1)+(((y(nn)-y(nn-1))/dz_alt)*(x_neu-x_alt_1))
-            ! if(ior==113.and.iaus==1)write(96,*)n_alt_s, n_neu_s,n,nn,x_neu,x_alt
+            yy(n) = y(nn-1) + (((y(nn) - y(nn-1)) / dz_alt) * (x_neu - x_alt_1))
             n_alt = nn
             x_alt = x_alt - dz_alt
             exit
          endif
+         
          if (x_neu <= x_alt .and. nn == 1) then
-            YY(n) = Y(nn)
+            yy(n) = y(nn)
             n_alt = nn
             x_alt = x_alt - dz_alt
             exit
          endif
-         cycle
+      
       enddo
-      if (ior == 113 .and. iaus == 1)write(96,*)n,nn
-      if (x_neu>=x_alt .and. nn>=n_alt_s.and.n <= n_neu_s)YY(n) = Y(n_alt_s)
+   
+      if (x_neu >= x_alt .and. nn >= n_alt_s .and. n <= n_neu_s) then
+         yy(n) = y(n_alt_s)
+      endif
    enddo
-   ! if(x_neu>x_alt)YY(n_neu_s) = Y(n_alt_s)
-   if (ior == 113 .and. iaus == 1)write(96,*)n,nn,n_alt_s,n_neu_s,Y(n_alt_s)
+
 end subroutine lin_spline

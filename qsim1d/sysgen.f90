@@ -30,17 +30,17 @@
 !! Segmentlaenge variabel, Zeitschritt fest gleich 60 min
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
-subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
-                  ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
-                  ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
-                  ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
-                  ,SedOMb,w2,w2b,dKornb,SPEWKSuS,WUEBKuS,PSREFSuS,extkuS,SPEWKSS,WUEBKS,PSREFSS,extkS  &
-                  ,itags,monats,uhrz,ifhStr,fhprof,iverfahren,ianze_max,HMQ,bvMQ,bHMQ,ieros)
+subroutine sysgen(ilang,  iwsim, nbuhn, akmB, ekmB, DLB, tau2B, alphaB, mUs                                        &
+                  , aschif, eschif, mSs, mStra, raua, bsohla, boeamq, hlboea, hflaea, htiefa                       &
+                  , hvF, hQaus, SedOM, BedGSed, sedvvert, dKorn, abfr, mStas, Startkm, mRBs, RBtyp, RBkm, ij       &
+                  , tflie, STRdt, STRiz, cpfad, wsp_UW, WSP_OW                                                     &
+                  , SedOMb, w2, w2b, dKornb, SPEWKSuS, WUEBKuS, PSREFSuS, extkuS, SPEWKSS, WUEBKS, PSREFSS, extkS  &
+                  , itags, monats, uhrz, ifhStr, fhprof, iverfahren, ianze_max, HMQ, bvMQ, bHMQ, ieros)
    
    use allodim
    implicit none
    
-   integer                                :: nndr, mu, ms, mstr, mstrl
+   integer                                :: mu, ms, mstr, mstrl
    integer                                :: monats, lboemz, khyd, jz, jsgn
    integer                                :: jieinz, i, iw, iwsim, iverfahren
    integer                                :: itst, itags, isum_str, iseg, isegst
@@ -147,8 +147,6 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
    dtv = 0.0
    dt = 1e30
    dt1 = dt
-   ! nndr : Anzahl der Dreissena-Kohorten
-   nndr = 2
    
    ! open(unit=36,file='diffus')
    ! rewind (36)
@@ -180,7 +178,9 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
            ,hflbu(mstrl,khyd),hWFlbu(mstrl,khyd),hhbu(mstrl,khyd)         &
            ,hblabu(mstrl,khyd),hbsobu(mstrl,khyd),hvmbu(mstrl,khyd)       &
            ,iBliak(mstrl,khyd),iBreak(mstrl,khyd)
-      if (iwsim == 2 .or. iwsim == 4 .or. iwsim == 5)SedOM(mstrl,khyd) = 0.0
+      
+      if (iwsim == 2 .or. iwsim == 4 .or. iwsim == 5) SedOM(mstrl,khyd) = 0.0
+      
       if (ieros == 1 .and. nbuhn(mstrl) > 0) then
          if (bvmq(mstrl,khyd) > 0.0 .and. (hVF(mstrl,khyd)*0.13) > bvmq(mstrl,khyd)) then
             fhconH = htiefa(mstrl,khyd)/HMQ(mstrl,khyd)-1.
@@ -301,7 +301,7 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
          vmbu(khyd) = hvmbu(mstr,khyd)
       enddo
       
-      !      khyd = khyd+1
+      ! khyd = khyd+1
       WSP(khyd) = hWSP(mstr,khyd)
       Qaus(khyd) = hQaus(mstr,khyd)
       Flaea(khyd) = hFlaea(mstr,khyd)
@@ -353,37 +353,40 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       if (ihydr == 0) then
          fkm(1) = fkmhyd(khyd)
          ihydr = 1
-         if (abfr(mstr) == 0)absta(khyd) = absta(khyd)+                     &
-             ((startkm(mstr)-fkmhyd(khyd))*1000.)
-         if (abfr(mstr) == 1)absta(khyd) = absta(khyd)+                     &
-             ((fkmhyd(khyd)-startkm(mstr))*1000.)
+         if (abfr(mstr) == 0) absta(khyd) = absta(khyd) + ((startkm(mstr)-fkmhyd(khyd))*1000.)
+         if (abfr(mstr) == 1) absta(khyd) = absta(khyd) + ((fkmhyd(khyd)-startkm(mstr))*1000.)
          fkm(1) = startkm(mstr)
          qsaus(1) = qaus(khyd)
       endif
       
-      23 vabst = (vob(khyd)+vob(khyd))/2.
+      23 continue
+      vabst = (vob(khyd)+vob(khyd))/2.
       if (nbuhn(mstr) == 1)bvabst = (vmbu(khyd)+vmbu(khyd))/2.
       jsgn = 1
       if (vabst < 0.0)jsgn = -1
       if (abs(vabst) < 0.0001)vabst = 0.0001*jsgn
       
-      30 dx1 = abs(vabst)*dt1
+      30 continue
+      dx1 = abs(vabst)*dt1
       if (iseg > isegs(mstr))goto 130
       
       if (i == 0) then
          fkm1 = fkm(1)
          goto 122
       endif
-      if (abfr(mstr) == 0)fkm1 = fkm(i)-elen(i)/1000.
-      if (abfr(mstr) == 1)fkm1 = fkm(i)+elen(i)/1000.
-      122 if (abfr(mstr) == 0)tstkm = fkm1-((sumx+dx1)/1000.)
-      if (abfr(mstr) == 1)tstkm = fkm1+((sumx+dx1)/1000.)
-      if (abfr(mstr) == 0 .and. tstkm < segkm(mstr,iseg))                 &
-          dx1 = ((fkm1-segkm(mstr,iseg))-sumx/1000.)*1000.
-      if (abfr(mstr) == 1 .and. tstkm > segkm(mstr,iseg))                 &
-          dx1 = ((abs(fkm1-segkm(mstr,iseg)))-sumx/1000.)*1000.
       
-      130 dt2 = dt1
+      if (abfr(mstr) == 0) fkm1 = fkm(i) - elen(i)/1000.
+      if (abfr(mstr) == 1) fkm1 = fkm(i) + elen(i)/1000.
+      
+      122 continue
+      if (abfr(mstr) == 0) tstkm = fkm1 - ((sumx+dx1)/1000.)
+      if (abfr(mstr) == 1) tstkm = fkm1 + ((sumx+dx1)/1000.)
+      
+      if (abfr(mstr) == 0 .and. tstkm < segkm(mstr,iseg)) dx1 = ((fkm1-segkm(mstr,iseg))-sumx/1000.)*1000.
+      if (abfr(mstr) == 1 .and. tstkm > segkm(mstr,iseg)) dx1 = ((abs(fkm1-segkm(mstr,iseg)))-sumx/1000.)*1000.
+      
+      130 continue
+      dt2 = dt1
       dt2 = dx1
       if ((dx1-absta(khyd)) > 0.001) then
          dt2 = absta(khyd)/abs(vabst)
@@ -443,7 +446,8 @@ subroutine sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs           
       sbKorn = sbKorn+dKornb(mstr,khyd)*dt2
       sumbt1 = sumbt1+dt2
       
-      138 sumx = sumx+dx1
+      138 continue
+      sumx = sumx+dx1
       sumt = sumt+dt2
       sumt1 = sumt1+dt2
       i = i+1

@@ -43,14 +43,12 @@
 !! aus Datei module_modell.f95
 module modell
    implicit none
-   save   ! stellt sicher, dass der Inhalt in den Speicherplaetzen
-   ! zwischen den einzelnen Einbindevorgaengen in den
-   ! einzelnen Programmeinheiten unveraendert bleibt
+   save 
+   
    include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mpif.h: integer*8 und real*8 raus
    ! die in mpif.h enthaltenen SAVE statements sind dann
-   ! doppelt gemoppelt und führen zu einer Warning, die aber ignoriert werden kann.
-   real :: PI
-   real , parameter :: grav = 9.81
+   ! doppelt definiert und führen zu einer Warning, die aber ignoriert werden kann.
+   real, parameter :: grav = 9.81
    !-------------------------------------------------------------------------------parallel_datenfelder
    ! Beschreibung in parallel.f95
    !> nummer und Gesamtzahl prozessoren (MPI)
@@ -622,7 +620,6 @@ contains
       character (len = longname) :: aufrufargument, systemaufruf, cmd
       integer io_error,sysa, icount, i, stat, length, errcode
       !integer antriebsart
-      pi = 4.0*atan(1.0)
       call get_command(cmd,length,stat)
       !print*, 'Aufruf:', cmd(1:length)
       icount = command_argument_count()

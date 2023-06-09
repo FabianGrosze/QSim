@@ -28,13 +28,10 @@
 !> array dimenions
 !!
 !! Felddimensionierungs-Parameter
-!!
-!! from Datei qsim.f09 ; back zu \ref index
 module allodim
 
    implicit none
-   save
-   
+     
    public
 
    integer , protected :: azstrs         !< \anchor azstrs Stranganzahl
@@ -47,11 +44,8 @@ module allodim
 contains
 
    subroutine set_azstrs(azstrs_in)
-   
       integer, intent(in) :: azstrs_in
-   
       azstrs = azstrs_in
-   
    end subroutine set_azstrs
    
 end module allodim

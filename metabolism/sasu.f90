@@ -29,6 +29,7 @@
 !! @author Volker Kirchesch
 !! @date 05.11.1987
 subroutine sasu(itags, monats, geob, geol, sa, su, zg, zlk, dk, tdj)
+   use aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -46,9 +47,7 @@ subroutine sasu(itags, monats, geob, geol, sa, su, zg, zlk, dk, tdj)
    ! --- local variables ---
    integer :: anzt, ineg
    real    :: ph, fk, t0, t1, d0, geobn
-   ! TODO (Schönung): Define pi globally
-   real, parameter :: pi = 22./7.
-   
+      
    external :: qerror, tage
    
    if (geoB < -90.0  .or. geoB > 90.0 .or. &

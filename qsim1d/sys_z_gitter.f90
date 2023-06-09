@@ -27,15 +27,15 @@
 subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,        &
                         hno2z,hno3z,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,     &
                         hchlgz,hchlbz,hgesPz,hgesNz,hQ_NKz,hQ_NBz,hQ_NGz,hCChlkz,    &
-                        hCChlbz,hCChlgz,itags,monats)
+                        hCChlbz,hCChlgz)
    ! znkzs:  Anzahl der Gitterpunkte des alten Gitters
    ! hnkzs:  Anzahl Gitterpunkte des neuen Gitters
    
    use allodim
    implicit none
    
-   integer                                :: nkz, nkzs_alt, monats, i_zaehlv, i_var
-   integer                                :: i_vars, itags, istep, ire, ior
+   integer                                :: nkz, nkzs_alt, i_zaehlv, i_var
+   integer                                :: i_vars, istep, ire, ior
    integer                                :: ihc_wert, ifak, ibeg
    integer                                :: azStr, nkzs_neu, mstr
    real                                   :: hc_wert, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
@@ -68,14 +68,17 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
       
       do ior = ibeg,iRe,istep ! Schleife über die longitudinalen Gitterpunkte
          
-         if (hnkzs(mstr,ior) == 1)cycle  !Bei 1D-Modellierung wird die Gitterbelegunsroutine übersprungen
+         ! Bei 1D-Modellierung wird die Gitterbelegunsroutine übersprungen
+         if (hnkzs(mstr,ior) == 1)cycle  
+         
          ! Ermittlung der Tiefe des alten Gitters
          gstiefe_alt = (znkzs(mstr,ior)-1)*dH2D
+         
          ! Ermittlung der Tiefe des neuen Gitters
          gstiefe_neu = (hnkzs(mstr,ior)-1)*dH2D
          
-         dTiefe = gsTiefe_neu-gstiefe_alt   ! Tiefenänderung zwischen Tiefe im neuen und alten Zeitschritt
-         hcdH2D = dTiefe/(znkzs(mstr,ior)-1)
+         dTiefe = gsTiefe_neu - gstiefe_alt 
+         hcdH2D = dTiefe / (znkzs(mstr,ior)-1)
          ifak = 1
          ! if(nkzs_neu<nkzs_alt)ifak = -1
          nkzs_alt = znkzs(mstr,ior)
@@ -270,8 +273,8 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
             end select zeiger_var
             i_zaehlv = i_zaehlv+1
             
-            call lin_interpolation(y_var,y_var_neu,hctiefe_neu,tiefe_neu, &
-                                   nkzs_alt, nkzs_neu,i_zaehlv,itags,monats,mstr,ior)
+            call lin_interpolation(y_var, y_var_neu, hctiefe_neu, tiefe_neu, &
+                                   nkzs_alt, nkzs_neu)
             
          enddo ! Ende Variablenschleife
          !

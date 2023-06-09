@@ -26,8 +26,8 @@
 ! --------------------------------------------------------------------------- !
 
 !> Bestimmung der neuen Gitterwerte durch lineare Interpolation
-subroutine lin_interpolation(y_var, y_var_new, hctiefe_new, tiefe_new, nkzs_old,  &
-                             nkzs_new, i_zaehlv, itags, monats, mstr, ior)
+subroutine lin_interpolation(y_var, y_var_new, hctiefe_new, tiefe_new, &
+                             nkzs_old, nkzs_new)
    implicit none
    
    ! --- dummy arguments ---
@@ -37,12 +37,7 @@ subroutine lin_interpolation(y_var, y_var_new, hctiefe_new, tiefe_new, nkzs_old,
    real,    intent(in),  dimension(50) :: tiefe_new
    integer, intent(in)                 :: nkzs_old
    integer, intent(in)                 :: nkzs_new
-   integer, intent(in)                 :: i_zaehlv ! TODO: unused
-   integer, intent(in)                 :: itags    ! TODO: unused
-   integer, intent(in)                 :: monats   ! TODO: unused
-   integer, intent(in)                 :: mstr     ! TODO: unused
-   integer, intent(in)                 :: ior      ! TODO: unused
-   
+
    ! --- local variables ---
    integer :: i_neu, nkz_alt, nkz
    real    :: yachs, stg

@@ -33,18 +33,19 @@ subroutine Ergeb2DParam(cpfad1)
    
    character(275) :: pfadstring
    character(8)   :: versionstext
+   integer        :: u_erg
    
    external :: version_string
    
    call version_string(versionstext)
    
    pfadstring = trim(adjustl(cpfad1)) // 'Ergeb2DParam.xml'
-   open(unit=1, file=pfadstring, encoding='UTF-8')
+   open(newunit = u_erg, file=pfadstring, encoding='UTF-8')
    
-   write(1, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-   write(1, '(3A)') '<GerrisParam FileType="Ergeb2D" QsimVersion="',versionstext,'">'
-   write(1, '(A)') '</GerrisParam>'
+   write(u_erg, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+   write(u_erg, '(3A)') '<GerrisParam FileType="Ergeb2D" QsimVersion="',versionstext,'">'
+   write(u_erg, '(A)') '</GerrisParam>'
    
-   close(1)
+   close(u_erg)
 end subroutine Ergeb2DParam
 

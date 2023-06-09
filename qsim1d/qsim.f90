@@ -46,13 +46,13 @@ program qsim
    logical         :: kontroll, einmalig, linux,mitsedflux, write_csv_output
    integer         :: open_error, jjj, iior
    integer         :: iend, iwied, ilang, ilbuhn, jlauf
-   integer         :: jtag, iergeb, itracer_vor, nndr, jstr
+   integer         :: jtag, iergeb, itracer_vor, nndr
    integer         :: nazstrs, isumanzsta, ieinl, mstr, msta
    integer         :: mrb, iseg, mtracer, itags, monats
    integer         :: jahrs, ij, lait1, laid1, laim1
    integer         :: mpf, ms, md, mc, mb,  mu, mwe, mv, mz, ma
    integer         :: me, ndr, iv, j, ksta
-   integer         :: jsed, nkztot_max, jkenn, monat_schr, jahr_schr
+   integer         :: jsed, jkenn, monat_schr, jahr_schr
    integer         :: itags_schr, istr, nstr, istrs, ifhstr
    integer         :: ianze_max, ior, itimeh, itimeb, itimea
    integer         :: itimee, itime, i_rands, iw_max, mstrrb
@@ -78,7 +78,7 @@ program qsim
    real            :: dlmax4, coro1, fkmgit, trpmin, trpmax
    real            :: tggbal, tgkbal, coroe, corose, pom_sedb
    real            :: spewksx1, wuebkx1, psrefsx1, extkx1, uhrz_schr
-   real            :: hcumt, dt, fhprof, hcon, hcontm
+   real            :: hcumt, fhprof, hcon, hcontm
    real            :: sum_qeinl, hcq1, hcq2, hcq3, hcq4
    real            :: hcq5, hcq6, hcq7, hcq8, hcq9
    real            :: hcq10, hcq11, hcq12, hcq13, hcq14
@@ -92,9 +92,8 @@ program qsim
    real            :: hc24, hc25, hc26, hc27, fssgrs
    real            :: fbsgrs, bsbzoo, hcchla, hczoos, hcnh4s
    real            :: hcno2s, hcno3s, hcgeps, hcbsb, hccsb
-   real            :: hcvkg, hcantb, a2ki, a3ki, a1ki
-   real            :: a3bl, a2bl, a1bl, a3gr, a1gr
-   real            :: a2gr, toc_csb, cdges, cref, cpges
+   real            :: hcvkg, hcantb, a1ki, a1bl, a1gr
+   real            :: toc_csb, cdges, cref, cpges
    real            :: toc, dk, sa, zlk, zg
    real            :: su, wtst, wtst_t, algb5, zoobsb
    real            :: algcs, zoocsb, hcs1, hcs2, hcs3
@@ -117,11 +116,10 @@ program qsim
    real            :: hcs118, hcs119, hcs120, hcs121, hcs122
    real            :: hcs123, hcs124, hcs125, hcs126, hcq
    real            :: hmue, hk, vhplus, rmin, uhrzhm
-   real            :: sumtracer, dtmin, dtmin_mac, elenl, ust
+   real            :: dtmin, dtmin_mac, elenl, ust
    real            :: alpha, cr_zahl, cr_zahl_mac, hc_alpha, hc_dl
-   real            :: dtneu, dtneu_mac, schwia, diff1, diff2
-   real            :: saettk, akrema, sbioki, saettb, pbiogr
-   real            :: pbiobl, diff3, diff4, diff5, diff6
+   real            :: dtneu, dtneu_mac, schwia, saettk, saettb
+   real            :: diff1, diff2, diff3, diff4, diff5, diff6
    real            :: diff7, diff8, diff9, diff10, diff11
    real            :: diff12, diff13, diff14, vco2s, tiefev
    real            :: algo, diff15, diff16, diff17, diff18
@@ -249,7 +247,7 @@ program qsim
    real, dimension(ialloc2)                :: zwdalb, zwdaab, zwsedb, zwzob, zwbmor, zwbbcm, zwabl, zwbmua, zwfiba
    real, dimension(ialloc2)                :: zwfhba, zwbrau, zwadrb, zwacob, zwtpbl, zup_pb, zup_nb, zq_pb, zq_nb
    real, dimension(ialloc2)                :: zabtbr, zwabz, zwaabz,  zwflae, zwlboe, zwskmo, zww2, zwsdom
-   real, dimension(ialloc2)                :: zwbso, zwjn2,zwtgzoo, zwakmor_1, zwagmor_1, zwabmor_1
+   real, dimension(ialloc2)                :: zwbso, zwjn2, zwakmor_1, zwagmor_1, zwabmor_1
    real, dimension(ialloc2)                :: zwgszn, zwglzn, zwgscad, zwglcad, zwgscu, zwglcu, zwgsni, zwglni
    real, dimension(ialloc2)                :: zwgsas, zwglas, zwgspb, zwglpb, zwgscr, zwglcr, zwgsfe, zwglfe
    real, dimension(ialloc2)                :: zwgshg, zwglhg, zwgsmn, zwglmn, zwgsu, zwglu, zwsseros
@@ -524,22 +522,21 @@ program qsim
    ! --------------------------------------------------------------------------
    ! reading from ModellA.txt (unit 10)
    ! --------------------------------------------------------------------------
-   write(pfadstring,'(2A)')trim(adjustl(cpfad)),'MODELLA.txt'
+   pfadstring = trim(adjustl(cpfad)) // 'MODELLA.txt'
    open(unit = 10, file = pfadstring, iostat = open_error)
    if (open_error /= 0) call qerror("Could not open ModellA.txt")
    rewind (10)
-   jStr = 0
+   
    read(10,'(2a)')ckenn_vers
-   if (ckenn_vers /= '*V') then
-   else
+   if (ckenn_vers == '*V') then
       rewind(10)
       read(10,'(a)') dummy !VERSIO
       read(10,'(a2)')chcon
    endif
-   read(10,'(f5.2,2x,f5.2)')GeoB,GeoL
-   read(10,'(I5)')azstr_read
+   read(10,'(f5.2,2x,f5.2)') GeoB, GeoL
+   read(10,'(I5)') azstr_read
    
-   ! set number of stretches
+   ! set number of stretches in module allodim
    call set_azstrs(azstr_read)
    
    ! ==========================================================================
@@ -1676,10 +1673,6 @@ program qsim
       read(110,'(2x)')
    endif
    
-   ! Festlegung der max. Tiefenschichtenanzahl für jeden Ortspunkt bei 2D
-   nkztot_max = 1
-   
-   
    ! =========================================================================
    ! initialize result files
    ! =========================================================================
@@ -1755,16 +1748,12 @@ program qsim
    
    istrs = istr-1
    
-   ! Conversion factor of time step to hour
-   hcUmt = 60./(tflie*1440.)
-            
-   ! Time step in seconds
-   dt = tflie * 86400.
+   
    
    ! --------------------------------------------------------------------------
    ! Einteilung der Flussstrecke in Segmente
    ! --------------------------------------------------------------------------
-   call sysgen(ilang,dt,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                  &
+   call sysgen(ilang,iwsim,nbuhn,akmB,ekmB,DLB,tau2B,alphaB,mUs                                     &
                ,aschif,eschif,mSs,mStra,raua,bsohla,boeamq,hlboea,hflaea,htiefa                     &
                ,hvF,hQaus,SedOM,BedGSed,sedvvert,dKorn,abfr,mStas,Startkm,mRBs,RBtyp,RBkm,ij        &
                ,tflie,STRdt,STRiz,cpfad,wsp_UW,WSP_OW                                               &
@@ -2307,11 +2296,7 @@ program qsim
          
          ! Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
          ! Angabe in mgChla/mgC
-         call ini_algae(akchl, abchl, agchl,    &
-                        Cagr, Caki, Cabl, CZoo, &
-                        a1Ki, a2Ki, a3Ki,       &
-                        a1Bl, a2Bl, a3Bl,       &
-                        a1Gr, a2Gr, a3Gr)
+         call ini_algae(akchl, abchl, agchl, a1Ki, a1Bl, a1Gr)
          
          ! Temperaturabhängigkeit des C:Chla-Verhältnisses 
          ! ag(k,b)chl gilt für 20°C  in mgC/mgChla
@@ -2319,14 +2304,13 @@ program qsim
          call algae_start(chlas(mstr,mRB),vkigrs(mstr,mRB),antbls(mstr,mRB),tempws(mstr,mRB),&
                           akbcms(mstr,mRB),abbcms(mstr,mRB),agbcms(mstr,mRB),                &
                           akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                      &
-                          a1Ki,a1Bl,a1Gr,Caki,Cabl,Cagr,akchl,abchl,agchl,                   &
+                          a1Ki,a1Bl,a1Gr,                                                    &
                           chlaks(mstr,mRB),chlabs(mstr,mRB),chlags(mstr,mRB))
          
          ! Berechnung der "BSB-Komponenten" am oberen Rand
          ! auch bei Stundenwert-Generierung
-         call orgc_start(TOC_CSB,bsbZoo,GROT,                                                            &
+         call orgc_start(TOC_CSB,bsbZoo,                                                            &
                          akis(mstr,mRB),abls(mstr,mRB),agrs(mstr,mRB),                                   &
-                         Caki,Cabl,Cagr,CZoo, bsbki,bsbbl,bsbgr,  csbki,csbbl,csbgr,                     &
                          zooins(mstr,mRB),vbsbs(mstr,mRB),vcsbs(mstr,mRB),                               &
                          obsbs(mstr,mRB),ocsbs(mstr,mRB),                                                &
                          CMs(mstr,mRB), CDs(mstr,1,mRB),CDs(mstr,2,mRB), CPs(mstr,1,mRB),CPs(mstr,2,mRB),&
@@ -2340,12 +2324,10 @@ program qsim
                           gelPs(mstr,mRB),gesPs(mstr,mRB),                                                &
                           Q_NKs(mstr,mRB),Q_PKs(mstr,mRB),Q_SKs(mstr,mRB),Q_NGs(mstr,mRB),Q_PGs(mstr,mRB),&
                           Q_NBs(mstr,mRB),Q_PBs(mstr,mRB),                                                &
-                          Qmx_NK,Qmn_NK,Qmx_PK,Qmn_PK,Qmx_SK,Qmn_SK, Qmx_NG,Qmn_NG,Qmx_PG,Qmn_PG, Qmx_NB, &
-                          Qmn_NB,Qmx_PB,Qmn_PB,                                                           &
                           CPges,CDges,Cref,BACs(mstr,mRB),CMs(mstr,mRB),                                  &
                           nl0s(mstr,mRB), pl0s(mstr,mRB),                                                 &
                           sss(mstr,mRB), ssalgs(mstr,mRB),                                                &
-                          itags,monats,mstr,mRB, einmalig,                                                &
+                          mstr,mRB, einmalig,                                                &
                           .false., 0)
          
          zooins(mstr,mRB) = hczoos
@@ -2482,7 +2464,6 @@ program qsim
          ! Ruecksetzen
          hnkzs(mstr,ior) = 1
          hdH2De(mstr,ior) = 0.0
-         hnkzs(mstr,ior) = 1
       enddo
       
       hnkzs(mstr,hanze(mstr)+1) = hnkzs(mstr,hanze(mstr))
@@ -3307,85 +3288,89 @@ program qsim
             hk   = 0.5 * hmue / (1. + 1.4 * hmue)
             vhplus = 10**(hk - hph(ESTRNR(istr,nstr),kanz))
             
-            hcs63 = hcs63+abs(hQaus(ESTRNR(istr,nstr),iSta)) * vhplus
-            hcs64 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hcoli(ESTRNR(istr,nstr),kanz)
-            hcs100 = hcs64+abs(hQaus(ESTRNR(istr,nstr),iSta))* hDOSCF(ESTRNR(istr,nstr),kanz)
-            hcs65 = hcs65+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvbsb(ESTRNR(istr,nstr),kanz)
-            hcs66 = hcs66+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvcsb(ESTRNR(istr,nstr),kanz)
-            hcs77 = hcs77+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NK(ESTRNR(istr,nstr),kanz)
-            hcs78 = hcs78+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PK(ESTRNR(istr,nstr),kanz)
-            hcs79 = hcs79+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_SK(ESTRNR(istr,nstr),kanz)
-            hcs80 = hcs80+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NG(ESTRNR(istr,nstr),kanz)
-            hcs81 = hcs81+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PG(ESTRNR(istr,nstr),kanz)
-            hcs82 = hcs82+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NB(ESTRNR(istr,nstr),kanz)
-            hcs83 = hcs83+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PB(ESTRNR(istr,nstr),kanz)
-            hcs85 = hcs85+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hSKmor(ESTRNR(istr,nstr),kanz)
-            hcs86 = hcs86+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
-            hcs95 = hcs95+abs(hQaus(ESTRNR(istr,nstr),iSta)) * hFluN3(ESTRNR(istr,nstr),kanz)
-            hcs99 = hcs99+abs(hQaus(ESTRNR(istr,nstr),iSta)) * TGZoo(ESTRNR(istr,nstr),kanz)
-            hcs110 = hcs110+abs(hQaus(ESTRNR(istr,nstr),iSta)) * akmor_1(ESTRNR(istr,nstr),kanz)
-            hcs111 = hcs111+abs(hQaus(ESTRNR(istr,nstr),iSta)) * agmor_1(ESTRNR(istr,nstr),kanz)
-            hcs112 = hcs112+abs(hQaus(ESTRNR(istr,nstr),iSta)) * abmor_1(ESTRNR(istr,nstr),kanz)
+            hcs63  = hcs63  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * vhplus
+            hcs64  = hcs64  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hcoli(ESTRNR(istr,nstr),kanz)
+            hcs100 = hcs64  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
+            hcs65  = hcs65  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvbsb(ESTRNR(istr,nstr),kanz)
+            hcs66  = hcs66  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hvcsb(ESTRNR(istr,nstr),kanz)
+            hcs77  = hcs77  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NK(ESTRNR(istr,nstr),kanz)
+            hcs78  = hcs78  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PK(ESTRNR(istr,nstr),kanz)
+            hcs79  = hcs79  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_SK(ESTRNR(istr,nstr),kanz)
+            hcs80  = hcs80  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NG(ESTRNR(istr,nstr),kanz)
+            hcs81  = hcs81  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PG(ESTRNR(istr,nstr),kanz)
+            hcs82  = hcs82  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_NB(ESTRNR(istr,nstr),kanz)
+            hcs83  = hcs83  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hQ_PB(ESTRNR(istr,nstr),kanz)
+            hcs85  = hcs85  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hSKmor(ESTRNR(istr,nstr),kanz)
+            hcs86  = hcs86  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hDOSCF(ESTRNR(istr,nstr),kanz)
+            hcs95  = hcs95  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hFluN3(ESTRNR(istr,nstr),kanz)
+            hcs99  = hcs99  + abs(hQaus(ESTRNR(istr,nstr),iSta)) * TGZoo(ESTRNR(istr,nstr),kanz)
+            hcs110 = hcs110 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * akmor_1(ESTRNR(istr,nstr),kanz)
+            hcs111 = hcs111 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * agmor_1(ESTRNR(istr,nstr),kanz)
+            hcs112 = hcs112 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * abmor_1(ESTRNR(istr,nstr),kanz)
             
-            hcs101 = hcs101+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsZn(ESTRNR(istr,nstr),kanz)
-            hcs102 = hcs102+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglZn(ESTRNR(istr,nstr),kanz)
-            hcs103 = hcs103+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCad(ESTRNR(istr,nstr),kanz)
-            hcs104 = hcs104+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCad(ESTRNR(istr,nstr),kanz)
-            hcs105 = hcs105+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCu(ESTRNR(istr,nstr),kanz)
-            hcs106 = hcs106+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCu(ESTRNR(istr,nstr),kanz)
-            hcs107 = hcs107+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsNi(ESTRNR(istr,nstr),kanz)
-            hcs108 = hcs108+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglNi(ESTRNR(istr,nstr),kanz)
-            hcs113 = hcs113+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsAs(ESTRNR(istr,nstr),kanz)
-            hcs114 = hcs114+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglAs(ESTRNR(istr,nstr),kanz)
-            hcs115 = hcs115+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsPb(ESTRNR(istr,nstr),kanz)
-            hcs116 = hcs116+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglPb(ESTRNR(istr,nstr),kanz)
-            hcs117 = hcs117+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsCr(ESTRNR(istr,nstr),kanz)
-            hcs118 = hcs118+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglCr(ESTRNR(istr,nstr),kanz)
-            hcs119 = hcs119+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsFe(ESTRNR(istr,nstr),kanz)
-            hcs120 = hcs120+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglFe(ESTRNR(istr,nstr),kanz)
-            hcs121 = hcs121+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsHg(ESTRNR(istr,nstr),kanz)
-            hcs122 = hcs122+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglHg(ESTRNR(istr,nstr),kanz)
-            hcs123 = hcs123+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsMn(ESTRNR(istr,nstr),kanz)
-            hcs124 = hcs124+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglMn(ESTRNR(istr,nstr),kanz)
-            hcs125 = hcs125+abs(hQaus(ESTRNR(istr,nstr),iSta))*hgsU(ESTRNR(istr,nstr),kanz)
-            hcs126 = hcs126+abs(hQaus(ESTRNR(istr,nstr),iSta))*hglU(ESTRNR(istr,nstr),kanz)
+            hcs101 = hcs101 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsZn(ESTRNR(istr,nstr),kanz)
+            hcs102 = hcs102 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglZn(ESTRNR(istr,nstr),kanz)
+            hcs103 = hcs103 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsCad(ESTRNR(istr,nstr),kanz)
+            hcs104 = hcs104 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglCad(ESTRNR(istr,nstr),kanz)
+            hcs105 = hcs105 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsCu(ESTRNR(istr,nstr),kanz)
+            hcs106 = hcs106 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglCu(ESTRNR(istr,nstr),kanz)
+            hcs107 = hcs107 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsNi(ESTRNR(istr,nstr),kanz)
+            hcs108 = hcs108 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglNi(ESTRNR(istr,nstr),kanz)
+            hcs113 = hcs113 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsAs(ESTRNR(istr,nstr),kanz)
+            hcs114 = hcs114 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglAs(ESTRNR(istr,nstr),kanz)
+            hcs115 = hcs115 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsPb(ESTRNR(istr,nstr),kanz)
+            hcs116 = hcs116 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglPb(ESTRNR(istr,nstr),kanz)
+            hcs117 = hcs117 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsCr(ESTRNR(istr,nstr),kanz)
+            hcs118 = hcs118 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglCr(ESTRNR(istr,nstr),kanz)
+            hcs119 = hcs119 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsFe(ESTRNR(istr,nstr),kanz)
+            hcs120 = hcs120 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglFe(ESTRNR(istr,nstr),kanz)
+            hcs121 = hcs121 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsHg(ESTRNR(istr,nstr),kanz)
+            hcs122 = hcs122 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglHg(ESTRNR(istr,nstr),kanz)
+            hcs123 = hcs123 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsMn(ESTRNR(istr,nstr),kanz)
+            hcs124 = hcs124 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglMn(ESTRNR(istr,nstr),kanz)
+            hcs125 = hcs125 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hgsU(ESTRNR(istr,nstr),kanz)
+            hcs126 = hcs126 + abs(hQaus(ESTRNR(istr,nstr),iSta)) * hglU(ESTRNR(istr,nstr),kanz)
             
             ! 2D-Modellierung
             ! 2D-Gitterbelegung des Strangs mit Werten der Vor- bzw. Nachsträngen
             nkzs_hc = hnkzs(mstr,iB)
             nkzs_hc1 = hnkzs(ESTRNR(istr,nstr),kanz)
+            
             if (nkzs_hc > 1 .and. nkzs_hc1 > 1) then
                i_EstRNR = ESTRNR(istr,nstr)
-               call sys_gitterStrang(mstr,nkzs_hc,nkzs_hc1,dH2D,tzt,o2zt,NH4zt                                              &
-                                     ,no2zt,no3zt,Pzt,gSizt,akizt,agrzt,ablzt,chlazt,chlkzt,chlgzt,chlbzt,gesPzt,gesNzt             &
-                                     ,Q_NKzt, Q_NBzt, Q_NGzt, CChlkzt,CChlbzt,CChlgzt, jnkz,i_EstRNR,itags,monats,uhrz)
+               call sys_gitterStrang(nkzs_hc, nkzs_hc1, dH2D, tzt, o2zt, NH4zt,     &
+                                     no2zt, no3zt, Pzt, gSizt, akizt, agrzt, ablzt, &
+                                     chlazt, chlkzt, chlgzt, chlbzt, gesPzt, gesNzt,&
+                                     Q_NKzt, Q_NBzt,  Q_NGzt, CChlkzt, CChlbzt,     &
+                                     CChlgzt, jnkz, i_EstRNR)
             endif
+            
             do nkz = 1,nkzs_hc  ! 2D_modellierung, Schleifenbeginn
-               hcs67(nkz) = hcs67(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Tzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs68(nkz) = hcs68(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*O2zt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs69(nkz) = hcs69(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NH4zt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs70(nkz) = hcs70(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO2zt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs71(nkz) = hcs71(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*NO3zt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs72(nkz) = hcs72(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Pzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs73(nkz) = hcs73(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gSizt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs74(nkz) = hcs74(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*akizt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs75(nkz) = hcs75(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*agrzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs76(nkz) = hcs76(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*ablzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs84(nkz) = hcs84(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlazt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs87(nkz) = hcs87(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlkzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs88(nkz) = hcs88(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlgzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs89(nkz) = hcs89(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*chlbzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs90(nkz) = hcs90(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesPzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs91(nkz) = hcs91(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*gesNzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs92(nkz) = hcs92(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs93(nkz) = hcs93(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs94(nkz) = hcs94(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs96(nkz) = hcs96(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlkzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs97(nkz) = hcs97(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlbzt(ESTRNR(istr,nstr),nkz,jnkz)
-               hcs98(nkz) = hcs98(nkz)+abs(hQaus(ESTRNR(istr,nstr),iSta))*CChlgzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs67(nkz) = hcs67(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * Tzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs68(nkz) = hcs68(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * O2zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs69(nkz) = hcs69(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * NH4zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs70(nkz) = hcs70(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * NO2zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs71(nkz) = hcs71(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * NO3zt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs72(nkz) = hcs72(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * Pzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs73(nkz) = hcs73(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * gSizt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs74(nkz) = hcs74(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * akizt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs75(nkz) = hcs75(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * agrzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs76(nkz) = hcs76(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * ablzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs84(nkz) = hcs84(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * chlazt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs87(nkz) = hcs87(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * chlkzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs88(nkz) = hcs88(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * chlgzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs89(nkz) = hcs89(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * chlbzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs90(nkz) = hcs90(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * gesPzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs91(nkz) = hcs91(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * gesNzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs92(nkz) = hcs92(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * Q_NKzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs93(nkz) = hcs93(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * Q_NBzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs94(nkz) = hcs94(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * Q_NGzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs96(nkz) = hcs96(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * CChlkzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs97(nkz) = hcs97(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * CChlbzt(ESTRNR(istr,nstr),nkz,jnkz)
+               hcs98(nkz) = hcs98(nkz) + abs(hQaus(ESTRNR(istr,nstr),iSta)) * CChlgzt(ESTRNR(istr,nstr),nkz,jnkz)
             enddo  ! Schleifenende
             
-            hcq = hcq+abs(hqaus(ESTRNR(istr,nstr),iSta))
+            hcq = hcq + abs(hqaus(ESTRNR(istr,nstr),iSta))
             
             ! Umspeichern der Daten am Ende des Wehrstrangs
             ! Wehrbelüftung wird am letzten Knoten des oberstromigen Strangs (OW)
@@ -3905,7 +3890,7 @@ program qsim
    if (ilang == 1) then
       call sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,hno2z,hno3z               &
                         ,hgelPz,hSiz,hakiz,hagrz,hablz,hchlaz,hchlkz,hchlgz,hchlbz,hgesPz,hgesNz       &
-                        ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz,itags,monats)
+                        ,hQ_NKz, hQ_NBz, hQ_NGz, hCChlkz,hCChlbz,hCChlgz)
    endif
    
    ! ==========================================================================
@@ -3933,8 +3918,6 @@ program qsim
    !6164 format(A,I0.5,A ,I4,A ,I0.2,A, I0.2,A, I0.2,A,I0.2,A)
 
    ! Strangschleife für Berechnung
-   if (iwsim == 4) sumTracer = 0.0  ! Aufsummierung der "Tracermasse"
-   
    do azStr = 1,azStrs
       mstr = mstra(azStr)
       anze = hanze(mstr)
@@ -4655,19 +4638,22 @@ program qsim
       ! -----------------------------------------------------------------------
       1412 continue
       ! if(hChla(mstr,1)<0.0)goto 1513 ! goto albenth
-      call algaeski(SCHWI,TFLIE,TEMPW,tempwz,RAU,TIEFE,VMITT,flae,VNO3,VNH4,GELP,svhemk,svhemb,svhemg,CHLA,ir                 &
-                    ,SI,dalgki,dalgak,flag,elen,ior,anze,sedalk,algzok,echla,qeinl,vabfl                                      &
-                    ,dkimor,fkm,jiein,evkigr,vkigr,antbl,eantbl,akchl,akgmax,akksn,akksp,akkssi,saettk,akremi,akrema          &
-                    ,sbioki,vco2,iph,akbcm,abbcm,agbcm,aki,abl,agr,extk,extk_lamda                                            &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                       & 
-                    ,uhrz,sised,tpki,iwied,akmuea,ftaaus,fiaus,fheaus                                                         &
-                    ,akraus,tausc,ischif,ilbuhn,ieros,askie,cmatki,algdrk,algcok,ess,zooind,GROT,SS,Q_PK,Q_NK,Q_SK            &
-                    ,vNH4z,vNO3z,gelPz,Siz,dalgkz,nkzs,dH2D,cpfad,up_PKz,up_NKz,up_Siz,Qmx_PK,Qmn_PK,upmxPK                   &
-                    ,Qmx_NK,Qmn_NK,upmxNK,Qmx_SK,Qmn_SK,upmxSK,SKmor,IKke,frmuke,alamda,akitbr,chlaz,akibrz,akiz,chlaL,qeinlL &
-                    ,ieinLs,algakz,algzkz,ablz,agrz,Chlaki,hchlkz,hchlgz,hchlbz,hCChlkz,hCChlbz,hCChlgz,Dz2D,ToptK,kTemp_Ki   &
-                    ,ifix,Chlabl,Chlagr,a1Ki,a2Ki,a3Ki,sedAlg_MQ,sedAlk0,hQ_NKz,hQ_NGz,hQ_NBz,Q_PG,Q_NG,Q_PB,Q_NB             &
-                    ,mstr,it_h,itags,monats,isim_end,extkS,akmor_1,agmor_1,abmor_1                                            &
-                    ,.false.,0)
+      call algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, &
+                    gelp, svhemk, svhemb, svhemg, chla, si, dalgki, dalgak,     &
+                    flag, anze, sedalk, algzok, echla, qeinl, vabfl,            &
+                    dkimor, jiein, evkigr, vkigr, antbl, eantbl, saettk, akbcm, &
+                    abbcm, agbcm, aki, abl, agr, extk, extk_lamda, ilamda, eta, &
+                    aw, ack, acg, acb, ah, as, al, sised, tpki, iwied, akmuea,  &
+                    ftaaus, fiaus, fheaus, akraus, tausc, ischif, ilbuhn,       &
+                    cmatki, algdrk, algcok, zooind, grot, ss, q_pk, q_nk, q_sk, &
+                    vnh4z, vno3z, gelpz, siz, dalgkz, nkzs, dh2d, up_pkz,       &
+                    up_nkz, up_siz, skmor, akitbr, chlaz, akibrz, akiz,         &
+                    algakz, algzkz, ablz, agrz, chlaki, hchlkz, hchlgz, hchlbz, &
+                    hcchlkz, hcchlbz, hcchlgz, dz2d, chlabl, chlagr, a1ki,      &
+                    sedalg_mq, sedalk0, hq_nkz, hq_ngz, hq_nbz, q_pg, q_ng,     &
+                    q_pb, q_nb, mstr, it_h, isim_end, extks, akmor_1, agmor_1,  &
+                    abmor_1,                                                    &
+                    .false., 0)
       
       if (nbuhn(mstr) == 0)goto 1413 ! goto algaesbl
       if (ilbuhn == 0) then
@@ -4883,17 +4869,19 @@ program qsim
       ! Blaualgen
       ! -----------------------------------------------------------------------
       1413 continue
-      call algaesbl(SCHWI,TFLIE,TEMPW,flag,elen,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemb,CHLA,ir                        &
-                    ,dalgbl,dalgab,ior,anze,sedalb,algzob,dblmor,fkm,vabfl,abchl,abgmax,abksn,abksp,saettb,abremi    &
-                    ,vco2,iph,vkigr,abbcm,abl,tpbl,uhrz,iwied,fibaus,abmuea,fhebas,abreau,tausc,ischif,ilbuhn,ieros  &
-                    ,ZAKI,ZAGR,ZABL,asble,qeinl,jiein,echla,ess,algdrb,algcob,antbl,zooind,GROT,SS,extk              &
-                    ,extk_lamda                                                                                      &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                              &
-                    ,vNH4z,vNO3z,gelPz,dalgbz,nkzs,dH2D,tempwz,cpfad,up_PBz,up_NBz,Qmx_PB,Qmn_PB                     &
-                    ,upmxPB,Qmx_NB,Qmn_NB,upmxNB,Q_NB,Q_PB,IKbe,frmube,alamda,abltbr,ablbrz,up_N2z,ablz              &
-                    ,chlabl,a1Bl,a2Bl,a3Bl,hchlbz,hCChlbz,algabz,algzbz,Dz2D,ToptB,kTemp_Bl,ifix,sedAlg_MQ           &
-                    ,sedAlb0,hQ_NBz, mstr,itags,monats,isim_end,abmor_1                                              &
-                    ,.false.,0)
+      call algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
+                    svhemb, chla, dalgbl, dalgab, anze, sedalb, algzob,        & 
+                    dblmor, saettb,        &
+                    vkigr, abbcm, abl, tpbl, fibaus, abmuea, fhebas, abreau,   &
+                    tausc, ischif, ilbuhn, ieros, algdrb, algcob,       & 
+                    antbl, extk, extk_lamda, ilamda, ack, acg, acb, al,        &
+                    vnh4z, vno3z, gelpz, dalgbz, nkzs, dh2d, tempwz, up_pbz,   &
+                    up_nbz,      &
+                    q_nb, q_pb,  abltbr, ablbrz, up_n2z, ablz,    &
+                    chlabl, a1bl, hchlbz, hcchlbz, algabz,                     &
+                    algzbz, dz2d,  sedalg_mq,            &
+                    sedalb0, hq_nbz,  mstr, isim_end, abmor_1,                 &
+                    .false.,  0)
       
       if (nbuhn(mstr) == 0)goto 1414 ! goto algaesgr
       if (ilbuhn == 0) then
@@ -5057,18 +5045,17 @@ program qsim
       ! Grünalgen
       ! -----------------------------------------------------------------------
       1414 continue
-      call algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                        &
-                    ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl        &
-                    ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr            &
-                    ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                   &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                     &
-                    ,tpgr,uhrz,iwied,algcog                                                                                 &
-                    ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GROT,Q_PG,Q_NG         &
-                    ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG                 &
-                    ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                     &
-                    ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz    &
-                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1                                                                        &
-                    ,.false.,0)
+      call algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
+                    svhemg, chla, dalggr, dalgag, anze, sedalg, algzog, dgrmor,&
+                    vkigr, chlaki, chlagr, algdrg, agbcm, agr, cmatgr, antbl,  &
+                    chlabl, extk, extk_lamda, ilamda, eta, aw, ack, acg, acb,  &
+                    ah, as, al, tpgr, algcog, figaus, agmuea, fhegas, agreau,  &
+                    tausc, ischif, ilbuhn, q_pg, q_ng, vnh4z, vno3z, gelpz,    &
+                    dalggz, nkzs, dh2d, tempwz, mstr, up_pgz, up_ngz, agrtbr,  &
+                    agrbrz, agrz, chlaz, hchlkz, hchlgz, hchlbz, hcchlgz,      &
+                    algagz, algzgz, dz2d, sedalg_mq, sedalg0, hq_ngz, a1gr,    &
+                    isim_end, agmor_1,                                         &
+                    .false., 0)
       
       if (any(isnan(agr))) call qerror("Division by zero in subroutine algaesgr")
       
@@ -6543,25 +6530,19 @@ program qsim
          izeits = STRiz(mstr)
          deltat = STRdt(mstr)
          jpoin1 = 0
+         
          call Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tempw,vo2,vnh4,vno3,vno2,vx0                  &
                         ,vx02,Si,mstr,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr  &
                         ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN     &
                         ,gesP,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,stind,mw,pw,ca,lf,coli,DOSCF                         &
-                        ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2             &
+                        ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4                 &
                         ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
                         ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
-                        ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK           &
+                        ,iwied,nkzs,tflie,jpoin1,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK                             &
                         ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
                         ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
-                        ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
-         
-         ! Aufsummierung der Tracermasse
-         ! TODO FG: sumTracer is not used elsewhere => remove?
-         if (iwsim == 4) then
-            do ior = 1, anze
-               sumTracer = sumTracer + ((tempw(ior)+tempw(ior+1))/2.) * vabfl(ior)
-            enddo
-         endif
+                        ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,ischwer)
+
          
          do ior = 1,anze+1
             tempwz(1,ior) = tempw(ior)
@@ -6850,7 +6831,8 @@ program qsim
       
       
       ! Umspeichern des ersten und letzten Gitterpunkts eines jeden Strangs
-      do ke = 1,2                       ! ke = 1: erster Gitterpunkt; ke = 2: letzter Gitterpunkt
+      ! ke = 1: erster Gitterpunkt; ke = 2: letzter Gitterpunkt
+      do ke = 1,2                       
          do nkz = 1,inkzs(mstr,ke)
             tzt(mstr,nkz,ke) = tempwz(nkz,ikanz(ke))
             o2zt(mstr,nkz,ke) = vo2z(nkz,ikanz(ke))
@@ -8079,7 +8061,9 @@ program qsim
          ! Ausschreiben der stündlichen Werte, falls imitt = 1
          ! --------------------------------------------------------------------
          if (imitt == 1) then
-         
+            ! Conversion factor of time step to hour
+            hcUmt = 60. / (tflie * 1440.)
+            
             if (iwsim == 4) then
                vbsby(iior)  = -1.
                vcsby(iior)  = -1.
@@ -9900,45 +9884,47 @@ program qsim
       
       do iior = 1,mStas(mstr)
          
-         ! EregebT.txt
-         write(155,'(a7,14x,I5,2x,F8.3,2x,i5)') 'Minimum', mstr,Stakm(mstr,iior),STRID(mstr)
-         
-         write(155,5105)Ymin(mstr,1),Ymin(mstr,2),Ymin(mstr,3)                            &
-                        ,Ymin(mstr,4),Ymin(mstr,5),Ymin(mstr,6)                           &
-                        ,Ymin(mstr,7),Ymin(mstr,8),Ymin(mstr,9)                           &
-                        ,Ymin(mstr,10),Ymin(mstr,11),Ymin(mstr,12)                        &
-                        ,Ymin(mstr,13),Ymin(mstr,14),Ymin(mstr,15)                        &
-                        ,Ymin(mstr,16),Ymin(mstr,17),Ymin(mstr,18)                        &
-                        ,Ymin(mstr,20),Ymin(mstr,19),Ymin(mstr,21),Ymin(mstr,22)          &
-                        ,Ymin(mstr,169)
-         
-         write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)       &
-                        ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)      &
-                        ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)      &
-                        ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)      &
-                        ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)      &
-                        ,Ymin(mstr,201),Ymin(mstr,202)
-         
-         write(155,5205)(Ymin(mstr,104)*hcUmt),(Ymin(mstr,93)*4.33*hcUmt),(Ymin(mstr,108)*hcUmt) &
-                        ,(Ymin(mstr,102)*hcUmt),Ymin(mstr,187),Ymin(mstr,188)             &
-                        ,Ymin(mstr,189),(Ymin(mstr,112)*hcUmt),(Ymin(mstr,105)*hcUmt)     &
-                        ,(Ymin(mstr,94)*hcUmt)
-         
-         write(155,5115)Ymin(mstr,115),Ymin(mstr,116),Ymin(mstr,117)                      &
-                        ,Ymin(mstr,118),Ymin(mstr,119),Ymin(mstr,120)                     &
-                        ,Ymin(mstr,121),Ymin(mstr,122),Ymin(mstr,123)                     &
-                        ,Ymin(mstr,124),Ymin(mstr,125),Ymin(mstr,126)                     &
-                        ,Ymin(mstr,127),Ymin(mstr,128),Ymin(mstr,129)                     &
-                        ,Ymin(mstr,130),Ymin(mstr,131),Ymin(mstr,132)                     &
-                        ,Ymin(mstr,133),Ymin(mstr,171),Ymin(mstr,168)                     &
-                        ,Ymin(mstr,170)
-         
-         write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)       &
-                        ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)      &
-                        ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)      &
-                        ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)      &
-                        ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)      &
-                        ,Ymin(mstr,201),Ymin(mstr,202)
+         if (imitt == 1) then
+            ! EregebT.txt
+            write(155,'(a7,14x,I5,2x,F8.3,2x,i5)') 'Minimum', mstr,Stakm(mstr,iior),STRID(mstr)
+            
+            write(155,5105)Ymin(mstr,1),Ymin(mstr,2),Ymin(mstr,3)                            &
+                           ,Ymin(mstr,4),Ymin(mstr,5),Ymin(mstr,6)                           &
+                           ,Ymin(mstr,7),Ymin(mstr,8),Ymin(mstr,9)                           &
+                           ,Ymin(mstr,10),Ymin(mstr,11),Ymin(mstr,12)                        &
+                           ,Ymin(mstr,13),Ymin(mstr,14),Ymin(mstr,15)                        &
+                           ,Ymin(mstr,16),Ymin(mstr,17),Ymin(mstr,18)                        &
+                           ,Ymin(mstr,20),Ymin(mstr,19),Ymin(mstr,21),Ymin(mstr,22)          &
+                           ,Ymin(mstr,169)
+            
+            write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)       &
+                           ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)      &
+                           ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)      &
+                           ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)      &
+                           ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)      &
+                           ,Ymin(mstr,201),Ymin(mstr,202)
+            
+            write(155,5205)(Ymin(mstr,104)*hcUmt),(Ymin(mstr,93)*4.33*hcUmt),(Ymin(mstr,108)*hcUmt) &
+                           ,(Ymin(mstr,102)*hcUmt),Ymin(mstr,187),Ymin(mstr,188)             &
+                           ,Ymin(mstr,189),(Ymin(mstr,112)*hcUmt),(Ymin(mstr,105)*hcUmt)     &
+                           ,(Ymin(mstr,94)*hcUmt)
+            
+            write(155,5115)Ymin(mstr,115),Ymin(mstr,116),Ymin(mstr,117)                      &
+                           ,Ymin(mstr,118),Ymin(mstr,119),Ymin(mstr,120)                     &
+                           ,Ymin(mstr,121),Ymin(mstr,122),Ymin(mstr,123)                     &
+                           ,Ymin(mstr,124),Ymin(mstr,125),Ymin(mstr,126)                     &
+                           ,Ymin(mstr,127),Ymin(mstr,128),Ymin(mstr,129)                     &
+                           ,Ymin(mstr,130),Ymin(mstr,131),Ymin(mstr,132)                     &
+                           ,Ymin(mstr,133),Ymin(mstr,171),Ymin(mstr,168)                     &
+                           ,Ymin(mstr,170)
+            
+            write(155,5207)Ymin(mstr,203),Ymin(mstr,204),Ymin(mstr,195),Ymin(mstr,196)       &
+                           ,Ymin(mstr,205),Ymin(mstr,206),Ymin(mstr,207),Ymin(mstr,208)      &
+                           ,Ymin(mstr,197),Ymin(mstr,198),Ymin(mstr,211),Ymin(mstr,212)      &
+                           ,Ymin(mstr,199),Ymin(mstr,200),Ymin(mstr,209),Ymin(mstr,210)      &
+                           ,Ymin(mstr,213),Ymin(mstr,214),Ymin(mstr,193),Ymin(mstr,194)      &
+                           ,Ymin(mstr,201),Ymin(mstr,202)
+         endif
          
          ! ErgebM.txt
          write(45,'(a7,7x,I5,2x,F8.3,2x,i5)')cmin,mstr,Stakm(mstr,iior),STRID(mstr)
@@ -10104,44 +10090,46 @@ program qsim
       if (Ymax(mstr,20) > 0.0)Ymax(mstr,20) = Ymax(mstr,20)*1000.
       
       do iior = 1,mStas(mstr)
+         if (imitt == 1) then
+            write(155,'(a7,14x,I5,2x,F8.3,2x,i5)')cmax,mstr,Stakm(mstr,iior),STRID(mstr)
+            
+            write(155,5105)Ymax(mstr,1),Ymax(mstr,2),Ymax(mstr,3)                            &
+                           ,Ymax(mstr,4),Ymax(mstr,5),Ymax(mstr,6)                           &
+                           ,Ymax(mstr,7),Ymax(mstr,8),Ymax(mstr,9)                           &
+                           ,Ymax(mstr,10),Ymax(mstr,11),Ymax(mstr,12)                        &
+                           ,Ymax(mstr,13),Ymax(mstr,14),Ymax(mstr,15)                        &
+                           ,Ymax(mstr,16),Ymax(mstr,17),Ymax(mstr,18)                        &
+                           ,Ymax(mstr,20),Ymax(mstr,19),Ymax(mstr,21),Ymax(mstr,22)          &
+                           ,Ymax(mstr,169)
+            
+            write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)       &
+                           ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)      &
+                           ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)      &
+                           ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)      &
+                           ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)      &
+                           ,Ymax(mstr,201),Ymax(mstr,202)
+            write(155,5205)(Ymax(mstr,104)*hcUmt),(Ymax(mstr,93)*4.33*hcUmt),(Ymax(mstr,108)*hcUmt) & 
+                           ,(Ymax(mstr,102)*hcUmt),Ymax(mstr,187),Ymax(mstr,188)             &
+                           ,Ymax(mstr,189),(Ymax(mstr,112)*hcUmt),(Ymax(mstr,105)*hcUmt)     &
+                           ,(Ymax(mstr,94)*hcUmt)
+            
+            write(155,5115)Ymax(mstr,115),Ymax(mstr,116),Ymax(mstr,117)                      &
+                           ,Ymax(mstr,118),Ymax(mstr,119),Ymax(mstr,120)                     &
+                           ,Ymax(mstr,121),Ymax(mstr,122),Ymax(mstr,123)                     &
+                           ,Ymax(mstr,124),Ymax(mstr,125),Ymax(mstr,126)                     &
+                           ,Ymax(mstr,127),Ymax(mstr,128),Ymax(mstr,129)                     &
+                           ,Ymax(mstr,130),Ymax(mstr,131),Ymax(mstr,132)                     &
+                           ,Ymax(mstr,133),Ymax(mstr,171),Ymax(mstr,168)                     &
+                           ,Ymax(mstr,170)
+            
+            write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)       &
+                           ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)      &
+                           ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)      &
+                           ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)      &
+                           ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)      &
+                           ,Ymax(mstr,201),Ymax(mstr,202)
          
-         write(155,'(a7,14x,I5,2x,F8.3,2x,i5)')cmax,mstr,Stakm(mstr,iior),STRID(mstr)
-         
-         write(155,5105)Ymax(mstr,1),Ymax(mstr,2),Ymax(mstr,3)                            &
-                        ,Ymax(mstr,4),Ymax(mstr,5),Ymax(mstr,6)                           &
-                        ,Ymax(mstr,7),Ymax(mstr,8),Ymax(mstr,9)                           &
-                        ,Ymax(mstr,10),Ymax(mstr,11),Ymax(mstr,12)                        &
-                        ,Ymax(mstr,13),Ymax(mstr,14),Ymax(mstr,15)                        &
-                        ,Ymax(mstr,16),Ymax(mstr,17),Ymax(mstr,18)                        &
-                        ,Ymax(mstr,20),Ymax(mstr,19),Ymax(mstr,21),Ymax(mstr,22)          &
-                        ,Ymax(mstr,169)
-         
-         write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)       &
-                        ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)      &
-                        ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)      &
-                        ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)      &
-                        ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)      &
-                        ,Ymax(mstr,201),Ymax(mstr,202)
-         write(155,5205)(Ymax(mstr,104)*hcUmt),(Ymax(mstr,93)*4.33*hcUmt),(Ymax(mstr,108)*hcUmt) & 
-                        ,(Ymax(mstr,102)*hcUmt),Ymax(mstr,187),Ymax(mstr,188)             &
-                        ,Ymax(mstr,189),(Ymax(mstr,112)*hcUmt),(Ymax(mstr,105)*hcUmt)     &
-                        ,(Ymax(mstr,94)*hcUmt)
-         
-         write(155,5115)Ymax(mstr,115),Ymax(mstr,116),Ymax(mstr,117)                      &
-                        ,Ymax(mstr,118),Ymax(mstr,119),Ymax(mstr,120)                     &
-                        ,Ymax(mstr,121),Ymax(mstr,122),Ymax(mstr,123)                     &
-                        ,Ymax(mstr,124),Ymax(mstr,125),Ymax(mstr,126)                     &
-                        ,Ymax(mstr,127),Ymax(mstr,128),Ymax(mstr,129)                     &
-                        ,Ymax(mstr,130),Ymax(mstr,131),Ymax(mstr,132)                     &
-                        ,Ymax(mstr,133),Ymax(mstr,171),Ymax(mstr,168)                     &
-                        ,Ymax(mstr,170)
-         
-         write(155,5207)Ymax(mstr,203),Ymax(mstr,204),Ymax(mstr,195),Ymax(mstr,196)       &
-                        ,Ymax(mstr,205),Ymax(mstr,206),Ymax(mstr,207),Ymax(mstr,208)      &
-                        ,Ymax(mstr,197),Ymax(mstr,198),Ymax(mstr,211),Ymax(mstr,212)      &
-                        ,Ymax(mstr,199),Ymax(mstr,200),Ymax(mstr,209),Ymax(mstr,210)      &
-                        ,Ymax(mstr,213),Ymax(mstr,214),Ymax(mstr,193),Ymax(mstr,194)      &
-                        ,Ymax(mstr,201),Ymax(mstr,202)
+         endif
          
          write(45,'(a7,7x,I5,2x,F8.3,2x,i5)')cmax,mstr,Stakm(mstr,iior),STRID(mstr)
          write(45,4103)Ymax(mstr,1),Ymax(mstr,1),Ymax(mstr,1)                            &
@@ -10302,8 +10290,9 @@ program qsim
    close(301, status = "delete")
    
    ! --- close output files --- 
-   close(45)                     ! ErgebM.txt
-   close(155)                    ! ErgebT.txt
+   close(45)  ! ErgebM.txt
+   close(110) ! EreigH.txt
+   close(155) ! ErgebT.txt
    close(156)
    close(157)
    close(158)

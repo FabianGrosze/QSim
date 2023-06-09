@@ -32,21 +32,24 @@ module aparam
    ! Grünalgen
    real, protected    :: agchl, aggmax, ikge, agksn, agksp
    real, protected    :: agremi, frmuge, bsbgr, csbgr, qmx_ng
-   real, protected    :: qmx_pg, qmn_ng, qmn_pg, upmxng, upmxpg
+   real, protected    :: qmx_pg, qmn_ng, qmn_pg 
    real, protected    :: opgrmi, opgrma, asgre, toptg, ktemp_gr
+   real               :: upmxpg, upmxng
    
    ! Kieselalgen
    real, protected    :: akchl, akgmax, ikke, akksn, akksp
    real, protected    :: akkssi, akremi, frmuke, bsbki, csbki
    real, protected    :: qmx_nk, qmx_pk, qmx_sk, qmn_nk, qmn_pk
-   real, protected    :: qmn_sk, upmxnk, upmxpk, upmxsk, opkimi
+   real, protected    :: qmn_sk, upmxsk, opkimi
    real, protected    :: opkima, askie, toptk, ktemp_ki
+   real               :: upmxpk, upmxnk
    
    ! Blaualgen
    real, protected    :: abchl, abgmax, ikbe, abksn, abksp, abremi, frmube,    &
-                         bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb, qmn_pb, upmxnb, &
-                         upmxpb, opblmi, opblma, asble, toptb, ktemp_bl
+                         bsbbl, csbbl, qmx_nb, qmx_pb, qmn_nb, qmn_pb,         &
+                         opblmi, opblma, asble, toptb, ktemp_bl
    integer            :: ifix
+   real               :: upmxpb, upmxnb
    
    ! zooplankton
    real, protected    :: irmax, foptr, grot, zresg, zaki, zagr, zabl
@@ -101,6 +104,9 @@ module aparam
    
    real, parameter    :: CRot = 0.45   !< C-Anteil Rotatorien
    real, parameter    :: CDr  = 0.38   !< C-Anteil Dreissena
+   
+   real, parameter    :: pi = 4.0 * atan(1.0) !< circular number
+   
    
    public :: aparam_lesen, AParamParam
    

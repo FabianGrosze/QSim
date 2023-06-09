@@ -28,15 +28,19 @@
 !> Bestimmug des Reflektionsanteils der direkten Sonnenstrahlung an der Gewässeroberfläche
 !! @author Volker Kirchesch
 !! @date 22.09.2010
-subroutine albedo(SH,REFL)
+subroutine albedo(sh, refl)
    ! TODO: Literaturangabe
+   
+   use aparam
    implicit none
    
+   real, intent(in)    :: sh
+   real, intent(out)   :: refl
+   
    real, dimension(15) :: alb
-   real                :: sh, shgr, refl, pi, dshgr, dalb, albint
+   real                :: shgr, dshgr, dalb
    integer             :: n
    
-   pi = 22./7.
    alb(1)  = 100.0
    alb(2)  = 70.5
    alb(3)  = 46.0
@@ -51,17 +55,17 @@ subroutine albedo(SH,REFL)
    alb(12) = 7.0
    alb(13) = 6.5
    
-   shgr = sh*180/pi
+   shgr = sh * 180 / pi
    if (shgr > 60.0) then
       refl = 6.5
    else
-      n = int(shgr/5)+1
-      dalb = alb(n)-alb(n+1)
-      dshgr = shgr-(n-1)*5
-      albint = dalb/5*dshgr
-      refl = alb(n)-albint
+      n = int(shgr/5) + 1
+      dalb = alb(n) - alb(n+1)
+      dshgr = shgr - (n-1) * 5
+      refl = alb(n) - (dalb / 5 * dshgr)
    endif
-   refl = refl/100
-   refl = 1-refl
+   
+   refl = 1. - (refl / 100.)
+   
    return
 end subroutine albedo

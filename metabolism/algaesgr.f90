@@ -24,81 +24,88 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA,SSALG,dalggr,dalgag                      &
-                    ,flag,elen,ior,anze,sedalg,algzog,dgrmor,fkm,vkigr,chlaki,chlagr,vabfl,qeinl,jiein,evkigr,eantbl      &
-                    ,agchl,aggmax,agksn,agksp,agremi,vco2,algdrg,pbiogr,Q_PK,Q_NK,iph,akbcm,agbcm,aki,agr,cmatgr          &
-                    ,cmatki,abbcm,antbl,abl,pbiobl,chlabl,extk,extk_lamda                                                 &
-                    ,ilamda,eta,aw,ack,acg,acb,ah,as,al                                                                   &
-                    ,tpgr,uhrz,iwied,algcog                                                                               &
-                    ,figaus,agmuea,fhegas,agreau,tausc,ischif,ilbuhn,ieros,asgre,echla,ess,ss,zooind,GRote,Q_PG,Q_NG      &
-                    ,vNH4z,vNO3z,gelPz,dalggz,nkzs,dH2D,tempwz,cpfad,itags,monats,mstr,up_PGz,up_NGz,Qmx_PG               &
-                    ,Qmn_PG,upmxPG,Qmx_NG,Qmn_NG,upmxNG,IKge,frmuge,alamda,agrtbr,agrbrz,akiz,agrz,ablz                   &
-                    ,chlaz,hchlkz,hchlgz,hchlbz,hCChlgz,algagz,algzgz,Dz2D,ToptG,kTemp_Gr,ifix,sedAlg_MQ,sedAlg0, hQ_NGz  &
-                    ,a1Gr,a2Gr,a3Gr,isim_end,agmor_1                                                                      &
-                    ,kontroll, jjj)
+
+!> Unterprogramm zur Berechnung des Grünalgenwachstums
+!! @author: Autor: Volker Kirchesch
+!! @date: 08.09.2015
+
+subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
+                    svhemg, chla, dalggr, dalgag, anze, sedalg, algzog,       &
+                    dgrmor, vkigr, chlaki, chlagr, algdrg, agbcm, agr, cmatgr,&
+                    antbl, chlabl, extk, extk_lamda, ilamda, eta, aw, ack,    &
+                    acg, acb, ah, as, al, tpgr, algcog, figaus, agmuea,       &
+                    fhegas, agreau, tausc, ischif, ilbuhn, q_pg, q_ng, vnh4z, &
+                    vno3z, gelpz, dalggz, nkzs, dh2d, tempwz, mstr, up_pgz,   &
+                    up_ngz, agrtbr, agrbrz, agrz, chlaz, hchlkz, hchlgz,      &
+                    hchlbz, hcchlgz, algagz, algzgz, dz2d, sedalg_mq, sedalg0,&
+                    hq_ngz, a1gr, isim_end, agmor_1,                          &
+                    kontroll, jjj)
    
-   ! Unterprogramm zur Berechnung des Grünalgenwachstums
-   ! Autor: Volker Kirchesch
-   ! Stand: 08.09.2015
-   
-   ! unterprogramme :tage,albedo
+  
    
    use allodim
+   use aparam
    implicit none
    
-   integer                          :: n_neu_s, n_alt_s, nschif, nkz, mstr
-   integer                          :: monats, j_aus, j, js, jsed, jjj
-   integer                          :: jcyano, i_zeiger, i, iwied, itemp
-   integer                          :: itags, isyn, ispek, isim_end, ised
-   integer                          :: iref, iph, ior, ilbuhn, ilamda
-   integer                          :: ifoto, ifix, ieros, iein, iaus, anze
-   real                             :: qmn_ng, zellv, yk, x, xup_n
+   integer                          :: n_neu_s, n_alt_s, nkz, mstr
+   integer                          :: j_aus, j, js, jsed, jjj
+   integer                          :: jcyano, i_zeiger, i
+   integer                          :: isyn, ispek, isim_end, ised
+   integer                          :: ior, ilbuhn, ilamda
+   integer                          :: ifoto, iaus, anze
+   real                             :: zellv, yk,xup_n
    real                             :: xk, xchla, xagrow, xagres, xac
-   real                             :: w, wst, vmitt1, vkrit, vges
+   real                             :: wst, vkrit, vges
    real                             :: v6, ust, ustkri, up_n2i, up_ci
-   real                             :: upmxpg, upmxng, upmxi, uhrz, topt
-   real                             :: toptg, tmax, tiefe1, tflie, te0
-   real                             :: tauad, sumyk, sumroh_chl, sumqp, sumqn
+   real                             :: tiefe1, tflie, upmxi
+   real                             :: sumyk, sumroh_chl, sumqp, sumqn
    real                             :: sumpc, sumn, sumh, sumaw, sumas
-   real                             :: sumah, sumac, sumacg, slamda, saettg
-   real                             :: roh_chlzmit, qsgr, qmx_pg, qmx_ng, qmxi
-   real                             :: qmn_pg, qmni, pc, pcmit, pcmax
-   real                             :: pbiogr, pbiobl, oc, oc0, obfli
+   real                             :: sumah, sumac, sumacg, saettg
+   real                             :: roh_chlzmit, qsgr,  qmxi
+   real                             :: qmni, pc, pcmit, pcmax
+   real                             :: oc, oc0, obfli
    real                             :: hctest, hconsk, hconql, halbi, g
-   real                             :: grote, ft_ks, ftemp, fta, frmuge
-   real                             :: frespx, frespg, frespgx, fn, fmor
+   real                             :: ft_ks, ftemp, fta
+   real                             :: frespx, frespgx, fn, fmor
    real                             :: fmor2, fmor1, fmor0, f5, f52, a1Gr
    real                             :: f51, dz_spline, dz, dztot, dz1
    real                             :: dh2d, deltaz, dagr, cnaehr, chlagrt
-   real                             :: ceq, cchl_stern, cchl0, caki, cagr
-   real                             :: cabl, a, awmit, asmit, asgre
-   real                             :: alpha_chl, alamda, akremi, ahmit
-   real                             :: agrt, agrs, agres, agremi, agmor
-   real                             :: agmomi, agmoma, agksp, agksn, aggrow
-   real                             :: aggmax, aggmaxtopt, agchl_max, agchl, agbcmt
-   real                             :: acmit, acmitg, abr, a3gr, a2gr
-   real                             :: LNQ, Icz, Ic, lamda0, IKg, IKge, kTemp_Gr, N_Cmax
-   real                             :: kTresp, agrt_old
+   real                             :: ceq, cchl_stern, cchl0
+   real                             :: awmit, asmit
+   real                             :: alpha_chl, ahmit
+   real                             :: agrt, agrs, agres, agmor, aggrow
+   real                             :: aggmaxtopt, agchl_max, agbcmt
+   real                             :: acmit, acmitg, abr
+   real                             :: Icz, Ic, N_Cmax
+   real                             :: agrt_old
    logical                          :: kontroll
-   character (len = 255)            :: cpfad
-   integer, dimension(1000)         :: flag, jiein, ischif, nkzs
+   integer, dimension(1000)         :: ischif, nkzs
    real, dimension(40)              :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
    real, dimension(50)              :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
    real, dimension(50)              :: Y, YY, hc_temp, Q_PGz, agresz
    real, dimension(50)              :: xroh_Chl
-   real, dimension(100)             :: qeinl, evkigr, eantbl, echla, ess, hemm
-   real, dimension(1000)            :: tempw, chla, ssalg, vno3, vnh4, gelp, vco2, chlaki, svhemg, dalggr
-   real, dimension(1000)            :: dalgag, chlagr, vmitt, rau, tiefe, elen, vabfl, vkigr, antbl, Q_PK
-   real, dimension(1000)            :: Q_NK, sedalg, algzog, dgrmor, agrtbr, fkm, algdrg, algcog, cmatgr
-   real, dimension(1000)            :: cmatki, tpgr, extk, akbcm, agbcm, aki, agr, zooind, abl, chlabl
-   real, dimension(1000)            :: abbcm, ss, figaus, agmuea, fhegas, agreau, up_PG, up_NG, Q_PG, Q_NG
+   real, dimension(100)             :: hemm
+   real, dimension(1000)            :: tempw, chla, vno3, vnh4, gelp, chlaki, svhemg, dalggr
+   real, dimension(1000)            :: dalgag, chlagr, vmitt, rau, tiefe,  vkigr, antbl
+   real, dimension(1000)            :: sedalg, algzog, dgrmor, agrtbr, algdrg, algcog, cmatgr
+   real, dimension(1000)            :: tpgr, extk, agbcm, agr, chlabl
+   real, dimension(1000)            :: figaus, agmuea, fhegas, agreau, up_PG, up_NG, Q_PG, Q_NG
    real, dimension(1000)            :: schwi, Dz2D, sedAlg0
    real, dimension(40,1000)         :: extk_lamda
-   real, dimension(50,1000)         :: agrbrz, up_PGz, up_NGz, akiz, agrz, ablz, algagz, dgmorz, algzgz
+   real, dimension(50,1000)         :: agrbrz, up_PGz, up_NGz,  agrz, algagz, dgmorz, algzgz
    real, dimension(50,1000)         :: vNH4z, vNO3z, gelPz, dalggz, tempwz, chlaz
    real, dimension(azStrs,1000)     :: sedAlg_MQ, agmor_1
    real, dimension(azStrs,50,1000)  :: hchlkz, hchlgz, hchlbz, hCChlgz, hQ_NGz
    real, dimension(azStrs,1000)     :: tausc
+   
+   
+   real, parameter :: kTresp = 0.058
+   real, parameter :: tauad = 100.    ! Relaxationszeit der Algen in sec
+   real, parameter :: te0 = 20.
+   real, parameter :: lamda0 = 440.
+   real, parameter :: slamda = 0.016
+   real, parameter :: agmomi = 0.02
+   real, parameter :: agmoma = 0.8
    
    external :: lin_spline, lichthemmung, uptake, c_chla, schiff, sedimentation
    external :: print_clipping, qerror
@@ -106,8 +113,6 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
    save Cchlaz
    
    ispek = 0
-   iein = 1
-   itemp = 1
    
    ifoto = 0     !Lichtabhängigkeit der Fotosyntheserate nach Ross (2009)
    ifoto = 1     !Lichtabhängigkeit der Fotosyntheserate nach Geider (1998)
@@ -122,102 +127,71 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       return
    endif
    
-   ! Eingaben
-   ! tauad = Relaxationszeit der Algen in min
-   TOPT = ToptG
-   kTresp = 0.058
-   tauad = 100.             !Relaxationszeit der Algen in sec
-   Iref = 140.
-   Cagr = 0.48
-   Caki = 0.48
-   Cabl = 0.48
-   
-   IKg = IKge
-   frespg = frmuge
-   Te0 = 20.
-   if (agChl>=32.2) then
+
+   if (agChl >= 32.2) then
       agchl_max = 32.2
    else
       agChl_max = 12.4
-      if (agChl == 20.6)agChl_max = 20.6
-      if (agChl == 15.6)agChl_max = 15.6
+      if (agChl == 20.6) agChl_max = 20.6
+      if (agChl == 15.6) agChl_max = 15.6
    endif
    
    ! C:Chla = abchl * exp(-a1*T) * a2 * I * exp(-a3*T)
-   CChl0 = agchl * exp(-a1Gr * Te0)               ! C:Chla bei 0°C mgC/mgChla
    if (agChl > agChl_max) then
       CChl0 = agChl_max * exp(-a1gr * Te0)
-   endif
-   ! Umrechnung der maximalen Wachstumsrate bei 20°C auf Wachstumsrate unter optimalen Temperatur-Bedingungen
-   aggmaxTopt = aggmax
-   if (iTemp == 1) then
-      aggmaxTopt = aggmax/(exp(-kTemp_Gr*(Te0-Topt)**2))
-      upmxPG = aggmaxTopt * Qmx_PG               ! s. Geider (1998), Angabe pro mg Biomasse
-      upmxNG = aggmaxTopt * Qmx_NG               ! Geider (1998)
+   else
+      CChl0 = agchl * exp(-a1Gr * Te0)               ! C:Chla bei 0°C mgC/mgChla
    endif
    
-   ! Einlesen der
-   ! wird wieder aktiviert wenn Datei in Gerris erzeugt wird
-   !!wy      write(pfadstring,'(2A)')trim(adjustl(cpfad)),'e_extnct.dat'
-   !!wy      open(unit=101, file=pfadstring)
-   !!wy      rewind(101)
-   !!wy      read(101,'(A2)')ckenn_vers1
-   !!wy      if(ckenn_vers1/='*V')then
-   !!wy        else
-   !!wy          read(101,'(2x)')
-   !!wy      endif
-   !!wy      read(101,'(i2)')ilamda
-   !
+   ! Umrechnung der maximalen Wachstumsrate bei 20°C auf Wachstumsrate unter 
+   ! optimalen Temperaturbedingungen
+   aggmaxTopt = aggmax/(exp(-kTemp_Gr*(Te0-toptg)**2))
+   upmxPG = aggmaxTopt * Qmx_PG               ! s. Geider (1998), Angabe pro mg Biomasse
+   upmxNG = aggmaxTopt * Qmx_NG               ! Geider (1998)
+
+
    sumaw = 0.0
    sumas = 0.0
    sumacg = 0.0
-   
    do i = 1,ilamda
-      !!wy      read(101,1000)eta(i),aw(i),ack(i),acg(i),acb(i),ah(i)             &
-      !!wy     &,as(i),al(i)
-      sumaw = sumaw+aw(i)
-      sumas = sumas+as(i)
-      sumacg = sumacg+acg(i)
+      sumaw = sumaw + aw(i)
+      sumas = sumas + as(i)
+      sumacg = sumacg + acg(i)
    enddo
-   awmit = sumaw/ilamda
-   asmit = sumas/ilamda
-   acmitg = sumacg/ilamda
-   
-   1000 format(f5.1,7(2x,f8.6))
+   awmit = sumaw / ilamda
+   asmit = sumas / ilamda
+   acmitg = sumacg / ilamda
    
    ! Berechnung des Absorptionsspektrums für Gelbstoffe
-   lamda0 = 440.
-   Slamda = 0.016
    sumah = 0.0
    do i = 1,ilamda
-      ah(i) = alamda*exp(-Slamda*(eta(i)-lamda0))
-      sumah = sumah+ah(i)
+      ah(i) = alamda * exp(-Slamda*(eta(i)-lamda0))
+      sumah = sumah + ah(i)
    enddo
-   
-   ahmit = sumah/ilamda
+   ahmit = sumah / ilamda
    
    ! Beginn der Segmentschleife
    do ior = 1,anze+1
-      
-   
       sumac = 0.0
       do i = 1,ilamda
-         sumac = sumac+(ack(i)*vkigr(ior)+acg(i)*(1.-vkigr(ior)-antbl(ior))+acb(i)*antbl(ior))
+         sumac = sumac                                      &
+               + ack(i) * vkigr(ior)                        &
+               + acg(i) * (1. - vkigr(ior) - antbl(ior))    &
+               + acb(i) * antbl(ior)
       enddo
       
-      acmit = sumac/ilamda
-      
+      acmit = sumac / ilamda
+       
       ! schwi*4.2 - Umrechnung von cal/(cm2*h) in J/(cm2*h)
-      OBFLI = 5.846*(schwi(ior)*4.2) ! Lichtgeschwindigkeit fuer Luft, da µE bei Wachstumsversuchen in Luft gemessen
-      
-      if (OBFLI < 0.0)obfli = 0.0
+      obfli = 5.846 * (schwi(ior)*4.2) ! Lichtgeschwindigkeit fuer Luft, da µE bei Wachstumsversuchen in Luft gemessen
+      if (obfli < 0.0) obfli = 0.0
       
       ! Spektrale Auflösung der photosynth. aktiven Strahlung
       if (ispek == 0) then
-         I0(1) = obfli
+         i0(1) = obfli
       else
          do i = 1,ilamda
-            I0(i) = obfli*al(i)
+            i0(i) = obfli * al(i)
          enddo
       endif
       
@@ -227,7 +201,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          F5z(nkz) = 0.0
       enddo
       
-      if (ilbuhn == 1)nkzs(ior) = 1
+      if (ilbuhn == 1) nkzs(ior) = 1
       
       if (ior > 1) then
          agr(ior-1) = agrt
@@ -244,56 +218,44 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       if (ilbuhn == 1 .and. tiefe(ior) < 0.05) cycle
       
       ! Temperaturabhaengigkeit der Respirationsrate
-      FTEMP = exp(kTresp*(TEMPW(ior)-20.))
+      ftemp = exp(ktresp*(tempw(ior)-20.))
       
       ! Temperaturabhaengigkeit der Wachstumsrate
-      if (itemp == 0) then
-         if (tempw(ior)>=tmax) then
-            fta = 0.01
-         else
-            LNQ = log(1.73)
-            W = LNQ*(TMAX-TOPT)
-            X = (W**2*(1+SQRT(1+40/W))**2)/400.
-            FTA = ((TMAX-TEMPW(ior))/(TMAX-TOPT))**X
-            FTA = FTA*EXP(X*(1-((TMAX-TEMPW(ior))/(TMAX-TOPT))))
-         endif
-      else
-         FTA = exp(-kTemp_Gr*(Tempw(ior)-Topt)**2)
-      endif
-      FTA = max(0.01,FTA) !!wy
-      if (kontroll) print*,'algaesgr:Temperaturabhaengigkeit jjj FTA,iTemp,tmax = ',jjj,FTA,iTemp,tmax !!wy
-      
+      fta = exp(-ktemp_gr*(tempw(ior)-toptg)**2)
+      fta = max(0.01,fta)
+       
       ! Berechnung der Schubspannungsgeschwindigkeit
-      FN = 1./RAU(ior)
-      G = 9.81
-      UST = ((FN*G**0.5)/TIEFE(ior)**0.166667)*abs(VMITT(ior))
+      fn = 1./rau(ior)
+      g = 9.81
+      ust = ((fn*g**0.5)/tiefe(ior)**0.166667)*abs(vmitt(ior))
       
       ! Berechnung des mittleren vertikalen Dispersionskoeffizient
       ! nach Fischer im ein-dimensionalen Fall (gute Näherung)
-      a = 0.4*ust
-      dztot = a*tiefe(ior)/6.
-      
       if (nkzs(ior) == 1 .or. Dz2D(ior) == 0.0) then
+         dztot = 0.4 * ust * tiefe(ior) / 6.
       else
          dztot = Dz2D(ior)
       endif
       dz = sqrt(tauad*2.*Dztot)               ! Dicke der Schicht im vertikalen Profil
-      PCmax = (aggmaxTopt+agremi * exp(kTresp*(Topt-20.)))/(1.-frespg)
+      PCmax = (aggmaxTopt+agremi * exp(kTresp*(toptg-20.)))/(1.-frmuge)
       
-      ! Berechnung der Lichtabsorption im gesamten Wasserk”rper
-      js = 0                   !!wy
-      if (dz > 0.0) js = int(tiefe(ior)/dz)      !!wy
-      !      js = int(tiefe(ior)/dz)
+      ! Berechnung der Lichtabsorption im gesamten Wasserkörper
+      if (dz > 0.0) then
+         js = int(tiefe(ior)/dz)
+      else
+         js = 0
+      endif
+      
       if (js > 30) then
          js = 30
          dz = tiefe(ior)/js
-      endif
-      if (js < 1) then
+      
+      else if (js < 1) then
          js = 1
          dz = tiefe(ior)
       endif
       
-      deltaz = tiefe(ior)-js*dz
+      deltaz = tiefe(ior) - js * dz
       if (deltaz > 0.0001) then
          js = js + 1
       else
@@ -310,9 +272,10 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          do nkz = 1,nkzs(ior)
             Y(nkz) = tempwz(nkz,ior)
          enddo
+         
          iaus = 0
          i_zeiger = 0
-         call lin_spline (dH2D, dz_spline, deltaz, n_alt_s, n_neu_s, Y, YY,i_zeiger,iaus,ior)
+         call lin_spline(dH2D, dz_spline, deltaz, n_alt_s, n_neu_s, Y, YY,i_zeiger)
          do j = 1,n_neu_s
             hc_temp(j) = YY(j)
          enddo
@@ -320,9 +283,8 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          do nkz = 1,nkzs(ior)
             Y(nkz) = hCChlgz(mstr,nkz,ior)
          enddo
-         i_zeiger = 0
-         call lin_spline (dH2D, dz_spline, deltaz, n_alt_s, n_neu_s, Y, YY,i_zeiger,iaus,ior)
-         iaus = 0
+         
+         call lin_spline(dH2D, dz_spline, deltaz, n_alt_s, n_neu_s, Y, YY,i_zeiger)
          do j = 1,n_neu_s
             CChlaz(j) = YY(j)
          enddo
@@ -330,30 +292,30 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       
       ! Nährstoffabhängigkeit des Wachstums (1D-Fall)
       ! Temperaturabhängigkeit von KP, KN,KSi
-      fT_Ks = 1.15**(20.-tempw(ior))
+      ! fT_Ks = 1.15**(20.-tempw(ior))
       fT_Ks = 1.
       
-      if ((Qmx_NG/Qmn_NG) < 1.25) then
-         F51 = (VNO3(ior)+VNH4(ior))/(agksN*ft_ks+VNO3(ior)+VNH4(ior))
+      if (qmx_ng/qmn_ng < 1.25) then
+         f51 = (vno3(ior) + vnh4(ior)) / (agksn * ft_ks + vno3(ior) + vnh4(ior))
       else
-         F51 = (Q_NG(ior)-Qmn_NG)/(Qmx_NG-Qmn_NG)
+         f51 = (q_ng(ior) - qmn_ng) / (qmx_ng - qmn_ng)
       endif
       
-      if ((Qmx_PG/Qmn_PG) < 1.25) then
-         F52 = gelP(ior)/(agksp*ft_ks+gelP(ior))
+      if (qmx_pg/qmn_pg < 1.25) then
+         f52 = gelp(ior) / (agksp * ft_ks + gelp(ior))
       else
-         F52 = (Q_PG(ior)-Qmn_PG)/(Qmx_PG-Qmn_PG)
+         f52 = (q_pg(ior) - qmn_pg) / (qmx_pg - qmn_pg)
       endif
       
-      F5 = F51
-      F5 = min(F51,F52)
-      if (F5 < 0.0)F5 = 0.0
+ 
+      f5 = min(f51,f52)
+      if (f5 < 0.0)f5 = 0.0
       
       do j = 1,js ! Schleife über die Schichten
          
          dz1 = dz
          
-         if (j == js .and. deltaz > 0.0)dz = deltaz
+         if (j == js .and. deltaz > 0.0) dz = deltaz
          if (ispek == 1) then
             Ic = 0.0
             do i = 1,ilamda
@@ -368,20 +330,24 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          if (nkzs(ior) == 1) then
             hc_temp(j) = tempw(ior)
             CChlaz(j) = agbcm(ior)
-         else
          endif
+         
          yK = 1.-svhemg(ior)
          CChl_Stern = CChl0 *exp(a1Gr * hc_temp(j))        ! dunkeladaptierte Algen
-         call LichtHemmung(tflie,Ic,yK,CChl_Stern,CChlaz,j)
-         hemm(j) = yK
-         Saettg = IKg * 0.183*exp(0.0848*hc_temp(j))
-         if (IKg == 103.9)Saettg = IKg * 0.234*exp(0.0726*hc_temp(j))
-         alpha_chl = PCmax*FTA*CChl_Stern/(Saettg*86400.)
+         call lichthemmung(tflie,Ic,yK,CChl_Stern,CChlaz,j)
+         
+         hemm(j) = yk
+         saettg = ikge * 0.183*exp(0.0848*hc_temp(j))
+         if (ikge == 103.9) saettg = ikge * 0.234*exp(0.0726*hc_temp(j))
+         alpha_chl = pcmax*fta*cchl_stern/(saettg*86400.)
+         
          if (ifoto == 0) then
-            Pc = Pcmax*FTA*(1.-exp(-Ic/Saettg))*hemm(j)
+            pc = pcmax * fta * (1.-exp(-ic/saettg)) * hemm(j)
          else if (ifoto == 1) then
-            Pc = Pcmax*FTA*(1.-exp(-Ic*alpha_Chl/(max(CChl_Stern,CChlaz(j))*Pcmax*FTA/86400.)))*hemm(j)
+            pc = pcmax * fta * (1.-exp(-ic * alpha_chl/(max(cchl_stern,cchlaz(j))*pcmax * fta/86400.))) * hemm(j)
          endif
+         
+         
          ! Berechnung roh_Chl (wird für die Neuberechnung der Chlorophyll-a-Konzentration)
          N_Cmax = Qmx_NG/Cagr
          xroh_Chlz(j) = CChlaz(j)/(alpha_Chl*(max(0.1,Ic))*N_Cmax) ! 2D-Fall
@@ -418,24 +384,23 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          iaus = 0
          i_zeiger = 1
          dz_spline = dz1
-         call lin_spline (dz_spline, dH2D, deltaz, js, n_neu_s, CChlaz, YY,i_zeiger,iaus,ior)
+         call lin_spline(dz_spline, dH2D, deltaz, js, n_neu_s, CChlaz, YY,i_zeiger)
          do nkz = 1,nkzs(ior)
             CChlaz(nkz) = YY(nkz)
          enddo
-         iaus = 0
-         i_zeiger = 1
+         
          dz_spline = dz1
-         call lin_spline (dz_spline, dH2D, deltaz, js, n_neu_s, Pz, YY,i_zeiger,iaus,ior)
+         call lin_spline(dz_spline, dH2D, deltaz, js, n_neu_s, Pz, YY,i_zeiger)
          do nkz = 1,nkzs(ior)
             Pz(nkz) = YY(nkz)
          enddo
-         i_zeiger = 1
+         
          dz_spline = dz1
-         call lin_spline (dz_spline, dH2D, deltaz, js, n_neu_s, xroh_Chlz, YY,i_zeiger,iaus,ior)
+         call lin_spline(dz_spline, dH2D, deltaz, js, n_neu_s, xroh_Chlz, YY,i_zeiger)
          do nkz = 1,nkzs(ior)
             roh_Chlz(nkz) = YY(nkz)
          enddo
-      endif                       ! 2D-Modellierung Ende
+      endif
       
       ! Mittelwertbildung der Hemmung
       sumyK = 0.0
@@ -450,8 +415,7 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          svhemg(ior) = 1.-(sumyK/sumH)
       endif
       
-      if (nkzs(ior) == 1) then
-      else
+      if (nkzs(ior) /= 1) then
          ! 2D-Modellierung
          ! Nährstoffabhängigkeit des Wachstums (2D-Fall)
          do nkz = 1,nkzs(ior)
@@ -469,14 +433,15 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          enddo
       endif
       
-      ! BERECHNUNG DER RESPIRATIONSRATE
+      ! Berechnung der Respirationsrate
       aggrow = Pcmit*F5
       
-      agres = aggrow * frespg + agremi*ftemp
-      agrt = agr(ior)*exp(aggrow*tflie)
-      dalggr(ior) = agrt-agr(ior)
-      dalgag(ior) = agrt*(1.-(exp(-agres*tflie)))
+      agres = aggrow * frmuge + agremi*ftemp
+      agrt = agr(ior) * exp(aggrow * tflie)
+      dalggr(ior) = agrt - agr(ior)
+      dalgag(ior) = agrt * (1.-(exp(-agres*tflie)))
       agrt = agrt - dalgag(ior)
+      
       if (nkzs(ior) > 1) then
          ! 2D-Modellierung
          sumQN = 0.0
@@ -484,12 +449,12 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
          sumH = 0.0
          do nkz = 1,nkzs(ior)            ! Schleifenbeginn 2D
             
-            ! BERECHNUNG DER RESPIRATIONSRATE
+            ! Berechnung der Respirationsrate
             aggrwz(nkz) = Pz(nkz)*F5z(nkz)
-            frespgx = frespg
+            frespgx = frmuge
             if ((aggrwz(nkz)-akremi*ftemp) < 0.0)frespx = 0.0
             
-            agresz(nkz) = aggrwz(nkz) * frespg + agremi*ftemp
+            agresz(nkz) = aggrwz(nkz) * frmuge + agremi*ftemp
             agrtz(nkz) = agrz(nkz,ior)*exp(aggrwz(nkz)*tflie)
             dalggz(nkz,ior) = agrtz(nkz)-agrz(nkz,ior)
             algagz(nkz,ior) = agrtz(nkz)*(1.-(exp(-agresz(nkz)*tflie)))
@@ -634,12 +599,10 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       if (ischif(ior) == 0) then
          v6 = 0.0
       else
-         nschif = ischif(ior)
-         vmitt1 = vmitt(ior)
-         call schiff(vmitt1,tiefe1,v6,nschif)
+         call schiff(vmitt(ior), tiefe1, ischif(ior), v6)
       endif
       
-      vges = vmitt(ior)+v6
+      vges = vmitt(ior) + v6
       
       agrs = asgre*agr(ior)
       ised = 1      ! Schalter zur Kennzeichnung der hier berücksichtigten partik. Wasserinhaltsstoffe
@@ -648,15 +611,14 @@ subroutine algaesgr(SCHWI,TFLIE,TEMPW,RAU,TIEFE,VMITT,VNO3,VNH4,GELP,svhemg,CHLA
       call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
       ceq = agrs*qsgr
       
-      SEDALg(ior) = (agrs - Ceq) * oc
+      sedalg(ior) = (agrs - ceq) * oc
       sedalg0(ior) = wst*asgre*qsgr
-      sedAlg_MQ(mstr,ior) = sedAlg_MQ(mstr,ior) + SEDALg(ior)
-      ! if(ieros.eq.1.and.vges.gt.vkrit)sedalg(ior) = 0.0
+      sedalg_mq(mstr,ior) = sedalg_mq(mstr,ior) + sedalg(ior)
+      
+      ! if (ieros == 1 .and. vges > vkrit) sedalg(ior) = 0.0
       
       
       ! Algenmortalität, abhängig vom Nährstoffgehalt der Zelle, bzw. Nährstoffangebot
-      agmomi = 0.02
-      agmoma = 0.8
       agmor = agmomi
       
       fmor0 = 0.05

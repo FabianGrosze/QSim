@@ -81,7 +81,6 @@ Q1 = module_model_settings.o \
     silicate_inflow_1d.o \
     sysgen.o \
     sys_gitterStrang.o \
-    sys_gitterTrans.o \
     sys_z_gitter.o \
     thomas.o\
     transport.o \

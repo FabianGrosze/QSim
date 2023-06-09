@@ -355,8 +355,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(10+nk),      & ! abl abls(mstr,mRB)
                     planktonic_variable( 9+nk),      & ! agr agrs(mstr,mRB)
                     a1Ki,a1Bl,a1Gr,                  & ! globale Parameter direkt aus QSimDatenfelder
-                    Caki,Cabl,Cagr,                  & ! Kohlenstoffgehalte der Biomassen direkt aus QSimDatenfelder
-                    akchl,abchl,agchl,               & ! APARAM.txt globale Parameter direkt aus QSimDatenfelder
                     planktonic_variable(12+nk),      & ! chlaki chlaks(mstr,mRB)
                     planktonic_variable(14+nk),      & ! chlabl chlabs(mstr,mRB)
                     planktonic_variable(13+nk))        ! chlagr chlags(mstr,mRB)
@@ -386,13 +384,10 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
       print*, ' frfgr  = ', planktonic_variable(56+nk)
    endif
    
-   call orgc_start(TOC_CSB,bsbZoo,GROT,             & ! globale Parameter direkt aus QSimDatenfelder
+   call orgc_start(TOC_CSB,bsbZoo,                  & ! globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable( 8+nk),      & ! aki | akis
                    planktonic_variable(10+nk),      & ! abl | abls
                    planktonic_variable( 9+nk),      & ! agr | agrs
-                   Caki,Cabl,Cagr,CZoo,             & ! Kohlenstoffgehalte der Biomassen direkt aus QSimDatenfelder
-                   bsbki,bsbbl,bsbgr,               & ! APARAM.txt globale Parameter direkt aus QSimDatenfelder
-                   csbki,csbbl,csbgr,               & ! APARAM.txt globale Parameter direkt aus QSimDatenfelder
                    planktonic_variable(50+nk),      & ! ZOOIND | zooins
                    planktonic_variable(46+nk),      & ! vbsb  BSB5 incl. lebender Organismen, messbar, Randwert | vbsbs
                    planktonic_variable(47+nk),      & ! vcsb  CSB incl. lebender Organismen , messbar, Randwert | vcsbs
@@ -447,7 +442,6 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(34+nk),      & ! Q_PG  | Q_PGs
                     planktonic_variable(35+nk),      & ! Q_NB  | Q_NBs
                     planktonic_variable(36+nk),      & ! Q_PB  | Q_PBs
-                    Qmx_NK,Qmn_NK,Qmx_PK,Qmn_PK,Qmx_SK,Qmn_SK, Qmx_NG,Qmn_NG,Qmx_PG,Qmn_PG, Qmx_NB,Qmn_NB,Qmx_PB,Qmn_PB,  & ! APARAM.txt globale Parameter direkt aus QSimDatenfelder
                     CPges,CDges,Cref,                & ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
                     planktonic_variable(42+nk),      & ! BAC   | BACs
                     planktonic_variable(41+nk),      & ! CM   |  CMs
@@ -455,7 +449,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(58+nk),      & ! pl0 Phosphor zu Kohlenstoff in organischem Material | pl0s,
                     planktonic_variable(53+nk),      & ! SS suspendierte Sedimente ohne lebende Organismen | sss,
                     planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE | ssalgs,
-                    0,0,0,0,                         & ! itags,monats,mstr,mRB für Kontrollausgaben in 1D benötigt
+                    0,0,                             & ! mstr,mRB für Kontrollausgaben in 1D benötigt
                     einmalig,kontroll,j)
    
    if (kontroll) print*,'randbedingungen_ergaenzen: nach algae_aufteilung',    &

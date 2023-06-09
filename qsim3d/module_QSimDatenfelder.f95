@@ -422,13 +422,13 @@ module QSimDatenfelder
    real, dimension(1,50,1000)            :: hCChlkz, hCChlbz, hCChlgz
    !> \anchor a1Ki \anchor a2Ki \anchor a3Ki
    !! ; in ini_algae() gesetzt
-   real  a1Ki, a2Ki, a3Ki
-   !> \anchor a1bl \anchor a2bl \anchor a3bl
+   real  a1Ki
+   !> \anchor a1bl
    !! ; in ini_algae() gesetzt
-   real  a1Bl, a2Bl, a3Bl
-   !> \anchor a1gr \anchor a2gr \anchor a3gr
+   real  a1Bl
+   !> \anchor a1gr
    !! ; in ini_algae() gesetzt
-   real a1Gr, a2Gr, a3Gr
+   real a1Gr
    real, dimension(1000)                 :: sedAlk0, sedalg0, sedalb0       ! sedAlk0 wird nur an k_eps() übergeben.
    real, dimension(1,50,1000)            :: hQ_NKz, hQ_NBz, hQ_NGz
    ! orgc, hnf:

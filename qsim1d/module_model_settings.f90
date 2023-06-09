@@ -175,7 +175,7 @@ contains
       
       print '("  simulation start: ", I0.4,"-",I0.2,"-",I0.2," ",f5.2," UTC+1")', jahr_start,monat_start,itag_start,uhr_start
       print '("  simulation end:   ", I0.4,"-",I0.2,"-",I0.2," ",f5.2," UTC+1")', jahre,monate,itage,uhren
-      print '("  timestep        = ", I0, " minutes (", f5.4," days)")', izdt, tflie
+      print '("  timestep:         ", I0, " minutes (", f5.4," days)")', izdt, tflie
       print *, ''
       
       print '(a,i1)',   '  iMitt       = ', imitt

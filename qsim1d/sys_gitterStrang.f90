@@ -25,21 +25,19 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
+subroutine sys_gitterStrang(j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt,       &
                             no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt,    &
                             chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt,    &
                             Q_NBzt, Q_NGzt,  CChlkzt,  CChlbzt, CChlgzt, jnkz, &
-                            i_EstRNR, itags, monats, uhrz)
+                            i_EstRNR)
    
    use allodim
    implicit none
    
-   integer                         :: nkz, nkzs_alt, monats, j_neu, j_alt
+   integer                         :: nkz, nkzs_alt, j_neu, j_alt, nkzs_neu
    integer                         :: jnkz, i_zaehlv, i_var, i_vars, i_estrnr
-   integer                         :: itags, ior
-   real                            :: uhrz, hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
+   real                            :: hcdh2d, gstiefe_neu, gstiefe_alt, dtiefe
    real                            :: dh2d
-   integer                         :: nkzs_neu, mstr
    real, dimension(azStrs,50,2)    :: tzt, o2zt, nh4zt, no2zt, no3zt, Pzt, gSizt, akizt, agrzt, ablzt, chlazt
    real, dimension(azStrs,50,2)    :: chlkzt, chlgzt, chlbzt, gesPzt, gesNzt, Q_NKzt, Q_NBzt, Q_NGzt
    real, dimension(azStrs,50,2)    :: CChlkzt, CChlbzt, CChlgzt
@@ -225,7 +223,8 @@ subroutine sys_gitterStrang(mstr, j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt, &
       end select zeiger_var
       i_zaehlv = i_zaehlv+1
       if (i_zaehlv <= 23) then
-         call lin_interpolation(y_var,y_var_neu,hctiefe_neu,tiefe_neu,nkzs_alt, nkzs_neu,i_zaehlv,itags,monats,mstr,ior)
+         call lin_interpolation(y_var, y_var_neu, hctiefe_neu, tiefe_neu,  &
+                                nkzs_alt, nkzs_neu)
       endif
    enddo ! Ende Variablenschleife
 end subroutine sys_gitterStrang

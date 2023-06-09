@@ -43,6 +43,7 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    ! CLOUD  - Bewoelkungsgrad
    
    use allodim
+   use aparam
    implicit none
    
    integer                         :: jahrs, nrs, mstr, monatv, monats_tst
@@ -54,7 +55,7 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    real                            :: uhrz, uhrv, uhren, tssa, time
    real                            :: time0, thell, tflie, sw, su
    real                            :: sh, shgr, schwia, sa, s3
-   real                            :: s2, s1, pi, hconx, hconwr
+   real                            :: s2, s1, hconx, hconwr
    real                            :: hconk, hconkr, hcon1, geol, geob
    real                            :: fdiff, evl, evaltr, evaltl, euferr
    real                            :: euferl, etas, eslenk, eqtime, epsi
@@ -76,7 +77,6 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    save itags_tst, monats_tst, jahrs_tst, uhrz_tst
    
    j = 0
-   PI = 22./7.
    Uhrv = Uhrz
    isim_end = 0
    

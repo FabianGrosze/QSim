@@ -73,7 +73,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    if (ischifs == 0) then
       v6 = 0.0
    else
-      call schiff(VMITTs,tiefes,v6,ischifs)
+      call schiff(VMITTs, tiefes, ischifs, v6)
    endif
    vges = VMITTs+v6
    

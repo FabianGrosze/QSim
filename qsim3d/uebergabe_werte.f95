@@ -486,14 +486,9 @@ subroutine broadcast_parameter()
    call MPI_Bcast(ratecs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    !-----------------------------------------------------------------weitere (ini_algae)
    call MPI_Bcast(a1Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a2Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a3Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(a1Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a2Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a3Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(a1Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a2Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a3Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
+
    !-----------------------------------------------------------------weitere (orgc_start)
    call MPI_Bcast(TOC_CSB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(bsbZoo,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !

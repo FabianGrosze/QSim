@@ -32,24 +32,24 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
                      ,vx02,Si,mstr,gelP,obsb,ocsb,vbsb,vcsb,CHNF,BVHNF,CD,CP,CM,BAC,zooind,chla,aki,agr,abl,chlaki,chlagr  &
                      ,chlabl,vkigr,antbl,abrzo1,ssalg,ss,svhemk,svhemg,svhemb,akbcm,agbcm,abbcm,fssgr,fbsgr,frfgr,gesN     &
                      ,gesP,nl0,pl0,Q_NK,Q_PK,Q_SK,Q_NG,Q_PG,Q_NB,Q_PB,stind,mw,pw,ca,lf,coli,DOSCF                         &
-                     ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4,ho2             &
+                     ,dlarvn,vph,iph,iwsim,htempw,hgesN,hgesP,hbsb,hcsb,hCHNF,hBVHNF,hCD,hCP,hCM,hBAC,hnh4                 &
                      ,hno3,hno2,hx0,hx02,hsi,hchla,haki,hagr,habl,hchlak,hchlag,hchlab,hvkigr,hantbl,hssalg,hss,hzooi      &
-                     ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl,Uvert,iMAC           &
-                     ,iwied,nkzs,tflie,jpoin1,itags,monats,Uhrz,iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK           &
+                     ,hgelp,hmw,hpw,hca,hlf,hph,hdlarn,hcoli,hDOSCF,hvbsb,hvcsb,SKmor,hSKmor,iflRi,dl ,Uvert,iMAC          &
+                     ,iwied,nkzs,tflie,jpoin1, iverfahren,ianze_max,Qmx_NK,Qmx_NB,Qmx_NG,Qmx_PK                            &
                      ,Qmx_PB,Qmx_PG,hFluN3,TGZoo,akmor_1,agmor_1,abmor_1                                                   &
                      ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
-                     ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,nkztot_max,ischwer)
+                     ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,ischwer)
    
    use allodim
    
    implicit none
    
-   integer                             :: nkz, nkztot_max, mtracer, mstr, monats
+   integer                             :: nkz, mtracer, mstr
    integer                             :: ktrans, kktrans, j, jpoin1, izeits
    integer                             :: iwsim, iwied, iwahld, iverfahren, itime
-   integer                             :: itags, isub_dtx, ischwer, iph, ior
+   integer                             :: isub_dtx, ischwer, iph, ior
    integer                             :: iork, iorks, ianze_max, anze
-   real                                :: vhrann, vhrand, uhrz, tflie, tempn
+   real                                :: vhrann, vhrand, tflie, tempn
    real                                :: temp0, sumdet, qmx_pk, qmx_pg, qmx_pb
    real                                :: qmx_nk, qmx_ng, qmx_nb, hk, deltat
    integer, dimension(azStrs)          :: iflRi, imac, isub_dt, isub_dt_Mac
@@ -64,7 +64,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    real, dimension(2,ialloc2)          :: CD, CP
    real, dimension(50,ialloc2)         :: Uvert
    real, dimension(azStrs,ialloc2)     :: hvmitt, hDOSCF, htempw, hgesN, hgesP, hbsb, hcsb, hCHNF, hBVHNF, hBAC
-   real, dimension(azStrs,ialloc2)     :: hCM, hnh4, ho2, hno3, hno2, hx0, hx02, hsi, hchla, haki, hagr, habl
+   real, dimension(azStrs,ialloc2)     :: hCM, hnh4, hno3, hno2, hx0, hx02, hsi, hchla, haki, hagr, habl
    real, dimension(azStrs,ialloc2)     :: hchlak, hchlag, hchlab, hvkigr, hantbl, hssalg, hss, hzooi, hgelp
    real, dimension(azStrs,ialloc2)     :: hmw, hpw, hca, hlf, hph, hdlarn, hcoli, hvbsb, hvcsb, hSKmor,hFluN3
    real, dimension(azStrs,ialloc2)     :: TGZoo, akmor_1, agmor_1, abmor_1
@@ -72,6 +72,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
    real, dimension(azStrs,ialloc2)     :: hgsAs, hglAs, hgsPb, hglPb, hgsCr, hglCr, hgsFe, hglFe
    real, dimension(azStrs,ialloc2)     :: hgsHg, hglHg, hgsMn, hglMn, hgsU, hglU
    real, dimension(azStrs,2,ialloc2)   :: hCD, hCP
+
    
    external :: advdiff
    
@@ -101,22 +102,23 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
       tempn = htempw(mstr,anze+1)
       
       888 continue
-      !      if(iflRi(mstr).eq.0)goto 911
+      ! if (iflRi(mstr) == 0) goto 911
       if (U(1) < 0.0 .and. ktrans /= 1 .and. ktrans /= 57) goto 911
       
-      call advdiff(anze,elen,vmitt,Uvert,dl,flag,ktrans,U,temp0,tempn                                                  &
-                   ,deltat,sumdet,itime,izeits,mstr,iwied,iwahlD,nkz,nkzs,tflie,iFlRi                                  &
-                   ,jpoin1,itags,monats,isub_dtx,imac,iverfahren,kktrans,nkztot_max,ianze_max,mtracer,iwsim,uhrz)
+      call advdiff(anze, elen, vmitt, Uvert, dl, flag, ktrans, U, deltat,   &
+                   sumdet, itime, izeits, mstr, iwied, iwahlD, nkz, tflie,  &
+                   jpoin1, isub_dtx, imac, iverfahren, kktrans, ianze_max,  &
+                   mtracer, iwsim)
       
-      911 goto (600,602,604,606,608,610,612,614,616,618,620             &
-      ,622,624,626,628,630,632,634,636,638,640,642,644                  &
-      ,646,648,650,658,660,662,664,666                                  &
-      ,668,670,672,674,676,678,680,682                                  &
-      ,690,692,694,696,698,500,502,504,506,508                          &
-      ,510,512,514,516,518,520,522,524,526,528                          &
-      ,530,532,534,536,537,539,540,560,565,570                          &
-      ,542,544,546,548,550,552,554,556,558,580,582,584                  &
-      ,586,588,590,592,594,596,598,400,402,404)ktrans
+      911 goto (600, 602, 604, 606, 608, 610, 612, 614, 616, 618, 620       &
+               ,622, 624, 626, 628, 630, 632, 634, 636, 638, 640, 642, 644  &
+               ,646, 648, 650, 658, 660, 662, 664, 666                      &
+               ,668, 670, 672, 674, 676, 678, 680, 682                      &
+               ,690, 692, 694, 696, 698, 500, 502, 504, 506, 508            &
+               ,510, 512, 514, 516, 518, 520, 522, 524, 526, 528            &
+               ,530, 532, 534, 536, 537, 539, 540, 560, 565, 570            &
+               ,542, 544, 546, 548, 550, 552, 554, 556, 558, 580, 582, 584  &
+               ,586, 588, 590, 592, 594, 596, 598, 400, 402, 404) ktrans
       
       600 continue
       do ior = 1,anze+1
