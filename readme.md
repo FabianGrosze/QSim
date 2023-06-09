@@ -2,8 +2,11 @@
 
 ## 14.09
 
+### 14.09.33
+* General Cleanup: Remove dead code and variables. No calculations were altered.
+
 ### 14.09.32
-* Create module and corefunction for zooplankton. No calculations were altered
+* Create module and corefunction for zooplankton. No calculations were altered.
 
 ### 14.09.31
 * Better descriptions for Dreissena in Gerris "Strangoptionen"
