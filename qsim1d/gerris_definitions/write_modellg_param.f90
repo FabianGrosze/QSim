@@ -1,4 +1,4 @@
-! --------------------------------------------------------------------------- !
+﻿! --------------------------------------------------------------------------- !
 !  QSim - Programm zur Simulation der Wasserqualität                          !
 !                                                                             !
 !  Copyright (C) 2022                                                         !
@@ -115,10 +115,10 @@ subroutine write_modellg_param(cpfad1)
    
    ! Kenngrößen Temperatur und Sediment
    write(u_xml, '(A)') '<ParamSetDef Id="QS" Text="Kenngrössen für Sedimenttemperatur" Help="Kenngrößen für die Gewässerabschnitten" Scope="Abschnitt">'
-   write(u_xml, '(A)') '  <Parameter Ident="SPEWKS" Text="Spez. WärmeKapazität Sediment" Unit="KJ/(kg*K)" Format="F6.2" Null="-1" Help="Ton: 0.83; Sand: 0.88" Min="0.8" Max="4.5" Default="-1" />'
+   write(u_xml, '(A)') '  <Parameter Ident="SPEWKS" Text="Spezifische Wärmekapazität Sediment" Unit="KJ/(kg*K)" Format="F6.2" Null="-1" Help="Ton: 0.83; Sand: 0.88" Min="0.8" Max="4.5" Default="-1" />'
    write(u_xml, '(A)') '  <Parameter Ident="WUEBK" Text="Wärmeübergangskoeffizient" Unit="KJ/(K*m2*h)" Format="F7.2" Null="-1" Help="" Min="0" Max="1000" Default="-1." />'
    write(u_xml, '(A)') '  <Parameter Ident="PSREFS" Text="Reflektionsanteil der Strahlung an der Sedimentoberfläche" Unit="-" Format="F5.2" Null="-1" Help="" Min="0" Max="1" Default="-1." />'
-   write(u_xml, '(A)') '  <Parameter Ident="EXTKS" Text="Extinktionskoeffizient für PARS" Unit="-" Format="F5.2" Null="-1" Help="Nur bei Temperaturmodellierung erforderlich" Min="" Max="" Default="-1." />'
+   write(u_xml, '(A)') '  <Parameter Ident="EXTKS" Text="Extinktionskoeffizient für PAR" Unit="-" Format="F5.2" Null="-1" Help="Nur bei Temperaturmodellierung erforderlich" Min="" Max="" Default="-1." />'
    write(u_xml, '(A)') '</ParamSetDef>'
    
    ! Erosion

@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Write `ErgebTParam.xml`
-subroutine ErgebTParam(cpfad1)
+subroutine write_ergebt_param(cpfad1)
 
    implicit none
    character(255), intent(in) :: cpfad1
@@ -104,5 +104,5 @@ subroutine ErgebTParam(cpfad1)
    write(u_erg, '(A)') '</GerrisParam>'
    
    close(u_erg)
-end subroutine ErgebTParam
+end subroutine write_ergebt_param
 

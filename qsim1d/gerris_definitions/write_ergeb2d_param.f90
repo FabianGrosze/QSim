@@ -24,47 +24,28 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine write_gerris_definitions(cpfad1)
-   use aparam, only: AParamParam
+
+!> Writes file `Ergeb2DParam.xml`
+subroutine write_ergeb2d_param(cpfad1)
    implicit none
    
-   character(255), intent(in) :: cpfad1
+   character(255), intent(in)  :: cpfad1
    
-   external :: ereiggparam, e_extnctparam, ereighparam, ergeb2dparam
-   external :: ergebmparam, wetterparam, write_e_extnct, version_string
-   external :: write_modellg_param, ergebtparam
+   character(275) :: pfadstring
+   character(8)   :: versionstext
+   integer        :: u_erg
    
-   print*,' Writing definitions:'
+   external :: version_string
    
-   print *, '  * AParamParam.xml'
-   call AParamParam(cpfad1)
+   call version_string(versionstext)
    
-   print *, '  * EreigGParam.xml'
-   call EreigGParam(cpfad1)
+   pfadstring = trim(adjustl(cpfad1)) // 'Ergeb2DParam.xml'
+   open(newunit = u_erg, file=pfadstring, encoding='UTF-8')
    
-   print *, '  * ModellGParam.xml'
-   call write_modellg_param(cpfad1)
+   write(u_erg, '(A)') '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+   write(u_erg, '(3A)') '<GerrisParam FileType="Ergeb2D" QsimVersion="',versionstext,'">'
+   write(u_erg, '(A)') '</GerrisParam>'
    
-   print *, '  * E_extnctParam.xml'
-   call E_extnctParam(cpfad1)
-   
-   print *, '  * EreigHParam.xml'
-   call EreigHParam(cpfad1)
-   
-   print *, '  * Ergeb2DParam.xml'
-   call Ergeb2DParam(cpfad1)
-   
-   print *, '  * ErgebMParam.xml'
-   call ErgebMParam(cpfad1)
-   
-   print *, '  * ErgebTParam.xml'
-   call ErgebTParam(cpfad1)
-   
-   print *, '  * WetterParam.xml'
-   call WetterParam(cpfad1)
-   
-   print *, '  * e_extnct.dat'
-   call write_e_extnct(cpfad1)
-   
-   print*, 'Definitions completed.'
-end subroutine write_gerris_definitions
+   close(u_erg)
+end subroutine write_ergeb2d_param
+

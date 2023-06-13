@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Write file e_extnctParam.xml
-subroutine e_extnctparam(cpfad1)
+subroutine write_e_extnct_param(cpfad1)
    implicit none
    
    character(255), intent(in)  :: cpfad1
@@ -59,4 +59,4 @@ subroutine e_extnctparam(cpfad1)
    write(u_extn, '(A)') '</GerrisParam>'
    
    close(u_extn)
-end subroutine e_extnctparam
+end subroutine write_e_extnct_param

@@ -1,4 +1,4 @@
-! --------------------------------------------------------------------------- !
+﻿! --------------------------------------------------------------------------- !
 !  QSim - Programm zur Simulation der Wasserqualität                          !
 !                                                                             !
 !  Copyright (C) 2022                                                         !
@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Write file EreigGParam.xml
-subroutine EreigGParam(cpfad1)
+subroutine write_ereigg_param(cpfad1)
    implicit none
    
    character(255), intent(in)  :: cpfad1
@@ -71,7 +71,7 @@ subroutine EreigGParam(cpfad1)
    write(u_erg, '(A)') '  <Parameter Ident="VO2" Text="Sauerstoff" IsLoad="0" Unit="mg/l" Format="F5.2" Null="-1" Help="Sauerstoffgehalt" Min="0" Max="99.99" Default="" Module="Alle" />'
    write(u_erg, '(A)') '  <Parameter Ident="CHNF" Text="Nanoflagellaten" IsLoad="0" Unit="Ind/ml" Format="F8.1" Null="-1" Help="Heterotrophe Nanoflagellaten" Min="0" Max="999999.9" Default="" Module="Alle" />'
    write(u_erg, '(A)') '  <Parameter Ident="BVHNF" Text="HNF Biovolumen" IsLoad="0" Unit="µm³" Format="F6.1" Null="-1" Help="Biovolumen der HNF" Min="0" Max="9999.9" Default="" Module="Alle" />'
-   write(u_erg, '(A)') '  <Parameter Ident="COLI" Text="Coliforme" IsLoad="0" Unit="Ind/100 ml" Format="E9.2" Null="-1.0" Help="Fäkalcoliforme Bakterien" Min="0.0" Max="999999999999999.9" Default="" Module="Alle,Temperatur,Coli" />'
+   write(u_erg, '(A)') '  <Parameter Ident="COLI" Text="Coliforme" IsLoad="0" Unit="Ind/100 ml" Format="E9.2" Null="-1.0" Help="Fäkalcoliforme Bakterien" Min="0.0" Max="999999999999999.9" Default="" Module="Alle,Coli" />'
    write(u_erg, '(A)') '  <Parameter Ident="EWAERM" Text="Wärme" IsLoad="0" Unit="MJ/s" Format="F7.1" Null="-9999.9" Help="Menge der eingeleiteten Wärme (Kraftwerk)" Min="-9999.8" Max="99999.9" Default="" Module="Alle,Temperatur" />'
    write(u_erg, '(A)') '  <Parameter Ident="TRACER" Text="Tracermenge" IsLoad="0" Unit="µg/l" Format="F9.3" Null="-1." Help="Tracerkonzentration" Min="0" Max="99999.999" Default="" Module="Tracer" />'
    write(u_erg, '(A)') '  <Parameter Ident="KONSS" Text="konserv. Substanz (Cl etc." IsLoad="0" Unit="mg/l" Format="F7.1" Null="-1" Help="Tracerkonzentration" Min="0" Max="99999.9" Default="" Module="KonsS" />'
@@ -122,5 +122,5 @@ subroutine EreigGParam(cpfad1)
    write(u_erg, '(A)') '</GerrisParam>'
    
    close(u_erg)
-end subroutine EreigGParam
+end subroutine write_ereigg_param
 

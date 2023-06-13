@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Write file EreigHParam.xml
- subroutine EreigHParam(cpfad1)
+ subroutine write_ereigh_param(cpfad1)
    implicit none
    character(255), intent(in)  :: cpfad1
    
@@ -66,5 +66,5 @@
    write(u_erg, '(A)') '</GerrisParam>'
    
    close(u_erg)
-end subroutine EreigHParam
+end subroutine write_ereigh_param
 

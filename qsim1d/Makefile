@@ -47,7 +47,17 @@ FC = gfortran
 
 # ===================================================================
 
-Q1 = module_model_settings.o \
+Q1 = gerris_definitions/write_e_extnct.o \
+    gerris_definitions/write_e_extnct_param.o \
+    gerris_definitions/write_ereigg_param.o \
+    gerris_definitions/write_ereigh_param.o \
+    gerris_definitions/write_ergeb2d_param.o \
+    gerris_definitions/write_ergebm_param.o \
+    gerris_definitions/write_ergebt_param.o \
+    gerris_definitions/write_modellg_param.o \
+    gerris_definitions/write_wetter_param.o \
+    gerris_definitions/write_gerris_definitions.o \
+    module_model_settings.o \
     advdiff.o \
     albedo.o \
     basispoint.o \
@@ -56,14 +66,8 @@ Q1 = module_model_settings.o \
     crank_nicolson.o \
     cra_nickoeff.o\
     ctracer.o \
-    EreigGParam.o \
-    EreigHParam.o \
-    Ergeb2DParam.o \
     ergebMFormat.o \
-    ErgebMParam.o \
     ergebTFormat.o \
-    ErgebTParam.o \
-    E_extnctParam.o \
     init_result_files.o \
     km_sys.o \
     lax_wendroff.o \
@@ -87,10 +91,6 @@ Q1 = module_model_settings.o \
     trimat.o \
     wehr.o \
     wehrles.o \
-    WetterParam.o \
-    write_e_extnct.o \
-    write_gerris_definitions.o \
-    write_modellg_param.o \
     z_gitter_einl.o\
     zooplankton_inflow_1d.o
     
@@ -136,7 +136,7 @@ CFLAGS = -O -g -fcheck=bounds
 FFLAGS = $(CFLAGS) -c -ffree-line-length-none -finit-local-zero
 # ========================================================================================================
 
-usual: date check metabolism qsim1d
+usual: check metabolism qsim1d
 
 debug: set_debug_options clean usual
 
@@ -150,16 +150,10 @@ clean_debug: clean debug
 
 all: usual save
 
-HERE=`pwd -P`
-NOW=`date +"%-d%m%Y"`
-date: 
-	@echo "NOW=$(NOW)"
-	@echo "HERE=$(HERE)"
-
 check:
-	if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) exists"; else exit 1 ; fi;
-	if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) exists"; else exit 1 ; fi;
-	if test -d ../metabolism; then echo "Directory ../metabolism exists"; else echo "../metabolism missing" ; fi;
+	@if test -d "$$MY_BIN"; then echo "Directory MY_BIN=$(MY_BIN) exists"; else exit 1 ; fi;
+	@if test -d "$$MY_ARC"; then echo "Directory MY_ARC=$(MY_ARC) exists"; else exit 1 ; fi;
+	@if test -d ../metabolism; then echo "Directory ../metabolism exists"; else echo "../metabolism missing" ; fi;
 
 metabolism: $(META)
 	ar ruv libmetabol.a $(META)
