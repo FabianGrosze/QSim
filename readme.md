@@ -1,6 +1,8 @@
 # QSim 14
 
 ## 14.09
+### 14.09.34
+* Improvement in Gerris definitions. No calculations were altered.
 
 ### 14.09.33
 * General Cleanup: Remove dead code and variables. No calculations were altered.
