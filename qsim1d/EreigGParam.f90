@@ -96,7 +96,7 @@ subroutine EreigGParam(cpfad1)
    write(1, '(A)') '  <Parameter Ident="gsZn" Text="Zinn-ges." IsLoad="0" Unit="µg/l" Format="F9.2"  Null="-1" Help="" Min="0.01"   Max="999999.99" Default="" Module="Schwer" />'
    write(1, '(A)') '  <Parameter Ident="glZn" Text="Zinn-gel." IsLoad="0" Unit="µg/l" Format="F9.2"  Null="-1" Help="" Min="0.01"   Max="99999.99"  Default="" Module="Schwer" />'
    write(1, '(A)') '  <Parameter Ident="gsAs" Text="Arsen-ges." IsLoad="0" Unit="µg/l" Format="F9.2"  Null="-1" Help="" Min="0.01"   Max="999999.99" Default="" Module="Schwer" />'
-   write(1, '(A)') '  <Parameter Ident="gsAs" Text="Arsen-gel." IsLoad="0" Unit="µg/l" Format="F9.2"  Null="-1" Help="" Min="0.01"   Max="99999.99"  Default="" Module="Schwer" />'
+   write(1, '(A)') '  <Parameter Ident="glAs" Text="Arsen-gel." IsLoad="0" Unit="µg/l" Format="F9.2"  Null="-1" Help="" Min="0.01"   Max="99999.99"  Default="" Module="Schwer" />'
    write(1, '(A)') '</ParamSetDef>'
 
    write(1, '(A)') '<TpEquations>'

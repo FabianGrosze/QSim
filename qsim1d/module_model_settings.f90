@@ -75,9 +75,10 @@ module module_model_settings
 contains
 
    !> Read paths as given to the program
-   subroutine get_paths(linux)
-      logical, intent(in)  :: linux    !< Should paths adapt to linux?
-      
+   subroutine get_paths(linux,defi)
+      logical, intent(in)   :: linux    !< paths adapt to linux
+      logical, intent(out)  :: defi     !< definition run
+
       character(1) :: sep 
       character(2) :: bckslsh = '\\'
             
@@ -95,11 +96,14 @@ contains
          sep = bckslsh(1:1)
       endif
       
+      defi=.true.
       !if (cpfad /= '/F') cpfad = trim(cpfad) // sep
-      if (cpfad1 /= 'DEFINITION')then
-         cpfad1 = trim(cpfad1) // sep
+      if (cpfad /= '/F')then
+      !if (cpfad /= 'DEFINITION')then
+         defi=.false.
+         cpfad = trim(cpfad) // sep
       endif
-      cpfad = trim(cpfad) // sep
+      cpfad1 = trim(cpfad1) // sep
 
    end subroutine get_paths
    

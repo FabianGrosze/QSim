@@ -41,7 +41,7 @@ program qsim
    character(201)  :: ctext
    character(275)  :: pfadstring
    character(6000) :: langezeile, message
-   logical         :: kontroll, einmalig, linux,mitsedflux, last_step, stop_loop, last_order
+   logical         :: kontroll, einmalig, linux,mitsedflux, last_step, stop_loop, last_order, defi
    logical         :: write_csv_output,ausdruck
    integer, dimension(output_crossections) :: output_strang, output_querprofil
    real, dimension(output_crossections)    :: output_km
@@ -480,15 +480,15 @@ program qsim
    write_csv_output = .true. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
    ! --- get arguments ---
-   call get_paths(linux)
+   call get_paths(linux,defi)
       
    ! ==========================================================================
    ! DEFINITION RUN
    ! writing parameter definition for GUI GERRIS
    ! ==========================================================================
    !if (cpfad == '/F') then
-   if (cpfad1 == 'DEFINITION') then
-      call write_gerris_definitions(cpfad)
+   if (defi) then
+      call write_gerris_definitions(cpfad1)
       print*,'stopping after writing GERRIS file format definitions'
       stop
    endif
@@ -1681,6 +1681,7 @@ program qsim
    pfadstring = trim(adjustl(cpfad1)) // 'EREIGH.txt' ; i_ereigh=110
    open(unit = i_ereigh, file = pfadstring, iostat = open_error)
    if (open_error /= 0) call qerror("Could not open EREIGH.txt")
+   print*,'going to read ',trim(pfadstring), open_error
    
    rewind (i_ereigh)
    read(i_ereigh,'(A2)')ckenn_vers1

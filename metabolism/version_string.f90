@@ -26,10 +26,11 @@
 ! --------------------------------------------------------------------------- !
 
 !> Define version.
+!> !! don't forget to change version number accordingly in version.rc for windows executables !!
 subroutine version_string(versionstext)
    implicit none
    character(len=8), intent(out) :: versionstext !< current version number
    
-   versionstext = '14.11.01' ! Test number heavy metals
+   versionstext = '14.12.01' ! Test number heavy metals
    return
 end subroutine version_string
