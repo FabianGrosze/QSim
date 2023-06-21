@@ -29,6 +29,7 @@
 
 SHELL=/usr/bin/bash
 
+
 # get QSim version from version_string.f90
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
@@ -212,7 +213,7 @@ qsim3d: $(Q3)
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
-	mv -f $(PV) $(MY_BIN)/$(PV)
+	cp -rp $(PV) $(MY_BIN)/$(PV)
 	cp -f ./scripte/* $(MY_BIN)
 
 KT = version.co trans_read.co \

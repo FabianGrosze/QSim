@@ -36,8 +36,9 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-#PV=qsim1d_$(QSim_version)_dev
-PV=qsim1d_schwermetall31
+# PV=qsim1d_$(QSim_version)_dev
+# PV=qsim1d_heavy_pure03
+PV=qsim1d_heavy_nice07
 
 #====================================================================
 
@@ -133,7 +134,7 @@ DEBUG_FLAGS = -O0 -g -c -ffree-line-length-none -fcheck=all,array-temps -fmax-er
 # ========================================================================================================
 # STANDARD MODE
 CFLAGS = -O -g -fcheck=bounds
-#CFLAGS = -O3 # run fast
+# CFLAGS = -O3 # run fast
 FFLAGS = $(CFLAGS) -c -ffree-line-length-none -finit-local-zero
 # ========================================================================================================
 
@@ -174,7 +175,7 @@ qsim1d:	$(Q1)
 	$(FC) $(Q1) -L. -lmetabol -o $(PV)
 
 exe:
-	mv ./$(PV) $(MY_BIN)/$(PV)
+	cp -rP ./$(PV) $(MY_BIN)/$(PV)
 
 clean:
 	@echo "cleaning ..."

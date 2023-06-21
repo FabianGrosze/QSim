@@ -35,7 +35,7 @@
 !! * ausgabe158_algae.csv (optional)
 !! @author Michael Schönung
 !! @date 20.06.2022
-subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
 !subroutine init_result_files(cpfad, modell, cEreig, write_csv_files)
 
    use allodim
@@ -47,6 +47,7 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
    character(len = 255), intent(in) :: cEreig          !< meta data (Gerris)
    logical, intent(in)              :: write_csv_output !< switch to turn of .csv-outputs
    integer, dimension(output_crossections) :: output_strang, output_querprofil
+   real, dimension(output_crossections) :: output_km
    integer                                 :: anz_csv_output
 
    ! --- local variables ---
@@ -96,31 +97,30 @@ subroutine init_result_files(cpfad, modell, cEreig, write_csv_output, output_str
 
    
    if (write_csv_output) then 
-      call ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+      call ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
    
       ! --- Ausgabe 156 ---
       print*, '> ausgabe156.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe156.csv'
       open(unit = 156, file = pfadstring, iostat = open_error)
-      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; iior ; Stakm ; ior ; vbsb ; vcsb ; vnh4 ; vno2 ; vno3 ; gsN ; gelp ;  &
-                     & gsP ; Si ; chla ; zooin ; vph ; mw ; ca ; lf ; ssalg ; tempw ; vo2 ; CHNF ; coli ; Dl ; dsedH ; tracer'
-
+      write(156,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; iior ; Stakm ; bsb ; csb ; vh4 ; no2 ; no3 ; gsN ; gelp ;  &
+                     & gsP ; Si ; zooin ; ph ; mw ; ca ; lf ; tempw ; O2 ; CHNF ; coli ; Dl'
+                
       ! --- Ausgabe 157 Schwermetalle ---
       print*, '> ausgabe157_schwermetalle.csv'
       pfadstring =  trim(adjustl(cpfad)) // 'ausgabe157_schwermetall.csv'
       open(unit = 157, file = pfadstring, iostat = open_error)
-      
       write(157,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; ior ; gsPb ; glPb ; gsCad ; glCad ; gsCr ; glCr ; gsFe ; &
                      & glFe ; gsCu ; glCu ; gsMn ; glMn ; gsNi ; glNi ; gsHg ; glHg ; gsU ; glU ; gsZn ; glZn ; gsAs ; glAs ;     &
-                     & SSeros; sedalk; sedalg; sedalb; sedss; tau; tausc'
-      
+                     &    ssalg ; ss ; sedSS ; SSeros ; dsedh ; tau ; tausc'
+
       ! --- Ausagbe 158 Algae ---
       print*, '> ausgabe158_algae.csv'
       pfadstring = trim(adjustl(cpfad)) // 'ausgabe158_algae.csv'
       open(unit = 158, file = pfadstring, iostat = open_error)
-      
-      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; ior ; O2 ; chla ;&
-                      &aki ; agr ; abl ; chlak ; chlag ; chlab ; ssalg ; ss'
+      write(158,'(a)')'itags ; monats ; jahrs ; uhrhm ; mstr ; Stakm ; ior ; chla ;&
+                      &aki ; agr ; abl ; chlak ; chlag ; chlab ; sedalk ; sedalg ; sedalb'
+
    endif
    
    ! remove file1.err, which might still exist from previous run
@@ -133,7 +133,7 @@ end subroutine init_result_files
 !> reads ausgabe_querprofile.txt in order to restrict output to certain cross-sections
 !! Jens Wyrwa 2022
 !!
-subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, anz_csv_output)
+subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_strang, output_querprofil, output_km, anz_csv_output)
 
    use allodim
    implicit none
@@ -147,6 +147,7 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
    ! --- local variables ---
    integer        :: open_error, ionumber, nn, alloc_status, io_error
    integer, dimension(output_crossections) :: output_strang, output_querprofil
+   real, dimension(output_crossections) :: output_km
    integer                                 :: anz_csv_output
    logical zeile
 
@@ -179,13 +180,14 @@ subroutine ausgabe_querprofil(cpfad, modell, cEreig, write_csv_output, output_st
    nn=0
    output_strang=0
    output_querprofil=0
+   output_km=0
    do while ( zeile(ionumber,ctext)) !! all lines
       nn = nn+1
       if (nn > anz_csv_output) then
          write(fehler,*)'Fehler bei ausgabe_querprofile.txt nochmal lesen ',nn,anz_csv_output
          call qerror(fehler)
       end if
-      read(ctext,*,iostat = io_error)output_strang(nn), output_querprofil(nn)
+      read(ctext,*,iostat = io_error)output_strang(nn), output_querprofil(nn), output_km(nn)
       if (io_error /= 0) then
          write(fehler,*)'reading output_strang, output_querprofil failed  nn,alloc_status= ',nn,alloc_status
          call qerror(fehler)

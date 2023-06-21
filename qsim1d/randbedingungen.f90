@@ -82,7 +82,6 @@ subroutine randbedingungen(cpfad, i_Rands, iw_max)
    
    close(92)
    
-   print '(a)'    , 'subroutine randbedingungen():'
-   print '(a, I0)', 'boundaries found in EREIGG.txt: ', i_rands
+   print '(a, I0,a)', 'subroutine randbedingungen() found ',i_rands,' boundaries in EREIGG.txt '
    
 end subroutine randbedingungen

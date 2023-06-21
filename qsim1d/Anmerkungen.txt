@@ -1,0 +1,8 @@
+
+28mar23:
+Es gibt kin Profil >2 512  585.05 ! 1175-663  ! Elbe-Km 585,05
+letztes Profil=           2         525   584.549988               2 =..km,flag erosion_kern h,Ks,v,tau,ss,ssalg,sseros=   5.42000008       40.0000000      0.112999998       7.82899261E-02   0.00000000       8.96005154       9.51886177       0.00000000    
+           2         525  sysgenou hfkm,hflag=   584.549988               2
+
+
+

@@ -91,6 +91,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    character(200)                         :: message
    character(255)                         :: cpfad
    character(275)                         :: pfadstring
+   character(4000)                        :: zeile
    integer, dimension(40000)              :: imstr, irbnr, ianzw
    integer, dimension(azstrs,100)         :: istund, rbtyp, nrschr
    integer, dimension(200,40000)          :: itagl, monatl, jahrl
@@ -121,12 +122,17 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    ! iwsim = 5 -> konserv. Substanz
    
    ianzRB = 0
-   ipps = 51
+   ipps = 29  ! without heavymetals
+   if(iSchwer == 1) ipps = 51  ! with heavymetals
+   
    if (.not. allocated(werts)) allocate(werts(1:i_Rands,1:ipps,1:iw_max))
    if (.not. allocated(mREC))  allocate(mREC(1:azStrs,1:i_Rands,1:ipps))
    
-   ! Einlesen aus EREIGG
-   if (ilang == 0) then
+   ! read from EREIGG only in first timestep
+   !if (ilang == 0) then
+   if (iwied == 0) then
+      print*,'doing funkstar first time, reading EREIGG.txt'
+
       close (92)
       write(pfadstring,'(2A)')trim(adjustl(cpfad)),'EREIGG.txt'
       open(unit = 92, file = pfadstring)
@@ -158,12 +164,18 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          ! Lesen der Zeitreihen an der jeweiligen Randbedingung aus EREIGG.txt
          ! alle Variablen in Feld werts
          do iwe = 1,NrSchr(mstr,RBNR)
-            
-            read(92,9240,iostat = read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
+            !read(92,9240,iostat = read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
+            !     ,(werts(ianzRB,ixpp,iwe),ixpp = 1,ipps)
+            read(92,'(A)',iostat = read_error)zeile
+            if (read_error < 0) call qerror("zeile error while reading EREIGG.txt")
+            read(zeile,*,iostat = read_error)itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe),uhrl(ianzRB,iwe)   &
                  ,(werts(ianzRB,ixpp,iwe),ixpp = 1,ipps)
-            if (read_error < 0) call qerror("Error while reading EreigG.txt")
-            
-            if (iwsim == 4) werts(ianzRB,28,iwe) = max(0., werts(ianzRB,28,iwe))
+            if (read_error < 0)then
+               print*,trim(zeile)
+               print*,iwe,mstr,RBNR,read_error,'=iwe,mstr,RBNR,read_error ; funkstar reading EREIGG.txt'
+               call qerror("werts error while reading zeile from EREIGG.txt")
+            endif
+            if (iwsim == 4) werts(ianzRB,28,iwe) = max(0., werts(ianzRB,28,iwe))  ! tracer
             ! Umrechnung der "Messwert-Uhrzeit" in Dezimalschreibweise
             uhrl(ianzRB,iwe) = int(uhrl(ianzRB,iwe))+((uhrl(ianzRB,iwe)-int(uhrl(ianzRB,iwe)))/0.6)
          enddo
@@ -202,7 +214,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
       !  F6.2    F8.1    F8.1  F6.2  F6.2    F8.1    F8.1  F6.2  F6.2
       !   gsHg   glHg    gsU    glU    gsZn    glZn gsAs glAs
       !   F7.3   F7.3   F7.3   F7.3    F8.1    F8.1 F5.1 F5.1
-   endif
+   endif ! first time
    
    NRS = ITAGS+31*(MONATS-1)
    if (monats > 2) NRS = NRS - INT(0.4*MONATS+2.3)
@@ -231,9 +243,9 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          is_set_wert2 = .false.
          
          ! set fail values depending on the parameter
-         if (ipp == 22) then
+         if (ipp == 22) then  ! tempw
             null_value = -9.99
-         elseif (ipp == 27) then
+         elseif (ipp == 27) then  ! waer
             null_value = -9999.9
          else
             null_value = -1.0
@@ -347,13 +359,19 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (colis(mstr,RBNR) >= 0.0) DOSCFs(mstr,RBNR) = 0.0
          if (ipp == 27) waers(mstr,RBNR)  = ywert
          if (ipp == 30) gsPbs(mstr,RBNR)  = ywert
-         if (ipp == 31) glPbs(mstr,RBNR)  = ywert
+         if (ipp == 31)then
+            glPbs(mstr,RBNR)  = ywert
+            !print*,mstr,RBNR,' funkstar gsPb,glPb =',gsPbs(mstr,RBNR),glPbs(mstr,RBNR)
+         endif
          if (ipp == 32) gsCads(mstr,RBNR) = ywert
          if (ipp == 33) glCads(mstr,RBNR) = ywert
          if (ipp == 34) gsCrs(mstr,RBNR)  = ywert
          if (ipp == 35) glCrs(mstr,RBNR)  = ywert
          if (ipp == 36) gsFes(mstr,RBNR)  = ywert
-         if (ipp == 37) glFes(mstr,RBNR)  = ywert
+         if (ipp == 37)then
+            glFes(mstr,RBNR)  = ywert
+            !print*,mstr,RBNR,' funkstar gsFe,glFe =',gsFes(mstr,RBNR),glFes(mstr,RBNR)
+         endif
          if (ipp == 38) gsCus(mstr,RBNR)  = ywert
          if (ipp == 39) glCus(mstr,RBNR)  = ywert
          if (ipp == 40) gsMns(mstr,RBNR)  = ywert
@@ -365,7 +383,10 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
          if (ipp == 46) gsUs(mstr,RBNR)   = ywert
          if (ipp == 47) glUs(mstr,RBNR)   = ywert
          if (ipp == 48) gsZns(mstr,RBNR)  = ywert
-         if (ipp == 49) glZns(mstr,RBNR)  = ywert
+         if (ipp == 49)then
+            glZns(mstr,RBNR)  = ywert
+            !print*,mstr,RBNR,' funkstar gsZn,glZn =',gsZns(mstr,RBNR),glZns(mstr,RBNR)
+         endif
          if (ipp == 50) gsAss(mstr,RBNR)  = ywert
          if (ipp == 51) glAss(mstr,RBNR)  = ywert
       enddo ! Ende Parameterschleife
@@ -481,11 +502,16 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
       !...Fehlermeldung
       if (ischwer == 1) then
          if (isnan(gszns(mstr,rbnr)) .or. isnan(glzns(mstr,rbnr))) then
-            if (vphs(mstr,RBNR) <= 0.0)   call qerror("Missing values for pH in inflow.")
+            if (vphs(mstr,RBNR) <= 0.0)then
+               call qerror("Missing values for pH in inflow.")
+            endif
             if (ssalgs(mstr,RBNR) <= 0.0) call qerror("Missing values for suspended matter in inflow.")
             exit
          endif
       endif
+      
+      ! print*,'funkstar mstr,RBNR=',mstr,RBNR,'vphs=',vphs(mstr,RBNR)
+
    enddo ! Ende Randbedingungsschleife
    ! deallocate(mREC)
    ! deallocate(werts)

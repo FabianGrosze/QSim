@@ -107,9 +107,11 @@ subroutine bottom_friction_strickler(tau,ust,kst,tiefe,vmitt)
    real, parameter     :: roh = 1000 !< water density [kg/m³]
    real, parameter     :: g = 9.81   !< gravity [m/s²] 
    
+   ust=1.0/6.0
+   if(ust==0.0)call qerror('ust=1./6. ist null')
    ust=0.0
    if((kst >= 0.0).and.(tiefe >= 0.0))then
-      ust = (abs(vmitt)*(g**0.5)) / (kst*(tiefe**(1/6)))
+      ust = (abs(vmitt)*(g**0.5)) / (kst*(tiefe**(1.0/6.0)))
    endif
    tau=(ust**2.0)*roh
 end subroutine bottom_friction_strickler
