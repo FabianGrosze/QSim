@@ -1,4 +1,3 @@
-! --------------------------------------------------------------------------- !
 !  QSim - Programm zur Simulation der Wasserqualität                          !
 !                                                                             !
 !  Copyright (C) 2022                                                         !
@@ -5715,10 +5714,6 @@ program qsim
          if (nbuhn(mstr) == 1) then
             
             do ior = 1, anze+1
-               ! TODO: Das muss in die Buhnenberechung der Schwebstoffe. Wird für den 
-               ! Moment hier behalten, um einen bisherigen Fehler zu reproduzieren, damit
-               ! voher == nachher. Kann nach erfolgreichem Test korrigiert werden.
-               zwtemp(ior) = tempw(ior)
                
                ! metabolism in groyne-field
                call water_temperature(                                                         &
@@ -6029,7 +6024,6 @@ program qsim
             bsedSS(mstr,ior) = sedSS(ior)
             bsedSS_MQ(mstr,ior) = sedSS_MQ(mstr,ior)
             
-            tempw(ior) = zwtemp(ior)
             tiefe(ior) = zwtief(ior)
             vmitt(ior) = zwvm(ior)
             zooind(ior) = zwzooi(ior)
