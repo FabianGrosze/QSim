@@ -43,19 +43,15 @@ subroutine water_temperature(tempw_s, tsed_s, templ_s, ro_s,  &
    double precision  :: par_at_sediment
    character(1000)   :: message
    
-   ! TODO (Schönung, June 2023):
-   ! This constant is wrong. According to Wikipedia it is
-   ! sigma = 5.670374419e-08 W/(m2 K4) =  2.041335e-07 kJ/(m2 K4 h)
-   ! hence, the sigma given here is wrong both in value and unit!
-   real, parameter :: sigma_sb = 2.0411e-7 ! Stefan-Boltzman-constant [kJ /(m2*K4)]
-   real, parameter :: rho_water = 1000.    ! density water [kg/m3]
-   real, parameter :: alpha_par = 0.45     ! proportion of PAR in global radiation [-]
-   real, parameter :: sedpv = 0.5
-   real, parameter :: cp_water = 4.187     ! specific heat capacity of water [kJ/(kg*K)]
-   real, parameter :: rho_sediment = 1825. ! density sediment [kg/m3]
-   real, parameter :: cp_air   = 1.005     ! specific heat capacity of air  [kJ/(kg*K)]
-   real, parameter :: nu = 0.622           ! molar mass ratio water:air
-   real, parameter :: p0 = 6.1078          ! vapor pressure at 0°C [mbar]
+   real, parameter :: sigma_sb = 2.04133479084e-7 ! Stefan-Boltzman-constant [kJ /(m2 K4 h)]
+   real, parameter :: rho_water = 1000.           ! density water [kg/m3]
+   real, parameter :: alpha_par = 0.45            ! proportion of PAR in global radiation [-]
+   real, parameter :: sedpv = 0.5                 
+   real, parameter :: cp_water = 4.187            ! specific heat capacity of water [kJ/(kg*K)]
+   real, parameter :: rho_sediment = 1825.        ! density sediment [kg/m3]
+   real, parameter :: cp_air   = 1.005            ! specific heat capacity of air  [kJ/(kg*K)]
+   real, parameter :: nu = 0.622                  ! molar mass ratio water:air
+   real, parameter :: p0 = 6.1078                 ! vapor pressure at 0°C [mbar]
    
    external :: qerror
    
