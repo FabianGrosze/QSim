@@ -34,7 +34,7 @@ SHELL=/usr/bin/bash
 QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 | cut -d"'" -f2`
 
 # set executable name
-PV=qsim3d_$(QSim_version)_testfile2_schwermetall_salinity_dev
+PV=qsim3d_$(QSim_version)_schwermetall_salinity_switchoff_dev
 
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2

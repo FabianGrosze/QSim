@@ -203,7 +203,8 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert,iformSa
    if (gsMns > 0.0) glMns = gsMns/(1.+VTKoeffMn(2)*Css)
    if (gsUs > 0.0) glUs = gsUs/(1.+VTKoeffU(2)*Css)
    
-   if(kontroll.and.(jjj==316))then
+   if(kontroll)then
+      print*,'iformVert', iformVert, 'iformSalinity',iformSalinity
       print*,jjj,'schwermetalle_kern Ende VTKoeffZn(2),VTKoeffCu(2),VTKoeffFe(2),Css='  &
                                          ,VTKoeffZn(2),VTKoeffCu(2),VTKoeffFe(2),Css
       print*,'Zn,Cad,Cu,Ni,As,Pb,Cr,Fe,Hg,Mn,U:'

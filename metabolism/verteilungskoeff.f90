@@ -112,6 +112,6 @@ subroutine verteilungskoeff(hcSS,hcph  &
       VTKoeff_Mn  = EXP(LOG(VTKoeff_Mn)  + b_Mn  * LOG(salinity + 1))
       VTKoeff_U   = EXP(LOG(VTKoeff_U)   + b_U   * LOG(salinity + 1))
    endif
-   if(kontroll .and.(jjj==316))print*,'316 VTKoeff_Fe=',VTKoeff_Fe
+   !if(kontroll .and.(jjj==316))print*,'316 VTKoeff_Fe=',VTKoeff_Fe
    
 end subroutine verteilungskoeff
