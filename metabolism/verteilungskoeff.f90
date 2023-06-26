@@ -101,16 +101,27 @@ subroutine verteilungskoeff(hcSS,hcph  &
       !print*,VTKoeff_Zn, '=VTKoeff_Zn vor Salinity Modifikation'
       VTKoeff_Zn  = EXP(LOG(VTKoeff_Zn)  + b_Zn  * LOG(salinity + 1))
       !print*,VTKoeff_Zn, '=VTKoeff_Zn nach Salinity Modifikation'
+      if(VTKoeff_Zn<=0.0)call qerror('VTKoeff_Zn is <= 0')
       VTKoeff_Cu  = EXP(LOG(VTKoeff_Cu)  + b_Cu  * LOG(salinity + 1))
+      if(VTKoeff_Cu<=0.0)call qerror('VTKoeff_Cu is <= 0')
       VTKoeff_Cad = EXP(LOG(VTKoeff_Cad) + b_Cd  * LOG(salinity + 1))
+      if(VTKoeff_Cad<=0.0)call qerror('VTKoeff_Cad is <= 0')
       VTKoeff_Ni  = EXP(LOG(VTKoeff_Ni)  + b_Ni  * LOG(salinity + 1))
+      if(VTKoeff_Ni<=0.0)call qerror('VTKoeff_Ni is <= 0')
       VTKoeff_As  = EXP(LOG(VTKoeff_As)  + b_As  * LOG(salinity + 1))
+      if(VTKoeff_As<=0.0)call qerror('VTKoeff_As is <= 0')
       VTKoeff_Pb  = EXP(LOG(VTKoeff_Pb)  + b_Pb  * LOG(salinity + 1))
+      if(VTKoeff_Pb<=0.0)call qerror('VTKoeff_Pb is <= 0')
       VTKoeff_Cr  = EXP(LOG(VTKoeff_Cr)  + b_Cr  * LOG(salinity + 1))
+      if(VTKoeff_Cr<=0.0)call qerror('VTKoeff_Cr is <= 0')
       VTKoeff_Fe  = EXP(LOG(VTKoeff_Fe)  + b_Fe  * LOG(salinity + 1))
+      if(VTKoeff_Fe<=0.0)call qerror('VTKoeff_Fe is <= 0')
       VTKoeff_Hg  = EXP(LOG(VTKoeff_Hg)  + b_Hg  * LOG(salinity + 1))
+      if(VTKoeff_Hg<=0.0)call qerror('VTKoeff_Hg is <= 0')
       VTKoeff_Mn  = EXP(LOG(VTKoeff_Mn)  + b_Mn  * LOG(salinity + 1))
+      if(VTKoeff_Mn<=0.0)call qerror('VTKoeff_Mn is <= 0')
       VTKoeff_U   = EXP(LOG(VTKoeff_U)   + b_U   * LOG(salinity + 1))
+      if(VTKoeff_U<=0.0)call qerror('VTKoeff_U is <= 0')
    endif
    !if(kontroll .and.(jjj==316))print*,'316 VTKoeff_Fe=',VTKoeff_Fe
    
