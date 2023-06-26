@@ -90,6 +90,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="water_temperature">
+		<File RelativePath="..\metabolism\water_temperature\module_water_temperature.f90"/>
+		<File RelativePath="..\metabolism\water_temperature\water_temperature.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -174,8 +178,6 @@
 		<File RelativePath="..\metabolism\strahlg.f90"/>
 		<File RelativePath="..\metabolism\tage.f90"/>
 		<File RelativePath="..\metabolism\temperl.f90"/>
-		<File RelativePath="..\metabolism\temperw.f90"/>
-		<File RelativePath="..\metabolism\temperw_kern.f90"/>
 		<File RelativePath="..\metabolism\uptake.f90"/>
 		<File RelativePath="..\metabolism\version_string.f90"/>
 		<File RelativePath="..\metabolism\verteilungskoeff.f90"/>
@@ -200,7 +202,6 @@
 		<File RelativePath=".\coliform_bacteria_inflow_1d.f90"/>
 		<File RelativePath=".\cra_nickoeff.f90"/>
 		<File RelativePath=".\crank_nicolson.f90"/>
-		<File RelativePath=".\ctracer.f90"/>
 		<File RelativePath=".\ergebMFormat.f90"/>
 		<File RelativePath=".\ergebTFormat.f90"/>
 		<File RelativePath=".\hnf_inflow_1d.f90">
@@ -225,8 +226,10 @@
 		<File RelativePath=".\sys_z_gitter.f90"/>
 		<File RelativePath=".\sysgen.f90"/>
 		<File RelativePath=".\thomas.f90"/>
+		<File RelativePath=".\tracer_inflow_1d.f90"/>
 		<File RelativePath=".\transport.f90"/>
 		<File RelativePath=".\trimat.f90"/>
+		<File RelativePath=".\water_temperature_inflow_1d.f90"/>
 		<File RelativePath=".\wehr.f90"/>
 		<File RelativePath=".\wehrles.f90"/>
 		<File RelativePath=".\z_gitter_einl.f90"/>

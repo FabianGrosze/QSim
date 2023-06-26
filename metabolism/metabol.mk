@@ -13,7 +13,8 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/phosphate/module_phosphate.o \
 	../metabolism/silicate/module_silicate.o \
 	../metabolism/nitrogen/module_nitrogen.o \
-	../metabolism/zooplankton/module_zooplankton.o \
+	../metabolism/water_temperature/module_water_temperature.o \
+    ../metabolism/zooplankton/module_zooplankton.o \
 	../metabolism/module_metabolism.o \
 	../metabolism/set_cloud_reflectance.o \
 	../metabolism/albenth.o \
@@ -42,8 +43,6 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/strahlg.o \
 	../metabolism/tage.o \
 	../metabolism/temperl.o \
-	../metabolism/temperw_kern.o \
-	../metabolism/temperw.o \
 	../metabolism/uptake.o \
 	../metabolism/anztag.o \
 	../metabolism/zuflussrand.o \

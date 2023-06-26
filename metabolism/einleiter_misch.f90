@@ -28,14 +28,21 @@
 subroutine einleiter_misch(ns,i,C,Cpart,hcQ,hcQE,CE,rohE,D,dH2D)
 
    implicit none
+   integer, intent(in),  dimension(1000)    :: ns
+   integer, intent(in)                      :: i
+   real,    intent(in),  dimension(50,1000) :: C
+   real,    intent(out), dimension(50)      :: cpart
+   real,    intent(in)                      :: hcq
+   real,    intent(in)                      :: hcqe
+   real,    intent(in)                      :: ce
+   real,    intent(in)                      :: rohe
+   real,    intent(in), dimension(50)       :: d
+   real,    intent(in)                      :: dh2d
    
-   integer                    :: n, j, jneu, i
-   real                       :: rohe, qp, qep, hcq, hcqe
-   real                       :: dh2d, ce
-   integer, dimension(1000)   :: ns
-   real                       :: Masseg, Massep
-   real, dimension(50)        :: Cg, Cpart, D
-   real , dimension(50,1000)  :: C
+   
+   integer             :: n, j, jneu
+   real                :: qp, qep, Masseg, Massep
+   real, dimension(50) :: Cg
    
    Masseg = 0.0
    Massep = 0.0

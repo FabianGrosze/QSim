@@ -183,7 +183,7 @@ subroutine randwert_planktonic(jjj,zaehl,logi)
    endif
    if (zaehl > 0) then !! Randbedingung zu dieser Nummer vorhanden
       !!if(rabe(zaehl)%zufluss)then !! z.Z. Zufluss über diesen Rand?
-      planktonic_variable( 1+nk) = rabe(zaehl)%wert_jetzt(22) !  Tempw temperw()
+      planktonic_variable( 1+nk) = rabe(zaehl)%wert_jetzt(22) !  Tempw 
       planktonic_variable( 2+nk) = rabe(zaehl)%wert_jetzt(23) !  VO2 oxygen()
       planktonic_variable( 3+nk) = rabe(zaehl)%wert_jetzt( 4) !  VNH4 ncyc()
       planktonic_variable( 4+nk) = rabe(zaehl)%wert_jetzt( 5) !  VNO2 ncyc()
@@ -347,7 +347,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    call algae_start(planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
                     planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB)
                     planktonic_variable(20+nk),      & ! ANTBL antbls(mstr,mRB)
-                    planktonic_variable( 1+nk),      & ! tempws Tempw temperw()
+                    planktonic_variable( 1+nk),      & ! tempws
                     planktonic_variable(24+nk),      & ! akbcm akbcms(mstr,mRB)
                     planktonic_variable(26+nk),      & ! abbcm abbcms(mstr,mRB)
                     planktonic_variable(25+nk),      & ! agbcm agbcms(mstr,mRB)

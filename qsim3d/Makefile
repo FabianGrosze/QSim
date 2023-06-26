@@ -134,7 +134,7 @@ Q3 = version.co \
    module_salinity.o \
    module_suspendedMatter.o \
    parallel.o \
-   temperw_huelle.o \
+   water_temperature_wrapper_3d.o \
    alter.o\
    module_isotope.o \
    nitrogen_wrapper_3d.o \

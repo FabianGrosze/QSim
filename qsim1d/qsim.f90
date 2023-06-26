@@ -67,7 +67,7 @@ program qsim
    integer         :: ista, jnkz, kanz2, jnkz2, kanz1
    integer         :: nkzs_hc, nkzs_hc1, i_estrnr, minute, kein
    integer         :: itstart, mstart, itmax, mmax, itend
-   integer         :: mend, istriz_neu, isim_end, nwaerm, izeits
+   integer         :: mend, istriz_neu, isim_end, izeits
    integer         :: jpoin1, ico, ke, itagv, monatv
    integer         :: jahrv, jtage, ianfan, itag_schr, i
    real            :: lat_k
@@ -230,7 +230,7 @@ program qsim
    real, dimension(ialloc2)                :: chlabl, exdrvb, zexbl, ablnh4, ablno3, drfaeb
    real, dimension(ialloc2)                :: ably, abln4y, sedaby, algzby, algdby, algcby, dalgby, dalaby, dbmory
    real, dimension(ialloc2)                :: abmuey, fiby, fheby, abrey, antbly, tpbly
-   real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwtsed, zwtemp, zwvm, zwtief,zwextk
+   real, dimension(ialloc2)                :: tau2, hctau1, hctau2, zwtemp, zwvm, zwtief,zwextk
    real, dimension(ialloc2)                :: zwno3, zwnh4, zwgelp, zwsvhk, zwchla, zwir, zwssa, zwsi, zwdalk
    real, dimension(ialloc2)                :: zwdaak, zwsedk, zwzok, zwkmor, zwkigr, zwantb, zwkbcm, zwaki, zwagr
    real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
@@ -294,7 +294,7 @@ program qsim
    real, dimension(ialloc2,5)              :: coro, coros
    real, dimension(2,ialloc2)              :: bcdy, bcpy
    real, dimension(ialloc5,ialloc2)        :: tempwz, tempzy, vnh4zy, vno2zy, vno3zy, vo2zy, gelpzy, sizy, chlazy
-   real, dimension(ialloc5,ialloc2)        :: akizy, agrzy, ablzy, dtemp, vnh4z, vno2z, vno3z, vo2z, gelpz, siz
+   real, dimension(ialloc5,ialloc2)        :: akizy, agrzy, ablzy, vnh4z, vno2z, vno3z, vo2z, gelpz, siz
    real, dimension(ialloc5,ialloc2)        :: akiz, agrz, ablz, chlaz, agrbrz, akibrz, ablbrz, algakz, algagz
    real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, uvert, dalgkz, dalgbz, dalggz
    real, dimension(ialloc5,ialloc2)        :: cchlakzy,cchlabzy,cchlagzy
@@ -456,18 +456,21 @@ program qsim
    real, dimension(:,:,:), allocatable     :: cchlkzt, cchlbzt, cchlgzt
       
    external :: algaesbl, algaesgr, algaeski, algae_start, ini_algae
-   external :: orgc_start, naehr_start, wehrles, wettles, wehr
+   external :: orgc_start, naehr_start, wehrles, wettles, wehr, sediment
    external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
    external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
    external :: sys_z_gitter, strahlg, temperl, sedflux, dreissen
-   external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d, coliform_bacteria_inflow_1d
-   external :: schweb, erosion, schwermetalle, transport, sasu, nitrogen_inflow_1d
-   external :: ph_inflow_1d, ctracer, temperw, phosphate_inflow_1d, sediment
+   external :: schweb, erosion, schwermetalle, transport, sasu
+   
+   external :: nitrogen_inflow_1d, coliform_bacteria_inflow_1d
+   external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d
+   external :: ph_inflow_1d, tracer_inflow_1d, phosphate_inflow_1d
+   external :: water_temperature_inflow_1d, zooplankton_inflow_1d
    
    ! --- settings ---
    linux = .false.
    kontroll = .false.
-   mitsedflux = .false.    ! sediment fluxes switched off temporarily
+   mitsedflux = .false.       ! sediment fluxes switched off temporarily
    write_csv_output = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
    ! --- get arguments ---
@@ -546,7 +549,7 @@ program qsim
    ! ==========================================================================
 
    nazStrs = 2 * azStrs
-   allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(azStrs*2))
+   allocate(hanze(azStrs), ianze(azStrs), STRiz(azStrs),isub_dt(azStrs),imac(azStrs),isub_dt_Mac(azStrs), mstr_ist(nazStrs))
    allocate(strNr(nazStrs), mstra(azStrs), ieinsh(azStrs), ieinLs(azStrs), nbuhn(azStrs), iFlRi(nazStrs), isegs(azStrs))
    allocate(STRID(azStrs), janzWt(azStrs), janzWs(azStrs), jlwo2(azStrs), iRB_K1(azStrs), ho2_z(azStrs))
    allocate(hte_z(azStrs), izufluss(azStrs), hph_z(azStrs), iFlRi_l(nazStrs), imRB_K1(ialloc1))
@@ -4280,6 +4283,7 @@ program qsim
          hJN2(:,:) = 0.0
          JDOC1(:) = 0.0
          JDOC2(:) = 0.0
+        
       endif 
       
       if (nbuhn(mstr) == 0) goto 1612 ! goto zooplankton
@@ -5681,166 +5685,151 @@ program qsim
       endif
       
       ! -----------------------------------------------------------------------
-      ! Temperatur
+      ! temperature
       ! -----------------------------------------------------------------------
       113 continue
-      
-      if (iwsim == 4) then
-         call ctracer(tempw,flag,anze,qeinl,etemp,vabfl,jiein,ilbuhn,nkzs)
+      if (iwsim == 4 .or. iwsim == 5) then
+         call tracer_inflow_1d(tempw, flag, anze, qeinl, etemp, vabfl, jiein)
          
       else
-         call temperw(RO,TEMPL,TEMPW,SCHWI,WGE,TIEFE,TFLIE,flag,elen,ior,anze, &
-                      etemp,ewaerm,typ,qeinl,vabfl,jiein,cloud,wtyp,iwied,uhrz,&
-                      ilbuhn,nwaerm,fkm,nkzs,tempwz,dH2D,iorLa,iorLe,ieinLs,   &
-                      flae,qeinlL,etempL,mstr,IDWe,ilang,dtemp,extk,itags,     &
-                      monats,Tsed,Wlage,hWS,htempw,htempz,WUEBKS,SPEWKSS,      &
-                      PSREFSS,extkS,iwsim,iform_VerdR,                         &
-                      .false.,0)
-      endif
-      
-      if (nbuhn(mstr) == 0)goto 413
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtemp(ior) = tempw(ior)
-            zwTsed(ior) = Tsed(ior)
-            zwextk(ior) = extk(ior)
+         call water_temperature_inflow_1d(tempw, etemp, ewaerm, etempl, mstr, &
+                                 ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa,  &
+                                 jiein, flae, anze, flag, tflie)
+         
+         do ior = 1, anze+1
+            ! metabolism in main river
+            call water_temperature(                                                        &
+                     tempw(ior), tsed(ior), templ(ior), ro(idwe(mstr,ior)),                &
+                     schwi(ior), wtyp(idwe(mstr,ior)), cloud(idwe(mstr,ior)), extk(ior),   &
+                     extks(mstr,ior), wlage(mstr,ior), wge(idwe(mstr,ior)), hws(mstr,ior), &
+                     tiefe(ior), wuebks(mstr,ior), spewkss(mstr,ior), psrefss(mstr,ior),   &
+                     iform_verdr, dh2d, tflie,                                             &
+                     kontroll, jjj)
+            
             do nkz = 1,nkzs(ior)
-               zwtez(nkz,ior) = tempwz(nkz,ior)
+               tempwz(nkz,ior) = tempw(ior)
             enddo
-            zwnkzs(ior) = nkzs(ior)
-            zwtief(ior) = tiefe(ior)
-            
-            tempw(ior) = btempw(mstr,ior)
-            Tsed(ior) = bTsed(mstr,ior)
-            tempwz(1,ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            extk(ior) = bextk(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 113
-      endif
       
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            btempw(mstr,ior) = tempw(ior)
-            bTsed(mstr,ior) = Tsed(ior)
-            tempw(ior) = zwtemp(ior)
-            Tsed(ior) = zwTsed(ior)
-            nkzs(ior) = zwnkzs(ior)
-            extk(ior) = zwextk(ior)
-            do nkz = 1,nkzs(ior)
-               tempwz(nkz,ior) = zwtez(nkz,ior)
-            enddo
-            tiefe(ior) = zwtief(ior)
-            
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) diff1 = btempw(mstr,ior) - tempw(ior)
-            if (bleb(mstr,ior) > 0.0) then
-               tempw(ior) = tempw(ior) + diff1 * hctau1(ior)
-               do nkz = 1,nkzs(ior)
-                  tempwz(nkz,ior) = tempwz(nkz,ior) + diff1 * hctau1(ior)
-               enddo
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               btempw(mstr,ior) = btempw(mstr,ior) - diff1 * hctau2(ior)
-            endif
          enddo
          
-         ilbuhn = 0
+         if (nbuhn(mstr) == 1) then
+            
+            do ior = 1, anze+1
+               ! TODO: Das muss in die Buhnenberechung der Schwebstoffe. Wird für den 
+               ! Moment hier behalten, um einen bisherigen Fehler zu reproduzieren, damit
+               ! voher == nachher. Kann nach erfolgreichem Test korrigiert werden.
+               zwtemp(ior) = tempw(ior)
+               
+               ! metabolism in groyne-field
+               call water_temperature(                                                         &
+                     btempw(mstr,ior), btsed(mstr,ior), templ(ior), ro(idwe(mstr,ior)),        &
+                     schwi(ior), wtyp(idwe(mstr,ior)), cloud(idwe(mstr,ior)), bextk(mstr,ior), &
+                     extks(mstr,ior), wlage(mstr,ior), wge(idwe(mstr,ior)), hws(mstr,ior),     &
+                     bh(mstr,ior), wuebks(mstr,ior), spewkss(mstr,ior), psrefss(mstr,ior),     &
+                     iform_verdr, dh2d, tflie,                                                 &
+                     kontroll, jjj)
+                     
+               ! mixing between main river and groyne field      
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) diff1 = btempw(mstr,ior) - tempw(ior)
+               if (bleb(mstr,ior) > 0.0) tempw(ior)       = tempw(ior)       + diff1 * hctau1(ior)
+               if (hctau2(ior) > 0.0)    btempw(mstr,ior) = btempw(mstr,ior) - diff1 * hctau2(ior)
+            enddo
+         endif
+      
       endif
       
+      if (iwsim == 2 .or. iwsim == 4 .or. iwsim == 5) goto 118 ! goto transport
       ! -----------------------------------------------------------------------
       ! ortho-Phosphat
       ! -----------------------------------------------------------------------
-      413 continue
+      if (iwsim == 2 .and. icoli == 1) goto 1525 ! goto coliform bacteria
       
-      if (iwsim == 2 .and. icoli == 1) goto 1525
-      if (iwsim == 4 .or. iwsim == 2 .or. iwsim == 5) goto 118
-      if (gelP(1) < 0.0) goto 1516
+      if (gelP(1) >= 0.0) then
       
-      if (nbuhn(mstr) > 0 .and. ilbuhn == 0) then
-         albewg(:) = 0.0
-         alberg(:) = 0.0
-         albewk(:) = 0.0
-         alberk(:) = 0.0
-      endif
+         if (nbuhn(mstr) > 0 .and. ilbuhn == 0) then
+            albewg(:) = 0.0
+            alberg(:) = 0.0
+            albewk(:) = 0.0
+            alberk(:) = 0.0
+         endif
+         
+         ! inflow from point and diffuse sources
+         call phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
+                                  gelPz, gPL, gesPL, egesP, eP, epl0, mstr,   &
+                                  ieinLs, qeinlL, qeinl, vabfl, iorLa, iorLe, &
+                                  jiein, flae, anze, nkzs, flag, tflie)
       
-      ! inflow from point and diffuse sources
-      call phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
-                               gelPz, gPL, gesPL, egesP, eP, epl0, mstr,   &
-                               ieinLs, qeinlL, qeinl, vabfl, iorLa, iorLe, &
-                               jiein, flae, anze, nkzs, flag, tflie)
-   
-      ! metabolism
-      do ior = 1, anze+1
-         call phosphate(gelP(ior), gesP(ior), bsbctP(ior),                      &
-                        aki(ior), agr(ior), abl(ior), dzres1(ior), dzres2(ior), &
-                        Q_PK(ior), Q_PG(ior), Q_PB(ior),                        &
-                        resdr(ior), exdrvk(ior), exdrvg(ior), exdrvb(ior),      &
-                        up_PGz(1,ior), up_PKz(1,ior), up_PBz(1,ior),            &
-                        agrbrz(1,ior), akibrz(1,ior), ablbrz(1,ior),            &
-                        algagz(1,ior), algakz(1,ior), algabz(1,ior),            &
-                        albewg(ior), alberg(ior), albewk(ior), alberk(ior),     &
-                        tiefev, hJPO4(mstr,ior), orgCsd(mstr, ior), pl0(ior),   &
-                        sedalk(ior), sedalb(ior), sedalg(ior),                  &
-                        algdrk(ior), algdrb(ior), algdrg(ior),                  &
-                        tflie,                                                  &
-                        kontroll, jjj)
-      enddo
-      
-      ! --- groyne fields ---
-      if (nbuhn(mstr) > 0) then
+         ! metabolism
          do ior = 1, anze+1
-            ! metabolism in groyne fields
-            call phosphate(bgelp(mstr,ior), bgesP(mstr,ior), bbsbcP(mstr,ior),                                &
-                           baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),&
-                           bQ_PK(mstr,ior), bQ_PG(mstr,ior),  bQ_PB(mstr,ior),                                &
-                           bresdr(mstr,ior), bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),            &
-                           bup_PG(mstr,ior), bup_PK(mstr,ior), bup_PB(mstr,ior),                              &
-                           bagtbr(mstr,ior), baktbr(mstr,ior), babtbr(mstr,ior),                              &
-                           balagz(mstr,ior), balakz(mstr,ior), balabz(mstr,ior),                              &
-                           albewg(ior), alberg(ior), albewk(ior), alberk(ior),                                &
-                           bh(mstr,ior), bJPO4(mstr,ior), borgCs(mstr,ior), bpl0(mstr,ior),                   &
-                           bsedak(mstr,ior), bsedab(mstr,ior), bsedag(mstr,ior),                              &
-                           badrk(mstr,ior), badrb(mstr,ior), badrg(mstr,ior),                                 &
-                           tflie,                                                                             &
+            call phosphate(gelP(ior), gesP(ior), bsbctP(ior),                      &
+                           aki(ior), agr(ior), abl(ior), dzres1(ior), dzres2(ior), &
+                           Q_PK(ior), Q_PG(ior), Q_PB(ior),                        &
+                           resdr(ior), exdrvk(ior), exdrvg(ior), exdrvb(ior),      &
+                           up_PGz(1,ior), up_PKz(1,ior), up_PBz(1,ior),            &
+                           agrbrz(1,ior), akibrz(1,ior), ablbrz(1,ior),            &
+                           algagz(1,ior), algakz(1,ior), algabz(1,ior),            &
+                           albewg(ior), alberg(ior), albewk(ior), alberk(ior),     &
+                           tiefev, hJPO4(mstr,ior), orgCsd(mstr, ior), pl0(ior),   &
+                           sedalk(ior), sedalb(ior), sedalg(ior),                  &
+                           algdrk(ior), algdrb(ior), algdrg(ior),                  &
+                           tflie,                                                  &
                            kontroll, jjj)
-            
-            ! mixing of groyne fields and main river
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-               diff1 = bgelp(mstr,ior) - gelp(ior)
-               diff2 = bpl0(mstr,ior)  - pl0(ior)
-               diff3 = bgesP(mstr,ior) - gesP(ior)
-               diff4 = bQ_PK(mstr,ior) - Q_PK(ior)
-               diff5 = bQ_PG(mstr,ior) - Q_PG(ior)
-               diff6 = bQ_PB(mstr,ior) - Q_PB(ior)
-            endif
-            
-            if (bleb(mstr,ior) > 0.0) then
-               gelp(ior) = gelp(ior) + diff1 * hctau1(ior)
-               pl0(ior)  = pl0(ior)  + diff2 * hctau1(ior)
-               gesP(ior) = gesP(ior) + diff3 * hctau1(ior)
-               Q_PK(ior) = Q_PK(ior) + diff4 * hctau1(ior)
-               Q_PG(ior) = Q_PG(ior) + diff5 * hctau1(ior)
-               Q_PB(ior) = Q_PB(ior) + diff6 * hctau1(ior)
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bgelp(mstr,ior) = bgelp(mstr,ior) - diff1 * hctau2(ior)
-               bpl0(mstr,ior)  = bpl0(mstr,ior)  - diff2 * hctau2(ior)
-               bgesP(mstr,ior) = bgesP(mstr,ior) - diff3 * hctau2(ior)
-               bQ_PK(mstr,ior) = bQ_PK(mstr,ior) - diff4 * hctau2(ior)
-               bQ_PG(mstr,ior) = bQ_PG(mstr,ior) - diff5 * hctau2(ior)
-               bQ_PB(mstr,ior) = bQ_PB(mstr,ior) - diff6 * hctau2(ior)
-            endif
          enddo
+         
+         ! --- groyne fields ---
+         if (nbuhn(mstr) > 0) then
+            do ior = 1, anze+1
+               ! metabolism in groyne fields
+               call phosphate(bgelp(mstr,ior), bgesP(mstr,ior), bbsbcP(mstr,ior),                                &
+                              baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior), bzres1(mstr,ior), bzres2(mstr,ior),&
+                              bQ_PK(mstr,ior), bQ_PG(mstr,ior),  bQ_PB(mstr,ior),                                &
+                              bresdr(mstr,ior), bexdvk(mstr,ior), bexdvg(mstr,ior), bexdvb(mstr,ior),            &
+                              bup_PG(mstr,ior), bup_PK(mstr,ior), bup_PB(mstr,ior),                              &
+                              bagtbr(mstr,ior), baktbr(mstr,ior), babtbr(mstr,ior),                              &
+                              balagz(mstr,ior), balakz(mstr,ior), balabz(mstr,ior),                              &
+                              albewg(ior), alberg(ior), albewk(ior), alberk(ior),                                &
+                              bh(mstr,ior), bJPO4(mstr,ior), borgCs(mstr,ior), bpl0(mstr,ior),                   &
+                              bsedak(mstr,ior), bsedab(mstr,ior), bsedag(mstr,ior),                              &
+                              badrk(mstr,ior), badrb(mstr,ior), badrg(mstr,ior),                                 &
+                              tflie,                                                                             &
+                              kontroll, jjj)
+               
+               ! mixing of groyne fields and main river
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1 = bgelp(mstr,ior) - gelp(ior)
+                  diff2 = bpl0(mstr,ior)  - pl0(ior)
+                  diff3 = bgesP(mstr,ior) - gesP(ior)
+                  diff4 = bQ_PK(mstr,ior) - Q_PK(ior)
+                  diff5 = bQ_PG(mstr,ior) - Q_PG(ior)
+                  diff6 = bQ_PB(mstr,ior) - Q_PB(ior)
+               endif
+               
+               if (bleb(mstr,ior) > 0.0) then
+                  gelp(ior) = gelp(ior) + diff1 * hctau1(ior)
+                  pl0(ior)  = pl0(ior)  + diff2 * hctau1(ior)
+                  gesP(ior) = gesP(ior) + diff3 * hctau1(ior)
+                  Q_PK(ior) = Q_PK(ior) + diff4 * hctau1(ior)
+                  Q_PG(ior) = Q_PG(ior) + diff5 * hctau1(ior)
+                  Q_PB(ior) = Q_PB(ior) + diff6 * hctau1(ior)
+               endif
+               
+               if (hctau2(ior) > 0.0) then
+                  bgelp(mstr,ior) = bgelp(mstr,ior) - diff1 * hctau2(ior)
+                  bpl0(mstr,ior)  = bpl0(mstr,ior)  - diff2 * hctau2(ior)
+                  bgesP(mstr,ior) = bgesP(mstr,ior) - diff3 * hctau2(ior)
+                  bQ_PK(mstr,ior) = bQ_PK(mstr,ior) - diff4 * hctau2(ior)
+                  bQ_PG(mstr,ior) = bQ_PG(mstr,ior) - diff5 * hctau2(ior)
+                  bQ_PB(mstr,ior) = bQ_PB(mstr,ior) - diff6 * hctau2(ior)
+               endif
+            enddo
+         endif
+      
       endif
       
       ! -----------------------------------------------------------------------
-      ! Silikat
+      ! silicate
       ! -----------------------------------------------------------------------
-      1516 continue
-      if (si(1) < 0.0)goto 1517
+      if (si(1) < 0.0) goto 1517
       
       ! inflow from point and diffuse sources
       call silicate_inflow_1d(si, q_sk, siL, esi, mstr, ieinLs,    &
@@ -8113,20 +8102,22 @@ program qsim
                     
             ! Write results to csv-files for debugging
             if (write_csv_output) then 
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                   &
-                                  ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
-                                  ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
-                                  ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
-                                  ,';',dsedH(mstr,iior),';',tracer(iior)
+               write(langezeile,*)                                                                                                    &
+                  itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr)                               &
+                  ,';',vbsby(iior),';',vcsby(iior),';',vnh4y(iior),';',vno2y(iior),';',vno3y(iior),';',gsNy(iior),';',gelpy(iior)  &
+                  ,';',gsPy(iior),';',Siy(iior),';',chlay(iior),';',zooiny(iior),';',vphy(iior),';',mwy(iior),';',cay(iior)        &
+                  ,';',lfy(iior),';',ssalgy(iior),';',tempwy(iior),';',vo2y(iior),';',CHNFy(iior),';',coliy(iior),';',Dly(iior)    &
+                  ,';',dsedH(mstr,iior),';',tracer(iior)
                write(156,'(a)')adjustl(trim(langezeile))
                
                
-               write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                &
-                                  ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'     &
-                                  ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'     &
-                                  ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'     &
-                                  ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                          &
-                                  ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
+               write(langezeile,*)                                                                                     &
+                  itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'               &
+                  ,gsPby(iior),';',glPby(iior),';',gsCady(iior),';',glCady(iior),';',gsCry(iior),';',glCry(iior),';'   &
+                  ,gsFey(iior),';',glFey(iior),';',gsCuy(iior),';' ,glCuy(iior),';' ,gsMny(iior),';',glMny(iior),';'   &
+                  ,gsNiy(iior),';',glNiy(iior),';',gsHgy(iior),';' ,glHgy(iior),';' ,gsUy(iior) ,';' ,glUy(iior),';'   &
+                  ,gsZny(iior),';',glZny(iior),';',gsAsy(iior),';' ,glAsy(iior)                                        &
+                  ,hSSeros(mstr,iior),';',hsedalk(mstr,iior),';',hsedalg(mstr,iior),';',hsedalb(mstr,iior),';',hsedss(mstr,iior)
                write(157,'(a)')adjustl(trim(langezeile))
                write(langezeile,*)itags,';',monats,';',jahrs,';',uhrhm,';',mstr,';',Stakm(mstr,iior),';',STRID(mstr),';'                  &
                                   ,ho2(mstr,iior),';',hchla(mstr,iior),';',haki(mstr,iior),';',hagr(mstr,iior),';',habl(mstr,iior),';'  &

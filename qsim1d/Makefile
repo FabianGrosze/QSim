@@ -65,7 +65,7 @@ Q1 = gerris_definitions/write_e_extnct.o \
     coliform_bacteria_inflow_1d.o \
     crank_nicolson.o \
     cra_nickoeff.o\
-    ctracer.o \
+    tracer_inflow_1d.o \
     ergebMFormat.o \
     ergebTFormat.o \
     init_result_files.o \

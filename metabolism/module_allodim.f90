@@ -37,8 +37,8 @@ module allodim
    integer , protected :: azstrs         !< \anchor azstrs Stranganzahl
    integer , parameter :: ialloc1 = 100  !> \anchor ialloc1 Einleiter pro Strang
    integer , parameter :: ialloc2 = 1000 !> \anchor ialloc2 Querprofile im Strang
-   integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im strang?
-   integer , parameter :: ialloc4 = 250  !> \anchor ialloc4 Sedimentschichten ?
+   integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im Strang?
+   integer , parameter :: ialloc4 = 250  !> \anchor ialloc4 maximal Anzahl Ausgabegrößen
    integer , parameter :: ialloc5 = 50   !> \anchor ialloc5 Tiefenschichtenanzahl
    
 contains

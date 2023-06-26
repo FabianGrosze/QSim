@@ -39,10 +39,7 @@ module QSimDatenfelder
    use allodim, only: ialloc2
    
    implicit none
-   save
    
-   ! awful hack so that it works ...
-   ! is also defined as variable in module_allodim
    integer, parameter, private :: azstrs = 1
    
    ! Zeitpunkt Berechnungs-Start
@@ -502,18 +499,14 @@ module QSimDatenfelder
    !! im qsim hauptprogramm auf den konstanten Wert = 3.1  gesetzt. (in QSim3d ebenfalls)
    real                          :: TOC_CSB
    
-   ! temperw
-   ! Felder dürfen nicht runterdimensioniert werden, da sonst Speicherzugriffsfehler auftreten
-   real                        :: lagem
-   real, dimension(20)         :: ro, wtyp, cloud, glob
-   real, dimension(1000)       :: templ,fluxT1
-   real, dimension(100)        :: etempL, ewaerm
-   real, dimension(50,1000)    :: dtemp
-   !>  \anchor wlage Lage der zugeordneten Wetter-Stationin m ue NN
-   real, dimension(azStrs,1000)    :: Wlage !  
-   !> \anchor hws Höhenlage des Wasserspiegels in m ü.NHN. Wird aus \ref wsp 
-   !! der \ref lnk_hydraul_rb zugewiesen.
-   real, dimension(azStrs,1000)    :: hWS
+   ! water temperature
+   real                            :: lagem
+   real, dimension(20)             :: ro, wtyp, cloud, glob
+   real, dimension(1000)           :: templ,fluxT1
+   real, dimension(100)            :: etempL, ewaerm
+   real, dimension(50,1000)        :: dtemp
+   real, dimension(azStrs,1000)    :: Wlage  !< \anchor wlage Lage der zugeordneten Wetter-Stationin m ue NN
+   real, dimension(azStrs,1000)    :: hWS    !< \anchor hws Höhenlage des Wasserspiegels in m ü.NHN.
    real, dimension(azStrs,1000)    :: htempw
    real, dimension(azStrs,50,1000) :: htempz
    
@@ -531,14 +524,9 @@ module QSimDatenfelder
    !> \anchor spewkss spewkss spezifische Wärmekapazität des Sediments in KJ/(Kg*K) wenn vorhanden aus \ref spewks , sonst speWKS0 = 0.8 \n
    !! qsim.f90:1215: ,temp.dat=77, read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA)  \n
    !! QSim3D benutzt speWKS0
-   real, dimension(1,1000)    :: SPEWKSS
-   !> \anchor psrefss psrefss unbenutzt?, PSREFS0 = 0.8 wenn vorhanden aus \ref psrefs
-   !! qsim.f90:1215: ,temp.dat=77, read(77,1047)aKSED(mstr,mA),eKSED(mstr,mA),SPEWKSx(mstr,mA),WUEBKx(mstr,mA),PSREFSx(mstr,mA)
-   real, dimension(azStrs,1000)    :: PSREFSS
-   !> \anchor extks extks Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!)
-   !! algaeski:      if(EXTKS(mstr,ior)>0.0)EXTK(ior) = EXTKS(mstr,ior) falls größer null überschreibt er auch Algen-Extinktion
-   real, dimension(azStrs,1000)    :: extks
-   !>   ??
+   real, dimension(1,1000)         :: spewkss
+   real, dimension(azStrs,1000)    :: psrefss
+   real, dimension(azStrs,1000)    :: extks !> \anchor extks extks Extinktionskoeffizient für PARS
    real, dimension(azStrs,50,1000) :: hgesPz
    !> Silizium-Flux aus dem Sediment
    real, dimension(1,1000)   :: hJSi
@@ -687,7 +675,6 @@ module QSimDatenfelder
    !!</table>
    !!
    !! <h2>bisherige Dimensionierung</h2>
-   !! temperw() wird fuer jeden Strang "mstr" aufgerufen und geht alle "anze" Zellen/Profile/Knoten durch.\n
    !!<table >
    !!<tr><th>Dimension   </th><th>    Zweck         </th></tr>
    !!<tr><td>    1000 </td><td>       Knoten im Strang   </td></tr>
@@ -702,7 +689,7 @@ contains
    !--------------------------------------------------------------------------------------------
    subroutine ini_QSimDatenfelder()
       logical kontroll
-      ! Steuer-Parameter übergeben...
+      ! Steuer-Parameter übergeben
       ! algaeski so benutzen , dass nur der 1. Strang mit nur einem Knoten/Profil berechnet wird
       anze = 1            ! Anzahl der Profile im aktuellen Strang
       mstr = 1            ! Strangzähler

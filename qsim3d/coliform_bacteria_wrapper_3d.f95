@@ -28,7 +28,7 @@
 subroutine coliform_bacteria_wrapper_3d(i)
    use modell
    use qsimdatenfelder
-   use module_metabolism, only: coliform_bacteria
+   use module_metabolism
    implicit none
    
    integer, intent(in) :: i

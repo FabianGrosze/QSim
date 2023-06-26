@@ -11,6 +11,7 @@ module module_metabolism
    use module_ph
    use module_phosphate
    use module_silicate
+   use module_water_temperature
    use module_zooplankton
    
    ! These modules are currently turned off:
@@ -19,8 +20,5 @@ module module_metabolism
    ! use module_macrophytes
    
    implicit none
-
-contains
-
 
 end module module_metabolism

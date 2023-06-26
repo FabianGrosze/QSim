@@ -29,35 +29,43 @@ subroutine zonen_parallel()
    use modell
    implicit none
    integer :: alloc_status, ini
+   
    call MPI_Bcast(zonen_anzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
+   
    if (meinrang /= 0) then ! alle Prozesse ausser 0
       allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel knoten_zone :', alloc_status
          call qerror(fehler)
       end if
+   
       do ini = 1,knotenanzahl2D
          knoten_zone(ini) = 0
       end do
+      
       allocate (element_zone(n_elemente), stat = alloc_status )
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel element_zone :', alloc_status
          call qerror(fehler)
       end if
+      
       do ini = 1,n_elemente
          element_zone(ini) = 0
       end do
+      
       allocate (point_zone(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel point_zone :', alloc_status
          call qerror(fehler)
       end if
+      
       do ini = 1,number_plankt_point
          point_zone(ini) = 0
       end do
       allocate (zone(zonen_anzahl), stat = alloc_status )
       if (alloc_status /= 0) call qerror('allocate zone failed in zonen_parallel() zonen.f95')
-   end if !! alle Prozesse ausser 0
+   endif !! alle Prozesse ausser 0
+   
    call MPI_Bcast(zone%zonen_nummer,zonen_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(zone%ini_randnr,zonen_anzahl,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(zone%nr_zone,zonen_anzahl,MPI_INT,0,mpi_komm_welt,ierr)

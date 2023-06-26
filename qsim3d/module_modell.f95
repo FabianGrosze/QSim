@@ -104,13 +104,8 @@ module modell
    integer :: iphy
    !> \anchor iformVert Verteilungsfunktion Schwermetalle 1-DWA-Modell 2-Deltares 2010
    integer :: iformVert
-   !> \anchor IFORM_VERDR:   Schalter für die Auswahl der Verdunstungsformeln in temperw_kern.f90 \n
-   !!    iform_VerdR==1 ! WMO (FGSM-Handbuch)
-   !!    iform_VerdR==2 ! Sweers (1976) over Land
-   !!    iform_VerdR==3 ! Rimsha & Donschenko
-   !!    iform_VerdR==4 ! Priestley-Taylor (1972)
-   !!    iform_VerdR==5 ! Delclaux et al. (2007)
-   integer :: iform_verdr
+   
+   integer :: iform_verdr !> \anchor iform_verdr:   Schalter für die Auswahl der Verdunstungsformeln in water_temperature.f90
    !> \anchor iwsim Kennung, Simulationstyp ?
    integer :: iwsim
    !> Netz-variablen

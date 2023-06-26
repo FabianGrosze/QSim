@@ -179,7 +179,7 @@ end subroutine wetter_parallel
 
 !> Dient der eingabe() von  Wetterdaten aus <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>.\n
 !! In QSim-3D können die selben Dateien verwendet werden wie in QSim-1D.\n
-!! Die Wetterdaten sind die wesentlichen Randbedingungen für die Berechnung der Wärmebilanz mittels temperw_huelle(),
+!! Die Wetterdaten sind die wesentlichen Randbedingungen für die Berechnung der Wärmebilanz mittels water_temperature_wrapper_3d(),
 !! deren Resultat die Temperaturverteilung im Wasserkörper ist.\n\n
 !! \n\n
 subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
@@ -809,7 +809,7 @@ subroutine strahlg_wetter()
                    ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr)
       schwi_T(i) = schwi(1)    ! global radiation at weather station
       
-      !transfer to nodes in temperw_huelle: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)
+      !transfer to nodes in water_temperature_wrapper_3d: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)
       if (isNaN(schwi_T(i))) then
          write(fehler,*)'strahlg_wetter station',Wetterstationskennung_T(i),' IMET_T = ',IMET_T,' isNaN(schwi_T(i))'
          call qerror(fehler)

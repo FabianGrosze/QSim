@@ -69,6 +69,12 @@
 		<Filter Name="macrophytes">
 		<File RelativePath="..\metabolism\macrophytes\macrophytes.f90"/>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90"/></Filter>
+		<Filter Name="zooplankton">
+		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
+		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90"/></Filter>
+		<Filter Name="water_temperature">
+		<File RelativePath="..\metabolism\water_temperature\module_water_temperature.f90"/>
+		<File RelativePath="..\metabolism\water_temperature\water_temperature.f90"/></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90"/>
@@ -105,11 +111,9 @@
 		<File RelativePath="..\metabolism\erosion.f90"/>
 		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
-		<File RelativePath="..\metabolism\konsum.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
-		<File RelativePath="..\metabolism\metabol.mk"/>
 		<File RelativePath="..\metabolism\module_allodim.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
@@ -132,8 +136,6 @@
 		<File RelativePath="..\metabolism\strahlg.f90"/>
 		<File RelativePath="..\metabolism\tage.f90"/>
 		<File RelativePath="..\metabolism\temperl.f90"/>
-		<File RelativePath="..\metabolism\temperw.f90"/>
-		<File RelativePath="..\metabolism\temperw_kern.f90"/>
 		<File RelativePath="..\metabolism\uptake.f90"/>
 		<File RelativePath="..\metabolism\version_string.f90"/>
 		<File RelativePath="..\metabolism\verteilungskoeff.f90"/>
@@ -189,7 +191,7 @@
 		<File RelativePath=".\stofftransport_schism.f95"/>
 		<File RelativePath=".\stofftransport_untrim.f95"/>
 		<File RelativePath=".\stoffumsatz.f95"/>
-		<File RelativePath=".\temperw_huelle.f95"/>
+		<File RelativePath=".\water_temperature_wrapper_3d.f95"/>
 		<File RelativePath=".\uebergabe_werte.f95"/>
 		<File RelativePath=".\wetter.f95"/>
 		<File RelativePath=".\zonen.f95"/></Filter></Filter></Files>

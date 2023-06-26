@@ -35,7 +35,6 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
    real, dimension(ialloc5)          :: hco2Ez, d, cpart
    
    ! functions
-   real                              :: density_1d
    external                          :: dichte, einleiter_misch
    
    ! --------------------------------------------------------------------------
@@ -148,5 +147,26 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
          
       endif   ! Ende Einleitungs-flag
    enddo
+   
+   
+contains
+
+!> Berechnung der Dichte im 1-dimensionalen Fall
+pure real function density_1d(tempw)
+   implicit none
+   real, intent(in)  :: tempw !< water temperature [°C]
+   
+   density_1d = 999.842594             &
+             + 6.793952e-2 * tempw     &
+             - 9.095290e-3 * tempw**2  &
+             + 1.001685e-4 * tempw**3  &
+             - 1.120083e-6 * tempw**4  &
+             + 6.536332e-9 * tempw**5
+   return
+end function density_1d
+
 
 end subroutine oxygen_inflow_1d
+
+
+
