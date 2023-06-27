@@ -7,6 +7,7 @@
 META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/module_aparam.o \
 	../metabolism/coliform_bacteria/module_coliform_bacteria.o \
+    ../metabolism/erosion/module_erosion.o \
 	../metabolism/organic_carbon/module_organic_carbon.o \
 	../metabolism/oxygen/module_oxygen.o \
 	../metabolism/ph/module_ph.o\
@@ -51,7 +52,5 @@ META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/sedimentbelastung.o \
 	../metabolism/schwermetalle.o \
 	../metabolism/schwermetalle_kern.o \
-	../metabolism/erosion.o \
-	../metabolism/erosion_kern.o \
 	../metabolism/schweb.o \
 	../metabolism/schweb_kern.o

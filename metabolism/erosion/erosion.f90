@@ -24,43 +24,55 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> Subroutine erosion_huelle() simulaties erosion of suspended Matters
-!! \n\n
-!! Quelle: erosion_huelle.f95
-subroutine erosion_huelle(i)
-   use modell
-   use QSimDatenfelder
-   use module_aparam
-   implicit none
-   integer :: i,npla,ntra
-   real tiefes,flaes,raus
-   real dsedHs !! Sohlhöhenänderung im aktuellen Zeitschritt
-   iglob = (i+meinrang*part) ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-   control = iglob == kontrollknoten
-   npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
-   ntra = (i-1)*number_trans_quant
-   tflie = real(deltat)/86400
-   tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
-   if (tiefes <= min_tief)tiefes = min_tief ! minimale Wassertiefe erhalten
-   raus = strickler( zone(point_zone(iglob))%reib , tiefes )
 
-   ! SUBROUTINE erosion_kern(tflie,TIEFEs,RAUs,VMITTs        &
-   !                        ,SSeross,sss,ssalgs,dsedHs       &
-   !                        ,tauscs,M_eross,n_eross,sedrohs  &
-   !                        ,control,jjj)
-   call erosion_kern(tflie                                        &
-                     ,TIEFEs                                      &
-                     ,RAUs                                        &
-                     ,rb_hydraul_p(1+(i-1)*number_rb_hydraul)     &
-                     ,transfer_quantity_p(12+ntra)                &
-                     ,planktonic_variable_p(53+npla)              &
-                     ,planktonic_variable_p(52+npla)              &
-                     ,transfer_quantity_p(68+ntra)                &
-                     ,zone(point_zone(iglob))%erosi%tau_krit      &
-                     ,zone(point_zone(iglob))%erosi%M_eros        &
-                     ,zone(point_zone(iglob))%erosi%n_eros        &
-                     ,zone(point_zone(iglob))%erosi%sed_roh       &
-                     ,control                                    &
-                     ,iglob )
-   return
-end subroutine erosion_huelle
+!> Bestimmung der Erosionsrate
+subroutine erosion(ss_s, ssalg_s, vmitt_s, tiefe_s, rau_s, tausc_s,        &
+                   sedroh_s, m_eros_s, n_eros_s, tflie, sseros_s, dsedh_s, &
+                   control, jjj)
+   implicit none
+   
+   ! --- dummy arguments ---
+   real, intent(inout) :: ss_s      !< Schwebstoffe
+   real, intent(inout) :: ssalg_s   !< 
+   real, intent(in)    :: vmitt_s   !< Fließgeschwindigkeit
+   real, intent(in)    :: tiefe_s   !< Wassertiefe
+   real, intent(in)    :: rau_s     !< 
+   real, intent(in)    :: tausc_s   !< 
+   real, intent(in)    :: sedroh_s  !< Rohdichte des Sediments [kg/m3]
+   real, intent(in)    :: m_eros_s  !< 
+   real, intent(in)    :: n_eros_s  !< 
+   real, intent(in)    :: tflie     !< Zeitschritt [d]
+   real, intent(out)   :: sseros_s  !< 
+   real, intent(out)   :: dsedh_s   !< Sohlhöhenänderung im aktuellen Zeitschritt [mm]
+   logical, intent(in) :: control   !< debugging
+   integer, intent(in) :: jjj       !< debugging
+   
+   ! --- local variables ---
+   real                :: ust, tau, drero
+   
+   real, parameter     :: roh2o = 1000.
+   real, parameter     :: g = 9.81
+   
+   
+   ! Berechnung der Sohlschubspannung
+   ust   = (g / rau_s)**0.5 / (tiefe_s**0.166667) * abs(vmitt_s)
+   tau = ust**2 * roh2o
+   
+   if (tau > tausc_s .and. tausc_s > 0.0 .and. sedroh_s > 0.0 .and. tiefe_s > 0.0) then
+      drero  = m_eros_s * (tau / tausc_s - 1.)**n_eros_s
+      drero  = drero * tflie * 86400.
+      dsedh_s  = 1000.0 * drero / sedroh_s
+      sseros_s = drero / tiefe_s
+      ss_s     = ss_s    + sseros_s * 1000.
+      ssalg_s  = ssalg_s + sseros_s * 1000.
+   else
+      dsedh_s  = 0.
+      sseros_s = 0.
+   endif
+   
+   if (control) then 
+      print*, 'erosion_kern tau,ss,ssalg,sseros,dsedh,jjj = ',  &
+               tau,ss_s,ssalg_s,sseros_s,dsedh_s,jjj
+   endif
+   
+end subroutine erosion

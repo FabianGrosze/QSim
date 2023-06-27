@@ -5,6 +5,7 @@
 module module_metabolism
    
    use module_coliform_bacteria
+   use module_erosion
    use module_nitrogen
    use module_organic_carbon
    use module_oxygen

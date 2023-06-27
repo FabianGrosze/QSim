@@ -69,12 +69,10 @@
 		<Filter Name="macrophytes">
 		<File RelativePath="..\metabolism\macrophytes\macrophytes.f90"/>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90"/></Filter>
-		<Filter Name="zooplankton">
-		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
-		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90"/></Filter>
-		<Filter Name="water_temperature">
-		<File RelativePath="..\metabolism\water_temperature\module_water_temperature.f90"/>
-		<File RelativePath="..\metabolism\water_temperature\water_temperature.f90"/></Filter>
+		<Filter Name="erosion">
+		<File RelativePath="..\metabolism\erosion\erosion.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90"/>
@@ -96,6 +94,12 @@
 		<Filter Name="silicate">
 		<File RelativePath="..\metabolism\silicate\module_silicate.f90"/>
 		<File RelativePath="..\metabolism\silicate\silicate.f90"/></Filter>
+		<Filter Name="water_temperature">
+		<File RelativePath="..\metabolism\water_temperature\module_water_temperature.f90"/>
+		<File RelativePath="..\metabolism\water_temperature\water_temperature.f90"/></Filter>
+		<Filter Name="zooplankton">
+		<File RelativePath="..\metabolism\zooplankton\module_zooplankton.f90"/>
+		<File RelativePath="..\metabolism\zooplankton\zooplankton.f90"/></Filter>
 		<File RelativePath="..\metabolism\albenth.f90"/>
 		<File RelativePath="..\metabolism\algaesbl.f90"/>
 		<File RelativePath="..\metabolism\algaesgr.f90"/>
@@ -106,8 +110,6 @@
 		<File RelativePath="..\metabolism\cbsb5.f90"/>
 		<File RelativePath="..\metabolism\dreissen.f90"/>
 		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
-		<File RelativePath="..\metabolism\erosion.f90"/>
-		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>
@@ -151,7 +153,7 @@
 		<File RelativePath=".\corophium_wrapper_3d.f95"/>
 		<File RelativePath=".\dreissen_huelle.f95"/>
 		<File RelativePath=".\eingabe.f95"/>
-		<File RelativePath=".\erosion_huelle.f95"/>
+		<File RelativePath=".\erosion_wrapper_3d.f95"/>
 		<File RelativePath=".\ganglinien.f95"/>
 		<File RelativePath=".\get_schism_step.f95"/>
 		<File RelativePath=".\hnf_wrapper_3d.f90"/>
@@ -188,8 +190,8 @@
 		<File RelativePath=".\stofftransport_schism.f95"/>
 		<File RelativePath=".\stofftransport_untrim.f95"/>
 		<File RelativePath=".\stoffumsatz.f95"/>
-		<File RelativePath=".\water_temperature_wrapper_3d.f95"/>
 		<File RelativePath=".\uebergabe_werte.f95"/>
+		<File RelativePath=".\water_temperature_wrapper_3d.f95"/>
 		<File RelativePath=".\wetter.f95"/>
 		<File RelativePath=".\zonen.f95"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>

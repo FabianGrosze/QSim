@@ -33,11 +33,11 @@ subroutine stoffumsatz()
    integer :: i, j , i1, i2, i3, n,k,nk
    logical :: printi, nix, fehler_nan
    integer :: ilast, i1last
-   real :: rlast,rcount
-   real :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
-   real , allocatable , dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
-   real , allocatable , dimension(:) :: tempsed_k, tempw_k
-   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before process calculations
+   real    :: rlast,rcount
+   real    :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
+   real, allocatable, dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
+   real, allocatable, dimension(:) :: tempsed_k, tempw_k
+   real, allocatable, dimension(:) :: planktonic_variable_before   ! temporary copy of values before process calculations
    
    
    if (meinrang == 0) print*,'stoffumsatz start'
@@ -110,7 +110,7 @@ subroutine stoffumsatz()
                   planktonic_variable_p(61+(i-1)*number_plankt_vari) = 0.0
                endif
                
-               if (ieros == 1) call erosion_huelle(i)
+               if (ieros == 1) call erosion_wrapper_3d(i)
                !if (iSchwer == 1)call schwermetalle_huelle(i)
                
                if (iglob == kontrollknoten) then

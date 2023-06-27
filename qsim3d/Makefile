@@ -154,7 +154,7 @@ Q3 = version.co \
    initialisieren.o \
    randbedingungen.o \
    schwermetalle_huelle.o \
-   erosion_huelle.o \
+   erosion_wrapper_3d.o \
    schweb_huelle.o\
    stofftransport_casu.o \
    stofftransport_untrim.o \

@@ -298,7 +298,7 @@ program qsim
    real, dimension(ialloc5,ialloc2)        :: algabz, algzkz, algzgz, algzbz, uvert, dalgkz, dalgbz, dalggz
    real, dimension(ialloc5,ialloc2)        :: cchlakzy,cchlabzy,cchlagzy
    real, dimension(ialloc5,ialloc2)        :: up_nkz, up_pkz, up_siz, up_n2z, up_ngz, up_pgz, up_nbz, up_pbz
-   real, dimension(:,:),  allocatable      :: tausc, m_eros, n_eros, sedroh, aeros, eeros, dsedh, zwdsedh ,btausc
+   real, dimension(:,:),  allocatable      :: tausc, m_eros, n_eros, sedroh, aeros, eeros, dsedh, bdsedh, zwdsedh ,btausc
    real, dimension(:),    allocatable      :: t1e,m1e,n1e,r1e
    real, dimension(:),    allocatable      :: strdt, fzeit, ho2_z, hte_z, hph_z, wsp_uw, wsp_ow, wehrh, wehrb
    real, dimension(:),    allocatable      :: qstrang_1, startkm, endkm
@@ -459,7 +459,7 @@ program qsim
    external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
    external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
    external :: sys_z_gitter, strahlg, temperl, sedflux, dreissen
-   external :: schweb, erosion, schwermetalle, transport, sasu
+   external :: schweb, schwermetalle, transport, sasu
    
    external :: nitrogen_inflow_1d, coliform_bacteria_inflow_1d
    external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d
@@ -567,7 +567,7 @@ program qsim
    allocate(nstrs(azStrs*2), nnstrs(azStrs))
    allocate(STRdt(azStrs), FZeit(azStrs), yWlage(azStrs,ialloc3), Wlage(azStrs,ialloc2), ymax(azStrs,ialloc4))
    allocate(tausc(azStrs,ialloc2), M_eros(azStrs,ialloc2), n_eros(azStrs,ialloc2), sedroh(azStrs,ialloc2) ,btausc(azStrs,ialloc2) )
-   allocate(dsedH(azStrs,ialloc2), zwdsedH(azStrs,ialloc2) )
+   allocate(dsedH(azStrs,ialloc2), bdsedh(azStrs,ialloc2), zwdsedH(azStrs,ialloc2))
    allocate(t1e(ialloc2), m1e(ialloc2), n1e(ialloc2), r1e(ialloc2) )
    allocate(Ymin(azStrs,ialloc4), vmq(azStrs,ialloc2), Hmq(azStrs,ialloc2), boeamq(azStrs,ialloc2))
    allocate(segkm(azStrs,ialloc2), clado(10,ialloc2), hClado(azStrs,5,ialloc2), bclado(azStrs,5,ialloc2))
@@ -6090,9 +6090,8 @@ program qsim
       
       ! --- metabolism in main river ---
       do ior = 1, anze+1
-         call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior),&
-                                rau(ior), tiefe(ior), vmitt(ior), schwi(ior),       &
-                                tflie,                                              &
+         call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior), &
+                                rau(ior), tiefe(ior), vmitt(ior), schwi(ior), tflie, &
                                 control, jjj)
       enddo
       
@@ -6103,8 +6102,7 @@ program qsim
             ! metabolism
             call coliform_bacteria(                                                            & 
                         bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
-                        rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior),                        &
-                        tflie,                                                                 &
+                        rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior), tflie,                 &
                         control, jjj)
             
             ! mixing between main river and groyne-field 
@@ -6127,86 +6125,62 @@ program qsim
       goto 118 ! goto transport
       
       ! -----------------------------------------------------------------------
-      ! Erosion
+      ! erosion
       ! -----------------------------------------------------------------------
       1520 continue
       if (ieros == 0) then
-         dsedH(mstr,:) = 0.
-         SSeros(:)     = 0.
-         goto 1519
-      endif
-      
-      call erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,  &
-                   tflie, tiefe, rau, vmitt, anze, mstr, iwied,              &
-                   control, 0)
-      
-      if (nbuhn(mstr) == 0)goto 1519
-      if (ilbuhn == 0) then
+         dsedh(mstr,:) = 0.
+         sseros(:)     = 0.
+      else
+         
          do ior = 1,anze+1
-            zwvm(ior) = vmitt(ior)
-            zwtief(ior) = tiefe(ior)
-            zwss(ior) = ss(ior)
-            zwssa(ior) = ssalg(ior)
-            zwsedS(ior) = sedss(ior)
-            zwsedk(ior) = sedalk(ior)
-            zwsedg(ior) = sedalg(ior)
-            zwsedb(ior) = sedalb(ior)
-            zwSSeros(ior) = SSeros(ior)
-            zwdsedH(mstr,ior) = dsedH(mstr,ior)
-            tempw(ior) = btempw(mstr,ior)
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            ss(ior) = bss(mstr,ior)
-            ssalg(ior) = bssalg(mstr,ior)
-            sedalk(ior) = bsedak(mstr,ior)
-            sedalg(ior) = bsedag(mstr,ior)
-            sedalb(ior) = bsedab(mstr,ior)
-            sedss(ior) = bsedss(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1520
-      endif
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            bss(mstr,ior) = ss(ior)
-            bssalg(mstr,ior) = ssalg(ior)
-            bSSeros(ior) = SSeros(ior)
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            ss(ior) = zwss(ior)
-            ssalg(ior) = zwssa(ior)
-            sedss(ior) = zwsedS(ior)
-            sedalk(ior) = zwsedk(ior)
-            sedalg(ior) = zwsedg(ior)
-            sedalb(ior) = zwsedb(ior)
-            SSeros(ior) = zwSSeros(ior)
-            dsedH(mstr,ior) = zwdsedH(mstr,ior)
+            if (iwied == 0) dsedh(mstr,ior) = 0.0
             
-            if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-               diff1 = bssalg(mstr,ior) - ssalg(ior)
-               diff2 = bss(mstr,ior)    - ss(ior)
-               diff3 = bfssgr(mstr,ior) - fssgr(ior)
-            endif
+            ! main river
+            call erosion(ss(ior), ssalg(ior), vmitt(ior), tiefe(ior), &
+                         rau(ior), tausc(mstr,ior), sedroh(mstr,ior), &
+                         m_eros(mstr,ior), n_eros(mstr,ior), tflie,   &
+                         sseros(ior), dsedh(mstr,ior),                &
+                         control, jjj)             
+                         
+         
+         
+            if (nbuhn(mstr) > 0) then
+               ! groyne fields
+               call erosion(bss(mstr,ior), bssalg(mstr,ior), vbm(mstr,ior), bh(mstr,ior), &
+                            rau(ior), tausc(mstr,ior), sedroh(mstr,ior),                  &
+                            m_eros(mstr,ior), n_eros(mstr,ior), tflie,                    &
+                            bsseros(ior), bdsedh(mstr,ior),                               &
+                            control, jjj)
             
-            if (bleb(mstr,ior) > 0.0) then
-               ssalg(ior) = ssalg(ior) + diff1 * hctau1(ior)
-               ss(ior)    = ss(ior)    + diff2 * hctau1(ior)
-               fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
-            endif
+               
+               ! mixing between main river and groyne field
+               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                  diff1 = bssalg(mstr,ior) - ssalg(ior)
+                  diff2 = bss(mstr,ior)    - ss(ior)
+                  diff3 = bfssgr(mstr,ior) - fssgr(ior)
+               endif
+               
+               if (bleb(mstr,ior) > 0.0) then
+                  ssalg(ior) = ssalg(ior) + diff1 * hctau1(ior)
+                  ss(ior)    = ss(ior)    + diff2 * hctau1(ior)
+                  fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
+               endif
+               
+               if (hctau2(ior) > 0.0) then
+                  bssalg(mstr,ior) = bssalg(mstr,ior) - diff1 * hctau2(ior)
+                  bss(mstr,ior)    = bss(mstr,ior)    - diff2 * hctau2(ior)
+                  bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
+               endif
             
-            if (hctau2(ior) > 0.0) then
-               bssalg(mstr,ior) = bssalg(mstr,ior) - diff1 * hctau2(ior)
-               bss(mstr,ior)    = bss(mstr,ior)    - diff2 * hctau2(ior)
-               bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
             endif
          enddo
-         ilbuhn = 0
+      
       endif
       
       ! -----------------------------------------------------------------------
       ! Schwermetalle
       ! -----------------------------------------------------------------------
-      1519 continue
       if (ischwer == 1) then
          
          1521 continue

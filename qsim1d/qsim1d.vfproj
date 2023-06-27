@@ -90,6 +90,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="erosion">
+		<File RelativePath="..\metabolism\erosion\erosion.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -149,8 +153,6 @@
 		<File RelativePath="..\metabolism\c_chla.f90"/>
 		<File RelativePath="..\metabolism\dreissen.f90"/>
 		<File RelativePath="..\metabolism\e_extnct_lesen.f90"/>
-		<File RelativePath="..\metabolism\erosion.f90"/>
-		<File RelativePath="..\metabolism\erosion_kern.f90"/>
 		<File RelativePath="..\metabolism\funkstar.f90"/>
 		<File RelativePath="..\metabolism\lichthemmung.f90"/>
 		<File RelativePath="..\metabolism\lin_spline.f90"/>

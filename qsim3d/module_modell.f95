@@ -288,13 +288,13 @@ module modell
    !!  WRITE(1, '(A)') '  <Parameter Ident="M_eros"   Text="ErodibilitÃ¤tskonstante"                                    Unit="kg/(mÂ²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
    !!  WRITE(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
    !!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/mÂ³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
-   type :: Erosion
-      !>    \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/mÂ², von MODELLG.3D Zeile E gelesen
-      !>    \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(mÂ²*s) , von MODELLG.3D Zeile E gelesen
-      !>    \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen SohlspannungsÃ¼berschuss , von MODELLG.3D Zeile E gelesen
-      !>    \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/mÂ³ , von MODELLG.3D Zeile E gelesen
+   type :: tErosion
+      !> \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/m2, von MODELLG.3D Zeile E gelesen
+      !> \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(m2*s) , von MODELLG.3D Zeile E gelesen
+      !> \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss , von MODELLG.3D Zeile E gelesen
+      !> \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/m3 , von MODELLG.3D Zeile E gelesen
       real ::tau_krit, M_eros, n_eros, sed_roh
-   end type Erosion
+   end type tErosion
    
    type :: ddr
       character(200) :: zonen_name
@@ -311,7 +311,7 @@ module modell
       type (benth_al) ::  albenthi            ! B Benthische Algen
       type (wetterstation) :: wettstat        ! T Wetterstation
       !type () ::                             ! O Anteil der Vegetationstypen
-      type (Erosion) :: erosi                 ! E Erosions-Parameter
+      type (tErosion) :: erosi                 ! E Erosions-Parameter
    end type ddr
    type(ddr) , allocatable , dimension (:) :: zone
    !-------------------------------------------------------------------------------wetter_datenfelder
