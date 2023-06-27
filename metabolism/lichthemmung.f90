@@ -32,43 +32,48 @@
 !! dH/dt = Kd*I*H+Tau*(1-H)
 !! Kd in m2/µE
 
-subroutine lichthemmung(dt,Ic,yK,CChl_Stern,ChlaCz,j)
+subroutine lichthemmung(dt, ic, yk, cchl_stern, chlacz)
 
    implicit none
-
-   integer               :: j, it
-   real                  :: yk, tau, taui0, psii, h
-   real                  :: fclose, dt, chl_c, chlc_stern, cchl_stern
-   real                  :: k1, k2, k3, k4
-   real                  :: Ic,Kd0,Kd
-   real, dimension(50)   :: ChlaCz
+   ! --- dummy arguments ---
+   real, intent(in)    :: dt
+   real, intent(in)    :: ic
+   real, intent(inout) :: yk
+   real, intent(in)    :: cchl_stern
+   real, intent(in)    :: chlacz
    
-   real, parameter         :: PSII0 = 1.5  ! Absortionsfläche dunkeladaptierter Algen in m2/E
+   ! --- local variables ---
+   integer :: it
+   real    :: tau, psii, h, fclose, chl_c
+   real    :: k1, k2, k3, k4, kd
    
-   ! KI0 Zuwachsrate der Hemmung
-   ChlC_Stern = 1./CChl_Stern
-   if (ChlaCz(j) > 0.0) then
-      Chl_C = 1./ChlaCz(j)
-      PSII = min(PSII0,PSII0 * (Chl_C/ChlC_Stern)**0.22)
+   real, parameter :: psii0 = 1.5    ! Absortionsfläche dunkeladaptierter Algen in [m2/E]
+   real, parameter :: kd0 = 1.04e-8  ! Fitingwert, Messungen nach Anning (2000)
+   real, parameter :: taui0 = 4.5e-5 ! Parameter zur Beschreibung der Erholung (Ross)
+   
+   
+   ! ki0 Zuwachsrate der Hemmung
+   if (chlacz > 0.0) then
+      chl_c = 1./chlacz
+      psii = psii0 * (chl_c * cchl_stern)**0.22
+      psii = min(psii0, psii)
    else
-      PSII = PSII0
+      psii = psii0
    endif
-   fclose = PSII0/PSII
-   ! Fiting-Wert, Messungen nach Anning (2000)
-   Kd0 = 1.04e-8
-   Kd = PSII*kd0*fclose*dt*86400.
-   
-   ! Parameter zur Beschreibung der Erholung (Ross)
-   TauI0 = 4.5e-5
-   Tau = TauI0*dt*86400.
+
+   ! TODO: psii kürzt sich hier aus der Gleichung. Warum wird es dann überhaupt berechnet?
+   fclose = psii0/psii
+   kd = psii * kd0 * fclose * dt * 86400.
+   tau = taui0 * dt * 86400.
    
    h = 0.5
    do it = 1,2
-      k1 = -Kd*Ic*yk+Tau*(1.-yk)
-      k2 = (yk+0.5*h*k1)*(-Kd*Ic)+Tau*(1.-yk+0.5*h*k1)
-      k3 = (yk+0.5*h*k2)*(-Kd*Ic)+Tau*(1.-yk+0.5*h*k2)
-      k4 = (yk+h*k3)*(-Kd*Ic)+Tau*(1.-yk+h*k3)
+      k1 = -kd*ic*yk+tau*(1.-yk)
+      k2 = (yk+0.5*h*k1)*(-kd*ic)+tau*(1.-yk+0.5*h*k1)
+      k3 = (yk+0.5*h*k2)*(-kd*ic)+tau*(1.-yk+0.5*h*k2)
+      k4 = (yk+h*k3)*(-kd*ic)+tau*(1.-yk+h*k3)
       yk = yk+((h/6.)*(k1+2.*k2+2.*k3+k4))
    enddo
 end subroutine lichthemmung
+
 

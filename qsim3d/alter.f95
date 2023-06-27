@@ -29,7 +29,7 @@ subroutine alter(i)
    !!    läuft parallel
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    
    implicit none
    integer :: i,nk
@@ -39,7 +39,7 @@ subroutine alter(i)
    !     i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
    iglob = (i+meinrang*part) ! globale Knotennummer
    if (iglob > number_plankt_point) return ! überstehende Nummern nicht bearbeiten.
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    nk = (i-1)*number_plankt_vari
    depth = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen
    ! planktonic_variable_name(71)= "            Tracer"  - c bei Shen&Wang 2007
@@ -59,14 +59,14 @@ subroutine alter(i)
    !tiefe(1)= rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
    !if(rb_hydraul_p(2+(i-1)*number_rb_hydraul) .ge. min_tief ) then !! knoten nass
    if (depth >= 0.0 ) then !! knoten nass
-      if (kontroll) print*,"Kontrollknoten nass in alter() weil depth = ",depth &
+      if (control) print*,"Kontrollknoten nass in alter() weil depth = ",depth &
           , " Tiefe = ",rb_hydraul_p(2+(i-1)*number_rb_hydraul)," min_tief = ",min_tief
    else !! knoten trockengefallen
       !! planktonic_variable_p(71+nk)=0.0 !! Tracer null im trockenen
-      if (kontroll) print*,"Kontrollknoten trockengefallen in alter() weill depth = ",depth &
+      if (control) print*,"Kontrollknoten trockengefallen in alter() weill depth = ",depth &
           ," Tiefe = ",rb_hydraul_p(2+(i-1)*number_rb_hydraul)," min_tief = ",min_tief
    endif ! Knoten nass
-   if (kontroll) print*,'alter: tracer, decaying,linear,grow ; nk,i', planktonic_variable_p(71+nk)  &
+   if (control) print*,'alter: tracer, decaying,linear,grow ; nk,i', planktonic_variable_p(71+nk)  &
        , planktonic_variable_p(73+nk), planktonic_variable_p(74+nk), planktonic_variable_p(75+nk), nk, i
    return
 end subroutine alter
@@ -100,9 +100,9 @@ subroutine alter_lesen()
          write(b,'(A)') trim(ctext)
          if ((b(1:1) == "z") .or. (b(1:1) == "Z")) wie_altern = 1
          if ((b(1:1) == "r") .or. (b(1:1) == "R")) wie_altern = 2
-      end if !keine leerzeile
+      endif !keine leerzeile
       print*, "alter_lesen(): wie_altern = ",wie_altern
-   end do ! keine weitere Zeile in alter.txt
+   enddo ! keine weitere Zeile in alter.txt
    rewind (ion)
    close (ion)
    
@@ -118,7 +118,7 @@ subroutine alter_lesen()
          print*, " "
          do i = 1,zonen_anzahl ! alle i zonen
             if (alter_nummer == zone(i)%zonen_nummer) altzaehl = i
-         end do ! alle i zonen
+         enddo ! alle i zonen
          alter_nummer = altzaehl
          print*,'selbige Zone hat den Zähler:  ', alter_nummer
          if (alter_nummer < 1 .or. alter_nummer > zonen_anzahl) then
@@ -134,8 +134,8 @@ subroutine alter_lesen()
             if (alter_nummer == rabe(i)%nr_rb) then
                print*,'selbiger Rand wird von der ', i, '-ten Randbedingung bedient'
                altzaehl = i
-            end if
-         end do !! alle Randbedingungen
+            endif
+         enddo !! alle Randbedingungen
          alter_nummer = altzaehl
          if ((alter_nummer < 1) .or. (alter_nummer > ianz_rb)) &
              call qerror("alter_lesen(): Rand-Nummer ungültig")
@@ -148,27 +148,27 @@ subroutine alter_lesen()
    if (alloc_status /= 0) then
       write(fehler,*)'allocate tr_integral_zone(zonen_anzahl, fehlgeschlagen alloc_status = ', alloc_status
       call qerror(fehler)
-   end if !
+   endif !
    
    allocate (vol_integral_zone(zonen_anzahl,zeitschrittanzahl+1), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)'allocate vol_integral_zone(zonen_anzahl, fehlgeschlagen alloc_status = ', alloc_status
       call qerror(fehler)
-   end if !
+   endif !
    
    allocate (ent_integral_zone(zonen_anzahl,zeitschrittanzahl+1), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)'allocate ent_integral_zone(zonen_anzahl fehlgeschlagen alloc_status = ', alloc_status
       call qerror(fehler)
-   end if !
+   endif !
    
    do i = 1,zeitschrittanzahl+1 !! initialisieren...
       do j = 1,zonen_anzahl
          tr_integral_zone(j,i)  = 0.0
          vol_integral_zone(j,i) = 0.0
          ent_integral_zone(j,i) = 0.0
-      end do ! alle zonen
-   end do ! alle i Zeitschritte
+      enddo ! alle zonen
+   enddo ! alle i Zeitschritte
    
    return
    
@@ -207,7 +207,7 @@ subroutine alter_ini()
       planktonic_variable(73 + nk) = 0.0 ! alter_decay
       planktonic_variable(74 + nk) = 0.0 ! alter_arith
       planktonic_variable(75 + nk) = 0.0 ! alter_growth
-   end do ! alle i knoten
+   enddo ! alle i knoten
    
    select case (wie_altern)
       case(1) ! Zone
@@ -215,8 +215,8 @@ subroutine alter_ini()
          do i = 1,number_plankt_point ! alle i knoten/elemente
             if (point_zone(i) == alter_nummer ) then
                planktonic_variable(71 + (i - 1) * number_plankt_vari) = 1.0 ! Tracer
-            end if !
-         end do ! alle i berechnungsstützstellen
+            endif !
+         enddo ! alle i berechnungsstützstellen
       case(2) ! Rand
          print*,"alter_ini() für ",alter_nummer,"-ten Rand mit nummer = ",rabe(alter_nummer)%nr_rb
          do i = 1,number_plankt_point ! alle i knoten/elemente
@@ -233,8 +233,8 @@ subroutine alter_ini()
                planktonic_variable(71 + nk) = 1.0 ! Tracer
                planktonic_variable(73 + nk) = 1.0 ! age_decay
                planktonic_variable(75 + nk) = 1.0 ! age_growth
-            end if !
-         end do ! alle i berechnungsstützstellen
+            endif !
+         enddo ! alle i berechnungsstützstellen
       case default
          call qerror("wie_altern muss vor alter_ini() geklärt werden")
    end select
@@ -277,14 +277,14 @@ subroutine alter_zeitschritt(izeit_gang)
             ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang) - entropy
          else
             entropy = 0.0
-         end if
+         endif
          if (j == kontrollknoten) then ! Ausgabe kontrollknoten
             print*, 'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = ', &
                     c, tief, knoten_flaeche(j),                                                                 &
                     point_zone(j), zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
-         end if ! kontrollknoten
+         endif ! kontrollknoten
       endif ! Knoten nass
-   end do ! alle j Knoten
+   enddo ! alle j Knoten
    
 end subroutine alter_zeitschritt
 !----+-----+----
@@ -309,7 +309,7 @@ subroutine alter_ausgabe()
    if (open_error /= 0) then
       print*,'ganglinien/tracer_zonen_integrale.txt lässt sich nicht öffnen'
       return
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    rewind (444444) ! tracer.txt zurückspulen
    
    write(444444,*)'# Zonen-Anzahl = ',zonen_anzahl,'jeweils Tracermasse | Wasservolumen | Entropie '
@@ -323,9 +323,9 @@ subroutine alter_ausgabe()
       do i = 1,zonen_anzahl
          write(beschriftung1,'(A,7X,F16.0,X,F16.0,X,F18.2)') trim(beschriftung1),  &
                tr_integral_zone(i,j), vol_integral_zone(i,j), ent_integral_zone(i,j)
-      end do ! alle i zonen
+      enddo ! alle i zonen
       write(444444,'(A)')trim(beschriftung1)
-   end do ! alle j Zeitpunkte
+   enddo ! alle j Zeitpunkte
    
    close (444444) ! Dateien tracer.txt wieder schließen
    
@@ -355,7 +355,7 @@ subroutine alter_rand(j)
    
    if (j == kontrollknoten) then ! Ausgabe kontrollknoten
       print*,"alter_rand ", nura, alter_nummer
-   end if ! kontrollknoten
+   endif ! kontrollknoten
    
    nk = (j - 1) * number_plankt_vari
    if (nura == alter_nummer) then
@@ -366,7 +366,7 @@ subroutine alter_rand(j)
       planktonic_variable(71 + nk) = 0.0 !  tracer
       planktonic_variable(73 + nk) = 0.0 ! alter_d
       planktonic_variable(75 + nk) = 0.0 ! alter_g
-   end if
+   endif
    planktonic_variable(74 + nk) = 0.0 ! alter_a
    
    return

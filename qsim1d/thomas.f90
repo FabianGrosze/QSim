@@ -1,5 +1,5 @@
 subroutine thomas(a, b, c, d, anze, U, imarker)
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

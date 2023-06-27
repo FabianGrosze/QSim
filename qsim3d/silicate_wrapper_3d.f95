@@ -28,7 +28,7 @@
 subroutine silicate_wrapper_3d(i)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    use module_metabolism, only : silicate
    implicit none
    
@@ -36,13 +36,13 @@ subroutine silicate_wrapper_3d(i)
    integer             :: j, nk
    
    iglob = i + meinrang * part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    nk = (i-1) * number_plankt_vari
    
    ! Umrechnen des Zeitschritts in Tage
    tflie = real(deltat)/86400.
    
-   if (kontroll) then
+   if (control) then
       print '("before silicate: (Knoten = ", I0, ")")', iglob 
       print*, "   si    = ", planktonic_variable_p( 7+nk)
       print*, "   hJSi  = ", benthic_distribution_p(46+(i-1)*number_benth_distr)
@@ -59,10 +59,10 @@ subroutine silicate_wrapper_3d(i)
             benthic_distribution_p(14+(i-1)*number_benth_distr),                                   &! albewk
             rb_hydraul_p(2+(i-1)*number_rb_hydraul),                                               &! tiefe
             tflie,                                                                                 &! tflie
-            kontroll, iglob)
+            control, iglob)
             
             
-   if (kontroll) then 
+   if (control) then 
       print*, "after silicate:"
       print*, "   si    = ", planktonic_variable_p( 7+nk)
       print*, "   hJSi  = ", benthic_distribution_p(46+(i-1)*number_benth_distr)

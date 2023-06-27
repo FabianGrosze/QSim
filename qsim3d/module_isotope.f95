@@ -34,15 +34,15 @@ module isotope
 
 contains
 
-   subroutine isotop_no3konsum(f,kontroll)
+   subroutine isotop_no3konsum(f,control)
       implicit none
       real        :: c_source, delta_source, R_source
       real        :: c_sink, delta_sink, R_sink
       real        :: f, alpha, eps, dc, R_standard
       real        :: d_logie, d_logik, d0, c0
-      logical     :: kontroll
+      logical     :: control
       
-      kontroll = .true.
+      control = .true.
       return
       
       
@@ -77,7 +77,7 @@ contains
          write(86,*)f,c_source,R_source,delta_source,d_logie,c_sink,R_sink,delta_sink,d_logik
          c_source = c_source-dc
          c_sink = c_sink+dc
-      end do
+      enddo
       
       return
    end subroutine isotop_no3konsum

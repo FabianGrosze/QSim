@@ -5,9 +5,9 @@ subroutine hnf(chnf_s, bac_s, vo2_s, tempw_s, drhnf_s, &
                zhnf_s, tflie,                          &
                hnfbac_s, hnfupa_s, hnfrea_s, hnfexa_s, & 
                hnfmoa_s, hnfmua_s, ro2hnf_s, bsbhnf_s, &
-               kontroll, jjj)
+               control, jjj)
    
-   use aparam,        only: uphnf, backs
+   use module_aparam
    use module_oxygen, only: oxygen_saturation_concentration
    implicit none
    
@@ -27,7 +27,7 @@ subroutine hnf(chnf_s, bac_s, vo2_s, tempw_s, drhnf_s, &
    real,    intent(out)   :: hnfmua_s !<
    real,    intent(out)   :: ro2hnf_s !< consumption of oxygen by hnf (respiration)
    real,    intent(out)   :: bsbhnf_s !< increment of bsb due to dead hnf and excretion 
-   logical, intent(in)    :: kontroll !< debugging
+   logical, intent(in)    :: control !< debugging
    integer, intent(in)    :: jjj      !< debugging
    
    ! --- local variables ---

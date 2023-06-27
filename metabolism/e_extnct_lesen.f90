@@ -29,11 +29,11 @@
 !!
 !! ließt die 
 !! Absorptionsspektren sigma(Lambda) fuer Wasser, Kiesel-,Gruen- und Blaualgen, 
-!! Humin, susp. Schwebstoff,Sonnenlicht\n
+!! Humin, susp. Schwebstoff,Sonnenlicht
+!!   
 !! aus <a href="../../exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
 !! 
-!!
-!! Quelle: e_extnct_lesen.f90 , zu: Stoffumsatz ; algae_huelle(), 
+!!!! Quelle: e_extnct_lesen.f90 , zu: Stoffumsatz ; algae_huelle(), 
 !! \ref lnk_randbedingungen , \ref lnk_extnct_rb
 
 subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
@@ -47,25 +47,12 @@ subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
    
    external :: qerror
    
-   ! Einlesen der e_extnct.dat
-   ! wird wieder aktiviert wenn Datei in Gerris erzeugt wird
-   ! open(unit=101, DEFAULTFILE=cpfad, file='e_extnct.dat')
-   ! open(unit=101, DEFAULTFILE='/GERRIS/QSIM/', file='e_extnct.dat')
-   
    write(dateiname,'(2A)')trim(cpfad),'e_extnct.dat'
    open(unit = 101 , file = dateiname, status = 'old', action = 'read ', iostat = io_error)
    if (io_error /= 0) call qerror("Could not open e_extnct.dat")
    
    rewind (101)
-   ! read(101,'(A2)')ckenn_vers1
-   ! if(ckenn_vers1/='*V')then
-   ! else
-   !    read(101,'(2x)')
-   ! endif
-   ! read(101,'(i2)') ilamda
    read(101,'(A)') text
-   !print*,'e_extnct.dat: Kopfzeile ...'
-   !print*,trim(text)
    
    ! Anzahl der Wellenlängen
    read(101,*, iostat = io_error) ilamda
@@ -80,6 +67,6 @@ subroutine e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
       if (io_error /= 0) call qerror("Error while reading from e_extnct.dat")
       
    enddo
-   !! print*,'e_extnct.dat: ',ilamda,' Zeilen gelesen'
+   
    return
 end subroutine e_extnct_lesen

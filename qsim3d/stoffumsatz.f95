@@ -94,7 +94,7 @@ subroutine stoffumsatz()
          call water_temperature_wrapper_3d(i)
          
          
-         if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then  #
+         if (rb_hydraul_p(2+(i-1)*number_rb_hydraul) > min_tief ) then
          ! Knoten nass, d.h. kein Stoffumsatz an trockenen Knoten
             
             if (.not. nur_temp) then

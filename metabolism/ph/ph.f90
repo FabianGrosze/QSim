@@ -35,9 +35,9 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
               dalgki_s, dalggr_s, dalgbl_s, dalgak_s, dalgag_s, dalgab_s,  &
               alberg_s, alberk_s, albewg_s, albewk_s,                      &
               susn_s, po2p_s, po2r_s, ssalg_s, stind_s,                    &
-              kontroll, jjj)
+              control, jjj)
    
-   use aparam, only: Caki, Cabl, Cagr, CRot, CDr
+   use module_aparam
    implicit none
    ! --- dummy arguments ---
    real, intent(inout)     :: mw_s      !< m-Wert
@@ -76,7 +76,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    real, intent(in)        :: po2r_s    !< CO2 Produktion der Makrophyten
    real, intent(in)        :: ssalg_s   !<
    real, intent(inout)     :: stind_s   !<
-   logical, intent(in)     :: kontroll  !< debugging
+   logical, intent(in)     :: control  !< debugging
    integer, intent(in)     :: jjj       !< debugging
    
    ! --- local variables ---
@@ -171,7 +171,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    bkco2 = hcon * bbeis
    DCO2o = defco2*(1.-exp(-bkco2*tflie))
    
-   if (kontroll) then
+   if (control) then
       print*, 'ph Oberflaechenbelueftung:'
       print*, '  DCO2o   = ', DCO2o
       print*, '  defco2  = ', defco2
@@ -277,7 +277,7 @@ subroutine ph(mw_s, pw_s, ca_s, lf_s, tempw_s, vph_s, vco2_s,              &
    uebca = moca*moco3/kca
    tind = (1577.*exp(-0.0496*uebca))*10./ssalg_s
    
-   if (kontroll) then 
+   if (control) then 
       if (tind > stind_s) then
          print*,'pH: keine Calcium Aenderung'
       else

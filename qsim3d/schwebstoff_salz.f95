@@ -41,7 +41,7 @@ subroutine schwebstoff_salz()
       do n = 1,trueb_anzahl,1
          if (trueb_zeit(trueb_zuord(n)) <= rechenzeit)nvor = n
          if (trueb_zeit(trueb_zuord(1+trueb_anzahl-n)) > rechenzeit)nach = 1+trueb_anzahl-n
-      end do ! alle n durch
+      enddo ! alle n durch
       aenderung = (nvor /= nvor_alt) .or. (nach /= nach_alt)
       
       if ((nvor > 0) .and. (nach <= 0)) then
@@ -52,8 +52,8 @@ subroutine schwebstoff_salz()
          endif
          do i = 1,knotenanzahl2D ! Alle Knoten
             planktonic_variable(53+(i-1)*number_plankt_vari) = vert1(i)
-         end do ! alle i Knoten
-      end if
+         enddo ! alle i Knoten
+      endif
       if ((nvor > 0) .and. (nach > 0)) then
          print*,'Schwebstoffvorgabe zwischen',trueb_zeit(trueb_zuord(nvor)),' und ', trueb_zeit(trueb_zuord(nach))
          if (aenderung) then
@@ -71,8 +71,8 @@ subroutine schwebstoff_salz()
          print*,'schwebstoff_salz() anteil = ',a
          do i = 1,knotenanzahl2D ! Alle Knoten
             planktonic_variable(53+(i-1)*number_plankt_vari) = ((1.0-a)*vert1(i))+(a*vert2(i))
-         end do ! alle i Knoten
-      end if
+         enddo ! alle i Knoten
+      endif
       if ((nvor <= 0) .and. (nach > 0)) then
          print*,'aktuelle rechenzeit vor Schwebstoffvorgabe-Zeitpunkt', trueb_zeit(trueb_zuord(nach))
          if (aenderung) then
@@ -81,13 +81,13 @@ subroutine schwebstoff_salz()
          endif
          do i = 1,knotenanzahl2D ! Alle Knoten
             planktonic_variable(53+(i-1)*number_plankt_vari) = vert2(i)
-         end do ! alle i Knoten
-      end if
+         enddo ! alle i Knoten
+      endif
       if (aenderung) then
          nvor_alt = nvor
          nach_alt = nach
       endif
-   end if ! nur auf Prozessor 0 bearbeiten
+   endif ! nur auf Prozessor 0 bearbeiten
    return
 end subroutine schwebstoff_salz
 !----+-----+----
@@ -110,7 +110,7 @@ subroutine ini_schwebstoff_salz()
    !   planktonic_variable(53+(k-1)*number_plankt_vari) = 0.0  !  Schwebstoffgehalt ss
    !   planktonic_variable(65+(k-1)*number_plankt_vari) = 0.0  !  Leitfähigkeit lf
    !   planktonic_variable(72+(k-1)*number_plankt_vari) = 0.0  !  salz
-   !end do
+   !enddo
    return
 end subroutine ini_schwebstoff_salz
 !> verteilung_holen_gr3 ließt aus unterverzeichnis trueb die angegebene Datei im gr3 (Elcirc) Format.
@@ -133,7 +133,7 @@ subroutine  verteilung_holen_gr3(datei,verteilung,anz)
       call qerror(' Keine Datei kein verteilung_holen_gr3 ')
    else
       print*,'Datei vorhanden'
-   end if
+   endif
    ion = 567
    open ( unit = ion , file = trim(dateipfad), status = 'old', action = 'read', iostat = sysa )
    if (sysa /= 0)call qerror('open_error dateipfad')
@@ -149,7 +149,7 @@ subroutine  verteilung_holen_gr3(datei,verteilung,anz)
          else
             call qerror(' verteilung_holen_gr3: zeile nicht lesbar ???')
          endif
-      end do ! alle i Knoten
+      enddo ! alle i Knoten
       print*,anz,' Werte gelesen'
    else
       call qerror(' verteilung_holen_gr3: Punktanzahl in Datei passt nicht zum aktuellen Modell')
@@ -157,7 +157,7 @@ subroutine  verteilung_holen_gr3(datei,verteilung,anz)
    close (ion)
    do i = 1,anz ! Dummybelegung
       if (isnan(verteilung(i)))call qerror('isnan(verteilung(i)) ')
-   end do ! alle i Knoten
+   enddo ! alle i Knoten
    return
 end subroutine verteilung_holen_gr3
 !----+-----+----
@@ -181,7 +181,7 @@ subroutine schwebstoff_salz_sichten()
       return
    else
       print*,'schwebstoff_salz: Vorgabe von Schwebstoffdaten im Verzeichnis trueb'
-   end if
+   endif
    print*,'schwebstoff_salz Vorgaben sichten ...'
    write(dateiname,'(2A)')trim(modellverzeichnis),'schwebe'
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
@@ -191,7 +191,7 @@ subroutine schwebstoff_salz_sichten()
    if (sysa /= 0) then
       print*,trim(systemaufruf)
       call qerror('Auflisten der Schwebstoffvorgaben fehlgeschlagen.')
-   end if
+   endif
    ion = 444
    open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = sysa )
    if (sysa /= 0)call qerror('open_error schwebe')
@@ -201,7 +201,7 @@ subroutine schwebstoff_salz_sichten()
    do while (zeile(ion))
       nz = nz+1
       if (ctext(1:1) == 'd')trueb_anzahl = trueb_anzahl+1
-   end do ! while Zeile
+   enddo ! while Zeile
    print*,'schwebstoff_salz_sichten(): trueb_anzah = ',trueb_anzahl
    if (trueb_anzahl >= 1) then
       allocate (trueb_zeit(trueb_anzahl), stat = sysa )
@@ -217,13 +217,13 @@ subroutine schwebstoff_salz_sichten()
             i = len(trim(ctext))
             do while (ctext(i:i) /= 'd')
                i = i-1
-            end do ! while Zeile
+            enddo ! while Zeile
             write(irgendeinstring,'(A)')ctext(i+1:len(trim(ctext)))
             !print*,'irgendeinstring:',trim(irgendeinstring)
             read(irgendeinstring,*)trueb_zeit(is)
             trueb_zuord(is) = is
-         end if !! alle s* Dateien
-      end do ! alle zeilen aus schwebe
+         endif !! alle s* Dateien
+      enddo ! alle zeilen aus schwebe
       close(ion)
       do n = 1,trueb_anzahl,1
          do i = n+1,trueb_anzahl,1
@@ -231,23 +231,23 @@ subroutine schwebstoff_salz_sichten()
                zwischenwert = trueb_zuord(n)
                trueb_zuord(n) = trueb_zuord(i)
                trueb_zuord(i) = zwischenwert
-            end if ! Zeitreihenfolge falsch
-         end do ! alle weiteren i durch
-      end do ! alle n durch
+            endif ! Zeitreihenfolge falsch
+         enddo ! alle weiteren i durch
+      enddo ! alle n durch
       do n = 1,trueb_anzahl,1
          print*,'schwebe ',n,'  zeit = ',trueb_zeit(trueb_zuord(n)), &
                                        '  Datei:', trim(trueb_datei(trueb_zuord(n)))
-      end do ! alle n durch
+      enddo ! alle n durch
       allocate (vert1(knotenanzahl2D), stat = sysa )
       if (sysa /= 0) then
          write(fehler,*)' Rueckgabewert von allocate (vert1(knotenanzahl2D) :', sysa
          call qerror(fehler)
-      end if
+      endif
       allocate (vert2(knotenanzahl2D), stat = sysa )
       if (sysa /= 0) then
          write(fehler,*)' Rueckgabewert von allocate (vert2(knotenanzahl2D) :', sysa
          call qerror(fehler)
-      end if
+      endif
    endif ! Schwebstoffvorgaben vorhanden
    return
 end subroutine schwebstoff_salz_sichten
@@ -262,11 +262,11 @@ subroutine schwebstoff_salz_parallel()
    !if(alloc_status.ne.0)then
    !   write(fehler,*)' Rueckgabewert von allocate (trueb(knotenanzahl2D) :', alloc_status
    !   call qerror(fehler)
-   !end if
+   !endif
    !allocate (salz(knotenanzahl2D), stat = alloc_status )
    !if(alloc_status.ne.0)then
    !   write(fehler,*)' Rueckgabewert von allocate (salz(knotenanzahl2D) :', alloc_status
    !   call qerror(fehler)
-   !end if
+   !endif
    !print*,'schwebstoff_salz_parallel , trueb und salz allociert', meinrang
 end subroutine schwebstoff_salz_parallel

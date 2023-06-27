@@ -30,14 +30,14 @@ subroutine nitrogen_wrapper_3d(i)
    use isotope
    use QSimDatenfelder
    use module_nitrogen, only: nitrifiers, nitrogen
-   use aparam
+   use module_aparam
    implicit none
    
    integer, intent(in) :: i
    
    integer  :: j, nk
    
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    
    iglob = i + meinrang * part
    nk = (i-1) * number_plankt_vari
@@ -54,7 +54,7 @@ subroutine nitrogen_wrapper_3d(i)
    ! Umrechung Zeitschritt
    tflie = real(deltat)/86400.
    
-   if (kontroll) then
+   if (control) then
       print '(a,i0,a)', 'before nitrogen (iglob: ', iglob, ')'
       print*, '   vNH4 = ', planktonic_variable_p( 3+nk)
       print*, '   vNO2 = ', planktonic_variable_p( 4+nk)
@@ -88,7 +88,7 @@ subroutine nitrogen_wrapper_3d(i)
          benthic_distribution_p(34+(i-1)*number_benth_distr),  & ! bettn
          transfer_quantity_p(32+(i-1)*number_trans_quant),     & ! go2n
          transfer_quantity_p(52+(i-1)*number_trans_quant),     & ! susno
-         kontroll, iglob)
+         control, iglob)
    
    
    call nitrogen(                                             & !
@@ -152,9 +152,9 @@ subroutine nitrogen_wrapper_3d(i)
          transfer_quantity_p(38+(i-1)*number_trans_quant),    & ! ablNO3
          benthic_distribution_p(37+(i-1)*number_benth_distr), & ! hFluN3
          transfer_quantity_p(90 +(i-1)*number_trans_quant),   & ! dC_DenW
-         kontroll, iglob)
+         control, iglob)
          
-   if (kontroll) then
+   if (control) then
       print '(a,i0,a)', 'after nitrogen (iglob: ', iglob, ')'
       print*, '   vNH4 = ', planktonic_variable_p( 3+nk)
       print*, '   vNO2 = ', planktonic_variable_p( 4+nk)

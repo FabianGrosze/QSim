@@ -31,7 +31,7 @@ subroutine sys_gitterStrang(j_neu, j_alt, dH2D, tzt, o2zt, nh4zt, no2zt,       &
                             Q_NBzt, Q_NGzt,  CChlkzt,  CChlbzt, CChlgzt, jnkz, &
                             i_EstRNR)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    integer                         :: nkz, nkzs_alt, j_neu, j_alt, nkzs_neu

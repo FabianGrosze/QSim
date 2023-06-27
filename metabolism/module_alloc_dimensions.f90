@@ -24,35 +24,28 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine dichte(tempwz, nkzs, ior, D)
-   use allodim
+
+!> array dimenions
+!!
+!! Felddimensionierungs-Parameter
+module module_alloc_dimensions
+
    implicit none
-   real,    intent(in),  dimension(ialloc5,ialloc2) :: tempwz
-   integer, intent(in),  dimension(ialloc2)         :: nkzs
-   integer, intent(in)                              :: ior
-   real,    intent(out), dimension(ialloc5)         :: D
+     
+   public
+
+   integer , protected :: azstrs         !< \anchor azstrs Stranganzahl
+   integer , parameter :: ialloc1 = 100  !> \anchor ialloc1 Einleiter pro Strang
+   integer , parameter :: ialloc2 = 1000 !> \anchor ialloc2 Querprofile im Strang
+   integer , parameter :: ialloc3 = 20   !> \anchor ialloc3 Abschnitte im Strang?
+   integer , parameter :: ialloc4 = 250  !> \anchor ialloc4 maximal Anzahl Ausgabegrößen
+   integer , parameter :: ialloc5 = 50   !> \anchor ialloc5 Tiefenschichtenanzahl
    
-   integer         :: j, nkz
+contains
+
+   subroutine set_azstrs(azstrs_in)
+      integer, intent(in) :: azstrs_in
+      azstrs = azstrs_in
+   end subroutine set_azstrs
    
-   real, parameter :: a0 =  999.842594
-   real, parameter :: a1 =  6.793952e-2
-   real, parameter :: a2 = -9.095290e-3
-   real, parameter :: a3 =  1.001685e-4
-   real, parameter :: a4 = -1.120083e-6
-   real, parameter :: a5 =  6.536332e-9
-   
-   
-   ! TODO (Schoenung, august 2022): This is wrong. This way the deepest layers use
-   ! the temperature form the highest layers and vice versa. They must use their 
-   ! corresponding layers.
-   j = nkzs(ior)
-   do nkz = 1,nkzs(ior)
-      d(nkz) = a0                      &
-             + a1 * tempwz(j,ior)      &
-             + a2 * tempwz(j,ior)**2   &
-             + a3 * tempwz(j,ior)**3   &
-             + a4 * tempwz(j,ior)**4   &
-             + a5 * tempwz(j,ior)**5
-      j = j-1
-   enddo
-end subroutine dichte
+end module module_alloc_dimensions

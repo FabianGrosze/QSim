@@ -3,8 +3,8 @@ subroutine silicate_inflow_1d(si, q_sk, siL, esi, mstr, ieinLs,   &
                               jiein, flae, anze, flag, tflie)
 
 
-   use allodim
-   use aparam, only: qmx_sk
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---

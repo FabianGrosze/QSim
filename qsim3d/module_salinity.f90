@@ -82,7 +82,7 @@ contains
          allocate (salinity_element(part * proz_anz), stat = alloc_status)
          if (alloc_status /= 0) call qerror('init_salinity: Error allocating salinity for NetCDF reading.')
          salinity_element = 0
-      end if
+      endif
       
       ! initialize data field used on MPI processes
       allocate (salinity_element_p(part), stat = alloc_status)
@@ -113,7 +113,7 @@ contains
          if (rechenzeit < transinfo_zeit(transinfo_zuord(1)) .or. &
              rechenzeit > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
             call qerror('step_salinity: Time outside of available time period')
-         end if
+         endif
          ! read data closest to center of current time step
          i_time = minloc(abs(transinfo_zeit - rechenzeit), 1)
          select case (hydro_trieb)
@@ -126,7 +126,7 @@ contains
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
                'step_salinity: ', i_time, '-th record read from file - min = ', minval(salinity_element),          &
                ', max = ', maxval(salinity_element), ', mean = ', sum(salinity_element)/max(1,size(salinity_element)), ' (psu)'
-      end if
+      endif
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
@@ -136,7 +136,7 @@ contains
       if (ierr /= 0) then
          write(error_message,'(a,i3)') 'step_salinity: mpi_scatter(salinity_element) failed - ', ierr
          call qerror(trim(error_message))
-      end if
+      endif
       
       ! Copy salinity variable to parallel transfer variable
       do i = 1,part
@@ -144,7 +144,7 @@ contains
          if (iGlob > number_plankt_point) exit
          j = (i - 1) * number_plankt_vari
          planktonic_variable_p(i_salinity + j) = salinity_element_p(i)
-      end do
+      enddo
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
@@ -180,8 +180,8 @@ contains
             salinity_element(i) = 0.
          else
             salinity_element(i) = max(0., salinity_element(i))
-         end if
-      end do
+         endif
+      enddo
 
    end subroutine get_salinity_UnTRIM2
    

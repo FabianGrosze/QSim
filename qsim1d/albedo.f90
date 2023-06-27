@@ -31,7 +31,7 @@
 subroutine albedo(sh, refl)
    ! TODO: Literaturangabe
    
-   use aparam
+   use module_aparam
    implicit none
    
    real, intent(in)    :: sh

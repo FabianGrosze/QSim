@@ -1,6 +1,6 @@
 subroutine quickest(U, vmitt, Uvert, dx, DeltaT, nx, flag, ktrans, nkz,  &
                     iwahlD, isgn, iwsim)
-   use allodim                 
+   use module_alloc_dimensions                 
    implicit none
    
    ! --- dummy arguments ---

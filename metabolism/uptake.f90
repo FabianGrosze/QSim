@@ -29,55 +29,71 @@
 !! Funktion: dQ/dt = upX - µ*Q
 !! @author Volker Kirchesch
 !! @date 27.11.2015
-subroutine uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+subroutine uptake(yk, xk, qmxi, qmni, cnaehr, halbi, upmxi, & 
+                  tflie, up_ci, up_n2i, jcyano, ifix)
    
    implicit none
    
-   integer :: m, ms, j_intern, j_aus, jcyano, ifix
-   real    :: yk, ykaus, xk, up_n2i, up_ci
-   real    :: upmxi, tflie, sup_c, sumup_n2, sumup_c
-   real    :: qmxi, qmni, halbi, dyk, deltat
-   real    :: cnaehr, abr
-
+   real,    intent(inout) :: yk 
+   real,    intent(inout) :: xk
+   real,    intent(in)    :: qmxi
+   real,    intent(in)    :: qmni
+   real,    intent(in)    :: cnaehr
+   real,    intent(in)    :: halbi
+   real,    intent(in)    :: upmxi
+   real,    intent(in)    :: tflie
+   real,    intent(out)   :: up_ci
+   real,    intent(out)   :: up_n2i
+   integer, intent(in)    :: jcyano
+   integer, intent(in)    :: ifix
+   
+   integer :: m, ms, j_intern
+   real    :: ykaus, sup_c, sumup_n2, sumup_c, dyk, deltat
+   
    ! Wahl der Funktion für die Abhängigkeit der Aufnahmerate von der zellinternen Konzentration
    j_intern = 1
    ms = 10
-   up_N2i = 0.0
-   up_Ci = 0.0
-   sumup_C = 0.0
-   sumup_N2 = 0.0
+   up_n2i = 0.0
+   up_ci = 0.0
+   sumup_c = 0.0
+   sumup_n2 = 0.0
    deltat = tflie/ms
-   ! Wachstumsrate µ
-   xk = max(0.0,xk*deltat) 
+   ! growth rate µ
+   xk = max(0.0, xk * deltat) 
    
    do m = 1, ms
-      if (j_intern == 0) then
-         up_Ci = ((Qmxi-yk)/(Qmxi-Qmni))*upmxi*(CNaehr/(CNaehr+Halbi))
-         if (jcyano == 1 .and. ifix == 1)up_N2i = ((Qmxi-yk)/(Qmxi-Qmni))*upmxi*(Halbi/(CNaehr+Halbi))
-      else if (j_intern == 1) then
-         up_Ci = upmxi*((1.-yk/Qmxi)/(1.-yk/Qmxi+0.01))*(CNaehr/(CNaehr+Halbi))
-         if (jcyano == 1 .and. ifix == 1)up_N2i = upmxi*((1.-yk/Qmxi)/(1.-yk/Qmxi+0.01))*(Halbi/(CNaehr+Halbi))
-      endif
-      up_Ci = up_Ci*deltat
-      up_N2i = up_N2i*deltat
-      sup_C = up_Ci + up_N2i
+      select case(j_intern)
+         case(0)
+            up_ci = ((qmxi-yk)/(qmxi-qmni))*upmxi*(cnaehr/(cnaehr+halbi))
+            if (jcyano == 1 .and. ifix == 1)up_n2i = ((qmxi-yk)/(qmxi-qmni))*upmxi*(halbi/(cnaehr+halbi))
+      
+         case(1)
+            up_ci = upmxi*((1.-yk/qmxi)/(1.-yk/qmxi+0.01))*(cnaehr/(cnaehr+halbi))
+            if (jcyano == 1 .and. ifix == 1)up_n2i = upmxi*((1.-yk/qmxi)/(1.-yk/qmxi+0.01))*(halbi/(cnaehr+halbi))
+      
+      end select
+      
+      up_ci = up_ci*deltat
+      up_n2i = up_n2i*deltat
+      sup_c = up_ci + up_n2i
       ykaus = yk
-      yk = yk + (sup_C - xk*yk)
-      if (yk > Qmxi) then
-         dyk = yk - Qmxi
-         sup_C = sup_C - dyk
-         if ((up_Ci + up_N2i) == 0.0) then
-            up_Ci = 0.0
-            up_N2i = 0.0
+      yk = yk + sup_c - xk * yk
+      if (yk > qmxi) then
+         dyk = yk - qmxi
+         sup_c = sup_c - dyk
+         
+         if (up_ci + up_n2i == 0.0) then
+            up_ci = 0.0
+            up_n2i = 0.0
          else
-            up_Ci = sup_C * (up_Ci/(up_Ci + up_N2i))
-            up_N2i = sup_C * (up_N2i/(up_Ci + up_N2i))
+            up_ci = sup_c * (up_ci/(up_ci + up_n2i))
+            up_n2i = sup_c * (up_n2i/(up_ci + up_n2i))
          endif
-         yk = Qmxi
+         yk = qmxi
       endif
-      sumup_C = sumup_C + up_Ci
-      sumup_N2 = sumup_N2 + up_N2i
+      sumup_c = sumup_c + up_ci
+      sumup_n2 = sumup_n2 + up_n2i
    enddo
-   up_Ci = sumup_C
-   up_N2i = sumup_N2
+   up_ci = sumup_c
+   up_n2i = sumup_n2
 end subroutine uptake

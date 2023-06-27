@@ -11,11 +11,10 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
                   dalgo_s, dalgao_s, algo_s, abeowg_s, abeowk_s,    &
                   abeorg_s, abeork_s, zooro2_s, hSchlr_s,           &
                   o2ein1_s,                                         &
-                  kontroll, jjj)
+                  control, jjj)
       
-   use aparam, only : Caki, Cagr, Cabl, GRot, &
-                      opkimi, opgrmi, opblmi, &
-                      opkima, opgrma, opblma
+   use module_aparam
+   
    implicit none
    ! --- dummy arguments ---           
    real,    intent(inout) :: vO2_s       !< Sauerstoffgehalt
@@ -66,7 +65,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    real,    intent(out)   :: zooro2_s    !< Sauerstoffverbrauch durch Zooplanktonrespiration (Rückgabewert)
    real,    intent(out)   :: hSchlr_s    !< Sauerstoffzehrung durch das Sediment [mgO2/(l*h)] hSchlr(mstr,ior)
    real,    intent(out)   :: o2ein1_s    !< Sauerstoffeintrag aus der Luft
-   logical, intent(in)    :: kontroll    !< debugging
+   logical, intent(in)    :: control    !< debugging
    integer, intent(in)    :: jjj         !< debugging
    
    ! --- local variables ---
@@ -197,7 +196,7 @@ subroutine oxygen(vO2_s, zooind_s,                                  &
    ! oxygen exchange
    o2ein1_s = defiz * bbei * tflie
       
-   if (kontroll) then
+   if (control) then
       write(*,'(A)')  'oxygen Oberflaechenbelueftung:'
       write(*,'(A,F0.6)') '  vO2    = ', vO2_s
       write(*,'(A,F0.6)') '  defiz  = ', defiz

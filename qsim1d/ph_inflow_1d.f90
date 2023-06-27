@@ -33,8 +33,8 @@
 subroutine ph_inflow_1d(vph, lf, ca, mw, pw, elfL, caL, eph, elf, eca, emw,  &
                         tempw, mstr, ieinLs, qeinlL, qeinl, vabfl, iorLe,    &
                         iorLa, jiein, flae, anze, flag, tflie,               &
-                        kontroll, jjj)
-   use allodim
+                        control, jjj)
+   use module_alloc_dimensions
    use module_ph, only: pwert
    implicit none
    
@@ -63,7 +63,7 @@ subroutine ph_inflow_1d(vph, lf, ca, mw, pw, elfL, caL, eph, elf, eca, emw,  &
    integer, intent(in)                        :: anze     !< 
    integer, intent(in),    dimension(ialloc2) :: flag     !<
    real,    intent(in)                        :: tflie    !< Zeitschritt [d]
-   logical, intent(in)                        :: kontroll !< debugging
+   logical, intent(in)                        :: control !< debugging
    integer, intent(in)                        :: jjj      !< debugging
    
    ! --- local variables ---

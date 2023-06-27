@@ -30,64 +30,74 @@
 !! Cd, Zn, Cu, Ni, As, Pb, Cr, Fe, Hg, Mn, U
 !! @author Volker Kirchesch
 !! @date 21.07.2019
-!! file: Verteilungskoeff.f90 zurück: \ref lnk_schwermetalle
-subroutine verteilungskoeff(hcSS,hcph  &
-                            ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb           &
-                            ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U                       &
-                            ,iformVert, kontroll)
+subroutine verteilungskoeff(hcss, hcph, vtkoeff_zn, vtkoeff_cu, vtkoeff_cad, &
+                            vtkoeff_ni, vtkoeff_as, vtkoeff_pb, vtkoeff_cr,  &
+                            vtkoeff_fe, vtkoeff_hg, vtkoeff_mn, vtkoeff_u,   &
+                            iformvert, control)
    
-   use aparam
+   use module_aparam
    
    implicit none
    
-   real   , intent(in)    :: hcSS, hcph
-   real   , intent(out)   :: VTKoeff_Zn, VTKoeff_Cad, VTKoeff_Cu, VTKoeff_Ni, VTKoeff_As, VTKoeff_Pb
-   real   , intent(out)   :: VTKoeff_Cr, VTKoeff_Fe, VTKoeff_Hg, VTKoeff_Mn, VTKoeff_U
-   integer, intent(in)    :: iformVert
-   logical, intent(in)    :: kontroll  !< debugging
+   ! --- dummy arguments ---
+   real,    intent(in)  :: hcss
+   real,    intent(in)  :: hcph
+   real,    intent(out) :: vtkoeff_zn
+   real,    intent(out) :: vtkoeff_cad
+   real,    intent(out) :: vtkoeff_cu
+   real,    intent(out) :: vtkoeff_ni
+   real,    intent(out) :: vtkoeff_as
+   real,    intent(out) :: vtkoeff_pb
+   real,    intent(out) :: vtkoeff_cr
+   real,    intent(out) :: vtkoeff_fe
+   real,    intent(out) :: vtkoeff_hg
+   real,    intent(out) :: vtkoeff_mn
+   real,    intent(out) :: vtkoeff_u
+   integer, intent(in)  :: iformvert
+   logical, intent(in)  :: control  !< debugging
    
    ! Konstanten und Exponenten zur Berechnung der Verteilungsfunktion
-   if (iformVert == 1) then
+   if (iformvert == 1) then
       ! --- DWA-Modell ---
       
       ! Berechnung der Verteilungskoeffizienten VTKoeff_Zn, VTKoeff_Cu, VTKoeff_Cad, VTKoeff_Ni
       ! VTKoff [l/g]
-      VTKoeff_Zn = (c1Zn/hcSS**e1Zn) + (c2Zn/hcSS**e2Zn)*((hcph/9.)**(c3Zn/hcSS**e3Zn))          &
-                   + ((c4Zn/hcSS**e4Zn)+c5Zn)*(((hcph-4.)/5.)**e5Zn-((hcph-4.)/5.)**(e5Zn-1))
-      VTKoeff_Cu = (c1Cu/hcSS**e1Cu) + (c2Cu/hcSS**e2Cu)*((hcph/9.)**(c3Cu/hcSS**e3Cu))          &
-                   + ((c4Cu/hcSS**e4Cu)+c5Cu)*(((hcph-4.)/5.)**e5Cu-((hcph-4.)/5.)**(e5Cu-1))
-      VTKoeff_Cad = (c1Cad/hcSS**e1Cad) + (c2Cad/hcSS**e2Cad)*((hcph/9.)**(c3Cad/hcSS**e3Cad))   &
-                    + ((c4Cad/hcSS**e4Cad)+c5Cad)*(((hcph-4.)/5.)**e5Cad-((hcph-4.)/5.)**(e5Cad-1))
-      VTKoeff_Ni = (c1Ni/hcSS**e1Ni) + (c2Ni/hcSS**e2Ni)*((hcph/9.)**(c3Ni/hcSS**e3Ni))          &
-                   + ((c4Ni/hcSS**e4Ni)+c5Ni)*(((hcph-4.)/5.)**e5Ni-((hcph-4.)/5.)**(e5Ni-1))
-      VTKoeff_As = (c1As/hcSS**e1As) + (c2As/hcSS**e2As)*((hcph/9.)**(c3As/hcSS**e3As))          &
-                   + ((c4As/hcSS**e4As)+c5As)*(((hcph-4.)/5.)**e5As-((hcph-4.)/5.)**(e5As-1))
+      vtkoeff_zn = (c1zn/hcss**e1zn) + (c2zn/hcss**e2zn)*((hcph/9.)**(c3zn/hcss**e3zn))          &
+                 + ((c4zn/hcss**e4zn)+c5zn)*(((hcph-4.)/5.)**e5zn-((hcph-4.)/5.)**(e5zn-1))
+      vtkoeff_cu = (c1cu/hcss**e1cu) + (c2cu/hcss**e2cu)*((hcph/9.)**(c3cu/hcss**e3cu))          &
+                 + ((c4cu/hcss**e4cu)+c5cu)*(((hcph-4.)/5.)**e5cu-((hcph-4.)/5.)**(e5cu-1))
+      vtkoeff_cad = (c1cad/hcss**e1cad) + (c2cad/hcss**e2cad)*((hcph/9.)**(c3cad/hcss**e3cad))   &
+                  + ((c4cad/hcss**e4cad)+c5cad)*(((hcph-4.)/5.)**e5cad-((hcph-4.)/5.)**(e5cad-1))
+      vtkoeff_ni = (c1ni/hcss**e1ni) + (c2ni/hcss**e2ni)*((hcph/9.)**(c3ni/hcss**e3ni))          &
+                 + ((c4ni/hcss**e4ni)+c5ni)*(((hcph-4.)/5.)**e5ni-((hcph-4.)/5.)**(e5ni-1))
+      vtkoeff_as = (c1as/hcss**e1as) + (c2as/hcss**e2as)*((hcph/9.)**(c3as/hcss**e3as))          &
+                 + ((c4as/hcss**e4as)+c5as)*(((hcph-4.)/5.)**e5as-((hcph-4.)/5.)**(e5as-1))
       
-      VTKoeff_Pb = (c1Pb/hcSS**e1Pb) + (c2Pb/hcSS**e2Pb)*((hcph/9.)**(c3Pb/hcSS**e3Pb))          &
-                   + ((c4Pb/hcSS**e4Pb)+c5Pb)*(((hcph-4.)/5.)**e5Pb-((hcph-4.)/5.)**(e5Pb-1))
-      VTKoeff_Cr = (c1Cr/hcSS**e1Cr) + (c2Cr/hcSS**e2Cr)*((hcph/9.)**(c3Cr/hcSS**e3Cr))          &
-                   + ((c4Cr/hcSS**e4Cr)+c5Cr)*(((hcph-4.)/5.)**e5Cr-((hcph-4.)/5.)**(e5Cr-1))
-      VTKoeff_Fe = (c1Fe/hcSS**e1Fe) + (c2Fe/hcSS**e2Fe)*((hcph/9.)**(c3Fe/hcSS**e3Fe))          &
-                   + ((c4Fe/hcSS**e4Fe)+c5Fe)*(((hcph-4.)/5.)**e5Fe-((hcph-4.)/5.)**(e5Fe-1))
+      vtkoeff_pb = (c1pb/hcss**e1pb) + (c2pb/hcss**e2pb)*((hcph/9.)**(c3pb/hcss**e3pb))          &
+                 + ((c4pb/hcss**e4pb)+c5pb)*(((hcph-4.)/5.)**e5pb-((hcph-4.)/5.)**(e5pb-1))
+      vtkoeff_cr = (c1cr/hcss**e1cr) + (c2cr/hcss**e2cr)*((hcph/9.)**(c3cr/hcss**e3cr))          &
+                 + ((c4cr/hcss**e4cr)+c5cr)*(((hcph-4.)/5.)**e5cr-((hcph-4.)/5.)**(e5cr-1))
+      vtkoeff_fe = (c1fe/hcss**e1fe) + (c2fe/hcss**e2fe)*((hcph/9.)**(c3fe/hcss**e3fe))          &
+                 + ((c4fe/hcss**e4fe)+c5fe)*(((hcph-4.)/5.)**e5fe-((hcph-4.)/5.)**(e5fe-1))
       
-      VTKoeff_Hg = (c1Hg/hcSS**e1Hg) + (c2Hg/hcSS**e2Hg)*((hcph/9.)**(c3Hg/hcSS**e3Hg))          &
-                   + ((c4Hg/hcSS**e4Hg)+c5Hg)*(((hcph-4.)/5.)**e5Hg-((hcph-4.)/5.)**(e5Hg-1))
-      VTKoeff_Mn = (c1Mn/hcSS**e1Mn) + (c2Mn/hcSS**e2Mn)*((hcph/9.)**(c3Mn/hcSS**e3Mn))          &
-                   + ((c4Mn/hcSS**e4Mn)+c5Mn)*(((hcph-4.)/5.)**e5Mn-((hcph-4.)/5.)**(e5Mn-1))
-      VTKoeff_U = (c1U/hcSS**e1U) + (c2U/hcSS**e2U)*((hcph/9.)**(c3U/hcSS**e3U))                 &
-                  + ((c4U/hcSS**e4U)+c5U)*(((hcph-4.)/5.)**e5U-((hcph-4.)/5.)**(e5U-1))
+      vtkoeff_hg = (c1hg/hcss**e1hg) + (c2hg/hcss**e2hg)*((hcph/9.)**(c3hg/hcss**e3hg))          &
+                 + ((c4hg/hcss**e4hg)+c5hg)*(((hcph-4.)/5.)**e5hg-((hcph-4.)/5.)**(e5hg-1))
+      vtkoeff_mn = (c1mn/hcss**e1mn) + (c2mn/hcss**e2mn)*((hcph/9.)**(c3mn/hcss**e3mn))          &
+                 + ((c4mn/hcss**e4mn)+c5mn)*(((hcph-4.)/5.)**e5mn-((hcph-4.)/5.)**(e5mn-1))
+      vtkoeff_u = (c1u/hcss**e1u) + (c2u/hcss**e2u)*((hcph/9.)**(c3u/hcss**e3u))                 &
+                + ((c4u/hcss**e4u)+c5u)*(((hcph-4.)/5.)**e5u-((hcph-4.)/5.)**(e5u-1))
    else
-      ! --- Deltares 2010 ---
-      VTKoeff_Zn  = VTkoeffDe_Zn
-      VTKoeff_Cu  = VTkoeffDe_Cu
-      VTKoeff_Cad = VTkoeffDe_Cad
-      VTKoeff_Ni  = VTkoeffDe_Ni
-      VTKoeff_As  = VTkoeffDe_As
-      VTKoeff_Pb  = VTkoeffDe_Pb
-      VTKoeff_Cr  = VTkoeffDe_Cr
-      VTKoeff_Fe  = VTkoeffDe_Fe
-      VTKoeff_Hg  = VTkoeffDe_Hg
-      VTKoeff_Mn  = VTkoeffDe_Mn
-      VTKoeff_U   = VTkoeffDe_U
+      ! --- deltares 2010 ---
+      vtkoeff_zn  = vtkoeffde_zn
+      vtkoeff_cu  = vtkoeffde_cu
+      vtkoeff_cad = vtkoeffde_cad
+      vtkoeff_ni  = vtkoeffde_ni
+      vtkoeff_as  = vtkoeffde_as
+      vtkoeff_pb  = vtkoeffde_pb
+      vtkoeff_cr  = vtkoeffde_cr
+      vtkoeff_fe  = vtkoeffde_fe
+      vtkoeff_hg  = vtkoeffde_hg
+      vtkoeff_mn  = vtkoeffde_mn
+      vtkoeff_u   = vtkoeffde_u
    endif
 end subroutine verteilungskoeff

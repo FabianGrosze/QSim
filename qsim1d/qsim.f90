@@ -25,8 +25,8 @@
 ! --------------------------------------------------------------------------- !
 program qsim
    
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    use module_model_settings
    use module_metabolism
    
@@ -42,7 +42,7 @@ program qsim
    character(201)  :: ctext
    character(275)  :: pfadstring
    character(6000) :: langezeile, message
-   logical         :: kontroll, einmalig, linux,mitsedflux, write_csv_output
+   logical         :: control, einmalig, linux,mitsedflux, write_csv_output
    integer         :: open_error, jjj, iior
    integer         :: iend, iwied, ilang, ilbuhn, jlauf
    integer         :: jtag, iergeb, itracer_vor, nndr
@@ -468,7 +468,7 @@ program qsim
    
    ! --- settings ---
    linux = .false.
-   kontroll = .false.
+   control = .false.
    mitsedflux = .false.       ! sediment fluxes switched off temporarily
    write_csv_output = .false. ! should simulation results be writting in special csv-files? (usefull for debugging)
    
@@ -540,7 +540,7 @@ program qsim
    read(10,'(f5.2,2x,f5.2)') GeoB, GeoL
    read(10,'(I5)') azstr_read
    
-   ! set number of stretches in module allodim
+   ! set number of stretches in module_alloc_dimensions
    call set_azstrs(azstr_read)
    
    ! ==========================================================================
@@ -984,8 +984,8 @@ program qsim
    ! --------------------------------------------------------------------------
    ! Ermittlung der Berechnungsgitterpunkte
    ! --------------------------------------------------------------------------
-   call km_sys(mstra,StaKm,RBkm,RBkmLe,RBtyp,mRBs             &
-               ,mWehr,mStas,iorLah,iorLeh,mstrLe,abfr,cpfad)
+   call km_sys(mstra, stakm, rbkm, rbkmle, rbtyp, mrbs,  &
+               mstas, iorlah, iorleh, mstrle, abfr, cpfad)
    
    pfadstring = trim(adjustl(cpfad)) // 'km_sys.dat'
    open(unit = 391, file = pfadstring, iostat = open_error)
@@ -1020,7 +1020,7 @@ program qsim
    ! -------------------------------------------------------------------------
    if (iwsim == 4 .or. iwsim == 5)  goto 329
    if (iwsim == 2 .and. icoli == 0) goto 329
-   call aparam_lesen(cpfad, iwsim, icoli, ieros, ischwer)
+   call read_aparam(cpfad, iwsim, icoli, ischwer)
    
    ! --------------------------------------------------------------------------
    ! reading from e_extnct.dat
@@ -1651,7 +1651,7 @@ program qsim
       call sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,            &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq, &
                     bHmq, jsed, w2, w2b,                                       &
-                    kontroll, 0)
+                    control, 0)
    endif
    
    
@@ -2490,7 +2490,7 @@ program qsim
    ! ==========================================================================
    if (iwsim /= 2 .and. iwsim /= 5) then
       call wehrles(itags, monats, Jahrs, uhrz, wehrh, wehrb, mStra, &
-                   jlWO2, janzWt, janzWs, cpfad, iwied)
+                   jlWO2, janzWt, iwied)
    endif
    
    ! ==========================================================================
@@ -4265,23 +4265,24 @@ program qsim
       1712 continue
       
       if (mitsedflux) then
-         call sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP      &
-                      ,Tempw,anze,mstr,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg                           &
-                      ,sedalb,sedSS_MQ,KNH4,KapN3,tflie,ilbuhn,itags,monats,uhrz,vo2z                      &
-                      ,vnh4z,vno3z,gelpz,nkzs,SorpCap,Klang,KdNh3,fPOC1,fPOC2                              &
-                      ,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB,Q_PB,pl0,nl0,Si,hSised,hJSi     &
-                      ,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,YNMAX1,STKS1,obsb,ocsb   &
-                      ,.false., 0)
+         call sedflux(tiefe, vmitt, rau, sedalg_mq, hsedom, hw2, hbedgs, hsedvvert,    &
+                      hdkorn, vo2, vno3, vnh4, gelp, tempw, anze, mstr, hjno3,         &
+                      hjnh4, hjpo4, hjo2, hjn2, sedalk, sedalg, sedalb, sedss_mq,      &
+                      tflie, ilbuhn, kdnh3, fpoc1, fpoc2, orgcsd_abb, hcd, jdoc1,      & 
+                      jdoc2, q_nk, q_pk, q_ng, q_pg, q_nb, q_pb, pl0, nl0, si, hsised, &
+                      hjsi, aki, agr, abl, chlaki, chlagr, chlabl, hflun3, ilang,      &
+                      iwied, ynmax1, stks1, obsb, ocsb,                                &
+                      .false., 0)
       else 
          ! without sedflux(), fluxes need to be set zero
-         hJNO3(:,:) = 0.0
-         hJNH4(:,:) = 0.0
-         hJPO4(:,:) = 0.0
-         hJO2(:,:) = 0.0
-         hJSi(:,:) = 0.0
-         hJN2(:,:) = 0.0
-         JDOC1(:) = 0.0
-         JDOC2(:) = 0.0
+         hjno3(:,:) = 0.0
+         hjnh4(:,:) = 0.0
+         hjpo4(:,:) = 0.0
+         hjo2(:,:) = 0.0
+         hjsi(:,:) = 0.0
+         hjn2(:,:) = 0.0
+         jdoc1(:) = 0.0
+         jdoc2(:) = 0.0
         
       endif 
       
@@ -4435,8 +4436,7 @@ program qsim
       ! zooplankton
       ! -----------------------------------------------------------------------
       1612  continue
-      call zooplankton_inflow_1d(zooind, ezind, mstr, qeinl, vabfl, jiein,  &
-                                 anze, flag, tflie)
+      call zooplankton_inflow_1d(zooind, ezind, qeinl, vabfl, jiein, anze, flag)
                                  
       do ior = 1, anze+1
          ! metabolism in main river
@@ -4446,7 +4446,7 @@ program qsim
                           abszo(ior), dzres2(ior), zexki(ior), zexgr(ior),       &
                           zexbl(ior), algzok(ior), algzog(ior), algzob(ior),     &
                           rmuas(ior), rakr(ior), rbar(ior), hnfza(ior),          &
-                          kontroll, jjj)
+                          control, jjj)
          
          ! metabolism in groyne-fields
          if (nbuhn(mstr) > 0 ) then   
@@ -4459,7 +4459,7 @@ program qsim
                              babszo(mstr,ior), bzres2(mstr,ior), bzexki(mstr,ior), bzexgr(mstr,ior),         &
                              bzexbl(mstr,ior), bazok(mstr,ior), bazog(mstr,ior), bazob(mstr,ior),            &
                              brmuas(mstr,ior), brakr(mstr,ior), brbar(mstr,ior), hnfza(ior),                 &
-                             kontroll, jjj)
+                             control, jjj)
             
             ! mixing between main river and groyne-fields
             diff1 = bzooi(mstr,ior)  - zooind(ior)
@@ -4490,7 +4490,7 @@ program qsim
       !                   itags, monats, uhrz, tflie,                               &
       !                   coroi(ior), corois(ior),                                  &
       !                   algcok(ior), algcog(ior), algcob(ior),                    &
-      !                   kontroll, jjj)
+      !                   control, jjj)
       !       
       !       ! groyne field
       !       call corophium(                                                                          &
@@ -4499,7 +4499,7 @@ program qsim
       !                   itags, monats, uhrz, tflie,                                                  &
       !                   coroi(ior), corois(ior),                                                     &
       !                   bacok(mstr,ior), bacog(mstr,ior), bacob(mstr,ior),                           &
-      !                   kontroll, jjj)
+      !                   control, jjj)
       !    enddo
       ! endif
       
@@ -4554,16 +4554,15 @@ program qsim
          enddo
       endif
       
-      call dreissen(zdrei,zdreis,tempw,flae,elen,anze                   &
-                    ,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg       &
-                    ,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek        &
-                    ,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs      &
-                    ,lait1,laim1,laid1,ilang                            &
-                    ,resdr,exdrvg,exdrvk,ssalg,drpfec                   &
-                    ,abl,exdrvb,abbcm,algdrb,drfaeb                     &
-                    ,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs   &
-                    ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax              &
-                    ,sgwmue,fkm,FoptD,mstr,azStr,                       &
+      call dreissen(zdrei,zdreis,tempw,flae,elen,anze                    &
+                    ,volfdr,aki,agr,algdrk,algdrg                        &
+                    ,tflie,ro2dr,lboem,bsohlm,ss,ssdr,drfaek             &
+                    ,drfaeg,drfaes,gewdr,dlarvn,itags,monats             &
+                    ,lait1,laim1,laid1,ilang                             &
+                    ,resdr,exdrvg,exdrvk,ssalg,drpfec                    &
+                    ,abl,exdrvb,algdrb,drfaeb                            &
+                    ,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs    &
+                    ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax,sgwmue,azStr, &
                     .false., 0)
       
       if (nbuhn(mstr) > 0) then
@@ -4621,7 +4620,7 @@ program qsim
       !             zhnf(ior), tflie,                                      &
       !             hnfbac(ior), hnfupa(ior), hnfrea(ior), hnfexa(ior),    & 
       !             hnfmoa(ior), hnfmua(ior), ro2hnf(ior), bsbhnf(ior),    &
-      !             kontroll, jjj)
+      !             control, jjj)
       ! enddo
       hnfbac = 0.
       hnfupa = 0.
@@ -5316,7 +5315,7 @@ program qsim
       !                    tiefe(ior), tflie,                                          &
       !                    albewg(ior), alberg(ior),  albewk(ior), alberk(ior),        &
       !                    cmatgr(ior), cmatki(ior),                                   &
-      !                    kontroll, jjj)
+      !                    control, jjj)
       !    enddo
       ! endif
             
@@ -5344,7 +5343,7 @@ program qsim
       !                        tempw(ior), schwi(ior), extk(ior),                &
       !                        itags, monats, itstart, mstart, itmax, mmax,      &
       !                        itend, mend, sa, su, tflie, po2p(ior), po2r(ior), &
-      !                        kontroll, jjj)
+      !                        control, jjj)
       !    enddo   
       !    ! if (nbuhn(mstr) > 0) then
       !    !    do ior = 1,anze+1
@@ -5375,13 +5374,13 @@ program qsim
       if (vbsb(1) < 0.0 .and. vbsb(1) < 0.0) goto 1514
       
       ! inflow from diffuse and point sources
-      call organic_carbon_inflow_1d(                      &
-               ocsb, obsb, CD, CP, CM, BAC, fbsgr, frfgr, &
-               vkigr, antbl, ecsb, ebsb, echla, evkigr,   &
-               eantbl, ezind, eCD, eCP, eCM, eBAC, frfgrs,&
-               fbsgrs, akbcm, agbcm, abbcm, tempw, bsbzoo,&
-               toc_csb, mstr, ieinLs, qeinlL, qeinl,      &
-               vabfl, iorLe, iorLa, jiein, flae, anze,    &
+      call organic_carbon_inflow_1d(                        &
+               ocsb, obsb, CD, CP, CM, BAC, fbsgr, frfgr,   &
+               vkigr, antbl, ecsb, ebsb, echla, evkigr,     &
+               eantbl, ezind, eCD, eCP, eCM, eBAC, frfgrs,  &
+               fbsgrs, akbcm, agbcm, abbcm, bsbzoo,         &
+               toc_csb, mstr, ieinLs, qeinlL, qeinl,        &
+               vabfl, iorLe, iorLa, jiein, flae, anze,      &
                flag, tflie)
       
       ! metabolism in main river
@@ -5403,7 +5402,7 @@ program qsim
                BAcmua(ior), bsbct(ior), BSBctP(ior), doN(ior), bsbt(ior),        &
                BSBbet(ior), orgCsd0(ior), orgCsd(mstr,ior), orgCsd_abb(mstr,ior),&
                dorgSS(ior), vBSB(ior), vCSB(ior),                                &
-               kontroll, jjj)
+               control, jjj)
       enddo
       
       ! groyne-field
@@ -5429,7 +5428,7 @@ program qsim
                      BAcmua(ior), bbsbct(mstr,ior), bbsbcP(mstr,ior), bdoN(mstr,ior), bbsbt(mstr,ior), &
                      bbsbbe(mstr,ior), orgCsd0(ior), borgCs(mstr,ior), orgCsd_abb(mstr,ior),           &
                      borgSS(mstr,ior), bvbsb(mstr,ior), bvcsb(mstr,ior),                               &
-                     kontroll, jjj)
+                     control, jjj)
             
             ! --- mixing between groyne-field and main river ---
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
@@ -5500,7 +5499,7 @@ program qsim
                          tiefe(ior), vmitt(ior), hJNH4(mstr,ior), tflie,        &
                          susn(ior), susn2(ior), pfln1(ior), pfln2(ior),         &
                          sedx0(ior), bettn(ior), go2n(ior), susno(ior),         &
-                         kontroll, jjj)
+                         control, jjj)
          
          ! nitrogen
          call nitrogen(vNH4(ior), vNO3(ior), vNO2(ior), gesN(ior), vO2(ior),    &
@@ -5524,7 +5523,7 @@ program qsim
                        akiNH4(ior), agrNH4(ior), ablNH4(ior),                   &
                        akiNO3(ior), agrNO3(ior), ablNO3(ior),                   &
                        hFluN3(mstr,ior), dC_DenW(ior),                          &
-                       kontroll, jjj)
+                       control, jjj)
       enddo
       
       ! --- groyne-field ---
@@ -5536,7 +5535,7 @@ program qsim
                             bh(mstr,ior), vbm(mstr,ior), bjNH4(mstr,ior), tflie,                            &
                             bsusn(mstr,ior), bsusn2(mstr,ior), bpfln1(mstr,ior), bpfln2(mstr,ior),          &
                             bsedx0(mstr,ior), bbettn(mstr,ior), bgo2n(mstr,ior), bsuso(mstr,ior),           &
-                            kontroll, jjj)
+                            control, jjj)
             
             ! nitrogen
             call nitrogen(bNH4(mstr,ior), bNO3(mstr,ior), bNO2(mstr,ior), bgesN(mstr,ior), bO2(mstr,ior),        &
@@ -5560,7 +5559,7 @@ program qsim
                           bakn4(mstr,ior), bagn4(mstr,ior), babn4(mstr,ior),                                     &
                           bakn3(mstr,ior), bagn3(mstr,ior), babn3(mstr,ior),                                     &
                           bFluN3(mstr,ior), bdc_denw(ior),                                                       &
-                          kontroll, jjj)
+                          control, jjj)
             
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) then
@@ -5626,7 +5625,7 @@ program qsim
       call ph_inflow_1d(vph, lf, ca, mw, pw, elfL, caL, eph, elf, eca, emw,   &
                         tempw, mstr, ieinLs, qeinlL, qeinl, vabfl, iorLe,     &
                         iorLa, jiein, flae, anze, flag, tflie,                &
-                        kontroll, jjj)
+                        control, jjj)
    
       ! metabolism in main river
       do ior = 1, anze+1
@@ -5637,7 +5636,7 @@ program qsim
                  dalgki(ior), dalggr(ior), dalgbl(ior), dalgak(ior), dalgag(ior), dalgab(ior),  &
                  alberg(ior), alberk(ior), albewg(ior), albewk(ior),                            &
                  susn(ior), po2p(ior), po2r(ior), ssalg(ior), stind(ior),                       &
-                 kontroll ,jjj)
+                 control ,jjj)
       enddo
       
       ! --- groyne-field ---
@@ -5651,7 +5650,7 @@ program qsim
                     bdaki(mstr,ior),bdagr(mstr,ior),bdabl(mstr,ior),bdaak(mstr,ior),bdaag(mstr,ior),bdaab(mstr,ior), &
                     baberg(mstr,ior),baberk(mstr,ior),babewg(mstr,ior),babewk(mstr,ior),                             &
                     bsusn(mstr,ior),bpo2p(mstr,ior),bpo2r(mstr,ior),bssalg(mstr,ior),bstind(mstr,ior),               &
-                    kontroll, jjj)
+                    control, jjj)
              
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
@@ -5703,7 +5702,7 @@ program qsim
                      extks(mstr,ior), wlage(mstr,ior), wge(idwe(mstr,ior)), hws(mstr,ior), &
                      tiefe(ior), wuebks(mstr,ior), spewkss(mstr,ior), psrefss(mstr,ior),   &
                      iform_verdr, dh2d, tflie,                                             &
-                     kontroll, jjj)
+                     control, jjj)
             
             do nkz = 1,nkzs(ior)
                tempwz(nkz,ior) = tempw(ior)
@@ -5722,7 +5721,7 @@ program qsim
                      extks(mstr,ior), wlage(mstr,ior), wge(idwe(mstr,ior)), hws(mstr,ior),     &
                      bh(mstr,ior), wuebks(mstr,ior), spewkss(mstr,ior), psrefss(mstr,ior),     &
                      iform_verdr, dh2d, tflie,                                                 &
-                     kontroll, jjj)
+                     control, jjj)
                      
                ! mixing between main river and groyne field      
                if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.0) diff1 = btempw(mstr,ior) - tempw(ior)
@@ -5749,10 +5748,10 @@ program qsim
          endif
          
          ! inflow from point and diffuse sources
-         call phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
-                                  gelPz, gPL, gesPL, egesP, eP, epl0, mstr,   &
-                                  ieinLs, qeinlL, qeinl, vabfl, iorLa, iorLe, &
-                                  jiein, flae, anze, nkzs, flag, tflie)
+         call phosphate_inflow_1d(gelp, gesp, pl0, q_pk, q_pg, q_pb,          &
+                                  gpl, gespl, egesp, ep, epl0, mstr,          &
+                                  ieinls, qeinll, qeinl, vabfl, iorla, iorle, &
+                                  jiein, flae, anze, flag, tflie)
       
          ! metabolism
          do ior = 1, anze+1
@@ -5768,7 +5767,7 @@ program qsim
                            sedalk(ior), sedalb(ior), sedalg(ior),                  &
                            algdrk(ior), algdrb(ior), algdrg(ior),                  &
                            tflie,                                                  &
-                           kontroll, jjj)
+                           control, jjj)
          enddo
          
          ! --- groyne fields ---
@@ -5787,7 +5786,7 @@ program qsim
                               bsedak(mstr,ior), bsedab(mstr,ior), bsedag(mstr,ior),                              &
                               badrk(mstr,ior), badrb(mstr,ior), badrg(mstr,ior),                                 &
                               tflie,                                                                             &
-                              kontroll, jjj)
+                              control, jjj)
                
                ! mixing of groyne fields and main river
                if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
@@ -5836,7 +5835,7 @@ program qsim
          call silicate(si(ior), hJSi(mstr,ior), up_Siz(1,ior), akibrz(1,ior), &
                        algakz(1,ior), albewk(ior),                            &
                        tiefe(ior), tflie,                                     &
-                       kontroll, jjj)
+                       control, jjj)
       enddo
       
       ! --- groyne-field ---
@@ -5847,7 +5846,7 @@ program qsim
             call silicate(bsi(mstr,ior), bJSi(mstr,ior), bup_Si(mstr,ior), baktbr(mstr,ior), &
                           balakz(mstr,ior), babewk(mstr,ior),                                &
                           bh(mstr,ior), tflie,                                               &
-                          kontroll, jjj)
+                          control, jjj)
             
             ! mixing between main river and groyne-field
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
@@ -5891,9 +5890,8 @@ program qsim
          enddo
       endif
       
-      call oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
-                         dh2d, ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa,    &
-                         jiein, flae, anze, flag, tflie)
+      call oxygen_inflow_1d(vo2, o2L, eo2, etemp, mstr, ieinLs, qeinlL, qeinl, &
+                            vabfl, iorLe, iorLa, jiein, flae, anze, flag, tflie)
       
       do ior = 1, anze+1
          
@@ -5910,7 +5908,7 @@ program qsim
                   dalgo(ior), dalgao(ior), algo, abeowg(ior), abeowk(ior),         &
                   abeorg(ior), abeork(ior), zooro2(ior), hSchlr(mstr,ior),         &
                   o2ein1(ior),                                                     &
-                  kontroll, jjj)
+                  control, jjj)
          
          if (isnan(vo2(ior))) then
             write(message, "(a,i0)") "Division by zero in subroutine oxygen in stretch ", mstr
@@ -5931,7 +5929,7 @@ program qsim
                      bdalgo(mstr,ior), bdalgao(mstr,ior), balgo(mstr,ior), babeowg(mstr,ior), babeowk(mstr,ior),   &
                      babeorg(mstr,ior), babeork(mstr,ior), bzooro2(mstr,ior), bschlr(mstr,ior),                    &
                      bo2ein1(mstr,ior),                                                                            &
-                     kontroll, jjj)
+                     control, jjj)
             
             ! Mixing of main river and groyne-fields
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) diff1 = bo2(mstr,ior) - vo2(ior)
@@ -5944,14 +5942,14 @@ program qsim
       ! -----------------------------------------------------------------------
       1518 continue
       if (ssalg(1) < 0.0) goto 1525
-      call schweb(zooind,dorgSS,ss,ssalg,tiefe,rau                                  &
-                  ,tflie,VMITT,flae,flag,elen,ior,anze,ess,ssL,qeinl,qeinlL,vabfl   &
-                  ,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinLs               &
-                  ,abl,zexbl,dblmor,drfaeb,jiein                                    &
-                  ,aki,agr,ssdr,drfaek,drfaeg,drfaes,fssgr,sedss,sedSS_MQ,fssgrs    &
-                  ,tausc,ischif,ilbuhn,fkm,ieros,iwied                              &
-                  ,echla,vkigr,akbcm,agbcm,antbl,abbcm,ezind,mstr,itags,monats,uhrz &
-                  ,kontroll,0)
+      call schweb(zooind, dorgSS, ss, ssalg, tiefe, rau, tflie, VMITT, flae,  &
+                  flag, ior, anze, ess, ssL, qeinl, qeinlL, vabfl, dkimor,    &
+                  dgrmor, abszo, zexki, zexgr, iorLa, iorLe, ieinLs, abl,     &
+                  zexbl, dblmor, drfaeb, jiein, aki, agr, ssdr, drfaek,       &
+                  drfaeg, drfaes, fssgr, sedss, sedSS_MQ, fssgrs, tausc,      &
+                  ischif, ilbuhn, ieros, echla, vkigr, akbcm, agbcm, antbl,   &
+                  abbcm, ezind, mstr,                                         &
+                  control, 0)
       
       if (nbuhn(mstr) == 0)goto 1525
       if (ilbuhn == 0) then
@@ -6095,7 +6093,7 @@ program qsim
          call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior),&
                                 rau(ior), tiefe(ior), vmitt(ior), schwi(ior),       &
                                 tflie,                                              &
-                                kontroll, jjj)
+                                control, jjj)
       enddo
       
       ! --- groyne-field ---
@@ -6107,7 +6105,7 @@ program qsim
                         bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
                         rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior),                        &
                         tflie,                                                                 &
-                        kontroll, jjj)
+                        control, jjj)
             
             ! mixing between main river and groyne-field 
             diff1 = bcoli(mstr,ior)  - coli(ior)
@@ -6138,9 +6136,9 @@ program qsim
          goto 1519
       endif
       
-      call erosion(ss,ssalg,SSeros,dsedH,tausc,M_eros,n_eros,sedroh  &
-                   ,tflie,tiefe,rau,vmitt,anze,mstr,ilang,iwied     &
-                   ,kontroll,0)
+      call erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,  &
+                   tflie, tiefe, rau, vmitt, anze, mstr, iwied,              &
+                   control, 0)
       
       if (nbuhn(mstr) == 0)goto 1519
       if (ilbuhn == 0) then
@@ -6155,7 +6153,6 @@ program qsim
             zwsedb(ior) = sedalb(ior)
             zwSSeros(ior) = SSeros(ior)
             zwdsedH(mstr,ior) = dsedH(mstr,ior)
-            !tausc(mstr,ior) = btausc(mstr,ior) Sedimenteigenschaften unterscheiden sich nicht im Buhnenfeld
             tempw(ior) = btempw(mstr,ior)
             tiefe(ior) = bh(mstr,ior)
             vmitt(ior) = vbm(mstr,ior)
@@ -6184,7 +6181,6 @@ program qsim
             sedalb(ior) = zwsedb(ior)
             SSeros(ior) = zwSSeros(ior)
             dsedH(mstr,ior) = zwdsedH(mstr,ior)
-            ! btausc(mstr,ior) = tausc(mstr,ior)
             
             if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
                diff1 = bssalg(mstr,ior) - ssalg(ior)

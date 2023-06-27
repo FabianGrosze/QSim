@@ -31,64 +31,78 @@
 subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                     SedOM, SedOMb, dKorn, dKornb, raua, vmq, Hmq, nbuhn, bvmq,&
                     bHmq, jsed, w2, w2b,                                      &
-                    kontroll, jjj)
+                    control, jjj)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
-   integer                         :: n, ns, nschif, ms, mstr
-   integer                         :: msta, kbuhn, jsed, ised, ischif
-   real                            :: vmitt1, v6, ust, tiefe1, raun
-   real                            :: phytoc, hcon, g, gesss, fsch
-   real                            :: fom_oc, bsbc
-   integer                         :: azStr
-   integer, dimension(azStrs)      :: mStas, mSs, abfr, mStra, nbuhn
-   real, dimension(azStrs,20)      :: aschif, eschif
-   real, dimension(azStrs,1000)    :: dKorn, SedOM, raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
-   logical, intent(in)             :: kontroll  !< debugging
-   integer, intent(in)             :: jjj       !< debugging
-   character(1000)                 :: message
+   integer, intent(in),    dimension(azStrs)         :: abfr
+   integer, intent(in),    dimension(azStrs)         :: mStra
+   real,    intent(in),    dimension(azStrs,ialloc2) :: Stakm
+   integer, intent(in),    dimension(azStrs)         :: mStas
+   integer, intent(in),    dimension(azStrs)         :: mSs
+   real,    intent(in),    dimension(azStrs,ialloc3) :: aschif, eschif
+   real,    intent(inout), dimension(azStrs,ialloc2) :: sedOM
+   real,    intent(inout), dimension(azStrs,ialloc2) :: SedOMb
+   real,    intent(inout), dimension(azStrs,ialloc2) :: dKorn
+   real,    intent(inout), dimension(azStrs,ialloc2) :: dKornb
+   real,    intent(in),    dimension(azStrs,ialloc2) :: raua
+   real,    intent(inout), dimension(azStrs,ialloc2) :: vmq
+   real,    intent(in),    dimension(azStrs,ialloc2) :: Hmq
+   integer, intent(in),    dimension(azStrs)         :: nbuhn
+   real,    intent(in),    dimension(azStrs,ialloc2) :: bvmq
+   real,    intent(in),    dimension(azStrs,ialloc2) :: bHmq
+   integer, intent(in)                               :: jsed
+   real,    intent(inout), dimension(azStrs,ialloc2) :: w2
+   real,    intent(inout), dimension(azStrs,ialloc2) :: w2b
+   logical, intent(in)                               :: control  !< debugging
+   integer, intent(in)                               :: jjj       !< debugging
    
-   external                        :: qerror, schiff, sed_pom
    
-   ! fOM_OC Verhältnis organisches Material zu organischem Kohlenstoff
-   fOM_OC = 1./0.378
+   integer         :: n, ns, nschif, ms, mstr, azStr
+   integer         :: msta, kbuhn, ised, ischif
+   real            :: vmitt1, v6, ust, tiefe1, raun, hcon, fsch
+   character(1000) :: message
+   
+   real, parameter :: g = 9.81
+   
+   external  :: qerror, schiff, sed_pom
+   
+ 
    
    do azStr = 1,azStrs
       mS = 1
       mstr = mStra(azStr)
       do mSta = 1,mStas(mstr)
          ischif = 0
-         if (mSs(mstr) == 0)goto 700
-         if (abfr(mstr) == 1)goto 879
-         if (Stakm(mstr,mSta) <= aschif(mstr,mS) .and. Stakm(mstr,mSta) >= eschif(mstr,mS)) then
-            ischif = 1
-            goto 700
+         if (mSs(mstr) /= 0) then
+            if (abfr(mstr) /= 1) then
+               
+               if (Stakm(mstr,mSta) <= aschif(mstr,mS) .and. Stakm(mstr,mSta) >= eschif(mstr,mS)) then
+                  ischif = 1
+                  
+               else if ((mS+1) > mSs(mstr)) then
+               
+               else if (Stakm(mstr,mSta) <= eschif(mstr,mS) .and. Stakm(mstr,mSta) <= aschif(mstr,mS+1)) then
+                  ischif = 1
+                  mS = mS+1
+               endif
+            
+            else
+               if (Stakm(mstr,mSta) >= aschif(mstr,mS) .and. Stakm(mstr,mSta) <= eschif(mstr,mS)) then
+                  ischif = 1
+               
+               else if ((mS+1) > mSs(mstr)) then
+               
+               else if (Stakm(mstr,mSta) >= eschif(mstr,mS) .and. Stakm(mstr,mSta) >= aschif(mstr,mS+1)) then
+                  ischif = 1
+                  mS = mS+1
+               endif
+               
+            endif
          endif
          
-         if ((mS+1) > mSs(mstr))goto 700
-         if (Stakm(mstr,mSta) <= eschif(mstr,mS) .and. Stakm(mstr,mSta) <= aschif(mstr,mS+1)) then
-            ischif = 1
-            mS = mS+1
-            goto 700
-         endif
-         
-         ! Kilometrierung wird zur Muendung hin groesser
-         879 continue
-         if (Stakm(mstr,mSta) >= aschif(mstr,mS) .and. Stakm(mstr,mSta) <= eschif(mstr,mS)) then
-            ischif = 1
-            goto 700
-         endif
-         if ((mS+1) > mSs(mstr))goto 700
-         if (Stakm(mstr,mSta) >= eschif(mstr,mS) .and. Stakm(mstr,mSta) >= aschif(mstr,mS+1)) then
-            ischif = 1
-            mS = mS+1
-         endif
-         
-         
-         700 continue
          raun = 1./raua(mstr,mSta)
-         g = sqrt(9.81)
          
          ! Fehlermeldung
          if (Hmq(mstr,mSta) <= 0.0) then
@@ -129,11 +143,8 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
             if (vmitt1 == 0.0) vmitt1 = 0.00001
             if (tiefe1 == 0.0) tiefe1 = 0.00001
             vmitt1 = abs(vmitt1)
-            ust = ((raun*g)/(tiefe1**0.16667))*vmitt1
+            ust = ((raun*sqrt(g))/(tiefe1**0.16667))*vmitt1
             
-            ! ischif = 0: kein Schiffsverkehr
-            !        = 1: mit Schiffsverkehr
-            ! v6: Schiffsgeschwindigkeit
             if (n == 1 .or. kbuhn == 0) then
                v6 = 0.0
                fsch = 1.
@@ -154,13 +165,10 @@ subroutine sediment(abfr, mStra, Stakm, mStas, mSs, aschif, eschif,           &
                endif
             endif
             
-            
-            BSBC = 5.     !  1.9
-            PhytoC = 3.4  !  1.3
-            GesSS = 55.   ! 16.0
-            call sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb, &
-                        dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,           &
-                        kontroll,jjj)
+            call sed_pom(tiefe1, ust, n, sedom(mstr,mSta), dkorn(mstr,mSta),  &
+                         sedomb(mstr,mSta), dkornb(mstr,mSta), fsch, jsed,    &
+                         w2(mstr,mSta), w2b(mstr,mSta),                       &
+                         control, jjj)
             
          enddo
       enddo

@@ -25,7 +25,7 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 subroutine write_gerris_definitions(cpfad1)
-   use aparam, only: AParamParam
+   use module_aparam
    implicit none
    
    character(255), intent(in) :: cpfad1
@@ -37,7 +37,7 @@ subroutine write_gerris_definitions(cpfad1)
    print*,' Writing definitions:'
    
    print *, '  * AParamParam.xml'
-   call AParamParam(cpfad1)
+   call write_aparamparam(cpfad1)
    
    print *, '  * EreigGParam.xml'
    call write_ereigg_param(cpfad1)

@@ -39,26 +39,26 @@ subroutine planktkon_parallel()
    if (as /= 0) then
       write(fehler,*)' return value allocate planktonic_variable_p :', as
       call qerror(fehler)
-   end if
+   endif
    do k = 1,part ! i
       do j = 1,number_plankt_vari ! initialise all concentrations to -1
          planktonic_variable_p(j+(k-1)*number_plankt_vari) = -2.0
-      end do
-   end do
+      enddo
+   enddo
    !planktonic_variable_p(:)=-2.0
    ! vertical profiles i.e. full 3D
    allocate (plankt_vari_vert_p(num_lev*number_plankt_vari_vert*part), stat = as )
    if (as /= 0) then
       write(fehler,*)' return value  plankt_vari_vert_p :', as
       call qerror(fehler)
-   end if
+   endif
    do k = 1,part
       do j = 1,number_plankt_vari_vert !
          do i = 1,num_lev ! initialise all concentrations to -1
             plankt_vari_vert_p(i+(j-1)*num_lev+(k-1)*number_plankt_vari_vert*num_lev) = -1.0
-         end do ! all i levels
-      end do !all j variables
-   end do ! all k nodes in subdomain
+         enddo ! all i levels
+      enddo !all j variables
+   enddo ! all k nodes in subdomain
    !call mpi_barrier (mpi_komm_welt, ierr)
    call scatter_planktkon()
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -84,13 +84,13 @@ subroutine scatter_planktkon()
    if (ierr /= 0) then
       write(fehler,*)' 13 MPI_Scatter(planktonic_variable failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    call MPI_Scatter(plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
                     plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' 14 MPI_Scatter(plankt_vari_vert failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,meinrang, ' scatter_planktkon finish'
    return
 end subroutine scatter_planktkon
@@ -106,13 +106,13 @@ subroutine gather_planktkon()
    if (ierr /= 0) then
       write(fehler,*)' 15 MPI_Gather(planktonic_variable failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    call MPI_Gather(plankt_vari_vert_p, part*number_plankt_vari_vert*num_lev, MPI_FLOAT,  &
                    plankt_vari_vert, part*number_plankt_vari_vert*num_lev, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' 16 MPI_Gather(plankt_vari_vert failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    
 end subroutine gather_planktkon
 !----+-----+----
@@ -129,13 +129,13 @@ subroutine ini_planktkon0(nk)
       !------- tiefengemittelte planktische variablen
       do j = 1,number_plankt_vari ! initialise
          write(planktonic_variable_name(j),'(18x)')
-      end do
+      enddo
       include "planktonic_variable_name.h"
       planktonic_variable_name = adjustl(planktonic_variable_name)
       
       do j = 1,number_plankt_vari ! zunächst nix ausgeben
          output_plankt(j) = .false.
-      end do
+      enddo
       
       !!!!!!!!! allocate and initialize planktonic_variable
       print*,"ini_planktkon0 going to: allocate (planktonic_variable( "  &
@@ -149,18 +149,18 @@ subroutine ini_planktkon0(nk)
       else
          print*,'planktonic_variable allocated to array size = ',  &
                                                                size(planktonic_variable)
-      end if
+      endif
       do k = 1,number_plankt_point ! i
          do j = 1,number_plankt_vari ! initialisierung aller konzentrationen zunächt auf Null
             planktonic_variable(j+(k-1)*number_plankt_vari) = 0.0 !!!####! 0.0
             !planktonic_variable(71+(k-1)*number_plankt_vari) = real(knoten_zone(k))  !  tracer test annu ####
             !planktonic_variable(72+(k-1)*number_plankt_vari) = 10*real(knoten_zone(k))  !  salz test annu ####
-         end do
-      end do
+         enddo
+      enddo
       ! ------- tiefenaufgelöst, planktonic variables
       do j = 1,number_plankt_vari_vert ! initialise
          write(plankt_vari_vert_name(j),'(18x)')
-      end do
+      enddo
       include "plankt_vari_vert_name.h"
       plankt_vari_vert_name = adjustl(plankt_vari_vert_name)
       
@@ -170,43 +170,43 @@ subroutine ini_planktkon0(nk)
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   plankt_vari_vert :', as
          call qerror(fehler)
-      end if
+      endif
       do k = 1,number_plankt_point ! initialisierung aller konzentrationen zunächt auf Null
          do j = 1,number_plankt_vari_vert !
             do l = 1,num_lev
                plankt_vari_vert(l+(j-1)*num_lev+(k-1)*number_plankt_vari_vert*num_lev) = 0.0 !!!####! 0.0
                !plankt_vari_vert(i,j,k)=0.0
                !plankt_vari_vert(k)%level(j)%value(i)=0.0
-            end do ! i alle
-         end do ! j alle levels
-      end do
+            enddo ! i alle
+         enddo ! j alle levels
+      enddo
       do j = 1,number_plankt_vari_vert ! zunächst nix ausgeben
          output_plankt_vert(j) = .false.
-      end do
+      enddo
       allocate (point_zone(number_plankt_point), stat = as )
       if (as /= 0) then
          print*,' allocate failed in zonen_parallel point_zone :', as
          call qerror(fehler)
-      end if
+      endif
       select case (hydro_trieb)
       case(1) ! casu-transinfo
          do ini = 1,number_plankt_point
             point_zone(ini) = knoten_zone(ini)
-         end do
+         enddo
       case(2) ! Untrim² netCDF
          do ini = 1,number_plankt_point
             point_zone(ini) = element_zone(ini)
-         end do
+         enddo
       case(3) ! SCHISM netCDF (doch noch von zone.gr3)
          do ini = 1,number_plankt_point
             point_zone(ini) = element_zone(ini)
-         end do
+         enddo
          !call qerror('ini_planktkon0: SCHISM zone not yet worked out')
       case default
          call qerror('ini_planktkon0: unknown hydraulic driver')
       end select
       
-   end if !! nur prozessor 0
+   endif !! nur prozessor 0
    
    ! make names available to all processes (e.g. for logging)
    call mpi_barrier(mpi_komm_welt, ierr)

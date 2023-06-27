@@ -72,7 +72,7 @@ subroutine screen_schism_nc()
          weiter = .false.
          !if(meinrang.eq.0)print*,'screen_schism_nc: systemaufruf',trim(adjustl(systemaufruf))
       endif
-   end do
+   enddo
    if (meinrang == 0)print*,"screen_schism_nc,n_stacks = ",n_stacks
    call mpi_barrier (mpi_komm_welt, ierr)
    transinfo_anzahl = 0
@@ -90,7 +90,7 @@ subroutine screen_schism_nc()
          call qerror(fehler)
       else
          print*,"screen_schism_nc: nf_open(ncid = ",ncid
-      end if ! open failed
+      endif ! open failed
       call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
       !! dimensions
       if (i == 1)allocate (dlength(ndims),dname(ndims), stat = istat)
@@ -100,7 +100,7 @@ subroutine screen_schism_nc()
          call check_err(iret)
          if ((meinrang == 2) .and. (i == 1))  &
              print*,meinrang,i,j,' screen_schism_nc: dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
-      end do !all j dimension
+      enddo !all j dimension
       !! Variables
       do j = 1,nVars
          iret = nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts)
@@ -111,17 +111,17 @@ subroutine screen_schism_nc()
             if ((meinrang == 0) .and. (i == 1))  &
                 print*, k,'-th dimension; name = ',trim(adjustl(dname(dimids(k)))),' dim.length = '  &
                 ,dlength(dimids(k)),' dimid = ' ,dimids(k)
-         end do !k Dimensionen von Variable j
+         enddo !k Dimensionen von Variable j
          !print*,"Attribute : "
          !call print_attributes(j, nAtts)
-      end do ! Variable j
+      enddo ! Variable j
       !! time-steps
       iret = nf_inq_varid(ncid,'time', varid)
       if (iret /= 0) then
          call check_err( iret )
          write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > time <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
-      end if
+      endif
       iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
       call check_err(iret)
       print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid = ',varid,iret,ncid
@@ -140,10 +140,10 @@ subroutine screen_schism_nc()
          if ( zeit_max <= zeiten(n) ) zeit_max = zeiten(n)
          if (n > 1) then
             zeit_delta = zeiten(2)-zeiten(1)
-         end if ! more than one timestep
+         endif ! more than one timestep
          print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2 = ',zeiten(1), zeiten(2),zeit_delta
          deallocate(zeiten)
-      end if ! dlength ok
+      endif ! dlength ok
       !! checking necessary variables
       iret = nf_inq_varid(ncid,'elev', varid)
       if (iret /= 0) then
@@ -151,23 +151,23 @@ subroutine screen_schism_nc()
          call check_err( iret )
          write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > elev <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
-      end if
+      endif
       iret = nf_inq_varid(ncid,'dahv', varid)
       if (iret /= 0) then
          if (meinrang == 0) print*,'screen_schism_nc: node veocities needed by QSim, param.nml: iof_hydro(16) = 1'
          call check_err( iret )
          write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > dahv <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
-      end if
+      endif
       iret = nf_inq_varid(ncid,'hvel_side', varid)
       if (iret /= 0) then
          if (meinrang == 0) print*,'screen_schism_nc: side velocities needed by QSim, param.nml: iof_hydro(26) = 1'
          call check_err( iret )
          write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > hvel_side <  < failed, iret = ',iret, " rank = ",meinrang
          call qerror(fehler)
-      end if
+      endif
       call check_err( nf_close(ncid) )
-   end do !all i stacks
+   enddo !all i stacks
    if (transinfo_anzahl < 1)call qerror('No transport info')
    !print*,meinrang,' screen_schism_nc Zeit  von:',zeit_min,' bis: ',zeit_max,' zeit_delta=',zeit_delta
    call MPI_Allreduce(zeit_delta, dttrans, 1, MPI_FLOAT, MPI_SUM, mpi_komm_welt, iret)
@@ -196,7 +196,7 @@ subroutine screen_schism_nc()
          do j = 1,ndims
             iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
             call check_err(iret)
-         end do ! all j Dimensions
+         enddo ! all j Dimensions
          iret = nf_inq_varid(ncid,'time', varid)
          call check_err(iret)
          iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
@@ -212,12 +212,12 @@ subroutine screen_schism_nc()
             transinfo_stack(nnt+j) = i
             transinfo_instack(nnt+j) = j
             write(transinfo_datei(nnt+j),'(A)')trim(adjustl(dateiname))
-         end do ! all j timesteps of this stack i
+         enddo ! all j timesteps of this stack i
          nnt = nnt+n
          deallocate(zeiten)
          iret = nf_close(ncid)
          call check_err(iret)
-      end do !all i stacks
+      enddo !all i stacks
       print*,'screen_schism_nc reread 0 timestep number = ',transinfo_anzahl, nnt, n_stacks
       if (nnt /= transinfo_anzahl)call qerror('screen_schism_nc reread 0 timestep number unclear ')
       !write(time_offset_string,'(A)')'2011 01 01 00 00 00' !#################
@@ -240,7 +240,7 @@ subroutine screen_schism_nc()
       write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
       print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
-   end if ! only prozessor 0
+   endif ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    deallocate (dlength,dname, stat = istat)
    deallocate (vxtype,vndims,vname,  stat = istat )

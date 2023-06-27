@@ -1,6 +1,6 @@
 subroutine lax_wendroff(U, vmitt, Uvert, DX, DT, NX, flag, nkz, ktrans, isgn, iwahld)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    real,    intent(inout), dimension(ialloc2)    :: u

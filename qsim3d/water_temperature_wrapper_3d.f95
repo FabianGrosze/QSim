@@ -36,12 +36,12 @@ subroutine water_temperature_wrapper_3d(i)
    real    :: btiefe
   
    iglob = i + meinrang * part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    nk = (i-1)*number_plankt_vari 
    tflie = real(deltat)/86400.
    
   
-   if (kontroll) then
+   if (control) then
       print*,'before temperw:'
       print*, '   temperw   = ', planktonic_variable_p(1+nk)
       print*, '   extk      = ', transfer_quantity_p(54+(i-1)*number_trans_quant)
@@ -73,10 +73,10 @@ subroutine water_temperature_wrapper_3d(i)
             iform_verdr,                                         & ! iform_verdr
             dh2d,                                                & ! dh2d
             tflie,                                               & ! tflie
-            kontroll, iglob)
+            control, iglob)
             
 
-   if (kontroll) then
+   if (control) then
       print*,' after temperw_kern:'
       print*, '   meinrang = ', meinrang
       print*, '   i        = ', i

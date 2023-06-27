@@ -1,6 +1,6 @@
 subroutine maccorm(u, elen, flag, dl, deltat, anze, nkz, isub_dtx, isgn)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

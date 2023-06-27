@@ -30,7 +30,7 @@ subroutine macrophytes(pfl_s, pflmin_s, pflmax_s, tiefe_s,          &
                        tempw_s, schwi_s, extk_s,                    &
                        itags, monats, itstart, mstart, itmax, mmax, &
                        itend, mend, sa, su, tflie, po2p_s, po2r_s,  &
-                       kontroll, jjj)
+                       control, jjj)
                  
    implicit none
    
@@ -55,7 +55,7 @@ subroutine macrophytes(pfl_s, pflmin_s, pflmax_s, tiefe_s,          &
    real,    intent(in)    :: tflie    !< timestep [d]
    real,    intent(out)   :: po2p_s   !< oxygen production of macrophytes [mgO2/l]
    real,    intent(out)   :: po2r_s   !< oxygen consumption of macrophytes [mgO2/l]
-   logical, intent(in)    :: kontroll !< debugging
+   logical, intent(in)    :: control !< debugging
    integer, intent(in)    :: jjj      !< debugging
    
    ! --- local variables ---

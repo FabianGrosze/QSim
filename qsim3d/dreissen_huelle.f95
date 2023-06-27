@@ -27,23 +27,28 @@
 
 subroutine dreissen_huelle(i)
    use modell
-   use QSimDatenfelder
-   use aparam
+   use qsimdatenfelder
+   use module_aparam
    implicit none
-   integer :: i,j, azStr,k
-   real, dimension(1000) :: lboem, bsohlm
-   real, dimension(1000) :: volfdr
-   integer lait1, laim1, laid1
-   real drpfec(1000), idras(1000,2), drmas(1000,2), drakr(1000,2), drbar(1000,2), drmor(1000,2),ffood(1000)
-   real HNFdra(1000)
-   iglob = (i+meinrang*part)
+   
+   integer, intent(in)     :: i
+   
+   integer                 :: j, azStr, k, lait1, laim1, laid1
+   real, dimension(1000)   :: lboem, bsohlm
+   real, dimension(1000)   :: volfdr
+   real, dimension(1000,2) :: idras, drmas, drakr, drbar, drmor
+   real, dimension(1000)   :: HNFdra, drpfec, ffood
+   
+   
+   iglob = i + meinrang*part
+   
    if (zone(point_zone(iglob))%dreissen%dreissena_aktiv == 0) then
-      if (kontroll)print*,'dreissen_huelle: keine muscheln in zone',point_zone(iglob)
+      if (control)print*,'dreissen_huelle: keine muscheln in zone',point_zone(iglob)
       return ! keine Muscheln in dieser Zone
    else
-      if (kontroll)print*,'dreissen_huelle ... start',iglob
+      if (control)print*,'dreissen_huelle ... start',iglob
    endif
-   ! Bilanzvariablen
+  
    zdreis(1:2,1) = benthic_distribution_p(56+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (0. Kohorte)
    zdreis(1:2,2) = benthic_distribution_p(57+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (1. Kohorte)
    zdreis(1:2,3) = benthic_distribution_p(58+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (2. Kohorte)
@@ -61,7 +66,7 @@ subroutine dreissen_huelle(i)
    dlmaxs(1:2) = benthic_distribution_p(69+(i-1)*number_benth_distr)   ! Dreissena Larven ??
    gwdmax(1:2) = benthic_distribution_p(70+(i-1)*number_benth_distr)   ! Dreissena Larven ??
    sgwmue(1:2) = benthic_distribution_p(71+(i-1)*number_benth_distr)   ! Dreissena Larven ??
-   !Übergabe
+   
    tempw(1:2) = planktonic_variable_p( 1+(i-1)*number_plankt_vari)      ! Wassertemperatur
    aki(1:2) = planktonic_variable_p(8+(i-1)*number_plankt_vari)         ! Anteil kiesel-Algen
    agr(1:2) = planktonic_variable_p(9+(i-1)*number_plankt_vari)         ! Anteil gruen-Algen
@@ -88,9 +93,7 @@ subroutine dreissen_huelle(i)
    FLAE(1:2) = 500.0*rb_hydraul_p(2+(i-1)*number_rb_hydraul)            !500* tiefe(1) Wassertiefe !! Breite konstant 500 m
    bsohlm(1:2) = 500.0                                                  ! Sohlbreite im 3D nicht verwendbar
    lboem(1:2) = 0.01                                                    ! Böschungslänge  im 3D nicht verwendbar
-   ior = 1                                                              ! Laufindex
    anze = 1                                                             ! Anzahl der Profile im aktuellen Strang
-   mstr = 1                                                             ! Strangzähler | nur ein Profil in einem Strang
    azStr = 2                                                            ! Strangnummer dient nur zum Hochzählen
    if (iglob == 1) azStr = 1
    volfdr(:) = 0.0                                                      ! unbenutzt
@@ -113,22 +116,21 @@ subroutine dreissen_huelle(i)
          print*,'vor dreissen: isnan(benthic_distribution_p  node#',iglob,' variable# ',k
          if (meinrang == 0)print*,'benth_distr_name:',benth_distr_name(k)
       endif
-   end do
+   enddo
    
    !----------------------------------------------------------------------------------
-   call dreissen(zdrei,zdreis,tempw,flae,elen,anze                  &
-                 ,ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg      &
-                 ,tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek       &
-                 ,drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs     &
-                 ,lait1,laim1,laid1,ilang                           &
-                 ,resdr,exdrvg,exdrvk,ssalg,drpfec                  &
-                 ,abl,exdrvb,abbcm,algdrb,drfaeb                    &
-                 ,idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs  &
-                 ,CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax             &
-                 ,sgwmue,fkm,FoptD,mstr,azStr                       &
-                 ,kontroll ,iglob ) !!wy
+   call dreissen(zdrei, zdreis, tempw, flae, elen, anze,                    &
+                 volfdr, aki, agr, algdrk, algdrg,                          &
+                 tflie, ro2dr, lboem, bsohlm, ss, ssdr, drfaek,             &
+                 drfaeg, drfaes, gewdr, dlarvn, itags, monats,              &
+                 lait1, laim1, laid1, ilang,                                &
+                 resdr, exdrvg, exdrvk, ssalg, drpfec,                      &
+                 abl, exdrvb, algdrb, drfaeb,                               &
+                 idras, drmas, drakr, drbar, drmor, ffood, coroI, coroIs,   &
+                 CHNF, drHNF, HNFdra, dlmax, dlmaxs, gwdmax, sgwmue, azStr, &
+                 control,  iglob)
    !----------------------------------------------------------------------------------
-   if (kontroll)print*,'dreissen_huelle ... zdreis(1,1), dlmax(1) = ',zdreis(1,1),dlmax(1)
+   if (control)print*,'dreissen_huelle ... zdreis(1,1), dlmax(1) = ',zdreis(1,1),dlmax(1)
    !Übergabe
    benthic_distribution_p(24+(i-1)*number_benth_distr) = ro2dr(1)    ! Respiration Dreissena-Muscheln in mgO2/l je Zeitschritt
    benthic_distribution_p(38+(i-1)*number_benth_distr) = algdrk(1)   ! kiesel Algen-Konsum-bentisch (Muscheln) in mg/l
@@ -162,13 +164,8 @@ subroutine dreissen_huelle(i)
    benthic_distribution_p(69+(i-1)*number_benth_distr) = dlmaxs(1)   ! Dreissena Larven ??
    benthic_distribution_p(70+(i-1)*number_benth_distr) = gwdmax(1)   ! Dreissena Larven ??
    benthic_distribution_p(71+(i-1)*number_benth_distr) = sgwmue(1)   ! Dreissena Larven ??
-   do k = 1,number_benth_distr
-      if (isnan(benthic_distribution_p(k+(i-1)*number_benth_distr))) then
-         print*,'nach dreissen: isnan(benthic_distribution_p  node#',iglob,' variable# ',k
-         if (meinrang == 0)print*,'benth_distr_name:',benth_distr_name(k)
-      endif
-   end do
-   if (kontroll) then
+   
+   if (control) then
       print*,'Pseudofacesanteil durch Dreissena drpfec = ',drpfec(1)
       print*,'Ingestionsrate Dreissena (0. +1. Koh.) idras = ',idras(1,1:2)
       print*,'Wachstumsrate Dreissena (0. +1. Koh.) drmas = ',drmas(1,1:2)
@@ -177,6 +174,7 @@ subroutine dreissen_huelle(i)
       print*,'Mortalitätsrate Dreissena (0. +1. Koh.) drmor = ',drmor(1,1:2)
       print*,'Verhältnis von Futterkonz. zu optimaler Futterkonzentration (Food-Faktor) für Dreissena ffood = ',ffood(1)
       print*,'Flagellatenverlustrate durch Dreissena hnfdra = ',hnfdra(1)
-   end if ! kontroll
+   endif
+   
    return
 end subroutine dreissen_huelle

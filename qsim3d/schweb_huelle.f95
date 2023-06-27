@@ -30,13 +30,13 @@
 subroutine schweb_huelle(i)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer :: i,npla,ntra
    real tiefes,flaes,raus
    ! real sedSS_MQ ! Sedimentation, die auftreten würde ohne Erosion
    iglob = (i+meinrang*part) ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    ntra = (i-1)*number_trans_quant
    tflie = real(deltat)/86400
@@ -46,7 +46,7 @@ subroutine schweb_huelle(i)
    ! ischif zone(point_zone(iglob))%schiff%schifffahrts_zone schifffahrt in dieser module::zonen ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr; MODELLG.txt "F"
    !  SUBROUTINE SCHWEB_kern(zooinds,dorgSSs,sss,ssalgs,tiefes,raus,tflie,VMITTs
    !                ,dkimors,dgrmors,abszos,zexkis,zexgrs,abls,zexbls,dblmor,drfaebs,akis,agrs,ssdrs,drfaeks      &
-   !             ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs,tauscs,ischifs,ieros,kontroll ,jjj )
+   !             ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs,tauscs,ischifs,ieros,control ,jjj )
    call SCHWEB_kern (                       &
                      planktonic_variable_p(50+npla)          &
                      ,transfer_quantity_p(19+ntra)            &
@@ -77,7 +77,7 @@ subroutine schweb_huelle(i)
                      ,tauscs                                  &
                      ,zone(point_zone(iglob))%schiff%schifffahrts_zone &
                      ,ieros                                   &
-                     ,kontroll                                &
+                     ,control                                &
                      ,iglob ) !!wy
    return
 end subroutine schweb_huelle

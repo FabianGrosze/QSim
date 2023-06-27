@@ -262,7 +262,7 @@ logical function querschnitt_lesen()
    read (ctext, * , iostat = io_error) anzahl_quer
    if (io_error /= 0) then
       call qerror("schnitt.txt anzahl_quer nicht lesbar.")
-   end if !anzahl_quer lesbar
+   endif !anzahl_quer lesbar
    
    print*,"schnitt.txt - Anzahl der Querschnitte: ", anzahl_quer
    ! type(qusch) , allocatable , dimension (:) :: querschnitt
@@ -271,19 +271,19 @@ logical function querschnitt_lesen()
    if (alloc_status /= 0) then
       write(fehler,*)'allocate (querschnitt(anzahl_quer) fehlgeschlagen'
       call qerror(fehler)
-   end if 
+   endif 
    
    do i = 1, anzahl_quer
       if (.not. naechste_zeile(nio)) then
          write(fehler,*)"Querschnitt #",i," Knotenanzahl nicht auffindbar"
          call qerror(fehler)
-      end if
+      endif
       
       read (ctext, *, iostat = io_error) querschnitt(i)%schnittlinie%anzkanten
       if (io_error /= 0) then
          print*,"schnitt #",i
          call qerror("Lesefehler schnitt.txt Knotenanzahl")
-      end if
+      endif
       
       if (querschnitt(i)%schnittlinie%anzkanten <= 1) then
          call qerror("Querschnitte mit weniger als 2 Knoten machen keinen Sinn.")
@@ -354,7 +354,7 @@ logical function querschnitt_lesen()
          do n = 1,kantenanzahl ! alle Kanten
             if (bottom_node(n) == bt .and. top_node(n) == tp) querschnitt(i)%schnittlinie%kante(j)%num = n
             if (bottom_node(n) == tp .and. top_node(n) == bt) querschnitt(i)%schnittlinie%kante(j)%num = -1 * n
-         end do
+         enddo
          
          
          nel = 0
@@ -375,21 +375,21 @@ logical function querschnitt_lesen()
                   l1 = cornernumber(n)
                else
                   l1 = l-1
-               end if 
+               endif 
                
                ! Kante bt-tp erkannt
                if (bt == elementnodes(n,l1) .and. tp == elementnodes(n,l)) then
                   nel = nel + 1
                   if (nel >= 3) call qerror("Eine Kante kann nicht in 3 Elementen vorkommen")
                   el(nel) = n
-               end if
+               endif
                
                ! Kante bt-tp erkannt
                if (tp == elementnodes(n,l1) .and. bt == elementnodes(n,l)) then
                   nel = nel + 1
                   if (nel >= 3) call qerror("Eine Kante kann nicht in 3 Elementen vorkommen")
                   el(nel) = n
-               end if 
+               endif 
                
             enddo ! alle l (3 oder 4) Ecken von Element k
          enddo ! alle n Elemente im Netz

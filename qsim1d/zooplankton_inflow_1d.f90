@@ -1,19 +1,17 @@
-subroutine zooplankton_inflow_1d(zooind, ezind, mstr, qeinl, vabfl, jiein,  &
-                                 anze, flag, tflie)
+subroutine zooplankton_inflow_1d(zooind, ezind, qeinl, vabfl, jiein, anze, flag)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---
    real,    intent(inout), dimension(ialloc2) :: zooind !< zooplankton in main river [Ind/l]
    real,    intent(in),    dimension(ialloc1) :: ezind  !< zooplanktion in point source [Ind/l]
-   integer, intent(in)                        :: mstr   !< number of current stretch
    real,    intent(in),    dimension(ialloc1) :: qeinl  !< 
    real,    intent(in),    dimension(ialloc2) :: vabfl  !<
    integer, intent(in),    dimension(ialloc2) :: jiein  !<
    integer, intent(in)                        :: anze   !<
    integer, intent(in),    dimension(ialloc2) :: flag   !<
-   real,    intent(in)                        :: tflie  !< timestep [d]
+
    
    ! --- local variables ---
    integer :: iein, j, ior, ior_flag, m, ihcq, ji
@@ -47,7 +45,8 @@ subroutine zooplankton_inflow_1d(zooind, ezind, mstr, qeinl, vabfl, jiein,  &
          if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcQ = 1 ! Konzentration an der Einleitstelle
          ! ist gleich der Konzentration der Einleitung
          
-         hczoo = zooind(ior-m)     ! Umbenennen der benötigten Variablen; 1D
+         ! Umbenennen der benötigten Variablen
+         hczoo = zooind(ior-m)    
          hcQ = abs(vabfl(ior-m))
         
          if (hcQ <= epsilon(hcq) .or. ihcQ == 1) hcQ = 1.e-10
@@ -75,7 +74,7 @@ subroutine zooplankton_inflow_1d(zooind, ezind, mstr, qeinl, vabfl, jiein,  &
             zooind(ior) = zooind(ior+1)
          endif
    
-      endif  ! Ende Einleitungs-flag
+      endif
    enddo
    
 end subroutine zooplankton_inflow_1d

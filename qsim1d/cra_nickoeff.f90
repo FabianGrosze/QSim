@@ -1,7 +1,7 @@
 subroutine cra_nickoeff(elen, r1, r2, r3, dl, flag, deltat, anze,  &
                         imarker, icranickoeff)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

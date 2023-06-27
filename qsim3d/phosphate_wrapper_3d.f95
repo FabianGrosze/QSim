@@ -28,20 +28,20 @@ subroutine phosphate_wrapper_3d(i)
    use modell
    use QSimDatenfelder
    use module_metabolism, only: phosphate
-   use aparam
+   use module_aparam
    implicit none
    
    integer, intent(in) :: i
    integer             :: k, nk
    
    iglob =  i + meinrang*part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    nk = (i-1)*number_plankt_vari
    
    ! Umwandlung des Zeitschritts von integer sekunden (T-QSim) in real Tage (QSim)
    tflie = real(deltat)/86400 
    
-   if (kontroll) then
+   if (control) then
       print*, 'before phosphate'
       print*, '   gesp = ', planktonic_variable_p(68+nk)
       print*, '   gelp = ', planktonic_variable_p( 6+nk)
@@ -89,10 +89,10 @@ subroutine phosphate_wrapper_3d(i)
       benthic_distribution_p(41+(i-1)*number_benth_distr),  & ! algdrb_s
       benthic_distribution_p(40+(i-1)*number_benth_distr),  & ! algdrg_s
       tflie,                                                & ! tflie
-      kontroll, iglob)
+      control, iglob)
    
    
-   if (kontroll) then
+   if (control) then
       print*, 'after phosphate'
       print*, '   gesp = ', planktonic_variable_p(68+nk)
       print*, '   gelp = ', planktonic_variable_p( 6+nk)
@@ -109,7 +109,7 @@ subroutine phosphate_wrapper_3d(i)
          print*,'trans_quant_name:', trans_quant_name(k)
          call qerror("phosphate_wrapper_3d(): isnan(transfer_quantity_p)")
       endif
-   end do
+   enddo
    
    return
 end subroutine phosphate_wrapper_3d

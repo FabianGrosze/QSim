@@ -37,31 +37,31 @@ subroutine zonen_parallel()
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel knoten_zone :', alloc_status
          call qerror(fehler)
-      end if
+      endif
    
       do ini = 1,knotenanzahl2D
          knoten_zone(ini) = 0
-      end do
+      enddo
       
       allocate (element_zone(n_elemente), stat = alloc_status )
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel element_zone :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       
       do ini = 1,n_elemente
          element_zone(ini) = 0
-      end do
+      enddo
       
       allocate (point_zone(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          print*,' allocate failed in zonen_parallel point_zone :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       
       do ini = 1,number_plankt_point
          point_zone(ini) = 0
-      end do
+      enddo
       allocate (zone(zonen_anzahl), stat = alloc_status )
       if (alloc_status /= 0) call qerror('allocate zone failed in zonen_parallel() zonen.f95')
    endif !! alle Prozesse ausser 0

@@ -1,9 +1,9 @@
 subroutine coliform_bacteria(coli_s, doscf_s, extks_s, tempw_s, &
                              rau_s, tiefe_s, vmitt_s, schwi_s,  &
                              tflie,                             &
-                             kontroll, jjj)
+                             control, jjj)
 
-   use aparam, only: rateci, xnuec, ratecd, etacd, ratecg, ratecs
+   use module_aparam
    implicit none
 
    ! --- dummy arguments ---
@@ -16,7 +16,7 @@ subroutine coliform_bacteria(coli_s, doscf_s, extks_s, tempw_s, &
    real, intent(in)     :: vmitt_s     !< velocity
    real, intent(in)     :: schwi_s     !< global radiation [cal/(cm2*h)]
    real, intent(in)     :: tflie       !< timestep [d]
-   logical, intent(in)  :: kontroll    !< debugging
+   logical, intent(in)  :: control    !< debugging
    integer, intent(in)  :: jjj         !< debuggin
 
    ! --- local variables ---

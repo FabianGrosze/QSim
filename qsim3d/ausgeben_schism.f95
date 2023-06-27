@@ -55,7 +55,7 @@ subroutine ausgeben_schism(itime)
    if (istat /= 0) then
       write(fehler,*)'open_error node_.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    !! mesh
    call mesh_output(ion)
    !! hydraulic
@@ -64,17 +64,17 @@ subroutine ausgeben_schism(itime)
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') p(n)
       !write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-   end do
+   enddo
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS vel_norm float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') u(n)
-   end do
+   enddo
    write(ion,'(A)')'VECTORS vel float'
    !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
    do n = 1,number_plankt_point
@@ -84,12 +84,12 @@ subroutine ausgeben_schism(itime)
       !vy=u(n)*sin(dir(n))*(-1.0)
       vz = 0.0
       write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') vel_x(n), vel_y(n), vz
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS rang float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(f27.6)') real( knoten_rang(n) )
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !! planktonic variables
    do j = 1,number_plankt_vari ! all depth averaged planktonic variables
       if (output_plankt(j)) then ! output requested
@@ -98,9 +98,9 @@ subroutine ausgeben_schism(itime)
          do n = 1,number_plankt_point ! all nodes
             aus = planktonic_variable(j+(n-1)*number_plankt_vari)
             write(ion,'(f27.6)') aus
-         end do ! all nodes
-      end if ! output requested
-   end do ! all planktonic_variable
+         enddo ! all nodes
+      endif ! output requested
+   enddo ! all planktonic_variable
    close (ion)
    print*,'node output ausgeben_schism done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
@@ -115,7 +115,7 @@ subroutine ausgeben_schism(itime)
    if (istat /= 0) then
       write(fehler,*)'open_error kanten.vtk'
       call qerror(fehler)
-   end if ! istat.ne.0
+   endif ! istat.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'Simlation QSim3D untrim'
    write(ion,'(A)')'ASCII'
@@ -125,17 +125,17 @@ subroutine ausgeben_schism(itime)
    do n = 1,kantenanzahl
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') 0.5*(knoten_x(top_node(n))+knoten_x(bottom_node(n)))  &
                                            , 0.5*(knoten_y(top_node(n))+knoten_y(bottom_node(n))), 0.0
-   end do ! alle kanten
+   enddo ! alle kanten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*2
    do n = 1,kantenanzahl
       write(ion,'(A,2x,I12)')'1',n-1
-   end do ! alle kanten
+   enddo ! alle kanten
    write(ion,'(A)')' ' ! vtk-vertex
    write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
    do n = 1,kantenanzahl
       write(ion,'(A)')'1'
-   end do ! alle kanten
+   enddo ! alle kanten
    
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl
@@ -143,17 +143,17 @@ subroutine ausgeben_schism(itime)
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,kantenanzahl
       write(ion,'(f27.6)') ed_area(n)
-   end do ! alle kanten
+   enddo ! alle kanten
    write(ion,'(A)')'SCALARS volume_flux float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,kantenanzahl
       write(ion,'(f27.6)') ed_flux(n)
-   end do ! alle kanten
+   enddo ! alle kanten
    write(ion,'(A)')'VECTORS ed_vel float'
    vz = 0.0
    do n = 1,kantenanzahl
       write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') ed_vel_x(n),ed_vel_y(n),vz
-   end do ! alle kanten
+   enddo ! alle kanten
    
    close (ion)
    print*,meinrang,myrank,'edge output ausgeben_schism not yet done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

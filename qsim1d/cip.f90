@@ -6,7 +6,7 @@
 !! Computer Physics Communications 93, 1-12 (1996)
 subroutine cip(u, cux, dx, nx, xpoint, flag, nkz, ktrans, isgn, m)
 
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

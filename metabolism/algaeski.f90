@@ -43,10 +43,10 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
                     hcchlbz, hcchlgz, dz2d, chlabl, chlagr, a1ki, sedalg_mq,    &
                     sedalk0, hq_nkz, hq_ngz, hq_nbz, q_pg, q_ng, q_pb, q_nb,    &
                     mstr, it_h, isim_end, extks, akmor_1, agmor_1, abmor_1,     &
-                    kontroll , jjj)
+                    control , jjj)
    
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    real, intent(in), dimension(1000)    :: schwi
@@ -67,7 +67,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
    real, intent(out), dimension(1000)   :: dalgki
    real, intent(out), dimension(1000)   :: dalgak
    
-   logical                         :: kontroll
+   logical                         :: control
    integer                         :: jjj
    integer                         :: n_neu_s, n_alt_s, nkz, m
    integer                         :: mstr, j_aus, j, js
@@ -626,7 +626,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
          endif
          
          CChl_Stern = CChl0 * exp(a1Ki * hc_temp(j))    ! Dunkeladaptierte Algen
-         call LichtHemmung(tflie,Ic,yK,CChl_Stern,CChlaz,j)
+         call lichthemmung(tflie, ic, yk, cchl_stern, cchlaz(j))
          hemm(j) = yK
          if (ikke == 95.5) then
             Saettk = ikke
@@ -748,7 +748,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
       
       if (akit > huge(akit)) then
          print*,'algaeski:Biomassezuwachses akit,dalgak,akgrow,akres = ',akit,dalgak,akgrow,akres
-      end if
+      endif
       
       
       if (nkzs(ior) > 1) then   ! 2D-Fall
@@ -788,7 +788,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
                upmxi = upmxPK * FTA
                jcyano = 0
                j_aus = 0
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                up_PKz(nkz,ior) = up_Ci
                Q_PKz(nkz) = yk
             endif
@@ -808,7 +808,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
                Halbi = akksN*ft_ks
                upmxi = upmxNK * FTA
                j_aus = 0
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                up_NKz(nkz,ior) = up_Ci
                Q_NKz(nkz) = yk
             endif
@@ -830,7 +830,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
                xchla = hChlkz(mstr,nkz,ior)
             endif
             
-            call C_Chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, Caki, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+            call c_chla(roh_chlz(nkz), xup_n, xakres, cchlaz(nkz), tflie, caki, cchl_stern, xchla, xac, xagrow, isyn)
             CChlazt(nkz) = CChlaz(nkz) !!wy sonst werden 2D Felder im 1D-Fall nicht bedient und haben beliebige Werte
             iaus = 0
             
@@ -870,7 +870,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
          Halbi = akksP*ft_ks
          upmxi = upmxPK * FTA
          jcyano = 0
-         call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          up_PK(ior) = up_Ci
          if (nkzs(ior) == 1)Q_PKt = yk
       endif
@@ -889,7 +889,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
          Halbi = akksN*ft_ks
          upmxi = upmxNK * FTA
          j_aus = 0
-         call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          j_aus = 0
          up_NK(ior) = up_Ci
          if (nkzs(ior) == 1)Q_NKt = yk
@@ -907,7 +907,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
       endif
       CChlaz(nkz) = akbcm(ior)
       if (mstr == 2)iaus = 0
-      call C_Chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, Caki, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+      call c_chla(roh_chlz(nkz), xup_n, xakres, cchlaz(nkz), tflie, caki, cchl_stern, xchla, xac, xagrow, isyn)
       iaus = 0
       
       ! Silikat (kein zellinterner Speicher)
@@ -942,10 +942,10 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
       ised = 1      ! Schalter zur Kennzeichnung der hier berücksichtigten partik. Wasserinhaltsstoffe
       jsed = 1
       ZellV = 1400.
-      call sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
-      if (kontroll) then
-         print*,'Sedimentation algaeski: tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj'   &
-                  ,tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj
+      call sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj)
+      if (control) then
+         print*,'Sedimentation algaeski: tiefe,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj'   &
+                  ,tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj
       endif
       ceq = akis * qsgr
       
@@ -988,7 +988,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
          print*,'fmor = min(fmor1,fmor2) ; akmor = akmomi+akmoma*(1.-((min(fmor0,fmor))/fmor0)**8.)'
          print*,'akmomi,akmoma,fmor,fmor0,fmor2 = ',akmomi,akmoma,fmor,fmor0,fmor1,fmor2,fmor3
          print*,'akmor_1(mstr,ior),akmor_1v,akmor_1t = ',akmor_1(mstr,ior),akmor_1v,akmor_1t
-      end if 
+      endif 
       
       ! SKmor - aufsummierte abgestorbene Kieselalgen im Wasserkörper
       ! Verringerung der abgestorbenen Kieselalgenbiomasse durch Sedimentation
@@ -1025,7 +1025,7 @@ subroutine algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4, 
          print*,hconql,dalgki(ior),cmatki(ior)
          print*,'hconsk = dkimor(ior)+dalgak(ior)+sedalk(ior)+algzok(ior)+algdrk(ior)+algcok(ior)'
          print*,hconsk,dkimor(ior),dalgak(ior),sedalk(ior),algzok(ior),algdrk(ior),algcok(ior)
-      end if 
+      endif 
       if (akit < 1.e-5) akit = 1.e-5
       chlakit = 1.e-5 
       

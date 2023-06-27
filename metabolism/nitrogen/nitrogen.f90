@@ -18,9 +18,9 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
                     akiNH4_s, agrNH4_s, ablNH4_s,                  &
                     akiNO3_s, agrNO3_s, ablNO3_s,                  &
                     hFluN3_s, dC_DenW_s,                           &
-                    kontroll, jjj)
+                    control, jjj)
    
-   use aparam, only: Nzoo, Qmx_NG, Qmx_NK, akksN, agksN, abksN
+   use module_aparam
    
    implicit none
    
@@ -85,7 +85,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
    real, intent(out)    :: ablNO3_s    !< Nitrataufnahme der Blaualgen
    real, intent(out)    :: hFluN3_s    !< Nitratflux Sediment (Ausgabe)
    real, intent(out)    :: dC_DenW_s   !< Kohlenstoffabbau in Wassersäule durch Nitrifikation (Ausgabe)
-   logical, intent(in)  :: kontroll    !< debugging
+   logical, intent(in)  :: control    !< debugging
    integer, intent(in)  :: jjj         !< debugging
    
    ! --- local variables ---
@@ -155,7 +155,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       print*, "   abl    = ", abl_s
       
       call qerror("Variable 'dzn' became NaN in subroutine nitrogen.")
-   end if
+   endif
 
    
    ! --------------------------------------------------------------------------
@@ -270,7 +270,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       print*, "   doN    = ", doN_s
       
       call qerror("Variable 'vNH4t' became NaN in subroutine nitrogen.")
-   end if
+   endif
    
    if (vNH4t < 0.0) then
       vnh4t_old = vnh4t
@@ -343,7 +343,7 @@ subroutine nitrogen(vNH4_s, vNO3_s, vNO2_s, gesN_s, vO2_s, vx02_s, &
       endif
       
       call qerror("Variable 'vNO3t' became NaN in subroutine nitrogen.")
-   end if
+   endif
    
    if (vno3t < 0.0) then
       vno3t_old = vno3t

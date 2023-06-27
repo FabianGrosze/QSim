@@ -1,6 +1,6 @@
 subroutine hnf_inflow_1d(chnf,bvhnf,echnf,ebvhnf, qeinl, vabfl, jiein, anze, flag)
    
-   use allodim
+   use module_alloc_dimensions
    
    implicit none
    

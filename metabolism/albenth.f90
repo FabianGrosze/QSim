@@ -33,9 +33,9 @@ subroutine albenth(abegm2_s, abekm2_s, vnh4_s, vno3_s, gelp_s, &
                    tiefe_s , tflie,                            &
                    albewg_s, alberg_s, albewk_s, alberk_s,     &
                    cmatgr_s, cmatki_s,                         & 
-                   kontroll, jjj)
-   use aparam
-   use allodim
+                   control, jjj)
+   use module_aparam
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---
@@ -57,7 +57,7 @@ subroutine albenth(abegm2_s, abekm2_s, vnh4_s, vno3_s, gelp_s, &
    real,    intent(out)   :: alberk_s !< respiration benthic diatoms
    real,    intent(out)   :: cmatgr_s !< TODO
    real,    intent(out)   :: cmatki_s !< TODO
-   logical, intent(in)    :: kontroll !< debugging
+   logical, intent(in)    :: control !< debugging
    integer, intent(in)    :: jjj      !< debugging
    
    ! --- local variables ---

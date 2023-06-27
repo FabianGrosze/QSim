@@ -42,7 +42,7 @@ subroutine stofftransport_casu()
    if (stationaer) then
       write(fehler,*)'stationaer so noch nicht vorgesehen (stofftransport.f95)'
       call qerror(fehler)
-   end if ! stationaer
+   endif ! stationaer
    call transinfo_schritte(startzeitpunkt, endzeitpunkt)
    print*,'stofftransport: von Zeitschrittt ... bis', na_transinfo, ne_transinfo
    do nt = na_transinfo, ne_transinfo ! alle Transport (zwischen) Zeitschritte
@@ -53,7 +53,7 @@ subroutine stofftransport_casu()
       allocate (zwischen(number_plankt_vari, number_plankt_point), stat = as )
       do n = 1,number_plankt_vari !!
          negativ(n) = .false.
-      end do ! alle planktischen variablen
+      enddo ! alle planktischen variablen
       nullzae = 0
       trockzae = 0
       do j = 1,number_plankt_point ! alle j Knoten
@@ -67,17 +67,17 @@ subroutine stofftransport_casu()
             endif
             if (isNaN( planktonic_variable(n+(j-1)*number_plankt_vari) ))  &
                 print*,'isNaN_planktonic_variable plankt_vari = ',n,' plankt_point = ',j
-         end do ! alle variablen
+         enddo ! alle variablen
          do l = 1,4
             ieck(l) = intereck((j-1)*4+l)
             if (isNaN( wicht((j-1)*4+l) ))print*,'isNaN_wicht,j,l,intereck',wicht((j-1)*4+l),j,l,intereck((j-1)*4+l)
-         end do ! alle 4 wichtungsfaktoren
+         enddo ! alle 4 wichtungsfaktoren
          do l = 1,3
             !1! tiwicht(l)=wicht(nm*4+l)
             !2! tiwicht(l)=wicht(nm*4+l)*tief(ieck(l))
             tiwicht(l) = wicht((j-1)*4+l) * rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul) !  neu31jan14 * tief(ieck(l))
             if ( rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul) <= min_tief)tiwicht(l) = 0.0
-         end do ! alle 3 wichtungsfaktoren
+         enddo ! alle 3 wichtungsfaktoren
          if (ieck(4) > 0) then !! nur bei vierecken 4.Knoten
             !1! tiwicht(4)=wicht(nm*4+4)
             !2! tiwicht(4)=wicht(nm*4+4)*tief(ieck(4))
@@ -85,30 +85,30 @@ subroutine stofftransport_casu()
             if (rb_hydraul(2+(ieck(4)-1)*number_rb_hydraul) <= min_tief) tiwicht(4) = 0.0  !4!
          else  !3!
             tiwicht(4) = 0.0  !3!
-         end if
+         endif
          summ = 0.0
          do l = 1,4
             summ = summ+tiwicht(l)
-         end do ! alle 4 wichtungsfaktoren
+         enddo ! alle 4 wichtungsfaktoren
          if (summ > 0.0) then
             do l = 1,4
                tiwicht(l) = tiwicht(l)/summ
-            end do ! alle 4 wichtungsfaktoren
+            enddo ! alle 4 wichtungsfaktoren
          else ! summ=0 konzentration bleibt liegen !
             !do l=1,4 !! Versuch 30jul15 wy
             !   tiwicht(l)=0.25
             !   ieck(l)=j
-            !end do ! alle 4 wichtungsfaktoren
+            !enddo ! alle 4 wichtungsfaktoren
             nullzae = nullzae+1
-         end if ! summ.gt.0
+         endif ! summ.gt.0
          if (tief <= min_tief) then
             trockzae = trockzae+1
-         end if ! trocken
+         endif ! trocken
          if (j == kontrollknoten)print*,'ieck,l = 1,4',(ieck(l),l = 1,4),'tiwicht,l = 1,4',(tiwicht(l),l = 1,4), summ
          if ((summ <= 0.0) .or. (tief <= min_tief)) then ! summ=0 oder alles trocken?, Wert bleibt | 19jul17 wy
             do n = 1,number_plankt_vari
                zwischen(n,j) = planktonic_variable(n+(j-1)*number_plankt_vari)
-            end do ! alle n Konzentrationen
+            enddo ! alle n Konzentrationen
          else ! summ!=0 und nass?
             do n = 1,number_plankt_vari
                zwischen(n,j) = planktonic_variable(n+(ieck(1)-1)*number_plankt_vari)*tiwicht(1) +  &
@@ -116,7 +116,7 @@ subroutine stofftransport_casu()
                                planktonic_variable(n+(ieck(3)-1)*number_plankt_vari)*tiwicht(3)
                if (ieck(4) > 0) then !! nur bei vierecken 4.Knoten
                   zwischen(n,j) = zwischen(n,j) + planktonic_variable(n+(ieck(4)-1)*number_plankt_vari)*tiwicht(4)
-               end if
+               endif
                if (isNaN(zwischen(n,j))) then
                   print*,'stofftransport isNaN(zwischen(',n,',',j,')), summ',zwischen(n,j),summ
                   print*,'ieck,l = 1,4',(ieck(l),l = 1,4)
@@ -131,24 +131,24 @@ subroutine stofftransport_casu()
                   write(fehler,*)'stofftransport: isNaN(zwischen planktonic_variable_name',planktonic_variable_name(n)
                   call qerror(fehler)
                endif ! isNaN
-            end do ! alle n Konzentrationen
+            enddo ! alle n Konzentrationen
          endif ! summ=0 alles trocken?, Wert bleibt
-      end do ! alle j Knoten
+      enddo ! alle j Knoten
       do j = 1,number_plankt_point ! alle j Knoten
          !if(j .eq. kontrollknoten)then ! Ausgabe kontrollknoten
          !   print*,'kontrollknoten vor Stofftransport lf=',planktonic_variable(65+(j-1)*number_plankt_vari)
-         !end if ! kontrollknoten
+         !endif ! kontrollknoten
          do n = 1,number_plankt_vari
             planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
-         end do ! alle n Konzentrationen
+         enddo ! alle n Konzentrationen
          !if(j .eq. kontrollknoten)then ! Ausgabe kontrollknoten
          !   print*,'kontrollknoten nach Stofftransport lf=',planktonic_variable(65+(j-1)*number_plankt_vari)
-         !end if ! kontrollknoten
-      end do ! alle j Knoten
+         !endif ! kontrollknoten
+      enddo ! alle j Knoten
       deallocate (zwischen, stat = as )
       do n = 1,number_plankt_vari !!
          if (negativ(n))print*,'stofftransport negativ, planktonic_variable #',n,' ',planktonic_variable_name(n)
-      end do ! alle planktischen variablen
+      enddo ! alle planktischen variablen
       if (nullzae > 0)print*,'stofftransport_casu: an ',nullzae,' Berechnungspunkten war die Wichtungssumme Null ?!'
       if (trockzae > 0)print*,'stofftransport_casu: ',trockzae,' Berechnungspunkte waren trocken'
       tracervolumen = 0.0
@@ -156,16 +156,16 @@ subroutine stofftransport_casu()
          tief = rb_hydraul(2+(j-1)*number_rb_hydraul)
          if (tief >= min_tief) then !nass
             tracervolumen = tracervolumen+( tief*knoten_flaeche(j)*planktonic_variable(71+(j-1)*number_plankt_vari) )
-         end if !nass
-      end do ! alle j Knoten
+         endif !nass
+      enddo ! alle j Knoten
       print*,'tracervolumen = ', transinfo_zeit(transinfo_zuord(nt)), tracervolumen
       !!if((kontrollknoten.gt.0).and.(kontrollknoten.le.number_plankt_point))then ! Ausgabe
       !!   print*,' nt= ', nt  &
       !!   ,' T_wass=', planktonic_variable(1*kontrollknoten) &
       !!   ,' Tracer=', planktonic_variable(71*kontrollknoten)
-      !!end if
+      !!endif
       !!print*,'transport nt=',nt,' start ende= ',startzeitpunkt, endzeitpunkt
-   end do ! nt, alle Transport (zwischen) Zeitschritte
+   enddo ! nt, alle Transport (zwischen) Zeitschritte
    return
 end subroutine stofftransport_casu
 !----+-----+----
@@ -194,7 +194,7 @@ subroutine holen_trans(nt)
       ntist = 1
    else !! instationaer
       ntist = nt
-   end if
+   endif
    write(vollerdateiname,'(3A)')trim(modellverzeichnis),'transinfo/',trim(transinfo_datei(transinfo_zuord(ntist)))
    ! lang=len(trim(transinfo_datei(transinfo_zuord(nt))))
    lang = len(trim(vollerdateiname))
@@ -204,7 +204,7 @@ subroutine holen_trans(nt)
    if (wrong /= 0) then
       write(fehler,*)' trans_read Lesen der Transportinformationen fehlgeschlagen ', wrong
       call qerror(fehler)
-   end if
+   endif
    if (nonu /= number_plankt_point) then
       write(fehler,*)'holen_trans: nonu /= number_plankt_point',nonu,number_plankt_point
       call qerror(fehler)
@@ -213,8 +213,8 @@ subroutine holen_trans(nt)
       do ll = 1,4
          if (isNaN( wicht((jj-1)*4+ll) ))print*,'holen_trans: isNaN( wicht((jj-1)*4+ll)  jj,ll,((jj-1)*4+ll) = ' &
              ,jj,ll,((jj-1)*4+ll)
-      end do ! alle 4 wichtungsfaktoren
-   end do ! all jj nodes
+      enddo ! alle 4 wichtungsfaktoren
+   enddo ! all jj nodes
    flaeche = 0.0
    volumen = 0.0
    anteil = 1.0/real(zeitschrittanzahl*anz_transinfo) !! Zeit-Anteil am Gesamt-Simulations-Zeitraum
@@ -227,7 +227,7 @@ subroutine holen_trans(nt)
          volumen = volumen+(tief*knoten_flaeche(j))
          if (uedau_flag) call qerror(" holen_trans(nt) Überstaudauer nicht mehr implementiert")
       endif ! trocken
-   end do ! alle j Knoten
+   enddo ! alle j Knoten
    mittelflaech = mittelflaech+(flaeche*anteil)
    mittelvolumen = mittelvolumen+(volumen*anteil)
    ! Bahnlinienursprünge ermitteln +
@@ -242,8 +242,8 @@ subroutine holen_trans(nt)
             ur_x(j) = ur_x(j)+knoten_x(intereck((j-1)*4+i))*wicht((j-1)*4+i)
             ur_y(j) = ur_y(j)+knoten_y(intereck((j-1)*4+i))*wicht((j-1)*4+i)
             ur_z(j) = ur_z(j)+knoten_z(intereck((j-1)*4+i))*wicht((j-1)*4+i)
-         end if
-      end do ! alle 4 ecken
+         endif
+      enddo ! alle 4 ecken
       ubetr = (((knoten_x(j)-ur_x(j))**2 + (knoten_y(j)-ur_y(j))**2 + (knoten_z(j)-ur_z(j))**2)**0.5)/dttrans
       infl = 10.0
       if (u(j) > 0.0)infl = ubetr/u(j)
@@ -267,12 +267,12 @@ subroutine holen_trans(nt)
       rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
       !! benthic_distribution(44+(j-1)*number_benth_distr)=ks ! da sollte eigentlich der strickler-Wert stehen
       benthic_distribution(45+(j-1)*number_benth_distr) = utau
-      !!end do !! alle j knoten
-      !!end if !! nur prozessor 0
+      !!enddo !! alle j knoten
+      !!endif !! nur prozessor 0
       if (j == kontrollknoten)print*,'holen_trans: ', j,' p = ',p(j),' u = ', u(j), ' tief = ',tief,   &
           " utau = ",utau," Ks = ",zone(point_zone(j))%reib,' knoten_lage = ',knoten_x(j),knoten_y(j),knoten_z(j),  &
           ' ursprung',ur_x(j),ur_y(j),ur_z(j), ' inflow',inflow(j), ' ubetr', ubetr,' nt = ',nt
-   end do ! all j nodes
+   enddo ! all j nodes
    print*,'Transport mit Datei ',trim(vollerdateiname),' nt = ',nt,' Wasserpiegelflaeche = ',flaeche  &
          ,' Wasservolumen = ',volumen,' Anzahl trockene Knoten = ',trockzae
    return
@@ -290,7 +290,7 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       write(fehler,*)'transinfo_schritte: Zeitintervall ' &
       ,start_zeitschritt, ' bis ', ende_zeitschritt,' geht nicht'
       call qerror(fehler)
-   end if
+   endif
    gefunden = .false.
    na_transinfo = -1
    ne_transinfo = -1
@@ -300,31 +300,31 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
          gefunden = .true.
          !print*,'na_transinfo,n ',na_transinfo,n
          !print*,'Strat Hydraulik Zeitschritt in diesem Qualitäts-Zeitschritt ', transinfo_zeit(transinfo_zuord(n))
-      end if
-   end do ! alle transportinfo Zeitpunkte
+      endif
+   enddo ! alle transportinfo Zeitpunkte
    if (stationaer) then
       na_transinfo = 1
       gefunden = .true.
-   end if
+   endif
    if ( .not. gefunden) then
       write(fehler,*)'Zum Anfangszeitpunkt des abgefragten Zeitintervalls existiert keine passende transportinfo Datei ' &
       ,start_zeitschritt
       call qerror(fehler)
-   end if
+   endif
    do n = 1,transinfo_anzahl
       if ((transinfo_zeit(transinfo_zuord(n)) > start_zeitschritt) .and. &
           (transinfo_zeit(transinfo_zuord(n)) <= ende_zeitschritt )) then
          !print*,'weiterer Hydraulik Zeitschritt in diesem Qualitäts-Zeitschritt ', transinfo_zeit(transinfo_zuord(n))
          ne_transinfo = n
-      end if
-   end do ! alle transportinfo Zeitpunkte
+      endif
+   enddo ! alle transportinfo Zeitpunkte
    if (stationaer) then
       !ne_transinfo=3 !! einde: 3*300s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
       !ne_transinfo=6 !! einde: 6*150s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
       !ne_transinfo=1 !! einde: 1*900s casu-zeitschirtt auf 1*900s tiqu-zeitschritt ######
       ne_transinfo = deltat/dttrans
       gefunden = .true.
-   end if
+   endif
    if (ne_transinfo < na_transinfo) ne_transinfo = na_transinfo
    !print*,'start_zeitschritt,ende_zeitschritt ',start_zeitschritt,ende_zeitschritt
    !print*,'ne_transinfo ',ne_transinfo
@@ -335,7 +335,7 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
    else !instationär
       deti = transinfo_zeit(transinfo_zuord(ne_transinfo))-transinfo_zeit(transinfo_zuord(na_transinfo))
       deti = deti+dttrans
-   end if
+   endif
    if (deti /= deltat) then
       print*,'Zeitschrittweiten Transport = ',dttrans,' - Güte = ',deltat,' passen nicht zueinander.'
       print*,'ganzzahlige Vielfache erforderlich.'
@@ -343,12 +343,12 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       print*,'anfang ',na_transinfo, transinfo_zuord(na_transinfo), transinfo_zeit(transinfo_zuord(na_transinfo))
       print*,'  ende ',ne_transinfo, transinfo_zuord(ne_transinfo), transinfo_zeit(transinfo_zuord(ne_transinfo))
       if (hydro_trieb == 1)call qerror('deti /= deltat')!! nur bei casu-Strombahnen abbrechen
-   end if
+   endif
    print*," Für den Transport im Gütezeitschritt von ",start_zeitschritt," bis ", ende_zeitschritt  &
    ," werden ", anz_transinfo," Transportzeitschritte verwendet."
    !do n=1,anz_transinfo
    !   print*,"#",na_transinfo+n-1," Zeitpunkt=",transinfo_zeit(transinfo_zuord(na_transinfo+n-1))
-   !end do
+   !enddo
    return
 end subroutine transinfo_schritte
 !----+-----+----
@@ -371,21 +371,21 @@ subroutine transinfo_sichten()
    if (system_error /= 0) then
       print*,trim(systemaufruf)
       call qerror('Auflisten der Transportinformationen fehlgeschlagen.')
-   end if ! io_error.ne.0
+   endif ! io_error.ne.0
    ion = 333
    open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
    if (open_error /= 0) then
       call qerror('open_error trafo')
       !else
       !   print*,"trafo offen"
-   end if
+   endif
    nz = 0
    nt = 0
    do while (zeile(ion))
       !print*,trim(ctext)
       nz = nz+1
       if (ctext(1:1) == 't')nt = nt+1
-   end do ! while Zeile
+   enddo ! while Zeile
    !print*,'trafo hat ',nt," Zeilen"
    transinfo_anzahl = nt
    if (transinfo_anzahl < 1)call qerror('No transport info')
@@ -404,15 +404,15 @@ subroutine transinfo_sichten()
          i = len(trim(ctext))
          do while (ctext(i:i) /= 't')
             i = i-1
-         end do ! while Zeile
+         enddo ! while Zeile
          write(irgendeinstring,'(A)')ctext(i+1:len(trim(ctext)))
          !print*,'irgendeinstring:',trim(irgendeinstring)
          read(irgendeinstring,*)transinfo_zeit(nt)
          transinfo_zuord(nt) = nt
          !print*,"transinfo   zuord=", transinfo_zuord(n), '  transinfo_zeit=',transinfo_zeit(n), &
          !       '  Datei:', trim(transinfo_datei(n))
-      end if !! alle t* Dateien
-   end do ! alle zeilen aus trafo
+      endif !! alle t* Dateien
+   enddo ! alle zeilen aus trafo
    close(ion)
    write(dateiname,'(2A)')trim(modellverzeichnis),'transinfo/meta'
    open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
@@ -449,15 +449,15 @@ subroutine transinfo_sichten()
                time_offset = zeitpunkt !! Offset vom Referenzjahr zum transinfo/meta Zeitursprung
                write(time_offset_string,'(I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr")')  &
                      tag,monat,jahr,stunde,minute,sekunde
-            end if ! io_error.ne.0
-         end if ! not vorhanden
-      end if ! not #
-   end do ! Zeile in /transinfo/meta'
+            endif ! io_error.ne.0
+         endif ! not vorhanden
+      endif ! not #
+   enddo ! Zeile in /transinfo/meta'
    if ( .not. offsetvorhanden) then
       write(fehler,*)'Fehler in der Datei ', trim(dateiname), ' beim Lesen der Verschiebung', &
                      ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
       call qerror(fehler)
-   end if ! offset nicht vorhanden
+   endif ! offset nicht vorhanden
    ! write(*,'(A,2x,F15.2,2x,I9)')'time-offset=',real(time_offset),time_offset
    do n = 1,transinfo_anzahl,1
       do i = n+1,transinfo_anzahl,1
@@ -465,28 +465,28 @@ subroutine transinfo_sichten()
             zwischenwert = transinfo_zuord(n)
             transinfo_zuord(n) = transinfo_zuord(i)
             transinfo_zuord(i) = zwischenwert
-         end if ! Zeitreihenfolge falsch
-      end do ! alle weiteren i durch
-   end do ! alle n durch
+         endif ! Zeitreihenfolge falsch
+      enddo ! alle weiteren i durch
+   enddo ! alle n durch
    !do n=1,transinfo_anzahl,1
    !    transinfo_zeit(transinfo_zuord(n))=transinfo_zeit(transinfo_zuord(n))+real(time_offset)
-   !end do ! alle n durch
+   !enddo ! alle n durch
    !do n=1,transinfo_anzahl,1
    !   transinfo_zeit(transinfo_zuord(n))=time_offset+transinfo_zeit(transinfo_zuord(n))
-   !end do ! alle n durch
+   !enddo ! alle n durch
    !dttrans=1 !! jetzt aus meta lesen!
    !if(transinfo_anzahl.gt.1)then
    !   dttrans=transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
    !   print*,'Transport Zeitschrittweite=',dttrans
-   !end if ! mehr als ein Transportzeitschritt
+   !endif ! mehr als ein Transportzeitschritt
    do n = 2,transinfo_anzahl,1
       delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
       if (delt /= dttrans) then
          write(fehler,*)' ERROR unregelmäßiger Transportzeitschritt ',delt, 'sollte sein: ', dttrans &
          ,' n = ', n,trim(transinfo_datei(transinfo_zuord(n)))
          call qerror(fehler)
-      end if ! mehr als ein Transportzeitschritt
-   end do ! alle Transportzeitschritte ab 2
+      endif ! mehr als ein Transportzeitschritt
+   enddo ! alle Transportzeitschritte ab 2
    print*, transinfo_anzahl,' Transport-Zeitschritte'
    zeitpunkt = transinfo_zeit(transinfo_zuord(1))
    call zeitsekunde()
@@ -520,7 +520,7 @@ subroutine netz_lesen()
       if ( .not. elements()) then
          write(fehler,*)'wenn transinfo/points da ist, müsste es auch ein transinfo/file.elements geben !!'
          call qerror(fehler)
-      end if !! elements()
+      endif !! elements()
       kanten_vorhanden = edges()
    else
       if ( netz_gr3()) then
@@ -578,7 +578,7 @@ logical function points()
       return
    else
       points = .true.
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    777 continue
    if (zeile(ion)) then
       if (ctext(1:1) == '#') then
@@ -589,45 +589,45 @@ logical function points()
       if (string_read_error /= 0) then
          write(fehler,*)'string_read_error subroutine points nknot'
          call qerror(fehler)
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       print*,knotenanzahl2D, 'Knoten sollen in points sein'
       nonu = knotenanzahl2D ! kontrollwert
    else
       write(fehler,*)'Lesen der knotenanzahl2D im Kopf von point fehlgeschlagen'
       call qerror(fehler)
-   end if !erste zeilen aus points gelesen
+   endif !erste zeilen aus points gelesen
    !knotenanzahl2D=knotenanzahl3D
    print*,'Momentan noch 2D-Tiefengemittelt'
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_y(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_rand(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_zone(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_flaeche(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    ! Knotenzeilen nacheinander einlesen
    n = 0
    do while ( zeile(ion))
@@ -639,25 +639,25 @@ logical function points()
          write(fehler,*)'Lesen fehlgeschlagen aus points an knoten #', n,' read_error:', string_read_error, &
          ' points wird von casu auf /transinfo ausgegeben. Nicht die converti-Version verwenden!'
          call qerror(fehler)
-      end if
+      endif
       if (knoten_zone(n) < 0) then
          write(fehler,*)' knoten #',n,': Zonennummer darf nicht negativ sein'
          call qerror(fehler)
-      end if
+      endif
       if (knoten_rand(n) < 0) then
          write(fehler,*)' knoten #',n,': Randnummer darf nicht negativ sein'
          call qerror(fehler)
-      end if
+      endif
       if (knoten_flaeche(n) <= 0.0) then
          write(fehler,*)' knoten #',n,': Knotenfläche muss größer Null sein'
          call qerror(fehler)
-      end if
+      endif
       modell_flaeche = modell_flaeche+knoten_flaeche(n)
-   end do ! zeile
+   enddo ! zeile
    if (n /= knotenanzahl2D) then
       write(fehler,*)'Zeilenzahl falsch in Datei points'
       call qerror(fehler)
-   end if
+   endif
    close (ion)
    !!
    xmax = -999999999999.9
@@ -683,7 +683,7 @@ logical function points()
       if (knoten_rand(n) < min_rand)min_rand = knoten_rand(n)
       if (knoten_rand(n) > max_rand)max_rand = knoten_rand(n)
       if (knoten_rand(n) > 0)anzrand = anzrand+1
-   end do ! alle Knoten
+   enddo ! alle Knoten
    print*,'x-koordinate max+min', xmax, xmin
    print*,'y-koordinate max+min', ymax, ymin
    print*,'Sohlhöhe max+min', zmax, zmin
@@ -731,7 +731,7 @@ logical function elements()
       else
          write(fehler,*)'string_read_error ausgabe.f95, file.elements'
          call qerror(fehler)
-      end if ! string_read_error.ne.0
+      endif ! string_read_error.ne.0
       allocate (cornernumber(n_elemente), stat = alloc_status )
       allocate (elementnodes(n_elemente,4), stat = alloc_status )
       summ_ne = 0
@@ -748,22 +748,22 @@ logical function elements()
                else ! weder Drei- noch Viereck
                   write(fehler,*)'weder Drei- noch Viereck ',n
                   call qerror(fehler)
-               end if !Viereck
-            end if !Dreieck
+               endif !Viereck
+            endif !Dreieck
          else ! Zeile nicht lesbar
             write(fehler,*)'Lesen aus file.elements fehlgeschlagen'
             call qerror(fehler)
-         end if !Zeile gelesen
+         endif !Zeile gelesen
          do j = 1,cornernumber(n)
             elementnodes(n,j) = elementnodes(n,j)+1
-         end do ! alle Knoten im Element
+         enddo ! alle Knoten im Element
          summ_ne = summ_ne+cornernumber(n)+1
-      end do ! alle elemente
+      enddo ! alle elemente
       close (ion)
    else
       write(fehler,*)'Datenausgabe ohne file.elements sieht nicht gut aus'
       call qerror(fehler)
-   end if ! end if file.elements vorhanden
+   endif ! endif file.elements vorhanden
    allocate (element_zone(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) then
       call qerror('allocate (element_zone failed')
@@ -773,7 +773,7 @@ logical function elements()
    ! bei casu-Netzen hat der Knoten die Zone, vorsichtshalber wird sie hier auf -7 initialisiert
    do n = 1,n_elemente ! alle Elemente
       element_zone(n) = -7
-   end do ! alle Elemente
+   enddo ! alle Elemente
    elements = .true.
    print*,'logical function elements(), module_modell.f95, hat aus file.elements ',n_elemente,' Elemente gelesen'
    return
@@ -812,12 +812,12 @@ logical function edges()
    else
       edges = .true.
       print*,'Datei transinfo/edges vorhanden'
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    if (zeile(ion))read(ctext, *) kantenanzahl
    n = 0
    do while ( zeile(ion))
       n = n+1
-   end do ! nächste zeile vorhanden
+   enddo ! nächste zeile vorhanden
    print*,"transinfo/edges: kantenanzahl = ",kantenanzahl," n = ",n
    allocate (top_node(kantenanzahl), stat = io_error )
    allocate (bottom_node(kantenanzahl), stat = io_error )
@@ -831,7 +831,7 @@ logical function edges()
       edges = .false.
       write(fehler,*)'alloc_error in edges = ', io_error
       call qerror(fehler)
-   end if !! alloc_error
+   endif !! alloc_error
    rewind(ion) !! nochmal von vorne:
    if (zeile(ion))read(ctext, *) kantenanzahl
    n = 0
@@ -847,7 +847,7 @@ logical function edges()
          edges = .false.
          write(fehler,*)'io_error = ', io_error,' at edge #',n
          call qerror(fehler)
-      end if !! io_error
+      endif !! io_error
       top_node(n) = top_node(n) + 1 !! Zählweise Fortran ab 1, C++ ab 0
       bottom_node(n) = bottom_node(n) + 1
       left_element(n) = left_element(n) + 1
@@ -858,7 +858,7 @@ logical function edges()
          print*,"left_element right_element = ",left_element(n), right_element(n)
          print*,"boundary_number zone = ",boundary_number(n),zon_num(n)
       endif !! kontrrollknoten
-   end do ! nächste zeile vorhanden
+   enddo ! nächste zeile vorhanden
    
    return
 end function edges

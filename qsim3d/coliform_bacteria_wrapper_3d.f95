@@ -35,7 +35,7 @@ subroutine coliform_bacteria_wrapper_3d(i)
    integer             :: nk
    
    iglob = i + meinrang*part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    nk = (i-1)*number_plankt_vari
    
    ! convert timestep from seconds in days
@@ -43,7 +43,7 @@ subroutine coliform_bacteria_wrapper_3d(i)
    tiefe(1) = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
    rau(1) = strickler(zone(point_zone(iglob))%reib , tiefe(1))
    
-   if (kontroll) then
+   if (control) then
       print*, "before coliform_bacteria:"
       print*, "   coli = ", planktonic_variable_p(61+nk)
       print*, ""
@@ -59,11 +59,11 @@ subroutine coliform_bacteria_wrapper_3d(i)
       rb_hydraul_p(1+(i-1)*number_rb_hydraul),                         & ! vmitt,
       schwi_t(zone(point_zone(iglob))%wettstat%wetterstations_nummer), & ! schwi
       tflie,                                                           & ! tflie
-      kontroll,                                                        & ! kontroll
+      control,                                                        & ! control
       iglob)                                                             ! jjj
    
 
-   if (kontroll) then
+   if (control) then
       print*, "after coliform_bacteria:"
       print*, "   coli = ", planktonic_variable_p(61+nk)
       print*, ""

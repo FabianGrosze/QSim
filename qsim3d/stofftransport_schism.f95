@@ -53,7 +53,7 @@ subroutine sc_read_rough()
    integer :: n
    do n = 1,number_benthic_points
       benthic_distribution(5+(n-1)*number_benth_distr) = 70.0 !! Strickler Reibungsbeiwert Kst_rau (Mannings n, here: Kst=1/n)
-   end do ! alle n Knoten
+   enddo ! alle n Knoten
    print*,"##### preliminary ##### modellg: call sc_read_rough: Strickler = 70 ######"
    return
 end subroutine sc_read_rough

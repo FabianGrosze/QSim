@@ -37,10 +37,10 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
                     up_nbz, q_nb, q_pb,  abltbr, ablbrz, up_n2z, ablz, chlabl, &
                     a1bl, hchlbz, hcchlbz, algabz, algzbz, dz2d, sedalg_mq,    &
                     sedalb0, hq_nbz, mstr, isim_end, abmor_1,                  &
-                    kontroll, jjj)
+                    control, jjj)
                     
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    real,    intent(in),    dimension(1000)           :: schwi
@@ -108,7 +108,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
    integer, intent(in)                               :: mstr
    integer, intent(in)                               :: isim_end
    real,    intent(inout), dimension(azStrs,1000)    :: abmor_1
-   logical, intent(in)                               :: kontroll
+   logical, intent(in)                               :: control
    integer, intent(in)                               :: jjj
 
    integer                  :: n_neu_s, n_alt_s, nkz
@@ -382,7 +382,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
          
          yK = 1. - svhemb(ior)
          CChl_Stern = CChl0 * exp(a1Bl * hc_temp(j))    ! dunkeladaptierte Algen
-         call LichtHemmung(tflie,Ic,yK,CChl_Stern,CChlaz,j)
+         call lichthemmung(tflie, ic, yk, cchl_stern, cchlaz(j))
          hemm(j) = yK
          
          if (ikbe == 191.) then
@@ -542,7 +542,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
                upmxi = upmxPB * FTA
                jcyano = 0
                j_aus = 0
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                up_PBz(nkz,ior) = up_Ci
                Q_PBz(nkz) = yk
             endif
@@ -563,7 +563,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
                CNaehr = sumN
                Halbi = abksN*ft_ks
                upmxi = upmxNB * FTA
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                
                up_NBz(nkz,ior) = up_Ci
                up_N2z(nkz,ior) = up_N2i
@@ -582,7 +582,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
                xchla = hChlbz(mstr,nkz,ior)
             endif
             iaus = 0
-            call C_Chla(roh_Chlz, xup_N, xabres, CChlaz, nkz, tflie, Cabl, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+            call c_chla(roh_chlz(nkz), xup_n, xabres, cchlaz(nkz), tflie, cabl, cchl_stern, xchla, xac, xagrow, isyn)
             CChlazt(nkz) = CChlaz(nkz)
             if (nkz > 1) then
                sumQN = sumQN + ((hQ_NBz(mstr,nkz-1,ior)+hQ_NBz(mstr,nkz,ior))/2.)*dH2D
@@ -615,7 +615,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
          upmxi = upmxpb * fta
          jcyano = 0
          j_aus = 0
-         call uptake(yk,xk,qmxi,qmni,cnaehr,halbi,upmxi,tflie,up_ci,up_n2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          up_pb(ior) = up_ci
          q_pb(ior) = yk
       endif
@@ -635,7 +635,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
          CNaehr = sumN
          Halbi = abksN*ft_ks
          upmxi = upmxNB * FTA
-         call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          
          up_NB(ior) = up_Ci
          up_N2(ior) = up_N2i
@@ -654,7 +654,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
       endif
       CChlaz(nkz) = abbcm(ior)
       iaus = 0
-      call C_Chla(roh_Chlz, xup_N, xabres, CChlaz, nkz, tflie, Cabl, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+      call c_chla(roh_chlz(nkz), xup_n, xabres, cchlaz(nkz), tflie, cabl, cchl_stern, xchla, xac, xagrow, isyn)
       iaus = 0
       
       if (nkzs(ior) == 1) then
@@ -683,7 +683,7 @@ subroutine algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,  &
       ised = 1      ! Schalter zur Kennzeichnung der hier berücksichtigten partik. Wasserinhaltsstoffe
       jsed = 1
       ZellV = 1000.
-      call sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+      call sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj)
       ceq = abls*qsgr
       
       sedalb(ior) = (abls - ceq) * oc

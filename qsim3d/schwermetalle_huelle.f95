@@ -30,11 +30,11 @@
 subroutine schwermetalle_huelle(i)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer :: i,npla,ntra,nben
    iglob = (i+meinrang*part)
-   kontroll = iglob == kontrollknoten  ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
+   control = iglob == kontrollknoten  ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    ntra = (i-1)*number_trans_quant
    nben = (i-1)*number_benth_distr
@@ -42,7 +42,7 @@ subroutine schwermetalle_huelle(i)
    !         ,anzZeits,sedsss,sedalks,sedalbs,sedalgs                                                  &
    !         ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs                &
    !         ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                                &
-   !         ,kontroll,jjj)
+   !         ,control,jjj)
    !!### Schwebstoff und ph: hssalg,hph aus vorangegangenem Zeitschritt in 3D noch nicht implementiert ###
    call schwermetalle_kern(                                  &
                             planktonic_variable_p( 52+npla)  &
@@ -78,6 +78,6 @@ subroutine schwermetalle_huelle(i)
                            ,planktonic_variable_p( 99+npla)  &
                            ,planktonic_variable_p(100+npla)  &
                            ,planktonic_variable_p(101+npla)  &
-                           ,kontroll,iglob)
+                           ,control,iglob)
    return
 end subroutine schwermetalle_huelle

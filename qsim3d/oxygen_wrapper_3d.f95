@@ -39,7 +39,7 @@ subroutine oxygen_wrapper_3d(i)
    iglob = i + meinrang*part ! globale Knotennummer
    i2 = zone(point_zone(iglob))%wettstat%wetterstations_nummer ! ist parallel
    nk = (i-1)*number_plankt_vari ! Ort im Feld der transporterten, planktischen Variablen
-   kontroll = (iglob == kontrollknoten)
+   control = (iglob == kontrollknoten)
    
   
    tiefe(1) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe
@@ -58,11 +58,11 @@ subroutine oxygen_wrapper_3d(i)
          print '("before oxygen: isnan(benthic_distribution_p): node #", i0, ", variable #", i0)', iglob, k
          if (meinrang == 0)print*,'benth_distr_name: ', benth_distr_name(k)
       endif
-   end do
+   enddo
    
   
    ! --- metabolism ---
-   if (kontroll) then 
+   if (control) then 
       print*,'before oxygen():'
       print*, '  vo2 = ', planktonic_variable_p( 2+nk)
    endif
@@ -115,9 +115,9 @@ subroutine oxygen_wrapper_3d(i)
                transfer_quantity_p(43+(i-1)*number_trans_quant),     & ! zooro2_s
                benthic_distribution_p(16+(i-1)*number_benth_distr),  & ! hSchlr_s
                benthic_distribution_p(19+(i-1)*number_benth_distr),  & ! O2ein1_s
-               kontroll, iglob)
+               control, iglob)
    
-   if (kontroll) then 
+   if (control) then 
       print*, 'after oxygen():'
       print*, '  vo2 = ', planktonic_variable_p( 2+nk)
    endif
@@ -129,7 +129,7 @@ subroutine oxygen_wrapper_3d(i)
          print '("before oxygen: isnan(planktonic_variable_p): node #", i0, ", variable #", i0)', iglob, k
          if (meinrang == 0) print*,'planktonic_variable_name: ', planktonic_variable_name(k)
       endif
-   end do
+   enddo
    
    do k = 1,number_trans_quant
       if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
@@ -137,14 +137,14 @@ subroutine oxygen_wrapper_3d(i)
          print '(a,i0)', '  meinrang = ',meinrang
          if (meinrang == 0) print*, 'trans_quant_name: ',trans_quant_name(k)
       endif
-   end do
+   enddo
    
    do k = 1,number_benth_distr
       if (isnan(benthic_distribution_p(k+(i-1)*number_benth_distr))) then
          print '("before oxygen: isnan(benthic_distribution_p): node #", i0, ", variable #", i0)', iglob, k
          if (meinrang == 0)print*,'benth_distr_name:',benth_distr_name(k)
       endif
-   end do
+   enddo
    
    return
 end subroutine oxygen_wrapper_3d

@@ -4,7 +4,7 @@
 # Wyrwa 02.September 2022
 #====================================================================
 
-META= ../metabolism/module_allodim.o \
+META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/module_aparam.o \
 	../metabolism/coliform_bacteria/module_coliform_bacteria.o \
 	../metabolism/organic_carbon/module_organic_carbon.o \
@@ -22,10 +22,8 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/algaesgr.o \
 	../metabolism/algaeski.o \
 	../metabolism/c_chla.o \
-	../metabolism/dichte.o \
 	../metabolism/dreissen.o \
 	../metabolism/e_extnct_lesen.o \
-	../metabolism/einleiter_misch.o \
 	../metabolism/funkstar.o \
 	../metabolism/lichthemmung.o \
 	../metabolism/lin_spline.o \
@@ -33,7 +31,6 @@ META= ../metabolism/module_allodim.o \
 	../metabolism/print_clipping.o \
 	../metabolism/sasu.o \
 	../metabolism/schiff.o \
-	../metabolism/sedadv.o \
 	../metabolism/sed_diffk.o \
 	../metabolism/sedflux.o \
 	../metabolism/sedimentation.o \

@@ -30,7 +30,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
                               ,anzZeits,sedsss,sedalks,sedalgs,sedalbs                                     &
                               ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs   &
                               ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                   &
-                              ,kontroll,jjj)
+                              ,control,jjj)
    
    implicit none
    integer               :: anzZeits,iformVert
@@ -47,7 +47,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    real                  :: CrSeds,FeSeds,Hgseds,MnSeds,USeds
    real                  :: Css,ph
    
-   logical, intent(in)   :: kontroll !< debugging
+   logical, intent(in)   :: control !< debugging
    integer, intent(in)   :: jjj      !< debugging
    
    logical  ,parameter  :: siebzehn = .TRUE. ! Formel 17 für Verteilungskoeffizienten aus Einleitungen
@@ -65,13 +65,13 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    call Verteilungskoeff(Css,ph  &
                          ,VTKoeffZn(1),VTKoeffCu(1),VTKoeffCad(1),VTKoeffNi(1),VTKoeffAs(1),VTKoeffPb(1)    &
                          ,VTKoeffCr(1),VTKoeffFe(1),VTKoeffHg(1) ,VTKoeffMn(1), VTKoeffU(1)                 &
-                         ,iformVert,kontroll)
+                         ,iformVert,control)
    Css = min(100.,SSalgs)
    ph = max(4.,vphs)
    call Verteilungskoeff(Css,ph  &
                          ,VTKoeffZn(2),VTKoeffCu(2),VTKoeffCad(2),VTKoeffNi(2),VTKoeffAs(2),VTKoeffPb(2)    &
                          ,VTKoeffCr(2),VTKoeffFe(2),VTKoeffHg(2) ,VTKoeffMn(2), VTKoeffU(2)                 &
-                         ,iformVert,kontroll)
+                         ,iformVert,control)
    
    ! Formel (17) zugeflossene Verteilung
    if (siebzehn) then
@@ -104,7 +104,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
                           gsMns,glMns,MnSeds,     &
                           gsUs,glUs,USeds,        &
                           anzZeits,SSeross,       &
-                          kontroll ,jjj)
+                          control ,jjj)
    ! Verringerung der Gesamt-Schwermetallkonz. durch Sedimentation
    Css = SSalgs
    if (gsZns > 0.0) gsZns = gsZns-(gsZns - glZns)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
@@ -113,7 +113,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
    if (gsNis > 0.0) gsNis = gsNis-(gsNis - glNis)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
    if (gsAss > 0.0) gsAss = gsAss-(gsAss - glAss)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
    if (gsPbs > 0.0) gsPbs = gsPbs-(gsPbs - glPbs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
-   !if(kontroll)print*,'schwermetalle_kern Sedimentation glPbs,gsPbs,Css=',glPbs,gsPbs,Css
+   !if(control)print*,'schwermetalle_kern Sedimentation glPbs,gsPbs,Css=',glPbs,gsPbs,Css
    if (gsCrs > 0.0) gsCrs = gsCrs-(gsCrs - glCrs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
    if (gsFes > 0.0) gsFes = gsFes-(gsFes - glFes)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
    if (gsHgs > 0.0) gsHgs = gsHgs-(gsHgs - glHgs)*((sedSSs+sedalks+sedalbs+sedalgs)/Css)
@@ -128,7 +128,7 @@ subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert        
       gsNis = gsNis + SSeross*NiSeds
       gsAss = gsAss + SSeross*AsSeds
       gsPbs = gsPbs + SSeross*PbSeds
-      !if(kontroll)print*,'schwermetalle_kern Erosion gsPbs,SSeross=',gsPbs,SSeross
+      !if(control)print*,'schwermetalle_kern Erosion gsPbs,SSeross=',gsPbs,SSeross
       gsCrs = gsCrs + SSeross*CrSeds
       gsFes = gsFes + SSeross*FeSeds
       gsHgs = gsHgs + SSeross*Hgseds

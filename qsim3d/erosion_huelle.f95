@@ -30,13 +30,13 @@
 subroutine erosion_huelle(i)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer :: i,npla,ntra
    real tiefes,flaes,raus
    real dsedHs !! Sohlhöhenänderung im aktuellen Zeitschritt
    iglob = (i+meinrang*part) ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    ntra = (i-1)*number_trans_quant
    tflie = real(deltat)/86400
@@ -47,7 +47,7 @@ subroutine erosion_huelle(i)
    ! SUBROUTINE erosion_kern(tflie,TIEFEs,RAUs,VMITTs        &
    !                        ,SSeross,sss,ssalgs,dsedHs       &
    !                        ,tauscs,M_eross,n_eross,sedrohs  &
-   !                        ,kontroll,jjj)
+   !                        ,control,jjj)
    call erosion_kern(tflie                                        &
                      ,TIEFEs                                      &
                      ,RAUs                                        &
@@ -60,7 +60,7 @@ subroutine erosion_huelle(i)
                      ,zone(point_zone(iglob))%erosi%M_eros        &
                      ,zone(point_zone(iglob))%erosi%n_eros        &
                      ,zone(point_zone(iglob))%erosi%sed_roh       &
-                     ,kontroll                                    &
+                     ,control                                    &
                      ,iglob )
    return
 end subroutine erosion_huelle

@@ -1,7 +1,7 @@
 subroutine coliform_bacteria_inflow_1d(coli, doscf, mstr, colil, ecoli, ieinls, &
                                        qeinll, qeinl, vabfl, iorle, iorla,      &
                                        jiein, flae, anze, flag, tflie)   
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

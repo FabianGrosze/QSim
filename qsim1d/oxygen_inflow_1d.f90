@@ -1,41 +1,31 @@
-subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
-                            dh2d, ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa, &
-                            jiein, flae, anze, flag, tflie)
+subroutine oxygen_inflow_1d(vo2, o2L, eo2, etemp, mstr, ieinLs, qeinlL, qeinl, &
+                            vabfl, iorLe, iorLa, jiein, flae, anze, flag, tflie)
                           
-   use aparam, only: Caki, Cagr, Cabl
-   use allodim
+   use module_aparam
+   use module_alloc_dimensions
    
    implicit none
    
-   real,    intent(inout), dimension(ialloc2)         :: vo2      !< Sauerstoff im Hauptfluss
-   real,    intent(inout), dimension(ialloc5,ialloc2) :: vo2z     !< Sauerstoff im Hauptfluss
-   real,    intent(in),    dimension(ialloc1)         :: o2L      !< Sauerstoff im Linieneinleiter
-   real,    intent(in),    dimension(ialloc1)         :: eo2      !< Sauerstoff im Punkteinleiter
-   real,    intent(in),    dimension(ialloc1)         :: etemp    !< Temperatur im Punkteinleiter
-   real,    intent(in),    dimension(ialloc5,ialloc2) :: tempwz   !< Wassertemperatur
-   integer, intent(in)                                :: mstr     !< aktuelle Strangnumme
-   integer, intent(in),    dimension(ialloc2)         :: nkzs     !< Anzahl Tiefenschichten am Knoten
-   real,    intent(in)                                :: dh2d     !< Dicke einer Tiefenschicht
-   integer, intent(in),    dimension(azStrs)          :: ieinLs   !<
-   real,    intent(inout), dimension(ialloc1)         :: qeinlL   ! TODO (schoenung): should be intent(in) only
-   real,    intent(in),    dimension(ialloc1)         :: qeinl    !< 
-   real,    intent(in),    dimension(ialloc2)         :: vabfl    !<
-   integer, intent(in),    dimension(ialloc1)         :: iorLe    !<
-   integer, intent(in),    dimension(ialloc1)         :: iorLa    !<
-   integer, intent(in),    dimension(ialloc2)         :: jiein    !<
-   real,    intent(in),    dimension(ialloc2)         :: flae     !<
-   integer, intent(in)                                :: anze     !<
-   integer, intent(in),    dimension(ialloc2)         :: flag     !<
-   real,    intent(in)                                :: tflie    !< Zeitschritt [d]
+   real,    intent(inout), dimension(ialloc2) :: vo2      !< Sauerstoff im Hauptfluss
+   real,    intent(in),    dimension(ialloc1) :: o2L      !< Sauerstoff im Linieneinleiter
+   real,    intent(in),    dimension(ialloc1) :: eo2      !< Sauerstoff im Punkteinleiter
+   real,    intent(in),    dimension(ialloc1) :: etemp    !< Temperatur im Punkteinleiter
+   integer, intent(in)                        :: mstr     !< aktuelle Strangnumme
+   integer, intent(in),    dimension(azStrs)  :: ieinLs   !<
+   real,    intent(inout), dimension(ialloc1) :: qeinlL   ! TODO (schoenung): should be intent(in) only
+   real,    intent(in),    dimension(ialloc1) :: qeinl    !< 
+   real,    intent(in),    dimension(ialloc2) :: vabfl    !<
+   integer, intent(in),    dimension(ialloc1) :: iorLe    !<
+   integer, intent(in),    dimension(ialloc1) :: iorLa    !<
+   integer, intent(in),    dimension(ialloc2) :: jiein    !<
+   real,    intent(in),    dimension(ialloc2) :: flae     !<
+   integer, intent(in)                        :: anze     !<
+   integer, intent(in),    dimension(ialloc2) :: flag     !<
+   real,    intent(in)                        :: tflie    !< Zeitschritt [d]
    
    ! --- local variables ---
-   integer                           :: iein, ieinL, ior, j, ior_flag, m, ihcQ, ji, nkz, vo2vor
-   real                              :: hcvo2, hco2E, hcq, hcQE, rohe, hcte
-   real, dimension(ialloc5, ialloc2) :: hcvo2z
-   real, dimension(ialloc5)          :: hco2Ez, d, cpart
-   
-   ! functions
-   external                          :: dichte, einleiter_misch
+   integer :: iein, ieinL, ior, j, ior_flag, m, ihcQ, ji
+   real    :: hcvo2, hco2E, hcq, hcQE,  hcte
    
    ! --------------------------------------------------------------------------
    ! diffuse sources
@@ -48,13 +38,6 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
          
          if (iorLa(ieinL) <= ior .and. iorLe(ieinL)>=ior) then
             if (qeinlL(ieinL) <= 0.0) qeinlL(ieinL) = 0.0
-            
-            ! depth resolved
-            do nkz = 1,nkzs(ior)
-               vo2z(nkz,ior) = vo2z(nkz,ior)+((o2L(ieinL)-vo2z(nkz,ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.
-            enddo
-            
-            ! depth avaraged
             vo2(ior) = vo2(ior)+((o2L(ieinL)-vo2(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.
          endif
       enddo
@@ -80,91 +63,31 @@ subroutine oxygen_inflow_1d(vo2, vo2z, o2L, eo2, etemp, tempwz, mstr, nkzs,   &
          if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0)ihcQ = 1 ! Konzentration an der Einleitstelle
          ! ist gleich der Konzentration der Einleitung
          
-         hcvO2 = vo2(ior-m)     ! Umbenennen der benötigten Variablen; 1D
+         hcvO2 = vo2(ior-m)
          hcQ = vabfl(ior-m)
          if (hcQ < 0.0)hcQ = abs(hcQ)
          if (hcQ == 0.0 .or. ihcQ == 1)hcQ = 1.e-10
          
-         do nkz = 1,nkzs(ior)
-            hcvo2z(nkz,ior) = vo2z(nkz,ior-m)
-         enddo
-      
-         do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
+         do ji = 1,jiein(ior)
             hcQE = max(0.0,qeinl(iein))
             hco2E = eo2(iein)
-            if (hco2E < 0.0) then
-               ! 1D
-               hco2E = hcvo2
-               
-               ! 2D
-               do nkz = 1, nkzs(ior)
-                  hco2Ez(nkz) = hcvo2z(nkz,ior)
-               enddo
-            else
-               do nkz = 1,nkzs(ior)
-                  hco2Ez(nkz) = hco2E
-               enddo
-            endif
-            
-            if (etemp(iein) > -9.9) then
-               hcTE = etemp(iein)
-               ! Dichte im Einleiter
-               rohE = density_1d(hcTE)
-               
-               ! Dichte im Vorfluter
-               call dichte(tempwz, nkzs, ior, D)
-               
-               ! Berechnung der vertikalen Einmischung
-               call einleiter_misch(nkzs,ior,hcvo2z,Cpart,hcQ,hcQE,hco2E,rohE,D,dH2D)
-               vo2z(1:nkzs(ior),ior) = Cpart(1:nkzs(ior))
-            else
-               do nkz = 1,nkzs(ior)      ! 2D
-                  vo2z(nkz,ior) = (hcQ*hcvo2z(nkz,ior)+hcQE*hco2Ez(nkz))/(hcQ+hcQE)
-               enddo
-            endif
-            
-            vo2vor = vo2(ior)
+            if (hco2E < 0.0) hco2E = hcvo2
+            if (etemp(iein) > -9.9) hcTE = etemp(iein)
             
             vo2(ior) = (hcQ * hcvo2 + hcQE * hco2E) / (hcQ + hcQE)
             hcQ = hcQ+qeinl(iein)
             iein = iein+1
             hcvo2 = vo2(ior)
-            
-            do nkz = 1,nkzs(ior)
-               hcvo2z(nkz,ior) = vo2z(nkz,ior)
-            enddo
-         enddo ! Ende Einleitungsschleife
+         enddo
          
          if (ior_flag == 1) then
             iein = iein - jiein(ior)
             ior = ior-1
             vo2(ior) = vo2(ior+1)
-            
-            do nkz = 1,nkzs(ior)
-               vo2z(nkz,ior) = vo2z(nkz,ior+1)
-            enddo
          endif
          
-      endif   ! Ende Einleitungs-flag
+      endif
    enddo
-   
-   
-contains
-
-!> Berechnung der Dichte im 1-dimensionalen Fall
-pure real function density_1d(tempw)
-   implicit none
-   real, intent(in)  :: tempw !< water temperature [°C]
-   
-   density_1d = 999.842594             &
-             + 6.793952e-2 * tempw     &
-             - 9.095290e-3 * tempw**2  &
-             + 1.001685e-4 * tempw**3  &
-             - 1.120083e-6 * tempw**4  &
-             + 6.536332e-9 * tempw**5
-   return
-end function density_1d
-
 
 end subroutine oxygen_inflow_1d
 

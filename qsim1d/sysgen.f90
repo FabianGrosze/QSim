@@ -30,14 +30,14 @@
 !! Segmentlaenge variabel, Zeitschritt fest gleich 60 min
 !! @author Volker Kirchesch
 !! @date 07.09.2015   
-subroutine sysgen(ilang,  iwsim, nbuhn, akmB, ekmB, DLB, tau2B, alphaB, mUs                                        &
+subroutine sysgen(ilang, iwsim, nbuhn, akmB, ekmB, DLB, tau2B, alphaB, mUs                                         &
                   , aschif, eschif, mSs, mStra, raua, bsohla, boeamq, hlboea, hflaea, htiefa                       &
                   , hvF, hQaus, SedOM, BedGSed, sedvvert, dKorn, abfr, mStas, Startkm, mRBs, RBtyp, RBkm, ij       &
                   , tflie, STRdt, STRiz, cpfad, wsp_UW, WSP_OW                                                     &
                   , SedOMb, w2, w2b, dKornb, SPEWKSuS, WUEBKuS, PSREFSuS, extkuS, SPEWKSS, WUEBKS, PSREFSS, extkS  &
                   , itags, monats, uhrz, ifhStr, fhprof, iverfahren, ianze_max, HMQ, bvMQ, bHMQ, ieros)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    integer                                :: mu, ms, mstr, mstrl

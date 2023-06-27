@@ -17,11 +17,9 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
                           BAcmua_s, bsbct_s, BSBctP_s, doN_s, bsbt_s,   &
                           BSBbet_s, orgCsd0_s, orgCsd_s, orgCsd_abb_s,  &
                           dorgSS_s, vBSB_s, vCSB_s,                     &
-                          kontroll, jjj)
+                          control, jjj)
   
-   use aparam,    only: Cagr, Caki, Cabl, CZoo, PZoo, NZoo,  ksm, yBAC, rsGBAC, &
-                        upBAC, hymxD, hyP1, ksd1, ksd2, GRot,                   &
-                        bsbbl, bsbgr, bsbki, csbbl, csbgr, csbki
+   use module_aparam
    implicit none
    
    ! ksM    - half-sauraton constant for uptake of mono-molecular C compounds (mgC / L)
@@ -89,15 +87,15 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    real, intent(out)    :: dorgSS_s     !< change in organic suspended matter due to C degradation (mg / L)
    real, intent(out)    :: vBSB_s       !< BOD at end of time step (mgO2 / L)
    real, intent(out)    :: vCSB_s       !< COD at end of time step (mgO2 / L)
-   logical, intent(in)  :: kontroll     !< debugging
+   logical, intent(in)  :: control     !< debugging
    integer, intent(in)  :: jjj          !< debugging
       
    ! --- local variables ---
    real     :: hnf_p_c, hnf_n_c
    real     :: vcb, cref, orgN, orgP
    real     :: topt, dti, ftemp, hymx
-   real     :: dCD1, dCD2, CD1_t, CD2_t, CP1_t, CP2_t, CMt, Creft, TOC
-   real     :: hupBAC, dCM, resBAC, BACt, bsbts, dC
+   real     :: CD1_t, CD2_t, CP1_t, CP2_t, CMt, Creft, TOC
+   real     :: hupBAC, resBAC, BACt, bsbts, dC
    real     :: fluxd1, fluxd2, fvcb, hconpf
    real     :: fluxO2, BSBtb, hc1, hc2, fbsgrt, frfgrt
    real     :: ust, aSedC, bSedC, CP1sd, CP2sd, BACsd, Crfsd, zellv, qsgr, oc, oc0, wst
@@ -286,7 +284,7 @@ subroutine organic_carbon(ocsb_s, obsb_s, CD1_s, CD2_s, CP1_s, CP2_s,   &
    ised  = 2
    jsed  = 1
    ZellV = 0.0
-   call sedimentation(tiefe_s, ised, ust, qsgr, oc, oc0, tflie, wst, jsed, ZellV, kontroll, jjj)
+   call sedimentation(tiefe_s, ised, ust, qsgr, oc, oc0, tflie, wst, jsed, ZellV, control, jjj)
  
    sedCP1 = (1. - qsgr) * CP1sd * oc
    sedCP2 = (1. - qsgr) * CP2sd * oc

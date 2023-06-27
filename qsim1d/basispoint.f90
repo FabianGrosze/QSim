@@ -1,7 +1,7 @@
 subroutine basispoint(anze, flag, deltat, vmitt, uvert, elen, xpoint, m,      &
                       nkz, iwahld, isgn)
                       
-   use allodim
+   use module_alloc_dimensions
    implicit none           
    
    ! --- dummy arguments ---

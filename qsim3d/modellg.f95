@@ -41,21 +41,21 @@ subroutine modellg()
    if (open_error /= 0) then
       write(fehler,*)'open_error MODELLG.3D.txt'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    
    if (zeile(ion)) then
       print*,'MODELLG.3D.txt Versionskennzeichnung:',ctext(1:50)
    else
       write(fehler,*)'keine Versionskennzeichnung im Kopf von MODELLG.3D.txt'
       call qerror(fehler)
-   end if
+   endif
    
    if (zeile(ion)) then
       print*,'MODELLG.3D.txt Modellname:',ctext(1:50)
    else
       write(fehler,*)'keine Modellname im Kopf von MODELLG.3D.txt'
       call qerror(fehler)
-   end if
+   endif
    
    ! Zonenanzahl
    if (zeile(ion)) then 
@@ -63,12 +63,12 @@ subroutine modellg()
       if (string_read_error /= 0) then
          write(fehler,*)'string_read_error subroutine modellg nzon'
          call qerror(fehler)
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       print*,'MODELLG.3D.txt:',zonen_anzahl, 'Zonen sollen drin sein'
    else
       write(fehler,*)'keine Zonenanzahl im Kopf von MODELLG.3D.txt'
       call qerror(fehler)
-   end if !Zonenanzahl
+   endif !Zonenanzahl
    allocate (zone(zonen_anzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate zone failed in modellg() zonen.f95')
    
@@ -130,7 +130,7 @@ subroutine modellg()
          if (izoni > zonen_anzahl) then
             write(fehler,*)' zu viele Zonen in MODELLG.3D.txt; izoni zonen_anzahl', izoni, zonen_anzahl
             call qerror(fehler)
-         end if
+         endif
          read(ctext(2:2000), *, iostat = string_read_error ) zone(izoni)%zonen_nummer, zone(izoni)%zonen_name
          if (string_read_error /= 0) then
             print*,'Block-Anfangs-Zeile aus MODELLG.3D.txt nicht ganz gelesen; string_read_error = ',string_read_error
@@ -139,7 +139,7 @@ subroutine modellg()
          else
             print*,'Block-Anfangs-Zeile aus MODELLG.3D.txt:',  &
             'zonen_nummer(',izoni,'), = ',zone(izoni)%zonen_nummer,' zonen_name = ',trim(zone(izoni)%zonen_name)
-         end if !
+         endif !
          if (tfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau eine Wetterstation.')
          if (rfolgt /= 1)call qerror('Fehler in MODELLG.3D.txt ; jede Zone braucht genau einen Rauheitswert.')
          if (ifolgt /= 1)  &
@@ -148,7 +148,7 @@ subroutine modellg()
          tfolgt = 0
          rfolgt = 0
          ifolgt = 0
-      end if ! nächster Block
+      endif ! nächster Block
       !! T - Wetterstationszuordnung für o.g. Zone für die Temperaturberechnung \n
       if ((ctext(1:1) == 'T') .or. (ctext(1:1) == 't')) then
          read(ctext(2:2000), *, iostat = string_read_error ) &
@@ -158,7 +158,7 @@ subroutine modellg()
          ' gehört Wetterstation # ', zone(izoni)%wettstat%wetterstations_nummer, &
          ' in der Höhe über NHN ', zone(izoni)%wettstat%wetterstations_lage
          tfolgt = tfolgt+1
-      end if ! T-Zeile
+      endif ! T-Zeile
       !! R - Reibungsbeiwert "Rauheit" für o.g. Zone als ks-Wert nach Nikuradse (Sandrauheit) in m [neu in 3D]\n
       if ((ctext(1:1) == 'R') .or. (ctext(1:1) == 'r')) then
          read(ctext(2:2000), *, iostat = string_read_error ) &
@@ -168,7 +168,7 @@ subroutine modellg()
          ,izoni,'. Zone mit Nummer ',zone(izoni)%zonen_nummer
          if (zone(izoni)%reib <= 0.0)call qerror('Reibungsbeiwert unzulässig')
          rfolgt = rfolgt+1
-      end if ! R-Zeile
+      endif ! R-Zeile
       !! I - Initialisierung für o.g. Zone mittels Randbedingung, Angabe der Randnummer [neu in 3D]\n
       if ((ctext(1:1) == 'I') .or. (ctext(1:1) == 'i')) then
          read(ctext(2:2000), *, iostat = string_read_error ) zone(izoni)%ini_randnr
@@ -176,7 +176,7 @@ subroutine modellg()
          print*,'MODELLG.3D.txt:','Zone ',izoni,' mit Nummer ',zone(izoni)%zonen_nummer &
          ,' wird initialisiert von Randbedingung Nr. ',zone(izoni)%ini_randnr
          ifolgt = ifolgt+1
-      end if ! I-Zeile
+      endif ! I-Zeile
       !! F - schifffahrts_zone
       if ((ctext(1:1) == 'F') .or. (ctext(1:1) == 'f')) then
          zone(izoni)%schiff%schifffahrts_zone = 1  ! ; 1->Schiffsverkehr  , 0-> kein Schiffsverkehr
@@ -185,7 +185,7 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler F-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: schifffahrt in Zone', izoni,' vschiff, uprop = '  &
                ,zone(izoni)%schiff%vschiff,zone(izoni)%schiff%uprop
-      end if ! F-Zeile
+      endif ! F-Zeile
       !! O - Verschattung durch Uferbewuchs Anteil der Vegetationstypen
       if ((ctext(1:1) == 'O') .or. (ctext(1:1) == 'o')) then
          print*,'ACHTUNG: O-Zeile in MODELLG.3D.txt'
@@ -196,7 +196,7 @@ subroutine modellg()
          !     &      ,iV=1,6),VALTAL(mstr,mV),EDUFAL(mstr,mV)                        &
          !     &      ,(VTYPA(mstr,mV,iV),iV=7,12),VALTAR(mstr,mV),EDUFAR(mstr,mV)    &
          !     &      ,(VTYPA(mstr,mV,iV),iV=13,14)
-      end if ! O-Zeile
+      endif ! O-Zeile
       !! S - Kenngrössen für Temperatur/Sedimenttemperatur
       !WRITE(1, '(A)') '<ParamSetDef id="QS" text="Kenngrössen für Temperatur/Sedimenttemperatur" help="Kenngrößen für die Gewässerabschnitten" scope="Abschnitt">'
       !WRITE(1, '(A)') ' <Parameter ident="SPEWKS" text="Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)" format="F6.2" null="-1" help="Ton: 0.83; Sand: 0.88" min="0.8" max="4.5" default="-1">'
@@ -214,7 +214,7 @@ subroutine modellg()
          zone(izoni)%seditemp%spewks, zone(izoni)%seditemp%wuebk,  &
          zone(izoni)%seditemp%psrefs, zone(izoni)%seditemp%extiks
          readable = .true.
-      end if ! S-Zeile
+      endif ! S-Zeile
       !! Z - Sediment-Kenngrößen, Belegungen für Stoffumsatz im Sediment
       !!###      read(77,1045)aPOM(mstr,mZ),ePOM(mstr,mZ),POMz(mstr,mZ),BedGSz(mstr,mz),Sedvvertz(mstr,mz)
       !!      zone(:)%sediflux%sedom=0.0 ! Anteil des organischen Materials im Sediment
@@ -227,7 +227,7 @@ subroutine modellg()
       !     &          zone(izoni)%sediflux%sedom,zone(izoni)%sediflux%bedgs,zone(izoni)%sediflux%sedvvert
       !            if(string_read_error.ne.0)then
       !               call qerror('Lesefehler Z-Zeile MODELLG.3D.txt')
-      !            end if ! Lesefehler Z-Zeile
+      !            endif ! Lesefehler Z-Zeile
       !            readable=.true.
       !            ! optional Korndurchmesser und burialgeschwindigkeit
       !            read(ctext(2:2000), *, iostat = string_read_error ) dummy,dummy,dummy,dummy,dummy,kornd(izoni)
@@ -236,7 +236,7 @@ subroutine modellg()
       !            if(string_read_error.ne. 0) burial(izoni)=0.0
       !            print*,'Z-Zeile in MODELLG.3D.txt: ,izoni,sedom,bedgs,sedvvert,kornd,burial='  &
       !     &            ,izoni,sedom(izoni),bedgs(izoni),sedvvert(izoni),kornd(izoni),burial(izoni)
-      !         end if ! Z-Zeile
+      !         endif ! Z-Zeile
       !! L - Kenngrössen für Laichperiode Muscheln Dreissena
       !! read(77,2306)laits(mstr),laims(mstr),laids(mstr)
       if ((ctext(1:1) == 'L') .or. (ctext(1:1) == 'l')) then
@@ -245,7 +245,7 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler L-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt:','Laichperiode zonen_nummer(izoni)', zone(izoni)%zonen_nummer, izoni
          print*,'lait, laim, laid',zone(izoni)%laich%lait, zone(izoni)%laich%laim, zone(izoni)%laich%laid
-      end if ! L-Zeile
+      endif ! L-Zeile
       !! D - Dreissena-Bewuchs in den Gewässer-Abschnitten
       !  WRITE(1, '(A)') '<ParamSetDef Id="QD" Text="Dreissena" Help="Dreissena-Bewuchs in den Gewässer-Abschnitten" Scope="Abschnitt">'
       !  WRITE(1, '(A)') '  <Parameter Ident="mboesch0" Text="Biomasse 0.Koh. Böschung" Unit="g/m²" Format="F7.2" Null="-1" Help="Dreissena-Biomasse der 0. Kohorte (Schalenlänge kl. 8 mm) im Abschnitt an der Böschung" Min="" Max="" Default="" />'
@@ -263,7 +263,7 @@ subroutine modellg()
          ,'msohle0,gewicht0,msohle1,gewicht1',zone(izoni)%dreissen%msohle0, zone(izoni)%dreissen%gewicht0   &
          ,zone(izoni)%dreissen%msohle1, zone(izoni)%dreissen%gewicht1
          if ( (zone(izoni)%dreissen%msohle0+zone(izoni)%dreissen%msohle1) > 0.0) zone(izoni)%dreissen%dreissena_aktiv = 1 ! muscheln nur aktiv wenn vorbelegt
-      end if ! D-Zeile
+      endif ! D-Zeile
       !! B Benthische Algen
       !! subroutine ModellGParam(cpfad1,j1)\n
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QB" Text="Benth.Algen" Help="Benth.Algen-Vorkommen in den Gewässer-Abschnitten" Scope="Abschnitt"\n
@@ -275,7 +275,7 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler B-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Benthische Algen in Zone', izoni,' albenthi%ggruen , albenthi%gkiesel = '  &
                ,zone(izoni)%albenthi%ggruen,zone(izoni)%albenthi%gkiesel
-      end if ! B-Zeile
+      endif ! B-Zeile
       !! M  Makrophyten
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QM" Text="Makrophyten" Help="Makrophyten-Wachstum" Scope="Strang">'
       !!  WRITE(1, '(A)') '  <Parameter Ident="StartTag" Text="Start-Tag" Unit="" Format="I2" Null="-1" Help="Tag des Wachstumsbeginns der Makrophyten" Min="1" Max="31" Default="" />'
@@ -292,7 +292,7 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler M-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Makrophyten-Wachstum in Zone', izoni,' maxtag = '  &
                                                                                  ,zone(izoni)%macrophyt%maxtag
-      end if ! M-Zeile
+      endif ! M-Zeile
       !! P Dichte der Makrophyten
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QP" Text="Dichte der Makrophyten" Help="Makrophyten-Dichte" Scope="Abschnitt \n
       !!  WRITE(1, '(A)') '  <Parameter Ident="PflMin" Text="min. Dichte (Winter)" Unit="g/m²" Format="F7.2" Null="-1" Help="Minimale Dichte der Makrophyten im Winter" \n
@@ -303,7 +303,7 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler P-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Dichte der Makrophyten in Zone', izoni,' %macrodicht%pflmin , %macrodicht%pflmax = '  &
                ,zone(izoni)%macrodicht%pflmin,zone(izoni)%macrodicht%pflmax
-      end if ! P-Zeile
+      endif ! P-Zeile
       
       !! E Erosionsparameter
       !!  WRITE(1, '(A)') '<ParamSetDef Id="QE" Text="Erosions-Parameter" Help="Kenngrößen für die Gewässerabschnitte" Scope="Abschnitt">'
@@ -318,26 +318,26 @@ subroutine modellg()
          if (string_read_error /= 0) call qerror('Lesefehler E-Zeile MODELLG.3D.txt')
          print*,'MODELLG.3D.txt: Erosionsparameter in Zone', izoni,' tau_krit, M_eros,  n_eros,  sed_roh = '  &
                ,zone(izoni)%erosi%tau_krit, zone(izoni)%erosi%M_eros, zone(izoni)%erosi%n_eros, zone(izoni)%erosi%sed_roh
-      end if ! e-Zeile
-   end do ! while(zeile(ion))
+      endif ! e-Zeile
+   enddo ! while(zeile(ion))
    close (ion)
    if (izoni /= zonen_anzahl) then
       !zonen_anzahl=izoni
       write(fehler,*)'Zonen-Anzahl',izoni,' ungleich der im Kopf von MODELLG.3D.txt angegeben ',zonen_anzahl
       call qerror(fehler)
-   end if
+   endif
    do i = 1,zonen_anzahl
       do n = i+1,zonen_anzahl
          if ( zone(i)%zonen_nummer == zone(n)%zonen_nummer) then
             write(fehler,*)' 8 Zonennummer von Zone',i ,' = ',zone(i)%zonen_nummer,' ist gleich Zonennummer von Zone',n
             call qerror(fehler)
          endif
-      end do ! alle n Zonen
+      enddo ! alle n Zonen
       if (zone(i)%reib <= 0.0) then
          write(fehler,*)'Reibungsbeiwert',zone(i)%reib,' von Zone',i,' ist falsch '
          call qerror(fehler)
       endif
-   end do ! alle i Zonen
+   enddo ! alle i Zonen
 
    select case (hydro_trieb)
       case(1) ! casu-transinfo
@@ -349,11 +349,11 @@ subroutine modellg()
                   knozoanz = knozoanz+1
                   zonflae = zonflae+knoten_flaeche(n)
                endif ! knoten in zone
-            end do ! alle n Knoten
+            enddo ! alle n Knoten
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
                   ,'heißt: ',trim(zone(i)%zonen_name)  &
                   ,', enthält ',knozoanz,' Knoten und bedeckt eine Fläche von ',zonflae, ' m**2'
-         end do ! alle i Zonen
+         enddo ! alle i Zonen
       
       case(2,3) ! Untrim² + SCHISM
          do i = 1,zonen_anzahl
@@ -363,11 +363,11 @@ subroutine modellg()
                   knozoanz = knozoanz+1
                   point_zone(n) = i
                endif
-            end do ! alle n Elemente
+            enddo ! alle n Elemente
             print*,'MODELLG.3D.txt: Die ',i,'-te Zone hat die Nummer ',zone(i)%zonen_nummer   &
                   ,'heißt: ',trim(zone(i)%zonen_name)  &
                   ,' und enthält ',knozoanz,' Elemente.'
-         end do ! alle i Zonen
+         enddo ! alle i Zonen
       
       case default
          call qerror('modellg Hydraulischer Antrieb unbekannt')
@@ -378,14 +378,14 @@ subroutine modellg()
          do i = 1,zonen_anzahl
             if ( point_zone(n) == i ) then
                vorhanden = .true. ! zone vorhanden + zugeordnet
-            end if !zonen_nummer vorhanden
-         end do ! alle i Zonen
+            endif !zonen_nummer vorhanden
+         enddo ! alle i Zonen
          if (.not. vorhanden) then
             write(fehler,'(a,i0,a,i0,a)'), 'Der von Berechnungs-Punkt #', n,' benötigte Zonen-Zähler #', point_zone(n), &
                                           ' ist nicht in MODELLG.3D.txt beschrieben.'
             call qerror(fehler)
-         end if ! nicht vorhanden
-      end do ! all n simulation-points
+         endif ! nicht vorhanden
+      enddo ! all n simulation-points
       print*,'MODELLG.3D.txt: Zone nummer was correctly transformed to zone counter at all simulation points (point_zone()).'
 
    return

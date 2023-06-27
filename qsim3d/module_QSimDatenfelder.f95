@@ -36,7 +36,7 @@
 !! zurück zu: \ref lnk_huellen
 module QSimDatenfelder
 
-   use allodim, only: ialloc2
+   use module_alloc_dimensions, only: ialloc2
    
    implicit none
    
@@ -688,7 +688,7 @@ module QSimDatenfelder
 contains
    !--------------------------------------------------------------------------------------------
    subroutine ini_QSimDatenfelder()
-      logical kontroll
+      logical control
       ! Steuer-Parameter übergeben
       ! algaeski so benutzen , dass nur der 1. Strang mit nur einem Knoten/Profil berechnet wird
       anze = 1            ! Anzahl der Profile im aktuellen Strang

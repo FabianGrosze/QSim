@@ -32,8 +32,8 @@
 subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
                     algak_s, albewk_s,               &
                     tiefe_s, tflie,                  &
-                    kontroll, jjj)
-   use aparam, only: Qmx_SK
+                    control, jjj)
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -45,7 +45,7 @@ subroutine silicate(si_s, hJSi_s, up_Si_s, akibr_s,  &
    real, intent(in)     :: albewk_s !< Wachstum benthischer Kieselalgen
    real, intent(in)     :: tiefe_s  !< Wassertiefe [m]
    real, intent(in)     :: tflie    !< Zeitschritt [d]
-   logical, intent(in)  :: kontroll !< debugging
+   logical, intent(in)  :: control !< debugging
    integer, intent(in)  :: jjj      !< debugging
    
    ! --- local variables ---

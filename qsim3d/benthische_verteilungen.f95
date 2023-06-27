@@ -38,20 +38,20 @@ subroutine benthic_parallel()
    if (as /= 0) then
       write(fehler,*)' Rueckgabewert von benthic_distribution_p :', as
       call qerror(fehler)
-   end if
+   endif
    
    do i = 1,part ! i
       do j = 1,number_benth_distr ! initialisierung aller konzentrationen zunächt auf 0.0 minus 1
          benthic_distribution_p(j+(i-1)*number_benth_distr) = 0.0 !!!####!-1.0
-      end do
-   end do
+      enddo
+   enddo
    ! if(meinrang.eq.0)then ! prozess 0 only
    !    do i=1,number_benthic_points ! all i verticals
    !       do j=1,number_benth_distr ! initialise
    !          benthic_distribution(j+(i-1)*number_benth_distr)=i*100+j
-   !       end do
-   !    end do
-   !  end if ! only prozessor 0
+   !       enddo
+   !    enddo
+   !  endif ! only prozessor 0
    call scatter_benthic()
    ! call mpi_barrier (mpi_komm_welt, ierr)
    return
@@ -69,7 +69,7 @@ subroutine scatter_benthic()
    if (ierr /= 0) then
       write(fehler,*)' 13 MPI_Scatter(benthic_distribution failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    !call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine scatter_benthic
@@ -86,7 +86,7 @@ subroutine gather_benthic()
    if (ierr /= 0) then
       write(fehler,*)' 13b MPI_Gather(benthic_distribution_p failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    
    !call mpi_barrier (mpi_komm_welt, ierr)
    return
@@ -105,7 +105,7 @@ subroutine ini_benthic0(nk)
       
       do j = 1,number_benth_distr ! initialise
          write(benth_distr_name(j),'(18x)')
-      end do
+      enddo
       
       benth_distr_name( 1) = "              tsed"
       benth_distr_name( 2) = "             sised"
@@ -192,17 +192,17 @@ subroutine ini_benthic0(nk)
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate benthic_distribution :', as
          call qerror(fehler)
-      end if
+      endif
       
       do i = 1,number_benthic_points ! all i verticals
          do j = 1,number_benth_distr ! initialise
             benthic_distribution(j+(i-1)*number_benth_distr) = 0.0
-         end do
-      end do
+         enddo
+      enddo
       
       do j = 1,number_benth_distr ! default no output
          output_benth_distr(j) = .false.
-      end do
+      enddo
       
       ! vorbelegen
       !do i=1,number_benthic_points !
@@ -210,9 +210,9 @@ subroutine ini_benthic0(nk)
       !benthic_distribution(2,k)=  7.0 !! Siliziumgehalt im Sediment
       !benthic_distribution(5+(i-1)*number_benth_distr)= 70.0 !! Strickler Reibungsbeiwert Kst_rau (Mannings n, here: Kst=1/n)
       !benthic_distribution(11+(i-1)*number_benth_distr)= tief(i) !! water depth
-      !end do
+      !enddo
       !print*, '### ACHTUNG ### Strickler Reibungsbeiwert Kst_rau wird noch nicht eingelesen sondern hilfsweise 70 gesetzt ????'
       
-   end if ! only prozessor 0
+   endif ! only prozessor 0
 end subroutine ini_benthic0
 !----+-----+----

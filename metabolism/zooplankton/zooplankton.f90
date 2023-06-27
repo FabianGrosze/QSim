@@ -35,10 +35,10 @@ subroutine zooplankton(zooind_s, aki_s, agr_s, abl_s, vo2_s,   &
                        abszo_s, dzres2_s, zexki_s, zexgr_s,    &
                        zexbl_s, algzok_s, algzog_s, algzob_s,  &
                        rmuas_s, rakr_s, rbar_s, hnfza_s,       &
-                       kontroll, jjj)
+                       control, jjj)
 
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -67,7 +67,7 @@ subroutine zooplankton(zooind_s, aki_s, agr_s, abl_s, vo2_s,   &
    real,    intent(out)   :: rakr_s   !<
    real,    intent(out)   :: rbar_s   !<
    real,    intent(out)   :: hnfza_s  !<
-   logical, intent(in)    :: kontroll !< debugging
+   logical, intent(in)    :: control !< debugging
    integer, intent(in)    :: jjj      !< debugging
 
    ! --- local variables ---

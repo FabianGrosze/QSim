@@ -47,12 +47,12 @@ subroutine macrophytes_wrapper_3d(i)
    
    ! iglob = i + meinrang * part
    ! nk = (i-1)*number_plankt_vari
-   ! kontroll = iglob == kontrollknoten
+   ! control = iglob == kontrollknoten
    ! 
    ! ! convert timestep from seconds (QSim3D) into days (QSim)
    ! tflie = real(deltat)/86400.
    ! 
-   ! if (kontroll) then   
+   ! if (control) then   
    !    print*,"before macrophytes"
    !    print*, "   pfl    = ", benthic_distribution_p(3+(i-1)*number_benth_distr)
    !    print*, "   pflmax = ", zone(point_zone(iglob))%macrodicht%pflmax
@@ -80,9 +80,9 @@ subroutine macrophytes_wrapper_3d(i)
    !          tflie,                                              & ! tflie
    !          transfer_quantity_p(30+(i-1)*number_trans_quant),   & ! po2p
    !          transfer_quantity_p(31+(i-1)*number_trans_quant),   & ! po2r
-   !          kontroll, iglob)
+   !          control, iglob)
    ! 
-   ! if (kontroll) then   
+   ! if (control) then   
    !    print*,"after macrophytes"
    !    print*, "   pfl    = ", benthic_distribution_p(3+(i-1)*number_benth_distr)
    !    print*, "   pflmax = ", zone(point_zone(iglob))%macrodicht%pflmax

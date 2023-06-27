@@ -24,7 +24,7 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-module aparam
+module module_aparam
    implicit none
    
    !> global parameter from APARAM.txt
@@ -108,7 +108,7 @@ module aparam
    real, parameter    :: pi = 4.0 * atan(1.0) !< circular number
    
    
-   public :: aparam_lesen, AParamParam
+   public :: read_aparam, write_aparamparam
    
 contains
    
@@ -116,10 +116,10 @@ contains
 !!
 !! Beschreibung siehe: \ref lnk_globale_parameter
 !! Quelle: module_aparam.f90
-subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
+subroutine read_aparam(cpfad, iwsim, icoli, ischwer)
    
    character(255), intent(in) :: cpfad
-   integer, intent(in)        :: iwsim, icoli, ieros, ischwer
+   integer, intent(in)        :: iwsim, icoli, ischwer
    
    
    integer                    :: io_error, io_error_sum
@@ -295,7 +295,7 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
          read(55,*,iostat = io_error) c1Hg,e1Hg,c2Hg,e2Hg,c3Hg              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) e3Hg,c4Hg,e4Hg,c5Hg,e5Hg              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) VTKoeffDe_Hg,c1U,e1U,c2U,e2U          ; if (io_error /= 0) io_error_sum = io_error_sum + 1
-         !line 41
+         ! line 41
          read(55,*,iostat = io_error) c3U,e3U,c4U,e4U,c5U                   ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) e5U,VTKoeffDe_U,c1Zn,e1Zn,c2Zn        ; if (io_error /= 0) io_error_sum = io_error_sum + 1
          read(55,*,iostat = io_error) e2Zn,c3Zn,e3Zn,c4Zn,e4Zn              ; if (io_error /= 0) io_error_sum = io_error_sum + 1
@@ -340,14 +340,14 @@ subroutine aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
    endif
    
    return
-end subroutine aparam_lesen
+end subroutine read_aparam
 
 
 
 !> Write file `AParamParam.xml`
 !!
 !! aus Datei module_aparam.f95 ; zurück zu \ref lnk_modellerstellung
-subroutine AParamParam(cpfad1)
+subroutine write_aparamparam(cpfad1)
    character(255) :: cpfad1
    
    character(275) :: pfadstring
@@ -598,6 +598,6 @@ subroutine AParamParam(cpfad1)
    close(200)
    return
    
-end subroutine AParamParam
+end subroutine write_aparamparam
 
-end module aparam
+end module module_aparam

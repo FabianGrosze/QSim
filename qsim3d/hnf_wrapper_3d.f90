@@ -41,7 +41,7 @@ subroutine hnf_wrapper_3d(i)
    ! convert timestep from seconds (QSim3D) into days (QSim)
    ! tflie = real(deltat)/86400. 
    ! 
-   ! if (kontroll) then
+   ! if (control) then
    !    print*, "before hnf:"
    !    print*, "   CHNF = ", planktonic_variable_p(48+(i-1)*number_plankt_vari)
    !    print*, ""
@@ -64,9 +64,9 @@ subroutine hnf_wrapper_3d(i)
    !    hnfmua(1),                                          ! hnfmua (from module qsimdatenfelder)
    !    transfer_quantity_p(44+(i-1)*number_trans_quant),   ! ro2hnf
    !    transfer_quantity_p(10+(i-1)*number_trans_quant),   ! bsbhnf
-   !    kontroll, iglob)         
+   !    control, iglob)         
    !               
-   ! if (kontroll) then
+   ! if (control) then
    !    print*, "after hnf:"
    !    print*, "   CHNF = ", planktonic_variable_p(48+(i-1)*number_plankt_vari)
    !    print*, "   HNFmua = ", HNFmua(1)

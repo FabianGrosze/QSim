@@ -32,7 +32,7 @@
 !! Quelle: organic_carbon_wrapper_3d.f95
 subroutine organic_carbon_wrapper_3d(i)
    use modell
-   use aparam
+   use module_aparam
    use QSimDatenfelder
    use module_metabolism, only: organic_carbon
 
@@ -47,7 +47,7 @@ subroutine organic_carbon_wrapper_3d(i)
    ! überstehende Nummern nicht bearbeiten
    if (iglob > knotenanzahl2D) return 
    
-   kontroll = (iglob == kontrollknoten)
+   control = (iglob == kontrollknoten)
    
    ! Strickler Reibungsbeiwert
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
@@ -61,7 +61,7 @@ subroutine organic_carbon_wrapper_3d(i)
    if (CHNFs <= 0.0) CHNFs = 0.0 ! CHNF=-1 meint keine HNF
    
    
-   if (kontroll) then
+   if (control) then
       print*, 'before organic_carbon'
       print*, '   CHNFs = ', CHNFs
       print*, '   CD1   = ', planktonic_variable_p(37+(i-1)*number_plankt_vari)
@@ -139,10 +139,10 @@ subroutine organic_carbon_wrapper_3d(i)
             transfer_quantity_p(19+(i-1)*number_trans_quant)   , & ! dorgSS
             planktonic_variable_p(46+(i-1)*number_plankt_vari) , & ! vBSB
             planktonic_variable_p(47+(i-1)*number_plankt_vari) , & ! vCSB
-            kontroll                                           , & ! kontroll
+            control                                           , & ! control
             iglob)
    
-   if (kontroll) then
+   if (control) then
       print*, 'after organic_carbon'
       print*, '   CHNFs = ', CHNFs
       print*, '   CD1   = ', planktonic_variable_p(37+(i-1)*number_plankt_vari)
@@ -168,7 +168,7 @@ subroutine organic_carbon_wrapper_3d(i)
          print*,'trans_quant_name:', trans_quant_name(k)
          call qerror("organic_carbon_wrapper_3d(): isnan(transfer_quantity_p)")
       endif
-   end do
+   enddo
     
    return
 

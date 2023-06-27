@@ -63,8 +63,8 @@ module modell
    integer strlaeng
    !> \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer)
    integer  :: kontrollknoten
-   !> \anchor kontroll Schalter ob Kontrollausgabe aus Stoffumsatzroutinen heraus erfolgen soll
-   logical  :: kontroll
+   !> \anchor control Schalter ob Kontrollausgabe aus Stoffumsatzroutinen heraus erfolgen soll
+   logical  :: control
    !> \anchor iglob globale Knotennummer, Übergabe an Stoffumsatzroutinen aus parallel laufenden Hüll-routinen
    integer  :: iglob
    !! Simulations-otionen ! Berechnungs- und Ausgabeflags
@@ -635,7 +635,7 @@ contains
       else! no controll node
          kontrollknoten = -1
          print*,'no control node, no extra output ', kontrollknoten
-      end if ! kontrollknoten
+      endif ! kontrollknoten
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
       call system(systemaufruf,sysa)
@@ -645,7 +645,7 @@ contains
          call qerror('Das Verzeichnis, welches das Modell enthalten sollte, existiert nicht.')
       else
          print*,'QSim3D Modell: > ', trim(modellverzeichnis)!!wird nacher in eingabe ausgegeben...
-      end if ! io_error.ne.0
+      endif ! io_error.ne.0
       strlaeng = len(trim(modellverzeichnis))
       !print*,'modellverzeichnis >', trim(modellverzeichnis), '<  len=',strlaeng
       !call getarg(2,aufrufargument)
@@ -676,7 +676,7 @@ contains
          antriebsart = 1
          print*,'antriebsart casu (transinfo)'
          return
-      end if ! io_error.ne.0
+      endif ! io_error.ne.0
       !! falls Antribsdatei transport.nc vorhanden, Untrim²-Resultate im NetCDF-Format verwenden
       write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
@@ -687,7 +687,7 @@ contains
          antriebsart = 2
          print*,'antriebsart untrim netDCF'
          return
-      end if ! io_error.ne.0
+      endif ! io_error.ne.0
       !!
       write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
@@ -698,7 +698,7 @@ contains
          antriebsart = 3
          print*,'antriebsart SCHISM netDCF'
          return
-      end if ! io_error.ne.0
+      endif ! io_error.ne.0
    end function antriebsart
    !!----+-----+----
    !> die Subroutine modella() ist Teil des module ::modell\n
@@ -727,7 +727,7 @@ contains
          call qerror(fehler)
       else
          print*,'MODELLA.txt: Breitengrad, Längengrad = ',  modell_geob, modell_geol
-      end if
+      endif
       !
       close (ion)
    end subroutine modella
@@ -744,9 +744,9 @@ contains
             !!print*,'io_error SUBROUTINE zeile'
             zeile = .FALSE.
             return
-         end if ! io_error.ne.0
+         endif ! io_error.ne.0
          if (ctext(1:1) /= '#') exit
-      end do ! alle Zeilen
+      enddo ! alle Zeilen
       zeile = .TRUE.
       return
    end function zeile
@@ -761,7 +761,7 @@ contains
       do i = 1,len(trim(ctext))
          !print*,i,">",ctext(i:i)
          if (ctext(i:i) /= " ")leerzeile = .false.
-      end do ! alle zeichen in ctext
+      enddo ! alle zeichen in ctext
       return
    end function leerzeile
    !----+-----+----
@@ -775,8 +775,8 @@ contains
          if ( .not. leerzeile()) then
             naechste_zeile = .true.
             return
-         end if ! keine Leerzeile
-      end do ! nächste nicht Kommentar Zeile gefunden
+         endif ! keine Leerzeile
+      enddo ! nächste nicht Kommentar Zeile gefunden
       naechste_zeile = .false.
       return
    end function naechste_zeile
@@ -793,7 +793,7 @@ contains
       if (vorher) then ! vor dem Zeitschritt
          startzeitpunkt = rechenzeit-(deltat/2)
          endzeitpunkt = startzeitpunkt+deltat
-      end if
+      endif
    end subroutine zeitschritt_halb
    !----+-----+----
    !> Dient der initialisierung der Zeitsteuerung.
@@ -808,7 +808,7 @@ contains
          uhrzeit_stunde = 12.0
          izeit = 0
          zeitschrittanzahl = 1
-      end if ! only prozessor 0
+      endif ! only prozessor 0
    end subroutine ini_zeit
    !----+-----+----
    !> Dient der Berechnung von zeitpunkt in ganzen sekunden aus \n
@@ -833,13 +833,13 @@ contains
          write(fehler,*)'zeitpunkt in sec. nicht als integer angebbar, weil Referenzjahr zu klein'  &
          ,maxjahre,jahre,jahr,referenzjahr
          call qerror(fehler)
-      end if
+      endif
       jahrestage = int(jahre/4)*1461 ! Schaltjahperioden als ganzes abziehen
       jahre = jahre - (int(jahre/4)*4)
       if (jahre > 0) then ! Referenzjahr immer Schaltjahr !!!
          jahrestage = jahrestage+366
          jahre = jahre-1
-      end if
+      endif
       jahrestage = jahrestage+jahre*365 ! 0 ... 2 verbleibende jahre in Schaltjahperiode nach Schaltjahr
       select case (monat)
          case (1) !Januar
@@ -919,7 +919,7 @@ contains
          write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
               ,zeitpunkt,tage,referenzjahr
          call qerror(fehler)
-      end if
+      endif
       uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
       stunde = (zeitpunkt-(tage*86400))/3600
       minute = (zeitpunkt-(tage*86400)-(stunde*3600))/60
@@ -933,14 +933,14 @@ contains
          do while (tage >= 365) ! weitere Jahre
             jahr = jahr+1
             tage = tage-365
-         end do !while
-      end if
+         enddo !while
+      endif
       jahr = jahr+referenzjahr
       schaltjahr = .false.
       if ( mod(jahr,4) == 0 ) then
          schaltjahr = .true.
          !print*,'zeitsekunde: schaltjahr'
-      end if
+      endif
       !print*,'zeitsekunde: tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)',  &
       !          tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)
       tag = tage+1 ! erster tag nach 0 tagen im Jahr
@@ -951,74 +951,74 @@ contains
       if (tag > monatstage) then ! im Februar (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 28
       if (schaltjahr)monatstage = 29
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im März (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im april (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 30
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im mai (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im juni (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 30
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im juli (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im august (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im september (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 30
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im oktober (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im november (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 30
       if (tag <= monatstage) goto 111
       if (tag > monatstage) then ! im dezember (oder später im Jahr)
          monat = monat+1
          tag = tag-monatstage
-      end if
+      endif
       monatstage = 31
       if (tag > monatstage) then ! Jahr rum
          write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
                zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
          call qerror(fehler)
-      end if
+      endif
       111    continue
       zeitpunkt = zeitpunkt-time_offset
    end subroutine zeitsekunde
@@ -1049,7 +1049,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*, 'In Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
-      end if
+      endif
       
       ! MODELLA.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
@@ -1058,7 +1058,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
-      end if
+      endif
       
       ! WETTER.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
@@ -1067,7 +1067,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*, 'In Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
-      end if
+      endif
       
       ! MODELLG.3D.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
@@ -1076,7 +1076,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
-      end if
+      endif
       
       ! APARAM.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
@@ -1085,7 +1085,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
-      end if
+      endif
       
       ! e_extnct.dat
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
@@ -1094,7 +1094,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei e_extnct.dat'
-      end if
+      endif
       
       
       select case (hydro_trieb)
@@ -1105,7 +1105,7 @@ contains
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'In Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
-            end if
+            endif
             
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
@@ -1115,7 +1115,7 @@ contains
                print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/points'
                !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
                !else
-            end if
+            endif
 
             write(systemaufruf,'(3A)',iostat = errcode) &
                'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
@@ -1124,7 +1124,7 @@ contains
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
-            end if
+            endif
             
          case(2) ! Untrim² netCDF
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
@@ -1133,7 +1133,7 @@ contains
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'In Ihrem Modellverzeichnis fehlt die Datei transport.nc'
-            end if
+            endif
             
             write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
@@ -1141,7 +1141,7 @@ contains
             if (sysa /= 0) then
                modell_vollstaendig = .false.
                print*,'In Ihrem Modellverzeichnis fehlt die Datei ELEMENTE.txt'
-            end if
+            endif
          
          case(3) ! SCHISM netCDF
             print*,'not yet checking completeness of SCHISM model'
@@ -1156,7 +1156,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
-      end if
+      endif
       
       ! ausgabezeitpunkte.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
@@ -1165,7 +1165,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
-      end if
+      endif
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis), &
                                                  'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
@@ -1173,7 +1173,7 @@ contains
       if (sysa /= 0) then
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
-      end if
+      endif
       
       ! email.txt
       send_email = .False.
@@ -1188,10 +1188,10 @@ contains
                write(email,'(A)')trim(adjustl(ctext))
                print*,'Über das Programmende werden Sie unter der Emailadresse ',trim(email),' benachrichtigt.'
                send_email = .True.
-            end if ! keine Kommentarzeile
-         end do ! alle Zeilen
+            endif ! keine Kommentarzeile
+         enddo ! alle Zeilen
          if (.not. send_email)print*,'No data found in email.txt'
-      end if ! Datei lässt sich öffnen
+      endif ! Datei lässt sich öffnen
       
       ! alter.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
@@ -1203,7 +1203,7 @@ contains
       else
          print*,'##### Datei alter.txt vorhanden, nur Aufenthaltszeit-Simulation, ggf incl. Temp. #####'
          nur_alter = .true.
-      end if
+      endif
       
       ! qusave
       print*,'script qusave:'
@@ -1213,7 +1213,7 @@ contains
       if (sysa /= 0) then
          print*, 'script qusave, called by QSim not available'
          print*, 'Input data will not be archived.'
-      end if
+      endif
       
       ! quzip
       print*,'script quzip:'
@@ -1223,7 +1223,7 @@ contains
       if (sysa /= 0) then
          print*, 'script quzip, called by QSim not available'
          print*, 'Input data will not be archived.'
-      end if
+      endif
       
    end function modell_vollstaendig
    !----+-----+----
@@ -1273,7 +1273,7 @@ contains
          if (strickler > 0.0) then
             strickler = (8*grav)/strickler
             strickler = (strickler**0.5)
-         end if
+         endif
       else ! trocken
          strickler = 1.0
       endif

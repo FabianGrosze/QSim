@@ -2,7 +2,7 @@ subroutine water_temperature_inflow_1d(tempw, etemp, ewaerm, etempl, mstr,   &
                                  ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa, &
                                  jiein, flae, anze, flag, tflie)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    ! --- dummy arguments ---
    real,    intent(inout), dimension(ialloc2) :: tempw
@@ -25,9 +25,6 @@ subroutine water_temperature_inflow_1d(tempw, etemp, ewaerm, etempl, mstr,   &
    ! --- local variables ---
    integer :: ieinl, ior, iein, j, ji, ior_flag, m, ihcq
    real    :: hctemp1, hctemp, hcq, hcwe, hcqe, hcte
-   
-   
-   external :: dichte
    
    hctemp1 = 0.0
    

@@ -33,9 +33,9 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
                        ,abls,zexbls,dblmors,drfaebs,akis,agrs,ssdrs,drfaeks     &
                        ,drfaegs,drfaess,fssgrs,sedsss,sedSS_MQs                 &
                        ,tauscs,ischifs,ieros                                    &
-                       ,kontroll,jjj)
+                       ,control,jjj)
    
-   use aparam
+   use module_aparam
    implicit none
    real   , intent(inout) :: sss      !< organische und anorganischer Schwebstoffe (ohne Algen und Zooplankton)
    real   , intent(out)   :: ssalgs   !< Gesamtschwebstoffe
@@ -47,7 +47,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    real   , intent(inout) :: ssdrs, fssgrs
    real   , intent(in)    :: tflie, TIEFEs, RAUs, VMITTs, tauscs
    real   , intent(in)    :: zexkis, zexgrs, zexbls, abszos
-   logical, intent(in)    :: kontroll !< debugging
+   logical, intent(in)    :: control !< debugging
    integer, intent(in)    :: jjj      !< debugging
    
    ! local variables
@@ -59,7 +59,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    external :: print_clipping, schiff, sedimentation
    
    
-   if (kontroll) then
+   if (control) then
       print*,'schweb_kern tiefe,rau,vmitt,tausc = ',tiefes,raus,vmitts,tauscs
       write(*, '(*(g0,1x))') 'Before schweb_kern: SS =', SSs
    endif
@@ -81,7 +81,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    ised = 3
    jsed = 1
    ZellV = 0.0
-   call sedimentation(tiefes,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+   call sedimentation(tiefes,ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj)
    ceq = sssed*qsgr
    sedsss = max(0.0,(sssed-ceq)) * oc
    sedSS_MQs = sedsss
@@ -103,7 +103,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
        + drfaeks + drfaegs + drfaebs  &
        + drfaess
    
-   if (kontroll) then
+   if (control) then
       write(*, '(*(g0,1x))') 'sedss   =', sedsss
       write(*, '(*(g0,1x))') 'exzo    =', exzo
       write(*, '(*(g0,1x))') 'dkimors =', dkimors
@@ -156,7 +156,7 @@ subroutine schweb_kern(zooinds,dorgSSs,sss,ssalgs,tiefes                        
    else
       sss = sst
    endif
-   if (kontroll) write(*, '(*(g0,1x))') 'After schweb_kern: SS =', SSs
+   if (control) write(*, '(*(g0,1x))') 'After schweb_kern: SS =', SSs
    
    ssalgs = sss                  &
           + agrs + akis + abls   &

@@ -42,8 +42,8 @@ subroutine ganglinien_parallel()
          print*,'ganglinien_parallel: Knoten #', knot_gangl(i),' macht Prozess #',meinrang," part = ",part
       else
          knot_gangl(i) = 0
-      end if
-   end do
+      endif
+   enddo
    call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (r_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
    allocate (t_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
@@ -71,7 +71,7 @@ subroutine ganglinien_parallel()
       !     &            ," (Wasserspiegellänge, Querschnittsfläche, Volumenstrom, Fluss der potentiellen und kinetischen Energie)."  &
       !     &            ," Ausserdem werden die Massenflüsse für die ",n_pl  &
       !     &            ," Variablen bestimmt, die in ausgabekonzentrationen.txt gewählt wurden."
-   end if ! alloc_status .ne.0
+   endif ! alloc_status .ne.0
    ! benthic distributions are not gathered. therefore process 0 can do no time-series output
    call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_bn,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -96,7 +96,7 @@ subroutine ganglinien_lesen()
    if (meinrang > 0) then !! has to be on process 0
       write(fehler,*)' 7 ganglinien_oeffnen auf process #',meinrang,' ... darf nicht sein'
       call qerror(fehler)
-   end if
+   endif
    anz_gangl = 0
    nn = 0
    ionumber = 777
@@ -105,7 +105,7 @@ subroutine ganglinien_lesen()
    if (open_error /= 0) then
       print*,'keine ganglinien_knoten.txt'
       return
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    do while ( zeile(ionumber)) !! zunächst Anzahl der Ganglinien feststellen
       if (ctext(1:1) /= '#') then !! keine Kommentarzeile
          anz_gangl = anz_gangl+1
@@ -113,10 +113,10 @@ subroutine ganglinien_lesen()
          if (io_error /= 0) then
             write(fehler,*)'knumm nicht richtig aus ganglinien_knoten.txt gelesen'
             call qerror(fehler)
-         end if ! io_error.ne.0
+         endif ! io_error.ne.0
          print*,'ganglinien_knoten.txt  ',anz_gangl,' :', trim(ctext), ' #',knumm
-      end if !! keine Kommentarzeile
-   end do ! zeile
+      endif !! keine Kommentarzeile
+   enddo ! zeile
    rewind (ionumber) ! ganglinien_knoten.txt zurückspulen
    allocate (knot_gangl(anz_gangl), stat = alloc_status )
    !allocate (c3Ammonium(anz_gangl), stat = alloc_status )
@@ -124,22 +124,22 @@ subroutine ganglinien_lesen()
    if (alloc_status /= 0) then
       write(fehler,*)'allocate knot_gangl(anz_gangl) fehlgeschlagen alloc_status = ', alloc_status
       call qerror(fehler)
-   end if !
+   endif !
    do while ( zeile(ionumber)) !! alle Zeilen
       if (ctext(1:1) /= '#') then !! keine Kommentarzeile
          nn = nn+1
          if (nn > anz_gangl) then
             write(fehler,*)'Fehler bei ganglinien_knoten.txt nochmal lesen ',nn,anz_gangl
             call qerror(fehler)
-         end if
+         endif
          read(ctext,*,iostat = io_error)knot_gangl(nn)
-      end if !! keine Kommentarzeile
-   end do ! alle zeilen
+      endif !! keine Kommentarzeile
+   enddo ! alle zeilen
    close (ionumber) ! ganglinien_knoten.txt wieder geschlossen
    print*,' ganglinien_lesen fertig | anz_gangl = ',anz_gangl
    !do i=1,anz_gangl
    !   print*,'knot_gangl(',i,')=', knot_gangl(i)
-   !end do
+   !enddo
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          call randlinie_zusammenstellen()
@@ -147,8 +147,8 @@ subroutine ganglinien_lesen()
             if ((knot_gangl(i) <= 0) .or. (knot_gangl(i) > knotenanzahl2D)) then
                write(fehler,*)i,'ganglinien_knoten.txt nummer ',knot_gangl(i),' nicht zwischen 1 und ',knotenanzahl2D
                call qerror(fehler)
-            end if ! Knotennummer ungültig in diesem Modell
-         end do
+            endif ! Knotennummer ungültig in diesem Modell
+         enddo
       case(2) ! Untrim² netCDF
          print*,'Konzentrationsvariablen bei Untrim-Netzen sind Element-Mitten,'
          print*,'daher müssen in ganglinien_knoten.txt Elementnummern eingetragen werden'
@@ -160,7 +160,7 @@ subroutine ganglinien_lesen()
             else
                print*,'ganglinien nr. ',i,' am Element ',knot_gangl(i),' Ort: ',element_x(knot_gangl(i)), element_y(knot_gangl(i))
             endif
-         end do
+         enddo
          !print*,'### randlinie_zusammenstellen und querschnitt_lesen für Untrim netCDF noch nicht implementiert ###'
       case(3) ! SCHISM
          print*,'no cross sections possible with SCHISM'
@@ -215,7 +215,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                   pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari)
                endif
             endif ! planktic output conc.
-         end do ! alle k planktonic_variable
+         enddo ! alle k planktonic_variable
          do k = 1,number_plankt_vari_vert
             if (output_plankt_vert(k)) then ! planktic_vert output conc.
                n = n+1
@@ -227,7 +227,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                pl_gang(i,izeit_gang,n) = &
                   plankt_vari_vert_p(gangl_level+(k-1)*num_lev+(nk-1)*number_plankt_vari_vert*num_lev)
             endif ! planktic output conc.
-         end do ! alle k planktonic_variable
+         enddo ! alle k planktonic_variable
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
          n = 0
          do k = 1,number_benth_distr
@@ -236,7 +236,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                if (n > n_bn) call qerror('ganglinien_zeitschritt n > n_bn')
                bn_gang(i,izeit_gang,n) = benthic_distribution_p(k+(nk-1)*number_benth_distr)
             endif
-         end do
+         enddo
          !transfer_quantities are not gathered. therefore process 0 can do no time-series output
          n = 0
          do k = 1,number_trans_val
@@ -245,14 +245,14 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                if (n > n_ue) call qerror('1 ganglinien_zeitschritt (n > n_ue) ')
                ue_gang(i,izeit_gang,n) = transfer_value_p(k)
             endif ! exchange output conc.
-         end do
+         enddo
          do k = 1,number_trans_quant
             if (output_trans_quant(k)) then ! exchange con. output
                n = n+1
                if (n > n_ue) call qerror('2 ganglinien_zeitschritt (n > n_ue) ')
                ue_gang(i,izeit_gang,n) = transfer_quantity_p(k+(nk-1)*number_trans_quant)
             endif ! exchange output conc.
-         end do
+         enddo
          do k = 1,number_trans_quant_vert
             if (output_trans_quant_vert(k)) then ! exchange con. output
                n = n+1
@@ -260,12 +260,12 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                ue_gang(i,izeit_gang,n) = &
                   trans_quant_vert_p(gangl_level+(k-1)*num_lev_trans+(nk-1)*num_lev_trans*number_trans_quant_vert)
             endif ! exchange output conc.
-         end do
+         enddo
          ! Integrations
          ! IntAmmonium(i)=IntAmmonium(i)+ (planktonic_variable(3,knot_gangl(i))+c3Ammonium(i))/2.0
          ! c3Ammonium(i)=planktonic_variable(3,knot_gangl(i))
-      end if ! knoten auf diesem Prozess
-   end do ! alle i Ausgabe-Knoten
+      endif ! knoten auf diesem Prozess
+   enddo ! alle i Ausgabe-Knoten
    if (meinrang == 0) then
       if (hydro_trieb == 1) then ! hydro_trieb=1=casu
          if ( nur_alter ) call alter_zeitschritt(izeit+1)
@@ -276,8 +276,8 @@ subroutine ganglinien_zeitschritt(izeit_gang)
          !print*,'ganglinien_zeitschritt: rand_flux durchgelaufen'
          !call querschnitt_flux(izeit+1)
          !print*,'ganglinien_zeitschritt: querschnitt_flux durchgelaufen'
-      end if ! hydro_trieb=1=casu
-   end if ! meinrang.eq. 0
+      endif ! hydro_trieb=1=casu
+   endif ! meinrang.eq. 0
    call mpi_barrier (mpi_komm_welt, ierr)
 end subroutine ganglinien_zeitschritt
 !!
@@ -307,7 +307,7 @@ subroutine ganglinien_schliessen()
       if (sys_error /= 0) then
          write(fehler,*)'rm -rf ganglinien_bisher  failed sys_error = ', sys_error
          call qerror(fehler)
-      end if !
+      endif !
       write(systemaufruf,'(5A)',iostat = errcode)'mv -f ',trim(modellverzeichnis),'ganglinien '  &
                                          ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
@@ -316,17 +316,17 @@ subroutine ganglinien_schliessen()
          print*,'mv -f ganglinien ganglinien_bisher  meldet: sys_error = ', sys_error
          !write(fehler,*)'mv -f ganglinien ganglinien_bisher  meldet: sys_error=', sys_error
          !call qerror(fehler)
-      end if !
+      endif !
       write(systemaufruf,'(3A)',iostat = errcode)'mkdir ',trim(modellverzeichnis),'ganglinien'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mkdir ganglinien failed')
       call system(systemaufruf,sys_error)
       if (sys_error /= 0) then
          write(fehler,*)'mkdir ganglinien  fehlgeschlagen sys_error = ', sys_error
          call qerror(fehler)
-      end if !
+      endif !
       do i = 1,40000
          beschriftung(i:i) = ' '
-      end do
+      enddo
       
       select case (time_style)
          case(0) !  Gerris
@@ -356,16 +356,16 @@ subroutine ganglinien_schliessen()
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(planktonic_variable_name(i))//spalte//"|"
             !print*,"output_plankt:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       do i = 1,number_plankt_vari_vert
          if (output_plankt_vert(i)) then ! planktic_vert output conc.
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(plankt_vari_vert_name(i))//spalte//"|"
             !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       !! benthic distributions are not gathered. therefore process 0 can do no time-series output
       do i = 1,number_benth_distr
          if (output_benth_distr(i)) then ! benth. distr. output
@@ -373,8 +373,8 @@ subroutine ganglinien_schliessen()
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(benth_distr_name(i))//spalte//"|"
             !print*,"output_benth_distr:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       !transfer_quantities
       do i = 1,number_trans_val
          if (output_trans_val(i)) then ! globale Übergabe Werte
@@ -382,24 +382,24 @@ subroutine ganglinien_schliessen()
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(trans_val_name(i))//spalte//"|"
             !print*,"output_trans_val:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       do i = 1,number_trans_quant
          if (output_trans_quant(i)) then ! exchange con. output
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(trans_quant_name(i))//spalte//"|"
             !print*,"output_trans_quant:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       do i = 1,number_trans_quant_vert
          if (output_trans_quant_vert(i)) then ! exchange con. output
             ngnu = ngnu+1
             write(spalte,'(I3.3)')ngnu
             beschriftung = trim(beschriftung)//adjustr(trans_quant_vert_name(i))//spalte//"|"
             !print*,"output_trans_quant_vert:",i,ngnu,trim(beschriftung)
-         end if
-      end do
+         endif
+      enddo
       print*,'Ganglinenausgabe der tiefenverteilten Variablen nur in der Schicht gangl_level = ',gangl_level
       ! if(nur_alter) call alter_ausgabe() !! Alters-Ausgabe
       ! Rand-Flüsse ausgeben
@@ -419,13 +419,13 @@ subroutine ganglinien_schliessen()
                   jahr  ,monat ,  tag  ,   stunde , minute , sekunde
             do i = 1, 6
                write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), randflux_gang(n,j,i)   ! r_gang(i,j)
-            end do ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
+            enddo ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
             write(12345+n,'(A)')trim(adjustl(r_zeile))
-         end do ! alle j Zeitschritte
+         enddo ! alle j Zeitschritte
          rewind(12345+n)
          close(12345+n) !
          print*,'Ausgabe Rand-Fluss ', trim(dateiname), ' meinrang = ',meinrang," n_pl = ",n_pl
-      end do ! alle Ränder
+      enddo ! alle Ränder
       123  continue
       ! --- output cross section fluxes ---
       if (querschneiden) then
@@ -438,8 +438,8 @@ subroutine ganglinien_schliessen()
             do i = 1,number_plankt_vari
                if (output_plankt(i)) then ! planktic output conc.
                   r_zeile = trim(r_zeile)//planktonic_variable_name(i)//" | "
-               end if
-            end do
+               endif
+            enddo
             write(9876+n,*)trim(adjustl(r_zeile))! write header
             do j = 1,zeitschrittanzahl
                zeitpunkt = q_gangl(j)
@@ -448,15 +448,15 @@ subroutine ganglinien_schliessen()
                   jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
                do i = 1,n_pl+2
                   write(r_zeile,'(A,6X,E16.10)')trim(r_zeile),schnittflux_gang(n,j,i)
-               end do ! all i fluxes
+               enddo ! all i fluxes
                write(9876+n,'(A)')trim(r_zeile)
-            end do ! all j timesteps
+            enddo ! all j timesteps
             rewind(9876+n) !
             close(9876+n) !
             print*,'Ausgabe Querschnitts-Fluss ', trim(dateiname), ' meinrang = ',meinrang," n_pl = ",n_pl
-         end do ! alle n cross sections
+         enddo ! alle n cross sections
       endif ! querschneiden
-   end if ! only prozessor 0
+   endif ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierr)
    ! lueftung! beschriftung=trim(beschriftung)//"|        delo2_last|"
@@ -469,13 +469,13 @@ subroutine ganglinien_schliessen()
          if (open_error /= 0) then
             print*,'Ganglinien-Ausgabedatei #',i," fuer Knoten ",knot_gangl(i),' geht nicht'
             return
-         end if ! open_error.ne.0
+         endif ! open_error.ne.0
          write(ionumber+i,'(A)')trim(beschriftung) ! Kopfzeile schreiben
          nk = knot_gangl(i)-meinrang*part
          write(ionumber+i,*)"# Gelaendehoehe = ", &
                                                rb_hydraul_p(3+(nk-1)*number_rb_hydraul)-rb_hydraul_p(2+(nk-1)*number_rb_hydraul) ! Geländehöhe rückrechnen
-      end if ! knoten auf diesem Prozess
-   end do ! alle Ausgabe-Knoten
+      endif ! knoten auf diesem Prozess
+   enddo ! alle Ausgabe-Knoten
    do i = 1,anz_gangl
       if (knot_gangl(i) > 0) then !Knoten auf diesem Prozess
          do j = 1,zeitschrittanzahl+1
@@ -499,24 +499,24 @@ subroutine ganglinien_schliessen()
             write(beschriftung,'(A, 2("       ",F7.2))')trim(beschriftung), t_gang(i,j), u_gang(i,j)
             do k = 1,n_pl
                write(beschriftung,2578)trim(beschriftung),pl_gang(i,j,k)
-            end do
+            enddo
             do k = 1,n_bn
                write(beschriftung,2578)trim(beschriftung),bn_gang(i,j,k)
-            end do
+            enddo
             do k = 1,n_ue
                write(beschriftung,2578)trim(beschriftung),ue_gang(i,j,k)
-            end do
+            enddo
             2578       format( A,6X,E16.10 )
             ! 2578       format(A,6X,F16.9)
             write(ionumber+i,'(A)')trim(beschriftung) ! final line output
-         end do ! alle j Zeitschritte
-      end if ! knoten auf diesem Prozess
-   end do ! alle i Ausgabe-Knoten
+         enddo ! alle j Zeitschritte
+      endif ! knoten auf diesem Prozess
+   enddo ! alle i Ausgabe-Knoten
    do i = 1,anz_gangl
       if (knot_gangl(i) > 0) then !Knoten auf diesem Prozess
          close (ionumber+i) ! Dateien glk... schließen
          !print*,'IntAmmonium(',knot_gangl(i),')=',(IntAmmonium(i)*real(deltat)), deltat
          !print*,' ganglinien_schliessen ',knot_gangl(i) , ionumber+i,' meinrang=',meinrang
-      end if ! knoten auf diesem Prozess
-   end do ! alle Ausgabe-Knoten
+      endif ! knoten auf diesem Prozess
+   enddo ! alle Ausgabe-Knoten
 end subroutine ganglinien_schliessen

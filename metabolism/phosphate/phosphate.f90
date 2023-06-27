@@ -13,9 +13,9 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
                      sedalk_s, sedalb_s, sedalg_s,              &
                      algdrk_s, algdrb_s, algdrg_s,              &
                      tflie,                                     &
-                     kontroll, jjj)
+                     control, jjj)
       
-   use aparam, only :  Qmx_PG, Qmx_PK
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -58,7 +58,7 @@ subroutine phosphate(gelP_s, gesP_s, bsbctP_s,                  &
    real, intent(in)     :: algdrg_s !< durch Dreissena konsumierte Grünalgen [mg/l]
    real, intent(in)     :: algdrb_s !< durch Dreissena konsumierte Blaualgen [mg/l]
    real, intent(in)     :: tflie    !< timestep [d]
-   logical, intent(in)  :: kontroll !< debugging
+   logical, intent(in)  :: control !< debugging
    integer, intent(in)  :: jjj      !< debugging
 
    ! --- local variables ---

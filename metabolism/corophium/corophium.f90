@@ -6,9 +6,9 @@ subroutine corophium(coro_s, coros_s, aki_s, agr_s, abl_s,  &
                      itags, monats, uhrz, tflie,            &
                      coroi_s, corois_s,                     &
                      algcok_s, algcog_s, algcob_s,          &
-                     kontroll, jjj)
+                     control, jjj)
    
-   use allodim
+   use module_alloc_dimensions
      
    implicit none
    
@@ -31,7 +31,7 @@ subroutine corophium(coro_s, coros_s, aki_s, agr_s, abl_s,  &
    real,    intent(out)                 :: algcok_s !< consumption of diatoms by corophium [mg/l]
    real,    intent(out)                 :: algcog_s !< consumption of green algae by corophium [mg/l]
    real,    intent(out)                 :: algcob_s !< consumption of cyanobacteria by corophium [mg/l]
-   logical, intent(in)                  :: kontroll !< debugging
+   logical, intent(in)                  :: control !< debugging
    integer, intent(in)                  :: jjj      !< debugging
    
    ! --- local variables ---

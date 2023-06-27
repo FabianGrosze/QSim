@@ -43,9 +43,9 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                          ,hglMn,hgsMn,egsMn,eglMn,MnSed       &
                          ,hglU,hgsU,egsU,eglU,USed            &
                          ,sedss,sedalk,sedalb,sedalg,hssalg,SSalg,ess,hph,vph,eph,SSeros       &
-                         ,ilang,iwied,kontroll,jjj)
-   use aparam
-   use allodim
+                         ,ilang,iwied,control,jjj)
+   use module_aparam
+   use module_alloc_dimensions
    implicit none
    
    integer                             :: azStr, anze,ieros,ilang,iformVert,ianze_max,mstr
@@ -76,7 +76,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
    real, dimension(azStrs,ialloc2)     :: AsSed, PbSed, CrSed, FeSed
    real, dimension(azStrs,ialloc2)     :: HgSed, MnSed, USed
    integer, dimension(azStrs,ialloc2)  :: anzZeit
-   logical, intent(in)                 :: kontroll !< debugging
+   logical, intent(in)                 :: control !< debugging
    integer, intent(in)                 :: jjj      !< debugging
    
    external :: sedimentbelastung, verteilungskoeff, schwermetalle_kern
@@ -113,7 +113,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                                 ,hgsMn(mstr,ior),hglMn(mstr,ior),MnSed(mstr,ior)    &
                                 ,hgsU(mstr,ior),hglU(mstr,ior),USed(mstr,ior)       &
                                 ,anzZeit(mstr,ior),SSeros(ior)                      &
-                                ,kontroll ,jjj)
+                                ,control ,jjj)
       enddo ! ior = 1,anze+1
    endif ! iwied==0
    
@@ -135,7 +135,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                                 ,hgsMn(mstr,ior),hglMn(mstr,ior),MnSed(mstr,ior)          &
                                 ,hgsU(mstr,ior),hglU(mstr,ior),USed(mstr,ior)             &
                                 ,anzZeit(mstr,ior),SSeros(ior)   &
-                                ,kontroll ,jjj)
+                                ,control ,jjj)
       endif
       ior_flag = 0
       if (flag(ior) == 6 .and. vabfl(ior) < 0.0 .and. vabfl(ior+1) > 0.0) then
@@ -207,7 +207,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
             call Verteilungskoeff( hcSS, hcph  &
                                   ,VTKoeff_Zn,VTKoeff_Cu,VTKoeff_Cad,VTKoeff_Ni,VTKoeff_As,VTKoeff_Pb   &
                                   ,VTKoeff_Cr,VTKoeff_Fe,VTKoeff_Hg ,VTKoeff_Mn,VTKoeff_U               &
-                                  ,iformVert, kontroll)
+                                  ,iformVert, control)
             if (hcgsCadE < 0.0 .and. hcglCadE < 0.0) then
                hcgsCadE = hcgsCad
                hcglCadE = hcglCad
@@ -485,7 +485,7 @@ subroutine schwermetalle(vabfl,qeinl,mstr,flag,anze,anzZeit,jiein,azStr,ieros,if
                               ,hgsCrt,hglCrt,hgsFet,hglFet                 &
                               ,hgsHgt,hglHgt,hgsMnt,hglMnt                 &
                               ,hgsUt,hglUt                                 &
-                              ,kontroll,jjj)
+                              ,control,jjj)
    enddo     ! Ende Schleife longitudinale Gitterpunkte
    
 end subroutine schwermetalle

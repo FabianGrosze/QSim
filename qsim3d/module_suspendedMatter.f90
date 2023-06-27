@@ -31,11 +31,11 @@
 module mod_suspendedMatter
    use netcdf
    use modell
-   use aparam, only: GRot
+   use module_aparam
    
    implicit none
    
-   private ! default: all is private
+   private 
    public  init_suspendedMatter, step_suspendedMatter
    
    ! Module variables
@@ -94,7 +94,7 @@ contains
                   write(textString, '(a,i2,a,i2,a)') 'init_suspendedMatter_UnTRIM2: Number of selected SPM classes (',       &
                                                     nClasses, ') exceeds number of available classes (', nClassesFile-1, ').'
                   call qerror(trim(textString))
-               end if
+               endif
                case default         ! any other hydrodynamics/SPM
                call qerror('init_suspendedMatter: Reading SPM from file only implemented for UnTRIM2 hydrodynamics')
          end select
@@ -109,7 +109,7 @@ contains
          spm_element = 0.
          vol_element = 0.
          
-      end if
+      endif
       
       ! initialize data field used on MPI processes
       allocate ( spm_element_p(part), stat = allocStatus )
@@ -141,7 +141,7 @@ contains
          if (rechenzeit < transinfo_zeit(transinfo_zuord(1)) .or. &
              rechenzeit > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
             call qerror('step_suspendedMatter: Time outside of available time period')
-         end if
+         endif
          ! read data closest to center of current time step
          iTime = minloc(abs(transinfo_zeit - rechenzeit), 1)
          select case (hydro_trieb)
@@ -154,7 +154,7 @@ contains
          write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                 &
                'step_suspendedMatter: ', iTime, '-th record read from file - min = ', minval(spm_element),        &
                ', max = ', maxval(spm_element), ', mean = ', sum(spm_element)/max(1,size(spm_element)), ' (mg/L)'
-      end if
+      endif
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
@@ -164,7 +164,7 @@ contains
       if (ierr /= 0) then
          write(errorMessage,'(a,i3)') 'step_suspendedMatter: mpi_scatter(spm_element) failed - ', ierr
          call qerror(trim(errorMessage))
-      end if
+      endif
       
       ! set SPM variables (SS and SSalg) and copy to parallel transfer variables
       do i = 1,part
@@ -175,11 +175,11 @@ contains
          livingMatter = 0.001 * planktonic_variable_p(iZoo + j) * GRot
          do k = 1,nPhyto
             livingMatter = livingMatter + planktonic_variable_p(iPhyto(k) + j)
-         end do
+         enddo
          ! assign SS and SSalg to MPI process fields
          planktonic_variable_p(iSS    + j) = spm_element_p(i)
          planktonic_variable_p(iSSalg + j) = spm_element_p(i) + livingMatter
-      end do
+      enddo
       
       ! synchronize all parallel processes
       call mpi_barrier(mpi_komm_welt, ierr)
@@ -228,8 +228,8 @@ contains
          else
             ! [kg] -> [g/m3] = [mg/L]
             spm_element(i) = 1.e3 * spm_element(i) / vol_element(i)
-         end if
-      end do
+         endif
+      enddo
       
    end subroutine get_suspendedMatter_UnTRIM2
    

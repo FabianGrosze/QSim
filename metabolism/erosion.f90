@@ -29,13 +29,13 @@
 !! @author Volker Kirchesch Jens Wyrwa
 !! @date 01.11.2021
 subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
-                   tflie, tiefe, rau, vmitt, anze, mstr, ilang, iwied,        &
-                   kontroll, jjj)
-   use allodim
+                   tflie, tiefe, rau, vmitt, anze, mstr, iwied,               &
+                   control, jjj)
+   use module_alloc_dimensions
    implicit none
    
-   logical                                 :: kontroll,kontroll_kern
-   integer                                 :: anze, jjj, iwied, mstr, ilang, ior
+   logical                                 :: control,kontroll_kern
+   integer                                 :: anze, jjj, iwied, mstr, ior
    real                                    :: tflie
    real, dimension(ialloc2)                :: tiefe, ss, ssalg, SSeros
    real, dimension(ialloc2)                :: vmitt, rau
@@ -63,10 +63,8 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
    endif
    
    do ior = 1,anze+1
-      !if(ilang==0)exit
-      
       kontroll_kern = .false.
-      if (kontroll .and. ior == jjj) then
+      if (control .and. ior == jjj) then
          kontroll_kern = .true.
          !print*,"vor erosion_kern ss(",jjj,"),ssalg=",ss(jjj),ssalg(jjj)
       endif
@@ -81,7 +79,7 @@ subroutine erosion(ss, ssalg, SSeros, dsedH, tausc, M_eros, n_eros, sedroh,   &
       endif
    enddo
    
-   if(kontroll) then 
+   if(control) then 
       print*, mstr,jjj,' erosion computing tausc(jjj,1),SSeros,SS,SSalg=',  &
               tausc(jjj,1), SSeros(jjj), SS(jjj), SSalg(jjj)
    endif

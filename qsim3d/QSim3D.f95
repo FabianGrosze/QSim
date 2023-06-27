@@ -28,7 +28,7 @@
 !! Beschreibung siehe:\ref index \n
 program QSim3D
    
-   use allodim
+   use module_alloc_dimensions
    use netcdf
    use modell
    use QSimDatenfelder
@@ -76,7 +76,7 @@ program QSim3D
          call mpi_barrier (mpi_komm_welt, ierr)
       else
          call step_suspendedMatter
-      end if
+      endif
       !------------------------------------------------- all metabolic processes
       call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       !------------------------------------------------- transport all concentrations (advection-diffusion) ...
@@ -88,7 +88,7 @@ program QSim3D
       if (jetzt_ausgeben()) call ausgeben() !! output concentration fields if required
       call ganglinien_zeitschritt(izeit+1) !! store values for time series
       call mpi_barrier (mpi_komm_welt, ierr)
-   end do
+   enddo
    !==== End of time-loop   =================================================================
    write(*,*)meinrang,' end of time-loop'
    !-------------------------------------------------
@@ -110,6 +110,6 @@ program QSim3D
       call exit(7)
       !else
       !   print*,'mpi_finalized'
-   end if
+   endif
    call exit(0)
 end program QSim3D

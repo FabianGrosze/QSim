@@ -41,13 +41,13 @@ subroutine ph_wrapper_3d(i)
    endif
    
    iglob = i + meinrang * part 
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)
    tflie = real(deltat) / 86400.
    raus = strickler(zone(point_zone(iglob))%reib, tiefes)
    flaes = 1000.0
    
-   if (kontroll) then
+   if (control) then
       print*, 'before ph:'
       print*, '  iglob    = ', iglob
       print*, '  meinrang = ', meinrang
@@ -93,9 +93,9 @@ subroutine ph_wrapper_3d(i)
            transfer_quantity_p(31+(i-1)*number_trans_quant),             &! po2r
            planktonic_variable_p(52+(i-1)*number_plankt_vari),           &! ssalg
            planktonic_variable_p(59+(i-1)*number_plankt_vari),           &! stind
-           kontroll, iglob)
+           control, iglob)
    
-   if (kontroll) then
+   if (control) then
       print*, 'after ph:'
       print*, '  iglob    = ', iglob
       print*, '  meinrang = ', meinrang
@@ -123,6 +123,6 @@ subroutine ini_ph()
       planktonic_variable(64+(i-1)*number_plankt_vari) = 0.0 ! 41.0 ! ca  41.0
       planktonic_variable(65+(i-1)*number_plankt_vari) = 0.0 ! 402.0 ! lf #### momentan von ini_salz gesetzt ???402.0
       planktonic_variable(66+(i-1)*number_plankt_vari) = 7.0 ! vph
-   end do
+   enddo
    return
 end subroutine ini_ph

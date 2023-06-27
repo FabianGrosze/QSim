@@ -94,7 +94,7 @@ subroutine parallel_vorbereiten()
       call mpi_barrier (mpi_komm_welt, ierr)
    else
       call init_suspendedMatter
-   end if
+   endif
    
    call alter_parallel()
    !print*,meinrang," alter_parallel() ... danach"
@@ -184,8 +184,8 @@ subroutine modell_parallel()
       if (alloc_status /= 0) then
          write(fehler,*)'modell_parallel() Rueckgabewert von allocate knoten_z(knotenanzahl2D) :', alloc_status
          call qerror(fehler)
-      end if ! allocate fehlgeschlagen
-   end if !! nicht 0-Prozess
+      endif ! allocate fehlgeschlagen
+   endif !! nicht 0-Prozess
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(knoten_z,knotenanzahl2D,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -200,7 +200,7 @@ end subroutine modell_parallel
 !! aus Datei parallel.f95 
 subroutine aparam_parallel()
    use modell
-   use aparam
+   use module_aparam
    implicit none
    
    !namelist /ALGAE/  &

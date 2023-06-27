@@ -72,7 +72,7 @@ subroutine stofftransport()
             if (kontrollknoten >= 1) print*,'0 nach stofftransport_casu: ph,lf = ',  &
                 planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari),  &
                 planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari)
-         end if !! nur prozessor 0
+         endif !! nur prozessor 0
          call scatter_planktkon()
       case(2) ! Untrim² netCDF
          call gather_planktkon()
@@ -81,7 +81,7 @@ subroutine stofftransport()
             if (kontrollknoten >= 1) print*,'nach stofftransport_untrim: lf,ph = ',  &
                 planktonic_variable(65+(kontrollknoten-1)*number_plankt_vari),  &
                 planktonic_variable(66+(kontrollknoten-1)*number_plankt_vari)
-         end if !! nur prozessor 0
+         endif !! nur prozessor 0
          call scatter_planktkon()
       case(3) ! SCHISM netCDF
          !! call stofftransport_schism() !parallel and 3D
@@ -118,8 +118,8 @@ subroutine stofftransport()
    if (meinrang == 0) then !! nur prozessor 0
       do j = 1,number_plankt_point ! alle j Knoten
          call tiefenprofil(j)  !! 2D depth avaraged
-      end do ! alle j Berechnungsstützstellen
-   end if !! nur prozessor 0
+      enddo ! alle j Berechnungsstützstellen
+   endif !! nur prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine stofftransport
@@ -137,25 +137,25 @@ subroutine allo_trans()
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate p :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       do j = 1,number_plankt_point ! alle j Berechnungsstützstellen
          p(j) = -777.777
-      end do ! alle j Berechnungsstützstellen
+      enddo ! alle j Berechnungsstützstellen
       allocate( u(number_plankt_point), dir(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate u :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       allocate( vel_x(number_plankt_point), vel_y(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate u :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       allocate (inflow(number_plankt_point), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate inflow :', alloc_status
          call qerror(fehler)
-      end if
+      endif
       
       select case (hydro_trieb)
          case(1) ! casu-transinfo
@@ -164,12 +164,12 @@ subroutine allo_trans()
             if (alloc_status /= 0) then
                write(fehler,*)' Rueckgabewert   von   allocate  intereck(4* :', alloc_status
                call qerror(fehler)
-            end if
+            endif
             allocate (wicht(4*number_plankt_point), stat = alloc_status )
             if (alloc_status /= 0) then
                write(fehler,*)' Rueckgabewert   von   allocate  wicht(4* :', alloc_status
                call qerror(fehler)
-            end if
+            endif
             allocate (w(number_plankt_point), stat = alloc_status )
             if (alloc_status /= 0) then
                write(fehler,*)' Rueckgabewert   von   allocate w :', alloc_status
@@ -206,7 +206,7 @@ subroutine allo_trans()
             call qerror('allo_trans: Hydraulischer Antrieb unbekannt')
       end select
    
-   end if ! only prozessor 0
+   endif ! only prozessor 0
    return
 end subroutine allo_trans
 !----+-----+----
@@ -227,7 +227,7 @@ subroutine ph2hplus()
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = hplus
       if (iglob == kontrollknoten) print*, meinrang, i, ' ph2hplus: ph, hplus, part, number_plankt_vari = ',  &
           ph, hplus, part, number_plankt_vari
-   end do ! all i elements/nodes on this process
+   enddo ! all i elements/nodes on this process
    
    return
 end subroutine ph2hplus
@@ -250,7 +250,7 @@ subroutine hplus2ph()
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = ph
       if (iglob == kontrollknoten) print*, meinrang, i, ' hplus2ph: ph, hplus, part, number_plankt_vari = ',  &
           ph, hplus, part, number_plankt_vari
-   end do ! alle j elements/nodes
+   enddo ! alle j elements/nodes
    
    return
 end subroutine hplus2ph

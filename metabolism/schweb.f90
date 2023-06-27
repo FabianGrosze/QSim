@@ -28,31 +28,33 @@
 !> Berechnung der Schwebstoffkonzentration
 !! @author Volker Kirchesch
 !! @date 22.09.2011
-subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,ior,anze,ess              &
-                  ,ssL,qeinl,qeinlL,vabfl,dkimor,dgrmor,abszo,zexki,zexgr,iorLa,iorLe,ieinls            &
-                  ,abl,zexbl,dblmor,drfaeb,jiein,aki,agr,ssdr,drfaek,drfaeg,drfaes,fssgr,sedss,sedSS_MQ &
-                  ,fssgrs,tausc,ischif,ilbuhn,fkm,ieros,iwied,echla,vkigr,akbcm,agbcm,antbl,abbcm       &
-                  ,ezind,mstr,itags,monats,uhrz                                                         &
-                  ,kontroll,jjj)
+subroutine schweb(zooind, dorgss, ss, ssalg, tiefe, rau, tflie, vmitt, flae, &
+                  flag, ior, anze, ess, ssl, qeinl, qeinll, vabfl, dkimor,   &
+                  dgrmor, abszo, zexki, zexgr, iorla, iorle, ieinls, abl,    &
+                  zexbl, dblmor, drfaeb, jiein, aki, agr, ssdr, drfaek,      &
+                  drfaeg, drfaes, fssgr, sedss, sedss_mq, fssgrs, tausc,     &
+                  ischif, ilbuhn, ieros, echla, vkigr, akbcm, agbcm,         &
+                  antbl, abbcm, ezind, mstr,                                 &
+                  control, jjj)
    
    ! SS     ORG. UND ANORG. SCHWEBSTOFFE(OHNE ALGEN UND ZOOPLANKTER
    ! SSALG  GESAMTSCHWEBSTOFFE
    
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
-   logical, intent(in)                  :: kontroll !< debugging
+   logical, intent(in)                  :: control !< debugging
    integer, intent(in)                  :: jjj      !< debugging
    integer                              :: anze
-   integer                              :: iein,mstr,itags,monats,ieinL,ior,j,ior_flag,ilbuhn,m,ihcq,iwied,ji,ieros
-   real                                 :: tflie,uhrz
+   integer                              :: iein,mstr,ieinL,ior,j,ior_flag,ilbuhn,m,ihcq,ji,ieros
+   real                                 :: tflie
    real                                 :: hcss,hcsse,HCFSSG,HCQ,HCQE, akie, agre, able, hcfssgE, FSSGRS
    integer, dimension(ialloc1)          :: iorLa, iorLe
    integer, dimension(ialloc2)          :: flag, jiein, ischif
    real, dimension(ialloc1)             :: ess, echla, ezind, qeinl, ssL, qeinlL
-   real, dimension(ialloc2)             :: zooind, ss, vabfl, ssalg, tiefe, rau, vmitt, flae, elen, zexki, zexgr, zexbl
-   real, dimension(ialloc2)             :: fkm, dblmor ,drfaeb, abl, aki, agr, dkimor, dgrmor, abszo
+   real, dimension(ialloc2)             :: zooind, ss, vabfl, ssalg, tiefe, rau, vmitt, flae, zexki, zexgr, zexbl
+   real, dimension(ialloc2)             :: dblmor ,drfaeb, abl, aki, agr, dkimor, dgrmor, abszo
    real, dimension(ialloc2), intent(in) :: dorgSS
    real, dimension(ialloc2)             :: ssdr, drfaek, drfaeg, drfaes, fssgr, sedss, vkigr, antbl, akbcm, agbcm, abbcm
    real, dimension(azStrs,ialloc2)      :: sedSS_MQ
@@ -63,12 +65,6 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
    
    iein = 1
    
-   ! is now defined in module aparam
-   ! Cagr = 0.48
-   ! Caki = 0.48
-   ! Cabl = 0.48
-   
-   !....Berücksichtigung der Linienquelle
    
    do ieinL = 1, ieinLs(mstr)
       if (qeinlL(ieinL)>=0.0 .and. ssL(ieinL) == -1.)cycle
@@ -141,11 +137,11 @@ subroutine SCHWEB(zooind,dorgSS,ss,ssalg,tiefe,rau,tflie,VMITT,flae,flag,elen,io
                       ,abl(ior),zexbl(ior),dblmor(ior),drfaeb(ior),aki(ior),agr(ior),ssdr(ior),drfaek(ior) &
                       ,drfaeg(ior),drfaes(ior),fssgr(ior),sedss(ior),sedSS_MQ(mstr,ior)                    &
                       ,tausc(mstr,ior),ischif(ior),ieros                                                   &
-                      ,kontroll,jjj)
+                      ,control,jjj)
       
    enddo ! Ende Knotenschleife
    
-   if (kontroll)print*,mstr,jjj,' schweb computing SSALG,SS,fssgr = ',  &
+   if (control)print*,mstr,jjj,' schweb computing SSALG,SS,fssgr = ',  &
        SSALG(jjj),SS(jjj),fssgr(jjj)
    
    return

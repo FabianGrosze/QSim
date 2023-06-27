@@ -43,7 +43,7 @@ subroutine holen_trans_untrim(nt)
    call check_err( nf90_get_var(ncid, varid, el_vol, start3, count3 ) )
    do n = 1,n_elemente !
       if ((el_vol(n) <= 0.0) .or. (el_vol(n) > 1.e+30)) el_vol(n) = 0.0
-   end do ! alle n elemente
+   enddo ! alle n elemente
    !print*,'stofftransport_untrim: got Mesh2_face_Wasservolumen_2d'
    start2 = (/ 1, nt /)
    count2 = (/ n_elemente, 1 /)
@@ -51,13 +51,13 @@ subroutine holen_trans_untrim(nt)
    call check_err( nf90_get_var(ncid, varid, p, start2, count2 ) )
    do n = 1,n_elemente !
       if ( abs(p(n)) > 1.e+30)p(n) = -999.9
-   end do ! alle n elemente
+   enddo ! alle n elemente
    !print*,'stofftransport_untrim: got Mesh2_face_Wasserstand_2d'
    call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid) )
    call check_err( nf90_get_var(ncid, varid, el_area, start2, count2 ) )
    do n = 1,n_elemente !
       if ((el_area(n) <= 0.0) .or. (el_area(n) > 1.e+30)) el_area(n) = 0.0
-   end do ! alle n elemente
+   enddo ! alle n elemente
    !print*,'stofftransport_untrim: got Mesh2_face_Wasserflaeche_2d'
    !---------------kanten
    ed_vel_x(:) = 0.0
@@ -82,12 +82,12 @@ subroutine holen_trans_untrim(nt)
          ed_area(n) = 0.0
          ed_vel_x(n) = 0.0
          ed_vel_y(n) = 0.0
-      end if ! Kante trocken
+      endif ! Kante trocken
       !print*,n,ed_vel_x(n),ed_vel_y(n)
       ! Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d:_FillValue = 1.e+31f ;
       if (ed_vel_x(n) > 100.0)ed_vel_x(n) = 0.0
       if (ed_vel_y(n) > 100.0)ed_vel_y(n) = 0.0
-   end do ! alle n kanten
+   enddo ! alle n kanten
    do n = 1,n_elemente ! mean velocity magnitude in element
       u(n) = 0.0
       do k = 1,cornernumber(n)
@@ -97,13 +97,13 @@ subroutine holen_trans_untrim(nt)
                   ed_vel_x(elementedges(n,k)),ed_vel_y(elementedges(n,k)),elementedges(n,k),n,k
             call qerror("holen_trans_untrim u infinity")
          endif
-      end do ! alle k Kanten im Element
+      enddo ! alle k Kanten im Element
       c = real(cornernumber(n))
       if (c <= 0.0)call qerror("cornernumber(n) ist null ???")
       u(n) = u(n)/c
       inflow(n) = .false.
       if (element_rand(n) > 0) inflow(n) = .true.
-   end do ! alle n Elemente
+   enddo ! alle n Elemente
    print*,'### stofftransport_untrim: all boundaries inflow ###'
    do j = 1,number_plankt_point ! all j elements
       rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
@@ -113,7 +113,7 @@ subroutine holen_trans_untrim(nt)
       rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
       benthic_distribution(44+(j-1)*number_benth_distr) = 0.1      ! ks ######### jetzt anders zone()%reib
       benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
-   end do ! all j elements
+   enddo ! all j elements
    print*,'### stofftransport_untrim: ks and utau, only first guess ###'
    return
 end subroutine holen_trans_untrim
@@ -142,7 +142,7 @@ subroutine stofftransport_untrim()
          ,' vor transportschritt untrim T_wass(kontrollelement) = '  &
          , planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari) &
          ,' Tracer = ', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
-      end if !kontrollknoten
+      endif !kontrollknoten
       subtim = startzeitpunkt + nint( real((2*nt-1)*deltat)/real(num_sub*2) )
       
       if (subtim < transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
@@ -155,22 +155,22 @@ subroutine stofftransport_untrim()
             nti = n
          endif
          diffprev = diff
-      end do ! alle n Zeitschritte
+      enddo ! alle n Zeitschritte
       print*,'stofftransport_untrim: substep-time,nti,diff = ',subtim,nti,diff
       if (nti <= 0) then
          call qerror('stofftransport_untrim: kein untrim Zeitpunkt identifiziert')
       else
          print*,'transportiert mit untrim-Strömungsfeld zeit = ',transinfo_zeit(transinfo_zuord(nti))
-      end if
+      endif
       call holen_trans_untrim(nti)
       !do n=1,number_plankt_point
       !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim  ################
-      !end do ! alle n Elemente
+      !enddo ! alle n Elemente
       do n = 1,number_plankt_point ! initialize volume exchange
          do j = 1,5
             wicht((n-1)*5+j) = 0.0
-         end do !alle 5
-      end do ! alle n Elemente
+         enddo !alle 5
+      enddo ! alle n Elemente
       do n = 1,kantenanzahl ! edge fluxes
          laeng = ( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
          ed_flux(n) = 0.0
@@ -220,13 +220,13 @@ subroutine stofftransport_untrim()
                            schnittflux_gang(iq,izeit, no+2 ) = schnittflux_gang(iq,izeit, no+2 )+  &
                                                                fluxi * planktonic_variable(k+(nedel-1)*number_plankt_vari)
                         endif ! planktic output conc.
-                     end do ! all k planktic variables
+                     enddo ! all k planktic variables
                   endif ! found
-               end do ! all jq
-            end do ! all iq cross sections
+               enddo ! all jq
+            enddo ! all iq cross sections
          endif ! querschneiden
          
-      end do ! alle n edges
+      enddo ! alle n edges
       do n = 1,n_elemente ! gathering inflows
          do k = 1,cornernumber(n)
             !if I am the left_element of my n-th edge and the flux is to the left
@@ -235,8 +235,8 @@ subroutine stofftransport_untrim()
             !if I am the right_element of my n-th edge and the flux is to the right
             if ( (right_element(elementedges(n,k)) == n) .and. (ed_flux(elementedges(n,k)) < 0.0) )  &
                 wicht((n-1)*5+(1+k)) = -1.0 * ed_flux(elementedges(n,k))
-         end do ! alle k Kanten im Element
-      end do ! alle n Elemente
+         enddo ! alle k Kanten im Element
+      enddo ! alle n Elemente
       cu_max = -50000.0
       cu_min = 50000.0
       cu = 0.
@@ -248,30 +248,30 @@ subroutine stofftransport_untrim()
             wicht((n-1)*5+1) = 1.0 - cu(n)
             do j = 2,5
                wicht((n-1)*5+j) = (wicht((n-1)*5+j)*dt_sub)/el_vol(n)
-            end do !alle 5
+            enddo !alle 5
          else !Element dry
             wicht((n-1)*5+1) = 1.0
             do j = 2,5
                wicht((n-1)*5+j) = 0.0
-            end do !alle 5
-         end if !Element wet
+            enddo !alle 5
+         endif !Element wet
          sumwicht = 0.0
          do j = 1,5 !clipping ######
             if (wicht((n-1)*5+j) < 0.0) wicht((n-1)*5+j) = 0.0
             if (wicht((n-1)*5+j) > 1.0) wicht((n-1)*5+j) = 1.0
             sumwicht = sumwicht+wicht((n-1)*5+j)
-         end do !alle 5
+         enddo !alle 5
          if (sumwicht > 0.0) then
             do j = 1,5 !
                wicht((n-1)*5+j) = wicht((n-1)*5+j)/sumwicht
-            end do !alle 5
+            enddo !alle 5
          else
             wicht((n-1)*5+1) = 1.0 ! Wert belibt wie er ist
             do j = 2,5
                wicht((n-1)*5+j) = 0.0
-            end do !alle 5
+            enddo !alle 5
          endif ! sumwicht.gt.0.0
-      end do ! alle n Elemente
+      enddo ! alle n Elemente
       ! calculate water volume fraction with Courant number > 1 and average cu in cells with cu > 1
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
@@ -286,9 +286,9 @@ subroutine stofftransport_untrim()
             do k = 1,4 ! all 4 neighbour (elements) if existing
                if (intereck((j-1)*4+k) > 0) zwischen(n,j) = zwischen(n,j) +  &
                    planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari) *wicht((j-1)*5+1+k)
-            end do
-         end do ! alle n Konzentrationen
-      end do ! alle j Elemente
+            enddo
+         enddo ! alle n Konzentrationen
+      enddo ! alle j Elemente
       
       do j = 1,number_plankt_point ! alle j Elemente
          if ( .not. inflow(j)) then ! Zuflusselemente auslassen
@@ -307,15 +307,15 @@ subroutine stofftransport_untrim()
                               , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
                               ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
                      endif
-                  end do !all 4 k
+                  enddo !all 4 k
                   write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name', planktonic_variable_name(n)
                   call qerror(fehler)
                else
                   planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
                endif
-            end do ! alle n Konzentrationen
-         end if !kein Zuflusselement
-      end do ! alle j Elemente
+            enddo ! alle n Konzentrationen
+         endif !kein Zuflusselement
+      enddo ! alle j Elemente
       !call ausgeben_untrim( subtim )
       if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
          print*,'Nach transportschritt untrim am kontrollelement:'
@@ -325,16 +325,16 @@ subroutine stofftransport_untrim()
          print*,'wicht !! self =',wicht((kontrollknoten-1)*5+1)
          print*,'intereck((j-1)*4+k) = ',( intereck((kontrollknoten-1)*4+k),k = 1,4 )
          print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
-      end if
+      endif
       print*,'transport nt = ',nt,' start ende = ',startzeitpunkt, endzeitpunkt
       !do iq=1,anzahl_quer !! all iq cross sections
       !   print*,nt,"schnittflux: ",zeitpunkt,izeit,iq," flux,volume="  &
       !         ,schnittflux_gang(iq,izeit, 1 ),schnittflux_gang(iq,izeit, 2 )
-      !end do
-   end do ! alle nt Subzeitschritte
+      !enddo
+   enddo ! alle nt Subzeitschritte
    !do n=1,number_plankt_point
    !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim ##############
-   !end do ! alle n Elemente
+   !enddo ! alle n Elemente
    deallocate (zwischen, stat = alloc_status )
    if (alloc_status /= 0) call qerror('deallocate (zwischen, failed')
    !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
@@ -343,7 +343,7 @@ subroutine stofftransport_untrim()
       q_gangl(izeit) = zeitpunkt
       schnittflux_gang(iq,izeit, 1 ) = schnittflux_gang(iq,izeit, 1 )/real(num_sub)
       print*,"schnittflux: ",zeitpunkt,izeit,iq," flux = ",schnittflux_gang(iq,izeit, 1 )
-   end do
+   enddo
    return
 end subroutine stofftransport_untrim
 !----+-----+----
@@ -382,7 +382,7 @@ subroutine read_mesh_nc()
       iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
       call check_err(iret)
       write(123,*)'dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
-   end do !j
+   enddo !j
    write(123,*)'--'
    !! Variablen
    allocate (vxtype(nVars), stat = alloc_status )
@@ -400,12 +400,12 @@ subroutine read_mesh_nc()
       write(123,*)"Dimensionen: "
       do k = 1,vndims(j)
          write(123,*)'   ', trim(adjustl(dname(dimids(k)))), dlength(dimids(k))
-      end do !k Dimensionen von Variable j
+      enddo !k Dimensionen von Variable j
       !rint*,'inquire_variable ',j,' : ' ,trim(adjustl(vname)),' - ',xtype,ndims,dimids
       write(123,*)"Attribute : "
       call print_attributes(j, nAtts)
       write(123,*)'--'
-   end do ! Variable j
+   enddo ! Variable j
    ! nGlobalAtts
    write(123,*)'Globale Attribute: '
    call print_attributes(NF90_GLOBAL, nGlobalAtts)
@@ -450,7 +450,7 @@ subroutine read_mesh_nc()
    if (alloc_status /= 0) call qerror('allocate (knoten_zone( failed')
    do n = 1,knotenanzahl2D !initialize zones
       knoten_zone(n) = 0
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !call check_err(  nf_inq_varid(ncid,'', didi) )
    !call check_err(  nf90_get_var(ncid, didi,  )
    !allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
@@ -466,12 +466,12 @@ subroutine read_mesh_nc()
       if (knoten_y(n) > maxy)maxy = knoten_y(n)
       if (knoten_x(n) < minx)minx = knoten_x(n)
       if (knoten_y(n) < miny)miny = knoten_y(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    print*,'read_mesh_nc: minx, maxx,miny,maxy = ',minx,maxx,miny,maxy
    !do n=1,knotenanzahl2D
    !   knoten_x(n)=knoten_x(n)-minx
    !   knoten_y(n)=knoten_y(n)-miny
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    !----------------------------------------------------------------------  elements/faces
    allocate (element_x(n_elemente),element_y(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate element_xy failed')
@@ -500,26 +500,26 @@ subroutine read_mesh_nc()
             write(fehler,*)'read_mesh_nc elementnodes falsch:',elementnodes(n,k),n,k
             call qerror(fehler)
          endif
-      end do ! alle Elementecken
+      enddo ! alle Elementecken
       summ_ne = summ_ne+cornernumber(n)+1
-   end do ! alle Elemente
+   enddo ! alle Elemente
    allocate (knot_ele(knotenanzahl2D), stat = alloc_status ) ! number of elements at node
    if (alloc_status /= 0) call qerror('allocate (knot_ele(knotenanzahl2D) failed')
    do n = 1,knotenanzahl2D
       knot_ele(n) = 0
-   end do ! alle Knoten
+   enddo ! alle Knoten
    do j = 1,n_elemente ! alle Elemente
       do k = 1,cornernumber(j)
          knot_ele(elementnodes(j,k)) = knot_ele(elementnodes(j,k))+1
-      end do ! alle Element-ecken
-   end do ! alle Elemente
+      enddo ! alle Element-ecken
+   enddo ! alle Elemente
    singlenodes = .false.
    do n = 1,knotenanzahl2D
       if (knot_ele(n) == 0) then
          print*,'no elements at node',n
          singlenodes = .true.
-      end if
-   end do ! alle Knoten
+      endif
+   enddo ! alle Knoten
    if (singlenodes) call qerror('read_mesh_nc: nodes belonging to no element in mesh')
    allocate (element_rand(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (element_rand failed')
@@ -533,7 +533,7 @@ subroutine read_mesh_nc()
    endif
    do n = 1,n_elemente ! alle Elemente
       element_zone(n) = 0
-   end do ! alle Elemente
+   enddo ! alle Elemente
    ! print*,'nach lesen von untrim netcdf-Datei alle Elemente zunächst in zone 0'
    allocate (elementedges(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementedges failed')
@@ -547,8 +547,8 @@ subroutine read_mesh_nc()
             write(fehler,*)'netcdf_mesh_only elementedges(n,k) falsch:',elementedges(n,k),n,k
             call qerror(fehler)
          endif
-      end do ! alle Elementecken
-   end do ! alle Elemente
+      enddo ! alle Elementecken
+   enddo ! alle Elemente
    deallocate (fa_no, stat = alloc_status )
    !----------------------------------------------------------------------  edges,Kanten
    kanten_vorhanden = .true.
@@ -573,14 +573,14 @@ subroutine read_mesh_nc()
       if ((bottom_node(n) < 1) .or. (bottom_node(n) > knotenanzahl2D))call qerror("read_mesh_nc:bottom_node falsch")
       top_node(n) = ed_fa(2,n)+1
       if ((top_node(n) < 1) .or. (top_node(n) > knotenanzahl2D))call qerror("read_mesh_nc:top_node falsch")
-   end do ! alle n Kanten
+   enddo ! alle n Kanten
    allocate (edge_normal_x(kantenanzahl),edge_normal_y(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (edge_normal failed')
    do n = 1,kantenanzahl ! alle Kanten
       ! Normalenvektor von Kantenlänge nach links
       edge_normal_x(n) = knoten_y(bottom_node(n)) - knoten_y(top_node(n))
       edge_normal_y(n) = knoten_x(top_node(n))    - knoten_x(bottom_node(n))
-   end do ! alle n Kanten
+   enddo ! alle n Kanten
    allocate (left_element(kantenanzahl),right_element(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (left,right_element  failed')
    call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_faces', didi) )
@@ -612,7 +612,7 @@ subroutine read_mesh_nc()
          else !links ist rechts
             right_element(n) = nele_links
             if ( .not. nixrechts) left_element(n) = nele_rechts
-         end if ! links auf der linken seite?
+         endif ! links auf der linken seite?
       else ! left_element(n) nicht vorhanden
          nach_links = edge_normal_x(n) * (element_x(nele_rechts) - knoten_x(bottom_node(n))) +  &
                       edge_normal_y(n) * (element_y(nele_rechts) - knoten_y(bottom_node(n)))
@@ -620,9 +620,9 @@ subroutine read_mesh_nc()
             left_element(n) = nele_rechts
          else !rechts ist rechts
             right_element(n) = nele_rechts
-         end if ! rechts auf der linken seite?
-      end if ! left_element(n) vorhanden ???
-   end do ! alle n Kanten
+         endif ! rechts auf der linken seite?
+      endif ! left_element(n) vorhanden ???
+   enddo ! alle n Kanten
    deallocate (ed_fa, stat = alloc_status )
    print*,'read_mesh_nc: von ',kantenanzahl,' Kanten, sind ',anzahl_randkanten,' Randkanten.'
    !     Mesh2_edge_bc:flag_meanings = "none closed dirichlet" ;
@@ -637,8 +637,8 @@ subroutine read_mesh_nc()
       else ! Kante mit nur einem Element
          if (nbc(n) == 0)call qerror("Randkantenfehler 11")
          boundary_number(n) = nbc(n)
-      end if ! Kante mit zwei Elementen links und rechts
-   end do ! alle n Kanten
+      endif ! Kante mit zwei Elementen links und rechts
+   enddo ! alle n Kanten
    deallocate (nbc, stat = alloc_status )
    allocate (intereck(4*n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (intereck(4  failed')
@@ -646,13 +646,13 @@ subroutine read_mesh_nc()
    do n = 1,n_elemente ! alle Elemente
       do k = 1,4
          intereck((n-1)*4+k) = 0
-      end do
+      enddo
       do k = 1,cornernumber(n)
          ! Nachbarelemente
          if ( left_element(elementedges(n,k)) == n) intereck((n-1)*4+k) = right_element(elementedges(n,k))
          if (right_element(elementedges(n,k)) == n) intereck((n-1)*4+k) = left_element(elementedges(n,k))
-      end do ! alle k Kanten im Element
-   end do ! alle n Elemente
+      enddo ! alle k Kanten im Element
+   enddo ! alle n Elemente
    !----------------------------------------------------------------------  Ränder,boundaries
    ! Die Variablen sind bei Untrim-Antrieb an den Elementen definiert, daher müssen doert auch die Randbedingungen angebracht werden.
    ! Zuflussränder sind aber nur an den Kanten erkennbar, daher müssen sie hier jetzt in element_rand eingearbeitet werden:
@@ -665,9 +665,9 @@ subroutine read_mesh_nc()
             ! bei mehreren Randkanten am Element, element_rand auf die größte Kanten-Randnummer setzen
             if (boundary_number(elementedges(n,k)) > element_rand(n)) then ! winner takes it all
                element_rand(n) = boundary_number(elementedges(n,k))
-            end if ! winner
-         end if ! Zufluss-Randkante
-      end do ! alle k Kanten im Element
+            endif ! winner
+         endif ! Zufluss-Randkante
+      enddo ! alle k Kanten im Element
       if (ndumm > 0) then ! Element hatte schon Randnummer
          if (ndumm /= element_rand(n)) then ! Randunummernkonflikt vermeiden
             element_rand(n) = ndumm !! in der Regel ist das ein Wasserstandsrand
@@ -675,9 +675,9 @@ subroutine read_mesh_nc()
             print*,'Randunummernkonflikt read_mesh_nc in Element #',n   &
             ,' element_rand# aus edges = ',element_rand(n),'element_rand# aus faces = ',ndumm
             call qerror('Randunummernkonflikt read_mesh_nc')
-         end if !Randunummernkonflikt
-      end if ! Element hatte schon Randnummer
-   end do ! alle n Elemente
+         endif !Randunummernkonflikt
+      endif ! Element hatte schon Randnummer
+   enddo ! alle n Elemente
    return
 end subroutine read_mesh_nc
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
@@ -696,20 +696,20 @@ subroutine read_elemente_gerris()
    if (io_error /= 0) then
       write(fehler,*)'open_error ELEMENTE.txt,\nDatei wird aber benötigt .. daher Abbruch'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    
    if (zeile(22)) then
       print*,'ELEMENTE.txt erste Zeile:',ctext(1:50)
    else
       write(fehler,*)'Lesen erste Zeile von ELEMENTE.txt fehlgeschlagen'
       call qerror(fehler)
-   end if
+   endif
    if (zeile(22)) then
       print*,'ELEMENTE.txt zweite Zeile:',ctext(1:50)
    else
       write(fehler,*)'Lesen zweite Zeile von ELEMENTE.txt fehlgeschlagen'
       call qerror(fehler)
-   end if
+   endif
    if ( .not. zeile(22))call qerror('Zeile 2(3) in ELEMENTE.txt fehlt')
    read(ctext, *, iostat = io_error) nelli
    if ( (io_error /= 0) .or. ( nelli /= n_elemente) ) then
@@ -717,7 +717,7 @@ subroutine read_elemente_gerris()
       call qerror(fehler)
    else!Elementanzahl o.k.
       print*,'read_elemente_gerris: Elementanzahl in ELEMENTE.txt o.k.',nelli
-   end if !Elementanzahl falsch
+   endif !Elementanzahl falsch
    do n = 1,n_elemente ! alle Elemente
       if ( .not. zeile(22))call qerror('Zeile in ELEMENTE.txt nicht lesbar')
       read(ctext, *, iostat = io_error) neln, elx, ely, nelz, nelr
@@ -727,36 +727,36 @@ subroutine read_elemente_gerris()
       !integer , allocatable , dimension (:) :: element_rand
       element_zone(n) = nelz
       element_rand(n) = nelr
-   end do ! alle n Elemente
+   enddo ! alle n Elemente
    !     knoten_rand ebenfalls nur zu Darstellungszwecken ... zeigt kanten-randnummern
    !     allocate (cell_bound_length(kantenanzahl), stat = alloc_status )
    allocate (rbc(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (rbc failed')
    do n = 1,knotenanzahl2D
       rbc(n) = 0.0
-   end do ! alle Knoten
+   enddo ! alle Knoten
    do n = 1,kantenanzahl
       rbc(top_node(n)) = rbc(top_node(n))+0.5*real(boundary_number(n))
       rbc(bottom_node(n)) = rbc(bottom_node(n))+0.5*real(boundary_number(n))
-   end do ! alle kanten
+   enddo ! alle kanten
    allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_rand failed')
    do n = 1,knotenanzahl2D
       knoten_rand(n) = nint(rbc(n))
-   end do ! alle Knoten
+   enddo ! alle Knoten
    deallocate (rbc, stat = alloc_status )
    ! Knoten-zonen zu Darstellungszwecken
    do n = 1,knotenanzahl2D
       knoten_zone(n) = 0
-   end do ! alle n Knoten zunächst 0
+   enddo ! alle n Knoten zunächst 0
    do n = 1,n_elemente ! alle Elemente
       do k = 1,cornernumber(n)
          !! höchste Zonennummer am Knoten, wenn verschiedene aus angrenzenden Elementen
          if ( element_zone(n) > knoten_zone(elementnodes(n,k)) ) knoten_zone(elementnodes(n,k)) = element_zone(n)
          !! Randknoten auf Element-nummern setzen:
          if ((knoten_rand(elementnodes(n,k)) > 0) .and. (element_rand(n) > 0))knoten_rand(elementnodes(n,k)) = element_rand(n)
-      end do ! alle k Element-ecken
-   end do ! alle n Elemente
+      enddo ! alle k Element-ecken
+   enddo ! alle n Elemente
    return
 end subroutine read_elemente_gerris
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
@@ -801,15 +801,15 @@ subroutine nc_sichten()
          !nnn=n-1-(((n-1)/3)*3)
          !transinfo_zeit(n)= transinfo_zeit(n)+ 1200.0*real(nnn) !Elbe
          !transinfo_zeit(n)= transinfo_zeit(n)+ 600.0*real(nnn) !Weser
-      end do ! alle Transportzeitschritte
+      enddo ! alle Transportzeitschritte
       do i = 1,attstrlen
          attstring(i:i) = ' '
-      end do
+      enddo
       call check_err( nf_get_att_text(ncid, didi, 'units', attstring) )
       print*,'nc_sichten, nMesh2_data_time units = ',trim(attstring)
       do i = 13,len(time_offset_string)+12
          time_offset_string(i-12:i-12) = attstring(i:i)
-      end do
+      enddo
       !write(time_offset_string,'(A)')attstring(13 : len(trim(attstring)))
       time_offset = 0
       print*,'time_offset_string = ',trim(time_offset_string)
@@ -827,14 +827,14 @@ subroutine nc_sichten()
       time_offset = zeitpunkt !! Offset vom Referenzjahr zum netcdf-Zeitursprung
       !do n=1,transinfo_anzahl ! Stunden in Sekunden
       !  transinfo_zeit(n)= transinfo_zeit(n)+time_offset
-      !end do ! alle Transportzeitschritte
+      !enddo ! alle Transportzeitschritte
       do n = 1,transinfo_anzahl
          if (iabs(transinfo_zeit(n)-nint(zeitstunde(n)*3600.0)) > 5) then ! wrong times
             write(fehler,*)'nc_sichten: ERROR nMesh2_data_time does not fit'
             print*,n,' times do not fit = ',zeitstunde(n),' h, ', nint(zeitstunde(n)*3600.0),transinfo_zeit(n),' s'
             call qerror(fehler)
          endif
-      end do ! alle Transportzeitschritte ab 2
+      enddo ! alle Transportzeitschritte ab 2
       dttrans = transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
       do n = 3,transinfo_anzahl,1
          delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
@@ -845,12 +845,12 @@ subroutine nc_sichten()
             print*,'transinfo_zuord(n),transinfo_zuord(n-1) = ',transinfo_zuord(n),transinfo_zuord(n-1)
             do nnn = 1,15,1
                print*,nnn,' = n transinfo_zeit = ',transinfo_zeit(transinfo_zuord(nnn)),transinfo_zuord(nnn)
-            end do
+            enddo
             write(fehler,*)'nc_sichten: ERROR unequal timestep = ',delt, ' should be: ', dttrans
             print*,'nMesh2_data_time = ',zeitstunde(n-1),zeitstunde(n),' h'
             call qerror(fehler)
-         end if ! wrong timestep
-      end do ! alle Transportzeitschritte ab 2
+         endif ! wrong timestep
+      enddo ! alle Transportzeitschritte ab 2
       print*,'all netcdf timesteps = ',dttrans,' seconds, checked.'
       print*,'nc_sichten ', transinfo_anzahl,' transport-timesteps'
       zeitpunkt = transinfo_zeit(transinfo_zuord(1))
@@ -861,7 +861,7 @@ subroutine nc_sichten()
       write(*,228)'until: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
       !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
       deallocate(zeitstunde) !,secuz)
-   end if ! only prozessor 0
+   endif ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    return
    227 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock = ",I9," sec. since start of year ",I4)
@@ -907,7 +907,7 @@ subroutine nvread()
       iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
       call check_err(iret)
       write(123,*)'dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
-   end do !j
+   enddo !j
    write(123,*)'--'
    !! Variablen
    allocate (vxtype(nVars), stat = alloc_status )
@@ -921,12 +921,12 @@ subroutine nvread()
       write(123,*)"Dimensionen: "
       do k = 1,vndims(j)
          write(123,*)'   ', trim(adjustl(dname(dimids(k)))), dlength(dimids(k))
-      end do !k Dimensionen von Variable j
+      enddo !k Dimensionen von Variable j
       !rint*,'inquire_variable ',j,' : ' ,trim(adjustl(vname)),' - ',xtype,ndims,dimids
       write(123,*)"Attribute : "
       call print_attributes(j, nAtts)
       write(123,*)'--'
-   end do ! Variable j
+   enddo ! Variable j
    ! nGlobalAtts
    write(123,*)'Globale Attribute: '
    call print_attributes(NF90_GLOBAL, nGlobalAtts)
@@ -944,7 +944,7 @@ subroutine nvread()
    call check_err(iret)
    do k = 1,vndims(varid)
       write(123,*)'   nMesh2_data_time:dim  ', trim(adjustl(dname(dimids(k)))), dlength(dimids(k))
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    if (dlength(dimids(1)) > 0) then
       allocate (zeiten(dlength(dimids(1))), stat = alloc_status )
       iret = nf90_get_var(ncid, varid, zeiten)
@@ -956,8 +956,8 @@ subroutine nvread()
          !! Knoten:
          !! double nMesh2_data_time(nMesh2_data_time)
          call untrim_vtk(k)
-      end do !k Dimensionen von Variable j
-   end if !more than 0 timesteps
+      enddo !k Dimensionen von Variable j
+   endif !more than 0 timesteps
    write(123,*)'--'
    iret = nf_close(ncid)
    call check_err(iret)
@@ -1006,7 +1006,7 @@ subroutine print_attributes( nvar, nAtts)
          case(NF90_CHAR)
             do i = 1,attstrlen
                attstring(i:i) = ' '
-            end do
+            enddo
             iret = nf_get_att_text(ncid, nvar, aname, attstring)
             call check_err(iret)
             write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = ",len(trim(attstring)),trim(adjustl(attstring))
@@ -1029,7 +1029,7 @@ subroutine print_attributes( nvar, nAtts)
             case default
             call qerror('netCDF external data typ unkown')
       end select
-   end do !k Attribute von Variable nvar
+   enddo !k Attribute von Variable nvar
    return
 end subroutine print_attributes
 !-----------------------------------------------------------------------
@@ -1055,7 +1055,7 @@ subroutine untrim_vtk(nt)
       if (errcode /= 0)call qerror('untrim_vtk writing filename netcdf_face failed')
    else ! no timesteps
       return
-   end if
+   endif
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
    if (errcode /= 0)call qerror('untrim_vtk writing systemcall rm -rf dateiname failed')
    call system(systemaufruf)
@@ -1064,7 +1064,7 @@ subroutine untrim_vtk(nt)
    if (open_error /= 0) then
       write(fehler,*)'open_error untrim*.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'reading SCHISM/untrim2 netCDF'
    write(ion,'(A)')'ASCII'
@@ -1081,7 +1081,7 @@ subroutine untrim_vtk(nt)
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       write(*,*)'   Mesh2_face_x:dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
    call check_err(iret)
    knotenanzahl2D = dlength
@@ -1089,17 +1089,17 @@ subroutine untrim_vtk(nt)
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_y(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (wsp(knotenanzahl2D), stat = alloc_status )
    allocate (volume(knotenanzahl2D), stat = alloc_status )
    iret = nf90_get_var(ncid, varid, knoten_x)
@@ -1113,14 +1113,14 @@ subroutine untrim_vtk(nt)
    do n = 1,knotenanzahl2D
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
    !write(ion,'(A)')'SCALARS Gelaendehoehe float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   write(ion,'(f27.6)') knoten_z(n)
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    ! Variable : Mesh2_face_Wasserstand_2d
    ! Dimensionen:
    !    nMesh2_face       11103
@@ -1136,7 +1136,7 @@ subroutine untrim_vtk(nt)
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,*) wsp(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    ! Variable : Mesh2_face_Salzgehalt_2d
    ! Dimensionen:
    !    nMesh2_face       11103
@@ -1152,7 +1152,7 @@ subroutine untrim_vtk(nt)
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,*) knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    iret = nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid)
    call check_err(iret)
    start3 = (/ 1, 1, nt /)
@@ -1163,7 +1163,7 @@ subroutine untrim_vtk(nt)
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,*) volume(n)
-   end do ! alle faces(elemente)
+   enddo ! alle faces(elemente)
    close (ion)
    deallocate (wsp,volume)
    deallocate (knoten_x,knoten_y,knoten_z)
@@ -1175,7 +1175,7 @@ subroutine untrim_vtk(nt)
       if (errcode /= 0)call qerror('untrim_vtk writing filename netcdf_edge_ failed')
    else ! no timesteps
       return
-   end if
+   endif
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
    if (errcode /= 0)call qerror('untrim_vtk writing systemcall rm -rf dateiname edges failed')
    call system(systemaufruf)
@@ -1184,7 +1184,7 @@ subroutine untrim_vtk(nt)
    if (open_error /= 0) then
       write(fehler,*)'open_error untrim*.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'reading SCHISM/untrim2 netCDF'
    write(ion,'(A)')'ASCII'
@@ -1200,7 +1200,7 @@ subroutine untrim_vtk(nt)
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       write(*,*)'   Mesh2_edge_x:dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
    call check_err(iret)
    kantenanzahl2D = dlength
@@ -1208,7 +1208,7 @@ subroutine untrim_vtk(nt)
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(kantenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    iret = nf90_get_var(ncid, varid, knoten_x)
    call check_err(iret)
    iret = nf_inq_varid(ncid,'Mesh2_edge_y', varid)
@@ -1220,7 +1220,7 @@ subroutine untrim_vtk(nt)
    do n = 1,kantenanzahl2D
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl2D
    ! Variable : Mesh2_edge_Durchflussflaeche_2d
@@ -1237,7 +1237,7 @@ subroutine untrim_vtk(nt)
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       print *,'   Mesh2_edge_Durchflussflaeche_2d::dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    allocate (qarea(kantenanzahl2D), stat = alloc_status )
    allocate (velmag(kantenanzahl2D), stat = alloc_status )
    start3 = (/ 1, 1, nt /)
@@ -1249,7 +1249,7 @@ subroutine untrim_vtk(nt)
    do n = 1,kantenanzahl2D
       !write(ion,'(f27.6)') p(n)
       write(ion,*) qarea(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    iret = nf_inq_varid(ncid,'Mesh2_edge_skalare_Stroemungsgeschwindigkeit_2d', varid)
    call check_err(iret)
    start3 = (/ 1, 1, nt /)
@@ -1261,7 +1261,7 @@ subroutine untrim_vtk(nt)
    do n = 1,kantenanzahl2D
       !write(ion,'(f27.6)') p(n)
       write(ion,*) velmag(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    close (ion)
    deallocate (qarea,velmag)
    deallocate (knoten_x,knoten_y,knoten_z)
@@ -1294,7 +1294,7 @@ subroutine netcdf_mesh_only()
    if (open_error /= 0) then
       write(fehler,*)'open_error netcdf_mesh_node.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'mesh_only SCHISM/untrim2 netCDF'
    write(ion,'(A)')'ASCII'
@@ -1309,7 +1309,7 @@ subroutine netcdf_mesh_only()
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       write(*,*)'   Mesh2_node_x:dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
    call check_err(iret)
    knotenanzahl2D = dlength
@@ -1318,17 +1318,17 @@ subroutine netcdf_mesh_only()
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_y(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    iret = nf90_get_var(ncid, varid, knoten_x)
    call check_err(iret)
    iret = nf_inq_varid(ncid,'Mesh2_node_y', varid)
@@ -1344,18 +1344,18 @@ subroutine netcdf_mesh_only()
       if (knoten_y(n) > maxy)maxy = knoten_y(n)
       if (knoten_x(n) < minx)minx = knoten_x(n)
       if (knoten_y(n) < miny)miny = knoten_y(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    print*,'netcdf_mesh_only minx, maxx,miny,maxy = ',minx,maxx,miny,maxy
    !do n=1,knotenanzahl2D
    !   knoten_x(n)=knoten_x(n)-minx
    !   knoten_y(n)=knoten_y(n)-miny
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
    do n = 1,knotenanzahl2D
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    iret = nf_inq_varid(ncid,'Mesh2_face_nodes', varid)
    call check_err(iret)
    iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
@@ -1368,7 +1368,7 @@ subroutine netcdf_mesh_only()
    call check_err(iret)
    write(*,*)'   Mesh2_face_nodes:dim 2  ', trim(adjustl(dname)), dlength
    n_elemente = dlength
-   !end do !k Dimensionen von Variable j
+   !enddo !k Dimensionen von Variable j
    allocate (fa_no(4,n_elemente), stat = alloc_status )
    allocate (elementnodes(n_elemente,4), stat = alloc_status )
    allocate (cornernumber(n_elemente), stat = alloc_status )
@@ -1388,8 +1388,8 @@ subroutine netcdf_mesh_only()
             write(fehler,*)'netcdf_mesh_only elementnodes falsch:',elementnodes(n,k),n,k
             call qerror(fehler)
          endif
-      end do ! alle Elementecken
-   end do ! alle Elemente
+      enddo ! alle Elementecken
+   enddo ! alle Elemente
    deallocate (fa_no, stat = alloc_status )
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,I12)')'CELLS ', n_elemente,i_corn
@@ -1401,7 +1401,7 @@ subroutine netcdf_mesh_only()
          write(ion,'(A,2x,3(I8,2x))') &
                                   '3',elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
       endif
-   end do ! alle Elemente
+   enddo ! alle Elemente
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'CELL_TYPES ', n_elemente
    do n = 1,n_elemente ! alle Elemente
@@ -1410,14 +1410,14 @@ subroutine netcdf_mesh_only()
       else
          write(ion,'(A)') '5'
       endif
-   end do ! alle Elemente
+   enddo ! alle Elemente
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
    write(ion,'(A)')'SCALARS zet float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    close (ion)
    deallocate (knoten_x)
    deallocate (knoten_y)
@@ -1433,7 +1433,7 @@ subroutine netcdf_mesh_only()
    if (open_error /= 0) then
       write(fehler,*)'open_error netcdf_mesh_element.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'mesh_only SCHISM/untrim2 netCDF'
    write(ion,'(A)')'ASCII'
@@ -1450,7 +1450,7 @@ subroutine netcdf_mesh_only()
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       write(*,*)'   Mesh2_face_x:dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
    call check_err(iret)
    knotenanzahl2D = dlength
@@ -1459,17 +1459,17 @@ subroutine netcdf_mesh_only()
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_y(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
-   end if
+   endif
    iret = nf90_get_var(ncid, varid, knoten_x)
    call check_err(iret)
    iret = nf_inq_varid(ncid,'Mesh2_face_y', varid)
@@ -1481,7 +1481,7 @@ subroutine netcdf_mesh_only()
    do n = 1,knotenanzahl2D
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    iret = nf_inq_varid(ncid,'Mesh2_edge_faces', varid)
    call check_err(iret)
    print *,'Mesh2_edge_faces: varid = ',varid
@@ -1492,7 +1492,7 @@ subroutine netcdf_mesh_only()
       iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
       call check_err(iret)
       print *,'   Mesh2_edge_faces::dim  ', trim(adjustl(dname)), dlength
-   end do !k Dimensionen von Variable j
+   enddo !k Dimensionen von Variable j
    iret = nf90_Inquire_Dimension(ncid, dimids(2), dname, dlength)
    call check_err(iret)
    kantenanzahl2D = dlength
@@ -1505,12 +1505,12 @@ subroutine netcdf_mesh_only()
       if (ed_fa(2,n) <= 0) ed_fa(2,n) = ed_fa(1,n)
       if (ed_fa(1,n) <= 0) ed_fa(1,n) = ed_fa(2,n)
       write(ion,'(A,2x,I8,2x,I8)')'2', ed_fa(1,n), ed_fa(2,n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl2D
    do n = 1,kantenanzahl2D
       write(ion,'(A)')'3'
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !int Mesh2_edge_faces(nMesh2_edge, two) ;
    !      Mesh2_edge_faces:long_name = "Face- (Polygon-) Verzeichnis der Kanten, linker und rechter Nachbar" ;
    !      Mesh2_edge_faces:cf_role = "edge_face_connectivity" ;
@@ -1522,7 +1522,7 @@ subroutine netcdf_mesh_only()
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,kantenanzahl2D
       write(ion,'(f27.6)') 0.01
-   end do ! alle Knoten
+   enddo ! alle Knoten
    close (ion)
    deallocate (knoten_x)
    deallocate (knoten_y)

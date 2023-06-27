@@ -1,24 +1,22 @@
 subroutine organic_carbon_inflow_1d(ocsb, obsb, CD, CP, CM, BAC, fbsgr, frfgr, &
                                     vkigr, antbl, ecsb, ebsb, echla, evkigr,   &
                                     eantbl, ezind, eCD, eCP, eCM, eBAC, frfgrs,&
-                                    fbsgrs, akbcm, agbcm, abbcm, tempw, bsbzoo,&
+                                    fbsgrs, akbcm, agbcm, abbcm, bsbzoo,       &
                                     toc_csb, mstr, ieinLs, qeinlL, qeinl,      &
                                     vabfl, iorLe, iorLa, jiein, flae, anze,    &
                                     flag, tflie)
-   use allodim
-   use aparam, only:  bsbki, bsbgr, bsbbl, &
-                      csbki, csbgr, csbbl, &
-                      CZoo, GRot
+   use module_alloc_dimensions
+   use module_aparam
                       
                      
    implicit none
    ! --- dummy arguments ---
    real,    intent(inout), dimension(ialloc2)          :: ocsb    !< CSB
    real,    intent(inout), dimension(ialloc2)          :: obsb    !< BSB
-   real,    intent(inout), dimension(2,ialloc2)        :: CD      !< leicht und schwer abbaubare gelöste organische C-Verbindungen.
-   real,    intent(inout), dimension(2,ialloc2)        :: CP      !< leicht und schwer abbaubare partikuläre organische C-Verbindungen.
-   real,    intent(inout), dimension(ialloc2)          :: CM      !< monomolekularen organischen C-Verbindungen
-   real,    intent(inout), dimension(ialloc2)          :: BAC     !< Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
+   real,    intent(inout), dimension(2,ialloc2)        :: cd      !< leicht und schwer abbaubare gelöste organische C-Verbindungen.
+   real,    intent(inout), dimension(2,ialloc2)        :: cp      !< leicht und schwer abbaubare partikuläre organische C-Verbindungen.
+   real,    intent(inout), dimension(ialloc2)          :: cm      !< monomolekularen organischen C-Verbindungen
+   real,    intent(inout), dimension(ialloc2)          :: bac     !< Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
    real,    intent(inout), dimension(ialloc2)          :: fbsgr   !<
    real,    intent(inout), dimension(ialloc2)          :: frfgr   !<
    real,    intent(in),    dimension(ialloc2)          :: vkigr   !< Anteil der Kieselagen
@@ -29,16 +27,15 @@ subroutine organic_carbon_inflow_1d(ocsb, obsb, CD, CP, CM, BAC, fbsgr, frfgr, &
    real,    intent(inout), dimension(ialloc1)          :: evkigr  !< Anteil der Kieselalgen im Einleiter
    real,    intent(inout), dimension(ialloc1)          :: eantbl  !< Anteil der Blaualgen im Einleiter
    real,    intent(in),    dimension(ialloc1)          :: ezind   !< Zooplankton im Einleiter
-   real,    intent(in),    dimension(azStrs,2,ialloc1) :: eCD     !< gelöste organische C-Verbindungen im Einleiter
-   real,    intent(in),    dimension(azStrs,2,ialloc1) :: eCP     !< partikuläre organische C-Verbindungen im Einleiter
-   real,    intent(in),    dimension(azStrs,ialloc1)   :: eCM     !< monomolekulare organische C-Verbindungen im Einleiter
-   real,    intent(in),    dimension(azStrs,ialloc1)   :: eBAC    !< Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen im Einleiter
+   real,    intent(in),    dimension(azStrs,2,ialloc1) :: ecd     !< gelöste organische C-Verbindungen im Einleiter
+   real,    intent(in),    dimension(azStrs,2,ialloc1) :: ecp     !< partikuläre organische C-Verbindungen im Einleiter
+   real,    intent(in),    dimension(azStrs,ialloc1)   :: ecm     !< monomolekulare organische C-Verbindungen im Einleiter
+   real,    intent(in),    dimension(azStrs,ialloc1)   :: ebac    !< Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen im Einleiter
    real,    intent(in),    dimension(azStrs,ialloc1)   :: frfgrs  !< 
    real,    intent(in)                                 :: fbsgrs  !< 
    real,    intent(in),    dimension(ialloc2)          :: akbcm   !< Chla:C-Verhältnis in Kieselalgen
    real,    intent(in),    dimension(ialloc2)          :: agbcm   !< Chla:C-Verhältnis in Grünalgen
    real,    intent(in),    dimension(ialloc2)          :: abbcm   !< Chla:C-Verhältnis in Blaualgen
-   real,    intent(in),    dimension(ialloc2)          :: tempw   !< Wassertemperatur [°C]
    real,    intent(in)                                 :: bsbzoo  !<
    real,    intent(in)                                 :: toc_csb !<
    integer, intent(in)                                 :: mstr    !< aktueller Strang

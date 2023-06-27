@@ -32,7 +32,7 @@ subroutine advdiff(anze, elen, vmitt, uvert, dl, flag, ktrans, u, deltat,  &
                    sumdet, itime, izeits, mstr, iwied, iwahld, nkz, tflie, &
                    jpoin1, isub_dtx, imac, iverfahren, kktrans, ianze_max, &
                    mtracer, iwsim)
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

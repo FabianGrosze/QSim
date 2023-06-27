@@ -28,118 +28,134 @@
 !> Entwicklung von Dreissena polymorph und deren Einfluss auf das Phytoplankton
 !! @author Volker Kirchesch
 !! @date 15.01.1996
-subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
-                    ior,volfdr,akbcm,agbcm,aki,agr,algdrk,algdrg,      &
-                    tflie,ro2dr,lboem,bsohlm,ss,vo2,ssdr,drfaek,       &
-                    drfaeg,drfaes,gewdr,dlarvn,itags,monats,jahrs,     &
-                    lait1,laim1,laid1,ilang,                           &
-                    resdr,exdrvg,exdrvk,ssalg,drpfec,                  &
-                    abl,exdrvb,abbcm,algdrb,drfaeb,                    &
-                    idras,drmas,drakr,drbar,drmor,ffood,coroI,coroIs,  &
-                    CHNF,drHNF,HNFdra,dlmax,dlmaxs,gwdmax,             &
-                    sgwmue,fkm,FoptDe,mstr,azStr,                      &
-                    kontroll,jjj)
+subroutine dreissen(zdrei, zdreis, tempw, flae, elen, anze,                   &
+                    volfdr, aki, agr, algdrk, algdrg,                         &
+                    tflie, ro2dr, lboem, bsohlm, ss, ssdr, drfaek,            &
+                    drfaeg, drfaes, gewdr, dlarvn, itags, monats,             &
+                    lait1, laim1, laid1, ilang,                               &
+                    resdr, exdrvg, exdrvk, ssalg, drpfec,                     &
+                    abl, exdrvb, algdrb, drfaeb,                              &
+                    idras, drmas, drakr, drbar, drmor, ffood, coroI, coroIs,  &
+                    CHNF, drHNF, HNFdra, dlmax, dlmaxs, gwdmax, sgwmue, azStr,&
+                    control, jjj)
                     
+   use module_aparam
+   use module_alloc_dimensions
    implicit none
    
-   integer     :: nrla1e, nrs, nrla1a, ndr, ilang
-   integer     :: mstr, monats, lait1, laim1, laid1
-   integer     :: jahrs, itags, ior
-   real        :: x, w, water_volume
-   real        :: uptm3, tflie
-   real        :: stdpla, rres
-   real        :: respbio
-   real        :: rescm3, f_fecal
-   real        :: hconvk, hconvg
-   real        :: hconvb, hcont, hconf, hcond
-   real        :: hconc2, hconc1, gewdts
-   real        :: filtration_rate, foptd, foptde, food
-   real        :: fki, filtered_volume, fgr
-   real        :: fco, fcos, fcom, fbl
-   real        :: exdrvz, excm3
-   real        :: drrt3, drrt33, drrt2, drrt, drft
-   real        :: drrt22, drrt1, drrt11
-   real        :: dreisn, dreinm, dreing, draup
-   real        :: dmorg, dlamor, dlafes, dgwmue
-   real        :: dfmue, dfmues, dfemue
-   real        :: ddrein, ddlarn
-   logical     :: increment_time
-   logical     :: kontroll !< debugging
-   integer     :: jjj      !< debugging
-   real        :: elen(1000),tempw(1000),flae(1000),zdrei(1000,4)
-   real        :: zdreis(1000,4),volfdr(1000)
-   real        :: akbcm(1000),agbcm(1000),fkm(1000)
-   real        :: aki(1000),agr(1000),algdrk(1000),algdrg(1000)
-   real        :: ro2dr(1000),vo2(1000),ssdr(1000),idras(1000,2)
-   real        :: drmas(1000,2),drakr(1000,2),drbar(1000,2),drmor(1000,2)
-   real        :: lboem(1000),bsohlm(1000),ss(1000)
-   real        :: drfaek(1000),drfaeg(1000),drfaes(1000)
-   real        :: gewdr(1000,4),ingestion_rate,dlarvn(1000),resdr(1000),exdrvg(1000)
-   real        :: dlmax(1000),dlmaxs(1000),gwdmax(1000),exdrvk(1000)
-   real        :: adrg(4),adrk(4),drss(4),drfeck(4),drfecg(4),drfecs(4)
-   real        :: filaki(4),filagr(4)
-   real        :: adrb(4),drfecb(4),filabl(4)
-   real        :: filss(4),vofkop(4),filHNF(4),HNFdra(1000)
-   real        :: ssalg(1000),drpfec(1000),sgwmue(1000),ffood(1000)
-   real        :: coroI(1000),coroIs(1000)
-   real        :: klmor,hcondb(4),hconds(4)
-   real        :: CHNF(1000),drHNF(1000),drfaeb(1000)
-   real        :: abl(1000),exdrvb(1000),abbcm(1000),algdrb(1000)
-   integer     :: anze, azStr, i
+   ! --- dummy arguments ---
+   ! TODO: Define intents
+   real,    dimension(ialloc2,4) :: zdrei, zdreis
+   real,    dimension(ialloc2)   :: tempw
+   real,    dimension(ialloc2)   :: flae
+   real,    dimension(ialloc2)   :: elen
+   integer                       :: anze
+   real,    dimension(ialloc2)   :: volfdr
+   real,    dimension(ialloc2)   :: aki
+   real,    dimension(ialloc2)   :: agr
+   real,    dimension(ialloc2)   :: algdrk
+   real,    dimension(ialloc2)   :: algdrg
+   real                          :: tflie
+   real,    dimension(ialloc2)   :: ro2dr
+   real,    dimension(ialloc2)   :: lboem
+   real,    dimension(ialloc2)   :: bsohlm
+   real,    dimension(ialloc2)   :: ss
+   real,    dimension(ialloc2)   :: ssdr
+   real,    dimension(ialloc2)   :: drfaek, drfaeg, drfaes
+   real,    dimension(ialloc2,4) :: gewdr
+   real,    dimension(ialloc2)   :: dlarvn
+   integer                       :: itags, monats
+   integer                       :: lait1, laim1, laid1
+   integer                       :: ilang
+   real,    dimension(ialloc2)   :: resdr
+   real,    dimension(ialloc2)   :: exdrvg
+   real,    dimension(ialloc2)   :: exdrvk
+   real,    dimension(ialloc2)   :: ssalg
+   real,    dimension(ialloc2)   :: drpfec
+   real,    dimension(ialloc2)   :: abl
+   real,    dimension(ialloc2)   :: exdrvb
+   real,    dimension(ialloc2)   :: algdrb
+   real,    dimension(ialloc2)   :: drfaeb
+   real,    dimension(ialloc2,2) :: idras
+   real,    dimension(ialloc2,2) :: drmas
+   real,    dimension(ialloc2,2) :: drakr
+   real,    dimension(ialloc2,2) :: drbar
+   real,    dimension(ialloc2,2) :: drmor
+   real,    dimension(ialloc2)   :: ffood
+   real,    dimension(ialloc2)   :: coroI, coroIs
+   real,    dimension(ialloc2)   :: CHNF
+   real,    dimension(ialloc2)   :: drHNF
+   real,    dimension(ialloc2)   :: HNFdra
+   real,    dimension(ialloc2)   :: dlmax, dlmaxs
+   real,    dimension(ialloc2)   :: gwdmax
+   real,    dimension(ialloc2)   :: sgwmue
+   integer                       :: azStr
+   logical, intent(in)           :: control !< debugging
+   integer, intent(in)           :: jjj      !< debugging
    
-   ! parameters
-   real   , parameter :: zqz10        = 3.1       ! Q10 of T dependence of respiration
-   real   , parameter :: ztmax        = 31.       ! T above which Dreissena has no additional respiration losses?
-   real   , parameter :: ztopt        = 28.       ! optimal T for respiration?
-   real   , parameter :: pgr          = 1.0       ! feeding preference for green algae
-   real   , parameter :: pki          = 1.0       ! feeding preference for diatoms
-   real   , parameter :: pbl          = 0.5       ! feeding preference for cyanobacteria
-   real   , parameter :: qres         = 0.29      ! active respiration rate (assimilation dependent) (1 / d)
-   real   , parameter :: rres0        = 0.0015    ! basal respiration rate (1 / d)
-   real   , parameter :: f_excrete    = 0.064     ! excreted fraction of assimilated biomass
-   real   , parameter :: r_o2_resp    = 5.59      ! oxygen consumption per biomass (mg o2 / mg) after Schneider
-   real   , parameter :: C_adult      = 0.38      ! C:Biomass of Dreissena adults (gC / g)
-   real   , parameter :: C_egg        = 3.35e-9   ! C:Biomass of Dreissena eggs   (gC / g)
-   real   , parameter :: Cagr         = 0.48      ! C:Biomass of green algae      (gC / g)
-   real   , parameter :: Caki         = 0.48      ! C:Biomass of diatoms          (gC / g)
-   real   , parameter :: Cabl         = 0.48      ! C:Biomass of cyanobacteria    (gC / g)
-   real   , parameter :: f_female     = 0.5       ! fraction of female Dreissena in population
-   real   , parameter :: f_fit        = 0.25      ! fraction of fit/healthy Dreissena in population
-   real   , parameter :: f_survival   = 0.75      ! egg/larval survivability?
-   real   , parameter :: C_lim        = 0.01      ! C content at which Dreissena cease feeding
-   real   , parameter :: klmorg       = 8.26      ! mortalilty of larvae over 22 days (mg) ?
-   real   , parameter :: tdpla        = 22.       ! development period from egg to larva (d)?
-   real   , parameter :: flai         = 0.52      ! fraction of weight loss attributed to egg production?
-   integer, parameter :: nndr         = 2         ! number of Dreissena cohorts (0th, 1st)
-   ! derived parameters
-   real   , parameter :: f_production = f_survival * f_fit * f_female
-   
-   ! newly introduced internal variables (F. Grosse)
-   real                  :: dt, dt1, dt2, dt3     ! times describing phase within reproduction period (days)
-   real                  :: f_spawn, f_spawn_max  ! fraction(s) of biomass invested into reproduction
-   real, dimension(nndr) :: delta_weight          ! weight loss of single Dreissena
+    ! --- local variables ---
+   integer            :: nrla1e, nrs, nrla1a, ndr, ior, i
+   real               :: x, w, water_volume, uptm3, hc_foptd
+   real               :: stdpla, rres, respbio, rescm3, f_fecal, hconvk, hconvg
+   real               :: hconvb, hcont, hconf, hcond, hconc2, hconc1, gewdts
+   real               :: filtration_rate, food, fki, filtered_volume, fgr, klmor
+   real               :: fco, fcos, fcom, fbl, exdrvz, excm3, drrt3, drrt33, drrt2, drrt, drft
+   real               :: drrt22, drrt1, drrt11, dreisn, dreinm, dreing, draup
+   real               :: dmorg, dlamor, dlafes, dgwmue, dfmue, dfmues, dfemue
+   real               :: ddrein, ddlarn, ingestion_rate
+   real, dimension(4) :: adrg, adrk, drss, drfeck, drfecg, drfecs, filaki, filagr
+   real, dimension(4) :: adrb, drfecb, filabl, filss, vofkop, filHNF
+   real, dimension(4) :: hcondb, hconds
+   real               :: dt, dt1, dt2, dt3     ! times describing phase within reproduction period (days)
+   real               :: f_spawn, f_spawn_max  ! fraction(s) of biomass invested into reproduction
+   logical            :: increment_time
    
    ! internal variables for Dreissena on slope/embankment and river bed, respectively
    ! index 1 - slope/embankment
    ! index 2 - river bed
-   real, dimension(2)    :: habitat_size          ! area of slope/embankment and area of river bed (m2)
-   real, dimension(2)    :: biomass_adult         ! areal integral of biomass of adult Dreissena (g)
-   real, dimension(2)    :: uptake_rate           ! (mgC / d)
-   real, dimension(2)    :: assimilation_rate     ! (mgC / d)
-   real, dimension(2)    :: excretion_rate        ! (mgC / d)
-   real, dimension(2)    :: respiration_rate      ! (mgC / d)
-   real, dimension(2)    :: net_growth            ! (mgC)
+   real, dimension(2) :: delta_weight      ! weight loss of single Dreissena
+   real, dimension(2) :: habitat_size      ! area of slope/embankment and area of river bed (m2)
+   real, dimension(2) :: biomass_adult     ! areal integral of biomass of adult Dreissena (g)
+   real, dimension(2) :: uptake_rate       ! (mgC/d)
+   real, dimension(2) :: assimilation_rate ! (mgC/d)
+   real, dimension(2) :: excretion_rate    ! (mgC/d)
+   real, dimension(2) :: respiration_rate  ! (mgC/d)
+   real, dimension(2) :: net_growth        ! (mgC)
+  
+  
+   ! parameters
+   real,    parameter :: zqz10 = 3.1       ! Q10 of T dependence of respiration
+   real,    parameter :: ztmax = 31.       ! T above which Dreissena has no additional respiration losses?
+   real,    parameter :: ztopt = 28.       ! optimal T for respiration?
+   real,    parameter :: pgr = 1.0         ! feeding preference for green algae
+   real,    parameter :: pki = 1.0         ! feeding preference for diatoms
+   real,    parameter :: pbl = 0.5         ! feeding preference for cyanobacteria
+   real,    parameter :: qres = 0.29       ! active respiration rate (assimilation dependent) (1/d)
+   real,    parameter :: rres0 = 0.0015    ! basal respiration rate (1/d)
+   real,    parameter :: f_excrete = 0.064 ! excreted fraction of assimilated biomass
+   real,    parameter :: r_o2_resp = 5.59  ! oxygen consumption per biomass (mg o2/mg) after Schneider
+   real,    parameter :: C_adult = 0.38    ! C:Biomass of Dreissena adults (gC/g)
+   real,    parameter :: C_egg = 3.35e-9   ! C:Biomass of Dreissena eggs   (gC/g)
+   real,    parameter :: f_female = 0.5    ! fraction of female Dreissena in population
+   real,    parameter :: f_fit = 0.25      ! fraction of fit/healthy Dreissena in population
+   real,    parameter :: f_survival = 0.75 ! egg/larval survivability?
+   real,    parameter :: C_lim = 0.01      ! C content at which Dreissena cease feeding
+   real,    parameter :: klmorg = 8.26     ! mortalilty of larvae over 22 days (mg) ?
+   real,    parameter :: tdpla = 22.       ! development period from egg to larva (d)?
+   real,    parameter :: flai = 0.52       ! fraction of weight loss attributed to egg production?
+   integer, parameter :: nndr = 2          ! number of Dreissena cohorts (0th, 1st)
+   real,    parameter :: f_production = f_survival * f_fit * f_female
    
    save drrt, drft, stdpla, increment_time
    
    ! Some useful information (units based on Gerris menu for stretch options)
-   ! zdrei  ... Dreissena biomass on embankment (0th/1st cohort; g / m2)
-   ! zdreis ... Dreissena biomass on river bed  (0th/1st cohort; g / m2)
-   ! gewdr  ... weight of a single Dreissena individual (mgC)
+   ! zdrei  dreissena biomass on embankment (0th/1st cohort; g / m2)
+   ! zdreis dreissena biomass on river bed  (0th/1st cohort; g / m2)
+   ! gewdr  weight of a single Dreissena individual (mgC)
    !
-   ! drrt   ... time since start of simulation
-   ! stdpla ... time since start of reproduction period
-   ! drft   ... time since start of reproduction period + egg development period (tdpla)
+   ! drrt   time since start of simulation
+   ! stdpla time since start of reproduction period
+   ! drft   time since start of reproduction period + egg development period (tdpla)
    !
    ! all *s quantities refer to river bed values, while those w/o 's' refer to embankment
    
@@ -150,8 +166,8 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
    endif
    
    ! optimal food concentration (mg C / L)
-   FoptD = FoptDe
-   if (FoptD == 0.0) FoptD = 1.2
+   hc_foptd = foptd
+   if (FoptD == 0.0) hc_foptd = 1.2
    
    ! mortality rate of larvae (1 / d)
    klmor  = klmorg / tdpla
@@ -219,7 +235,7 @@ subroutine dreissen(zdrei,zdreis,tempw,flae,elen,anze,                 &
       
       ! food-related Michaelis-Menten kinetics
       if (food > C_lim) then
-         hconf = min(1., food / FoptD)
+         hconf = min(1., food / hc_FoptD)
       else
          hconf = 0.0
       endif

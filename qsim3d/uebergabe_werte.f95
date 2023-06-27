@@ -31,7 +31,7 @@
 subroutine ueber_parallel()
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer :: allostat
    call MPI_Bcast(number_trans_quant_points,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -43,14 +43,14 @@ subroutine ueber_parallel()
    if (allostat /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate transfer_quantity_p :', allostat
       call qerror(fehler)
-   end if
+   endif
    !      print*,meinrang,'allocate (transfer_quantity_p    number_trans_quant,number_trans_quant_points,part=' &
    !     &      ,number_trans_quant,part
    allocate (trans_quant_vert_p(number_trans_quant_vert*part*num_lev_trans), stat = allostat )
    if (allostat /= 0) then
       write(fehler,*)' allocate (trans_quant_vert_p failed :', allostat
       call qerror(fehler)
-   end if
+   endif
    !      print*,meinrang,' allocate (trans_quant_vert_p  -  number_trans_quant_vert,num_lev_trans,part'  &
    !     &      ,number_trans_quant_vert,num_lev_trans,part
    !call mpi_barrier (mpi_komm_welt, ierr)
@@ -70,7 +70,7 @@ subroutine scatter_ueber()
    if (ierr /= 0) then
       write(fehler,*)' MPI_Bcast(transfer_value_p failed :',ierr
       call qerror(fehler)
-   end if
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
    !print*,meinrang,'scatter_ueber: MPI_Bcast(transfer_value_p,  number_trans_val,part=',number_trans_val,part
    !call mpi_barrier (mpi_komm_welt, ierr)
@@ -83,7 +83,7 @@ subroutine scatter_ueber()
    if (ierr /= 0) then
       write(fehler,*)' MPI_Scatter(transfer_quantity failed :',ierr
       call qerror(fehler)
-   end if
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
    !print*,meinrang,' scatter_ueber nach MPI_Scatter(transfer_quantity'
    call MPI_Scatter(trans_quant_vert, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT,  &
@@ -91,7 +91,7 @@ subroutine scatter_ueber()
    if (ierr /= 0) then
       write(fehler,*)' MPI_Scatter(trans_quant_vert failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    !      print*,meinrang,'scatter_ueber: MPI_Scatter(trans_quant_vert,ierr,number_trans_quant_vert,part,num_lev_trans'  &
    !     &      ,ierr,number_trans_quant_vert,part,num_lev_trans
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -110,13 +110,13 @@ subroutine gather_ueber()
    if (ierr /= 0) then
       write(fehler,*)' MPI_Gather(transfer_quantity failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    call MPI_Gather(trans_quant_vert_p, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT,  &
                    trans_quant_vert, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' MPI_Gather(trans_quant_vert failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    return
 end subroutine gather_ueber
 !----+-----+----
@@ -141,7 +141,7 @@ subroutine ini_ueber(nk)
          trans_val_name(j)   = "                  "
          transfer_value_p(j) = 0.0
          output_trans_val(j) = .false.
-      end do
+      enddo
       
       ! names
       trans_val_name( 1) = "          empty_01"
@@ -170,7 +170,7 @@ subroutine ini_ueber(nk)
       ! --- depth averaged quantities ---
       do j = 1,number_trans_quant ! initialise
          trans_quant_name(j) = "                  "
-      end do
+      enddo
       
       trans_quant_name( 1) = "              bsbt"
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
@@ -281,7 +281,7 @@ subroutine ini_ueber(nk)
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate transfer_quantity :', as
          call qerror(fehler)
-      end if
+      endif
       print*,meinrang,'allocate (transfer_quantity(    number_trans_quant,number_trans_quant_points = ' &
             ,number_trans_quant,number_trans_quant_points
       
@@ -289,19 +289,19 @@ subroutine ini_ueber(nk)
       do i = 1,number_trans_quant_points
          do j = 1,number_trans_quant 
             transfer_quantity(j+(i-1)*number_trans_quant) = 0.0 
-         end do
-      end do
+         enddo
+      enddo
       
       ! Initailize as no output
       do j = 1,number_trans_quant
          output_trans_quant(j) = .false.
-      end do
+      enddo
       
       
       !--------vertically distributed quantities
       do j = 1,number_trans_quant_vert ! initialise
          write(trans_quant_vert_name(j),'(18x)')
-      end do
+      enddo
       trans_quant_vert_name( 1) = "            up_NKz"
       trans_quant_vert_name( 2) = "            up_NGz" ! N-Aufnahmerate der Algengruppe gruen
       trans_quant_vert_name( 3) = "            up_NBz" ! N-Aufnahmerate der Algengruppe blau
@@ -338,21 +338,21 @@ subroutine ini_ueber(nk)
       if (as /= 0) then
          write(fehler,*)' allocate (trans_quant_vert failed :', as
          call qerror(fehler)
-      end if
+      endif
       do i = 1,number_trans_quant_points
          do j = 1,number_trans_quant_vert
             do k = 1,num_lev_trans
                trans_quant_vert(k+(j-1)*num_lev_trans+(i-1)*number_trans_quant_vert*num_lev_trans) = 0.0 !!!####!0.0 ! initialisierung aller konzentrationen zunächt auf Null
-            end do ! alle k levels
-         end do ! alle j quantities
+            enddo ! alle k levels
+         enddo ! alle j quantities
          !do k=1,num_lev_trans
          !   trans_quant_vert(k+(1-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert)=7.7 ! up_NKz probehalber
-         !end do ! alle k levels
-      end do ! alle i Knoten
+         !enddo ! alle k levels
+      enddo ! alle i Knoten
       do j = 1,number_trans_quant_vert ! default: no output
          output_trans_quant_vert(j) = .false.
-      end do
-   end if !! nur prozessor 0
+      enddo
+   endif !! nur prozessor 0
    
    ! make names available to all processes (e.g. for logging)
    call mpi_barrier(mpi_komm_welt, ierr)
@@ -373,7 +373,7 @@ end subroutine ini_ueber
 subroutine broadcast_parameter()
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    !----------------------------------------------------------------- APARAM.txt
    call MPI_Bcast(agchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !

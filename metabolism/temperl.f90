@@ -31,7 +31,7 @@
 !!            Temperature. - Agricultural Meteorology, 23, S.205-216 (1981)
 subroutine temperl(sa, su, uhrz, templ, mstr, idwe, tlmax, tlmin, anze, imet)
 
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

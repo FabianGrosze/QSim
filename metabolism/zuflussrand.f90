@@ -80,7 +80,7 @@ subroutine algae_start(chlas, vkigrs, antbls, tempws, &
                        a1Ki, a1Bl, a1Gr,              &
                        chlaks, chlabs, chlags)
                        
-   use aparam
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -131,7 +131,7 @@ subroutine orgc_start(TOC_CSB, bsbZoo,              &
                       CMs, CDs1, CDs2, CPs1, CPs2,  &
                       ssalgs, frfgrs, BACs, CHNFs,  &
                       CPges, CDges, Cref, TOC)
-   use aparam
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -275,9 +275,9 @@ subroutine naehr_start(akis, abls, agrs, vnh4s, vno3s , vno2s, gesns, zooins,  &
                        gelps, gesps, q_nks, q_pks, q_sks, q_ngs, q_pgs, q_nbs, &
                        q_pbs, cpges, cdges, cref, bacs, cms, nl0s, pl0s, sss,  &
                        ssalgs, mstr, mrb, einmalig,                            &
-                       kontroll, jjj)
+                       control, jjj)
    
-   use aparam
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
@@ -304,7 +304,7 @@ subroutine naehr_start(akis, abls, agrs, vnh4s, vno3s , vno2s, gesns, zooins,  &
    integer, intent(in)    :: mstr
    integer, intent(in)    :: mrb
    logical, intent(inout) :: einmalig
-   logical, intent(in)    :: kontroll !< degbugging
+   logical, intent(in)    :: control !< degbugging
    integer, intent(in)    :: jjj      !< debugging
    
    

@@ -28,7 +28,7 @@
 !> Pointsources for Tracer
 subroutine tracer_inflow_1d(tempw, flag, anze, qeinl, etemp, vabfl, jiein)
                    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

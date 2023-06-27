@@ -27,8 +27,8 @@
 
 subroutine sedflux_huelle(i)
 
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    use modell
    use QSimDatenfelder
    
@@ -41,8 +41,8 @@ subroutine sedflux_huelle(i)
    real, dimension(azStrs,1000)          :: raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
    iglob = (i+meinrang*part)
    nk = (i-1)*number_plankt_vari
-   kontroll = iglob == kontrollknoten
-   if (kontroll)print*,'sedflux: nk,i,iglob = ',nk,i,iglob
+   control = iglob == kontrollknoten
+   if (control)print*,'sedflux: nk,i,iglob = ',nk,i,iglob
    !!(\ref tiefe,\ref vmitt,\ref rau,\ref sedalg_mq,\ref hsedom,\ref hw2,\ref hbedgs,\ref hsedvvert
    tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
    vmitt(1:2) = rb_hydraul_p(1+(i-1)*number_rb_hydraul) ! Geschwindigkeitsbetrag; randbedingungen.h
@@ -79,7 +79,7 @@ subroutine sedflux_huelle(i)
    Hmq(1,1:2) = 2.0
    bvmq(1,1:2) = 1.0
    bHmq(1,1:2) = 2.0
-   if (kontroll)print*,'vor Sediment: hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2) = ',hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2)
+   if (control)print*,'vor Sediment: hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2) = ',hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2)
    call Sediment(1,mStra,Stakm,mStas,mSs,aschif,eschif          &
                  ,hsedom,SedOMb,hdkorn,dKornb                   &
                  ,raua,vmq,Hmq,nbuhn,bvmq,bHmq                  &
@@ -87,13 +87,13 @@ subroutine sedflux_huelle(i)
    hsedom(1,2) = hsedom(1,1)
    hw2(1,2) = hw2(1,1)
    hdkorn(1,2) = hdkorn(1,1)
-   if (kontroll)print*,'nach Sediment: hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2) = ',hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2)
-   if (kontroll)print*,'nach Sediment: raua,vmq,Hmq = ',raua(1,1:2),vmq(1,1:2),Hmq(1,1:2)
+   if (control)print*,'nach Sediment: hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2) = ',hsedom(1,1:2),hw2(1,1:2),hdkorn(1,1:2)
+   if (control)print*,'nach Sediment: raua,vmq,Hmq = ',raua(1,1:2),vmq(1,1:2),Hmq(1,1:2)
    if (zone(point_zone(iglob))%sediflux%kornd > 0.0)  hdkorn(1,1:2) = zone(point_zone(iglob))%sediflux%kornd ! einlesen optional, in 3D neu
    !if(burial(point_zone(iglob)).gt. 0.0) hw2(1,1:2) = burial(point_zone(iglob))   ! von sed_pom() auf 0.74e-5 gesetzt !!!
    hbedgs(1,1:2) = zone(point_zone(iglob))%sediflux%bedgs ! BedGSz  Bedeckungsgrad der Sohle mit Sediment (0-1)
    hsedvvert(1,1:2) = zone(point_zone(iglob))%sediflux%sedvvert ! Sedvvertz  volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h | ust???
-   if (kontroll)print*,'sedflux_huelle: hdkorn,hbedgs,hsedom,hw2 = ',hdkorn(1,1:2),hbedgs(1,1:2),hsedom(1,1:2),hw2(1,1:2)
+   if (control)print*,'sedflux_huelle: hdkorn,hbedgs,hsedom,hw2 = ',hdkorn(1,1:2),hbedgs(1,1:2),hsedom(1,1:2),hw2(1,1:2)
    !!,\ref hdkorn,\ref vo2,\ref vno3,\ref vnh4,\ref gelP,\ref tempw,\ref anze,\ref mstr           &\n
    !#  subroutine Sed_POM(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,fsch,fOM_OC,mstr,mSta,jsed,w2,w2b)
    !   Berechnung des Mittleren Korndurchmessers in mm
@@ -150,7 +150,7 @@ subroutine sedflux_huelle(i)
       !!\ref gelpz,\ref nkzs,\ref sorpcape,\ref klange                                &\n
       gelpz(j,1) = plankt_vari_vert_p(j+(6-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev)
       gelpz(j,2) = gelpz(j,1)
-   end do ! alle tiefenlevels
+   enddo ! alle tiefenlevels
    nkzs(1) = 1         ! nur eine Tiefenschicht
    nkzs(2) = nkzs(1)
    ! direkt aus QSimDatenfelder sorpcape ! SorptionsKapazität für Phosphor
@@ -208,21 +208,21 @@ subroutine sedflux_huelle(i)
    iwied = 0      ! unbenutzte Variable
    ! direkt aus QSimDatenfelder ynmx1e  !  Max. Wachstum Nitrosomonas
    ! direkt aus QSimDatenfelder ystks1e !  Halbsättigung Nitrosomonas
-   !!\ref obsb,\ref ocsb,  \ref kontroll ,*jjj* ) !!wy
+   !!\ref obsb,\ref ocsb,  \ref control ,*jjj* ) !!wy
    obsb(1) = planktonic_variable_p(17+(i-1)*number_plankt_vari) ! C-BSB5
    obsb(2) = obsb(1)
    ocsb(1) = planktonic_variable_p(18+(i-1)*number_plankt_vari) ! CSB
    ocsb(2) = ocsb(1)
-   !if(kontroll)print*,'sedflux vorher: vO2,hJSi,hJNO3,hJNH4,hJN2=',vo2(1),hJSi(1,1),hJNO3(1,1),hJNH4(1,1),hJN2(1,1)
+   !if(control)print*,'sedflux vorher: vO2,hJSi,hJNO3,hJNH4,hJN2=',vo2(1),hJSi(1,1),hJNO3(1,1),hJNH4(1,1),hJN2(1,1)
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    call sedflux (tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP,Tempw,anze,mstr  &
                  ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4,KapN3                            &
                  ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCap,Klang                        &
                  ,KdNh3,fPOC1,fPOC2,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                           &
                  ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,YNMAX1,STKS1    &
-                 ,obsb,ocsb,  kontroll ,iglob ) !!wy
+                 ,obsb,ocsb,  control ,iglob ) !!wy
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Datenrückgabe:
-   if (kontroll)print*,'sedflux nacher: ,hJO2,vo2(1),hJSi,hJNO3,hJNH4,hJPO4(1,1),hJN2 = ' &
+   if (control)print*,'sedflux nacher: ,hJO2,vo2(1),hJSi,hJNO3,hJNH4,hJPO4(1,1),hJN2 = ' &
        ,hJO2(1,1),vo2(1),hJSi(1,1),hJNO3(1,1),hJNH4(1,1),hJPO4(1,1),hJN2(1,1)
    benthic_distribution_p(35+(i-1)*number_benth_distr) = hJNO3(1,1) ! Nitrat-Freisetzung aus dem Sediment
    benthic_distribution_p(36+(i-1)*number_benth_distr) = hJNH4(1,1) ! Ammonium-Freisetzung aus dem Sediment

@@ -1,77 +1,63 @@
-subroutine phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
-                               gelPz, gPL, gesPL, egesP, eP, epl0, mstr,   &
-                               ieinLs, qeinlL, qeinl, vabfl, iorLa, iorLe, &
-                               jiein, flae, anze, nkzs, flag, tflie)
-   use allodim
-   use aparam, only : Qmx_PK, Qmx_PG, Qmx_PB
+subroutine phosphate_inflow_1d(gelp, gesp, pl0, q_pk, q_pg, q_pb,          &
+                               gpl, gespl, egesp, ep, epl0, mstr,          &
+                               ieinls, qeinll, qeinl, vabfl, iorla, iorle, &
+                               jiein, flae, anze, flag, tflie)
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---
-   real,    intent(inout), dimension(ialloc2)               :: gelp   !< gelöster Phosphor
-   real,    intent(inout), dimension(ialloc2)               :: gesP   !< Gesamtphosphor
-   real,    intent(inout), dimension(ialloc2)               :: pl0    !< P:C-Verhältnis   
-   real,    intent(inout), dimension(ialloc2)               :: Q_PK   !< Phosphor in Kieselalgen
-   real,    intent(inout), dimension(ialloc2)               :: Q_PG   !< Phosphor in Grünalgen
-   real,    intent(inout), dimension(ialloc2)               :: Q_PB   !< Phosphor in Blaualgen
-   real,                   dimension(azStrs,ialloc5,ialloc2):: hgesPz !< 
-   real,    intent(inout), dimension(ialloc5,ialloc2)       :: gelPz  !< gelöster Phosphor tiefenaufgelöst
-   real,    intent(inout), dimension(ialloc1)               :: gPL    !< gelöster Phosphor in Linienquelle  
-   real,    intent(inout), dimension(ialloc1)               :: gesPL  !< Gesamtphosphor in Lininenquelle
-   real,    intent(in),    dimension(ialloc1)               :: egesP  !< Gesamtphosphor im Einleiter
-   real,    intent(in),    dimension(ialloc1)               :: eP     !< 
-   real,    intent(in),    dimension(ialloc5)               :: epl0   !< P:C-Verhältnis im Einleiter
-   integer, intent(in)                                      :: mstr   !< akuteller Strang
-   integer, intent(in),    dimension(azStrs)                :: ieinLs !< Anzahl der Linienquellen je Strang
-   real,    intent(in),    dimension(ialloc1)               :: qeinlL !<
-   real,    intent(in),    dimension(ialloc5)               :: qeinl  !<
-   real,    intent(inout), dimension(ialloc2)               :: vabfl  !<
-   integer,                dimension(ialloc1)               :: iorLa  !<
-   integer,                dimension(ialloc1)               :: iorLe  !<
-   integer, intent(in),    dimension(ialloc2)               :: jiein  !<
-   real,    intent(in),    dimension(ialloc2)               :: flae   !< Oberfläche
-   integer, intent(in)                                      :: anze   !< Anzahl der Abschnitte im aktuellen Strang
-   integer,                dimension(ialloc2)               :: nkzs   !< Anzahl der Tiefenschichten
-   integer, intent(in),    dimension(ialloc2)               :: flag   !<
-   real,    intent(in)                                      :: tflie  !< Zeitschritt [d]
+   real,    intent(inout), dimension(ialloc2)  :: gelp   !< gelöster phosphor
+   real,    intent(inout), dimension(ialloc2)  :: gesp   !< gesamtphosphor
+   real,    intent(inout), dimension(ialloc2)  :: pl0    !< p:c-verhältnis   
+   real,    intent(inout), dimension(ialloc2)  :: q_pk   !< phosphor in kieselalgen
+   real,    intent(inout), dimension(ialloc2)  :: q_pg   !< phosphor in grünalgen
+   real,    intent(inout), dimension(ialloc2)  :: q_pb   !< phosphor in blaualgen
+   real,    intent(inout), dimension(ialloc1)  :: gpl    !< gelöster phosphor in linienquelle  
+   real,    intent(inout), dimension(ialloc1)  :: gespl  !< gesamtphosphor in lininenquelle
+   real,    intent(in),    dimension(ialloc1)  :: egesp  !< gesamtphosphor im einleiter
+   real,    intent(in),    dimension(ialloc1)  :: ep     !< 
+   real,    intent(in),    dimension(ialloc5)  :: epl0   !< p:c-verhältnis im einleiter
+   integer, intent(in)                         :: mstr   !< akuteller strang
+   integer, intent(in),    dimension(azstrs)   :: ieinls !< anzahl der linienquellen je strang
+   real,    intent(in),    dimension(ialloc1)  :: qeinll !<
+   real,    intent(in),    dimension(ialloc5)  :: qeinl  !<
+   real,    intent(inout), dimension(ialloc2)  :: vabfl  !<
+   integer,                dimension(ialloc1)  :: iorla  !<
+   integer,                dimension(ialloc1)  :: iorle  !<
+   integer, intent(in),    dimension(ialloc2)  :: jiein  !<
+   real,    intent(in),    dimension(ialloc2)  :: flae   !< oberfläche
+   integer, intent(in)                         :: anze   !< anzahl der abschnitte im aktuellen strang
+   integer, intent(in),    dimension(ialloc2)  :: flag   !<
+   real,    intent(in)                         :: tflie  !< zeitschritt [d]
    
    ! --- local variables ---
-   integer             :: ieinL, ior, nkz, iein, j, ior_flag, m, ihcQ, ji
-   integer             :: nkzs_alt, nkzs_neu
-   real                :: hcgelP, hcgesP, hcQ
-   real                :: hcQE, hcgelpE, hcgespE, hcpl0E , hcpl0
-   real, dimension(50) :: gelPz_neu, gesPz_neu, hcgelPz
-   real, dimension(50) :: hcgelpEz, hcgespEz, hcgesPz
+   integer :: ieinl, ior, iein, j, ior_flag, m, ihcq, ji
+   real    :: hcgelp, hcgesp, hcq
+   real    :: hcqe, hcgelpe, hcgespe, hcpl0e , hcpl0
+
    
    
    ! --------------------------------------------------------------------------
    ! diffuse sources
    ! --------------------------------------------------------------------------
-   do ieinL = 1, ieinLs(mstr)
+   do ieinl = 1, ieinls(mstr)
       do ior = 1,anze+1
-         if (iorLe(ieinL) < ior)cycle
-         if (iorLa(ieinL) <= ior .and. iorLe(ieinL)>=ior) then
-            if (qeinlL(ieinL) <= 0.0) then
-               gPL(ieinL) = 0.0
-               gesPL(ieinL) = 0.0
+         if (iorle(ieinl) < ior)cycle
+         if (iorla(ieinl) <= ior .and. iorle(ieinl)>=ior) then
+            if (qeinll(ieinl) <= 0.0) then
+               gpl(ieinl) = 0.0
+               gespl(ieinl) = 0.0
             endif
             
-            ! --- 2D ---
-            do nkz = 1,nkzs(ior)
-               if (qeinlL(ieinL)>=0.0 .and. gPL(ieinL) == -1) then
-               else
-                  gelPz(nkz,ior) = gelPz(nkz,ior)+((gPL(ieinL)-gelPz(nkz,ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.
-               endif
-            enddo
-            
-            ! --- 1D ---
-            if (qeinlL(ieinL)>=0.0 .and. gPL(ieinL) == -1) then
+            if (qeinll(ieinl)>=0.0 .and. gpl(ieinl) == -1) then
             else
-               gelP(ior) = gelP(ior)+((gPL(ieinL)-gelP(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.
+               gelp(ior) = gelp(ior)+((gpl(ieinl)-gelp(ior))*qeinll(ieinl)/flae(ior))*tflie*86400.
             endif
             
-            if (qeinlL(ieinL)>=0.0 .and. gesPL(ieinL) == -1) then
+            if (qeinll(ieinl)>=0.0 .and. gespl(ieinl) == -1) then
             else
-               gesP(ior) = gesP(ior)+((gesPL(ieinL)-gesP(ior))*qeinlL(ieinL)/flae(ior))*tflie*86400.
+               gesp(ior) = gesp(ior)+((gespl(ieinl)-gesp(ior))*qeinll(ieinl)/flae(ior))*tflie*86400.
             endif
          endif
       enddo
@@ -82,7 +68,7 @@ subroutine phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
    ! point sources
    ! --------------------------------------------------------------------------
    iein = 1
-   do j = 1,anze+1                ! Schleife longitudinale Gitterpunkte
+   do j = 1,anze+1 
       ior = j
       ior_flag = 0
       
@@ -93,87 +79,53 @@ subroutine phosphate_inflow_1d(gelp, gesP, pl0, Q_PK, Q_PG, Q_PB, hgesPz,  &
       
       if (flag(ior) == 4) then
          m = 1
-         ihcQ = 0
+         ihcq = 0
          if (vabfl(ior-1) < 0.0 .and. vabfl(ior) < 0.0) m = -1
-         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcQ = 1 ! Konzentration an der Einleitstelle
-         ! ist gleich der Konzentration der Einleitung
+         if (vabfl(ior-1) < 0.0 .and. vabfl(ior) > 0.0) ihcq = 1 ! konzentration an der einleitstelle
+         ! ist gleich der konzentration der einleitung
          
-         hcgelP = gelP(ior-m)
-         hcgesP = gesP(ior-m)
+         hcgelp = gelp(ior-m)
+         hcgesp = gesp(ior-m)
          hcpl0  = pl0(ior-m)
-         hcQ    = vabfl(ior-m)
-         if (hcQ < 0.0) hcQ = abs(hcQ)
-         if (hcQ == 0.0 .or. ihcQ == 1) hcQ = 1.e-10
-         
-         nkzs_alt = nkzs(ior-m)
-         nkzs_neu = nkzs(ior)
-         
-         do nkz = 1, nkzs_alt
-            gelPz_neu(nkz) = gelPz(nkz,ior-m)
-            if (gesP(ior) > 0.0) gesPz_neu(nkz) = hgesPz(mstr,nkz,ior-m)
-         enddo
-         
-         ! call z_gitter_einl(dh2D,ior,nkzs_alt,nkzs_neu,gelPz_neu,hcgelPz)
-         ! if(gesP(ior)>0.0)call z_gitter_einl(dh2D,ior,nkzs_alt,nkzs_neu,gesPz_neu,hcgesPz)
-         do nkz = 1,nkzs_neu
-            hcgelPz(nkz) = gelPz_neu(nkz)
-            if (gesP(ior) > 0.0) hcgesPz(nkz) = gesPz_neu(nkz)
-         enddo
-         
-         do ji = 1,jiein(ior)   ! Beginn Einleitungsschleife
-            hcQE = max(0.0,qeinl(iein))
-            hcgelpE = eP(iein)
-            hcgespE = egesP(iein)
-            hcpl0E = epl0(iein)
+         hcq    = vabfl(ior-m)
+         if (hcq < 0.0) hcq = abs(hcq)
+         if (hcq == 0.0 .or. ihcq == 1) hcq = 1.e-10
+                  
+         do ji = 1,jiein(ior)   ! beginn einleitungsschleife
+            hcqe = max(0.0,qeinl(iein))
+            hcgelpe = ep(iein)
+            hcgespe = egesp(iein)
+            hcpl0e = epl0(iein)
             
-            if (hcpl0E  < 0.0) hcpl0E  = hcpl0
-            if (hcgelpE < 0.0) hcgelpE = hcgelp
-            if (hcgespE < 0.0) hcgespE = hcgesp
-            do nkz = 1, nkzs(ior)
-               hcgelpEz(nkz) = eP(iein)
-               if (hcgelpEz(nkz) < 0.0)hcgelpEz(nkz) = hcgelpz(nkz)
-               hcgespEz(nkz) = egesP(iein)
-               if (hcgespEz(nkz) < 0.0)hcgespEz(nkz) = hcgespz(nkz)
-            enddo
-            do nkz = 1,nkzs(ior)      ! 2D
-               gelpz(nkz,ior) = (hcQ*hcgelpz(nkz)+hcQE*hcgelpEz(nkz))/(hcQ+hcQE)
-               if (gesP(ior) > 0.0)hgesPz(mstr,nkz,ior) = (hcQ*hcgespz(nkz)+hcQE*hcgespEz(nkz))/(hcQ+hcQE)
-            enddo
+            if (hcpl0e  < 0.0) hcpl0e  = hcpl0
+            if (hcgelpe < 0.0) hcgelpe = hcgelp
+            if (hcgespe < 0.0) hcgespe = hcgesp
             
-            gelp(ior) = (hcQ * hcgelp      + hcQE * hcgelpE) / (hcQ+hcQE)
-            pl0(ior)  = (hcQ * hcpl0       + hcQE * hcpl0E)  / (hcQ+hcQE)
-            Q_PK(ior) = (hcQ * Q_PK(ior-m) + hcQE * Qmx_PK)  / (hcQ+hcQE)
-            Q_PG(ior) = (hcQ * Q_PG(ior-m) + hcQE * Qmx_PG)  / (hcQ+hcQE)
-            Q_PB(ior) = (hcQ * Q_PB(ior-m) + hcQE * Qmx_PB)  / (hcQ+hcQE)
-            if (gesP(ior) > 0.0) then
-               gesP(ior) = (hcQ*hcgesP+hcQE*hcgespE)/(hcQ+hcQE)
+            gelp(ior) = (hcq * hcgelp      + hcqe * hcgelpe) / (hcq+hcqe)
+            pl0(ior)  = (hcq * hcpl0       + hcqe * hcpl0e)  / (hcq+hcqe)
+            q_pk(ior) = (hcq * q_pk(ior-m) + hcqe * qmx_pk)  / (hcq+hcqe)
+            q_pg(ior) = (hcq * q_pg(ior-m) + hcqe * qmx_pg)  / (hcq+hcqe)
+            q_pb(ior) = (hcq * q_pb(ior-m) + hcqe * qmx_pb)  / (hcq+hcqe)
+            if (gesp(ior) > 0.0) then
+               gesp(ior) = (hcq*hcgesp+hcqe*hcgespe)/(hcq+hcqe)
             endif
-            hcQ = hcQ + qeinl(iein)
+            hcq = hcq + qeinl(iein)
             iein = iein+1
-            hcgelP = gelP(ior)
-            hcgesP = gesP(ior)
+            hcgelp = gelp(ior)
+            hcgesp = gesp(ior)
             hcpl0 = pl0(ior)
             
-            do nkz = 1,nkzs(ior)
-               hcgelpz(nkz) = gelPz(nkz,ior)
-               hcgesPz(nkz) = hgesPz(mstr,nkz,ior)
-            enddo
          enddo
          
          if (ior_flag == 1) then
             iein = iein - jiein(ior)
             ior = ior-1
             gelp(ior) = gelp(ior+1)
-            if (gesP(ior+1)>=0.0)gesP(ior) = gesP(ior+1)
+            if (gesp(ior+1)>=0.0)gesp(ior) = gesp(ior+1)
             pl0(ior) = pl0(ior+1)
-            Q_PK(ior) = Q_PK(ior+1)
-            Q_PG(ior) = Q_PG(ior+1)
-            Q_PB(ior) = Q_PB(ior+1)
-            
-            do nkz = 1,nkzs(ior)
-               gelPz(nkz,ior) = gelPz(nkz,ior+1)
-               if (gesP(ior) > 0.0)hgesPz(mstr,nkz,ior) = hgesPz(mstr,nkz,ior+1)
-            enddo
+            q_pk(ior) = q_pk(ior+1)
+            q_pg(ior) = q_pg(ior+1)
+            q_pb(ior) = q_pb(ior+1)
          endif
       
       endif

@@ -27,53 +27,57 @@
 
 !> @ author Volker Kirchesch
 !! @date 21.04.2004
-subroutine sed_diffk(tiefe,vmitt,rau,h1,h2,hdkorn,diffk1,diffk2,difkp1,difkp2,poro1,poro2,vvert,vvert1,vvert2    &
-                     ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
+subroutine sed_diffk(tiefe_s, vmitt_s, rau_s, h1, h2, hdkorn_s, vvert, &
+                     poro1, poro2, diffk1, diffk2, difkp1, difkp2,     &
+                     vvert1, vvert2)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
+   real, intent(in)  :: tiefe_s
+   real, intent(in)  :: vmitt_s
+   real, intent(in)  :: rau_s
+   real, intent(in)  :: h1, h2
+   real, intent(in)  :: hdkorn_s
+   real, intent(in)  :: vvert
+   real, intent(in)  :: poro1, poro2
+   real, intent(out) :: diffk1, diffk2
+   real, intent(out) :: difkp1, difkp2
+    
+   real, intent(out) :: vvert1, vvert2
    
-   integer                      :: monats, n, mstr, itags, ior
-   real                         :: zwdiffk2, zwdiffk1, z2stern
-   real                         :: z1stern, w, vvert, vvert2, vvert1
-   real                         :: vis_0, u, ust, uhrz, t
-   real                         :: sc, scp, sco, sc0, roh_h2o
-   real                         :: re, raun, poros, poro2, poro1
-   real                         :: hcon, h2, h1, g, dvis
-   real                         :: dkorn, difkp2, difkp1, diffmo, diffkm
-   real                         :: diffk2_2, diffk2, diffk1_2, diffk1_1, diffk1
-   real                         :: kappa, k, kvis, nuestern, nue, nuestern_2
-   real                         :: alphao2, alphao1
-   logical, intent(in)          :: kontroll  !< debugging
-   integer, intent(in)          :: jjj       !< debugging
-   real, dimension(azstrs,1000) :: hdkorn
-   real, dimension(1000)        :: tiefe, vmitt,rau
+   integer :: n
+   real    :: zwdiffk2, zwdiffk1, z2stern
+   real    :: z1stern, w, vis_0, u, ust, t
+   real    :: sc, scp, sco, sc0, roh_h2o
+   real    :: re, raun, poros, hcon, dvis
+   real    :: diffmo, diffkm, diffk2_2, diffk1_2, diffk1_1
+   real    :: kappa, k, kvis, nuestern, nue, nuestern_2
+   real    :: alphao2, alphao1, zvvert1, zvvert2
    
-   external                     :: sedadv
+   real, parameter :: g = 9.81
    
-   
-   raun = 1./rau(ior)
-   g = 9.81
+   raun = 1./rau_s
    poros = (poro1*h1+poro2*h2)/(h1+h2)
    kvis = 1.e-6
    dvis = 0.001
    roh_h2o = 1000.
-   dkorn = hdkorn(mstr,ior)
+
    sco = 570.
    scp = 1827.
    vis_0 = 0.01 ! molekulare kinematische Viskosität von reinem Wasser in cm2/s
    t = 1.       ! Einheit in Sekunden
    diffmo = (kvis/scp)*86400.
-   if (tiefe(ior) == 0.0 .or. abs(vmitt(ior)) == 0.0) then
-      difkp1 = (kvis/scp)*86400.
-      difkp2 = (kvis/scp)*86400.
-      diffk1 = (kvis/sco)*86400.
-      diffk2 = (kvis/sco)*86400.
+   
+   if (tiefe_s == 0.0 .or. abs(vmitt_s) == 0.0) then
+      difkp1 = (kvis / scp) * 86400.
+      difkp2 = (kvis / scp) * 86400.
+      diffk1 = (kvis / sco) * 86400.
+      diffk2 = (kvis / sco) * 86400.
    else
-      ust = ((raun*sqrt(g))/(tiefe(ior)**0.16667))*abs(vmitt(ior))
+      ust = ((raun*sqrt(g))/(tiefe_s**0.16667))*abs(vmitt_s)
       w = ust
       u = ust
-      k = 5.6e-3*poros**3*dkorn**2*g/((1.-poros)**2*kvis)
+      k = 5.6e-3*poros**3*hdkorn_s**2*g/((1.-poros)**2*kvis)
       kappa = k*dvis/(roh_h2o*g)
       re = w*kappa**0.5/kvis
       nuestern_2 = 12.838 * re**1.3845/(50.60846**1.3845+re**1.3845)
@@ -116,17 +120,30 @@ subroutine sed_diffk(tiefe,vmitt,rau,h1,h2,hdkorn,diffk1,diffk2,difkp1,difkp2,po
             alphao2 = diffk2_2/diffk1_2
          endif
          
-      enddo  ! Ende Schleife zur Berechnung von DiffK und DiffKP
+      enddo 
+      
       difkp1 = diffk1
       difkp2 = diffk2
       diffk1 = zwdiffk1
       diffk2 = zwdiffk2
    endif
-   vvert1 = 0.0
-   vvert2 = 0.0
    
-   if (vvert > 0.0) then
-      call sedadv(vvert,alphao1,alphao2,diffk1,diffk2,vvert1,vvert2,h1,h2,diffmo)
+  
+   ! --- sedadv ---
+   if (vvert <= 0.0) then
+      vvert1 = 0.0
+      vvert2 = 0.0
+   else
+      zvvert1 = vvert * alphao1
+      vvert1 = (vvert + zvvert1) / 2.
+      
+      diffk1 = diffmo
+      zvvert2 = zvvert1 * alphao2
+      vvert2 = (zvvert1 + zvvert2)/2.
+      
+      diffk2 = diffmo
+      diffk1 = diffk1 + vvert1 * h1
+      diffk2 = diffk2 + vvert2 * h2
    endif
 end subroutine sed_diffk
 

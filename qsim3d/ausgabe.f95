@@ -44,7 +44,7 @@ subroutine ausgeben()
             print*,'hydro_trieb = ',hydro_trieb
             call qerror('ausgeben: Hydraulischer Antrieb unbekannt')
       end select
-   end if ! nur Prozessor 0
+   endif ! nur Prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine ausgeben
@@ -79,20 +79,20 @@ subroutine tagesmittelwert()
          call system(trim(systemaufruf),system_error)
          if (system_error /= 0) then
             print*,'rm -rf mittelwert_*** failed.'
-         end if ! system_error.ne.0
+         endif ! system_error.ne.0
          open ( unit = ion , file = dateiname, status = 'new', action = 'write', iostat = open_error )
          if (open_error /= 0) then
             write(fehler,*)'open_error mittelwert_vtk open_error = ',open_error
             call qerror(fehler)
-         end if ! open_error.ne.0
+         endif ! open_error.ne.0
          if (knotenanzahl2D /= number_benthic_points) then
             write(fehler,*)'3D noch nicht vorgesehen hier'
             call qerror(fehler)
-         end if !
+         endif !
          if (number_plankt_point /= knotenanzahl2D) then
             write(fehler,*)'number_plankt_point und knotenanzahl2D passen nicht zusammen ???'
             call qerror(fehler)
-         end if !
+         endif !
          !write(ion,*)'huhu ausgabe'
          write(ion,'(A)')'# vtk DataFile Version 3.0'
          write(ion,'(A)')'Simlation tiqusim'
@@ -104,7 +104,7 @@ subroutine tagesmittelwert()
          write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
          do n = 1,knotenanzahl2D
             write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          if (element_vorhanden) then
             ! Elemente ausgeben
             write(ion,'(A)')' '
@@ -112,47 +112,47 @@ subroutine tagesmittelwert()
             do n = 1,n_elemente ! alle Elemente
                if (cornernumber(n) == 3) then
                   write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-               end if
+               endif
                if (cornernumber(n) == 4) then
                   write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-               end if
-            end do ! alle Elemente
+               endif
+            enddo ! alle Elemente
             write(ion,'(A)')' '
             write(ion,'(A,2x,I12)')'CELL_TYPES ', n_elemente
             do n = 1,n_elemente ! alle Elemente
                if (cornernumber(n) == 3)write(ion,'(A)') '5'
                if (cornernumber(n) == 4)write(ion,'(A)') '9'
-            end do ! alle Elemente
+            enddo ! alle Elemente
          else ! keine file.elements vorhanden
             ! Punkte als vtk-vertices
             write(ion,'(A)')' '
             write(ion,'(A,2x,I12,2x,I12)')'CELLS ', knotenanzahl2D, 2*knotenanzahl2D
             do n = 1,knotenanzahl2D
                write(ion,'(A,2x,I8)')'1', n-1
-            end do ! alle Knoten
+            enddo ! alle Knoten
             write(ion,'(A)')' '
             write(ion,'(A,2x,I12)')'CELL_TYPES ', knotenanzahl2D
             do n = 1,knotenanzahl2D
                write(ion,'(A)')'1'
-            end do ! alle Knoten
-         end if !! element_vorhanden
+            enddo ! alle Knoten
+         endif !! element_vorhanden
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
          write(ion,'(A)')'SCALARS Gelaendehoehe float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') knoten_z(n)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          write(ion,'(A)')'SCALARS T_wass_mittel float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') transfer_quantity_p(68+(n-1)*number_trans_quant)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          write(ion,'(A)')'SCALARS T_sed_mittel float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') transfer_quantity_p(69+(n-1)*number_trans_quant)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          write(ion,'(A)')'SCALARS mittel_tief float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
@@ -161,19 +161,19 @@ subroutine tagesmittelwert()
                                    / transfer_quantity_p(71+(n-1)*number_trans_quant)    ! tagesmittelwert Wassertiefe
             else
                write(ion,'(f27.6)') null
-            end if
-         end do ! alle Knoten
+            endif
+         enddo ! alle Knoten
          write(ion,'(A)')'SCALARS Bedeckungsdauer float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') transfer_quantity_p(71+(n-1)*number_trans_quant)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          do n = 1,knotenanzahl2D
             transfer_quantity_p(68+(n-1)*number_trans_quant) = 0.0
             transfer_quantity_p(69+(n-1)*number_trans_quant) = 0.0
             transfer_quantity_p(70+(n-1)*number_trans_quant) = 0.0
             transfer_quantity_p(71+(n-1)*number_trans_quant) = 0.0
-         end do ! alle Knoten wieder null setzen
+         enddo ! alle Knoten wieder null setzen
          close(ion)
       endif ! Tageswechsel
       tagesanteil = real(deltat)/real(86400)
@@ -188,7 +188,7 @@ subroutine tagesmittelwert()
             transfer_quantity_p(71+(n-1)*number_trans_quant) = transfer_quantity_p(71+(n-1)*number_trans_quant)  &
                                                              + (tagesanteil) ! Bedeckungsdauer (Tageanteil)
          endif
-      end do ! alle Knoten
+      enddo ! alle Knoten
    endif ! heute mittelwertberechnung
    uhrzeit_stunde_vorher = uhrzeit_stunde
    return
@@ -226,7 +226,7 @@ subroutine ausgabekonzentrationen()
       return
    else
       print*,'ausgabekonzentrationen.txt geoeffnet ...'
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    do while ( zeile(ion)) !!  read all lines and understand
       if ((ctext(1:1) == 'x') .or. (ctext(1:1) == 'X')) then ! line marked ?
          found = .false.
@@ -239,8 +239,8 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_plankt(j) = .true.
                found = .true.
-            end if !! in string ctext
-         end do ! done all planktic con.
+            endif !! in string ctext
+         enddo ! done all planktic con.
          do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
             write(text,'(A18)')trim(plankt_vari_vert_name(j))
             iscan = index(trim(ctext),trim(text))
@@ -249,8 +249,8 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_plankt_vert(j) = .true.
                found = .true.
-            end if !! in string ctext
-         end do ! done all plankt_vari_vert
+            endif !! in string ctext
+         enddo ! done all plankt_vari_vert
          do j = 1,number_benth_distr ! all benthic distributions
             write(text,'(A)')ADJUSTL(trim(benth_distr_name(j)))
             iscan = index(trim(ctext),trim(text))
@@ -259,10 +259,10 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_benth_distr(j) = .true.
                found = .true.
-            end if !! in string ctext
+            endif !! in string ctext
             ! ausgabe_bentver(j)=.true. ! überbrückt: ### alle
             ! ausgabe_bentver(j)=.false. ! überbrückt: ### keine
-         end do ! done all all benthic distributions
+         enddo ! done all all benthic distributions
          do j = 1,number_trans_val  ! alle globalen Übergabe Werte
             write(text,'(A)')ADJUSTL(trim(trans_val_name(j)))
             iscan = index(trim(ctext),trim(text))
@@ -271,8 +271,8 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_trans_val(j) = .true.
                found = .true.
-            end if !! in string ctext
-         end do !
+            endif !! in string ctext
+         enddo !
          do j = 1,number_trans_quant ! all exchange con.
             write(text,'(A)')ADJUSTL(trim(trans_quant_name(j)))
             iscan = index(trim(ctext),trim(text))
@@ -281,10 +281,10 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_trans_quant(j) = .true.
                found = .true.
-            end if !! in string ctext
+            endif !! in string ctext
             ! output_trans_quant(j)=.true. ! überbrückt: ### alle
             ! output_trans_quant(j)=.false. ! überbrückt: ### keine
-         end do ! done all exchange con.
+         enddo ! done all exchange con.
          do j = 1,number_trans_quant_vert  ! all vertically distributed transfer quantities
             write(text,'(A)')ADJUSTL(trim(trans_quant_vert_name(j)))
             iscan = index(trim(ctext),trim(text))
@@ -293,43 +293,43 @@ subroutine ausgabekonzentrationen()
                !print*,trim(ctext)
                output_trans_quant_vert(j) = .true.
                found = .true.
-            end if !! in string ctext
-         end do ! done all vertically distributed transfer quantities
+            endif !! in string ctext
+         enddo ! done all vertically distributed transfer quantities
          if ( .not. found) then
             print*,'no parameter found for choice:'
             !print*,trim(ctext)
-         end if ! not found
-      end if ! marked line
-   end do ! no further line
+         endif ! not found
+      endif ! marked line
+   enddo ! no further line
    close (ion)
    if (nur_alter) then ! allways write age concentrations in age simulation
       output_plankt(71) = .true. ! Tracer
       output_plankt(73) = .true. ! age_decay
       output_plankt(74) = .true. ! age_arith
       output_plankt(75) = .true. ! age_growth
-   end if ! nuralter
+   endif ! nuralter
    
    n_pl = 0
    do j = 1,number_plankt_vari
       if (output_plankt(j))n_pl = n_pl+1
-   end do
+   enddo
    do j = 1,number_plankt_vari_vert
       if (output_plankt_vert(j))n_pl = n_pl+1
-   end do
+   enddo
    n_bn = 0
    do j = 1,number_benth_distr
       if (output_benth_distr(j))n_bn = n_bn+1
-   end do
+   enddo
    n_ue = 0
    do j = 1,number_trans_val
       if (output_trans_val(j))n_ue = n_ue+1
-   end do
+   enddo
    do j = 1,number_trans_quant
       if (output_trans_quant(j))n_ue = n_ue+1
-   end do
+   enddo
    do j = 1,number_trans_quant_vert
       if (output_trans_quant_vert(j))n_ue = n_ue+1
-   end do
+   enddo
    print*,'ausgabekonzentrationen n_pl,n_bn,n_ue = ',n_pl,n_bn,n_ue
    !     writing output variable list moved to SUBROUTINE eingabe()
    !text='ausgabekonzentrationen_beispiel.txt'
@@ -355,31 +355,31 @@ subroutine ausgabekonzentrationen_beispiel()
       return
    else
       print*,'ausgabekonzentrationen_beispiel.txt opened for write ...'
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    write(104,'(A)')"# depth averaged, planctonic, transported concentrations"
    do j = 1,number_plankt_vari ! all depth averaged planktic con.
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(planktonic_variable_name(j))
-   end do ! done all planktic con.
+   enddo ! done all planktic con.
    write(104,'(A)')"# depth resolving, planctonic, transported concentrations"
    do j = 1,number_plankt_vari_vert ! all vertically distributed planktonic variables
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(plankt_vari_vert_name(j))
-   end do ! done all plankt_vari_vert
+   enddo ! done all plankt_vari_vert
    write(104,'(A)')"# bentic distributions"
    do j = 1,number_benth_distr ! all benthic distributions
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(benth_distr_name(j))
-   end do ! done all benthic distributions
+   enddo ! done all benthic distributions
    write(104,'(A)')"# global transfer variables"
    do j = 1,number_trans_val  ! alle globalen Übergabe Werte
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(trans_val_name(j))
-   end do
+   enddo
    write(104,'(A)')"# depth averaged transfer variables"
    do j = 1,number_trans_quant ! all exchange con.
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(trans_quant_name(j))
-   end do
+   enddo
    write(104,'(A)')"# depth resolving transfer variables"
    do j = 1,number_trans_quant_vert  ! all vertically distributed transfer quantities
       write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(trans_quant_vert_name(j))
-   end do
+   enddo
    close (104)
    return
 end subroutine ausgabekonzentrationen_beispiel
@@ -401,7 +401,7 @@ subroutine ausgabezeitpunkte()
       n_ausgabe = 0
       close (ion)
       return
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    n = 0
    do while ( zeile(ion))
       if (ctext(1:1) /= '#') then ! keine Kommentarzeile
@@ -412,10 +412,10 @@ subroutine ausgabezeitpunkte()
             print*,'unlesbare Angabe in ausgabezeitpunkte.txt'
             write(fehler,*)trim(ctext)
             call qerror(fehler)
-         end if ! io_error.ne.0
+         endif ! io_error.ne.0
          !call sekundenzeit()
       endif ! keine Kommentarzeile
-   end do ! zeile
+   enddo ! zeile
    n_ausgabe = n
    print*,n_ausgabe,' Ausgabezeitpunkte'
    allocate (ausgabe_zeitpunkt(n_ausgabe), stat = alloc_status )
@@ -442,9 +442,9 @@ subroutine ausgabezeitpunkte()
             print*,'mit Bahnlinienausgabe ',ausgabe_bahnlinie(n)
          else
             ausgabe_bahnlinie(n) = 0
-         end if ! io_error.ne.0
+         endif ! io_error.ne.0
       endif ! keine Kommentarzeile
-   end do ! zeile
+   enddo ! zeile
    close (ion)
    return
 end subroutine ausgabezeitpunkte
@@ -460,23 +460,23 @@ subroutine ausgeben_parallel()
    if (ierr /= 0) then
       write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_ausgabe,  ierr = ', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,'MPI_Bcast(n_ausgabe gemacht',meinrang
    if (meinrang /= 0) then
       allocate (ausgabe_zeitpunkt(n_ausgabe), stat = alloc_status )
       allocate (ausgabe_bahnlinie(n_ausgabe), stat = alloc_status )
-   end if
+   endif
    call MPI_Bcast(ausgabe_zeitpunkt,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_zeitpunkt,  ierr = ', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,'MPI_Bcast(ausgabe_zeitpunkt gemacht',meinrang
    call MPI_Bcast(ausgabe_bahnlinie,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_bahnlinie,  ierr = ', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,'MPI_Bcast(ausgabe_bahnlinie gemacht',meinrang
    return
 end subroutine ausgeben_parallel
@@ -493,22 +493,22 @@ logical function jetzt_ausgeben()
    !   jetzt_ausgeben=.FALSE.
    !   if(meinrang.eq. 0)print*,'SCHISM preliminary: no output for all timesteps'
    !   return
-   !end if ! SCHISM
+   !endif ! SCHISM
    
    do n = 1,n_ausgabe,1
       diff = ausgabe_zeitpunkt(n)-rechenzeit
       if ( (diff >= (-1*(deltat/2))) .and. (diff < (deltat/2)) ) then
          jetzt_ausgeben = .TRUE.
          if (ausgabe_bahnlinie(n) /= 0) bali = .TRUE.
-      end if !
+      endif !
       !print*,'ausgeben? ', rechenzeit, ausgabe_punkt(n), deltat, (rechenzeit-ausgabe_punkt(n))
       !if(((rechenzeit-ausgabe_punkt(n)).lt.deltat).and.((rechenzeit-ausgabe_punkt(n)).ge.0))then
       !if(((rechenzeit-ausgabe_punkt(1)).lt.deltat).and.((rechenzeit-ausgabe_punkt(1)).ge.0))then
       !   print*,'jetzt jede Stunde ausgeben'
       !   ausgabe_punkt(1)=ausgabe_punkt(1)+3600
       !   jetzt_ausgeben=.TRUE.
-      !end if !
-   end do
+      !endif !
+   enddo
    !if(.not.jetzt_ausgeben)jetzt_ausgeben=(zeitschrittanzahl.eq.izeit) !! Ausgabe am Ende
    if (jetzt_ausgeben)print*,'jetzt_ausgeben ,meinrang',meinrang
    return
@@ -527,20 +527,20 @@ subroutine ini_aus(nk)
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate AusgabeKonzentrationsName :', as
          call qerror(fehler)
-      end if
+      endif
       AusgabeKonzentrationsName( 1) = "            BACmua"
       !!!!!!!!! ausgabe_konzentration allokieren und initialisieren
       allocate (ausgabe_konzentration(anzahl_auskonz,knotenanzahl_ausgabe), stat = as )
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate transfer_quantity :', as
          call qerror(fehler)
-      end if
+      endif
       do k = 1,knotenanzahl_ausgabe ! alle knoten
          do j = 1,anzahl_auskonz ! initialisierung aller konzentrationen zunächt auf Null
             ausgabe_konzentration(j,k) = 0.0
-         end do
-      end do
-   end if !! nur prozessor 0
+         enddo
+      enddo
+   endif !! nur prozessor 0
 end subroutine ini_aus
 !----+-----+----
 !> ELCIRC .grd Format ausgabe momentan Sept15 Überstaudauern für Elbestabil
@@ -560,7 +560,7 @@ subroutine aus_grd()
          print*,'uedau0.grd, open_error = ',open_error
          close (ion)
          return
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       
       write(ion,'(A)') 'Grid written by QSim3D'
       write(ion,'(I9,2x,I9)')n_elemente, knotenanzahl2D
@@ -569,18 +569,18 @@ subroutine aus_grd()
          ! write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
          write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n),   &
                                                      benthic_distribution(44+(n-1)*number_benth_distr)  !! Überstaudauer
-      end do ! alle Knoten
+      enddo ! alle Knoten
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
             write(ion,'(5(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-         end if
+         endif
          if (cornernumber(n) == 4) then
             write(ion,'(6(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-         end if
-      end do ! alle Elemente
+         endif
+      enddo ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 0-15 cm (44) ausgegeben auf: uedau0.grd'
@@ -592,7 +592,7 @@ subroutine aus_grd()
          print*,'uedau15.grd, open_error = ',open_error
          close (ion)
          return
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       
       write(ion,'(A)') 'Grid written by QSim3D'
       write(ion,'(I9,2x,I9)')n_elemente, knotenanzahl2D
@@ -601,18 +601,18 @@ subroutine aus_grd()
          ! write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
          write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n),   &
                                                      benthic_distribution(45+(n-1)*number_benth_distr)  !! Überstaudauer
-      end do ! alle Knoten
+      enddo ! alle Knoten
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
             write(ion,'(5(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-         end if
+         endif
          if (cornernumber(n) == 4) then
             write(ion,'(6(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-         end if
-      end do ! alle Elemente
+         endif
+      enddo ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 15-25 cm (45) ausgegeben auf: uedau15.grd'
@@ -624,7 +624,7 @@ subroutine aus_grd()
          print*,'uedau25.grd, open_error = ',open_error
          close (ion)
          return
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       
       write(ion,'(A)') 'Grid written by QSim3D'
       write(ion,'(I9,2x,I9)')n_elemente, knotenanzahl2D
@@ -633,16 +633,16 @@ subroutine aus_grd()
          ! write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
          write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n),   &
                                                      benthic_distribution(46+(n-1)*number_benth_distr)  !! Überstaudauer
-      end do ! alle Knoten
+      enddo ! alle Knoten
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
             write(ion,'(5(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-         end if
+         endif
          if (cornernumber(n) == 4) then
             write(ion,'(6(I8,2x))') n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-         end if
-      end do ! alle Elemente
+         endif
+      enddo ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 25-35 cm (46) ausgegeben auf: uedau25.grd'
@@ -655,7 +655,7 @@ subroutine aus_grd()
          print*,'uedau35.grd, open_error = ',open_error
          close (ion)
          return
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       
       write(ion,'(A)') 'Grid written by QSim3D'
       write(ion,'(I9,2x,I9)')n_elemente, knotenanzahl2D
@@ -664,22 +664,22 @@ subroutine aus_grd()
          ! write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
          write(ion,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n),   &
                                                      benthic_distribution(47+(n-1)*number_benth_distr)  !! Überstaudauer
-      end do ! alle Knoten
+      enddo ! alle Knoten
       
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
             write(ion,'(5(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-         end if
+         endif
          if (cornernumber(n) == 4) then
             write(ion,'(6(I8,2x))') &
                                 n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-         end if
-      end do ! alle Elemente
+         endif
+      enddo ! alle Elemente
       
       close (ion)
       print*,'Überstaudauer 35-undendl. cm (47) ausgegeben auf: uedau35.grd'
-   end if !! nur prozessor 0
+   endif !! nur prozessor 0
    return
 end subroutine aus_grd
 !----+-----+----
@@ -705,7 +705,7 @@ subroutine show_mesh()
       if (open_error /= 0) then
          write(fehler,*)'open_error mesh_node.vtk'
          call qerror(fehler)
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       call mesh_output(ion)
       print*,'show_mesh:mesh_node.vtk done'
       close (ion)
@@ -720,7 +720,7 @@ subroutine show_mesh()
          if (open_error /= 0) then
             write(fehler,*)'open_error mesh_midedge.vtk'
             call qerror(fehler)
-         end if ! open_error.ne.0
+         endif ! open_error.ne.0
          print*,
          write(ion,'(A)')'# vtk DataFile Version 3.0'
          write(ion,'(A)')'Simlation QSim3D SCHISM'
@@ -731,34 +731,34 @@ subroutine show_mesh()
          do n = 1,kantenanzahl
             write(ion,'(f17.5,2x,f17.5,2x,f8.3)') 0.5*(knoten_x(top_node(n))+knoten_x(bottom_node(n)))  &
                                                  , 0.5*(knoten_y(top_node(n))+knoten_y(bottom_node(n))), 0.0
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*2
          do n = 1,kantenanzahl
             write(ion,'(A,2x,I12)')'1',n-1
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' ' ! vtk-vertex
          write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
          do n = 1,kantenanzahl
             write(ion,'(A)')'1'
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12)')'POINT_DATA ', kantenanzahl
          write(ion,'(A)')'SCALARS length float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,kantenanzahl
             write(ion,'(f27.6)') cell_bound_length(n) ! real(n) ! ed_area(n)
-         end do ! alle kanten
+         enddo ! alle kanten
          ! write(ion,'(A)')'SCALARS volume_flux float 1'
          ! write(ion,'(A)')'LOOKUP_TABLE default'
          ! do n=1,kantenanzahl
          !    write(ion,'(f27.6)') ed_flux(n)
-         ! end do ! alle kanten
+         ! enddo ! alle kanten
          dummy = 0.0
          write(ion,'(A)')'VECTORS normal float'
          do n = 1,kantenanzahl
             write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') edge_normal_x(n),edge_normal_y(n),dummy
-         end do ! all edges/sides
+         enddo ! all edges/sides
          close (ion)
          print*,'show_mesh:mesh_midedge.vtk schism done',kantenanzahl
          
@@ -771,7 +771,7 @@ subroutine show_mesh()
          if (open_error /= 0) then
             write(fehler,*)'open_error mesh_side.vtk'
             call qerror(fehler)
-         end if ! open_error.ne.0
+         endif ! open_error.ne.0
          print*,
          write(ion,'(A)')'# vtk DataFile Version 3.0'
          write(ion,'(A)')'Simlation QSim3D SCHISM'
@@ -781,17 +781,17 @@ subroutine show_mesh()
          write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
          do n = 1,knotenanzahl2D
             write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, kantenanzahl*3
          do n = 1,kantenanzahl
             write(ion,'(A,2x,I12,2x,I12)')'2',top_node(n)-1,bottom_node(n)-1
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' ' ! vtk-vertex
          write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
          do n = 1,kantenanzahl
             write(ion,'(A)')'3'
-         end do ! alle kanten
+         enddo ! alle kanten
          dummy = 123.4
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
@@ -799,15 +799,15 @@ subroutine show_mesh()
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') dummy ! real(n) ! ed_area(n)
-         end do ! alle kanten
+         enddo ! alle kanten
          ! write(ion,'(A)')'SCALARS volume_flux float 1'
          ! write(ion,'(A)')'LOOKUP_TABLE default'
          ! do n=1,kantenanzahl
          !    write(ion,'(f27.6)') ed_flux(n)
-         ! end do ! alle kanten
+         ! enddo ! alle kanten
          close (ion)
          print*,'show_mesh:mesh_side.vtk schism done',kantenanzahl
-      end if ! schism
+      endif ! schism
       !-------------------------------------------------------------------------------------------- faces=elements
       kanten_vorhanden = .false. !! geht schief bei casu ????
       !! if(kanten_vorhanden)then
@@ -822,7 +822,7 @@ subroutine show_mesh()
          if (open_error /= 0) then
             write(fehler,*)'open_error mesh_element.vtk'
             call qerror(fehler)
-         end if ! open_error.ne.0
+         endif ! open_error.ne.0
          write(ion,'(A)')'# vtk DataFile Version 3.0'
          write(ion,'(A)')'mesh_element '
          write(ion,'(A)')'ASCII'
@@ -832,10 +832,10 @@ subroutine show_mesh()
          dummy = 0.0
          do n = 1,n_elemente
             write(ion,'(f17.5,2x,f17.5,2x,f8.3)') element_x(n), element_y(n), dummy
-         end do ! all elements/faces
+         enddo ! all elements/faces
          do n = 1,knotenanzahl2D
             write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-         end do ! alle Knoten
+         enddo ! alle Knoten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl, 3*kantenanzahl
          do n = 1,kantenanzahl
@@ -846,26 +846,26 @@ subroutine show_mesh()
                nel = n_elemente+bottom_node(n)
             endif
             write(ion,'(A,2x,I8,2x,I8)')'2', nel-1, ner-1
-         end do ! alle Knoten
+         enddo ! alle Knoten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12)')'CELL_TYPES ', kantenanzahl
          do n = 1,kantenanzahl
             write(ion,'(A)')'3'
-         end do ! alle kanten
+         enddo ! alle kanten
          write(ion,'(A)')' '
          write(ion,'(A,2x,I12)')'POINT_DATA ', n_elemente+knotenanzahl2D
          write(ion,'(A)')'SCALARS boundary float 1'
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,n_elemente
             write(ion,'(f27.6)') real(element_rand(n))
-         end do
+         enddo
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') real(knoten_rand(n))
-         end do ! alle Knoten
+         enddo ! alle Knoten
          print*,'show_mesh: mesh_element.vtk done'
          close (ion)
-      end if! edges
-   end if ! nur Prozessor 0
+      endif! edges
+   endif ! nur Prozessor 0
    return
 end subroutine show_mesh
 !----+-----+----+-----+----+-----+----+-----+----+-----+----
@@ -887,7 +887,7 @@ subroutine mesh_output(ion)
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
    do n = 1,knotenanzahl2D
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    if (element_vorhanden) then
       ! Elemente ausgeben (Knotennummern in paraview wieder von 0 beginnend !!
       write(ion,'(A)')' '
@@ -895,53 +895,53 @@ subroutine mesh_output(ion)
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3) then
             write(ion,'(4(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1
-         end if
+         endif
          if (cornernumber(n) == 4) then
             write(ion,'(5(I8,2x))') cornernumber(n),elementnodes(n,1)-1,elementnodes(n,2)-1,elementnodes(n,3)-1,elementnodes(n,4)-1
-         end if
-      end do ! alle Elemente
+         endif
+      enddo ! alle Elemente
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12)')'CELL_TYPES ', n_elemente
       do n = 1,n_elemente ! alle Elemente
          if (cornernumber(n) == 3)write(ion,'(A)') '5'
          if (cornernumber(n) == 4)write(ion,'(A)') '9'
-      end do ! alle Elemente
+      enddo ! alle Elemente
    else ! keine file.elements vorhanden
       ! Punkte als vtk-vertices
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12,2x,I12)')'CELLS ', knotenanzahl2D, 2*knotenanzahl2D
       do n = 1,knotenanzahl2D
          write(ion,'(A,2x,I8)')'1', n-1
-      end do ! alle Knoten
+      enddo ! alle Knoten
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12)')'CELL_TYPES ', knotenanzahl2D
       do n = 1,knotenanzahl2D
          write(ion,'(A)')'1'
-      end do ! alle Knoten
-   end if !! element_vorhanden
+      enddo ! alle Knoten
+   endif !! element_vorhanden
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12)')'POINT_DATA ', knotenanzahl2D
    write(ion,'(A)')'SCALARS Gelaendehoehe float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !write(ion,'(A)')'SCALARS zonen_nummer float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   if(knoten_zone(n).eq. 0)call qerror('mesh_output: knoten_zone must not be zero')
    !   write(ion,'(f27.6)') real( zonen_nummer(knoten_zone(n)) )
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    write(ion,'(A)')'SCALARS knoten_zone float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') real( knoten_zone(n) )
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS knoten_rand float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,'(f27.6)') real(knoten_rand(n))
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !close (ion) !channel number is handeled by subroutine show_mesh
    
    !----------------------------------------------------------------- .gr3
@@ -954,7 +954,7 @@ subroutine mesh_output(ion)
       print*,'mesh.gr3, io_error = ',io_error
       close (igr3)
       return
-   end if ! io_error.ne.0
+   endif ! io_error.ne.0
    
    write(igr3,'(A,2x,A)') 'Grid written by QSim3D',modellverzeichnis
    write(igr3,*)n_elemente, knotenanzahl2D
@@ -962,18 +962,18 @@ subroutine mesh_output(ion)
    do n = 1,knotenanzahl2D
       ! write(igr3,'(I9,2x,f11.4,2x,f11.4,2x,f11.4)')n, knoten_x(n), knoten_y(n), p(n) !! Wasserspiegellage
       write(igr3,*)n, knoten_x(n), knoten_y(n), knoten_z(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    
    do n = 1,n_elemente ! alle Elemente
       if (cornernumber(n) == 3) then
          write(igr3,*) &
                       n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3)
-      end if
+      endif
       if (cornernumber(n) == 4) then
          write(igr3,*) &
                       n, cornernumber(n),elementnodes(n,1),elementnodes(n,2),elementnodes(n,3),elementnodes(n,4)
-      end if
-   end do ! alle Elemente
+      endif
+   enddo ! alle Elemente
    
    close (igr3)
    !print*,'written mesh.gr3'

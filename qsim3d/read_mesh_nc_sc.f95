@@ -89,7 +89,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
          if ((knoten_zone(i) < 0) .or. (knoten_zone(i) > 300)) then
             write(fehler,*)' knoten #',i,': Zonennummer darf nicht negativ oder größer als 300 sein; ist aber = ',knoten_zone(i)
             call qerror(fehler)
-         end if
+         endif
       enddo
       
       xmax = -999999999999.9 ; xmin = 999999999999.9
@@ -102,7 +102,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
          if (ymin >= knoten_y(i))ymin = knoten_y(i)
          if (nmax <= knoten_zone(i))nmax = knoten_zone(i)
          if (nmin >= knoten_zone(i))nmin = knoten_zone(i)
-      end do ! alle i Knoten
+      enddo ! alle i Knoten
       print*,'zone.gr3:'
       print*,'x-koordinate max+min', xmax, xmin
       print*,'y-koordinate max+min', ymax, ymin
@@ -113,7 +113,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       if (istat /= 0) then
          write(fehler,*)'read_mesh_nc_sc local_to_global_0000 failed, rank = ',meinrang
          call qerror(trim(fehler))
-      end if
+      endif
       read(10,*)ns_global,ne_global,np_global,nvrt,nproc !,ntracers
       print*,'read_mesh_nc_sc: local_to_global_0000 ',trim(adjustl(dateiname)), &
              ' points, elements, sides levels, processes'                       &
@@ -153,7 +153,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       !print*,'read_mesh_nc_sc: using hydraulic event: ',trim(adjustl(modellverzeichnis))//'outputs_schism'
       !systemaufruf='ls -thora '//trim(adjustl(modellverzeichnis))//'outputs_schism'
       !call system(trim(systemaufruf),istat)
-   end if !! prozess 0 only
+   endif !! prozess 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
    !if(meinrang.ne.0)allocate( np(0:proz_anz-1),ns(0:proz_anz-1),ne(0:proz_anz-1),stat=istat)
    if (rkind /= 8)call qerror('read_mesh_nc_sc: rkind /= 8') ! Default real datatype from schism_glbl needs to be 8=DOUBLE_PRECISION
@@ -185,7 +185,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    if (istat /= 0) then
       write(fehler,*)'read_mesh_nc_sc open local_to_global_* failed, rank = ',meinrang
       call qerror(trim(fehler))
-   end if
+   endif
    if (.not.zeile(10+meinrang)) call qerror('get_local_to_global erste zeile')
    if (.not.zeile(10+meinrang)) call qerror('get_local_to_global zweite zeile')
    read(10+meinrang,*)nea
@@ -216,7 +216,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       if (istat /= 0) then
          write(fehler,*)'read error get_local_to_global islg rank = ',meinrang
          call qerror('fehler')
-      end if
+      endif
    enddo
    
    !!!! read second part:  !!!!
@@ -286,7 +286,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       do n = 1,n_elemente !initialize zones and boundaries
          element_zone(n) = 0
          element_rand(n) = 0
-      end do ! alle Elemente!
+      enddo ! alle Elemente!
       print*,"read_mesh_nc_sc: allocate 0 4"
       ! reread on process 0
       write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
@@ -365,7 +365,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
             !!! vnor1=su2(k,j)*snx(j)+sv2(k,j)*sny(j)
             !!! vnor2=su2(k-1,j)*snx(j)+sv2(k-1,j)*sny(j)
             !!! flux_adv_hface(k,j)=(zs(k,j)-zs(k-1,j))*distj(j)*(vnor1+vnor2)/2 !normal * area = flux (in local x-direction)
-         end do !all m, 1 to nc_sc
+         enddo !all m, 1 to nc_sc
          close(10)
          
          ! Reconstruct connectivity table
@@ -391,18 +391,18 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       do n = 1,kantenanzahl !! check integrity of side-node connectivity
          if ((top_node(n) <= 0) .or. (top_node(n) > knotenanzahl2D))print*,"top_node(",n,")wrong",top_node(n)
          if ((bottom_node(n) <= 0) .or. (bottom_node(n) > knotenanzahl2D))print*,"bottom_node(",n,")wrong",bottom_node(n)
-      end do ! all n sides=edges
+      enddo ! all n sides=edges
       summ_ne = 0 ! needed by vtk output
       do n = 1,n_elemente
          summ_ne = summ_ne+cornernumber(n)+1
-      end do ! all Elements
+      enddo ! all Elements
       
       distmax = -999999999999.9
       distmin = 999999999999.9
       do n = 1,kantenanzahl ! all edges
          if (distmax <= cell_bound_length(n))distmax = cell_bound_length(n)
          if (distmin >= cell_bound_length(n))distmin = cell_bound_length(n)
-      end do ! all n edges/sides
+      enddo ! all n edges/sides
       element_vorhanden = .true.
       xmax = -999999999999.9
       xmin = 999999999999.9
@@ -418,14 +418,14 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
          knoten_z(n) = knoten_z(n)*(-1.0) ! bathymety elevation upwards
          if (zmax <= knoten_z(n))zmax = knoten_z(n)
          if (zmin >= knoten_z(n))zmin = knoten_z(n)
-      end do ! alle Knoten
+      enddo ! alle Knoten
       print*,'local_to_global_0000:'
       print*,'x-koordinate max+min', xmax, xmin
       print*,'y-koordinate max+min', ymax, ymin
       print*,'Sohlhöhe max+min', zmax, zmin
       print*,'maxstack = ',maxstack
       print*,'edge length distmax+distmin', distmax, distmin
-   end if !! prozess 0 only
+   endif !! prozess 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(maxstack,1,MPI_INT,0,mpi_komm_welt,ierr)
    nst_prev = -333 ! initialize
@@ -435,7 +435,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    if (meinrang == 0) then !! prozess 0 only
       do j = 1,knotenanzahl2D ! initialize all j nodes with  boundary number 0 = inside node
          knoten_rand(j) = 0
-      end do ! alle j node
+      enddo ! alle j node
       rewind(14)
       read(14,*); read(14,*) !header+numbers
       do i = 1,knotenanzahl2D
@@ -456,9 +456,9 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
             knoten_rand(n) = j
          enddo
          print*,'read_mesh_nc_sc: zone.gr3 open boundary ',j, ' has ',nr,' nodes'
-      end do ! all j open boundaries
+      enddo ! all j open boundaries
       close(14)
-   end if !! prozess 0 only
+   endif !! prozess 0 only
    
    call mpi_barrier (mpi_komm_welt, ierr)
    if (meinrang == 0) print*,'read_mesh_nc_sc finished'

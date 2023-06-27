@@ -1,7 +1,7 @@
 subroutine crank_nicolson(u, elen, flag, dl, deltat, anze, icranickoeff,  &
                           ithomas, ktrans, nkz, isub_dtx, isgn)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    ! --- dummy arguments ---

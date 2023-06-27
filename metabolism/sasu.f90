@@ -29,7 +29,7 @@
 !! @author Volker Kirchesch
 !! @date 05.11.1987
 subroutine sasu(itags, monats, geob, geol, sa, su, zg, zlk, dk, tdj)
-   use aparam
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---

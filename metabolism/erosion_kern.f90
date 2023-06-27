@@ -31,7 +31,7 @@
 subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
                         ssalg_s, dsedh_s, tausc_s, m_eros_s, n_eros_s,       &
                         sedroh_s,                                            &
-                        kontroll,jjj)
+                        control,jjj)
    implicit none
    
    ! dummy arguments
@@ -48,7 +48,7 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
    real                :: n_eros_s  !< <i>Dokumentation fehlt noch</i>
    real                :: sedroh_s  !< Rohdichte des Sediments [kg/m3]
    real                :: dRero_s   !< Erosionsrate je Zeitschritt [kg/m2]
-   logical, intent(in) :: kontroll  !< debugging
+   logical, intent(in) :: control  !< debugging
    integer, intent(in) :: jjj       !< debugging
    
    ! local variables
@@ -58,7 +58,7 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
    real, parameter     :: g = 9.81
    ! --------------------------------------------------------------------------
    
-   if (kontroll) then
+   if (control) then
       print*,'erosion_kern tiefe, rau, vmitt,', tiefe_s, rau_s, vmitt_s
       print*,'tausc,M_eros,n_eros,sedroh = '  , tausc_s, m_eros_s,n_eros_s,sedroh_s
    endif
@@ -81,7 +81,7 @@ subroutine erosion_kern(tflie, tiefe_s, rau_s, vmitt_s, SSeros_s, ss_s,      &
       SSeros_s = 0.
    endif
    
-   if (kontroll) then 
+   if (control) then 
       print*, 'erosion_kern tau_s,SS,SSalg,SSeros,dsedH,jjj = ',  &
                tau_s,ss_s,ssalg_s,SSeros_s,dsedh_s,jjj
    endif

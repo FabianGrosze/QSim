@@ -44,15 +44,15 @@ subroutine ausgeben_casu()
    if (knotenanzahl2D /= number_plankt_point) then
       write(fehler,*)'knotenanzahl2D /= number_plankt_point ',knotenanzahl2D, number_plankt_point
       call qerror(fehler)
-   end if
+   endif
    if (knotenanzahl2D /= number_trans_quant_points) then
       write(fehler,*)'knotenanzahl2D /= number_trans_quant_points'
       call qerror(fehler)
-   end if
+   endif
    if (knotenanzahl2D /= number_benthic_points) then
       write(fehler,*)'knotenanzahl2D /= number_benthic_points ... full 3D output not yet implemented'
       call qerror(fehler)
-   end if
+   endif
    write(zahl,*)rechenzeit
    zahl = adjustl(zahl)
    !-------------------------------------
@@ -68,7 +68,7 @@ subroutine ausgeben_casu()
       if (open_error /= 0) then
          write(fehler,*)'open_error bahnlinien.vtk'
          call qerror(fehler)
-      end if ! open_error.ne.0
+      endif ! open_error.ne.0
       !write(ion,*)'huhu ausgabe'
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'Simulation QSim3D casu'
@@ -80,27 +80,27 @@ subroutine ausgeben_casu()
       write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D*2, ' float'
       do n = 1,knotenanzahl2D
          write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
-      end do ! alle Knoten
+      enddo ! alle Knoten
       do n = 1,knotenanzahl2D
          write(ion,'(f17.5,2x,f17.5,2x,f8.3)') ur_x(n), ur_y(n), ur_z(n)
-      end do ! alle Knoten
+      enddo ! alle Knoten
       ! Punkte als vtk-vertices
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12,2x,I12)')'CELLS ', knotenanzahl2D, 3*knotenanzahl2D
       do n = 1,knotenanzahl2D
          write(ion,'(A,2x,I8,2x,I8)')'2', n-1, knotenanzahl2D+(n-1)
-      end do ! alle Knoten
+      enddo ! alle Knoten
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12)')'CELL_TYPES ', knotenanzahl2D
       do n = 1,knotenanzahl2D
          write(ion,'(A)')'3'
-      end do ! alle Knoten
+      enddo ! alle Knoten
       !print*,"-------- Bahnlinien gemacht, jetzt beginnen Randnormalvektoren ---------------",ianz_rb
       !write(ion,'(A)')' '
       !write(ion,'(A,2x,I12)')'POINT_DATA ',knotenanzahl2D*2
       222  continue
       close (ion)
-   end if ! bali
+   endif ! bali
    !-------------------------------------
    !print*,"Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte1234567890123"
    print*,"Ausgabe Knotenpunkte"
@@ -114,50 +114,50 @@ subroutine ausgeben_casu()
    if (open_error /= 0) then
       write(fehler,*)'open_error ausgabe.vtk'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    if (knotenanzahl2D /= number_benthic_points) then
       write(fehler,*)'3D noch nicht vorgesehen hier'
       call qerror(fehler)
-   end if !
+   endif !
    if (number_plankt_point /= knotenanzahl2D) then
       write(fehler,*)'number_plankt_point und knotenanzahl2D passen nicht zusammen ???'
       call qerror(fehler)
-   end if !
+   endif !
    call mesh_output(ion)
    write(ion,'(A)')'SCALARS WSP float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') p(n)
       write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS summwicht float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       summwicht = 0.0
       do j = 1,4
          summwicht = summwicht + wicht((n-1)*4+j)
-      end do ! alle Ecken im Herkunftselement der Bahnlinie
+      enddo ! alle Ecken im Herkunftselement der Bahnlinie
       write(ion,'(f27.6)') summwicht
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS Rang float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') real(n/part)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    ! Birte Anfang 17.02.2016
    write(ion,'(A)')'SCALARS flaeche float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') knoten_flaeche(n)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    ! Birte Ende
    write(ion,'(A)')'VECTORS u float'
    !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
@@ -166,40 +166,40 @@ subroutine ausgeben_casu()
       ny = u(n)*sin(dir(n))
       nz = 0.0
       write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS Geschwindigkeitsbetrag float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') u(n)
       write(ion,'(f27.6)') rb_hydraul(1+(n-1)*number_rb_hydraul)
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS rau float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(6x,f27.6)') zone(point_zone(n))%reib
-   end do
+   enddo
    write(ion,'(A)')'SCALARS strickler float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,number_plankt_point
       write(ion,'(6x,f27.6)') strickler( zone(point_zone(n))%reib , rb_hydraul(2+(n-1)*number_rb_hydraul) )
-   end do
+   enddo
    !write(ion,'(A)')'SCALARS Utau float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   write(ion,'(f27.6)') rb_hydraul(4+(n-1)*number_rb_hydraul)
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    !write(ion,'(A)')'SCALARS Ks float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   write(ion,'(f27.6)') reib_ks(knoten_zone(n))
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    !write(ion,'(A)')'SCALARS Kst float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   sandrauh=reib_ks(knoten_zone(n))
    !   wati=rb_hydraul(2+(n-1)*number_rb_hydraul)
    !   write(ion,'(f27.6)') strickler(sandrauh,wati)
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    write(ion,'(A)')'SCALARS numDiff.rel float 1'
    !write(ion,'(A)')'SCALARS nue_elder float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
@@ -212,7 +212,7 @@ subroutine ausgeben_casu()
       if (nue_elder > 0.0) relnumdiff = nue_num/nue_elder
       write(ion,'(6x,f27.6)')relnumdiff
       !write(ion,'(6x,f27.6)')nue_elder
-   end do ! alle Knoten
+   enddo ! alle Knoten
    write(ion,'(A)')'SCALARS Randnummer float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
@@ -221,14 +221,14 @@ subroutine ausgeben_casu()
       else
          write(ion,'(6x,f27.6)') real( knoten_rand(n) )
       endif
-   end do ! alle Knoten
+   enddo ! alle Knoten
    !write(ion,'(A)')'SCALARS inflow float 1'
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   infl=0.0
    !   if(inflow(n))infl=1.0
    !   write(ion,'(f27.6)') infl
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    if (nur_alter) then
       ! Altersberechnung nach Shen&Wang 2007
       write(ion,'(A)')'SCALARS age_arith float 1'
@@ -239,7 +239,7 @@ subroutine ausgeben_casu()
          aus = 0.0
          if (tr > minimum_age_tracer ) aus = al / tr
          write(ion,'(6x,f27.6)') aus
-      end do ! alle Knoten
+      enddo ! alle Knoten
       ! Aufenthaltszeit in Tagen
       write(ion,'(A)')'SCALARS Tage_Aufenthalt float 1'
       write(ion,'(A)')'LOOKUP_TABLE default'
@@ -249,8 +249,8 @@ subroutine ausgeben_casu()
          aus = 0.0
          if (tr > minimum_age_tracer ) aus = al / tr
          write(ion,'(6x,f27.6)') aus
-      end do ! alle Knoten
-   end if !nur_alter
+      enddo ! alle Knoten
+   endif !nur_alter
    ! planktische, transportierte Konzentrationen entsprechend ausgabeflag
    do j = 1,number_plankt_vari ! alle tiefengemittelten
       if (output_plankt(j)) then ! zur ausgabe vorgesehen
@@ -260,9 +260,9 @@ subroutine ausgeben_casu()
             aus = planktonic_variable(j+(n-1)*number_plankt_vari)
             !if (tief(n).le.0.05)aus=-999.999
             write(ion,'(f27.6)') aus
-         end do ! alle Knoten
-      end if ! zur ausgabe vorgesehen
-   end do ! alle planktonic_variable
+         enddo ! alle Knoten
+      endif ! zur ausgabe vorgesehen
+   enddo ! alle planktonic_variable
    do j = 1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
       if (output_plankt_vert(j)) then ! zur ausgabe vorgesehen
          write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
@@ -270,9 +270,9 @@ subroutine ausgeben_casu()
          do n = 1,knotenanzahl2D ! alle Knoten
             aus = plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
             write(ion,'(f27.6)') aus
-         end do ! alle Knoten
-      end if ! zur ausgabe vorgesehen
-   end do ! done all plankt_vari_vert
+         enddo ! alle Knoten
+      endif ! zur ausgabe vorgesehen
+   enddo ! done all plankt_vari_vert
    ! Übergabe_Konzentrationen entsprechend ausgabeflag
    do j = 1,number_trans_quant ! alle tiefengemittelten
       if (output_trans_quant(j)) then ! zur ausgabe vorgesehen
@@ -280,9 +280,9 @@ subroutine ausgeben_casu()
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,knotenanzahl2D
             write(ion,'(f27.6)') transfer_quantity(j+(n-1)*number_trans_quant)
-         end do ! alle Knoten
-      end if ! zur ausgabe vorgesehen
-   end do ! alle transkon
+         enddo ! alle Knoten
+      endif ! zur ausgabe vorgesehen
+   enddo ! alle transkon
    do j = 1,number_trans_quant_vert ! alle tiefenaufgelösten z.Z. nur level 1
       if (output_trans_quant_vert(j)) then ! zur ausgabe vorgesehen
          write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_vert_name(j))),' float 1'
@@ -290,9 +290,9 @@ subroutine ausgeben_casu()
          do n = 1,knotenanzahl2D
             aus = trans_quant_vert(1+(j-1)*num_lev_trans+(n-1)*num_lev_trans*number_trans_quant_vert)
             write(ion,'(f27.6)') aus
-         end do ! alle Knoten
-      end if ! zur ausgabe vorgesehen
-   end do ! done all vertically distributed transfer quantities
+         enddo ! alle Knoten
+      endif ! zur ausgabe vorgesehen
+   enddo ! done all vertically distributed transfer quantities
    ! benthic distributions according to output flag
    do j = 1,number_benth_distr ! all benthic distributions
       if (output_benth_distr(j)) then ! flagged?
@@ -300,9 +300,9 @@ subroutine ausgeben_casu()
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,number_benthic_points ! all nodes
             write(ion,'(f27.6)') benthic_distribution(j+(n-1)*number_benth_distr)
-         end do ! all nodes
-      end if ! flagged
-   end do ! all benthic distributions
+         enddo ! all nodes
+      endif ! flagged
+   enddo ! all benthic distributions
    !>
    !!
    ! Benthische_verteilungen entsprechend ausgabeflag
@@ -310,7 +310,7 @@ subroutine ausgeben_casu()
    !write(ion,'(A)')'LOOKUP_TABLE default'
    !do n=1,knotenanzahl2D
    !   write(ion,'(f27.6)') benthische_verteilung(1,n)
-   !end do
+   !enddo
    ! write(ion,'(A)')'VECTORS normaltop float'
    ! !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
    ! do n=1,knotenanzahl2D
@@ -323,10 +323,10 @@ subroutine ausgeben_casu()
    !          nx=rabe(knoten_rand(n))%randlinie%kante(i)%normal_x
    !          ny=rabe(knoten_rand(n))%randlinie%kante(i)%normal_y
    !       endif !top
-   !       end do ! alle i Kanten
-   !    end if ! randknoten
+   !       enddo ! alle i Kanten
+   !    endif ! randknoten
    !    write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-   ! end do ! alle Knoten
+   ! enddo ! alle Knoten
    ! write(ion,'(A)')'VECTORS normalbottom float'
    ! !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
    ! do n=1,knotenanzahl2D
@@ -339,16 +339,16 @@ subroutine ausgeben_casu()
    !          nx=rabe(knoten_rand(n))%randlinie%kante(i)%normal_x
    !          ny=rabe(knoten_rand(n))%randlinie%kante(i)%normal_y
    !       endif !bottom
-   !       end do ! alle i Kanten
-   !    end if ! randknoten
+   !       enddo ! alle i Kanten
+   !    endif ! randknoten
    !    write(ion,'(6x, f11.6, 2x, f11.6, 2x, f11.6)') nx, ny, nz
-   ! end do ! alle Knoten
+   ! enddo ! alle Knoten
    ! write(ion,'(A)')'SCALARS tief_diff float 1'
    ! write(ion,'(A)')'LOOKUP_TABLE default'
    ! do n=1,knotenanzahl2D
    !    aus=p(n)-knoten_z(n)
    !    write(ion,'(f27.6)') aus
-   ! end do ! alle Knoten
+   ! enddo ! alle Knoten
    !! Kontrollwerte wg. Zuflussrandermittlung:
    !goto 777 ! z. Z. nicht ausgeben:
    !write(ion,'(A)')'SCALARS ubetr float 1'
@@ -356,7 +356,7 @@ subroutine ausgeben_casu()
    !do n=1,knotenanzahl2D
    !   ubetr=(((knoten_x(n)-ur_x(n))**2 + (knoten_y(n)-ur_y(n))**2 + (knoten_z(n)-ur_z(n))**2)**0.5)/dttrans
    !   write(ion,'(f27.6)') ubetr
-   !end do ! alle Knoten
+   !enddo ! alle Knoten
    !777  continue
    close (ion)
    ! Visualisierung anwerfen ...
@@ -365,7 +365,7 @@ subroutine ausgeben_casu()
    ! if(sysa.ne.0) then
    !    print*,'Aufruf von visu fehlgeschalgen'
    !    ! call qerror(fehler) 7
-   ! end if ! systemaufruf fehlgeschlagen
+   ! endif ! systemaufruf fehlgeschlagen
    ! call aus_grd() !! Ausgabe als Janet-lesbare Datei
    return
 end subroutine ausgeben_casu

@@ -40,7 +40,7 @@ subroutine Transport(anze,deltat,izeits,isub_dt,isub_dt_Mac,hvmitt,elen,flag,tem
                      ,hgsZn,hglZn,hgsCad,hglCad,hgsCu,hglCu,hgsNi,hglNi,hgsAs,hglAs,hgsPb,hglPb,hgsCr,hglCr,hgsFe,hglFe    &
                      ,hgsHg,hglHg,hgsMn,hglMn,hgsU,hglU,mtracer,ischwer)
    
-   use allodim
+   use module_alloc_dimensions
    
    implicit none
    

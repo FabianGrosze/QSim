@@ -1,57 +1,60 @@
 ! --------------------------------------------------------------------------- !
-!  QSim - Programm zur Simulation der Wasserqualität                          !
+!  qsim - programm zur simulation der wasserqualität                          !
 !                                                                             !
-!  Copyright (C) 2022                                                         !
-!  Bundesanstalt für Gewässerkunde                                            !
-!  Koblenz (Deutschland)                                                      !
+!  copyright (c) 2022                                                         !
+!  bundesanstalt für gewässerkunde                                            !
+!  koblenz (deutschland)                                                      !
 !  http://www.bafg.de                                                         !
 !                                                                             !
-!  Dieses Programm ist freie Software. Sie können es unter den Bedingungen    !
-!  der GNU General Public License, Version 3, wie von der Free Software       !
-!  Foundation veröffentlicht, weitergeben und/oder modifizieren.              !
+!  dieses programm ist freie software. sie können es unter den bedingungen    !
+!  der gnu general public license, version 3, wie von der free software       !
+!  foundation veröffentlicht, weitergeben und/oder modifizieren.              !
 !                                                                             !
-!  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es     !
-!  Ihnen von Nutzen sein wird, aber ohne irgendeine Garantie, sogar ohne die  !
-!  implizite Garantie der Makrtreife oder der Verwendbarkeit für einen        !
-!  bestimmten Zweck.                                                          !
+!  die veröffentlichung dieses programms erfolgt in der hoffnung, dass es     !
+!  ihnen von nutzen sein wird, aber ohne irgendeine garantie, sogar ohne die  !
+!  implizite garantie der makrtreife oder der verwendbarkeit für einen        !
+!  bestimmten zweck.                                                          !
 !                                                                             !
-!  Details finden Sie in der GNU General Public License.                      !
-!  Sie sollten ein Exemplar der GNU General Public License zusammen mit       !
-!  diesem Programm erhalten haben.                                            !
-!  Falls nicht, siehe http://www.gnu.org/licenses/.                           !
+!  details finden sie in der gnu general public license.                      !
+!  sie sollten ein exemplar der gnu general public license zusammen mit       !
+!  diesem programm erhalten haben.                                            !
+!  falls nicht, siehe http://www.gnu.org/licenses/.                           !
 !                                                                             !
-!  Programmiert von                                                           !
-!  1979 bis 2018   Volker Kirchesch                                           !
-!  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
+!  programmiert von                                                           !
+!  1979 bis 2018   volker kirchesch                                           !
+!  seit 2011       jens wyrwa, wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 
-!> Ermittlung der SoffFluxe aus dem Sediment
+!> ermittlung der sofffluxe aus dem sediment
 !!
-!! DiToro 2001; QUAL2K
+!! ditoro 2001; qual2k
 !!
-!! @author: Volker Kirchesch
+!! @author: volker kirchesch
 !! @date 12.11.2008
-subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,vO2,vNO3,vNH4,gelP,Tempw,anze,mstr       &
-                   ,hJNO3,hJNH4,hJPO4,hJO2,hJN2,sedalk,sedalg,sedalb,sedSS_MQ,KNH4e,kapN3e                               &
-                   ,tflie,ilbuhn,itags,monats,uhrz,vo2z,vnh4z,vno3z,gelPz,nkzs,SorpCape,Klange                           &
-                   ,KdNh3e,fPOC1e,fPOC2e,orgCsd_abb,hCD,JDOC1,JDOC2,Q_NK,Q_PK,Q_NG,Q_PG,Q_NB                             &
-                   ,Q_PB,pl0,nl0,Si,hSised,hJSi,aki,agr,abl,Chlaki,Chlagr,Chlabl,hFluN3,ilang,iwied,yNmx1e,Stks1e &
-                   ,obsb,ocsb,kontroll,jjj)
+subroutine sedflux(tiefe, vmitt, rau, sedalg_mq, hsedom, hw2, hbedgs, hsedvvert,    &
+                   hdkorn, vo2, vno3, vnh4, gelp, tempw, anze, mstr, hjno3,         &
+                   hjnh4, hjpo4, hjo2, hjn2, sedalk, sedalg, sedalb, sedss_mq,      &
+                   tflie, ilbuhn, kdnh3e, fpoc1e, fpoc2e, orgcsd_abb, hcd, jdoc1,   &
+                   jdoc2, q_nk, q_pk, q_ng, q_pg, q_nb, q_pb, pl0, nl0, si, hsised, &
+                   hjsi, aki, agr, abl, chlaki, chlagr, chlabl, hflun3, ilang,      &
+                   iwied, ynmx1e, stks1e, obsb, ocsb,                               &
+                   control, jjj)
    
-   use allodim
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
-   integer                        :: mstr, monats, kdsi2, kdsi1, i
-   integer                        :: izaehl_str, iwied, it, itags, ior
+   integer                        :: mstr, kdsi2, kdsi1, i
+   integer                        :: izaehl_str, iwied, it, ior
    integer                        :: ilbuhn, ilang, ibedg, ibedgs
    real                           :: temps, zwxalphals, zwsumsdss_mq, zwsumsdalg_mq, zwsumpopsed
    real                           :: zwsumponsed, zwsumpocsed, zwsumdw2, zwjpop_neu, zwjpon_neu
    real                           :: zwjpoc_neu, ynmx1e, w20, w12, vvert
-   real                           :: vvert2, vvert1, vcb, vbc, uhrz
+   real                           :: vvert2, vvert1, vcb, vbc
    real                           :: thtasi, thtaom, thtan4, thtan3, thtad
    real                           :: thtadp, thtac4, tflie, sumw21, sumpopsedz
    real                           :: sumponsedz, sumpocsedz, sumdw22, sumdw21, stks1e
-   real                           :: sorpcape, sorpcap1, sod, sodinit, sisaett
+   real                           :: sorpcap1, sod, sodinit, sisaett
    real                           :: si2, si1, si0, sech, psi2
    real                           :: psi2init, psi1, poro2, poro1, popsed
    real                           :: popsed2, popsed1, ponsed, ponsed2, ponsed1
@@ -60,7 +63,7 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
    real                           :: o2cpo4, o20, hjsiz, hjpo4z, hjo2z
    real                           :: hjno3z, hjnh4z, hjch4aqz, hcono, hconn
    real                           :: hcond2, hcond1, hcon2, hcon1, hcalphals
-   real                           :: h2, h1, h11, g, ftpom, adsorbP
+   real                           :: h2, h1, h11, ftpom, adsorbp
    real                           :: fsi_c, fpsi2, fpsi1, fpom, fpoc2e
    real                           :: fpoc1e, fpoc0, fp2, fp1, fo_nit
    real                           :: fdsi2, fdsi1, fdnc_n, fd2, fd1_aus
@@ -69,800 +72,753 @@ subroutine sedflux(tiefe,vmitt,rau,sedAlg_MQ,hSedOM,hw2,hBedGS,hsedvvert,hdKorn,
    real                           :: dim_kn, difkp2, difkp1, diffk2, diffk1
    real                           :: dichto, dichte, dichta, delta_adp, dalgvert
    real                           :: csod, csodmx, csod1, ch4sat, ch41
-   real                           :: ch40, caki, cagr, cabl, c4toc2
+   real                           :: ch40, c4toc2
    real                           :: bettf, benmx1, benks1, aus_kd, alphals
-   integer                        :: anze, anzZschritt
-   integer, dimension(1000)       :: nkzs
-   real, dimension(1000)          :: Tiefe,vmitt,rau,Tempw,vo2,vNH4,vNO3,gelP,Si,JCH4aq
-   real, dimension(1000)          :: sedalk,sedalg,sedalb,Q_NK,Q_PK,Q_NG,Q_PG, aki, agr ,abl, Chlaki, Chlagr, Chlabl
-   real, dimension(1000)          :: Q_NB,Q_PB,pl0,nl0, JDOC1,JDOC2, obsb, ocsb
-   real, dimension(azStrs,1000)   :: hSedOM,hBedGS,hsedvvert,hw2,hJNO3,hJNH4,hJPO4,hJO2,hdKorn, hSised , hJN2
-   real, dimension(50,1000)       :: vnh4z, vno3z, gelPz, vo2z
-   real, dimension(azStrs,1000)   :: orgCsd_abb, sedAlg_MQ
-   real, dimension(azStrs,1000)   :: hJSi, hFluN3
-   real, dimension(azStrs,1000)   :: sedSS_MQ
-   real, dimension(azStrs,2,1000) :: hCD
-   real                           :: KNH4,KNH4e,KL12,N4toN3,KM_NH4,KMO_N4,KMO_NO3,KM_NO3,kSi, JPSi
-   real                           :: kappC, KdNh31,KdNh32,kappN3,kapN3e,km_PSi
-   real                           :: KdPO42,KdPO41,JDeniG,NO30,NH40,NSOD,langCon1,Klange,KdNh3e,kappaSi1,kappaSi2
-   real                           :: Jc,JN,Jc1,JN1,Jcneu,JPON,JPOC,N20
-   real                           :: JPOP,JC4N31,JC4N32,JP1,JP
-   real, dimension(2)             :: Denit ,JDenit , NH4, NH4T, NO3, Sipor, PSi, SSi, SiT, N2
-   real, dimension(3)             :: KdiaPC,POC2,PON1,PON2,POC1,POP2,POP1,PO4z1,PO4z2,fPOC
-   real, dimension(2)             :: PO4T,PO4, DOC0, DOC1, DOC2, xk1DOC
-   real                           :: m1,m2,KL01P,KL12P
+   integer                        :: anze, anzzschritt
+   real, dimension(1000)          :: tiefe,vmitt,rau,tempw,vo2,vnh4,vno3,gelp,si,jch4aq
+   real, dimension(1000)          :: sedalk,sedalg,sedalb,q_nk,q_pk,q_ng,q_pg, aki, agr ,abl, chlaki, chlagr, chlabl
+   real, dimension(1000)          :: q_nb,q_pb,pl0,nl0, jdoc1,jdoc2, obsb, ocsb
+   real, dimension(azstrs,1000)   :: hsedom,hbedgs,hsedvvert,hw2,hjno3,hjnh4,hjpo4,hjo2,hdkorn, hsised , hjn2
+   real, dimension(azstrs,1000)   :: orgcsd_abb, sedalg_mq
+   real, dimension(azstrs,1000)   :: hjsi, hflun3
+   real, dimension(azstrs,1000)   :: sedss_mq
+   real, dimension(azstrs,2,1000) :: hcd
+   real                           :: kl12,n4ton3,km_nh4,kmo_n4,kmo_no3,km_no3,ksi, jpsi
+   real                           :: kappc, kdnh31,kdnh32,km_psi
+   real                           :: kdpo42,kdpo41,jdenig,no30,nh40,nsod,langcon1,kdnh3e,kappasi1,kappasi2
+   real                           :: jc,jn,jc1,jn1,jcneu,jpon,jpoc,n20
+   real                           :: jpop,jc4n31,jc4n32,jp1,jp
+   real, dimension(2)             :: denit ,jdenit , nh4, nh4t, no3, sipor, psi, ssi, sit, n2
+   real, dimension(3)             :: kdiapc,poc2,pon1,pon2,poc1,pop2,pop1,po4z1,po4z2,fpoc
+   real, dimension(2)             :: po4t,po4, doc0, doc1, doc2, xk1doc
+   real                           :: m1,m2,kl01p,kl12p
    double precision               :: s,a11,a12,a21,a22,b1,b2
-   logical, intent(in)            :: kontroll  !< debugging
+   logical, intent(in)            :: control  !< debugging
    integer, intent(in)            :: jjj       !< debugging
    
-   real, dimension(:,:), allocatable, save :: sumPOCsed, sumPONsed, sumPOPsed, sumsdSS_MQ, sumsdAlg_MQ, sumdw2, xalphals, JPOC_neu
-   real, dimension(:,:), allocatable, save :: JPON_neu, JPOP_neu, bsumPOCsed, bsumPONsed, bsumPOPsed, bsumsdSS_MQ
-   real, dimension(:,:), allocatable, save :: bsumsdAlg_MQ, bsumdw2, bxalphals, bJPOC_neu, bJPON_neu, bJPOP_neu,POCvert1,POCvert2
+   real, dimension(:,:), allocatable, save :: sumpocsed, sumponsed, sumpopsed, sumsdss_mq, sumsdalg_mq, sumdw2, xalphals, jpoc_neu
+   real, dimension(:,:), allocatable, save :: jpon_neu, jpop_neu, bsumpocsed, bsumponsed, bsumpopsed, bsumsdss_mq
+   real, dimension(:,:), allocatable, save :: bsumsdalg_mq, bsumdw2, bxalphals, bjpoc_neu, bjpon_neu, bjpop_neu,pocvert1,pocvert2
    
    external :: sed_diffk, lin_sys
    
-   save anzZschritt, izaehl_Str
+   save anzzschritt, izaehl_str
    
-   if (.not.allocated(sumPOCsed))   allocate(sumPOCsed(azStrs,1000))
-   if (.not.allocated(sumPONsed))   allocate(sumPONsed(azStrs,1000))
-   if (.not.allocated(sumPOPsed))   allocate(sumPOPsed(azStrs,1000))
-   if (.not.allocated(sumsdSS_MQ))  allocate(sumsdSS_MQ(azStrs,1000))
-   if (.not.allocated(sumsdAlg_MQ)) allocate(sumsdAlg_MQ(azStrs,1000))
-   if (.not.allocated(sumdw2))      allocate(sumdw2(azStrs,1000))
-   if (.not.allocated(xalphals))    allocate(xalphals(azStrs,1000))
-   if (.not.allocated(JPOC_neu))    allocate(JPOC_neu(azStrs,1000))
-   if (.not.allocated(JPON_neu))    allocate(JPON_neu(azStrs,1000))
-   if (.not.allocated(JPOP_neu))    allocate(JPOP_neu(azStrs,1000))
-   if (.not.allocated(bsumPOCsed))  allocate(bsumPOCsed(azStrs,1000))
-   if (.not.allocated(bsumPONsed))  allocate(bsumPONsed(azStrs,1000))
-   if (.not.allocated(bsumPOPsed))  allocate(bsumPOPsed(azStrs,1000))
-   if (.not.allocated(bsumsdSS_MQ)) allocate(bsumsdSS_MQ(azStrs,1000))
-   if (.not.allocated(bsumsdAlg_MQ))allocate(bsumsdAlg_MQ(azStrs,1000))
-   if (.not.allocated(bsumdw2))     allocate(bsumdw2(azStrs,1000))
-   if (.not.allocated(bxalphals))   allocate(bxalphals(azStrs,1000))
-   if (.not.allocated(bJPOC_neu))   allocate(bJPOC_neu(azStrs,1000))
-   if (.not.allocated(bJPON_neu))   allocate(bJPON_neu(azStrs,1000))
-   if (.not.allocated(bJPOP_neu))   allocate(bJPOP_neu(azStrs,1000))
-   if (.not.allocated(POCvert1))    allocate(POCvert1(azStrs,1000))
-   if (.not.allocated(POCvert2))    allocate(POCvert2(azStrs,1000))
-   diffK1 = 0.0
+   if (.not.allocated(sumpocsed))   allocate(sumpocsed(azstrs,1000))
+   if (.not.allocated(sumponsed))   allocate(sumponsed(azstrs,1000))
+   if (.not.allocated(sumpopsed))   allocate(sumpopsed(azstrs,1000))
+   if (.not.allocated(sumsdss_mq))  allocate(sumsdss_mq(azstrs,1000))
+   if (.not.allocated(sumsdalg_mq)) allocate(sumsdalg_mq(azstrs,1000))
+   if (.not.allocated(sumdw2))      allocate(sumdw2(azstrs,1000))
+   if (.not.allocated(xalphals))    allocate(xalphals(azstrs,1000))
+   if (.not.allocated(jpoc_neu))    allocate(jpoc_neu(azstrs,1000))
+   if (.not.allocated(jpon_neu))    allocate(jpon_neu(azstrs,1000))
+   if (.not.allocated(jpop_neu))    allocate(jpop_neu(azstrs,1000))
+   if (.not.allocated(bsumpocsed))  allocate(bsumpocsed(azstrs,1000))
+   if (.not.allocated(bsumponsed))  allocate(bsumponsed(azstrs,1000))
+   if (.not.allocated(bsumpopsed))  allocate(bsumpopsed(azstrs,1000))
+   if (.not.allocated(bsumsdss_mq)) allocate(bsumsdss_mq(azstrs,1000))
+   if (.not.allocated(bsumsdalg_mq))allocate(bsumsdalg_mq(azstrs,1000))
+   if (.not.allocated(bsumdw2))     allocate(bsumdw2(azstrs,1000))
+   if (.not.allocated(bxalphals))   allocate(bxalphals(azstrs,1000))
+   if (.not.allocated(bjpoc_neu))   allocate(bjpoc_neu(azstrs,1000))
+   if (.not.allocated(bjpon_neu))   allocate(bjpon_neu(azstrs,1000))
+   if (.not.allocated(bjpop_neu))   allocate(bjpop_neu(azstrs,1000))
+   if (.not.allocated(pocvert1))    allocate(pocvert1(azstrs,1000))
+   if (.not.allocated(pocvert2))    allocate(pocvert2(azstrs,1000))
+   diffk1 = 0.0
    diffk2 = 0.0
-   Caki = 0.48
-   Cagr = 0.48
-   Cabl = 0.48
-   iBedGs = 1
-   if (ilbuhn == 0)izaehl_Str = izaehl_Str + 1
+ 
+ 
+   ibedgs = 1
+   if (ilbuhn == 0)izaehl_str = izaehl_str + 1
    if (ilang == 0) then
       do ior = 1, anze + 1
-         sumsdSS_MQ(mstr,ior) = 0.0
-         sumsdAlg_MQ(mstr,ior) = 0.0
+         sumsdss_mq(mstr,ior) = 0.0
+         sumsdalg_mq(mstr,ior) = 0.0
       enddo
-      if (izaehl_Str == 1 .and. ilbuhn == 0)anzZschritt = 0
+      if (izaehl_str == 1 .and. ilbuhn == 0)anzzschritt = 0
    endif
-   if (izaehl_Str == 1 .and. ilbuhn == 0)anzZschritt = anzZschritt + 1
-   do ior = 1, anze + 1  ! Knotenschleife
-      if (kontroll) then
-         print*,'sedflux anfang Knotenschleife: JPOC_neu,sumPOCsed,mstr,ior = '  &
-               ,JPOC_neu(mstr,ior),sumPOCsed(mstr,ior),mstr,ior
-         print*,'DOC1(),DOC2()',DOC1(:),DOC2(:)
-         print*,'POC1(),POC2()',POC1(:),POC2(:)
-      endif
-      !print*,"sedflux mstr,ior,vo2(ior)",mstr,ior,vo2(ior)
+   if (izaehl_str == 1 .and. ilbuhn == 0)anzzschritt = anzzschritt + 1
+   
+   do ior = 1, anze + 1
       if (iwied == 0) then
-         sumPOCsed(mstr,ior) = 0.0
-         sumPONsed(mstr,ior) = 0.0
-         sumPOPsed(mstr,ior) = 0.0
-         sumsdSS_MQ(mstr,ior) = 0.0
-         sumsdAlg_MQ(mstr,ior) = 0.0
+         sumpocsed(mstr,ior) = 0.0
+         sumponsed(mstr,ior) = 0.0
+         sumpopsed(mstr,ior) = 0.0
+         sumsdss_mq(mstr,ior) = 0.0
+         sumsdalg_mq(mstr,ior) = 0.0
          sumdw2(mstr,ior) = 0.0
          xalphals(mstr,ior) = 0.0
-         JPOC_neu(mstr,ior) = 0.0
-         JPON_neu(mstr,ior) = 0.0
-         JPOP_neu(mstr,ior) = 0.0
-         bsumPOCsed(mstr,ior) = 0.0
-         bsumPONsed(mstr,ior) = 0.0
-         bsumPOPsed(mstr,ior) = 0.0
-         bsumsdSS_MQ(mstr,ior) = 0.0
-         bsumsdAlg_MQ(mstr,ior) = 0.0
+         jpoc_neu(mstr,ior) = 0.0
+         jpon_neu(mstr,ior) = 0.0
+         jpop_neu(mstr,ior) = 0.0
+         bsumpocsed(mstr,ior) = 0.0
+         bsumponsed(mstr,ior) = 0.0
+         bsumpopsed(mstr,ior) = 0.0
+         bsumsdss_mq(mstr,ior) = 0.0
+         bsumsdalg_mq(mstr,ior) = 0.0
          bsumdw2(mstr,ior) = 0.0
          bxalphals(mstr,ior) = 0.0
-         bJPOC_neu(mstr,ior) = 0.0
-         bJPON_neu(mstr,ior) = 0.0
-         bJPOP_neu(mstr,ior) = 0.0
-         POCvert1(mstr,ior) = 0.0
-         POCvert2(mstr,ior) = 0.0
+         bjpoc_neu(mstr,ior) = 0.0
+         bjpon_neu(mstr,ior) = 0.0
+         bjpop_neu(mstr,ior) = 0.0
+         pocvert1(mstr,ior) = 0.0
+         pocvert2(mstr,ior) = 0.0
       endif
       
       if (ilbuhn == 1) then
-         zwsumPOCsed = sumPOCsed(mstr,ior)
-         zwsumPONsed = sumPONsed(mstr,ior)
-         zwsumPOPsed = sumPOPsed(mstr,ior)
-         zwsumsdSS_MQ = sumsdSS_MQ(mstr,ior)
-         zwsumsdAlg_MQ = sumsdAlg_MQ(mstr,ior)
+         zwsumpocsed = sumpocsed(mstr,ior)
+         zwsumponsed = sumponsed(mstr,ior)
+         zwsumpopsed = sumpopsed(mstr,ior)
+         zwsumsdss_mq = sumsdss_mq(mstr,ior)
+         zwsumsdalg_mq = sumsdalg_mq(mstr,ior)
          zwsumdw2 = sumdw2(mstr,ior)
          zwxalphals = xalphals(mstr,ior)
-         zwJPOC_neu = JPOC_neu(mstr,ior)
-         zwJPON_neu = JPON_neu(mstr,ior)
-         zwJPOP_neu = JPOP_neu(mstr,ior)
+         zwjpoc_neu = jpoc_neu(mstr,ior)
+         zwjpon_neu = jpon_neu(mstr,ior)
+         zwjpop_neu = jpop_neu(mstr,ior)
          
-         sumPOCsed(mstr,ior) = bsumPOCsed(mstr,ior)
-         sumPONsed(mstr,ior) = bsumPONsed(mstr,ior)
-         sumPOPsed(mstr,ior) = bsumPOPsed(mstr,ior)
-         sumsdSS_MQ(mstr,ior) = bsumsdSS_MQ(mstr,ior)
-         sumsdAlg_MQ(mstr,ior) = bsumsdAlg_MQ(mstr,ior)
+         sumpocsed(mstr,ior) = bsumpocsed(mstr,ior)
+         sumponsed(mstr,ior) = bsumponsed(mstr,ior)
+         sumpopsed(mstr,ior) = bsumpopsed(mstr,ior)
+         sumsdss_mq(mstr,ior) = bsumsdss_mq(mstr,ior)
+         sumsdalg_mq(mstr,ior) = bsumsdalg_mq(mstr,ior)
          sumdw2(mstr,ior) = bsumdw2(mstr,ior)
          xalphals(mstr,ior) = bxalphals(mstr,ior)
-         JPOC_neu(mstr,ior) = bJPOC_neu(mstr,ior)
-         JPON_neu(mstr,ior) = bJPON_neu(mstr,ior)
-         JPOP_neu(mstr,ior) = bJPOP_neu(mstr,ior)
+         jpoc_neu(mstr,ior) = bjpoc_neu(mstr,ior)
+         jpon_neu(mstr,ior) = bjpon_neu(mstr,ior)
+         jpop_neu(mstr,ior) = bjpop_neu(mstr,ior)
       endif
-      !      POCvert1 = 0.0
-      !      POCvert2 = 0.0
+      
       vvert = max(0.0,hsedvvert(mstr,ior))*24./1000.       ! hsedvvert in mm/h; vvert in m/d
-      sumsdSS_MQ(mstr,ior) = sumsdSS_MQ(mstr,ior) + sedSS_MQ(mstr,ior)
-      sumsdAlg_MQ(mstr,ior) = sumsdAlg_MQ(mstr,ior) + sedAlg_MQ(mstr,ior)
-      if (hBedGS(mstr,ior)>=0.0)iBedGs = 2
-      if (ilbuhn == 1)iBedGs = 1
-      do iBedG = 1,iBedGs
-         if (iBedG == 2) then
-            sumPOCsedz = sumPOCsed(mstr,ior)
-            sumPONsedz = sumPONsed(mstr,ior)
-            sumPOPsedz = sumPOPsed(mstr,ior)
-            sumPOCsed(mstr,ior) = 0.0
-            sumPONsed(mstr,ior) = 0.0
-            sumPOPsed(mstr,ior) = 0.0
+      sumsdss_mq(mstr,ior) = sumsdss_mq(mstr,ior) + sedss_mq(mstr,ior)
+      sumsdalg_mq(mstr,ior) = sumsdalg_mq(mstr,ior) + sedalg_mq(mstr,ior)
+      if (hbedgs(mstr,ior)>=0.0)ibedgs = 2
+      if (ilbuhn == 1)ibedgs = 1
+      do ibedg = 1,ibedgs
+         if (ibedg == 2) then
+            sumpocsedz = sumpocsed(mstr,ior)
+            sumponsedz = sumponsed(mstr,ior)
+            sumpopsedz = sumpopsed(mstr,ior)
+            sumpocsed(mstr,ior) = 0.0
+            sumponsed(mstr,ior) = 0.0
+            sumpopsed(mstr,ior) = 0.0
          endif
-         O20 = vo2(ior)
-         if (nkzs(ior) > 1)O20 = vo2z(nkzs(ior),ior)
-         if (O20 < 0.1)O20 = 0.1
-         NO30 = vNO3(ior)
-         ! if(nkzs(ior)>1)NO30 = vNO3z(nkzs(ior),ior)
-         if (NO30 < 0.01)NO30 = 0.01
-         NH40 = vNH4(ior)
-         ! if(nkzs(ior)>1)NH40 = vNH4z(nkzs(ior),ior)
-         if (NH40 < 0.01)NH40 = 0.01
-         PO40 = gelP(ior)
-         ! if(nkzs(ior)>1)PO40 = gelPz(nkzs(ior),ior)
-         if (PO40 < 0.001)PO40 = 0.001
-         Si0 = si(ior)
-         if (Si0 < 0.01)Si0 = 0.01
-         DOC0(1) = hCD(mstr,1,ior)
-         DOC0(2) = hCD(mstr,2,ior)
-         N20 = hFluN3(mstr,ior)
+         o20 = vo2(ior)
+         if (o20 < 0.1)o20 = 0.1
+         no30 = vno3(ior)
+         if (no30 < 0.01)no30 = 0.01
+         nh40 = vnh4(ior)
+         if (nh40 < 0.01)nh40 = 0.01
+         po40 = gelp(ior)
+  
+         if (po40 < 0.001)po40 = 0.001
+         si0 = si(ior)
+         if (si0 < 0.01)si0 = 0.01
+         doc0(1) = hcd(mstr,1,ior)
+         doc0(2) = hcd(mstr,2,ior)
+         n20 = hflun3(mstr,ior)
          
-         fPOM = hSedOM(mstr,ior) ! Anteil organisches Material im Sediment
-         if (iBedG == 2)fPOM = 0.001
-         w20 = hw2(mstr,ior) ! Burial-Geschwindigkeit
-         Temps = Tempw(ior)
-         CH40 = 0.2
-         g = 9.81 ! in Modul??
-         !
-         ! Porosität (s. DiTorro (2001) Seite 4)
-         Poro1 = 0.98*fPOM/(fPOM+0.011)
-         if (Poro1 < 0.29)Poro1 = 0.29
-         Poro2 = Poro1 - 0.05
-         !
-         Dp = 0.00012
-         Dichta = 2.6
-         Dichto = 1.2
-         fPOC0 = 0.378 ! Kohlenstoffanteil im organischen Material
-         fC_O2 = 2.76
-         fC_N = 10.1
-         fC_P = 117.
-         fdnC_N = 1.31
-         fO_Nit = 4.57
-         fSi_C = 0.05            ! 0.12 Chase
-         POC1_R = 0.1 !POC1_R in mg/g
-         !
-         Dichte = dichta*(1.-fPOM)+fPOM*Dichto
-         !
-         !.Feststoffkonzentration
-         ! m = Ro*(1-Poro)  mg*cm-3
-         m1 = Dichte*(1.-Poro1)
-         m2 = Dichte*(1.-Poro2)
-         JPOC = dichte*1000.*1000.*fPOM*fPOC0*w20
-         if (kontroll)print*,'sedflux: JPOC,dichte,fPOM,fPOC0,w20,ior = ',JPOC,dichte,fPOM,fPOC0,w20,ior
-         ! w20 = (((sumsdSS_MQ(mstr,ior)+sumsdAlg_MQ(mstr,ior))/anzZschritt)*tiefe(ior)*(1./tflie))/(dichte*1000.*1000.)
-         ! if(w20<5.e-6)w20 = 5.e-6
-         JPSi = JPOC * fSi_C
-         JPON = JPOC*(1./fC_N)
-         JPOP = JPOC*(1./fC_P)
-         ThtaD = 1.08
-         ThtaN3 = 1.08
-         ThtaN4 = 1.123
-         ThtaC4 = 1.08
-         ThtaOM = 1.14
-         ThtaDp = 1.117
-         ThtaSi = 1.1
-         !
-         if (fPOC1e < 0.0 .and. fPOC2e < 0.0) then
-            fPOC(1) = 0.65
-            fPOC(2) = 0.15
-            fPOC(3) = 0.2
-         else if (fPOC1e > 0.0 .and. fPOC2e > 0.0) then
-            fPOC(1) = fPOC1e
-            fPOC(2) = fPOC2e
-            fPOC(3) = 1. - fPOC1e - fPOC2e
+         fpom = hsedom(mstr,ior) ! anteil organisches material im sediment
+         if (ibedg == 2)fpom = 0.001
+         w20 = hw2(mstr,ior) ! burial-geschwindigkeit
+         temps = tempw(ior)
+         ch40 = 0.2
+         
+         ! porosität (s. ditorro (2001) seite 4)
+         poro1 = 0.98*fpom/(fpom+0.011)
+         if (poro1 < 0.29)poro1 = 0.29
+         poro2 = poro1 - 0.05
+         
+         dp = 0.00012
+         dichta = 2.6
+         dichto = 1.2
+         fpoc0 = 0.378 ! kohlenstoffanteil im organischen material
+         fc_o2 = 2.76
+         fc_n = 10.1
+         fc_p = 117.
+         fdnc_n = 1.31
+         fo_nit = 4.57
+         fsi_c = 0.05            ! 0.12 chase
+         poc1_r = 0.1 !poc1_r in mg/g
+         
+         dichte = dichta*(1.-fpom)+fpom*dichto
+         
+         ! feststoffkonzentration
+         ! m = ro*(1-poro)  mg*cm-3
+         m1 = dichte*(1.-poro1)
+         m2 = dichte*(1.-poro2)
+         jpoc = dichte*1000.*1000.*fpom*fpoc0*w20
+         
+         jpsi = jpoc * fsi_c
+         jpon = jpoc*(1./fc_n)
+         jpop = jpoc*(1./fc_p)
+         thtad = 1.08
+         thtan3 = 1.08
+         thtan4 = 1.123
+         thtac4 = 1.08
+         thtaom = 1.14
+         thtadp = 1.117
+         thtasi = 1.1
+         
+         if (fpoc1e < 0.0 .and. fpoc2e < 0.0) then
+            fpoc(1) = 0.65
+            fpoc(2) = 0.15
+            fpoc(3) = 0.2
+         else if (fpoc1e > 0.0 .and. fpoc2e > 0.0) then
+            fpoc(1) = fpoc1e
+            fpoc(2) = fpoc2e
+            fpoc(3) = 1. - fpoc1e - fpoc2e
          endif
-         KappN3 = kapN3e ! Denitrifikationsgeschwindigkeit m/d
-         KNH4 = KNH4e    ! Nitrifikationsgeschwindigkeit m/d
-         kappC = 0.57 !2.8    ! Methanoxidationsgeschwindigkeit 0.57 m/d
-         !Kohlenstoffmineralisationsgeschwindigkeit
-         KdiaPC(1) = 0.035
-         KdiaPC(2) = 0.0018
-         KdiaPC(3) = 0.0
-         KM_NH4 = 0.728 ! Halbsättigungskonstante für N bei Nitrifikation
-         KMO_N4 = 0.37  ! Halbsättigungskonstante für O2 bei Nitrifikation  !0.37
-         KM_NO3 = 0.4   ! Halbsättigungskonstante für N bei Denitrifikation und P_Freisetzung (Boudreau)
-         KMO_NO3 = 0.26 ! Halbsättigungskonstante für O2 bei Denitrifikation und P_Freisetzung (Boudreau)
-         kSi = 0.03    ! Lösungsrate in 1/d für partikuläres Silikat, optimiert aus Daten der Saar
-         km_PSi = 50.  ! Halbsättigungskonstante in gSi/m3 für Mineralisation von partik. Silikat, DiToro
+         kappc = 0.57 !2.8    ! methanoxidationsgeschwindigkeit 0.57 m/d
+         
+         ! kohlenstoffmineralisationsgeschwindigkeit
+         kdiapc(1) = 0.035
+         kdiapc(2) = 0.0018
+         kdiapc(3) = 0.0
+         km_nh4 = 0.728 ! halbsättigungskonstante für n bei nitrifikation
+         kmo_n4 = 0.37  ! halbsättigungskonstante für o2 bei nitrifikation  !0.37
+         km_no3 = 0.4   ! halbsättigungskonstante für n bei denitrifikation und p_freisetzung (boudreau)
+         kmo_no3 = 0.26 ! halbsättigungskonstante für o2 bei denitrifikation und p_freisetzung (boudreau)
+         ksi = 0.03     ! lösungsrate in 1/d für partikuläres silikat, optimiert aus daten der saar
+         km_psi = 50.   ! halbsättigungskonstante in gsi/m3 für mineralisation von partik. silikat, ditoro
          vbc = obsb(ior)/ocsb(ior)
-         xK1DOC(1) = 0.18
-         xK1DOC(2) = 0.3
+         xk1doc(1) = 0.18
+         xk1doc(2) = 0.3
          alphals = 0.848*vcb**0.347
-         Dim_KN = 1.3
-         if (KdNh3e < -1.)KdNh3e = 0.0
-         if (KdNh3e < 0.0) then
-            KdNH31 = Dim_KN*Poro1/((1.-Poro1)*Dichte)
-            KdNH32 = Dim_KN*Poro2/((1.-Poro2)*Dichte)
+         dim_kn = 1.3
+         if (kdnh3e < -1.)kdnh3e = 0.0
+         if (kdnh3e < 0.0) then
+            kdnh31 = dim_kn*poro1/((1.-poro1)*dichte)
+            kdnh32 = dim_kn*poro2/((1.-poro2)*dichte)
          else
-            KdNH31 = KdNh3e !Partitionskoeffizient für Ammonium
-            KdNH32 = KdNh31
+            kdnh31 = kdnh3e !partitionskoeffizient für ammonium
+            kdnh32 = kdnh31
          endif
-         KdPO42 = 350 !Partitionskoeffizient für P in der anaeroben Schicht
-         dKdP41 = 330.
-         O2cPO4 = 2.
-         KdSi1 = 14.! Partitionskoeffizient für Silikat
          
-         H2 = 0.1    ! Dicke der anaeroben Schicht
-         H1 = 0.01  ! Anfangsdicke der aeroben Schicht
-         !
-         !  Berechnung der partikulären und gelösten Fraktion für Ammonium in Schicht1 und 2
-         !
-         fd1 = 1./(1.+m1*KdNH31)
-         !if(ISNAN(fd1))print*,"sedflux m1*KdNH31",m1,KdNH31
-         fp1 = 1.-fd1
-         fd2 = 1./(1.+m2*KdNH32)
-         fp2 = 1.-fd2
-         !
-         NO3(1) = NO30
-         NO3(2) = NO30
-         NH4(1) = NH40
-         NH4(2) = NH40
+         kdpo42 = 350 ! partitionskoeffizient für p in der anaeroben schicht
+         dkdp41 = 330.
+         o2cpo4 = 2.
+         kdsi1 = 14.! partitionskoeffizient für silikat
          
-         ! Diagenese
-         fTPOM = ThtaOM**(Temps-20.)
-         w12 = Dp
-         do it = 1,10 ! Iterationsschleife Anfang
-            !do it = 1,100 ! Iterationsschleife Anfang Test feinere Iteration !!wy
-            if (kontroll) then
-               print*,'sedflux (Iterationsschleife Anfang): JPOC_neu,sumPOCsed,mstr,ior = '  &
-                     ,JPOC_neu(mstr,ior),sumPOCsed(mstr,ior),mstr,ior
-               print*,'DOC1(),DOC2()',DOC1(:),DOC2(:)
-               print*,'POC1(),POC2()',POC1(:),POC2(:)
-            endif
+         h2 = 0.1   ! dicke der anaeroben schicht
+         h1 = 0.01  ! anfangsdicke der aeroben schicht
+         
+         !  berechnung der partikulären und gelösten fraktion für ammonium in schicht 1 und 2
+         fd1 = 1. - (1./(1.+m1 * kdnh31))
+         fd2 = 1. - (1./(1.+m2 * kdnh32))
+         
+         no3(1) = no30
+         no3(2) = no30
+         nh4(1) = nh40
+         nh4(2) = nh40
+         
+         ! diagenese
+         ftpom = thtaom**(temps-20.)
+         w12 = dp
+         do it = 1,10 ! iterationsschleife anfang
             
-            ! Berechnung des Diffusionskoeffizienten in der aeroben und anaeroben Schicht, DiffK1, DIFFK2
-            call Sed_DiffK(tiefe,vmitt,rau,H1,H2,hdKorn,DiffK1,DiffK2,DifKP1,DifKP2,poro1,poro2,vvert,vvert1,vvert2      &
-                           ,mstr,ior,itags,monats,uhrz, kontroll ,jjj )
-            if (kontroll)print*,'sedflux: it,ior,iBedG = ',it,ior,iBedG
-            if ((kontroll) .and. (it == 1).and.(ior == 1)) then
-               print*,'sedflux: nach Sed_DiffK '
-               print*,'tiefe,vmitt,rau,H1,H2,hdKorn = ',tiefe(ior),vmitt(ior),rau(ior),H1,H2,hdKorn(mstr,ior)
-               print*,'DiffK1,DiffK2,DifKP1,DifKP2 = ',DiffK1,DiffK2,DifKP1,DifKP2
-               print*,'poro1,poro2,vvert,vvert1,vvert2 = ',poro1,poro2,vvert,vvert1,vvert2
-            end if
-            if (it == 1)s = Dp/H1
-            KL12 = DiffK2*ThtaD**(Temps-20.)/(H2/2.) !! nur diese diffusivität geht ein.
-            do i = 1,3 ! Fraktionsschleife Anfang
+            ! berechnung des diffusionskoeffizienten in der aeroben und anaeroben schicht, diffk1, diffk2
+            call sed_diffk(tiefe(ior), vmitt(ior), rau(ior), h1, h2, hdkorn(mstr,ior), vvert, &
+                           poro1, poro2, diffk1, diffk2, difkp1, difkp2, vvert1, vvert2)
+                           
+            if (it == 1) s = dp/h1
+            kl12 = diffk2*thtad**(temps-20.)/(h2/2.) ! nur diese diffusivität geht ein
+            
+            do i = 1,3 ! fraktionsschleife anfang
                
-               ! -- POC ---
-               ! Schicht 1
-               a11 = -KdiaPC(i)*fTPOM*H1-w20-w12
+               ! -- poc ---
+               ! schicht 1
+               a11 = -kdiapc(i)*ftpom*h1-w20-w12
                a12 = w12
-               b1 = -fPOC(i)*JPOC
-               ! Schicht 2
+               b1 = -fpoc(i)*jpoc
+               ! schicht 2
                a21 = w20+w12
-               a22 = -KdiaPC(i)*fTPOM*H2-w20-w12
-               b2 = -fPOC(i)*JPOC
+               a22 = -kdiapc(i)*ftpom*h2-w20-w12
+               b2 = -fpoc(i)*jpoc
                
-               call lin_sys(a11,a12,a21,a22,b1,b2,POC1(i),POC2(i))
-               ! --- DOC ---
+               call lin_sys(a11,a12,a21,a22,b1,b2,poc1(i),poc2(i))
+               ! --- doc ---
                if (i < 3) then
-                  !  Schicht 1
-                  a11 = -xK1DOC(i)*fTPOM*H1-KL12-s
-                  a12 = KL12
-                  b1 = -s*DOC0(i)
-                  !  Schicht 2
-                  a22 = -KdiaPC(i)*fTPOM*H2-KL12
-                  a22 = -KL12
+                  !  schicht 1
+                  a11 = -xk1doc(i)*ftpom*h1-kl12-s
+                  a12 = kl12
+                  b1 = -s*doc0(i)
+                  !  schicht 2
+                  a22 = -kdiapc(i)*ftpom*h2-kl12
+                  a22 = -kl12
                   b2 = 0.0
-                  call lin_sys(a11,a12,a21,a22,b1,b2,DOC1(i),DOC2(i))
+                  call lin_sys(a11,a12,a21,a22,b1,b2,doc1(i),doc2(i))
                endif
                
-               ! --- PON ---
-               ! Schicht 1
-               a11 = -KdiaPC(i)*fTPOM*H1-w20-w12
+               ! --- pon ---
+               ! schicht 1
+               a11 = -kdiapc(i)*ftpom*h1-w20-w12
                a12 = w12
-               b1 = -fPOC(i)*JPON
-               !  Schicht 2
+               b1 = -fpoc(i)*jpon
+               !  schicht 2
                a21 = w20+w12
-               a22 = -KdiaPC(i)*fTPOM*H2-w20-w12
-               b2 = -fPOC(i)*JPON
-               call lin_sys(a11,a12,a21,a22,b1,b2,PON1(i),PON2(i))
+               a22 = -kdiapc(i)*ftpom*h2-w20-w12
+               b2 = -fpoc(i)*jpon
+               call lin_sys(a11,a12,a21,a22,b1,b2,pon1(i),pon2(i))
                
-               ! --- POP ---
-               ! Schicht 1
-               a11 = -KdiaPC(i)*fTPOM*H1-w20-w12
+               ! --- pop ---
+               ! schicht 1
+               a11 = -kdiapc(i)*ftpom*h1-w20-w12
                a12 = w12
-               b1 = -fPOC(i)*JPOP
-               ! Schicht 2
+               b1 = -fpoc(i)*jpop
+               ! schicht 2
                a21 = w20+w12
-               a22 = -KdiaPC(i)*fTPOM*H2-w20-w12
-               b2 = -fPOC(i)*JPOP
+               a22 = -kdiapc(i)*ftpom*h2-w20-w12
+               b2 = -fpoc(i)*jpop
                
-               call lin_sys(a11,a12,a21,a22,b1,b2,POP1(i),POP2(i))
+               call lin_sys(a11,a12,a21,a22,b1,b2,pop1(i),pop2(i))
                
-            enddo ! Fraktionsschleife Ende
+            enddo ! fraktionsschleife ende
             
-            Jc1 = 0.0
-            JN1 = 0.0
-            JP1 = 0.0
-            do i = 1,2 ! Summenbildung in der aeroben Schicht
+            jc1 = 0.0
+            jn1 = 0.0
+            jp1 = 0.0
+            do i = 1,2 ! summenbildung in der aeroben schicht
                if (i == 1) then
-                  H11 = H1 - sumdw2(mstr,ior) * xalphals(mstr,ior)
+                  h11 = h1 - sumdw2(mstr,ior) * xalphals(mstr,ior)
                   hcalphals = xalphals(mstr,ior)
                else
-                  H11 = H1 - sumdw2(mstr,ior) * (1.-xalphals(mstr,ior))
+                  h11 = h1 - sumdw2(mstr,ior) * (1.-xalphals(mstr,ior))
                   hcalphals = (1.-xalphals(mstr,ior))
                endif
-               if (H11 < 0.0) then
-                  H11 = 0.0
-                  fakH = 1.
+               if (h11 < 0.0) then
+                  h11 = 0.0
+                  fakh = 1.
                else
-                  fakH = sumdw2(mstr,ior)/H1
+                  fakh = sumdw2(mstr,ior)/h1
                endif
-               !! TODO Summation falsch??? der JPOC_neu und der  POCvert1 zweimal hinzuaddiert???
-               Jc1 = Jc1                                                       &
-                   + KdiaPC(i) * fTPOM * POC1(i) * H11                         &
-                   + xK1DOC(i) * fTPOM * JPOC_neu(mstr,ior) * hcalphals * fakH & 
-                   + xK1DOC(i) * fTPOM * DOC1(i)*H1                            &
-                   + xK1DOC(i) * fTPOM * POCvert1(mstr,ior) * hcalphals
+               
+               ! todo summation falsch? der jpoc_neu und der  pocvert1 zweimal hinzuaddiert?
+               jc1 = jc1                                                       &
+                   + kdiapc(i) * ftpom * poc1(i) * h11                         &
+                   + xk1doc(i) * ftpom * jpoc_neu(mstr,ior) * hcalphals * fakh & 
+                   + xk1doc(i) * ftpom * doc1(i)*h1                            &
+                   + xk1doc(i) * ftpom * pocvert1(mstr,ior) * hcalphals
                    
-               JN1 = JN1                                                       &
-                   + KdiaPC(i) * fTPOM * PON1(i) * H11                         &
-                   + xK1DOC(i) * fTPOM * JPON_neu(mstr,ior) * hcalphals * fakH &
-                   + xK1DOC(i) * fTPOM * DOC1(i) * nl0(ior) * H1               &
-                   + xK1DOC(i) * fTPOM * POCvert1(mstr,ior) * nl0(ior) * hcalphals
+               jn1 = jn1                                                       &
+                   + kdiapc(i) * ftpom * pon1(i) * h11                         &
+                   + xk1doc(i) * ftpom * jpon_neu(mstr,ior) * hcalphals * fakh &
+                   + xk1doc(i) * ftpom * doc1(i) * nl0(ior) * h1               &
+                   + xk1doc(i) * ftpom * pocvert1(mstr,ior) * nl0(ior) * hcalphals
                
-               JP1 = JP1                                                       &
-                   + KdiaPC(i) * fTPOM * POP1(i) * H11                         &
-                   + xK1DOC(i) * fTPOM * JPOP_neu(mstr,ior) * hcalphals * fakH &
-                   + xK1DOC(i) * fTPOM * DOC1(i) * pl0(ior) * H1               &
-                   + xK1DOC(i) * fTPOM * POCvert1(mstr,ior) * pl0(ior) * hcalphals
+               jp1 = jp1                                                       &
+                   + kdiapc(i) * ftpom * pop1(i) * h11                         &
+                   + xk1doc(i) * ftpom * jpop_neu(mstr,ior) * hcalphals * fakh &
+                   + xk1doc(i) * ftpom * doc1(i) * pl0(ior) * h1               &
+                   + xk1doc(i) * ftpom * pocvert1(mstr,ior) * pl0(ior) * hcalphals
             enddo
-            Jc = 0.0
-            JN = 0.0
-            JP = 0.0
+            jc = 0.0
+            jn = 0.0
+            jp = 0.0
             
-            do i = 1,2 !Summenbildung in der anaeroben Schicht
-               !! Summation falsch??? POCvert2 zweimal hinzuaddiert???
-               Jc = Jc                                      &
-                  + KdiaPC(i) * fTPOM * POC2(i) * H2        &
-                  + xK1DOC(i) * fTPOM * DOC2(i) * H2        &
-                  + xK1DOC(2) * fTPOM * POCvert2(mstr,ior)
+            do i = 1,2 !summenbildung in der anaeroben schicht
+               ! summation falsch? pocvert2 zweimal hinzuaddiert?
+               jc = jc                                      &
+                  + kdiapc(i) * ftpom * poc2(i) * h2        &
+                  + xk1doc(i) * ftpom * doc2(i) * h2        &
+                  + xk1doc(2) * ftpom * pocvert2(mstr,ior)
                   
-               JN = JN                                                  &
-                  + KdiaPC(i) * fTPOM * PON2(i) * H2                    &
-                  + xK1DOC(i) * fTPOM * DOC2(i) * nl0(ior) * H2         &
-                  + xK1DOC(2) * fTPOM * POCvert2(mstr,ior) * nl0(ior)   
+               jn = jn                                                  &
+                  + kdiapc(i) * ftpom * pon2(i) * h2                    &
+                  + xk1doc(i) * ftpom * doc2(i) * nl0(ior) * h2         &
+                  + xk1doc(2) * ftpom * pocvert2(mstr,ior) * nl0(ior)   
                
-               JP = JP                                                  &
-                  + KdiaPC(i) * fTPOM * POP2(i) * H2                    &
-                  + xK1DOC(i) * fTPOM * DOC2(i) * pl0(ior) * H2         &
-                  + xK1DOC(2) * fTPOM * POCvert2(mstr,ior) * pl0(ior)
+               jp = jp                                                  &
+                  + kdiapc(i) * ftpom * pop2(i) * h2                    &
+                  + xk1doc(i) * ftpom * doc2(i) * pl0(ior) * h2         &
+                  + xk1doc(2) * ftpom * pocvert2(mstr,ior) * pl0(ior)
             enddo
-            Jc  = Jc  * fC_O2
-            Jc1 = Jc1 * fC_O2
+            jc  = jc  * fc_o2
+            jc1 = jc1 * fc_o2
             if (it == 1) then
-               SOD = Jc1+Jc+4.57*JN1
+               sod = jc1+jc+4.57*jn1
             else
             endif
-            CH4sat = 100.*(1.+(Tiefe(ior)/10.))*1.024**(20.-Temps)
-            POC_1 = POC2(1)/(1000.*m2)
-            w12 = (Dp/H2)*ThtaDp**(Temps-20.)*(POC_1/POC1_R) !*(O20/(O20+0.5))
+            ch4sat = 100.*(1.+(tiefe(ior)/10.))*1.024**(20.-temps)
+            poc_1 = poc2(1)/(1000.*m2)
+            w12 = (dp/h2)*thtadp**(temps-20.)*(poc_1/poc1_r)
             
-            s = SOD/O20
-            H1 = 0.5
-            if (s /= 0.0)H1 = DiffK1*ThtaD**(Temps-20.)/s ! Neuberechnung der Dicke der aeroben Schicht
-            if (H1 <= 0.0) H1 = 0.01
-            if (H1 > 0.5)     H1 = 0.5
-            ! H1 = KL12*H2/s
+            s = sod/o20
+            h1 = 0.5
+            if (s /= 0.0) h1 = diffk1*thtad**(temps-20.)/s ! neuberechnung der dicke der aeroben schicht
+            if (h1 <= 0.0) h1 = 0.01
+            if (h1 > 0.5)  h1 = 0.5
             
-            ! --- Ammonium ---
-            N4toN3 = 0.0
-            if ((s /= 0.0) .and. (O20 /= 0.0)) N4toN3 = KNH4**2*ThtaN4**(Temps - 20)/s*(O20/2.)/(KMO_N4 + (O20/2.))
-            !*KM_NH4/(KM_NH4 + NH4(1))
-            ! N4toN3 = KNH4*ThtaN4**(Temps - 20)*(O20/2.)/(KMO_N4 + (O20/2.))
+            ! --- ammonium ---
+            if (s == 0.0 .or. o20 == 0.0) then
+               n4ton3 = 0.0
+            else
+               n4ton3 = knh4**2*thtan4**(temps - 20)/s*(o20/2.)/(kmo_n4 + (o20/2.))
+            endif
             
-            ! Schicht 1
-            a11 = -KL12*fd1-w12*fp1-N4toN3*fd1-s*fd1-w20
-            a12 = KL12*fd2+w12*fp2
-            b1 = -JN1-s*NH40
+            ! schicht 1
+            a11 = -kl12*fd1-w12*fp1-n4ton3*fd1-s*fd1-w20
+            a12 = kl12*fd2+w12*fp2
+            b1 = -jn1-s*nh40
             
-            ! Schicht 2
-            a21 = KL12*fd1+w12*fp1+w20
-            a22 = -KL12*fd2-w12*fp2-w20
-            b2 = -JN
-            call lin_sys(a11,a12,a21,a22,b1,b2,NH4T(1),NH4T(2))
+            ! schicht 2
+            a21 = kl12*fd1+w12*fp1+w20
+            a22 = -kl12*fd2-w12*fp2-w20
+            b2 = -jn
+            call lin_sys(a11,a12,a21,a22,b1,b2,nh4t(1),nh4t(2))
             
-            NH4(1) = NH4T(1)*fd1
-            NH4(2) = NH4T(2)*fd2
+            nh4(1) = nh4t(1)*fd1
+            nh4(2) = nh4t(2)*fd2
             fd1_aus = fd1
-            NSOD = fO_Nit*N4toN3*NH4(1)
-            BENMX1 = yNmx1e
-            BENKS1 = Stks1e
-            BETTF = BENMX1*(nh4(1)/(VNH4(1)+BENKS1))*(O20/2.)/(KMO_N4 + (O20/2.))*ThtaN4**(Temps - 20)
+            nsod = fo_nit*n4ton3*nh4(1)
+            benmx1 = ynmx1e
+            benks1 = stks1e
+            bettf = benmx1*(nh4(1)/(vnh4(1)+benks1))*(o20/2.)/(kmo_n4 + (o20/2.))*thtan4**(temps - 20)
             
-            ! --- Denitrifikation/Nitrat ---
-            hconD1 = (KMO_NO3/(KMO_NO3+(O20/2.)))
-            !*NO3(1)/(NO3(1)+KM_NO3)
-            hconD2 = NO3(2)/(NO3(2)+KM_NO3)
-            ! Denit(1) = sqrt(KappN3*ThtaN3**(Temps-20.)*s)
-            Denit(1) = 0.0
-            if ((s*hconD1) /= 0.0)Denit(1) = KappN3**2*ThtaN3**(Temps-20.)/s*hconD1 ! nach DiToro
-            Denit(2) = kappN3*ThtaN3**(Temps-20.)
+            ! --- denitrifikation/nitrat ---
+            hcond1 = (kmo_no3/(kmo_no3+(o20/2.)))
+            !*no3(1)/(no3(1)+km_no3)
+            hcond2 = no3(2)/(no3(2)+km_no3)
+            ! denit(1) = sqrt(kapn3*thtan3**(temps-20.)*s)
+            denit(1) = 0.0
+            if ((s*hcond1) /= 0.0)denit(1) = kapn3**2*thtan3**(temps-20.)/s*hcond1 ! nach ditoro
+            denit(2) = kapn3*thtan3**(temps-20.)
             
-            ! Schicht 1
-            a11 = -KL12-Denit(1)-s
-            a12 = KL12
-            b1 = -s*NO30-N4toN3*NH4(1)
+            ! schicht 1
+            a11 = -kl12-denit(1)-s
+            a12 = kl12
+            b1 = -s*no30-n4ton3*nh4(1)
             
-            ! Schicht 2
-            a21 = KL12
-            a22 = -KL12-Denit(2)
+            ! schicht 2
+            a21 = kl12
+            a22 = -kl12-denit(2)
             b2 = 0.0
             
-            call lin_sys(a11,a12,a21,a22,b1,b2,NO3(1),NO3(2))
-            JDenit(1) = Denit(1)*NO3(1)
-            JDenit(2) = Denit(2)*NO3(2)
-            JDeniG = JDenit(1)+JDenit(2)
+            call lin_sys(a11,a12,a21,a22,b1,b2,no3(1),no3(2))
+            jdenit(1) = denit(1)*no3(1)
+            jdenit(2) = denit(2)*no3(2)
+            jdenig = jdenit(1)+jdenit(2)
             
-            JC4N31 = JC1*hconD1*NO3(1)/(NO3(1)+KM_NO3)
-            JC4N32 = JDenit(2)*fdnC_N*fC_O2
+            jc4n31 = jc1*hcond1*no3(1)/(no3(1)+km_no3)
+            jc4n32 = jdenit(2)*fdnc_n*fc_o2
             
-            ! --- N2 Bildung ---
-            ! Schicht 1
-            a11 = -KL12-s
-            a12 = KL12
-            b1 = -s*N20-Denit(1)*1.1*NO3(1)
+            ! --- n2 bildung ---
+            ! schicht 1
+            a11 = -kl12-s
+            a12 = kl12
+            b1 = -s*n20-denit(1)*1.1*no3(1)
             
-            ! Schicht 2
-            a21 = KL12
-            a22 = -KL12
-            b2 = -Denit(2)*1.1*NO3(2)
+            ! schicht 2
+            a21 = kl12
+            a22 = -kl12
+            b2 = -denit(2)*1.1*no3(2)
             
-            call lin_sys(a11,a12,a21,a22,b1,b2,N2(1),N2(2))
+            call lin_sys(a11,a12,a21,a22,b1,b2,n2(1),n2(2))
             
-            ! --- SOD ---
-            ! Methanconsumption durch Denitrifikation in Layer 1 und Layer 2
-            Jcneu = Jc-JC4N32
-            if (Jcneu < 0.0)Jcneu = 0.0
-            CSODmx = sqrt(2.*KL12*CH4sat*Jcneu)
-            if (Jcneu < CSODmx)CSODmx = Jcneu
+            ! --- sod ---
+            ! methanconsumption durch denitrifikation in layer 1 und layer 2
+            jcneu = jc-jc4n32
+            if (jcneu < 0.0)jcneu = 0.0
+            csodmx = sqrt(2.*kl12*ch4sat*jcneu)
+            if (jcneu < csodmx)csodmx = jcneu
             hcon1 = 0.0
             hcon2 = 0.0
-            if (SOD /= 0.0) then
-               hcon1 = kappC*ThtaC4**(Temps-20.)*O20/SOD
-               hcon2 = O20/SOD
-            end if
+            if (sod /= 0.0) then
+               hcon1 = kappc*thtac4**(temps-20.)*o20/sod
+               hcon2 = o20/sod
+            endif
             
             if (hcon1 > 400.) then
-               CSOD = CSODmx
+               csod = csodmx
             else
                sech = 2./(exp(hcon1)+exp(-hcon1))
-               CSOD = CSODmx*(1.-sech)
+               csod = csodmx*(1.-sech)
             endif
-            CSOD1 = Jc1 - JC4N31
-            SODinit = SOD
-            SOD = (SOD+CSOD+CSOD1+NSOD)/2.
-            if (kontroll) then
-               print*,'sedflux (Iterationsschleife Ende): it,ior,iBedG = ',it,ior,iBedG
-               print*,'SOD,SODinit,CSOD,CSOD1,NSOD',SOD,SODinit,CSOD,CSOD1,NSOD
-               print*,'H1,H2,hdKorn,tiefe,vmitt,rau = ',H1,H2,hdKorn(mstr,ior),tiefe(ior),vmitt(ior),rau(ior)
-               print*,'DiffK1,DiffK2,DifKP1,DifKP2 = ',DiffK1,DiffK2,DifKP1,DifKP2
-               print*,'poro1,poro2,vvert,vvert1,vvert2 = ',poro1,poro2,vvert,vvert1,vvert2
-               print*,'Jc1,Jcneu,Jc = ',Jc1,Jcneu,Jc
-               print*,'DOC1(),DOC2()',DOC1(:),DOC2(:)
-               print*,'POC1(),POC2()',POC1(:),POC2(:)
-            end if
-            if (abs((SOD-SODinit)/SOD)*100. < 1.)exit
-            !if(abs((SOD-SODinit)/SOD)*100.< 0.1)exit
+            csod1 = jc1 - jc4n31
+            sodinit = sod
+            sod = (sod+csod+csod1+nsod)/2.
+            if (abs((sod-sodinit)/sod)*100. < 1.)exit
             
-            ! --- Methankonzentration in der aeroben Schicht ---
-            C4toC2 = (kappC**2*ThtaC4**((Temps-20.)/2.))/s
-            CH41 = (CSODmx+s*CH40)/(C4toC2+s)
+            ! --- methankonzentration in der aeroben schicht ---
+            c4toc2 = (kappc**2*thtac4**((temps-20.)/2.))/s
+            ch41 = (csodmx+s*ch40)/(c4toc2+s)
             
-         enddo ! Iterationsschleife Ende
+         enddo ! iterationsschleife ende
          
-         ! --- orthoPhosphat und Silikat ---
-         ! PHOSPHOR
-         KL01P = (DifKP1/H1)*ThtaD**(Temps-20.)
-         KL12P = DifKP2*ThtaD**(Temps-20.)/(H2/2.)
-         if (SorpCape < 0.0) then
-            SorpCap1 = 4.34*fPOM**1.05
+         ! --- orthophosphat und silikat ---
+         ! phosphor
+         kl01p = (difkp1/h1)*thtad**(temps-20.)
+         kl12p = difkp2*thtad**(temps-20.)/(h2/2.)
+         if (sorpcap < 0.0) then
+            sorpcap1 = 4.34*fpom**1.05
          else
-            SorpCap1 = SorpCape
+            sorpcap1 = sorpcap
          endif
-         LangCon1 = Klange
-         PO41Por = 0.01
-         PO42Por = 0.01
+         langcon1 = klang
+         po41por = 0.01
+         po42por = 0.01
          
-         ! SILIKAT
-         Sipor(1) = 0.001
-         Sipor(2) = 0.001
-         Sisaett = 0.4667*67.8+0.4667*1.48*Temps
+         ! silikat
+         sipor(1) = 0.001
+         sipor(2) = 0.001
+         sisaett = 0.4667*67.8+0.4667*1.48*temps
          
          do it = 1,30
-            !  PHOSPHOR
-            adsorbP = SorpCap1*LangCon1*PO41Por/(1.+LangCon1*PO41Por)
-            adsorbP = adsorbP/1000.
-            PO41Por = PO41Por/1000./1000.
-            KdPO41 = adsorbP/PO41Por
-            aus_kd = KdPO41
-            hconO = 0.0
-            hconN = 0.0
-            hconO = 1.             ! da in Schicht 2 kein Sauerstoff
-            hconN = KM_NO3/(KM_NO3+NO3(2))
-            adsorbP = SorpCap1*LangCon1*PO42Por/(1.+LangCon1*PO42Por)
-            adsorbP = adsorbP*(1.-(hconO*hconN))
-            adsorbP = adsorbP/1000.
-            PO42Por = PO42Por/1000./1000.
-            KdPO42 = adsorbP/PO42Por
-            fd1 = 1./(1.+m1*KdPO41)
+            ! phosphor
+            adsorbp = sorpcap1*langcon1*po41por/(1.+langcon1*po41por)
+            adsorbp = adsorbp/1000.
+            po41por = po41por/1000./1000.
+            kdpo41 = adsorbp/po41por
+            aus_kd = kdpo41
+            hcono = 0.0
+            hconn = 0.0
+            hcono = 1. ! da in schicht 2 kein sauerstoff
+            hconn = km_no3/(km_no3+no3(2))
+            adsorbp = sorpcap1*langcon1*po42por/(1.+langcon1*po42por)
+            adsorbp = adsorbp*(1.-(hcono*hconn))
+            adsorbp = adsorbp/1000.
+            po42por = po42por/1000./1000.
+            kdpo42 = adsorbp/po42por
+            fd1 = 1./(1.+m1*kdpo41)
             fp1 = 1.-fd1
-            fd2 = 1./(1.+m2*KdPO42)
+            fd2 = 1./(1.+m2*kdpo42)
             fp2 = 1.-fd2
             !
-            !      Schicht 1
-            a11 = -KL12*fd1-w12*fp1-s*fd1-w20
-            a12 = KL12*fd2+w12*fp2
-            b1 = -s*PO40-JP1
+            !      schicht 1
+            a11 = -kl12*fd1-w12*fp1-s*fd1-w20
+            a12 = kl12*fd2+w12*fp2
+            b1 = -s*po40-jp1
             !
-            !      Schicht 2
-            a21 = KL12*fd1+w12*fp1+w20
-            a22 = -KL12*fd2-w12*fp2-w20
-            b2 = -Jp
+            !      schicht 2
+            a21 = kl12*fd1+w12*fp1+w20
+            a22 = -kl12*fd2-w12*fp2-w20
+            b2 = -jp
             !
-            PO42Tinit = PO4T(2)
-            call lin_sys(a11,a12,a21,a22,b1,b2,PO4T(1),PO4T(2))
+            po42tinit = po4t(2)
+            call lin_sys(a11,a12,a21,a22,b1,b2,po4t(1),po4t(2))
             !
-            PO4(1) = PO4T(1)*fd1
-            PO4(2) = PO4T(2)*fd2
-            if (abs(PO4T(2)-PO42Tinit) < 0.05)exit
-            PO42Por = (PO42Por*1000. + PO4(2))/2.
-            PO41Por = (PO41Por*1000. + PO4(1))/2.
-         enddo  ! Ende Phosphor
+            po4(1) = po4t(1)*fd1
+            po4(2) = po4t(2)*fd2
+            if (abs(po4t(2)-po42tinit) < 0.05)exit
+            po42por = (po42por*1000. + po4(2))/2.
+            po41por = (po41por*1000. + po4(1))/2.
+         enddo  ! ende phosphor
          
-         ! --- Phosphor-Desorption ---
-         PO40z = PO40
-         PO40 = 0.000
-         ! Schicht 1
-         a11 = -KL12*fd1-w12*fp1-s*fd1-w20
-         a12 = KL12*fd2+w12*fp2
-         b1 = -s*PO40-JP1
+         ! --- phosphor-desorption ---
+         po40z = po40
+         po40 = 0.000
+         ! schicht 1
+         a11 = -kl12*fd1-w12*fp1-s*fd1-w20
+         a12 = kl12*fd2+w12*fp2
+         b1 = -s*po40-jp1
          
-         ! Schicht 2
-         a21 = KL12*fd1+w12*fp1+w20
-         a22 = -KL12*fd2-w12*fp2-w20
-         b2 = -Jp
+         ! schicht 2
+         a21 = kl12*fd1+w12*fp1+w20
+         a22 = -kl12*fd2-w12*fp2-w20
+         b2 = -jp
          
-         call lin_sys(a11,a12,a21,a22,b1,b2,PO4T(1),PO4T(2))
+         call lin_sys(a11,a12,a21,a22,b1,b2,po4t(1),po4t(2))
          
-         PO4z1(1) = PO4T(1)*fd1
-         PO4z1(2) = PO4T(2)*fd2
-         hconO = 0.0
-         hconN = 0.0
-         hconO = KMO_NO3/(KMO_NO3+(O20/2.))
-         hconN = KM_NO3/(KM_NO3+NO3(1))
-         delta_adP = hconO*hconN
-         adsorbP = SorpCap1*LangCon1*PO41Por/(1.+LangCon1*PO41Por)
-         adsorbP = adsorbP*(1.-delta_adP)
-         adsorbP = adsorbP
-         PO41Por = PO41Por/1000
-         KdPO41 = adsorbP/PO41Por
-         fd1 = 1./(1.+m1*KdPO41)
+         po4z1(1) = po4t(1)*fd1
+         po4z1(2) = po4t(2)*fd2
+         hcono = 0.0
+         hconn = 0.0
+         hcono = kmo_no3/(kmo_no3+(o20/2.))
+         hconn = km_no3/(km_no3+no3(1))
+         delta_adp = hcono*hconn
+         adsorbp = sorpcap1*langcon1*po41por/(1.+langcon1*po41por)
+         adsorbp = adsorbp*(1.-delta_adp)
+         adsorbp = adsorbp
+         po41por = po41por/1000
+         kdpo41 = adsorbp/po41por
+         fd1 = 1./(1.+m1*kdpo41)
          fp1 = 1.-fd1
-         fd2 = 1./(1.+m2*KdPO42)
+         fd2 = 1./(1.+m2*kdpo42)
          fp2 = 1.-fd2
-         PO4z2(1) = PO4T(1)*fd1
-         PO4z2(2) = PO4T(2)*fd2
+         po4z2(1) = po4t(1)*fd1
+         po4z2(2) = po4t(2)*fd2
          
-         PO4(1) = PO4(1)+(PO4z2(1)-PO4z1(1))
-         PO40 = PO40z
-         !Ende Phosphor
-         
-         
+         po4(1) = po4(1)+(po4z2(1)-po4z1(1))
+         po40 = po40z
+         !ende phosphor
          
          do it = 1, 30
-            ! Silikat
+            ! silikat
             if (it == 1) then
-               Si1 = 0.0
-               Si2 = 0.0
-               PSi1 = 1000.
-               PSi2 = 1000.
+               si1 = 0.0
+               si2 = 0.0
+               psi1 = 1000.
+               psi2 = 1000.
             else
-               Si1 = (Si1 + Sipor(1))/2.
-               Si2 = (Si2 + Sipor(2))/2.
-               PSi1 = (PSi1 + PSi(1))/2.
-               PSi2 = (PSi2 + PSi(2))/2.
+               si1 = (si1 + sipor(1))/2.
+               si2 = (si2 + sipor(2))/2.
+               psi1 = (psi1 + psi(1))/2.
+               psi2 = (psi2 + psi(2))/2.
             endif
-            kappaSi1 = kSi*ThtaSi**(Temps-20.)*(1.-(min(Sisaett,Si1))/Sisaett)*(PSi1/(PSi1+km_PSi))
-            kappaSi2 = kSi*ThtaSi**(Temps-20.)*(1.-(min(Sisaett,Si2))/Sisaett)*(PSi2/(PSi2+km_PSi))
-            SSi(1) = kSi*H1*ThtaSi**(Temps-20.)*(PSi1/(PSi1+km_PSi))*(SiSaett-min(Sisaett,Si1))
-            SSi(2) = kSi*H2*ThtaSi**(Temps-20.)*(PSi2/(PSi2+km_PSi))*(SiSaett-min(Sisaett,Si2))
+            kappasi1 = ksi*thtasi**(temps-20.)*(1.-(min(sisaett,si1))/sisaett)*(psi1/(psi1+km_psi))
+            kappasi2 = ksi*thtasi**(temps-20.)*(1.-(min(sisaett,si2))/sisaett)*(psi2/(psi2+km_psi))
+            ssi(1) = ksi*h1*thtasi**(temps-20.)*(psi1/(psi1+km_psi))*(sisaett-min(sisaett,si1))
+            ssi(2) = ksi*h2*thtasi**(temps-20.)*(psi2/(psi2+km_psi))*(sisaett-min(sisaett,si2))
             
-            kdSi2 = kdSi1 ! Partitionskoeffizient in der anaeroben Schicht
-            hconO = 1.
-            hconN = KM_NO3/(KM_NO3+NO3(2))
-            fdSi1 = 1./(1.+m1*KdSi1)
-            fpSi1 = 1.-fdSi1
-            fdSi2 = 1./(1.+m2*KdSi2)
-            fpSi2 = 1.-fdSi2
-            a11 = -kappaSi1*H1-w12-w20
+            kdsi2 = kdsi1 ! partitionskoeffizient in der anaeroben schicht
+            hcono = 1.
+            hconn = km_no3/(km_no3+no3(2))
+            fdsi1 = 1./(1.+m1*kdsi1)
+            fpsi1 = 1.-fdsi1
+            fdsi2 = 1./(1.+m2*kdsi2)
+            fpsi2 = 1.-fdsi2
+            a11 = -kappasi1*h1-w12-w20
             a12 = w12
-            b1 = -JPSi
+            b1 = -jpsi
             a21 = w20+w12
-            a22 = -kappaSi2*H2-w20-w12
-            b2 = -JPSi
-            PSi2init = PSi(2)
-            call lin_sys(a11,a12,a21,a22,b1,b2,PSi(1),PSi(2))
-            PSi(1) = PSi(1) + hSised(mstr,ior)
-            a11 = -KL12*fdSi1-w12*fpSi1-s*fdSi1-w20
-            a12 = KL12*fdSi2+w12*fpSi2
-            b1 = -SSi(1)-s*Si0
-            a21 = KL12*fdSi1+w12*fpSi1+w20
-            a22 = -KL12*fdSi2-w12*fpSi2-w20
-            b2 = -SSi(2)
-            call lin_sys(a11,a12,a21,a22,b1,b2,SiT(1),SiT(2))
-            Sipor(1) = min(Sisaett,SiT(1)*fdSi1)
-            Sipor(2) = min(Sisaett,SiT(2)*fdSi2)
-            if (abs(PSi(2)-PSi2init) < 0.01)exit
-         enddo  ! Silikat
+            a22 = -kappasi2*h2-w20-w12
+            b2 = -jpsi
+            psi2init = psi(2)
+            call lin_sys(a11,a12,a21,a22,b1,b2,psi(1),psi(2))
+            psi(1) = psi(1) + hsised(mstr,ior)
+            a11 = -kl12*fdsi1-w12*fpsi1-s*fdsi1-w20
+            a12 = kl12*fdsi2+w12*fpsi2
+            b1 = -ssi(1)-s*si0
+            a21 = kl12*fdsi1+w12*fpsi1+w20
+            a22 = -kl12*fdsi2-w12*fpsi2-w20
+            b2 = -ssi(2)
+            call lin_sys(a11,a12,a21,a22,b1,b2,sit(1),sit(2))
+            sipor(1) = min(sisaett,sit(1)*fdsi1)
+            sipor(2) = min(sisaett,sit(2)*fdsi2)
+            if (abs(psi(2)-psi2init) < 0.01)exit
+         enddo  ! silikat
          
          ! --------------------------------------------------------------------
-         ! Stoffflüsse in den Wasserkörper
+         ! stoffflüsse in den wasserkörper
          ! --------------------------------------------------------------------
-         hJNO3(mstr,ior) = s * (NO3(1) - NO30) ! + Flux vom Sediment in den Wasserkörper
-         hJNH4(mstr,ior) = s * (NH4(1) - NH40)
-         hJPO4(mstr,ior) = s * (PO4(1) - PO40)
-         JDOC1(ior) = s * (DOC1(1) - DOC0(1))
-         JDOC2(ior) = s * (DOC1(2) - DOC0(2))
-         if (kontroll)print*,'sedfluc: ,DOC1(),DOC2(),POC1(),POC2(),ior = ',DOC1(:),DOC2(:),POC1(:),POC2(:),ior
-         hJSi(mstr,ior) = s *(Sipor(1) - Si0)
-         hJO2(mstr,ior) = SOD
-         JCH4aq(ior) = s * (CH41 - CH40)
-         hJN2(mstr,ior) = s * (N2(1) - N20)
+         hjno3(mstr,ior) = s * (no3(1) - no30) ! + flux vom sediment in den wasserkörper
+         hjnh4(mstr,ior) = s * (nh4(1) - nh40)
+         hjpo4(mstr,ior) = s * (po4(1) - po40)
+         jdoc1(ior) = s * (doc1(1) - doc0(1))
+         jdoc2(ior) = s * (doc1(2) - doc0(2))
+         hjsi(mstr,ior) = s *(sipor(1) - si0)
+         hjo2(mstr,ior) = sod
+         jch4aq(ior) = s * (ch41 - ch40)
+         hjn2(mstr,ior) = s * (n2(1) - n20)
          
          ! --------------------------------------------------------------------
-         ! Berechnung der Menge an Algen die aktiv ins Sediment transportiert werden
+         ! berechnung der menge an algen die aktiv ins sediment transportiert werden
          ! --------------------------------------------------------------------
          if (vvert > 0.0 .and. ilbuhn == 0) then
-            dalgvert = (aki(ior)*Caki + agr(ior)*Cagr + abl(ior)*Cabl)*vvert1
-            dPOCvert = POCvert1(mstr,ior)*KdiaPC(1)*fTPOM*tflie
-            POCvert1(mstr,ior) = max(0.0,POCvert1(mstr,ior) + dalgvert - dPOCvert)
-            POCvert1(mstr,ior) = 0.0
-            dPOCvert = POCvert2(mstr,ior)*KdiaPC(1)*fTPOM*tflie
-            POCvert2(mstr,ior) = max(0.0,POCvert2(mstr,ior) - dPOCvert + dalgvert * vvert2/vvert1)
-            POCvert2(mstr,ior) = 0.0 * vvert2/vvert1
-            aki(ior) = aki(ior) - aki(ior)*vvert1*tflie/Tiefe(ior)
-            agr(ior) = agr(ior) - agr(ior)*vvert1*tflie/Tiefe(ior)
-            abl(ior) = abl(ior) - abl(ior)*vvert1*tflie/Tiefe(ior)
-            if (kontroll)print*,'sedflux: Chlaki(ior)_vorher,ior = ',Chlaki(ior),ior
-            Chlaki(ior) = Chlaki(ior) - Chlaki(ior)*vvert1*tflie/Tiefe(ior)
-            if (kontroll)print*,'sedflux: Chlaki(ior)_nachher,ior,vvert1,tflie,Tiefe(ior) = ',Chlaki(ior),ior,vvert1,tflie,Tiefe(ior)
-            Chlagr(ior) = Chlagr(ior) - Chlagr(ior)*vvert1*tflie/Tiefe(ior)
-            Chlabl(ior) = Chlabl(ior) - Chlabl(ior)*vvert1*tflie/Tiefe(ior)
+            dalgvert = (aki(ior)*caki + agr(ior)*cagr + abl(ior)*cabl)*vvert1
+            dpocvert = pocvert1(mstr,ior)*kdiapc(1)*ftpom*tflie
+            pocvert1(mstr,ior) = max(0.0,pocvert1(mstr,ior) + dalgvert - dpocvert)
+            pocvert1(mstr,ior) = 0.0
+            dpocvert = pocvert2(mstr,ior)*kdiapc(1)*ftpom*tflie
+            pocvert2(mstr,ior) = max(0.0,pocvert2(mstr,ior) - dpocvert + dalgvert * vvert2/vvert1)
+            pocvert2(mstr,ior) = 0.0 * vvert2/vvert1
+            aki(ior) = aki(ior) - aki(ior)*vvert1*tflie/tiefe(ior)
+            agr(ior) = agr(ior) - agr(ior)*vvert1*tflie/tiefe(ior)
+            abl(ior) = abl(ior) - abl(ior)*vvert1*tflie/tiefe(ior)
+            chlaki(ior) = chlaki(ior) - chlaki(ior)*vvert1*tflie/tiefe(ior)
+            chlagr(ior) = chlagr(ior) - chlagr(ior)*vvert1*tflie/tiefe(ior)
+            chlabl(ior) = chlabl(ior) - chlabl(ior)*vvert1*tflie/tiefe(ior)
          endif
         
-         if (iBedG == 1) then
-            hJNO3z = hJNO3(mstr,ior)
-            hJNH4z = hJNH4(mstr,ior)
-            hJPO4z = hJPO4(mstr,ior)
-            hJO2z = hJO2(mstr,ior)
-            hJCH4aqz = JCH4aq(ior)
-            hJSiz = hJSi(mstr,ior)
+         if (ibedg == 1) then
+            hjno3z = hjno3(mstr,ior)
+            hjnh4z = hjnh4(mstr,ior)
+            hjpo4z = hjpo4(mstr,ior)
+            hjo2z = hjo2(mstr,ior)
+            hjch4aqz = jch4aq(ior)
+            hjsiz = hjsi(mstr,ior)
          else
-            hJNO3(mstr,ior) = hJNO3(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJNO3z*hBedGS(mstr,ior)
-            hJNH4(mstr,ior) = hJNH4(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJNH4z*hBedGS(mstr,ior)
-            hJPO4(mstr,ior) = hJPO4(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJPO4z*hBedGS(mstr,ior)
-            hJO2(mstr,ior) = hJO2(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJO2z*hBedGS(mstr,ior)
-            JCH4aq(ior) = JCH4aq(ior)*(1.-hBedGS(mstr,ior)) + hJCH4aqz*hBedGS(mstr,ior)
-            hJSi(mstr,ior) = hJSi(mstr,ior)*(1.-hBedGS(mstr,ior)) + hJSiz*hBedGS(mstr,ior)
+            hjno3(mstr,ior) = hjno3(mstr,ior)*(1.-hbedgs(mstr,ior)) + hjno3z*hbedgs(mstr,ior)
+            hjnh4(mstr,ior) = hjnh4(mstr,ior)*(1.-hbedgs(mstr,ior)) + hjnh4z*hbedgs(mstr,ior)
+            hjpo4(mstr,ior) = hjpo4(mstr,ior)*(1.-hbedgs(mstr,ior)) + hjpo4z*hbedgs(mstr,ior)
+            hjo2(mstr,ior) = hjo2(mstr,ior)*(1.-hbedgs(mstr,ior)) + hjo2z*hbedgs(mstr,ior)
+            jch4aq(ior) = jch4aq(ior)*(1.-hbedgs(mstr,ior)) + hjch4aqz*hbedgs(mstr,ior)
+            hjsi(mstr,ior) = hjsi(mstr,ior)*(1.-hbedgs(mstr,ior)) + hjsiz*hbedgs(mstr,ior)
             exit
          endif
+         
          if (ilang == 0) then
-            sumPOCsed(mstr,ior) = 0.0
-            sumPONsed(mstr,ior) = 0.0
-            sumPOPsed(mstr,ior) = 0.0
+            sumpocsed(mstr,ior) = 0.0
+            sumponsed(mstr,ior) = 0.0
+            sumpopsed(mstr,ior) = 0.0
             sumdw2(mstr,ior) = 0.0
             xalphals(mstr,ior) = 0.0
          else
             
-            ! Veränderung des leichtabbaubaren Kohlenstoffsgehalts in der
-            ! aeroben Schicht durch Sedimentation im Zeitschritt<tflie>
-            POCsed = orgCsd_abb(mstr,ior)+Sedalk(ior)*Caki+sedalg(ior)*Cagr+sedalb(ior)*Cabl
-            PONsed = orgCsd_abb(mstr,ior)*nl0(ior)+Sedalk(ior)*Q_NK(ior)+sedalg(ior)*Q_NG(ior)+sedalb(ior)*Q_NB(ior)
-            POPsed = orgCsd_abb(mstr,ior)*pl0(ior)+Sedalk(ior)*Q_PK(ior)+sedalg(ior)*Q_PG(ior)+sedalb(ior)*Q_PB(ior)
-            POCsed1 = POCsed*tiefe(ior) * alphals                   ! PODsed1: leichtabbaubarer Anteil
-            POCsed2 = POCsed*tiefe(ior) * (1.-alphals)              ! PODsed2: schwerabbarer Anteil
-            PONsed1 = PONsed*tiefe(ior) * alphals
-            PONsed2 = PONsed*tiefe(ior) * (1.-alphals)
-            POPsed1 = POPsed*tiefe(ior) * alphals
-            POPsed2 = POPsed*tiefe(ior) * (1.-alphals)
-            dsumdw21 = sumdw2(mstr,ior)*xalphals(mstr,ior)*xK1DOC(1)*tflie
-            dsumdw22 = sumdw2(mstr,ior)*(1.-xalphals(mstr,ior))*xK1DOC(2)*tflie
-            sumdw21 = sumdw2(mstr,ior)*xalphals(mstr,ior) - dsumdw21 + POCsed1/(dichto*1000.*1000.)
-            sumdw22 = sumdw2(mstr,ior)*(1.-xalphals(mstr,ior)) - dsumdw22 + POCsed2/(dichto*1000.*1000.)
+            ! veränderung des leichtabbaubaren kohlenstoffsgehalts in der
+            ! aeroben schicht durch sedimentation im zeitschritt<tflie>
+            pocsed = orgcsd_abb(mstr,ior)+sedalk(ior)*caki+sedalg(ior)*cagr+sedalb(ior)*cabl
+            ponsed = orgcsd_abb(mstr,ior)*nl0(ior)+sedalk(ior)*q_nk(ior)+sedalg(ior)*q_ng(ior)+sedalb(ior)*q_nb(ior)
+            popsed = orgcsd_abb(mstr,ior)*pl0(ior)+sedalk(ior)*q_pk(ior)+sedalg(ior)*q_pg(ior)+sedalb(ior)*q_pb(ior)
+            pocsed1 = pocsed*tiefe(ior) * alphals                   ! podsed1: leichtabbaubarer anteil
+            pocsed2 = pocsed*tiefe(ior) * (1.-alphals)              ! podsed2: schwerabbarer anteil
+            ponsed1 = ponsed*tiefe(ior) * alphals
+            ponsed2 = ponsed*tiefe(ior) * (1.-alphals)
+            popsed1 = popsed*tiefe(ior) * alphals
+            popsed2 = popsed*tiefe(ior) * (1.-alphals)
+            dsumdw21 = sumdw2(mstr,ior)*xalphals(mstr,ior)*xk1doc(1)*tflie
+            dsumdw22 = sumdw2(mstr,ior)*(1.-xalphals(mstr,ior))*xk1doc(2)*tflie
+            sumdw21 = sumdw2(mstr,ior)*xalphals(mstr,ior) - dsumdw21 + pocsed1/(dichto*1000.*1000.)
+            sumdw22 = sumdw2(mstr,ior)*(1.-xalphals(mstr,ior)) - dsumdw22 + pocsed2/(dichto*1000.*1000.)
+            
             if (sumw21 > 0.0) then
                xalphals(mstr,ior) = sumdw21/(sumdw21+sumdw22)
             endif
             sumdw2(mstr,ior) = sumdw21+sumdw22
-            ! fehler?? POCsed = (POCsed1+POCsed1)*(1./tflie)
-            POCsed = (POCsed1+POCsed2)*(1./tflie)
-            PONsed = (PONsed1+PONsed2)*(1./tflie)
-            POPsed = (POPsed1+POPsed2)*(1./tflie)
             
-            sumPOCsed(mstr,ior) = sumPOCsed(mstr,ior) + POCsed
-            JPOC_neu(mstr,ior) = sumPOCsed(mstr,ior)/(anzZschritt-1)
-            sumPONsed(mstr,ior) = sumPONsed(mstr,ior) + PONsed
-            JPON_neu(mstr,ior) = sumPONsed(mstr,ior)/(anzZschritt-1)
+            ! fehler? pocsed = (pocsed1+pocsed1)*(1./tflie)
+            pocsed = (pocsed1+pocsed2)*(1./tflie)
+            ponsed = (ponsed1+ponsed2)*(1./tflie)
+            popsed = (popsed1+popsed2)*(1./tflie)
             
-            sumPOPsed(mstr,ior) = sumPOPsed(mstr,ior) + POPsed
-            JPOP_neu(mstr,ior) = sumPOPsed(mstr,ior)/(anzZschritt-1)
+            sumpocsed(mstr,ior) = sumpocsed(mstr,ior) + pocsed
+            jpoc_neu(mstr,ior) = sumpocsed(mstr,ior)/(anzzschritt-1)
+            sumponsed(mstr,ior) = sumponsed(mstr,ior) + ponsed
+            jpon_neu(mstr,ior) = sumponsed(mstr,ior)/(anzzschritt-1)
+            
+            sumpopsed(mstr,ior) = sumpopsed(mstr,ior) + popsed
+            jpop_neu(mstr,ior) = sumpopsed(mstr,ior)/(anzzschritt-1)
          endif
-         if (kontroll)print*,'sedflux: ,JPOC_neu,POCsed,sumPOCsed,iBedG,mstr,ior = ' &
-             ,JPOC_neu(mstr,ior),POCsed,sumPOCsed(mstr,ior),iBedG,mstr,ior
-         if (kontroll)print*,'sedflux: orgCsd_abb,Sedalk,alphals = '   &
-             ,orgCsd_abb(mstr,ior),Sedalk(ior),alphals
-      enddo !Ende Schleife für Berücksichtigung des Bedeckungsgrads #do iBedG = 1,iBedGs
       
-      if (iBedGs == 2) then
-         sumPOCsed(mstr,ior) = sumPOCsedz
-         sumPONsed(mstr,ior) = sumPONsedz
-         sumPOPsed(mstr,ior) = sumPOPsedz
+      enddo
+      
+      if (ibedgs == 2) then
+         sumpocsed(mstr,ior) = sumpocsedz
+         sumponsed(mstr,ior) = sumponsedz
+         sumpopsed(mstr,ior) = sumpopsedz
       endif
+      
       if (ilbuhn == 1) then
-         bsumPOCsed(mstr,ior) = sumPOCsed(mstr,ior)
-         bsumPONsed(mstr,ior) = sumPONsed(mstr,ior)
-         bsumPOPsed(mstr,ior) = sumPOPsed(mstr,ior)
-         bsumsdSS_MQ(mstr,ior) = sumsdSS_MQ(mstr,ior)
-         bsumsdAlg_MQ(mstr,ior) = sumsdAlg_MQ(mstr,ior)
-         bsumdw2(mstr,ior) = sumdw2(mstr,ior)
-         bxalphals(mstr,ior) = xalphals(mstr,ior)
-         bJPOC_neu(mstr,ior) = JPOC_neu(mstr,ior)
-         bJPON_neu(mstr,ior) = JPON_neu(mstr,ior)
-         bJPOP_neu(mstr,ior) = JPOP_neu(mstr,ior)
-         sumPOCsed(mstr,ior) = zwsumPOCsed
-         sumPONsed(mstr,ior) = zwsumPONsed
-         sumPOPsed(mstr,ior) = zwsumPOPsed
-         sumsdSS_MQ(mstr,ior) = zwsumsdSS_MQ
-         sumsdAlg_MQ(mstr,ior) = zwsumsdAlg_MQ
-         sumdw2(mstr,ior) = zwsumdw2
-         xalphals(mstr,ior) = zwxalphals
-         JPOC_neu(mstr,ior) = zwJPOC_neu
-         JPON_neu(mstr,ior) = zwJPON_neu
-         JPOP_neu(mstr,ior) = zwJPOP_neu
+         bsumpocsed(mstr,ior)  = sumpocsed(mstr,ior)
+         bsumponsed(mstr,ior)  = sumponsed(mstr,ior)
+         bsumpopsed(mstr,ior)  = sumpopsed(mstr,ior)
+         bsumsdss_mq(mstr,ior) = sumsdss_mq(mstr,ior)
+         bsumsdalg_mq(mstr,ior)= sumsdalg_mq(mstr,ior)
+         bsumdw2(mstr,ior)     = sumdw2(mstr,ior)
+         bxalphals(mstr,ior)   = xalphals(mstr,ior)
+         bjpoc_neu(mstr,ior)   = jpoc_neu(mstr,ior)
+         bjpon_neu(mstr,ior)   = jpon_neu(mstr,ior)
+         bjpop_neu(mstr,ior)   = jpop_neu(mstr,ior)
+         sumpocsed(mstr,ior)   = zwsumpocsed
+         sumponsed(mstr,ior)   = zwsumponsed
+         sumpopsed(mstr,ior)   = zwsumpopsed
+         sumsdss_mq(mstr,ior)  = zwsumsdss_mq
+         sumsdalg_mq(mstr,ior) = zwsumsdalg_mq
+         sumdw2(mstr,ior)      = zwsumdw2
+         xalphals(mstr,ior)    = zwxalphals
+         jpoc_neu(mstr,ior)    = zwjpoc_neu
+         jpon_neu(mstr,ior)    = zwjpon_neu
+         jpop_neu(mstr,ior)    = zwjpop_neu
       endif
       
-      ! Reduktion des neu sedimentierten partikulären Silikats
-      hSised(mstr,ior) = hSised(mstr,ior) - ((SSi(1)*hSised(mstr,ior))/(H1*PSi(1)))*tflie
-      if (kontroll)print*,'sedflux: JPOC_neu,sumPOCsed,mstr,ior = '  &
-          ,JPOC_neu(mstr,ior),sumPOCsed(mstr,ior),mstr,ior
-   enddo !Ende Knotenschleife
+      ! reduktion des neu sedimentierten partikulären silikats
+      hsised(mstr,ior) = hsised(mstr,ior) - ((ssi(1)*hsised(mstr,ior))/(h1*psi(1)))*tflie
+      
+   enddo
    
-   if (izaehl_Str == azStrs)izaehl_Str = 0
+   if (izaehl_str == azstrs)izaehl_str = 0
    
    return
 end subroutine sedflux

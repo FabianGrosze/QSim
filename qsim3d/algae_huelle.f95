@@ -31,7 +31,7 @@
 subroutine algae_huelle(i)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    
    integer :: i,j,k,nk,i2,string_write_error
@@ -45,7 +45,7 @@ subroutine algae_huelle(i)
          print*,'vorher: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
          if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
       endif
-   end do
+   enddo
    
    do j = 1,num_lev_trans
       do k = 1,number_trans_quant_vert
@@ -53,13 +53,13 @@ subroutine algae_huelle(i)
             print*,'algaes** vorher: isnan(trans_quant_vert_p  node#',iglob,' level#', j,' variable# ',k
             if (meinrang == 0)print*,'trans_quant_vert_name:',trans_quant_vert_name(k)
          endif
-      end do
-   end do
+      enddo
+   enddo
    nk = (i-1)*number_plankt_vari
    i2 = zone(point_zone(iglob))%wettstat%wetterstations_nummer !! ist parallel !!!
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    !if(i.eq.1)print*,'algae_huelle: lesen von e_extnct.dat (algaeski) bei jedem Knoten ist noch viiieel zu umständlich ###'
-   if (kontroll)print*,'algae_huelle: nk,i,iglob = ',nk,i,iglob
+   if (control)print*,'algae_huelle: nk,i,iglob = ',nk,i,iglob
    
    ! ==========================================================================
    ! Datenübergabe
@@ -71,7 +71,7 @@ subroutine algae_huelle(i)
    do j = 1,num_lev
       tempwz(j,1) = plankt_vari_vert_p(j+(1-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Wassertemperatur tiefenaufgelöst
       tempwz(j,2) = tempwz(j,1)
-   end do
+   enddo
    tiefe(1:2) = rb_hydraul_p(2+(i-1)*number_rb_hydraul) ! Wassertiefe aus randbedingungen.h
    rau(1:2) = strickler( zone(point_zone(iglob))%reib , tiefe(1) ) ! Strickler Reibungsbeiwert
    vmitt(1) = rb_hydraul_p(1+(i-1)*number_rb_hydraul) ! Geschwindigkeitsbetrag; randbedingungen.h
@@ -148,7 +148,7 @@ subroutine algae_huelle(i)
    saettg = transfer_value_p(8)    ! ???
    saettb = transfer_value_p(9)    ! ???
    akrema = 0.0 ! unbenutzt
-   !if(kontroll)print*,'algae_huelle: PCmax =',(akgmax+akremi)/(1.-frmuke) ! max C-spezifische Photosyntheserate bei optimal Temperatur
+   !if(control)print*,'algae_huelle: PCmax =',(akgmax+akremi)/(1.-frmuke) ! max C-spezifische Photosyntheserate bei optimal Temperatur
    sbioki = 0.0 ! unbenutzt
    vco2(1) = transfer_quantity_p(26+(i-1)*number_trans_quant) ! Kohlendioxyd ! unbenutzt
    vco2(2) = vco2(1)
@@ -170,7 +170,7 @@ subroutine algae_huelle(i)
    ilamda = rb_extnct_ilamda
    do j = 1,ilamda
       eta(j) = rb_extnct_p(1 + (j-1)*anz_extnct_koeff)
-      !if(kontroll)print*,'eta(',j,')=',eta(j)
+      !if(control)print*,'eta(',j,')=',eta(j)
       aw(j) = rb_extnct_p(2 + (j-1)*anz_extnct_koeff)
       ack(j) = rb_extnct_p(3 + (j-1)*anz_extnct_koeff)
       acg(j) = rb_extnct_p(4 + (j-1)*anz_extnct_koeff)
@@ -181,8 +181,8 @@ subroutine algae_huelle(i)
       ! extk_lamda wird nur von algaeski an algaesbl und algaesgr übergeben. an jedem Knoten hier in algae_huelle
       !extk_lamda(j,1) = rb_extnct_p(9 + (j-1)*anz_extnct_koeff) ! eigentlich nur Rückgabewert
       extk_lamda(j,1) = 0.0 ! initialize
-      !if(kontroll)print*,'extk_lamda(',j,',1)=',extk_lamda(j,1)
-   end do
+      !if(control)print*,'extk_lamda(',j,',1)=',extk_lamda(j,1)
+   enddo
    uhrz = uhrzeit_stunde     ! Uhrzeit module::modell zeitsekunde()
    sised(1) = benthic_distribution_p(2+(i-1)*number_benth_distr) ! Siliziumgehalt im Sediment
    sised(2) = sised(1)
@@ -276,7 +276,7 @@ subroutine algae_huelle(i)
       dalggz(j,2) = dalggz(j,1)
       dalgbz(j,1) = trans_quant_vert_p(j+(14-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! Zuwachs Kieselalgen tiefenaufgelöst
       dalgbz(j,2) = dalgbz(j,1)
-   end do
+   enddo
    nkzs(1) = 1         ! nur eine Tiefenschicht
    nkzs(2) = nkzs(1)
    dH2D = 0.25 ! Dicke Tiefenschicht ???
@@ -285,7 +285,7 @@ subroutine algae_huelle(i)
    if (string_write_error /= 0) then
       write(fehler,*)'241: Übergabe modellverzeichnis- > cpfad in algae_huelle() fehlgeschalgen'
       call qerror(fehler)
-   end if
+   endif
    do j = 1,num_lev
       up_NKz(j,1) = trans_quant_vert_p(j+(1-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! N (Stickstoff) Aufnahmerate der Kiesel-Algen
       up_NKz(j,2) = up_NKz(j,1)
@@ -301,7 +301,7 @@ subroutine algae_huelle(i)
       up_PGz(j,2) = up_PGz(j,1)
       up_PBz(j,1) = trans_quant_vert_p(j+(7-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! P (Phosphor) Aufnahmerate der blau-Algen
       up_PBz(j,2) = up_PBz(j,1)
-   end do
+   enddo
 
    Skmor(1) = planktonic_variable_p(69+nk)  ! Silizium in schwebenden, abgestorbenen Kieselalgen
    Skmor(2) = Skmor(1)
@@ -315,7 +315,7 @@ subroutine algae_huelle(i)
    do j = 1,num_lev
       chlaz(j,1) = plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Chlorophyl-A tiefenaufgelöst
       chlaz(j,2) = chlaz(j,1)
-   end do
+   enddo
    do j = 1,num_lev_trans
       akibrz(j,1) = trans_quant_vert_p(j+(23-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! Zwischengröße Kiesel-Algen-Biomasse ?
       akibrz(j,2) = akibrz(j,1)
@@ -325,7 +325,7 @@ subroutine algae_huelle(i)
       ablbrz(j,2) = ablbrz(j,1)
       up_N2z(j,1) = trans_quant_vert_p(j+(8-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) !  Aufnahmerate von Luftstickstoff durch Blaualgen
       up_N2z(j,2) = up_N2z(j,1)
-   end do
+   enddo
    do j = 1,num_lev
       akiz(j,1) = plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse kiesel-Algen tiefenaufgelöst
       akiz(j,2) = akiz(j,1)
@@ -333,7 +333,7 @@ subroutine algae_huelle(i)
       agrz(j,2) = agrz(j,1)
       ablz(j,1) = plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Biomasse blau-Algen tiefenaufgelöst
       ablz(j,2) = ablz(j,1)
-   end do
+   enddo
    chlaL(1) = 0.0            ! für Linienquelle; nicht verwendet
    qeinlL(1) = 0.0           ! für Linienquelle; nicht verwendet
    iorLa(1) = 0              ! zur Berücksichtigung der Linienquelle; nicht verwendet
@@ -352,7 +352,7 @@ subroutine algae_huelle(i)
       algzgz(j,2) = algzgz(j,1)
       algzbz(j,1) = trans_quant_vert_p(j+(28-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) ! blau-Algen-Konsum durch Zoo-Plankton in mg/l
       algzbz(j,2) = algzbz(j,1)
-   end do
+   enddo
    Chlaki(1) = planktonic_variable_p(12+nk)  ! Chlorophyl in Kieselalgen muegchla/l
    Chlaki(2) = Chlaki(1)
    chlagr(1) = planktonic_variable_p(13+nk)  ! Chlorophyl in gruenalgen muegchla/l
@@ -372,14 +372,14 @@ subroutine algae_huelle(i)
       hCChlgz(1,j,2) = hCChlgz(1,j,1)
       hCChlbz(1,j,1) = plankt_vari_vert_p(j+(22-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! c-chla Verhältnis blau
       hCChlbz(1,j,2) = hCChlbz(1,j,1)
-   end do
+   enddo
    ! in tiefengemittelten Berechnungen eigentlich inaktiv
    Dz2D(1:2) = transfer_quantity_p(61+(i-1)*number_trans_quant) ! vertikalen Dispersionskoeffizient aus k_eps()
    ! vorsichtshalber:
    Dz2D(1:2) = 0.0
    sedAlg_MQ(1,1) = benthic_distribution_p(52+(i-1)*number_benth_distr) ! ?? wird aus sedflux kommen
    sedAlg_MQ(1,2) = sedAlg_MQ(1,1)
-   if (kontroll) print*,'vor algaeski: sedAlg_MQ = ', sedAlg_MQ(1,1)
+   if (control) print*,'vor algaeski: sedAlg_MQ = ', sedAlg_MQ(1,1)
    do j = 1,num_lev !
       hQ_NKz(1,j,1) = plankt_vari_vert_p(j+(17-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! Stickstoffanteil der Algenbiomasse kiesel
       hQ_NKz(1,j,2) = hQ_NKz(1,j,1)
@@ -387,7 +387,7 @@ subroutine algae_huelle(i)
       hQ_NGz(1,j,2) = hQ_NGz(1,j,1)
       hQ_NBz(1,j,1) = plankt_vari_vert_p(j+(19-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) ! blau
       hQ_NBz(1,j,2) = hQ_NBz(1,j,1)
-   end do
+   enddo
    ! Für die Berechnung des Chlorophyll-a/Kohlenstoff-Verhaeltnisses
    ! Angabe in mgChla/mgC  ; in ini_algae() gesetzt in . Variablendefinition in module QSimDatenfelder
    
@@ -401,21 +401,21 @@ subroutine algae_huelle(i)
    itags = tag     ! Tag im Monat module::modell zeitsekunde()
    monats = monat  ! Monat im Jahr module::modell zeitsekunde()
    isim_end = 0
-   if (kontroll) print*,'vor algaes**: up_Siz = ',up_Siz(1,1)
-   if (kontroll) print*,'vor algaes**: chlaki,chlagr,chlabl = ',chlaki(1),chlagr(1),chlabl(1)
-   if (kontroll) print*,'vor algaes**: aki,agr,abl = ',aki(1),agr(1),abl(1)
-   if (kontroll) print*,'vor algaeski: extk,EXTKS = ',extk(1:2),EXTKS(1,1:2)
-   if (kontroll) print*,'vor algaes**: schwi(1),CHLA,up_NKz = ',schwi(1),CHLA(1),up_NKz(1,1)
-   if (kontroll) print*,'vor algaes**: Q_NK,hQ_NKz,akbcm,hCChlgz = ',Q_NK(1),hQ_NKz(1,1,1),akbcm(1),hCChlgz(1,1,1)
-   if (kontroll) print*,'vor algaes**: algzok,zooind,GROT = ',algzok(1),zooind(1),GROT
-   if (kontroll) print*,'vor algaeski: svhemk = ',svhemk(1),extk(1)
-   if (kontroll) print*,'vor algaes**: akmor_1,agmor_1,abmor_1 = ',akmor_1(1,1),agmor_1(1,1),abmor_1(1,1)
+   if (control) print*,'vor algaes**: up_Siz = ',up_Siz(1,1)
+   if (control) print*,'vor algaes**: chlaki,chlagr,chlabl = ',chlaki(1),chlagr(1),chlabl(1)
+   if (control) print*,'vor algaes**: aki,agr,abl = ',aki(1),agr(1),abl(1)
+   if (control) print*,'vor algaeski: extk,EXTKS = ',extk(1:2),EXTKS(1,1:2)
+   if (control) print*,'vor algaes**: schwi(1),CHLA,up_NKz = ',schwi(1),CHLA(1),up_NKz(1,1)
+   if (control) print*,'vor algaes**: Q_NK,hQ_NKz,akbcm,hCChlgz = ',Q_NK(1),hQ_NKz(1,1,1),akbcm(1),hCChlgz(1,1,1)
+   if (control) print*,'vor algaes**: algzok,zooind,GROT = ',algzok(1),zooind(1),GROT
+   if (control) print*,'vor algaeski: svhemk = ',svhemk(1),extk(1)
+   if (control) print*,'vor algaes**: akmor_1,agmor_1,abmor_1 = ',akmor_1(1,1),agmor_1(1,1),abmor_1(1,1)
    do k = 1,number_benth_distr
       if (isnan(benthic_distribution_p(k+(i-1)*number_benth_distr))) then
          print*,'vor algaes**: isnan(benthic_distribution_p  node#',iglob,' variable# ',k
          if (meinrang == 0)print*,'benth_distr_name:',benth_distr_name(k)
       endif
-   end do
+   enddo
    
    ! ==========================================================================
    ! metabolism
@@ -437,7 +437,7 @@ subroutine algae_huelle(i)
                  dz2d, chlabl, chlagr, a1ki, sedalg_mq, sedalk0, hq_nkz,       &
                  hq_ngz, hq_nbz, q_pg, q_ng, q_pb, q_nb, mstr, it_h, isim_end, &
                  extks, akmor_1, agmor_1, abmor_1,                             &
-                 kontroll, iglob)
+                 control, iglob)
    
    call algaesbl(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,     &
                  svhemb, chla, dalgbl, dalgab, anze, sedalb, algzob,           & 
@@ -451,7 +451,7 @@ subroutine algae_huelle(i)
                  chlabl, a1bl, hchlbz, hcchlbz, algabz,                        &
                  algzbz, dz2d,  sedalg_mq,                                     &
                  sedalb0, hq_nbz, mstr, isim_end, abmor_1,                     &
-                 kontroll, iglob)
+                 control, iglob)
    
    call algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp,     &
                  svhemg, chla, dalggr, dalgag, anze, sedalg, algzog, dgrmor,   &
@@ -462,28 +462,28 @@ subroutine algae_huelle(i)
                  dh2d, tempwz, mstr, up_pgz, up_ngz, agrtbr, agrbrz, agrz,     &
                  chlaz, hchlkz, hchlgz, hchlbz, hcchlgz, algagz, algzgz, dz2d, &
                  sedalg_mq, sedalg0, hq_ngz, a1gr,  isim_end, agmor_1,         &
-                 kontroll, iglob)
+                 control, iglob)
    
    ! vkigr(ior) = chlaki(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
    ! antbl(ior) = chlabl(ior)/(chlagrt+chlaki(ior)+chlabl(ior))
-   ! if(kontroll) print*,'nach vorläufiger Ersatz: chla,chlaki,chlabl,chlagr= ',chla(1),chlaki(1),chlabl(1),chlagr(1)
+   ! if(control) print*,'nach vorläufiger Ersatz: chla,chlaki,chlabl,chlagr= ',chla(1),chlaki(1),chlabl(1),chlagr(1)
    ! chla(1) = chlaki(1) + chlabl(1) + chlagr(1) !!!### = chlaki(ior) + chlabl(ior) +chlagrt
    ! if(chla(1).le. 0.0) then
    !    write(fehler,*)'algae_huelle chla .le. 0.0 am Knoten #',iglob
    !    call qerror(fehler)
-   ! end if
+   ! endif
    ! vkigr(1) = chlaki(1)/chla(1)
    ! antbl(1) = chlabl(1)/chla(1)
-   if (kontroll) print*,'nach algaes**: up_Siz = ',up_Siz(1,1)
-   if (kontroll) print*,'nach algaes**: chlaki,chlagr,chlabl = ',chlaki(1),chlagr(1),chlabl(1)
-   if (kontroll) print*,'nach algaes**: aki,agr,abl = ',aki(1),agr(1),abl(1)
-   if (kontroll) print*,'nach algaesgr: vkigr(1),chlaki(1),chla(1) = ',vkigr(1),chlaki(1),chla(1)
-   if (kontroll) print*,'nach algaesgr: svhemk,svhemg,svhemb = ',svhemk(1),svhemg(1),svhemb(1)
-   if (kontroll) print*,'nach algaesgr: extk = ',extk(1)
-   if (kontroll) print*,'nach algaesgr: agbcm, hchlgz, hCChlgz = ', agbcm(1), hchlgz(1,1,1), hCChlgz(1,1,1)
-   if (kontroll) print*,'nach algaes**: akmor_1,agmor_1,abmor_1 = ',akmor_1(1,1),agmor_1(1,1),abmor_1(1,1)
-   if (kontroll) print*,'nach algaes**: up_NKz = ',up_NKz(1,1)
-   if (kontroll) print*,'nach algaes**:hchlkz hchlgz hchlbz hCChlgz hCChlkz hCChlbz = ' &
+   if (control) print*,'nach algaes**: up_Siz = ',up_Siz(1,1)
+   if (control) print*,'nach algaes**: chlaki,chlagr,chlabl = ',chlaki(1),chlagr(1),chlabl(1)
+   if (control) print*,'nach algaes**: aki,agr,abl = ',aki(1),agr(1),abl(1)
+   if (control) print*,'nach algaesgr: vkigr(1),chlaki(1),chla(1) = ',vkigr(1),chlaki(1),chla(1)
+   if (control) print*,'nach algaesgr: svhemk,svhemg,svhemb = ',svhemk(1),svhemg(1),svhemb(1)
+   if (control) print*,'nach algaesgr: extk = ',extk(1)
+   if (control) print*,'nach algaesgr: agbcm, hchlgz, hCChlgz = ', agbcm(1), hchlgz(1,1,1), hCChlgz(1,1,1)
+   if (control) print*,'nach algaes**: akmor_1,agmor_1,abmor_1 = ',akmor_1(1,1),agmor_1(1,1),abmor_1(1,1)
+   if (control) print*,'nach algaes**: up_NKz = ',up_NKz(1,1)
+   if (control) print*,'nach algaes**:hchlkz hchlgz hchlbz hCChlgz hCChlkz hCChlbz = ' &
        ,hchlkz(1,1,1), hchlgz(1,1,1), hchlbz(1,1,1), hCChlgz(1,1,1), hCChlkz(1,1,1), hCChlbz(1,1,1)
    778 continue
    
@@ -525,7 +525,7 @@ subroutine algae_huelle(i)
    ! extk_lamda wird nur von algaeski an algaesbl und algaesgr übergeben. an jedem Knoten hier in algae_huelle
    !do j=1,ilamda
    !   rb_extnct_p(9 + (j-1)*anz_extnct_koeff)= extk_lamda(j,1) ! ??? an allen Knoten auf allen Prozessen immer derselbe Wert??
-   !end do
+   !enddo
    benthic_distribution_p(2+(i-1)*number_benth_distr) = sised(1) ! Siliziumgehalt im Sediment (wird von algaeski verändert)
    transfer_quantity_p(55+(i-1)*number_trans_quant) = tpki(1) ! Ausgabeparameter ?? Kieselalgen Phosphor ??
    transfer_quantity_p(80+(i-1)*number_trans_quant) = tpgr(1) ! Ausgabeparameter ?? Grünalgen Phosphor ??
@@ -557,7 +557,7 @@ subroutine algae_huelle(i)
       trans_quant_vert_p(j+(12-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = dalgkz(j,1) ! Zuwachs Kieselalgen tiefenaufgelöst
       trans_quant_vert_p(j+(13-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = dalggz(j,1) ! Zuwachs Kieselalgen tiefenaufgelöst
       trans_quant_vert_p(j+(14-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = dalgbz(j,1) ! Zuwachs Kieselalgen tiefenaufgelöst
-   end do
+   enddo
    do j = 1,num_lev
       trans_quant_vert_p(j+(1-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_NKz(j,1) ! N (Stickstoff) Aufnahmerate der Kiesel-Algen
       trans_quant_vert_p(j+(2-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_NGz(j,1) ! N (Stickstoff) Aufnahmerate der grün-Algen
@@ -566,25 +566,25 @@ subroutine algae_huelle(i)
       trans_quant_vert_p(j+(5-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_PKz(j,1) ! P (Phosphor) Aufnahmerate der Kiesel-Algen
       trans_quant_vert_p(j+(6-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_PGz(j,1) ! P (Phosphor) Aufnahmerate der grün-Algen
       trans_quant_vert_p(j+(7-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_PBz(j,1) ! P (Phosphor) Aufnahmerate der blau-Algen
-   end do
+   enddo
    planktonic_variable_p(69+nk) = Skmor(1) ! Silizium in schwebenden, abgestorbenen Kieselalgen
    transfer_quantity_p(48+(i-1)*number_trans_quant) = akitbr(1) ! Kieselalgen ??
    transfer_quantity_p(49+(i-1)*number_trans_quant) = agrtbr(1) !
    transfer_quantity_p(50+(i-1)*number_trans_quant) = abltbr(1) ! Zwischengröße Algenbiomasse ???
    do j = 1,num_lev
       plankt_vari_vert_p(j+(11-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = chlaz(j,1) ! Chlorophyl-A tiefenaufgelöst
-   end do
+   enddo
    do j = 1,num_lev_trans
       trans_quant_vert_p(j+(23-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = akibrz(j,1) ! Kiesel-Algen-Biomasse? Wachstum? tiefenaufgelöst
       trans_quant_vert_p(j+(24-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = agrbrz(j,1) ! Zwischengröße grün-Algen-Biomasse ?
       trans_quant_vert_p(j+(25-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = ablbrz(j,1) ! Zwischengröße blau-Algen-Biomasse ?
       trans_quant_vert_p(j+(8-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = up_N2z(j,1) !  Aufnahmerate von Luftstickstoff durch Blaualgen
-   end do
+   enddo
    do j = 1,num_lev
       plankt_vari_vert_p(j+( 8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = akiz(j,1) ! Biomasse kiesel-Algen tiefenaufgelöst
       plankt_vari_vert_p(j+( 9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = agrz(j,1) ! Biomasse gruen-Algen tiefenaufgelöst
       plankt_vari_vert_p(j+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = ablz(j,1) ! Biomasse blau-Algen tiefenaufgelöst
-   end do
+   enddo
    do j = 1,num_lev_trans
       trans_quant_vert_p(j+(18-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algakz(j,1) !  Respirierte Kiesel-Algenbiomasse, tiefenaufgelöst
       trans_quant_vert_p(j+(19-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algagz(j,1) !  Respirierte grün-Algenbiomasse,
@@ -592,7 +592,7 @@ subroutine algae_huelle(i)
       trans_quant_vert_p(j+(26-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algzkz(j,1) ! Kiesel-Algen-Konsum durch Zoo-Plankton in mg/l
       trans_quant_vert_p(j+(27-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algzgz(j,1) ! grün-Algen-Konsum durch Zoo-Plankton in mg/l
       trans_quant_vert_p(j+(28-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert) = algzbz(j,1) ! blau-Algen-Konsum durch Zoo-Plankton in mg/l
-   end do
+   enddo
    do j = 1,num_lev
       plankt_vari_vert_p(j+(12-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hchlkz(1,j,1) ! Chlorophylgehalt der Kieselalgen
       plankt_vari_vert_p(j+(13-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hchlgz(1,j,1) ! Chlorophylgehalt der Gruenalgen
@@ -600,13 +600,13 @@ subroutine algae_huelle(i)
       plankt_vari_vert_p(j+(20-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlkz(1,j,1) ! c-chla Verhältnis Kiesel
       plankt_vari_vert_p(j+(21-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlgz(1,j,1) ! c-chla Verhältnis grün
       plankt_vari_vert_p(j+(22-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hCChlbz(1,j,1) ! c-chla Verhältnis blau
-   end do
+   enddo
    benthic_distribution_p(52+(i-1)*number_benth_distr) = sedAlg_MQ(1,1) ! ??
    do j = 1,num_lev
       plankt_vari_vert_p(j+(17-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NKz(1,j,1) ! Stickstoffanteil der Algenbiomasse kiesel
       plankt_vari_vert_p(j+(18-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NGz(1,j,1) ! grün
       plankt_vari_vert_p(j+(19-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = hQ_NBz(1,j,1) ! blau
-   end do
+   enddo
    benthic_distribution_p(53+(i-1)*number_benth_distr) = sedAlk0(1) ! !sedAlk0 wird nur an k_eps() übergeben.
    
    
@@ -620,35 +620,35 @@ subroutine algae_huelle(i)
          print*,'nach algaes**: isnan(planktonic_variable_p  node#',iglob,' variable# ',k
          if (meinrang == 0)print*,'planktonic_variable_name:',planktonic_variable_name(k)
       endif
-   end do
+   enddo
    do j = 1,num_lev
       do k = 1,number_plankt_vari_vert
          if (isnan(plankt_vari_vert_p(j+(k-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev))) then
             print*,'nach algaes**: isnan(plankt_vari_vert_p  node#',iglob,' level#', j,' variable# ',k
             if (meinrang == 0)print*,'plankt_vari_vert_name:',plankt_vari_vert_name(k)
          endif
-      end do
-   end do
+      enddo
+   enddo
    do k = 1,number_trans_quant
       if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
          print*,'nach algaes**: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
          if (meinrang == 0)print*,'trans_quant_name:',trans_quant_name(k)
       endif
-   end do
+   enddo
    do j = 1,num_lev_trans
       do k = 1,number_trans_quant_vert
          if (isnan(trans_quant_vert_p(j+(k-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert))) then
             print*,'nach algaes**: isnan(trans_quant_vert_p  node#',iglob,' level#', j,' variable# ',k
             if (meinrang == 0)print*,'trans_quant_vert_name:',trans_quant_vert_name(k)
          endif
-      end do
-   end do
+      enddo
+   enddo
    do k = 1,number_benth_distr
       if (isnan(benthic_distribution_p(k+(i-1)*number_benth_distr))) then
          print*,'nach algaes**: isnan(benthic_distribution_p  node#',iglob,' variable# ',k
          if (meinrang == 0)print*,'benth_distr_name:',benth_distr_name(k)
       endif
-   end do
+   enddo
 
    return
 end subroutine algae_huelle
@@ -660,7 +660,7 @@ end subroutine algae_huelle
 subroutine algae_aufteilung(i)!! ### ERSETZT
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer i,nk,l
    real T, Te0, Sum_N, f_NK
@@ -694,14 +694,14 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   /(1000.*planktonic_variable(24+nk)*Caki)
    do l = 1,num_lev ! akiz konstante Verteilung in der Vertikalen
       plankt_vari_vert(l+(8-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(8+nk)
-   end do ! alle l levels
+   enddo ! alle l levels
    !      agrs(mstr,mRB) = (chlas(mstr,mRB)*(1.-vkigrs(mstr,mRB)-antbls(mstr,mRB))/1000.)*(agbcms(mstr,mRB)/Cagr)
    planktonic_variable(9+nk) = ( planktonic_variable(13+nk)*planktonic_variable(25+nk) ) / (1000.0*Cagr)
    !     &   planktonic_variable(11+nk)*(1.-planktonic_variable(19+nk)-planktonic_variable(20+nk)) &
    !     &   /(1000.*planktonic_variable(25+nk)*Cagr) ! agr = (chla*(1-VKIGR-ANTBL))/(1000*agbcm*Cagr)
    do l = 1,num_lev ! ablz konstante Verteilung in der Vertikalen
       plankt_vari_vert(l+(9-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(9+nk)
-   end do ! alle l levels
+   enddo ! alle l levels
    
    !      abls(mstr,mRB) = (chlas(mstr,mRB)*antbls(mstr,mRB)/1000.)*(abbcms(mstr,mRB)/Cabl)
    planktonic_variable(10+nk) = ( planktonic_variable(14+nk)*planktonic_variable(26+nk) ) / (1000.0*Cabl)
@@ -709,7 +709,7 @@ subroutine algae_aufteilung(i)!! ### ERSETZT
    !     &   /(1000.*planktonic_variable(26+nk)*Cabl)  ! abl = (chla*ANTBL)/(1000*abbcm*Cabl)
    do l = 1,num_lev ! agrz konstante Verteilung in der Vertikalen
       plankt_vari_vert(l+(10-1)*num_lev+(i-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(10+nk)
-   end do ! alle l levels
+   enddo ! alle l levels
    !....zelluläre Nährstoffgehalte in den Algen
    !      Sum_N = vnh4s(mstr,mRB)+vNO3s(mstr,mRB)
    !      f_NK = 0.582*(Sum_N/(Sum_N+0.011))

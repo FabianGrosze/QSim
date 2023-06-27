@@ -47,9 +47,9 @@ subroutine albenth_wrapper_3d(i)
    
    ! iglob = (i+meinrang*part)
    ! nk = (i-1)*number_plankt_vari
-   ! kontroll = iglob == kontrollknoten
+   ! control = iglob == kontrollknoten
    
-   ! if (kontroll)print*,'albenth_huelle  iglob,i,nk,meinrang = ',iglob,i,nk,meinrang
+   ! if (control)print*,'albenth_huelle  iglob,i,nk,meinrang = ',iglob,i,nk,meinrang
    ! tflie = real(deltat)/86400 ! Umwandlung des Zeitschritts von integer sekunden (QSim3D) in real Tage (QSim)
    
    ! call albenth(                                                       &
@@ -71,7 +71,7 @@ subroutine albenth_wrapper_3d(i)
    !    benthic_distribution_p(12+(i-1)*number_benth_distr),             & ! alberk
    !    benthic_distribution_p(10+(i-1)*number_benth_distr),             & ! cmatgr
    !    benthic_distribution_p(9+(i-1)*number_benth_distr),              & ! cmatki
-   !    kontroll, jjj)
+   !    control, jjj)
    
    return
 end subroutine albenth_wrapper_3d

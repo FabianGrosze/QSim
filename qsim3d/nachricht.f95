@@ -39,20 +39,20 @@ subroutine qerror(fehlermeldung)
       !print*,systemaufruf
       print*,'qerror system call rm -rf fortschritt failed'
       call MPI_Abort(mpi_komm_welt, errcode, ierr)
-   end if !
+   endif !
    call system(systemaufruf,sysa)
    if (sysa /= 0) then
       print*,'deleting file fortschritt when error exit failed'
-   end if !
+   endif !
    write(systemaufruf,'(5A)',iostat = errcode)'echo "',trim(fehlermeldung),'" > ',trim(modellverzeichnis),'abbruch'
    if (errcode /= 0) then
       print*,'qerror system call echo abbruch failed'
       call MPI_Abort(mpi_komm_welt, errcode, ierr)
-   end if !
+   endif !
    call system(systemaufruf,sysa)
    if (sysa /= 0) then
       print*,'writing error message into file abbruch failed'
-   end if !
+   endif !
    write(errcode,*)' ### controlled error exit ### QSim3D ### '
    call MPI_Abort(mpi_komm_welt, errcode, ierr)
    stop
@@ -80,38 +80,30 @@ subroutine fortschritt(n,f)
          case (1) ! start
             call version_string(versionstext)
             print*,'--------------- > QSim-3D ',trim(versionstext),' < --------------- Start-- '
-            !   call ausgabekonzentrationen_beispiel()
-            !   call AParamParam(cpfad1,j1)
-            !   call EreigGParam(cpfad1,j1)
-            !   call ModellGParam(cpfad1,j1)
-            !   call E_extnctParam(cpfad1,j1)
-            !   call EreigHParam(cpfad1,j1)
-            !   call Ergeb2DParam(cpfad1,j1)
-            !   call ErgebMParam(cpfad1,j1)
-            !   call ErgebTParam(cpfad1,j1)
-            !   call WetterParam(cpfad1,j1)
             call versionsdatum()
-            !        Pfadnamen des Modell Verzeichnisses ermitteln und auf Vollständigkeit prüfen:
+            
+            ! Pfadnamen des Modell Verzeichnisses ermitteln und auf Vollständigkeit prüfen:
             call modeverz()
             if ( .not. modell_vollstaendig()) then
                write(fehler,*)'Modell leider unvollständig'
                call qerror(fehler)
             endif
-            !        Laufzeitermittlung starten
+            
+            ! Laufzeitermittlung starten
             write(systemaufruf,'(3A)',iostat = errcode)'date > ',trim(modellverzeichnis),'start'
             if (errcode /= 0)call qerror('fortschritt systemaufruf date start')
             call system(systemaufruf,system_error)
             if (system_error /= 0) then
                write(fehler,*)'date > start fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
-            end if !
+            endif !
             write(progressfile,'(2A)',iostat = errcode)adjustl(trim(modellverzeichnis)),'fortschritt' !! create filestring
             if (errcode /= 0) then
                print*,'|',modellverzeichnis,'|'
                print*,'|',progressfile,'|'
                write(fehler,*)'fortschritt progressfile 1 error = ', errcode
                call qerror(fehler)
-            end if !
+            endif !
             open ( ion , file = adjustl(trim(progressfile)), status = 'new', action = 'write', iostat = sysa )
             if (sysa /= 0) then
                print*,'open error file fortschritt, directory blocked by another run?'
@@ -120,12 +112,15 @@ subroutine fortschritt(n,f)
             else
                rewind (ion)
                write(ion,'(f9.6)') 0.0
-            end if ! Datei lässt sich anlegen
+            endif ! Datei lässt sich anlegen
             close(ion)
-            !        source-code Verweis übernehmen:
+            
+            !source-code Verweis übernehmen:
             ! z.B. write(codesource,*) "/home/jwyrwa/QSim3D" (wird vom Makefile geschrieben)
             include "code_source.h"
             print*,"starting; progress file = ",adjustl(trim(progressfile))," ; codesource = ",adjustl(trim(codesource))
+         
+         
          case (0) ! making progress
             write(progressfile,'(2A)',iostat = errcode)adjustl(trim(modellverzeichnis)),'fortschritt' !! create filestring
             if (errcode /= 0) then
@@ -133,7 +128,7 @@ subroutine fortschritt(n,f)
                print*,'|',progressfile,'|'
                write(fehler,*)'fortschritt progressfile 0 error = ', errcode
                call qerror(fehler)
-            end if !
+            endif !
             open ( ion , file = adjustl(trim(progressfile)), status = 'old', action = 'readwrite', iostat = sysa )
             if (sysa /= 0) then
                print*,' |',adjustl(trim(progressfile)),'| ',sysa, ion
@@ -148,7 +143,7 @@ subroutine fortschritt(n,f)
                else
                   call qerror('kein fortschritt ???')
                endif
-            end if ! Datei lässt sich anlegen
+            endif ! Datei lässt sich anlegen
             close(ion)
          case (-1) ! end, finalizing
             print*,'mittelflaech = ',mittelflaech,' mittelvolumen = ',mittelvolumen
@@ -159,7 +154,7 @@ subroutine fortschritt(n,f)
             if (system_error /= 0) then
                write(fehler,*)'date > ende fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
-            end if !
+            endif !
             !call system('cat start ende > lauf')
             write(systemaufruf,'(7A)',iostat = errcode)'cat ',trim(modellverzeichnis),'start '  &
                                                ,trim(modellverzeichnis),'ende > ',trim(modellverzeichnis),'lauf'
@@ -168,7 +163,7 @@ subroutine fortschritt(n,f)
             if (system_error /= 0) then
                write(fehler,*)'cat start ende > lauf fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
-            end if !
+            endif !
             print*,'Laufzeit von ... bis:'
             !call system('tail lauf')
             write(systemaufruf,'(3A)',iostat = errcode)'tail ',trim(modellverzeichnis),'lauf'
@@ -177,7 +172,7 @@ subroutine fortschritt(n,f)
             if (system_error /= 0) then
                write(fehler,*)'tail lauf fehlgeschlagen system_error = ', system_error
                call qerror(fehler)
-            end if !
+            endif !
             if (send_email) then
                write(systemaufruf,'(7A)',iostat = errcode)'mail ',trim(email),' -s "qsim3d ',trim(modellverzeichnis)  &
                                                   ,' fertig" < ',trim(modellverzeichnis),'lauf'
@@ -209,8 +204,8 @@ subroutine fortschritt(n,f)
                else
                   print*,"### Archivierung der Quellcode Sicherung (*source*.taz) aus "  &
                   ,trim(adjustl(codesource))," schlug fehl."
-               end if
-            end if ! system_error.ne.0
+               endif
+            endif ! system_error.ne.0
             ! Ereignis sichern:
             write(systemaufruf,'(3A)',iostat = errcode)'qusave ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt: systemaufruf qusave modellverzeichnis fehlgeschlagen')
@@ -219,7 +214,7 @@ subroutine fortschritt(n,f)
                print*,'Eingabedaten in qsim3d_modell_<Modell>_<Datum>.taz archiviert.'
             else
                print*,"### Archivierung der Eingabedaten schlug fehl."
-            end if
+            endif
             ! vtk-Dateien (d.h. Variablenfelder zu den Ausgabezeitpunkten) archivieren:
             write(systemaufruf,'(3A)',iostat = errcode)'quzip ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
             if (errcode /= 0)call qerror('fortschritt systemaufruf ')
@@ -228,7 +223,7 @@ subroutine fortschritt(n,f)
                print*,'zipped vtk-output'
             else
                print*,'no archive for vtk-output'
-            end if
+            endif
             if (stationaer)print*,'stationaer'
             if (nur_temp)print*,'##### nur Temperatur-Simulation (itemp == 1 in EREIGG.txt) #####'
             if (nur_alter)print*,'##### nur Aufenthaltzeit-Simulation  (Datei alter.txt) #####'
@@ -244,11 +239,11 @@ subroutine fortschritt(n,f)
                print*,'|',systemaufruf,'|'
                write(fehler,*)'systemaufruf fortschritt -1 error = ', errcode
                call qerror(fehler)
-            end if !
+            endif !
             call system(systemaufruf,sysa)
             if (sysa /= 0) then
                call qerror('Löschen der Datei fortschritt fehlgeschlagen')
-            end if !
+            endif !
             case default
             call qerror ('fortschritt, Auswahlparameter n falsch')
       end select

@@ -66,8 +66,6 @@ Q1 = gerris_definitions/write_e_extnct.o \
     crank_nicolson.o \
     cra_nickoeff.o\
     tracer_inflow_1d.o \
-    ergebMFormat.o \
-    ergebTFormat.o \
     init_result_files.o \
     km_sys.o \
     lax_wendroff.o \
@@ -91,7 +89,6 @@ Q1 = gerris_definitions/write_e_extnct.o \
     trimat.o \
     wehr.o \
     wehrles.o \
-    z_gitter_einl.o\
     zooplankton_inflow_1d.o
     
 

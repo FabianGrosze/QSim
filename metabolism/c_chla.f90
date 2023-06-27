@@ -28,32 +28,40 @@
 !>Berechnung der Chla-Bildung im Zeitschritt
 !! @author Volker Kirchesch
 !! @date 12.11.2015
-subroutine c_chla(roh_Chlz, xup_N, xakres, CChlaz, nkz, tflie, C_Bio,         &
-                  CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+subroutine c_chla(roh_chlz_s, xup_n, xakres, cchlaz_s, tflie, c_bio, &
+                  cchl_stern, xchla, xac, xagrow, isyn)
                   
    implicit none
+   real,    intent(in)    :: roh_chlz_s
+   real,    intent(in)    :: xup_n
+   real,    intent(in)    :: xakres
+   real,    intent(inout) :: cchlaz_s
+   real,    intent(in)    :: tflie
+   real,    intent(in)    :: c_bio
+   real,    intent(in)    :: cchl_stern
+   real,    intent(in)    :: xchla
+   real,    intent(in)    :: xac
+   real,    intent(in)    :: xagrow
+   integer, intent(in)    :: isyn
    
-   integer             :: nkz, isyn, iaus
-   real                :: xup_n, xchla, xakres, xagrow, xac
-   real                :: up_n, tflie, pchl, hconz, hconv
-   real                :: hconn, dchl, c_bio, chla_neu, cchl_stern
-   real, dimension(50) :: roh_Chlz, CChlaz
+   ! --- local variables ---
+   real :: up_n, pchl, hconz, hconv, hconn, dchl, chla_neu
    
    
-   up_N = xup_N/C_Bio
-   ! up_N Umrechnung von Std. auf sec.
-   PChl = roh_Chlz(nkz)*up_N/(tflie*86400.)
-   hconz = exp(PChl * tflie*86400.)
-   hconN = exp(xakres*tflie)
+   up_n = xup_n/c_bio
+   ! up_n umrechnung von std. auf sec.
+   pchl = roh_chlz_s * up_n / (tflie * 86400.)
+   hconz = exp(pchl * tflie * 86400.)
+   hconn = exp(xakres * tflie)
    
-   if (isyn == 1) then     ! Geider (1997)
-      hconV = 1./CChl_Stern
-      dChl = hconV*xaC*1000.*(exp(xagrow*roh_Chlz(nkz)*tflie)-1.)
-      chla_neu = xchla + dChl
-      hconz = chla_neu/xChla
-      hconz = exp((log(chla_neu) -log(xChla)))
+   if (isyn == 1) then     ! geider (1997)
+      hconv = 1./cchl_stern
+      dchl = hconv * xac * 1000. * (exp(xagrow * roh_chlz_s * tflie)-1.)
+      chla_neu = xchla + dchl
+      hconz = chla_neu / xchla
+      hconz = exp((log(chla_neu) - log(xchla)))
    endif
-   CChlaz(nkz) = (hconz/hconN)*(1./CChlaz(nkz))
-   CChlaz(nkz) = max(CChl_Stern,1./CChlaz(nkz))
+   cchlaz_s = (hconz/hconn)  *(1. / cchlaz_s)
+   cchlaz_s = max(cchl_stern, 1./cchlaz_s)
 
 end subroutine c_chla

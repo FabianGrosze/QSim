@@ -42,8 +42,8 @@ subroutine strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,   &
    ! SHGR   - Sonnenhoehe im Gradmass
    ! CLOUD  - Bewoelkungsgrad
    
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    integer                         :: jahrs, nrs, mstr, monatv, monats_tst

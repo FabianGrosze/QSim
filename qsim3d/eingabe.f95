@@ -32,7 +32,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    !
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    
    implicit none
    integer :: i, j, n, n_cal
@@ -49,7 +49,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
             call netz_lesen() ! Lage der Knoten, Zonen, Randnummern und Vermaschung einlesen
             ! Konzentrationen anlegen und initialisieren:
             n_cal = knotenanzahl2D
-         end if ! only prozessor 0
+         endif ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(2) ! Untrim² netCDF
@@ -58,7 +58,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
             call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
             n_cal = n_elemente
             print*,'Untrim netCDF read mesh'
-         end if ! only prozessor 0
+         endif ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
       case(3) ! SCHISM netCDF
@@ -86,8 +86,8 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       if (kontrollknoten == 0) then
          print*,"### special option #### only writing output variable list ausgabekonzentrationen_beispiel.txt"
          call qerror('modeverz: control node = 0  ### special option #### (error is regular exit)')
-      end if
-   end if ! only prozessor 0
+      endif
+   endif ! only prozessor 0
    call mpi_barrier (mpi_komm_welt, ierr)
    call show_mesh()
    call ini_zeit() ! initialise time preliminary to reference-year
@@ -96,7 +96,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       case(1) ! casu-transinfo
          if (meinrang == 0) then ! prozess 0 only
             call transinfo_sichten()      ! Transportinformationen sichten:
-         end if ! only prozessor 0
+         endif ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
       case(2) ! Untrim² netCDF
          call nc_sichten()
@@ -121,7 +121,7 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       write(cpfad,*,iostat = ierr)trim(adjustl(modellverzeichnis))
       if (ierr /= 0) call qerror('eingabe: write(cpfad went wrong')
       
-      call aparam_lesen(cpfad,iwsim,icoli,ieros,ischwer)
+      call read_aparam(cpfad, iwsim, icoli, ischwer)
       call extnct_lesen()
       call ausgabezeitpunkte()      ! reading points in time for output
       call ausgabekonzentrationen() ! reading output-values
@@ -134,13 +134,13 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
          print*,'querschneiden'
       else
          print*,'keine Querschnitte'
-      end if
+      endif
       !! nachschauen, ob und zu welchen Zeitpunkten
       !! Verteilungen der Trübung/Schwebstoff und des Salzgehalts offline bereitliegen.
       call schwebstoff_salz_sichten()
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
-   end if ! only prozessor 0
+   endif ! only prozessor 0
    call aparam_parallel()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
@@ -167,7 +167,7 @@ subroutine ereigg_modell()
    if (open_error /= 0) then
       write(fehler,*)'open_error EREIGG.txt ... Datei vorhanden?'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    rewind (ion)
    !
    if ( .not. zeile(ion)) call qerror('ereigg_modell 1 read_error /= 0')
@@ -209,12 +209,12 @@ subroutine ereigg_modell()
    if (deltat <= 0) then
       write(fehler,*)'ereigg_modell: zeitschrittweite = ',deltat,' , und das ist falsch!'
       call qerror(fehler)
-   end if ! zeitschrittweite deltat ist falsch
+   endif ! zeitschrittweite deltat ist falsch
    if (abs(real(deltat)-(dt_min*60)) > 0.01) then
       write(fehler,*)'ereigg_modell: angegebene zeitschrittweite = ',dt_min,' minuten d.h.',(dt_min*60)  &
                     ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
       call qerror(fehler)
-   end if ! Zeitschritt als ganze sekunden
+   endif ! Zeitschritt als ganze sekunden
    zeitschrittanzahl = (endzeitpunkt-startzeitpunkt)/(deltat)
    print*,'zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat = ',zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat
    if (zeitschrittanzahl <= 0) then
@@ -222,15 +222,15 @@ subroutine ereigg_modell()
       !! zeitschrittanzahl=null durchlaufen lassen, um Initialisierung ausgeben zu können
       if (zeitschrittanzahl < 0) then !! nur abbrechen wenn unter null.
          call qerror('zeitschrittanzahl < 0')
-      end if ! zeitschrittanzahl.lt.0
-   end if ! zeitschrittanzahl.le.0
+      endif ! zeitschrittanzahl.lt.0
+   endif ! zeitschrittanzahl.le.0
    !if(hydro_trieb.eq. 3)then !## preliminary SCHISM all hydro steps
    !   deltat=dttrans
    !   startzeitpunkt=transinfo_zeit(transinfo_zuord(1))
    !   endzeitpunkt  =transinfo_zeit(transinfo_zuord(transinfo_anzahl))
    !   zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/deltat
    !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' deltat=',deltat
-   !end if !SCHISM
+   !endif !SCHISM
    print*,"hydro_trieb = ",hydro_trieb      !case(2) ! Untrim² netCDF
    
    print*,'transinfo_zeit,Anfang+Ende = ',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
@@ -238,7 +238,7 @@ subroutine ereigg_modell()
       print*,"startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1) = "
       print*,startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1)
       call qerror('### Abbruch ### zum startzeitpunkt liegen noch keine Transportinformationen vor')
-   end if !wrong start time
+   endif !wrong start time
    if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl)))  &
        call qerror('### Abbruch ### zum endzeitpunkt liegen keine Transportinformationen mehr vor')
    print*,'EREIGG.txt, Berechnungs-Zeitraum von ',startzeitpunkt,' bis ', endzeitpunkt  &
@@ -271,14 +271,14 @@ subroutine ereigg_modell()
       print*,'EREIGG.txt Zeilentext: ',trim(ctext)
       write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    
    !#FG: check that suspended matter ('SS') is only read from hydrodynamic forcing ('iEros<0') when UnTRIM2 is used ('hydro_trieb=2')
    !#FG: dirty(!!!) temporary hack to use 'iEros' for this
    if (iEros < 0 .and. hydro_trieb /= 2) then
       write(fehler,'(a)') "eingabe.f95: Can only read 'SS' (iEros < 0) from UnTRIM hydrodynamics (hydro_trieb = 2)"
       call qerror(fehler)
-   end if
+   endif
    
    if (imitt == 1) &
        print*,'### Warnung ###, die in EREIGG.txt mittels imitt = 1 angeforderte Ausgabe von Tagesmittelwerten ', &

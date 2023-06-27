@@ -46,7 +46,7 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
                     ,istund,uhrz,RBtyp,NRSCHr,itags,monats,jahrs,cpfad,iwsim,ilang,iwied,mstrRB,i_Rands                      &
                     ,iw_max,iformVert)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    integer                                :: nrs, nrsj, mstr, mstrrb, monats

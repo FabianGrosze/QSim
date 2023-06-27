@@ -1,10 +1,9 @@
 subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
                       vNO2_s, rhyd_s, rau_s, tiefe_s, vmitt_s, hJNH4_s,    &
                       tflie, susn_s, susn2_s, pfln1_s, pfln2_s, sedx0_s,   &
-                      bettn_s, go2n_s, susno_s, kontroll, jjj)
+                      bettn_s, go2n_s, susno_s, control, jjj)
    
-   use aparam,    only: ynmax1, ynmax2, stks2, stks1, bnmx1, bnks1, bnmx2, &
-                        bnks2, anitr1, anitr2
+   use module_aparam
    implicit none
    ! --- dummy arguments ---
    real, intent(inout)     :: vx0_s    !< nitrosomonas
@@ -29,7 +28,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    real, intent(out)       :: bettn_s  !<
    real, intent(out)       :: go2n_s   !< O2-Verbrauch durch Nitrifikation (NH4N -> NO3N)
    real, intent(out)       :: susno_s  !<
-   logical, intent(in)     :: kontroll !< debugging
+   logical, intent(in)     :: control !< debugging
    integer, intent(in)     :: jjj      !< debugging
    
    ! --- local variables ---
@@ -207,7 +206,7 @@ subroutine nitrifiers(vx0_s, vx02_s, pfl_s, vph_s, tempw_s, vo2_s, vNH4_s, &
    jsed = 1
    ZellV = 0.0
    call sedimentation(tiefe_s, ised, ust, qsgr, oc, Oc0, tflie, wst, jsed, ZellV, &
-                      kontroll, jjj)
+                      control, jjj)
    
    ! --- Nitrosomonas ---
    csedn  = vx0_s * 0.69

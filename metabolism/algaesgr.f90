@@ -39,12 +39,12 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
                     up_ngz, agrtbr, agrbrz, agrz, chlaz, hchlkz, hchlgz,      &
                     hchlbz, hcchlgz, algagz, algzgz, dz2d, sedalg_mq, sedalg0,&
                     hq_ngz, a1gr, isim_end, agmor_1,                          &
-                    kontroll, jjj)
+                    control, jjj)
    
   
    
-   use allodim
-   use aparam
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    integer                          :: n_neu_s, n_alt_s, nkz, mstr
@@ -78,7 +78,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
    real                             :: acmit, acmitg, abr
    real                             :: Icz, Ic, N_Cmax
    real                             :: agrt_old
-   logical                          :: kontroll
+   logical                          :: control
    integer, dimension(1000)         :: ischif, nkzs
    real, dimension(40)              :: eta, aw, ack, acg, acb, ah, as, al, I0, Iz
    real, dimension(50)              :: agrtz, Pz, F5z, aggrwz, CChlaz, CChlazt, Chlagrzt, xroh_Chlz, roh_Chlz
@@ -334,7 +334,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
          
          yK = 1.-svhemg(ior)
          CChl_Stern = CChl0 *exp(a1Gr * hc_temp(j))        ! dunkeladaptierte Algen
-         call lichthemmung(tflie,Ic,yK,CChl_Stern,CChlaz,j)
+         call lichthemmung(tflie, ic, yk, cchl_stern, cchlaz(j))
          
          hemm(j) = yk
          saettg = ikge * 0.183*exp(0.0848*hc_temp(j))
@@ -478,7 +478,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
                upmxi = upmxPG * FTA
                jcyano = 0
                j_aus = 0
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                up_PGz(nkz,ior) = up_Ci
                Q_PGz(nkz) = yk
             endif
@@ -497,7 +497,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
                Halbi = agksN*ft_ks
                upmxi = upmxNG * FTA
                j_aus = 0
-               call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+               call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
                j_aus = 0
                up_NGz(nkz,ior) = up_Ci
                hQ_NGz(mstr,nkz,ior) = yk
@@ -514,7 +514,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
                xchla = hChlgz(mstr,nkz,ior)
             endif
             
-            call C_Chla(roh_Chlz, xup_N, xagres, CChlaz, nkz, tflie, Cagr, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+            call c_chla(roh_chlz(nkz), xup_n, xagres, cchlaz(nkz), tflie, cagr, cchl_stern, xchla, xac, xagrow, isyn)
             CChlazt(nkz) = CChlaz(nkz)
             if (nkz > 1) then
                sumQN = sumQN + ((hQ_NGz(mstr,nkz-1,ior)+hQ_NGz(mstr,nkz,ior))/2.)*dH2D
@@ -544,7 +544,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
          Halbi = agksP*ft_ks
          upmxi = upmxPG * FTA
          jcyano = 0
-         call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          up_PG(ior) = up_Ci
          Q_PG(ior) = yk
       endif
@@ -562,7 +562,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
          CNaehr = sumN
          Halbi = agksN*ft_ks
          upmxi = upmxNG * FTA
-         call uptake(yk,xk,Qmxi,Qmni,CNaehr,Halbi,upmxi,tflie,up_Ci,up_N2i,abr,jcyano,ifix,j_aus)
+         call uptake(yk, xk, Qmxi, Qmni, CNaehr, Halbi, upmxi, tflie, up_Ci, up_N2i, jcyano, ifix)
          up_NG(ior) = up_Ci
          Q_NG(ior) = yk
       endif
@@ -579,7 +579,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
       endif
       CChlaz(nkz) = agbcm(ior)
       iaus = 0
-      call C_Chla(roh_Chlz, xup_N, xagres, CChlaz, nkz, tflie, Cagr, CChl_Stern, xChla, xaC, xagrow, isyn, iaus)
+      call c_chla(roh_chlz(nkz), xup_n, xagres, cchlaz(nkz), tflie, cagr, cchl_stern, xchla, xac, xagrow, isyn)
       iaus = 0
       
       if (nkzs(ior) == 1) then
@@ -608,7 +608,7 @@ subroutine algaesgr(schwi, tflie, tempw, rau, tiefe, vmitt, vno3, vnh4, gelp, &
       ised = 1      ! Schalter zur Kennzeichnung der hier berücksichtigten partik. Wasserinhaltsstoffe
       jsed = 1
       ZellV = 300.
-      call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,kontroll,jjj)
+      call Sedimentation(tiefe(ior),ised,ust,qsgr,oc,Oc0,tflie,wst,jsed,ZellV,control,jjj)
       ceq = agrs*qsgr
       
       sedalg(ior) = (agrs - ceq) * oc

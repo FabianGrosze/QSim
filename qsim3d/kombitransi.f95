@@ -46,7 +46,7 @@ program kombitransi
    if (sysa /= 0) then
       print*,"angegebenes Sammel-Verzeichnis",trim(sammelverzeichnis)," existiert nicht."
       stop
-   end if
+   endif
    call transinfo_sichten(sammelverzeichnis, dttrans, start, ende)
    transinfo_anzahl = 1+((ende-start)/dttrans)
    print*,"sammelverzeichnis: ", transinfo_anzahl,' Transport-Zeitschritte von:',  &
@@ -55,7 +55,7 @@ program kombitransi
       sammel_start = start
       sammel_ende = ende
       sammel_dt = dttrans
-   end if !
+   endif !
    !stop ! test
    do ! nächstes Verzeichnis zum Kombinieren
       print*,'Bitte das nächste Verzeichnis zum Kombinieren der Transportinformationen eingeben:'
@@ -67,7 +67,7 @@ program kombitransi
       if (sysa /= 0) then
          print*,"angegebenes Verzeichnis",trim(modellverzeichnis)," existiert nicht."
          exit
-      end if
+      endif
       call transinfo_sichten(modellverzeichnis, dttrans, start, ende)
       transinfo_anzahl = 1+((ende-start)/dttrans)
       print*, transinfo_anzahl,' Transport-Zeitschritte von:',  &
@@ -80,11 +80,11 @@ program kombitransi
          if (sammel_ende < start+86400) then
             print*,"Anschluss mit mehr als einem Tag Überlappung nicht gewährleistet. - > Abbruch"
             exit
-         end if
+         endif
          if (ende <= sammel_ende) then
             print*,"Das Verzeichnis enthält keine Fortsetzung. - > Abbruch"
             exit
-         end if
+         endif
          if (sammel_dt /= dttrans) then
             print*,"Zeitschrittweite inkompatibel. - > Abbruch"
             exit
@@ -93,7 +93,7 @@ program kombitransi
             print*,"Zeitschritt-Raster nicht fortlaufend. - > Abbruch"
             exit
          endif
-      end if ! weitere Zeiträume
+      endif ! weitere Zeiträume
       print*,"Kopiervorgang startet und kann etwas dauern ...."
       do i = sammel_ende,ende,dttrans !! brauchbare zeitpunkte kopieren
          !trans_write.c:   sprintf(text,"%s/transinfo/t%09d",dirname,itime);
@@ -104,11 +104,11 @@ program kombitransi
          if (sysa /= 0) then
             print*,"Kopieren fehlgeschlagen: ",trim(systemaufruf)
             stop
-         end if
-      end do ! alle i brauchbaren Zeitschritte
+         endif
+      enddo ! alle i brauchbaren Zeitschritte
       print*,"es wurden die Zeitpunkte",sammel_ende," bis ", ende," kopiert"
       sammel_ende = ende
-   end do ! alle weiteren Verzeichnisse
+   enddo ! alle weiteren Verzeichnisse
    print*,"es wurden die ",((sammel_ende-sammel_start)/sammel_dt)+1," Zeitpunkte von "  &
    ,sammel_start," bis ",sammel_ende," zusammengetragen."
    print*,"kombi endet regulär"
@@ -137,7 +137,7 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
       stop
    else
       print*,'Sichten von modellverzeichnis: > ', trim(modellverzeichnis)
-   end if ! io_error.ne.0
+   endif ! io_error.ne.0
    !print*,'Transportinformationen sichten ...'
    write(dateiname,'(2A)')trim(modellverzeichnis),'trafo'
    write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'transinfo > ', trim(dateiname)
@@ -148,27 +148,27 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
       print*,trim(systemaufruf)
       print*,'Auflisten der Transportinformationen fehlgeschlagen.'
       stop
-   end if ! io_error.ne.0
+   endif ! io_error.ne.0
    ion = 333
    open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
    if (open_error /= 0) then
       print*,'open_error trafo'
       stop
-   end if
+   endif
    ! call system("tail trafo",system_error)
    nz = 0
    transinfo_anzahl = 0
    do while (naechste_zeile(ion,ctext))
       nz = nz+1
       if (ctext(1:1) == 't')transinfo_anzahl = transinfo_anzahl+1
-   end do ! while Zeile
+   enddo ! while Zeile
    if (transinfo_anzahl < 1) then
       print*,'keine Zeitpunkte, weitermachen sinnlos'
       stop
    else
       print*,trim(modellverzeichnis),'transinfo enthält ',nz," Dateien, davon sind "  &
       ,transinfo_anzahl,' transport-informations-zeitpunkte.'
-   end if
+   endif
    allocate (transinfo_zeit(transinfo_anzahl), stat = alloc_status )
    allocate (transinfo_datei(transinfo_anzahl), stat = alloc_status )
    allocate (transinfo_zuord(transinfo_anzahl), stat = alloc_status )
@@ -178,7 +178,7 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
       if ( .not. naechste_zeile(ion,ctext)) then
          print*,'lesen 2 trafo fehlgeschlagen'
          stop
-      end if
+      endif
       !write(*,*)trim(ctext)
       if (ctext(1:1) == 't') then
          nt = nt+1
@@ -186,22 +186,22 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
          i = len(trim(ctext))
          do while (ctext(i:i) /= 't')
             i = i-1
-         end do ! while Zeile
+         enddo ! while Zeile
          write(irgendeinstring,'(A)')ctext(i+1:len(trim(ctext)))
          !print*,'irgendeinstring:',trim(irgendeinstring)
          read(irgendeinstring,*)transinfo_zeit(nt)
          transinfo_zuord(nt) = nt
          !print*,"transinfo   zuord=", transinfo_zuord(n), '  transinfo_zeit=',transinfo_zeit(n), &
          !       '  Datei:', trim(transinfo_datei(n))
-      end if !! alle t* Dateien
-   end do ! alle zeilen aus trafo
+      endif !! alle t* Dateien
+   enddo ! alle zeilen aus trafo
    close(ion)
    write(dateiname,'(2A)')trim(modellverzeichnis),'transinfo/meta'
    open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
    if (open_error /= 0) then
       print*,'open_error transinfo/meta'
       stop
-   end if
+   endif
    if ( .not. naechste_zeile(ion,ctext)) then
       print*,'deltat-zeile aus transinfo/meta nicht lesbar'
       stop
@@ -213,13 +213,13 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
          !else
          !   print*,"dttrans(meta)=",dttrans
       endif ! Lesen fehlgeschlagen
-   end if ! keine Zeile
+   endif ! keine Zeile
    if ( .not. naechste_zeile(ion,ctext)) then
       print*,'Zeitursprung in transinfo/meta nicht vorhanden'
    else
       read(ctext,*,iostat = io_error) tag, monat, jahr, stunde, minute, sekunde
       print*,"meta-zeit-offset = ",tag, monat, jahr, stunde, minute, sekunde
-   end if
+   endif
    !! transinfo-Dateien in aufsteigende Reihenfolge bringen
    do n = 1,transinfo_anzahl,1
       do i = n+1,transinfo_anzahl,1
@@ -227,9 +227,9 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
             zwischenwert = transinfo_zuord(n)
             transinfo_zuord(n) = transinfo_zuord(i)
             transinfo_zuord(i) = zwischenwert
-         end if ! Zeitreihenfolge falsch
-      end do ! alle weiteren i durch
-   end do ! alle n durch
+         endif ! Zeitreihenfolge falsch
+      enddo ! alle weiteren i durch
+   enddo ! alle n durch
    !! Zeitschritt prüfen
    do n = 2,transinfo_anzahl,1
       delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
@@ -237,8 +237,8 @@ subroutine transinfo_sichten(modellverzeichnis, dttrans, start, ende)
          print*,' ERROR unregelmäßiger Transportzeitschritt ',delt, 'sollte sein: ', dttrans &
          ,' n = ', n,trim(transinfo_datei(transinfo_zuord(n)))
          stop
-      end if ! mehr als ein Transportzeitschritt
-   end do ! alle Transportzeitschritte ab 2
+      endif ! mehr als ein Transportzeitschritt
+   enddo ! alle Transportzeitschritte ab 2
    !! Rückgabewerte
    start = transinfo_zeit(transinfo_zuord(1))
    ende = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
@@ -265,18 +265,18 @@ logical function naechste_zeile(ion,ctext)
          naechste_zeile = .false.
          naechste = .false.
          return ! Rückgabe: keine nächste zeile
-      end if ! io_error.ne.0
+      endif ! io_error.ne.0
       kommentar = .false.
       if (ctext(1:1) == '#') kommentar = .true. ! Kommentarzeile, nächste Zeile probieren
       leerzeile = .true.
       do i = 1,len(trim(ctext))
          if (ctext(i:i) /= " ")leerzeile = .false.
-      end do ! alle zeichen in ctext
+      enddo ! alle zeichen in ctext
       if (( .not. leerzeile) .and. ( .not. kommentar)) then
          naechste_zeile = .true. ! nächste Zeile gefunden
          naechste = .false. !keine weiteren einlesen
          return
-      end if ! keine Leerzeile
-   end do ! nächste nicht Kommentar Zeile gefunden
+      endif ! keine Leerzeile
+   enddo ! nächste nicht Kommentar Zeile gefunden
    return
 end function naechste_zeile

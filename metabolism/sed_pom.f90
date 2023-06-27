@@ -24,80 +24,97 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine sed_pom(tiefe1,ust,n,BSBC,PhytoC,GesSS,SedOM,dKorn,SedOMb,dKornb,  &
-                   fsch,fOM_OC,mstr,mSta,jsed,w2,w2b,                         &
-                   kontroll ,jjj)
+subroutine sed_pom(tiefe1, ust, n, sedom_s, dkorn_s, sedomb_s,  &
+                   dkornb_s, fsch, jsed, w2_s, w2b_s,           &
+                   control, jjj)
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
-   integer                     :: n, mstr, msta, jsed, ised, ior
-   real                        :: fsch, zellv, xtflie, xsedom, wst
-   real                        :: w2z, ust, tiefe1, sedomz, sdflus
-   real                        :: sdflub, sdflua, qsgr, phytoc, oc
-   real                        :: oc0, gesss, fom_oc, dkornz, dichto
-   real                        :: dichte, dichta, ceq, bsbc
-   logical, intent(in)         :: kontroll  !< debugging
-   integer, intent(in)         :: jjj       !< debugging
-   double precision            :: sedoc
-   real,dimension(azStrs,1000) :: SedOM, dKorn, SedOMb, dKornb, w2, w2b
+   ! --- dummy arguments ---
+   real,    intent(in)    :: tiefe1
+   real,    intent(in)    :: ust
+   integer, intent(in)    :: n
+   real,    intent(inout) :: sedom_s
+   real,    intent(inout) :: dkorn_s
+   real,    intent(inout) :: sedomb_s
+   real,    intent(inout) :: dkornb_s
+   real,    intent(in)    :: fsch
+   integer, intent(in)    :: jsed
+   real,    intent(inout) :: w2_s
+   real,    intent(inout) :: w2b_s
+   logical, intent(in)    :: control  !< debugging
+   integer, intent(in)    :: jjj       !< debugging
    
-   external                    :: sedimentation
+   ! --- local variables ---
+   integer          :: ised, ior
+   real             :: zellv, xtflie, xsedom, wst
+   real             :: w2z, sedomz, sdflus
+   real             :: sdflub, sdflua, qsgr, oc
+   real             :: oc0,  dkornz
+   real             :: dichte, ceq
+   double precision :: sedoc
+   
+   real, parameter :: bsbc = 5.
+   real, parameter :: phytoc = 3.4
+   real, parameter :: gesss = 55.
+   real, parameter :: dichta = 2.6
+   real, parameter :: dichto = 1.2
+   
+   external :: sedimentation
    
    do ised = 1,3
       
       xtflie = 1.
       ior = 1
-      ZellV = 500.
-      call sedimentation(tiefe1,ised,ust,qsgr,oc,Oc0,xtflie,wst,jsed,ZellV,kontroll,jjj)
+      zellv = 500.
+      call sedimentation(tiefe1, ised, ust, qsgr, oc, oc0,      &
+                         xtflie, wst, jsed, zellv, control, jjj)
       ceq = qsgr
       
       if (ised == 1) then
-         sdFluA = (1. - Ceq) * oc
+         sdflua = (1. - ceq) * oc
       else if (ised == 2) then
-         sdFluB = (1. - Ceq) * oc
+         sdflub = (1. - ceq) * oc
       else
-         sdFluS = (1. - Ceq) * oc
+         sdflus = (1. - ceq) * oc
       endif
    enddo
    
    if (n == 2) then
-      SedOMz = SedOM(mstr,mSta)
-      dKornz = dKorn(mstr,mSta)
-      w2z = w2(mstr,mSta)
+      sedomz = sedom_s
+      dkornz = dkorn_s
+      w2z = w2_s
    endif
    
-   SedOC = (BSBC*sdFluB+PhytoC*sdFluA)/(GesSS*max(1.e-10,sdFluS))
-   if (SedOM(mstr,mSta) > 0.0 .and. n == 1) then
-      sedOM(mstr,mSta) = sedOM(mstr,mSta)/100.
-   else if (SedOMb(mstr,mSta) > 0.0 .and. n == 2) then
-      SedOM(mstr,mSta) = SedOMb(mstr,msta)/100.
+   sedoc = (bsbc*sdflub+phytoc*sdflua)/(gesss*max(1.e-10,sdflus))
+   
+   if (sedom_s > 0.0 .and. n == 1) then
+      sedom_s = sedom_s/100.
+   else if (sedomb_s > 0.0 .and. n == 2) then
+      sedom_s = sedomb_s/100.
    else
-      SedOM(mstr,mSta) = SedOC !*fOM_OC
-      xsedOM = SedOM(mstr,mSta)
-      SedOM(mstr,mSta) = SedOM(mstr,mSta)*fsch
-      if (SedOM(mstr,mSta) < 0.001)SedOM(mstr,mSta) = 0.005
+      sedom_s = sedoc
+      xsedom = sedom_s
+      sedom_s = sedom_s * fsch
+      if (sedom_s < 0.001) sedom_s = 0.005
    endif
-   Dichta = 2.6
-   Dichto = 1.2
-   Dichte = dichta*(1.-SedOM(mstr,mSta))+SedOM(mstr,mSta)*Dichto
-   ! w2(mstr,mSta) = 0.000109*exp(-579.2*ust)
-   ! if(w2(mstr,mSta)>0.75e-5)w2(mstr,mSta)=0.75e-5
-   ! w2(mstr,mSta) = ((BSBC*sdFluB+PhytoC*sdFluA)*3.1*tiefe1)/(SedOM(mstr,mSta)*1000.*1000.*Dichte)
-   ! if(w2(mstr,mSta)>1.45e-5)w2(mstr,mSta)=0.74e-5
-   w2(mstr,mSta) = 0.74e-5
-   ! Berechnung des Mittleren Korndurchmessers in mm
-   dKorn(mstr,mSta) = min(100.,0.0047*exp(64.89*ust))
-   ! Umrechnung in m
-   dKorn(mstr,mSta) = dKorn(mstr,mSta)/1000.
+   
+   
+   dichte = dichta * (1.-sedom_s) + sedom_s * dichto
+   w2_s = 0.74e-5
+   
+   ! berechnung des mittleren korndurchmessers [m]
+   dkorn_s = min(100.,0.0047*exp(64.89*ust))
+   dkorn_s = dkorn_s / 1000.
    
    if (n == 2) then
-      SedOMb(mstr,mSta) = SedOM(mstr,mSta)
-      dKornb(mstr,mSta) = dKorn(mstr,mSta)
-      w2b(mstr,mSta) = w2(mstr,mSta)
-      SedOM(mstr,mSta) = SedOMz
-      dKorn(mstr,mSta) = dKornz
-      w2(mstr,mSta) = w2z
+      sedomb_s = sedom_s
+      dkornb_s = dkorn_s
+      w2b_s = w2_s
+      sedom_s = sedomz
+      dkorn_s = dkornz
+      w2_s = w2z
    endif
    
    return

@@ -31,7 +31,7 @@ subroutine sys_z_Gitter(mstra,hanze,znkzs,hnkzs,dH2D,iFlRi,htempz,ho2z,hnh4z,   
    ! znkzs:  Anzahl der Gitterpunkte des alten Gitters
    ! hnkzs:  Anzahl Gitterpunkte des neuen Gitters
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    integer                                :: nkz, nkzs_alt, i_zaehlv, i_var

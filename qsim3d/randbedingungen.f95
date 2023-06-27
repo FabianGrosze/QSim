@@ -32,7 +32,7 @@
 subroutine randbedingungen_setzen()
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    integer :: j, RB_zaehl
    logical einmalig
@@ -79,10 +79,10 @@ subroutine randbedingungen_setzen()
                !if(j .eq. kontrollknoten)then ! Ausgabe
                !    print*,'kontrollknoten Randknoten: inflow =', inflow(j),' #', j,  &
                !    ' lf=',planktonic_variable(65+nk)
-               !end if !kontrollknoten
-            end if ! Zufluss-Randknoten
-         end if ! bedienter Randknoten
-      end do ! alle j Knoten
+               !endif !kontrollknoten
+            endif ! Zufluss-Randknoten
+         endif ! bedienter Randknoten
+      enddo ! alle j Knoten
       ! meteorological Boundary Conditions
       !      templ(1)=temperatur_lu       ! Lufttemperatur aus Wetterstationsdaten
       !      ro(1)=luftfeuchte            ! relative Luftfeuchte in %
@@ -96,7 +96,7 @@ subroutine randbedingungen_setzen()
                   planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari)
       endif
       
-   end if ! nur prozessor 0
+   endif ! nur prozessor 0
    
    call mpi_barrier (mpi_komm_welt, ierr)
    call scatter_BC()
@@ -150,14 +150,14 @@ subroutine scatter_rb_hydraul()
    !         rb_hydraul(1+(j-1)*number_rb_hydraul)    = u(j)
    !         rb_hydraul(2+(j-1)*number_rb_hydraul)    = tief(j)
    !         rb_hydraul(3+(j-1)*number_rb_hydraul)    = p(j)
-   !      end do !! alle j knoten
-   !end if !! nur prozessor 0
+   !      enddo !! alle j knoten
+   !endif !! nur prozessor 0
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' 14 MPI_Scatter(rb_hydraul failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine scatter_rb_hydraul
@@ -166,7 +166,7 @@ end subroutine scatter_rb_hydraul
 subroutine randwert_planktonic(jjj,zaehl,logi)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    !!  \anchor jjj wahrscheinlich ein Zähler (def. in randbedingungen; referenziert in N subroutine!?)
    integer :: jjj, zaehl, nk, i, l
@@ -291,7 +291,7 @@ subroutine randwert_planktonic(jjj,zaehl,logi)
       !                  if(jjj.eq.kontrollknoten)print*,"randwert_planktonic: OBSB=",planktonic_variable(17+nk)  &
       !     &                                           ," OCSB=",planktonic_variable(18+nk)
       if (nur_alter .and. (wie_altern == 2))call alter_rand(jjj)
-   end if !! RandbedingungsNummer größer 0
+   endif !! RandbedingungsNummer größer 0
    return
 end subroutine randwert_planktonic
 !----+-----+----
@@ -311,8 +311,8 @@ subroutine tiefenprofil(jjj)
    do i = 1,14 ! tiefenprofile der ersten 14 konzentrationen
       do l = 1,num_lev
          plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(i+nk)
-      end do ! alle l levels
-   end do ! alle ersten 14 konzentrationen
+      enddo ! alle l levels
+   enddo ! alle ersten 14 konzentrationen
    do l = 1,num_lev
       plankt_vari_vert(l+(16-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(67+nk) !  hgesNz = GESN
       plankt_vari_vert(l+(15-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(68+nk) !  hgesPz = GESP
@@ -322,7 +322,7 @@ subroutine tiefenprofil(jjj)
       plankt_vari_vert(l+(20-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(24+nk) !  hCChlkz = akbcm
       plankt_vari_vert(l+(21-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(25+nk) !  hCChlgz = agbcm
       plankt_vari_vert(l+(22-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(26+nk) !  hCChlbz = abbcm
-   end do ! alle l levels
+   enddo ! alle l levels
    return
 end subroutine tiefenprofil
 !----+-----+----
@@ -330,7 +330,7 @@ end subroutine tiefenprofil
 subroutine randbedingungen_ergaenzen(j,einmalig)
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    use module_ph, only: pwert
    
    implicit none
@@ -340,8 +340,8 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    
    nk = (j-1)*number_plankt_vari
    
-   kontroll = .false.
-   if (j == kontrollknoten) kontroll = .true.
+   control = .false.
+   if (j == kontrollknoten) control = .true.
    
    !     ini_algae in initialisieren() initialisieren.f95
    call algae_start(planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
@@ -363,7 +363,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
    !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
    
-   if (kontroll) then
+   if (control) then
       print*, 'randbedingungen_ergaenzen: before orgc_start'
       print*, ' aki    = ', planktonic_variable( 8+nk)
       print*, ' agr    = ', planktonic_variable( 9+nk)
@@ -404,7 +404,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                    planktonic_variable(48+nk),      & ! CHNF  | CHNFs,
                    CPges, CDges, Cref, TOC )          ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
    
-   if (kontroll) then
+   if (control) then
       print*, 'randbedingungen_ergaenzen: after orgc_start'
       print*, ' aki    = ', planktonic_variable( 8+nk)
       print*, ' agr    = ', planktonic_variable( 9+nk)
@@ -450,9 +450,9 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
                     planktonic_variable(53+nk),      & ! SS suspendierte Sedimente ohne lebende Organismen | sss,
                     planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE | ssalgs,
                     0,0,                             & ! mstr,mRB für Kontrollausgaben in 1D benötigt
-                    einmalig,kontroll,j)
+                    einmalig,control,j)
    
-   if (kontroll) print*,'randbedingungen_ergaenzen: nach algae_aufteilung',    &
+   if (control) print*,'randbedingungen_ergaenzen: nach algae_aufteilung',    &
                         ' chla = ',  planktonic_variable(11+nk),    &
                         ' vkigr = ', planktonic_variable(19+nk),    &
                         ' antbl = ', planktonic_variable(20+nk),    &
@@ -486,31 +486,31 @@ subroutine randbedingungen_parallel()
    if (as /= 0) then
       write(fehler,*)' Rueckgabewert allocate  von rb_hydraul_p(part   :', as
       call qerror(fehler)
-   end if
+   endif
    do ini = 1,part*number_rb_hydraul
       rb_hydraul_p(ini) = 0.0
-   end do
+   enddo
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)'randbedingungen_parallel MPI_Scatter(rb_hydraul failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,'rb_hydraul_p successfully allocated and scattered',meinrang
    call mpi_barrier (mpi_komm_welt, ierr)
    !      allocate (rb_wetter_p(part*number_rb_wetter), stat = as )
    !      if(as.ne.0)then
    !         write(fehler,*)' Rueckgabewert von allocate rb_wetter_p(part   :', as
    !         call qerror(fehler)
-   !      end if
+   !      endif
    !      do ini=1,part*number_rb_wetter
    !         rb_wetter_p(ini)=0.0
-   !      end do
+   !      enddo
    call MPI_Bcast(rb_extnct_ilamda,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(rb_extnct_ilamda,  ierr = ', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,meinrang, 'nachher rb_extnct_ilamda=', rb_extnct_ilamda
    call mpi_barrier (mpi_komm_welt, ierr)
    !print*,meinrang, ' anz_extnct_koeff=', anz_extnct_koeff
@@ -520,18 +520,18 @@ subroutine randbedingungen_parallel()
       if (as /= 0) then
          write(fehler,*)'rb_extnct_p konnte nicht allokiert werden ', as, ' prozess = ', meinrang
          call qerror(fehler)
-      end if ! alloc_status .ne.0
+      endif ! alloc_status .ne.0
       do ini = 1,rb_extnct_ilamda*anz_extnct_koeff
          rb_extnct_p(ini) = 0.0
-      end do
-   end if ! meinrang.ne.0
+      enddo
+   endif ! meinrang.ne.0
    !   ### call MPI_Scatter(rb_extnct, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT,  &
    !& rb_extnct_p, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    call MPI_Bcast(rb_extnct_p,rb_extnct_ilamda*anz_extnct_koeff,MPI_FLOAT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)'randbedingungen_parallel MPI_Bcast(rb_extnct_p failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    !print*,'eta(ilamda)=rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang'  &
    !      ,rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang
    !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierr
@@ -551,7 +551,7 @@ subroutine scatter_BC()
    if (ierr /= 0) then
       write(fehler,*)' MPI_Scatter(rb_hydraul failed :', ierr
       call qerror(fehler)
-   end if
+   endif
    return
 end subroutine scatter_BC
 !----+-----+----
@@ -590,7 +590,7 @@ subroutine RB_werte_aktualisieren(t)
                !else ! randwert_gueltig
                !   print*,'randwert_gueltig .FALSE. Rand-n, Variable-k, Zeitpunkt-j,wert',n,k,j,wert
             endif ! randwert_gueltig
-         end do ! alle Zeitintervalle in dieser Randbedingung
+         enddo ! alle Zeitintervalle in dieser Randbedingung
          if (vor_da .and. nach_da) then
             a = real(t-zeit_vor)/real(zeit_nach-zeit_vor)
             rabe(n)%wert_jetzt(k) = (1.0 - a)*wert_vor + a*wert_nach
@@ -632,12 +632,12 @@ subroutine RB_werte_aktualisieren(t)
                call qerror(fehler)
             end select ! k
          endif ! no valid value
-      end do ! alle k werte
-   end do ! alle n Randbedingungen
+      enddo ! alle k werte
+   enddo ! alle n Randbedingungen
    !if(hydro_trieb.eq.2)then ! untrim
    !   rabe(2)%wert_jetzt(28)= 1.0 ! untrim Tracer inflow test
    !   print*,'### untrim boundary 2 Tracer constant 1.0 ###'
-   !end if
+   !endif
    return
 end subroutine RB_werte_aktualisieren
 !----+-----+----
@@ -652,7 +652,7 @@ logical function randwert_gueltig(wert,n)
    if ((n > n_active_concentrations) .or. (n <= 0)) then
       write(fehler,*)n,' keine gültige Randwertnummer #### Abbruch ####'
       call qerror(fehler)
-   end if
+   endif
    select case (n) ! Unterscheidung Randwert-variable
       case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
          randwert_gueltig = .TRUE.
@@ -697,12 +697,12 @@ subroutine ereigg_Randbedingungen_lesen()
    if (open_error /= 0) then
       write(fehler,*)'open_error EREIGG.txt ... Datei vorhanden?'
       call qerror(fehler)
-   end if ! open_error.ne.0
+   endif ! open_error.ne.0
    rewind (ion)
    ! erster Lesedurchgang:
    do n = 1,6  ! Kopf überlesen (modell::ereigg_modell())
       if ( .not. zeile(ion)) call qerror('Kopf überlesen in ereigg_Randbedingungen_lesen() schlägt fehl')
-   end do ! Kopf überlesen
+   enddo ! Kopf überlesen
    ianz_rb = 0
    min_nr = 9999
    max_rand_nr = -9999
@@ -725,8 +725,8 @@ subroutine ereigg_Randbedingungen_lesen()
       if ( .not. zeile(ion)) then
          write(fehler,*)'read_error in EREIGG.txt; Randbedingung # ',ianz_rb,' Zeile ',n
          call qerror(fehler)
-      end if ! open_error.ne.0
-   end do
+      endif ! open_error.ne.0
+   enddo
    !imstr(ianzRB) = mstr
    !iRBNR(ianzRB) = RBNR
    !ianzW(ianzRB) = NrSchr(mstr,RBNR)
@@ -744,20 +744,20 @@ subroutine ereigg_Randbedingungen_lesen()
    if (alloc_status /= 0) then
       write(fehler,*)'rabe konnte nicht allokiert werden ', alloc_status
       call qerror(fehler)
-   end if ! alloc_status .ne.0
+   endif ! alloc_status .ne.0
    do ini = 1,ianz_rb
       rabe(ini)%anz_rb = 0
-   end do
+   enddo
    if ((max_rand_nr <= 0) .or. (max_rand_nr > 9999)) then
       write(fehler,*)'eine maximale Randbedingungsnummer von: ', max_rand_nr, ' ist doch wohl nicht sinnvoll?'
       call qerror(fehler)
-   end if ! Randbedingungsnummer
+   endif ! Randbedingungsnummer
    !
    ! zweiter Lesedurchgang:
    rewind (ion)
    do n = 1,6  ! Kopf überlesen
       if ( .not. zeile(ion)) call qerror('zweiter Lesedurchgang ereigg_Randbedingungen_lesen() Kopf überlesen schlägt fehl')
-   end do ! Kopf überlesen
+   enddo ! Kopf überlesen
    do n = 1,ianz_rb !! alle Randbedingungsblöcke nochmal lesen
       if ( .not. zeile(ion)) call qerror(' ereigg_Randbedingungen_lesen() Randbedingungsblöcke nochmal lesen schlägt fehl')
       read(ctext, *, iostat = read_error) rabe(n)%nr_rb, idumm, rabe(n)%tagesmittelwert_flag, anzi
@@ -770,10 +770,10 @@ subroutine ereigg_Randbedingungen_lesen()
       if (alloc_status /= 0) then
          write(fehler,*)'lesezeil konnte nicht allokiert werden ', alloc_status
          call qerror(fehler)
-      end if ! alloc_status .ne.0
+      endif ! alloc_status .ne.0
       do ini = 1,anzi
          lesezeil(ini)%itag = 0
-      end do
+      enddo
       
       i = 0
       do m = 1,anzi !alle Zeitpunkte dieser Randlinie
@@ -799,21 +799,21 @@ subroutine ereigg_Randbedingungen_lesen()
                print*,lesezeil(m)
                call qerror("isNaN(lesezeil(m)%werts(j)")
             endif !isnan
-         end do !anzrawe
+         enddo !anzrawe
          if (randwert_gueltig(lesezeil(m)%werts(22),22)) then
             i = i+1
-         end if ! temperatur positif
-      end do !! all m time-points at this boundary
+         endif ! temperatur positif
+      enddo !! all m time-points at this boundary
       rabe(n)%t_guelt = i
       rabe(n)%anz_rb = anzi
       allocate (rabe(n)%punkt(rabe(n)%anz_rb), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)'ereigg_Randbedingungen_lesen():allocate (rabe(n)%punkt(i) fehlgeschlagen ', alloc_status
          call qerror(fehler)
-      end if ! alloc_status .ne.0
+      endif ! alloc_status .ne.0
       do ini = 1,rabe(n)%anz_rb
          rabe(n)%punkt(ini)%zeit_sek = 0
-      end do
+      enddo
       do i = 1,rabe(n)%anz_rb !alle Zeitpunkte dieser Randlinie
          !! HIER !! wird die Randbedingungszeile in die Struktur rb eingefügt  !! HIER !!
          rabe(n)%punkt(i)%zeil = lesezeil(i)
@@ -827,7 +827,7 @@ subroutine ereigg_Randbedingungen_lesen()
          !print 228, jahr, monat, tag, stunde, minute, sekunde &
          !         , rabe(n)%punkt(i)%zeil%werts(22)
          !228 FORMAT (I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2)
-      end do !! alle Zeitpunkte dieser Randlinie
+      enddo !! alle Zeitpunkte dieser Randlinie
       deallocate (lesezeil)
       print*,'Randbedingung ',n,' hat Nr. ',rabe(n)%nr_rb,' und enthält ',rabe(n)%anz_rb &
       ,' Zeitpunkte, von denen ',rabe(n)%t_guelt  &
@@ -836,8 +836,8 @@ subroutine ereigg_Randbedingungen_lesen()
       if (rabe(n)%nr_rb <= 0) then
          write(fehler,*)'###Abbruch 345 ### Randbedingungsnummern müssen größer als 0 sein !!'
          call qerror(fehler)
-      end if
-   end do !! alle Randbedingungslinien nochmal lesen
+      endif
+   enddo !! alle Randbedingungslinien nochmal lesen
    !! Nummerierung der Ränder eindeutig?
    do i = 1,ianz_rb
       do n = i+1,ianz_rb
@@ -845,8 +845,8 @@ subroutine ereigg_Randbedingungen_lesen()
             write(fehler,*)' 11 Randnummer von Rand', i, ' = ',rabe(i)%nr_rb,' ist gleich Randnummer von Rand ',n
             call qerror(fehler)
          endif
-      end do ! alle n Zonen
-   end do ! alle i Zonen
+      enddo ! alle n Zonen
+   enddo ! alle i Zonen
    !
    select case (hydro_trieb)
       case(1) ! casu-transinfo
@@ -854,44 +854,44 @@ subroutine ereigg_Randbedingungen_lesen()
          do j = 1,knotenanzahl2D !! max Randnummer ermitteln:
             if (knoten_rand(j) > 0) then !! Randknoten
                if (knoten_rand(j) > maxrandnr)maxrandnr = knoten_rand(j)
-            end if ! Randknoten
-         end do ! alle j Knoten
+            endif ! Randknoten
+         enddo ! alle j Knoten
          allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
          do ini = 1,maxrandnr !! Randnummernvorkommen initialisieren
             nr_vorhanden(ini) = 0
-         end do
+         enddo
          allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
          if (alloc_status /= 0) then
             write(fehler,*)'nr_vorhanden(maxrandnr) konnte nicht allokiert werden ', alloc_status
             call qerror(fehler)
-         end if ! alloc_status .ne.0
+         endif ! alloc_status .ne.0
          do ini = 1,maxrandnr !! Rand-vorkommen initialisieren
             rb_vorkommen(ini) = 0
-         end do
+         enddo
          do j = 1,knotenanzahl2D !! vorhandene Randummern durchzählen.
             if (knoten_rand(j) > 0)nr_vorhanden(knoten_rand(j)) = nr_vorhanden(knoten_rand(j)) + 1
-         end do ! alle j Knoten
+         enddo ! alle j Knoten
          do j = 1,maxrandnr !! alle Randnummern ausgeben:
             if (nr_vorhanden(j) > 0) then
                print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Knoten vor.'
             else
                print*,'Randnummer ',j,' kommt nie vor.'
-            end if !
-         end do ! alle j Randnummern
+            endif !
+         enddo ! alle j Randnummern
          do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
             rb_vorkommen(j) = 0
             do n = 1,ianz_rb !! alle Randbedingungen
                if (j == rabe(n)%nr_rb) then
                   print*,'Randnummer mit dem Zähler',n,' bedient die Randbedingung mit der Nummer ',rabe(n)%nr_rb
                   rb_vorkommen(j) = rb_vorkommen(j) + 1
-               end if
-            end do !! alle n Randbedingungen
+               endif
+            enddo !! alle n Randbedingungen
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben.'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j), ' Randbedingungen angegeben.'
                call qerror(fehler)
-            end if
-         end do ! alle j Randnummern
+            endif
+         enddo ! alle j Randnummern
          !! Randzähler in Feld knoten_rand() schreiben
          do j = 1,knotenanzahl2D
             !if(j.eq.kontrollknoten)print*,"Kontrollknoten #",j
@@ -903,10 +903,10 @@ subroutine ereigg_Randbedingungen_lesen()
                   do n = 1,ianz_rb !! alle Randbedingungen
                      if (knoten_rand(j) == rabe(n)%nr_rb) then
                         nini = n
-                     end if
-                  end do !! alle n Randbedingungen
+                     endif
+                  enddo !! alle n Randbedingungen
                   knoten_rand(j) = nini
-               end if !! nicht bediente Randnummer
+               endif !! nicht bediente Randnummer
                if (j == kontrollknoten) then
                   print*,"Kontrollknoten #",j," ist Randknoten mit der Rand-zähler ", knoten_rand(j)
                   if (knoten_rand(j) <= ianz_rb) then
@@ -914,9 +914,9 @@ subroutine ereigg_Randbedingungen_lesen()
                   else
                      print*,"Diesem Randknoten ist keine Randbedingung zugeordnet"
                   endif !Randbedingung zugeordnet
-               end if ! kontrollknoten
-            end if ! Randknoten
-         end do ! alle j Knoten
+               endif ! kontrollknoten
+            endif ! Randknoten
+         enddo ! alle j Knoten
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
       case(2) ! Untrim² netCDF
@@ -928,11 +928,11 @@ subroutine ereigg_Randbedingungen_lesen()
             rb_vorhanden = .false.
             do n = 1,ianz_rb !! alle Randbedingungen
                if (element_rand(j) == rabe(n)%nr_rb)rb_vorhanden = .true.
-            end do !! alle n Randbedingungen
+            enddo !! alle n Randbedingungen
             if (( .not. rb_vorhanden) .and. (element_rand(j) /= 0))  &
                 print*,'ereigg_Randbedingungen_lesen Untrim: element ',j,' randnummer = ' &
                 ,element_rand(j),' zugehörige Randbedingung fehlt'
-         end do
+         enddo
          allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
          allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
          do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
@@ -942,31 +942,31 @@ subroutine ereigg_Randbedingungen_lesen()
                if (j == rabe(n)%nr_rb) then
                   print*,'Randvorgabe mit dem Zähler',n,' bedient die Randbedingung mit der Nummer ',rabe(n)%nr_rb
                   rb_vorkommen(j) = rb_vorkommen(j) + 1
-               end if
-            end do !! alle n Randbedingungen
+               endif
+            enddo !! alle n Randbedingungen
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben.'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j), ' Randbedingungen angegeben.'
                call qerror(fehler)
-            end if
-         end do ! alle j Randnummern
+            endif
+         enddo ! alle j Randnummern
          do j = 1,n_elemente !! vorhandene Randummern durchzählen.
             if (element_rand(j) > 0)nr_vorhanden(element_rand(j)) = nr_vorhanden(element_rand(j)) + 1
-         end do ! alle j Elemente
+         enddo ! alle j Elemente
          do j = 1,maxrandnr !! alle Randnummern ausgeben:
             if (nr_vorhanden(j) > 0) then
                print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Elementen vor.'
             else
                print*,'Randnummer ',j,' kommt nie vor.'
-            end if !
-         end do ! alle j Randnummern
+            endif !
+         enddo ! alle j Randnummern
          print*,'### ereigg_Randbedingungen_lesen: Untrim netCDF Randnummern momentan nur von ',min_nr,' bis ',maxrandnr
          do n = 1,ianz_rb !! alle Randbedingungen
             if (rabe(n)%nr_rb < min_nr)  &
                 print*,'ereigg_Randbedingungen_lesen Untrim: ',n,'-ter Rand mit nr = ',rabe(n)%nr_rb,' unbenutzt'
             if (rabe(n)%nr_rb > maxrandnr)  &
                 print*,'ereigg_Randbedingungen_lesen Untrim: ',n,'-ter Rand mit nr = ',rabe(n)%nr_rb,' unbenutzt'
-         end do !! alle n Randbedingungen
+         enddo !! alle n Randbedingungen
          !! Randnummer in Randzähler umwandeln.
          do j = 1,n_elemente
             if (element_rand(j) > 0) then !! falls Rand
@@ -977,20 +977,20 @@ subroutine ereigg_Randbedingungen_lesen()
                   do n = 1,ianz_rb !! alle Randbedingungen
                      if (element_rand(j) == rabe(n)%nr_rb) then
                         nini = n
-                     end if
-                  end do !! alle n Randbedingungen
+                     endif
+                  enddo !! alle n Randbedingungen
                   element_rand(j) = nini
-               end if !! nicht bediente Randnummer
+               endif !! nicht bediente Randnummer
                if (j == kontrollknoten) then
-                  print*,"Kontroll-Element #",j," hat Rand-zähler ", element_rand(j)
+                  print*,"control-Element #",j," hat Rand-zähler ", element_rand(j)
                   if (element_rand(j) <= ianz_rb) then
                      print*,"Diesem Rand-Element ist keine Randbedingung #",rabe(element_rand(j))%nr_rb," zugeordnet."
                   else
                      print*,"Diesem RandElement ist keine Randbedingung zugeordnet"
                   endif !Randbedingung zugeordnet
-               end if ! kontrollknoten
-            end if ! Randknoten
-         end do ! alle j Elemente
+               endif ! kontrollknoten
+            endif ! Randknoten
+         enddo ! alle j Elemente
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
       case(3) ! SCHISM
@@ -998,45 +998,45 @@ subroutine ereigg_Randbedingungen_lesen()
          do j = 1,knotenanzahl2D !! max Randnummer ermitteln:
             if (knoten_rand(j) > 0) then !! Randknoten
                if (knoten_rand(j) > maxrandnr)maxrandnr = knoten_rand(j)
-            end if ! Randknoten
-         end do ! alle j Knoten
+            endif ! Randknoten
+         enddo ! alle j Knoten
          allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
          do ini = 1,maxrandnr !! Randnummernvorkommen initialisieren
             nr_vorhanden(ini) = 0
-         end do
+         enddo
          allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
          if (alloc_status /= 0) then
             write(fehler,*)'nr_vorhanden(maxrandnr) konnte nicht allokiert werden ', alloc_status
             call qerror(fehler)
-         end if ! alloc_status .ne.0
+         endif ! alloc_status .ne.0
          do ini = 1,maxrandnr !! Rand-vorkommen initialisieren
             rb_vorkommen(ini) = 0
-         end do
+         enddo
          do j = 1,knotenanzahl2D !! vorhandene Randummern durchzählen.
             if (knoten_rand(j) > 0)nr_vorhanden(knoten_rand(j)) = nr_vorhanden(knoten_rand(j)) + 1
-         end do ! alle j Knoten
+         enddo ! alle j Knoten
          do j = 1,maxrandnr !! alle Randnummern ausgeben:
             if (nr_vorhanden(j) > 0) then
                print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Knoten vor. -SCHISM'
             else
                print*,'Randnummer ',j,' kommt nie vor. -SCHISM'
-            end if !
-         end do ! alle j Randnummern
+            endif !
+         enddo ! alle j Randnummern
          do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
             rb_vorkommen(j) = 0
             do n = 1,ianz_rb !! alle Randbedingungen
                if (j == rabe(n)%nr_rb) then
                   print*,'Randnummer mit dem Zähler',n,' bedient die Randbedingung mit der Nummer  -SCHISM',rabe(n)%nr_rb
                   rb_vorkommen(j) = rb_vorkommen(j) + 1
-               end if
-            end do !! alle n Randbedingungen
+               endif
+            enddo !! alle n Randbedingungen
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben. -SCHISM'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j)  &
                    , ' Randbedingungen angegeben. -SCHISM'
                call qerror(fehler)
-            end if
-         end do ! alle j Randnummern
+            endif
+         enddo ! alle j Randnummern
          !! Randnummer in Feld knoten_rand() durch Randzähler ersetzen !!
          do j = 1,knotenanzahl2D
             !if(j.eq.kontrollknoten)print*,"Kontrollknoten #",j
@@ -1048,10 +1048,10 @@ subroutine ereigg_Randbedingungen_lesen()
                   do n = 1,ianz_rb !! alle Randbedingungen
                      if (knoten_rand(j) == rabe(n)%nr_rb) then
                         nini = n
-                     end if
-                  end do !! alle n Randbedingungen
+                     endif
+                  enddo !! alle n Randbedingungen
                   knoten_rand(j) = nini
-               end if !! nicht bediente Randnummer
+               endif !! nicht bediente Randnummer
                if (j == kontrollknoten) then
                   print*,"Kontrollknoten #",j," ist Randknoten mit der Rand-zähler ", knoten_rand(j)
                   if (knoten_rand(j) <= ianz_rb) then
@@ -1059,9 +1059,9 @@ subroutine ereigg_Randbedingungen_lesen()
                   else
                      print*,"Diesem Randknoten ist keine Randbedingung zugeordnet"
                   endif !Randbedingung zugeordnet
-               end if ! kontrollknoten
-            end if ! Randknoten
-         end do ! alle j Knoten
+               endif ! kontrollknoten
+            endif ! Randknoten
+         enddo ! alle j Knoten
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
          case default
@@ -1080,7 +1080,7 @@ end subroutine ereigg_Randbedingungen_lesen
 subroutine extnct_lesen()
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    implicit none
    character(500) dateiname, text
    integer :: io_error,i, alloc_status, ini
@@ -1095,10 +1095,10 @@ subroutine extnct_lesen()
    if (alloc_status /= 0) then
       write(fehler,*)'103 rb_extnct_p auf prozessor 0 konnte nicht allokiert werden ', alloc_status
       call qerror(fehler)
-   end if ! alloc_status .ne.0
+   endif ! alloc_status .ne.0
    do ini = 1,rb_extnct_ilamda*anz_extnct_koeff
       rb_extnct_p(ini) = 0.0
-   end do
+   enddo
    do i = 1,ilamda
       rb_extnct_p(1 + (i-1)*anz_extnct_koeff) = eta(i)
       rb_extnct_p(2 + (i-1)*anz_extnct_koeff) = aw(i)
@@ -1127,10 +1127,10 @@ subroutine alloc_hydraul_BC(nk)
    if (as /= 0) then
       write(fehler,*)' return value rb_hydraul(nk*   :', as
       call qerror(fehler)
-   end if
+   endif
    do ini = 1,nk*number_rb_hydraul
       rb_hydraul(ini) = 0.0
-   end do
+   enddo
    return
 end subroutine alloc_hydraul_BC
 !----+-----+----
@@ -1188,7 +1188,7 @@ subroutine rand_flux(zeitzaehler)
          ! print*,'rand_flux: kante', i,' nbot,ntop ', nbot,ntop
          ! do k=1,n_pl ! ausgabe-plankt.vari. in Ganglinie speichern
          !    print*,"rand_flux:c1(",k,")=",c1(k)," c2=",c2(k)," massen_flux=",massen_flux(k)," masx=", masx(k)
-         ! end do! alle k Ausgabe-Variablen
+         ! enddo! alle k Ausgabe-Variablen
          call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
          vox2 = 0.5*(u1*d1 + u2*d2) !! Volumentromermittlung stückweise zu Testzwecken
          !       print*,"Rand #",n," Kante #",i," pox=",pox
@@ -1202,7 +1202,7 @@ subroutine rand_flux(zeitzaehler)
          kin_ener_flux = kin_ener_flux + kix
          volst2 = volst2+vox2
          massen_flux = massen_flux + masx !!
-      end do ! alle i Kanten
+      enddo ! alle i Kanten
       print*,"rand_flux: Rand #",n,' mit ',rabe(n)%randlinie%anzkanten ,' Kanten'&
       ," pot_ener_flux(MW) = ",pot_ener_flux/1000000," kin_ener_flux(MW) = ",kin_ener_flux/1000000
       !&         ," vol_strom(Integral)=",vol_strom," mittlere Fließgeschwindigkeit=",vol_strom/flaeche  &
@@ -1214,7 +1214,7 @@ subroutine rand_flux(zeitzaehler)
       randflux_gang(n,zeitzaehler,4) = pot_ener_flux/1000000 !! in mega-Watt
       randflux_gang(n,zeitzaehler,5) = kin_ener_flux/1000000 !! in mega-Watt
       randflux_gang(n,zeitzaehler,6) = massen_flux !!
-   end do ! alle n Randbedingungen
+   enddo ! alle n Randbedingungen
    ! deallocate(c1)
    ! deallocate(c2)
    ! deallocate(masx)
@@ -1239,7 +1239,7 @@ subroutine randlinie_zusammenstellen()
       call qerror(fehler)
    else
       print*,"randlinie_zusammenstellen() auf 0"
-   end if ! alloc_status .ne.0
+   endif ! alloc_status .ne.0
    ! print*,"randlinie_zusammenstellen zählt mal durch"
    do n = 1,ianz_rb !! alle Randbedingungen
       anzranz = 0
@@ -1247,15 +1247,15 @@ subroutine randlinie_zusammenstellen()
       do j = 1,knotenanzahl2D ! alle j Knoten
          if (knoten_rand(j) == n ) then
             anzranz = anzranz+1
-         end if ! Randknoten
-      end do ! alle j Knoten
+         endif ! Randknoten
+      enddo ! alle j Knoten
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzranz," Knoten"
       rabe(n)%randlinie%anzkanten = anzranz-1
       allocate (rabe(n)%randlinie%kante(rabe(n)%randlinie%anzkanten+1), stat = alloc_status )
       if (alloc_status /= 0) then
          write(fehler,*)'allocate (rabe(n)%randlinie%kante fehlgeschlagen'
          call qerror(fehler)
-      end if ! alloc_status .ne.0
+      endif ! alloc_status .ne.0
       anzel = 0
       do j = 1,n_elemente ! alle j Elemente
          nexi = 0
@@ -1263,7 +1263,7 @@ subroutine randlinie_zusammenstellen()
          vierdrin = 0
          do k = 1,cornernumber(j) ! 3 oder 4
             if ( knoten_rand(elementnodes(j,k)) == n) nexi = nexi+1
-         end do ! alle k knoten im Element j
+         enddo ! alle k knoten im Element j
          if (nexi == 2) then ! Normalfall, Element hat eine Kante auf dem Rand
             anzel = anzel+1
             rabe(n)%randlinie%kante(anzel)%element = j
@@ -1274,12 +1274,12 @@ subroutine randlinie_zusammenstellen()
                   if (top) then
                      rabe(n)%randlinie%kante(anzel)%top = elementnodes(j,k)
                      top = .false.
-                  end if ! top
+                  endif ! top
                else ! nicht Randknoten
                   if (dreidrin > 0)vierdrin = elementnodes(j,k)
                   if (vierdrin == 0)dreidrin = elementnodes(j,k)
-               end if ! Randknoten
-            end do ! alle k Knoten im Element j (2-Knoten-Randelement)
+               endif ! Randknoten
+            enddo ! alle k Knoten im Element j (2-Knoten-Randelement)
             kx = knoten_x(rabe(n)%randlinie%kante(anzel)%top)-knoten_x(rabe(n)%randlinie%kante(anzel)%bottom)
             ky = knoten_y(rabe(n)%randlinie%kante(anzel)%top)-knoten_y(rabe(n)%randlinie%kante(anzel)%bottom)
             nx = -1*ky
@@ -1296,10 +1296,10 @@ subroutine randlinie_zusammenstellen()
             else ! Normalenvektor übernehmen
                rabe(n)%randlinie%kante(anzel)%normal_x = nx
                rabe(n)%randlinie%kante(anzel)%normal_y = ny
-            end if ! einwärts
+            endif ! einwärts
             kantlang = ( (rabe(n)%randlinie%kante(anzel)%normal_x**2) + (rabe(n)%randlinie%kante(anzel)%normal_y**2) )**0.5
             lang = lang+kantlang
-         end if ! Normalfall
+         endif ! Normalfall
          if (nexi >= 3) then ! unerwünschter Sonderfall
             ! anzel=anzel+2 ! unerwünschter Sonderfall
             write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
@@ -1308,7 +1308,7 @@ subroutine randlinie_zusammenstellen()
 
             print*,trim(fehler)
             !call qerror(fehler)
-         end if ! unerwünscht
+         endif ! unerwünscht
          !if(nexi.eq.4)anzel=anzel+3 ! unerwünschter Sonderfall: 3 Kanten eines Vierecks sind Rand
          !if(nexi.gt.1)then !! Element j hat Kante an Rand n
          !   print*,"Element #",j," hat ",nexi," Knoten am Rand ",n," Randkantenlänge=",kantlang
@@ -1316,8 +1316,8 @@ subroutine randlinie_zusammenstellen()
          ! &                      , knoten_y(rabe(n)%randlinie%kante(anzel)%top)
          !   print*,"bottom ", rabe(n)%randlinie%kante(anzel)%bottom, knoten_x(rabe(n)%randlinie%kante(anzel)%bottom)  &
          !&                         , knoten_y(rabe(n)%randlinie%kante(anzel)%bottom)
-         !end if ! Randkante
-      end do ! alle j Elemente
+         !endif ! Randkante
+      enddo ! alle j Elemente
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzel  &
             ," Kanten und ist ",lang," m lang"
       if (anzel == rabe(n)%randlinie%anzkanten) then
@@ -1332,7 +1332,7 @@ subroutine randlinie_zusammenstellen()
             !call qerror(fehler)
          endif
       endif
-   end do ! alle n Ränder
+   enddo ! alle n Ränder
    ! Das Allocieren der Flux-Felder geschieht erst in ganglinien_parallel()
    ! weil dort erst die Anzahl der Konzentrationen für die Massenflüsse zusammengezählt wird.
    return

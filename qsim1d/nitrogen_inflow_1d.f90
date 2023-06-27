@@ -4,8 +4,8 @@ subroutine nitrogen_inflow_1d(vnh4, vno2, vno3, gesN, vx0, vx02, nl0, Q_NK,    &
                               ieinLs, qeinlL, qeinl, vabfl, iorLe, iorLa,      &
                               jiein, flae, anze, flag, tflie)
    
-   use allodim
-   use aparam, only: qmx_NK, qmx_NG, qmx_NB
+   use module_alloc_dimensions
+   use module_aparam
    implicit none
    
    ! --- dummy arguments ---

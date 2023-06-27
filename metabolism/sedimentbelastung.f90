@@ -45,7 +45,7 @@ subroutine sedimentbelastung(ssalgs,                     &
                              hgsmns, hglmns, mnseds,     &
                              hgsus, hglus, useds,        &
                              anzzeits, sseross,          &
-                             kontroll,  jjj)
+                             control,  jjj)
    implicit none
    
    integer                  :: anzzeits
@@ -61,13 +61,13 @@ subroutine sedimentbelastung(ssalgs,                     &
    real                     :: hgshgs,hglhgs,hgseds
    real                     :: hgsmns,hglmns,mnseds
    real                     :: hgsus,hglus,useds
-   logical, intent(in)      :: kontroll  !< debugging
+   logical, intent(in)      :: control  !< debugging
    integer, intent(in)      :: jjj       !< debugging
    
    ! counting timesteps without erosion
    if (sseross <= 0.0)anzzeits = anzzeits+1
+   
    if (anzzeits <= 0) then ! no deposition yet, sediment equals suspension
-      !print*,'sedimentbelastung timecounter anzzeits .le. zero'
       znseds = 1000 * (hgszns-hglzns)/ssalgs
       cadseds = 1000*(hgscads-hglcads)/ssalgs
       cuseds = 1000 * (hgscus-hglcus)/ssalgs

@@ -29,7 +29,7 @@ subroutine initialisieren()
 
    use modell
    use QSimDatenfelder
-   use aparam
+   use module_aparam
    
    implicit none
    
@@ -42,10 +42,10 @@ subroutine initialisieren()
       do k = 1,number_plankt_point ! i
          do j = 1,number_plankt_vari ! initialisierung aller konzentrationen zunächt auf Null
             planktonic_variable(j+(k-1)*number_plankt_vari) = 0.0
-         end do
+         enddo
          !planktonic_variable(57+(k-1)*number_plankt_vari)= 0.15 ! nl0 >> nL0(ior) = (hcQ*hcnl0+hcQE*hcnl0E)/(hcQ+hcQE) ncyc() ??? hcnl0E wird berechnet in qsim.f90
          !planktonic_variable(58+(k-1)*number_plankt_vari)= 0.03 ! pl0 >> pl0(ior) = (hcQ*hcpl0+hcQE*hcpl0E)/(hcQ+hcQE) po4s() ??? hcpl0E wird berechnet in qsim.f90
-      end do
+      enddo
       !!!!! Initilisieren der Zone mit der zugeordneten Randbedingung ini_randnr aus MODELLG.3D.txt
       !! Dazu ein <a href="./exp/MODELLG.3D.txt" target="_blank">Beispiel</a>.\n\n
       !! Initialisierungs-Randnummer der Zone, ini_randnr, in Randzähler umwandeln...
@@ -65,7 +65,7 @@ subroutine initialisieren()
                endif
                vorhanden = .true.
             endif
-         end do !! alle j Randbedingungen
+         enddo !! alle j Randbedingungen
          if (vorhanden .and. (nini > 0)) then
             zone(i)%ini_randnr = nini
             print*,'initialisieren: Zone ',i,' mit Nr. ',zone(i)%zonen_nummer  &
@@ -76,21 +76,21 @@ subroutine initialisieren()
                   ," nini = ",nini,' Diese Vorgabe (Randnummer) ist unmöglich ### Abbruch'
             call qerror(fehler)
          endif
-      end do ! alle i zonen
+      enddo ! alle i zonen
       do i = 1,zonen_anzahl ! alle i zonen
          print*,'initialisieren: ini_randnr(',i,') = ',zone(i)%ini_randnr
-      end do ! alle i zonen
+      enddo ! alle i zonen
       
       ! Konstanten für Algen belegen
       call ini_algae(akchl, abchl, agchl, a1Ki, a1Bl, a1Gr)
       
       do i = 1,zonen_anzahl ! alle i zonen
          print*,'initialisieren nach ini_algae: ini_randnr(',i,') = ',zone(i)%ini_randnr
-      end do ! alle i zonen
+      enddo ! alle i zonen
       call RB_werte_aktualisieren(rechenzeit)
       do i = 1,zonen_anzahl ! alle i zonen
          print*,'initialisieren nach RB_werte_aktualisieren: ini_randnr(',i,') = ',zone(i)%ini_randnr
-      end do ! alle i zonen
+      enddo ! alle i zonen
       einmal = .true.
       do j = 1,number_plankt_point ! knotenanzahl2D ! alle j knoten
          !select case (hydro_trieb)
@@ -107,7 +107,7 @@ subroutine initialisieren()
          if ((nuzo <= 0) .or. (nuzo > zonen_anzahl)) then
             write(fehler,*)'initialisieren: error in zone number: ',point_zone(j),nuzo,' at point ',j
             call qerror(fehler)
-         end if
+         endif
          !if(j.eq.kontrollknoten)then
          !   print*,'vor randwert_planktonic ini_randnr(',nuzo,')=',zone(nuzo)%ini_randnr
          !   print*,'rabe(',zone(nuzo)%ini_randnr,')%wert_jetzt(22)='  &
@@ -132,7 +132,7 @@ subroutine initialisieren()
          !planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),         &
          !planktonic_variable(99+(kontrollknoten-1)*number_plankt_vari)
          call tiefenprofil(j)
-      end do ! alle j knoten
+      enddo ! alle j knoten
       !print*,'initialisieren: randbedingungen_ergaenzen done', meinrang
       !     allocate arrays for hydraulic parameters
       call alloc_hydraul_BC(number_plankt_point)
@@ -177,7 +177,7 @@ subroutine initialisieren()
       !   benthic_distribution(45+(j-1)*number_benth_distr) =  0.0
       !   benthic_distribution(46+(j-1)*number_benth_distr) =  0.0
       !   benthic_distribution(47+(j-1)*number_benth_distr) =  0.0
-      ! end do ! alle j knoten
+      ! enddo ! alle j knoten
       !if((kontrollknoten.gt.0).and.(meinrang.eq.0))print*,'initialisieren4: tempw,chla,glMn=',   &
       !       planktonic_variable( 1+(kontrollknoten-1)*number_plankt_vari),                     &
       !       planktonic_variable(11+(kontrollknoten-1)*number_plankt_vari),                     &
@@ -185,7 +185,7 @@ subroutine initialisieren()
       !print*,'initialisieren(): tracer testbelegung #########'
       !do j=1,number_plankt_point !
       !   planktonic_variable(71+(j-1)*number_plankt_vari)=0.0
-      !end do !
+      !enddo !
       ! Dreissena, Muschel Anfangs-Belegung aus Zonenvorgabe
       do i = 1,number_plankt_point ! i
          benthic_distribution(56+(i-1)*number_benth_distr) = zone(point_zone(i))%dreissen%msohle0 ! Dreissenabiomasse pro Fläche Sohle (0. Kohorte) zdreis(1:2,1) =
@@ -200,13 +200,13 @@ subroutine initialisieren()
          benthic_distribution(65+(i-1)*number_benth_distr) = zone(point_zone(i))%dreissen%gewicht1  ! Gewicht einer Dreissena-Muschel (1. Kohorte) gewdr(1:2,2) =
          benthic_distribution(66+(i-1)*number_benth_distr) = 0.0  ! Gewicht einer Dreissena-Muschel (2. Kohorte) gewdr(1:2,3) =
          benthic_distribution(67+(i-1)*number_benth_distr) = 0.0  ! Gewicht einer Dreissena-Muschel (3. Kohorte) gewdr(1:2,4) =
-      end do ! alle k Berechnungspunkte
+      enddo ! alle k Berechnungspunkte
       ! Benthische Algen, zonenweise Anfangsbelegung
       do i = 1,number_plankt_point ! i
          benthic_distribution(72+(i-1)*number_benth_distr) = zone(point_zone(i))%albenthi%ggruen  ! Biomasse benthischer Grünalgen
          benthic_distribution(73+(i-1)*number_benth_distr) = zone(point_zone(i))%albenthi%gkiesel  ! Biomasse benthischer Kieselalgen
-      end do ! alle k Berechnungspunkte
-   end if !! nur prozessor 0
+      enddo ! alle k Berechnungspunkte
+   endif !! nur prozessor 0
    !print*,'initialisieren(): kontrollpunkt', meinrang
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(nt,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -214,7 +214,7 @@ subroutine initialisieren()
    if (hydro_trieb == 3) then ! get first schism flowfield for initialization in parallel
       !print*,meinrang,' initialisieren(): get_schism_step fetching step= ',nt, ' in parallel'
       !!!### call get_schism_step(nt)
-   end if ! hydro_trieb=SCHISM,3
+   endif ! hydro_trieb=SCHISM,3
    call mpi_barrier (mpi_komm_welt, ierr)
    
    !if((kontrollknoten.gt.0).and.(meinrang.eq.0))                                    &

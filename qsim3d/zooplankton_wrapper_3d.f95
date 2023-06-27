@@ -27,7 +27,7 @@
 subroutine zooplankton_wrapper_3d(i)
    use modell
    use qsimdatenfelder
-   use aparam
+   use module_aparam
    use module_metabolism, only: zooplankton
    implicit none
 
@@ -36,7 +36,7 @@ subroutine zooplankton_wrapper_3d(i)
    
    
    iglob = i + meinrang * part
-   kontroll = iglob == kontrollknoten
+   control = iglob == kontrollknoten
    
    ! convert timestep from integer seconds (QSim3D) in real days (QSim1D)
    tflie = real(deltat) / 86400 
@@ -70,7 +70,7 @@ subroutine zooplankton_wrapper_3d(i)
             transfer_quantity_p(77 + nt),   & ! rakr
             transfer_quantity_p(78 + nt),   & ! rbar
             transfer_quantity_p(75 + nt),   & ! hnfza
-            kontroll,                       & !
+            control,                       & !
             iglob)
    
    return

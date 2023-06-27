@@ -43,7 +43,7 @@ subroutine wehr(wehrh, wehrb, ho2, hQaus, O2zt, htempw, ho2_z, ho2z_z, hlf,   &
    
    ! TODO: CO2-Austrag muss noch geändert werden
    
-   use allodim
+   use module_alloc_dimensions
    implicit none
    
    integer                             :: nstr, nkz, mstr, mstep0, kanz
