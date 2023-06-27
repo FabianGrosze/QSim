@@ -1,6 +1,15 @@
 # QSim 14
 
 ## 14.09
+
+### 14.09.35
+* Modules and corefunctions for
+   * water temperature
+   * suspended matter
+   * erosion
+
+* Bugfixes in water temperature
+
 ### 14.09.34
 * Improvement in Gerris definitions. No calculations were altered.
 
