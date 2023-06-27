@@ -33,7 +33,7 @@ subroutine schwermetalle_huelle(i)
    use module_aparam
    implicit none
    integer :: i,npla,ntra,nben
-   iglob = (i+meinrang*part)
+   iglob = i + meinrang * part
    control = iglob == kontrollknoten  ! i ist die lokale Knotennummer auf dem jeweiligen Prozessor und läuft von 1 bis part
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    ntra = (i-1)*number_trans_quant

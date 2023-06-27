@@ -525,7 +525,7 @@ subroutine update_weather()
    enddo ! i Schleife über alle Wetterstationen
    ! transfer to nodes via transfer_quantity_p array
    do i = 1,part ! Alle Knoten auf diesem Prozessor
-      iglob = (i+meinrang*part)
+      iglob = i + meinrang * part
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
          i2 = zone(point_zone(iglob))%wettstat%wetterstations_nummer !! ist parallel !!!
          transfer_quantity_p(62+(i-1)*number_trans_quant) = tlmed_T(i2) ! air temp.

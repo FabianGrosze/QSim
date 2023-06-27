@@ -205,14 +205,14 @@ contains
       
       ! read data from netCDF file
       ! read mean SPM mass
-      start4 = (/                   1, 1, nClassesFile - nClasses + 1, iTime /)
-      count4 = (/ number_plankt_point, 1,                nClasses    ,     1 /)
+      start4 = (/ 1, 1, nClassesFile - nClasses + 1, iTime /)
+      count4 = (/ number_plankt_point, 1, nClasses, 1 /)
       call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_Schwebstoffmenge_2d', varid) )
       call nc_check_err( nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
       call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(1), fillValue(1)) )
       ! read mean water volume
-      start3 = (/                   1, 1, iTime /)
-      count3 = (/ number_plankt_point, 1,     1 /)
+      start3 = (/ 1, 1, iTime /)
+      count3 = (/ number_plankt_point, 1, 1 /)
       call nc_check_err( nf90_inq_varid(ncid,'Mesh2_face_mittleres_Wasservolumen_2d', varid) )
       call nc_check_err( nf90_get_var(ncid, varid, vol_element, start3, count3 ) )
       call nc_check_err( nf90_inq_var_fill(ncid, varid, iFill(2), fillValue(2)) )

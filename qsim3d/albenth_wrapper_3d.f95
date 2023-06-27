@@ -45,7 +45,7 @@ subroutine albenth_wrapper_3d(i)
    
    
    
-   ! iglob = (i+meinrang*part)
+   ! iglob = i + meinrang * part
    ! nk = (i-1)*number_plankt_vari
    ! control = iglob == kontrollknoten
    

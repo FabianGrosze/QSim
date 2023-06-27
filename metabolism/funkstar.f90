@@ -86,7 +86,6 @@ subroutine funkstar(abfls,vbsbs,vcsbs,vnh4s,vno2s,vno3s,gesNs,vx0s,vx02s,gelps,g
    real                                   :: vtkoeff_hg,vtkoeff_mn,vtkoeff_u
    real                                   :: null_value
    double precision                       :: r_nrs, r_nrs2, r_nrs1
-   character(200)                         :: message
    character(255)                         :: cpfad
    character(275)                         :: pfadstring
    integer, dimension(40000)              :: imstr, irbnr, ianzw

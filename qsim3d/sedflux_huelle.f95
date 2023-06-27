@@ -39,7 +39,7 @@ subroutine sedflux_huelle(i)
    integer, dimension(azStrs)            :: mStas, mSs, abfr, mStra, nbuhn
    real, dimension(azStrs,20)            :: aschif, eschif
    real, dimension(azStrs,1000)          :: raua, Stakm, vmq, Hmq, bvmq, bHmq, SedOMb, dKornb, w2, w2b
-   iglob = (i+meinrang*part)
+   iglob = i + meinrang * part
    nk = (i-1)*number_plankt_vari
    control = iglob == kontrollknoten
    if (control)print*,'sedflux: nk,i,iglob = ',nk,i,iglob

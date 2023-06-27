@@ -39,7 +39,7 @@ subroutine algae_huelle(i)
    logical :: error
      
    !if(i==1)print*,'algae_huelle läuft an'
-   iglob = (i+meinrang*part)
+   iglob = i + meinrang * part
    do k = 1,number_trans_quant
       if (isnan(transfer_quantity_p(k+(i-1)*number_trans_quant))) then
          print*,'vorher: isnan(transfer_quantity_p  node#',iglob,' variable# ',k,' meinrang = ',meinrang
@@ -245,7 +245,7 @@ subroutine algae_huelle(i)
    zooind(1) = planktonic_variable_p(50+(i-1)*number_plankt_vari) ! Anzahl der Rotatorien in Ind/l
    zooind(2) = zooind(1)
    !jetzt direkt aus QSimDatenfelder GROT=transfer_parameter_p(67) ! Gewicht einer Rotatorie µg  | Aparam.txt
-   ss(1) = planktonic_variable_p(53+nk) ! ORG. UND ANORG. SCHWEBSTOFFE(OHNE ALGEN UND ZOOPLANKTER) schweb()
+   ss(1) = planktonic_variable_p(53+nk) ! ORG. UND ANORG. SCHWEBSTOFFE (OHNE ALGEN UND ZOOPLANKTER)
    ss(2) = ss(1)
    Q_PK(1) = planktonic_variable_p(31+nk) ! Phosphoranteil der Kiesel-Algenbiomasse
    Q_PK(2) = Q_PK(1)

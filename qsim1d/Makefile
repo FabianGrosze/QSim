@@ -63,9 +63,9 @@ Q1 = gerris_definitions/write_e_extnct.o \
     basispoint.o \
     cip.o \
     coliform_bacteria_inflow_1d.o \
-    crank_nicolson.o \
     cra_nickoeff.o\
-    tracer_inflow_1d.o \
+    crank_nicolson.o \
+    hnf_inflow_1d.o \
     init_result_files.o \
     km_sys.o \
     lax_wendroff.o \
@@ -74,19 +74,22 @@ Q1 = gerris_definitions/write_e_extnct.o \
     nitrogen_inflow_1d.o \
     organic_carbon_inflow_1d.o \
     oxygen_inflow_1d.o \
-    phosphate_inflow_1d.o \
     ph_inflow_1d.o \
+    phosphate_inflow_1d.o \
     qerror.o \
     qsim.o \
     quickest.o \
     randbedingungen.o \
     silicate_inflow_1d.o \
-    sysgen.o \
+    suspended_matter_inflow_1d.o \
     sys_gitterStrang.o \
     sys_z_gitter.o \
+    sysgen.o \
     thomas.o\
+    tracer_inflow_1d.o \
     transport.o \
     trimat.o \
+    water_temperature_inflow_1d.o \
     wehr.o \
     wehrles.o \
     zooplankton_inflow_1d.o

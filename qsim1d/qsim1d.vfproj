@@ -80,6 +80,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\corophium\module_corophium.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="erosion">
+		<File RelativePath="..\metabolism\erosion\erosion.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
 		<Filter Name="hnf">
 		<File RelativePath="..\metabolism\hnf\hnf.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
@@ -90,10 +94,10 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
-		<Filter Name="erosion">
-		<File RelativePath="..\metabolism\erosion\erosion.f90">
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
-		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
+		<Filter Name="suspended_matter">
+		<File RelativePath="..\metabolism\suspended_matter\module_suspended_matter.f90"/>
+		<File RelativePath="..\metabolism\suspended_matter\suspended_matter.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -163,8 +167,6 @@
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>
 		<File RelativePath="..\metabolism\schiff.f90"/>
-		<File RelativePath="..\metabolism\schweb.f90"/>
-		<File RelativePath="..\metabolism\schweb_kern.f90"/>
 		<File RelativePath="..\metabolism\schwermetalle.f90"/>
 		<File RelativePath="..\metabolism\schwermetalle_kern.f90"/>
 		<File RelativePath="..\metabolism\sed_diffk.f90"/>
@@ -204,6 +206,7 @@
 		<File RelativePath=".\ph_inflow_1d.f90"/>
 		<File RelativePath=".\phosphate_inflow_1d.f90"/>
 		<File RelativePath=".\silicate_inflow_1d.f90"/>
+		<File RelativePath=".\suspended_matter_inflow_1d.f90"/>
 		<File RelativePath=".\tracer_inflow_1d.f90"/>
 		<File RelativePath=".\water_temperature_inflow_1d.f90"/>
 		<File RelativePath=".\zooplankton_inflow_1d.f90"/></Filter>

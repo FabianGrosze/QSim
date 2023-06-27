@@ -13,6 +13,7 @@ META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/ph/module_ph.o\
 	../metabolism/phosphate/module_phosphate.o \
 	../metabolism/silicate/module_silicate.o \
+    ../metabolism/suspended_matter/module_suspended_matter.o \
 	../metabolism/nitrogen/module_nitrogen.o \
 	../metabolism/water_temperature/module_water_temperature.o \
     ../metabolism/zooplankton/module_zooplankton.o \
@@ -51,6 +52,5 @@ META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/verteilungskoeff.o \
 	../metabolism/sedimentbelastung.o \
 	../metabolism/schwermetalle.o \
-	../metabolism/schwermetalle_kern.o \
-	../metabolism/schweb.o \
-	../metabolism/schweb_kern.o
+	../metabolism/schwermetalle_kern.o
+	

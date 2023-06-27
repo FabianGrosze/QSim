@@ -11,7 +11,7 @@ subroutine hnf_inflow_1d(chnf,bvhnf,echnf,ebvhnf, qeinl, vabfl, jiein, anze, fla
    real,    intent(in),    dimension(ialloc1) :: ebvhnf
    real,    intent(in),    dimension(ialloc1) :: qeinl
    real,    intent(in),    dimension(ialloc1) :: vabfl  
-   real,    intent(in),    dimension(ialloc2) :: jiein
+   integer, intent(in),    dimension(ialloc2) :: jiein
    integer, intent(in)                        :: anze
    integer, intent(in),    dimension(ialloc2) :: flag
    

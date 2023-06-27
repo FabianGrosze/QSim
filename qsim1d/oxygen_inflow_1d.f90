@@ -6,6 +6,7 @@ subroutine oxygen_inflow_1d(vo2, o2L, eo2, etemp, mstr, ieinLs, qeinlL, qeinl, &
    
    implicit none
    
+   ! --- dummy arguments ---
    real,    intent(inout), dimension(ialloc2) :: vo2      !< Sauerstoff im Hauptfluss
    real,    intent(in),    dimension(ialloc1) :: o2L      !< Sauerstoff im Linieneinleiter
    real,    intent(in),    dimension(ialloc1) :: eo2      !< Sauerstoff im Punkteinleiter

@@ -235,10 +235,8 @@ program qsim
    real, dimension(ialloc2)                :: zwsisd, zwkmua, zwfta, zwfia, zwfhea, zwkrau
    real, dimension(ialloc2)                :: zwsvhb, zwsvhg, zwdalg, zwdaag, zwsedg, zwzog, zwgmor, zwgbcm
    real, dimension(ialloc2)                :: zwgmua, zwfiga, zwfhga, zwgrau, zwadrk, zwadrg, zwacok, zwacog, zwvo2
-   real, dimension(ialloc2)                :: zwzooi, zwabsz, zwzexk, zwzexg, zwph, zwcsed_abb
-   real, dimension(ialloc2)                :: zwzexb, zwobsb, zwocsb, zwnl0, zwpl0
-   real, dimension(ialloc2)                :: zwdfak, zwdfab, zwdfag, zwdfas, zwssdr, zwcsed
-   real, dimension(ialloc2)                :: zworgs, zwss, zwfssg, zwseds
+   real, dimension(ialloc2)                :: zwzooi, zwph, zwcsed_abb
+   real, dimension(ialloc2)                :: zwobsb, zwocsb, zwnl0, zwpl0, zwcsed, zwss, zwseds 
    real, dimension(ialloc2)                :: zwtpki, zwtpgr, zwchlk, zwchlg, zwchlb
    real, dimension(ialloc2)                :: zwn4z, zwn3z, zwpz
    real, dimension(ialloc2)                :: zwsiz, zup_pk, zup_nk, zup_si, zq_pk, zq_nk, zq_sk, zaktbr
@@ -459,12 +457,13 @@ program qsim
    external :: anztag, write_gerris_definitions, version_string, qerror, km_sys, e_extnct_lesen
    external :: init_result_files, sysgen, randbedingungen, funkstar, sys_gitterstrang
    external :: sys_z_gitter, strahlg, temperl, sedflux, dreissen
-   external :: schweb, schwermetalle, transport, sasu
+   external :: schwermetalle, transport, sasu
    
    external :: nitrogen_inflow_1d, coliform_bacteria_inflow_1d
    external :: organic_carbon_inflow_1d, silicate_inflow_1d, oxygen_inflow_1d
    external :: ph_inflow_1d, tracer_inflow_1d, phosphate_inflow_1d
    external :: water_temperature_inflow_1d, zooplankton_inflow_1d
+   external :: suspended_matter_inflow_1d
    
    ! --- settings ---
    linux = .false.
@@ -5938,136 +5937,60 @@ program qsim
          endif
       enddo
       ! -----------------------------------------------------------------------
-      ! Schwebstoffe
+      ! suspended matter
       ! -----------------------------------------------------------------------
       1518 continue
-      if (ssalg(1) < 0.0) goto 1525
-      call schweb(zooind, dorgSS, ss, ssalg, tiefe, rau, tflie, VMITT, flae,  &
-                  flag, ior, anze, ess, ssL, qeinl, qeinlL, vabfl, dkimor,    &
-                  dgrmor, abszo, zexki, zexgr, iorLa, iorLe, ieinLs, abl,     &
-                  zexbl, dblmor, drfaeb, jiein, aki, agr, ssdr, drfaek,       &
-                  drfaeg, drfaes, fssgr, sedss, sedSS_MQ, fssgrs, tausc,      &
-                  ischif, ilbuhn, ieros, echla, vkigr, akbcm, agbcm, antbl,   &
-                  abbcm, ezind, mstr,                                         &
-                  control, 0)
-      
-      if (nbuhn(mstr) == 0)goto 1525
-      if (ilbuhn == 0) then
-         do ior = 1,anze+1
-            zwtief(ior) = tiefe(ior)
-            zwvm(ior) = vmitt(ior)
-            zwzooi(ior) = zooind(ior)
-            zworgS(ior) = dorgSS(ior)
-            zwss(ior) = ss(ior)
-            zwssa(ior) = ssalg(ior)
-            zwkmor(ior) = dkimor(ior)
-            zwgmor(ior) = dgrmor(ior)
-            zwbmor(ior) = dblmor(ior)
-            zwabsz(ior) = abszo(ior)
-            zwzexk(ior) = zexki(ior)
-            zwzexg(ior) = zexgr(ior)
-            zwzexb(ior) = zexbl(ior)
-            zwaki(ior) = aki(ior)
-            zwagr(ior) = agr(ior)
-            zwabl(ior) = abl(ior)
-            zwkigr(ior) = vkigr(ior)
-            zwantb(ior) = antbl(ior)
-            zwdfak(ior) = drfaek(ior)
-            zwdfag(ior) = drfaeg(ior)
-            zwdfab(ior) = drfaeb(ior)
-            zwdfas(ior) = drfaes(ior)
-            zwssdr(ior) = ssdr(ior)
-            zwfssg(ior) = fssgr(ior)
-            zwsedS(ior) = sedss(ior)
-            zwsedSS_MQ = sedSS_MQ(mstr,ior)
-            
-            tiefe(ior) = bh(mstr,ior)
-            vmitt(ior) = vbm(mstr,ior)
-            zooind(ior) = bzooi(mstr,ior)
-            dorgSS(ior) = borgSS(mstr,ior)
-            ss(ior) = bss(mstr,ior)
-            ssalg(ior) = bssalg(mstr,ior)
-            dkimor(ior) = bdkmor(mstr,ior)
-            dgrmor(ior) = bdgmor(mstr,ior)
-            dblmor(ior) = bdbmor(mstr,ior)
-            abszo(ior) = babszo(mstr,ior)
-            zexki(ior) = bzexki(mstr,ior)
-            zexgr(ior) = bzexgr(mstr,ior)
-            zexbl(ior) = bzexbl(mstr,ior)
-            aki(ior) = baki(mstr,ior)
-            agr(ior) = bagr(mstr,ior)
-            abl(ior) = babl(mstr,ior)
-            vkigr(ior) = bvkigr(mstr,ior)
-            antbl(ior) = bantbl(mstr,ior)
-            drfaek(ior) = bdfaek(mstr,ior)
-            drfaeg(ior) = bdfaeg(mstr,ior)
-            drfaeb(ior) = bdfaeb(mstr,ior)
-            drfaes(ior) = bdfaes(mstr,ior)
-            ssdr(ior) = bssdr(mstr,ior)
-            fssgr(ior) = bfssgr(mstr,ior)
-            sedSS(ior) = bsedSS(mstr,ior)
-            sedSS_MQ(mstr,ior) = bsedSS_MQ(mstr,ior)
-         enddo
-         ilbuhn = 1
-         goto 1518
-      endif
-      
-      if (ilbuhn == 1) then
-         do ior = 1,anze+1
-            borgSS(mstr,ior) = dorgSS(ior)
-            bss(mstr,ior) = ss(ior)
-            bssalg(mstr,ior) = ssalg(ior)
-            bssdr(mstr,ior) = ssdr(ior)
-            bfssgr(mstr,ior) = fssgr(ior)
-            bsedSS(mstr,ior) = sedSS(ior)
-            bsedSS_MQ(mstr,ior) = sedSS_MQ(mstr,ior)
-            
-            tiefe(ior) = zwtief(ior)
-            vmitt(ior) = zwvm(ior)
-            zooind(ior) = zwzooi(ior)
-            dorgSS(ior) = zworgS(ior)
-            ss(ior) = zwss(ior)
-            ssalg(ior) = zwssa(ior)
-            dkimor(ior) = zwkmor(ior)
-            dgrmor(ior) = zwgmor(ior)
-            dblmor(ior) = zwbmor(ior)
-            abszo(ior) = zwabsz(ior)
-            zexki(ior) = zwzexk(ior)
-            zexgr(ior) = zwzexg(ior)
-            zexbl(ior) = zwzexb(ior)
-            aki(ior) = zwaki(ior)
-            agr(ior) = zwagr(ior)
-            abl(ior) = zwabl(ior)
-            vkigr(ior) = zwkigr(ior)
-            antbl(ior) = zwantb(ior)
-            drfaek(ior) = zwdfak(ior)
-            drfaeg(ior) = zwdfag(ior)
-            drfaes(ior) = zwdfas(ior)
-            ssdr(ior) = zwssdr(ior)
-            fssgr(ior) = zwfssg(ior)
-            sedss(ior) = zwsedS(ior)
-            sedSS_MQ(mstr,ior) = zwsedSS_MQ(ior)
-            if (ieros == 0) then
-               if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
-                  diff1 = bss(mstr,ior)    - ss(ior)
-                  diff2 = bssalg(mstr,ior) - ssalg(ior)
-                  diff3 = bfssgr(mstr,ior) - fssgr(ior)
-               endif
-               
-               if (bleb(mstr,ior) > 0.0) then
-                  ss(ior)    = ss(ior)    + diff1 * hctau1(ior)
-                  ssalg(ior) = ssalg(ior) + diff2 * hctau1(ior)
-                  fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
-               endif
-               
-               if (hctau2(ior) > 0.0) then
-                  bss(mstr,ior)    = bss(mstr,ior)    - diff1 * hctau2(ior)
-                  bssalg(mstr,ior) = bssalg(mstr,ior) - diff2 * hctau2(ior)
-                  bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
+      if (ssalg(1) >= 0.0) then
+         call suspended_matter_inflow_1d(ss, fssgr, vkigr, antbl, akbcm, agbcm, abbcm, &
+                                         fssgrs, ssl, ess, echla, ezind, mstr, ieinls, &
+                                         qeinll, qeinl, vabfl, iorle, iorla, jiein,    &
+                                         flae, anze, flag, tflie)
+         
+         
+         do ior = 1, anze+1
+            ! main river
+            call suspended_matter(                                                                    &
+                        ss(ior), ssdr(ior), fssgr(ior), aki(ior), agr(ior), abl(ior), zooind(ior),    &
+                        tiefe(ior), rau(ior), vmitt(ior), tausc(mstr,ior), dorgss(ior), dkimor(ior),  &
+                        dgrmor(ior), dblmor(ior), drfaek(ior), drfaeg(ior), drfaeb(ior), drfaes(ior), &
+                        zexki(ior), zexgr(ior), zexbl(ior), abszo(ior), ischif(ior), ieros, tflie,    &
+                        ssalg(ior), sedss(ior), sedss_mq(mstr,ior),                                   &
+                        control, jjj)       
+
+            if (nbuhn(mstr) > 0) then
+               ! groyne fields
+               call suspended_matter(                                                                                                        &
+                        bss(mstr,ior), bssdr(mstr,ior),  bfssgr(mstr,ior),  baki(mstr,ior), bagr(mstr,ior), babl(mstr,ior), bzooi(mstr,ior), &
+                        bh(mstr,ior), rau(ior), vbm(mstr,ior), tausc(mstr,ior), borgss(mstr,ior), bdkmor(mstr,ior),                          &
+                        bdgmor(mstr,ior), bdbmor(mstr,ior), bdfaek(mstr,ior), bdfaeg(mstr,ior), bdfaeb(mstr,ior), bdfaes(mstr,ior),          &
+                        bzexki(mstr,ior), bzexgr(mstr,ior), bzexbl(mstr,ior), babszo(mstr,ior), ischif(ior), ieros, tflie,                   &
+                        bssalg(mstr,ior), bsedss(mstr,ior), bsedss_mq(mstr,ior),                                                             &
+                        control, jjj)                      
+ 
+               ! mixing between groyne fields and main river             
+               if (ieros == 0) then
+                  if (bleb(mstr,ior) > 0. .or. hctau2(ior) > 0.) then
+                     diff1 = bss(mstr,ior)    - ss(ior)
+                     diff2 = bssalg(mstr,ior) - ssalg(ior)
+                     diff3 = bfssgr(mstr,ior) - fssgr(ior)
+                  endif
+                  
+                  if (bleb(mstr,ior) > 0.0) then
+                     ss(ior)    = ss(ior)    + diff1 * hctau1(ior)
+                     ssalg(ior) = ssalg(ior) + diff2 * hctau1(ior)
+                     fssgr(ior) = fssgr(ior) + diff3 * hctau1(ior)
+                  endif
+                  
+                  if (hctau2(ior) > 0.0) then
+                     bss(mstr,ior)    = bss(mstr,ior)    - diff1 * hctau2(ior)
+                     bssalg(mstr,ior) = bssalg(mstr,ior) - diff2 * hctau2(ior)
+                     bfssgr(mstr,ior) = bfssgr(mstr,ior) - diff3 * hctau2(ior)
+                  endif
                endif
             endif
+         
          enddo
-         ilbuhn = 0
+      
       endif
       
       ! -----------------------------------------------------------------------
@@ -6080,49 +6003,51 @@ program qsim
       1525 continue
       
       if (iwsim == 5) goto 118  ! goto transport
-      if (iwsim /= 2) goto 1520 ! goto erosion
-      if (hcoli(mstr,1) < 0.0) goto 118 ! goto transport
       
-      ! inflow from point and diffuse sources
-      call coliform_bacteria_inflow_1d(coli, doscf, mstr, colil, ecoli, ieinls, &
-                                       qeinll, qeinl, vabfl, iorle, iorla,      &
-                                       jiein, flae, anze, flag, tflie)
+      if (iwsim == 2) then
+         if (hcoli(mstr,1) < 0.0) goto 118 ! goto transport
       
-      ! --- metabolism in main river ---
-      do ior = 1, anze+1
-         call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior), &
-                                rau(ior), tiefe(ior), vmitt(ior), schwi(ior), tflie, &
-                                control, jjj)
-      enddo
+         ! inflow from point and diffuse sources
+         call coliform_bacteria_inflow_1d(coli, doscf, mstr, colil, ecoli, ieinls, &
+                                          qeinll, qeinl, vabfl, iorle, iorla,      &
+                                          jiein, flae, anze, flag, tflie)
       
-      ! --- groyne-field ---
-      if (nbuhn(mstr) > 0) then
-         
-         do ior = 1,anze+1
-            ! metabolism
-            call coliform_bacteria(                                                            & 
-                        bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
-                        rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior), tflie,                 &
-                        control, jjj)
-            
-            ! mixing between main river and groyne-field 
-            diff1 = bcoli(mstr,ior)  - coli(ior)
-            diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
-            
-            if (bleb(mstr,ior) > 0.0) then
-               coli(ior)  = coli(ior)  + diff1 * (1.-exp(-hctau1(ior)))
-               DOSCF(ior) = DOSCF(ior) + diff2 * (1.-exp(-hctau1(ior)))
-            endif
-            
-            if (hctau2(ior) > 0.0) then
-               bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * (1.-exp(-hctau2(ior)))
-               bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
-            endif
+         ! --- metabolism in main river ---
+         do ior = 1, anze+1
+            call coliform_bacteria(coli(ior), doscf(ior), extks(mstr, ior), tempw(ior), &
+                                   rau(ior), tiefe(ior), vmitt(ior), schwi(ior), tflie, &
+                                   control, jjj)
          enddo
-      endif
       
-      ! Skip all other metabolism
-      goto 118 ! goto transport
+         ! --- groyne-field ---
+         if (nbuhn(mstr) > 0) then
+         
+            do ior = 1,anze+1
+               ! metabolism
+               call coliform_bacteria(                                                            & 
+                           bcoli(mstr,ior), bDOSCF(mstr,ior), extks(mstr, ior), btempw(mstr,ior), &
+                           rau(ior), bh(mstr,ior), vmitt(ior), schwi(ior), tflie,                 &
+                           control, jjj)
+            
+               ! mixing between main river and groyne-field 
+               diff1 = bcoli(mstr,ior)  - coli(ior)
+               diff2 = bDOSCF(mstr,ior) - DOSCF(ior)
+            
+               if (bleb(mstr,ior) > 0.0) then
+                  coli(ior)  = coli(ior)  + diff1 * (1.-exp(-hctau1(ior)))
+                  DOSCF(ior) = DOSCF(ior) + diff2 * (1.-exp(-hctau1(ior)))
+               endif
+            
+               if (hctau2(ior) > 0.0) then
+                  bcoli(mstr,ior)  = bcoli(mstr,ior)  - diff1 * (1.-exp(-hctau2(ior)))
+                  bDOSCF(mstr,ior) = bDOSCF(mstr,ior) - diff2 * (1.-exp(-hctau2(ior)))
+               endif
+            enddo
+         endif
+      
+         ! Skip all other metabolism
+         goto 118 ! goto transport
+      endif
       
       ! -----------------------------------------------------------------------
       ! erosion

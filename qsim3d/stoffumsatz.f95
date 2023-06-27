@@ -43,7 +43,7 @@ subroutine stoffumsatz()
    if (meinrang == 0) print*,'stoffumsatz start'
    ! Stoffumsätze parallelisiert
    do i = 1,part ! Alle Knoten auf diesem Prozessor
-      iglob = (i+meinrang*part)
+      iglob = i + meinrang * part
       nk = (i-1)*number_plankt_vari ! Ort im Feld der transportierten, planktischen Variablen
       
       if (iglob <= number_plankt_point) then ! Knotennummer existiert (letzter Prozess)
@@ -101,7 +101,7 @@ subroutine stoffumsatz()
                call phosphate_wrapper_3d(i)
                call silicate_wrapper_3d(i)
                call oxygen_wrapper_3d(i)
-               call schweb_huelle(i)
+               call suspended_matter_wrapper_3d(i)
                
                ! coliform bacteria
                if (iColi == 1) then
