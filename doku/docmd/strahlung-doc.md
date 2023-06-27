@@ -1,12 +1,10 @@
 Strahlung {#lnk_strahlung}
 =========
 
-Licht, oder besser die Strahlung, ist ein zentraler Faktor für den Wärmehaushalt
-eines Gewässers. Die Globalstrahlung spielt aber auch für die Primärproduzenten 
+Licht ist ein zentraler Faktor für den Wärmehaushalt eines Gewässers. Die Globalstrahlung spielt aber auch für die Primärproduzenten 
 und damit die Produktivität eines Gewässers eine zentrale Rolle.
 
-Die Strahlung wird im BfG-Gewässergütemodell zur Simulation folgender 
-Prozesse benötigt:
+Die Strahlung wird im BfG-Gewässergütemodell zur Simulation folgender Prozesse benötigt:
 
 - Wärmehaushalt des Fließgewässers <br>
  _(Wellenlänge 290 - 4000 nm)_;

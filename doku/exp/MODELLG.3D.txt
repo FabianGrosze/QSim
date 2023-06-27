@@ -30,8 +30,6 @@ R  0.01
 I   2
 #T o.g. Zone zugeordnete Wetterstation: anfangsKm,endKm(unbenutzt)  wetterstations_nummer wetterstations_lage(müNN)
 T  77.77   99.99   1    0.0
-#E tau_krit, M_eros, n_eros, sed_roh
-E  1.25      0.00075 3.2     1450.0
 
 L  Laichperiode						Laichperiode						Strang
 W  Wehr							Parameter des Wehres					Strang
@@ -47,7 +45,6 @@ U  Buhnen						Parameter für Buhnenfelder				Abschnitt
 O  Anteil der Vegetationstypen				Anteil der Vegetationstypen				Abschnitt
 Z  Sediment-Kenngrößen					Sediment-Kenngrößen in den Gewässer-Abschnitten		Abschnitt
 S  Kenngrössen für Temperatur/Sedimenttemperatur	Kenngrößen für die Gewässerabschnitten			Abschnitt
-E  Erosions-Parameter 
 
 
  WRITE(1, '(A)') '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>'
@@ -149,9 +146,6 @@ E  Erosions-Parameter
 !  WRITE(1, '(A)') '</ParamSetDef>'
   WRITE(1, '(A)') '</GerrisParam>'
   
-!!  WRITE(1, '(A)') '  <Parameter Ident="tau_krit" Text="kritische Sohlschubspannung ab der Erosion auftritt"       Unit="N/m²"      Format="F7.3" Null="-1" Help="" Max="" Default="9999.99" />'
-!!  WRITE(1, '(A)') '  <Parameter Ident="M_eros"   Text="Erodibilitätskonstante"                                    Unit="kg/(m²*s)" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="0." />'
-!!  WRITE(1, '(A)') '  <Parameter Ident="n_eros"   Text="Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss" Unit="-" Format="F7.3" Null="-1" Help="" Min="" Max="" Default="1." />'
-!!  WRITE(1, '(A)') '  <Parameter Ident="sed_roh"  Text="Dichte des liegenden Sediments"                            Unit="kg/m³"     Format="F7.3" Null="-1" Help="" Min="" Max="" Default="2650.0" />'
+  CLOSE(1)
 
-
+ END subroutine ModellGParam

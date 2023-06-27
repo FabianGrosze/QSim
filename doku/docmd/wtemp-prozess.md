@@ -90,10 +90,11 @@ durch Multiplikation mit 1/24000.
 <!-- #mf: müsste es nicht 1/86400 sein? -->
 
 In QSim verwendete Werte für *a* und *b* (Referenz: Poß (\cite poss_1983)) 
-| a	| b	| Literatur | 
-| 0.13	| 0.0936 | WMO (1966) (\cite wmo_1966) | 
-| 0.153	| 0.063	| Sweers (1976) (\cite sweers_1976) | 
-| 0.211	| 0.103	| Rimsha-Donchenko (1957) aus Poß (1983)(\cite poss_1983) |
+| a	    | b	     | Literatur                                               |     
+| ----- | ------ | ------------------------------------------------------- |     
+| 0.13	| 0.0936 | WMO (1966) (\cite wmo_1966)                             | 
+| 0.153	| 0.063	 | Sweers (1976) (\cite sweers_1976)                       | 
+| 0.211	| 0.103	 | Rimsha-Donchenko (1957) aus Poß (1983)(\cite poss_1983) |
 
 
 In einem vierten und fünften Verfahren erfolgt die Berechnung der Verdunstung 
