@@ -36,6 +36,7 @@ via the the following list.
 - \subpage lnk_download
 - \subpage lnk_literatur
 - \subpage lnk_kontakt
+- \subpage lnk_lizenz
 
 * The pages will be deleted later*:
 - \subpage lnk_todo
