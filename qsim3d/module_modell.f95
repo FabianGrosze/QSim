@@ -654,82 +654,81 @@ contains
       hydro_trieb = antriebsart()
       return
    end subroutine modeverz
+   
+   
    !----+-----+----
-   !> Unterscheidung welche den für den hydraulischen Antrieb verweendet werden.\\
-   !! hydro_trieb = Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)\\
+   !> Unterscheidung welche den für den hydraulischen Antrieb verweendet werden.
+   !!
+   !! hydro_trieb = Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)
+   !!
    !! advect_algo = Flag für den Advektionsalgorithmus (noch unbenutzt, d.h. z.Z. casu lin. ELM,)
-   !! \n\n
    integer function antriebsart()
       implicit none
-      character(len = longname) :: systemaufruf
-      integer :: system_error, errcode
-      antriebsart = 0
-      print*,'antriebsart: find hydraulic driver'
-      !! falls casu-transinfo Directory vorhanden, das nehmen
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo',' >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
-      call system(trim(systemaufruf),system_error)
-      if (system_error /= 0) then
-         print*,"antriebsart: casu (transinfo) not available; directory transinfo not accessible"
-      else
+      logical :: exists
+      
+      ! casu
+      inquire(file = trim(modellverzeichnis) // 'transinfo', exist = exists)
+      if (exists) then
+         print*, "Hydodynamic driver: casu"
          antriebsart = 1
-         print*,'antriebsart casu (transinfo)'
          return
-      endif ! io_error.ne.0
-      !! falls Antribsdatei transport.nc vorhanden, Untrim²-Resultate im NetCDF-Format verwenden
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc',' >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
-      call system(trim(systemaufruf),system_error)
-      if (system_error /= 0) then
-         print*,"antriebsart: untrim netDCF not available; file transport.nc not accessible"
-      else
+      endif
+      
+      ! UnTrim²
+      inquire(file = trim(modellverzeichnis) // 'transport.nc', exist = exists)
+      if (exists) then
+         print*, "Hydodynamic driver: NetCDF UnTrim2"
          antriebsart = 2
-         print*,'antriebsart untrim netDCF'
          return
-      endif ! io_error.ne.0
-      !!
-      write(systemaufruf,'(4A)',iostat = errcode)'stat ',trim(modellverzeichnis),'outputs_schism',' >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('antriebsart writing filename elemente_ failed')
-      call system(trim(systemaufruf),system_error)
-      if (system_error /= 0) then
-         print*,"antriebsart: SCHISM netDCF not available; directory outputs_schism not accessible"
-      else
+      endif
+      
+      ! SCHISM
+      inquire(file = trim(modellverzeichnis) // 'outputs_schism', exist = exists)
+      if (exists) then
+         print*, "Hydodynamic driver: NetCDF SCHISM"
          antriebsart = 3
-         print*,'antriebsart SCHISM netDCF'
          return
-      endif ! io_error.ne.0
+      endif
+      
+      call qerror("Hydrodynamic driver is missing.")
    end function antriebsart
+   
+   
    !!----+-----+----
-   !> die Subroutine modella() ist Teil des module ::modell\n
-   !! Die <a href="./exp/MODELLA.txt" target="_blank">MODELLA.txt</a> Dateien für QSim-1D sind weiterverwendbar, aber \n
+   !> die Subroutine modella() ist Teil des module ::modell
+   !!
+   !! Die <a href="./exp/MODELLA.txt" target="_blank">MODELLA.txt</a> Dateien für QSim-1D sind weiterverwendbar, aber 
    !! es werden in QSim-3D nur noch die Geologischen Breiten- und Längenkoordinaten daraus gelesen.
-   !! \n\n
+   !!
    !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modella()
       implicit none
-      character (len = 500) :: dateiname, text
-      integer :: open_error, ion, read_error
+      character(500) :: dateiname, text
+      integer        :: open_error, ion, read_error
+      
       write(dateiname,'(2A)')trim(modellverzeichnis),'/MODELLA.txt'
       ion = 103
       open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
       if (open_error /= 0) call qerror('open_error MODELLA.txt')
-      !
+      
       if ( .not. zeile(ion)) call qerror('modella Version nicht da')
       print*,'MODELLA.txt: Version = ', trim(ctext)
       if ( .not. zeile(ion)) call qerror('modellname lesen aus MODELLA.txt fehlgeschlagen')
       print*,'MODELLA.txt: modellname = ', trim(ctext)
-      !
+      
       if ( .not. zeile(ion)) call qerror('modell_geob fehlt in MODELLA.txt')
       read(ctext, *, iostat = read_error) modell_geob, modell_geol
+      
       if (read_error /= 0) then
          write(fehler,*)' modell_geob lesen aus MODELLA.txt fehlgeschlagen ', read_error
          call qerror(fehler)
       else
          print*,'MODELLA.txt: Breitengrad, Längengrad = ',  modell_geob, modell_geol
       endif
-      !
+      
       close (ion)
    end subroutine modella
+   
    !----+-----+----
    !> Dient dem Einlesen der nächsten nicht-#-Kommentar Zeile \n\n
    !! \n\n
