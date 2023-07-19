@@ -1187,23 +1187,15 @@ contains
       endif
       
       ! qusave
-      print*,'script qusave:'
-      write(systemaufruf,'(3A)',iostat = errcode)'which qusave'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing which qusave failed')
-      call system(systemaufruf,sysa)
+      call system('which qusave >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'script qusave, called by QSim not available'
-         print*, 'Input data will not be archived.'
+         print*, 'Script `qusave` is not available. Input data will not be archived.'
       endif
       
       ! quzip
-      print*,'script quzip:'
-      write(systemaufruf,'(3A)',iostat = errcode)'which quzip'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing which quzip failed')
-      call system(systemaufruf,sysa)
+      call system('which quzip  >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'script quzip, called by QSim not available'
-         print*, 'Input data will not be archived.'
+         print*, 'Script `quzip` is not available. Input data will not be archived.'
       endif
       
    end function modell_vollstaendig
