@@ -57,10 +57,9 @@ module modell
    !-------------------------------------------------------------------------------Modell+Netz
    !> modellverzeichnis etc.
    integer , parameter :: longname = 3000
-   character (len = longname) :: pfad, modellverzeichnis, codesource, email,fehler
+   character (len = longname) :: pfad, modellverzeichnis, codesource, fehler
    !character (len=4000) :: progressfile
-   logical :: send_email
-   integer strlaeng
+   integer :: strlaeng
    !> \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer)
    integer  :: kontrollknoten
    !> \anchor control Schalter ob Kontrollausgabe aus Stoffumsatzroutinen heraus erfolgen soll
@@ -1036,7 +1035,7 @@ contains
    !> Prüfen, ob alle notwendigen Dateien im Modellverzeichnis vorliegen.
    logical function modell_vollstaendig()
       implicit none
-      character (len = longname) :: aufrufargument,systemaufruf, emaildatei
+      character (len = longname) :: aufrufargument, systemaufruf
       integer                    :: io_error,sysa, ia, ion, errcode
       logical                    :: zeile_vorhanden
       
@@ -1174,24 +1173,6 @@ contains
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
       endif
-      
-      ! email.txt
-      send_email = .False.
-      write(emaildatei,'(2A)')trim(modellverzeichnis),'email.txt'
-      ion = 101
-      open (unit = ion, file = emaildatei, status = 'old', action = 'read ', iostat = sysa)
-      if (sysa /= 0) then
-         print*,'Ohne Datei email.txt keine Benachrichtigung'
-      else
-         do while ( zeile(ion))
-            if (ctext(1:1) /= '#') then !! keine Kommentarzeile
-               write(email,'(A)')trim(adjustl(ctext))
-               print*,'Über das Programmende werden Sie unter der Emailadresse ',trim(email),' benachrichtigt.'
-               send_email = .True.
-            endif ! keine Kommentarzeile
-         enddo ! alle Zeilen
-         if (.not. send_email)print*,'No data found in email.txt'
-      endif ! Datei lässt sich öffnen
       
       ! alter.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
