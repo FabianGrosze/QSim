@@ -63,16 +63,16 @@
 		<Filter Name="corophium">
 		<File RelativePath="..\metabolism\corophium\corophium.f90"/>
 		<File RelativePath="..\metabolism\corophium\module_corophium.f90"/></Filter>
+		<Filter Name="erosion">
+		<File RelativePath="..\metabolism\erosion\erosion.f90">
+			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
 		<Filter Name="hnf">
 		<File RelativePath="..\metabolism\hnf\hnf.f90"/>
 		<File RelativePath="..\metabolism\hnf\module_hnf.f90"/></Filter>
 		<Filter Name="macrophytes">
 		<File RelativePath="..\metabolism\macrophytes\macrophytes.f90"/>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90"/></Filter>
-		<Filter Name="erosion">
-		<File RelativePath="..\metabolism\erosion\erosion.f90">
-			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
-		<File RelativePath="..\metabolism\erosion\module_erosion.f90"/></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90"/>
@@ -156,7 +156,7 @@
 		<File RelativePath=".\erosion_wrapper_3d.f95"/>
 		<File RelativePath=".\ganglinien.f95"/>
 		<File RelativePath=".\get_schism_step.f95"/>
-		<File RelativePath=".\hnf_wrapper_3d.f90"/>
+		<File RelativePath=".\hnf_wrapper_3d.f95"/>
 		<File RelativePath=".\initialisieren.f95"/>
 		<File RelativePath=".\kombitransi.f95"/>
 		<File RelativePath=".\konsum_huelle.f95"/>
@@ -165,21 +165,20 @@
 		<File RelativePath=".\module_isotope.f95"/>
 		<File RelativePath=".\module_modell.f95"/>
 		<File RelativePath=".\module_QSimDatenfelder.f95"/>
-		<File RelativePath=".\module_salinity.f90"/>
-		<File RelativePath=".\module_suspendedMatter.f90"/>
+		<File RelativePath=".\module_salinity.f95"/>
+		<File RelativePath=".\module_suspendedMatter.f95"/>
 		<File RelativePath=".\nachricht.f95"/>
 		<File RelativePath=".\nitrogen_wrapper_3d.f95"/>
 		<File RelativePath=".\organic_carbon_wrapper_3d.f95"/>
 		<File RelativePath=".\oxygen_wrapper_3d.f95"/>
 		<File RelativePath=".\parallel.f95"/>
-		<File RelativePath=".\ph_wrapper_3d.f90"/>
+		<File RelativePath=".\ph_wrapper_3d.f95"/>
 		<File RelativePath=".\phosphate_wrapper_3d.f95"/>
 		<File RelativePath=".\planktische_variablen.f95"/>
 		<File RelativePath=".\QSim3D.f95"/>
 		<File RelativePath=".\randbedingungen.f95"/>
 		<File RelativePath=".\read_mesh_nc_sc.f95"/>
 		<File RelativePath=".\schnitt.f95"/>
-		<File RelativePath=".\suspended_matter_wrapper_3d.f95"/>
 		<File RelativePath=".\schwebstoff_salz.f95"/>
 		<File RelativePath=".\schwermetalle_huelle.f95"/>
 		<File RelativePath=".\screen_schism_nc.f95"/>
@@ -190,6 +189,7 @@
 		<File RelativePath=".\stofftransport_schism.f95"/>
 		<File RelativePath=".\stofftransport_untrim.f95"/>
 		<File RelativePath=".\stoffumsatz.f95"/>
+		<File RelativePath=".\suspended_matter_wrapper_3d.f95"/>
 		<File RelativePath=".\uebergabe_werte.f95"/>
 		<File RelativePath=".\water_temperature_wrapper_3d.f95"/>
 		<File RelativePath=".\wetter.f95"/>
