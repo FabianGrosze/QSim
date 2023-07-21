@@ -166,7 +166,7 @@
 		<File RelativePath=".\module_modell.f95"/>
 		<File RelativePath=".\module_QSimDatenfelder.f95"/>
 		<File RelativePath=".\module_salinity.f95"/>
-		<File RelativePath=".\module_suspendedMatter.f95"/>
+		<File RelativePath=".\module_suspended_matter.f95"/>
 		<File RelativePath=".\nachricht.f95"/>
 		<File RelativePath=".\nitrogen_wrapper_3d.f95"/>
 		<File RelativePath=".\organic_carbon_wrapper_3d.f95"/>

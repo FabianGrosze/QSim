@@ -968,12 +968,15 @@ end subroutine nvread
 !-----------------------------------------------------------------------
 subroutine check_err(iret)
    implicit none
+   
    integer iret
+   
    include 'netcdf.inc'
-   if (iret /= NF_NOERR) then
-      write(*,*) nf_strerror(iret)
-   endif
+   
+   if (iret /= NF_NOERR) call qerror(trim(nf_strerror(iret)))
+   
    return
+   
 end subroutine check_err
 !-----------------------------------------------------------------------
 subroutine print_attributes( nvar, nAtts)

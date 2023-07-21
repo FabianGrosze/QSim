@@ -56,10 +56,12 @@ end subroutine parallel_ini
 !! \n\n
 !! aus Datei parallel.f95; zurück: \ref lnk_datenstruktur
 subroutine parallel_vorbereiten()
+
    use modell
    use QSimDatenfelder
-   use mod_suspendedMatter, only: init_suspendedMatter
-   use mod_salinity, only: init_salinity
+   use module_suspended_matter, only: init_suspended_matter
+   use module_salinity        , only: init_salinity
+   
    !!!###    use schism_msgp, only: myrank,parallel_abort !,nproc
    implicit none
    integer kontroll_lokal
@@ -86,15 +88,18 @@ subroutine parallel_vorbereiten()
    !print*,meinrang," randbedingungen_parallel() ... danach"
    call mpi_barrier (mpi_komm_welt, ierr)
    
-   ! initialize SPM (and salinity)
-   call init_salinity
+   ! initialize SPM
    if (iEros>=0) then
       call schwebstoff_salz_parallel()
       !print*,meinrang," schwebstoff_salz_parallel() ... danach"
       call mpi_barrier (mpi_komm_welt, ierr)
    else
-      call init_suspendedMatter
+      ! SPM will be read from hydrodynamics file
+      call init_suspended_matter
    endif
+   
+   ! initialize salinity (will be read from hydrodynamics file)
+   call init_salinity
    
    call alter_parallel()
    !print*,meinrang," alter_parallel() ... danach"
