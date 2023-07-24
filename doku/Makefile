@@ -24,6 +24,7 @@ help:
 	@echo "make put_add ==  collect additional content into qsim_doku_additional.zip and copy to $(ADDITIONAL)"
 	@echo "make offline ==  produce stand-alone Version in ./qsim_doku_offline.zip"
 	@echo "make all     ==  compile, achive and install ; including upload of newly made offline Version and additional Material (slow)"
+	@echo "detailed instructions: https://gitlab.lan.bafg.de/qsim/qsim/-/wikis/Dokuportal"
 
 all: clean check date offline doc save insta
 
