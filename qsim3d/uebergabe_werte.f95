@@ -24,115 +24,98 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!----------------------------------------------------------------------------------------- uebergabekonzentrationen
-!----+-----+----
-!> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
-!! .... to be done\n
+
+!> Verteilen der Datenstrukturen auf die parallelen Prozesse
 subroutine ueber_parallel()
    use modell
    use QSimDatenfelder
    use module_aparam
    implicit none
    integer :: allostat
+
    call MPI_Bcast(number_trans_quant_points,1,MPI_INT,0,mpi_komm_welt,ierr)
-   !      print*,meinrang,' ueber_parallel, number_trans_quant_points,number_trans_quant='  &
-   !     &      ,number_trans_quant_points,number_trans_quant
    call broadcast_parameter()
-   !      print*,meinrang,' broadcast_parameter'
-   allocate (transfer_quantity_p(number_trans_quant*part), stat = allostat )
+   allocate (transfer_quantity_p(number_trans_quant*part), stat = allostat)
    if (allostat /= 0) then
-      write(fehler,*)' Rueckgabewert   von   allocate transfer_quantity_p :', allostat
+      write(fehler, "(a,i0)") 'allocate(transfer_quantity_p()) returned: ', allostat
       call qerror(fehler)
    endif
-   !      print*,meinrang,'allocate (transfer_quantity_p    number_trans_quant,number_trans_quant_points,part=' &
-   !     &      ,number_trans_quant,part
-   allocate (trans_quant_vert_p(number_trans_quant_vert*part*num_lev_trans), stat = allostat )
+   allocate (trans_quant_vert_p(number_trans_quant_vert*part*num_lev_trans), stat = allostat)
    if (allostat /= 0) then
-      write(fehler,*)' allocate (trans_quant_vert_p failed :', allostat
+      write(fehler,"(a,i0)")' allocate (trans_quant_vert_p failed :', allostat
       call qerror(fehler)
    endif
-   !      print*,meinrang,' allocate (trans_quant_vert_p  -  number_trans_quant_vert,num_lev_trans,part'  &
-   !     &      ,number_trans_quant_vert,num_lev_trans,part
-   !call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,' ueber_parallel vor scatter_ueber'
    call scatter_ueber()
-   !call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,' ueber_parallel nach scatter_ueber'
    return
 end subroutine ueber_parallel
+
 !----+-----+----
-!> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
-!! .... to be done\n
+!> Verteilen der Datenstrukturen auf die parallelen Prozesse
 subroutine scatter_ueber()
    use modell
    implicit none
+
    call MPI_Bcast(transfer_value_p,number_trans_val,MPI_FLOAT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
-      write(fehler,*)' MPI_Bcast(transfer_value_p failed :',ierr
+      write(fehler,"(a,i0)")' MPI_Bcast(transfer_value_p failed :',ierr
       call qerror(fehler)
    endif
    call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,'scatter_ueber: MPI_Bcast(transfer_value_p,  number_trans_val,part=',number_trans_val,part
-   !call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,"size(transfer_quantity_p)=",size(transfer_quantity_p)
-   !call mpi_barrier (mpi_komm_welt, ierr)
-   !if(meinrang.eq.0)print*,"size(transfer_quantity)=",size(transfer_quantity)
-   !call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Scatter(transfer_quantity, part*number_trans_quant, MPI_FLOAT,  &
                     transfer_quantity_p, part*number_trans_quant, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
-      write(fehler,*)' MPI_Scatter(transfer_quantity failed :',ierr
+      write(fehler,"(a,i0)")' MPI_Scatter(transfer_quantity failed :',ierr
       call qerror(fehler)
    endif
    call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,' scatter_ueber nach MPI_Scatter(transfer_quantity'
    call MPI_Scatter(trans_quant_vert, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT,  &
                     trans_quant_vert_p, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
-      write(fehler,*)' MPI_Scatter(trans_quant_vert failed :', ierr
+      write(fehler,"(a,i0)")' MPI_Scatter(trans_quant_vert failed :', ierr
       call qerror(fehler)
    endif
-   !      print*,meinrang,'scatter_ueber: MPI_Scatter(trans_quant_vert,ierr,number_trans_quant_vert,part,num_lev_trans'  &
-   !     &      ,ierr,number_trans_quant_vert,part,num_lev_trans
    call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang,' scatter_ueber nach MPI_Scatter(trans_quant_vert,'
    return
 end subroutine scatter_ueber
+
 !----+-----+----
-!> <h1>wieder-einsammeln der Datenstrukturen von den parallelen Prozesse</h1>
-!! \n
+!> wieder-einsammeln der Datenstrukturen von den parallelen Prozesse
 subroutine gather_ueber()
    use modell
    implicit none
+   
    integer :: i
+   
    call MPI_Gather(transfer_quantity_p, part*number_trans_quant, MPI_FLOAT,  &
                    transfer_quantity, part*number_trans_quant, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
-      write(fehler,*)' MPI_Gather(transfer_quantity failed :', ierr
+      write(fehler,"(a,i0)")' MPI_Gather(transfer_quantity failed :', ierr
       call qerror(fehler)
    endif
+   
    call MPI_Gather(trans_quant_vert_p, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT,  &
                    trans_quant_vert, number_trans_quant_vert*part*num_lev_trans, MPI_FLOAT, 0,mpi_komm_welt, ierr)
    if (ierr /= 0) then
-      write(fehler,*)' MPI_Gather(trans_quant_vert failed :', ierr
+      write(fehler,"(a,i0)") ' MPI_Gather(trans_quant_vert failed :', ierr
       call qerror(fehler)
    endif
    return
 end subroutine gather_ueber
+
 !----+-----+----
 !> Initialisierung der nicht-transportierten Übergabe-Konzentrationen und Werte.
-!! \n\n
 subroutine ini_ueber(nk)
    use modell
    implicit none
-   integer nk,i,n,as,j,l,k
+   
+   integer, intent(in) :: nk
+   integer :: i, n, as, j, l, k
+   
    if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
-      !--------------------------------------------- Übergabe Konzentrationen
+   
+      ! Übergabe Konzentrationen
       number_trans_quant_points = nk
-      if (num_lev_trans /= num_lev) then
-         write(fehler,*)'Anzahl der Levels num_lev_trans und num_lev(planktonic) müssen gleich sein',num_lev_trans,num_lev
-         call qerror(fehler)
-      endif
+      if (num_lev_trans /= num_lev) call qerror("`num_lev_trans` does not equal `num_lev`")
       
       
       ! --- single (global) transfer values ---
@@ -154,17 +137,11 @@ subroutine ini_ueber(nk)
       trans_val_name( 8) = "            saettg"
       trans_val_name( 9) = "            saettb"
       trans_val_name(10) = "              it_h" ! Anzahl der Zeitschritte während der Hellphase
-      !algae_huelle.f95:      saettg = transfer_value_p(8)    ! ???
-      !algae_huelle.f95:      saettb = transfer_value_p(9)    ! ???
-      !trans_val_name()= "               " !
       
       trans_val_name = adjustl(trans_val_name)
       
       ! values
-      ! transfer_value_p(6)=     ! saettk  [Rückgabewert Algen]
       transfer_value_p(7) = 1.25 ! Schiffseinfluss  [qsim.f90: tauscs = 1.25]
-      ! transfer_value_p(8)=     ! saettg
-      ! transfer_value_p(9)=     ! saettb 
       
       
       ! --- depth averaged quantities ---
@@ -275,28 +252,20 @@ subroutine ini_ueber(nk)
       trans_quant_name = adjustl(trans_quant_name)
       
       ! allocate transfer_quantity and initialise
-      !!! allocate (transfer_quantity(number_trans_quant*number_trans_quant_points), stat = as )
-      print*,"ini_ueber allocate (transfer_quantity part*proz_anz = ",part*proz_anz,part,proz_anz
-      allocate (transfer_quantity(number_trans_quant*part*proz_anz), stat = as )
+      ! all concentrations are initialized as 0.0
+      allocate (transfer_quantity(number_trans_quant*part*proz_anz), source = 0.0,  stat = as )
       if (as /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate transfer_quantity :', as
+         write(fehler,"(a,i0)") 'allocate transfer_quantity returned:', as
          call qerror(fehler)
       endif
-      print*,meinrang,'allocate (transfer_quantity(    number_trans_quant,number_trans_quant_points = ' &
-            ,number_trans_quant,number_trans_quant_points
       
-      ! Initialising all concentrationen as 0.0
-      do i = 1,number_trans_quant_points
-         do j = 1,number_trans_quant 
-            transfer_quantity(j+(i-1)*number_trans_quant) = 0.0 
-         enddo
-      enddo
+      print*,            "allocated `transfer_quantity` with these dimensions:"
+      print "(3x,3(a,i0))", "part*proz_anz = ", part*proz_anz, ", part = ", part, ", proz_anz = ", proz_anz
       
       ! Initailize as no output
       do j = 1,number_trans_quant
          output_trans_quant(j) = .false.
       enddo
-      
       
       !--------vertically distributed quantities
       do j = 1,number_trans_quant_vert ! initialise
@@ -333,38 +302,34 @@ subroutine ini_ueber(nk)
       
       trans_quant_vert_name = adjustl(trans_quant_vert_name)
       
-      allocate (trans_quant_vert(part*proz_anz*number_trans_quant_vert*num_lev_trans), stat = as )
-      !allocate (trans_quant_vert(number_trans_quant*number_trans_quant_points*num_lev_trans), stat = as )
+      allocate(trans_quant_vert(part*proz_anz*number_trans_quant_vert*num_lev_trans), source = 0.0, stat = as)
+      
       if (as /= 0) then
          write(fehler,*)' allocate (trans_quant_vert failed :', as
          call qerror(fehler)
       endif
-      do i = 1,number_trans_quant_points
-         do j = 1,number_trans_quant_vert
-            do k = 1,num_lev_trans
-               trans_quant_vert(k+(j-1)*num_lev_trans+(i-1)*number_trans_quant_vert*num_lev_trans) = 0.0 !!!####!0.0 ! initialisierung aller konzentrationen zunächt auf Null
-            enddo ! alle k levels
-         enddo ! alle j quantities
-         !do k=1,num_lev_trans
-         !   trans_quant_vert(k+(1-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert)=7.7 ! up_NKz probehalber
-         !enddo ! alle k levels
-      enddo ! alle i Knoten
-      do j = 1,number_trans_quant_vert ! default: no output
+      
+      do j = 1,number_trans_quant_vert 
+         ! default: no output
          output_trans_quant_vert(j) = .false.
       enddo
-   endif !! nur prozessor 0
+   endif
    
    ! make names available to all processes (e.g. for logging)
    call mpi_barrier(mpi_komm_welt, ierr)
+   
    do k = 1,number_trans_val
       call mpi_bcast(trans_val_name(k)       , len(trans_val_name(k))       , MPI_CHAR, 0, mpi_komm_welt, ierr)
    enddo
+   
    do k = 1,number_trans_quant
       call mpi_bcast(trans_quant_name(k)     , len(trans_quant_name(k))     , MPI_CHAR, 0, mpi_komm_welt, ierr)
    enddo
+   
    do k = 1,number_trans_quant_vert
       call mpi_bcast(trans_quant_vert_name(k), len(trans_quant_vert_name(k)), MPI_CHAR, 0, mpi_komm_welt, ierr)
    enddo
+   
    call mpi_barrier(mpi_komm_welt, ierr)
    
 end subroutine ini_ueber
@@ -375,7 +340,8 @@ subroutine broadcast_parameter()
    use QSimDatenfelder
    use module_aparam
    implicit none
-   !----------------------------------------------------------------- APARAM.txt
+   
+   ! APARAM.txt
    call MPI_Bcast(agchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(aggmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(IKge,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
@@ -484,15 +450,15 @@ subroutine broadcast_parameter()
    call MPI_Bcast(xnuec,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(ratecg,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(ratecs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   !-----------------------------------------------------------------weitere (ini_algae)
+   
+   ! weitere (ini_algae)
    call MPI_Bcast(a1Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(a1Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(a1Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
 
-   !-----------------------------------------------------------------weitere (orgc_start)
+   !  weitere (orgc_start)
    call MPI_Bcast(TOC_CSB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
    call MPI_Bcast(bsbZoo,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   !-----------------------------------------------------------------weitere (naehr2_start)
    
    return
 end subroutine broadcast_parameter

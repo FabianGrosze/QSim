@@ -25,57 +25,64 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 !> subroutine eingabe()
-!! bewerkstelligt das Einlesen vom \ref lnk_datenmodell. \n
+!! bewerkstelligt das Einlesen vom \ref lnk_datenmodell.
+!!
 !! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellerstellung
-
-subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
-   !
+subroutine eingabe() ! arbeite nur auf Prozessor 0 
+   
    use modell
    use QSimDatenfelder
    use module_aparam
    
    implicit none
-   integer :: i, j, n, n_cal
-   logical :: vorhanden, only, querschnitt_lesen
-   integer mtag, mmonat ,mjahr
-   real :: muhrzeit_stunde
-   integer , allocatable , dimension (:) :: randzaehl
-   logical , allocatable , dimension (:) :: randda
-   !print*,'eingabe() startet'
-   only = .false.
+   
+   integer                             :: i, j, n, n_cal
+   integer                             :: mtag, mmonat ,mjahr
+   integer, allocatable , dimension(:) :: randzaehl
+   logical                             :: vorhanden, querschnitt_lesen
+   real                                :: muhrzeit_stunde
+   logical, allocatable , dimension(:) :: randda
+   
+   
    select case (hydro_trieb)
       case(1) ! casu-transinfo
-         if (meinrang == 0) then ! prozess 0 only
+         if (meinrang == 0) then
             call netz_lesen() ! Lage der Knoten, Zonen, Randnummern und Vermaschung einlesen
             ! Konzentrationen anlegen und initialisieren:
             n_cal = knotenanzahl2D
          endif ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+      
       case(2) ! Untrim² netCDF
-         if (meinrang == 0) then ! prozess 0 only
+         if (meinrang == 0) then 
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
             call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
             n_cal = n_elemente
             print*,'Untrim netCDF read mesh'
-         endif ! only prozessor 0
+         endif 
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
+      
       case(3) ! SCHISM netCDF
-         !!!### call read_mesh_nc_sc()
+         ! call read_mesh_nc_sc()
          n_cal = n_elemente !!??
          n_cal = knotenanzahl2D
-         if (meinrang == 0)print*,'got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?????????########'
-         case default
+         if (meinrang == 0) print*,'got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?????????########'
+      
+      case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
    end select
+   
    ! partitioning of variable arrays
-   part = n_cal/proz_anz
-   n = part*proz_anz
-   !print*,'ini_par knotenanzahl=', nk,' proz_anz=', proz_anz, ' part=', part, ' part*proz_anz=', n
-   if (n < n_cal)part = part+1
-   print*,'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
+   part = n_cal / proz_anz
+   n = part * proz_anz
+   if (n < n_cal) part = part+1
+   
+   print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
                   ," modell_parallel() n_cal = ", n_cal
+   print*, ""
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)
@@ -84,10 +91,11 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
    if (meinrang == 0) then ! only prozessor 0
       call ausgabekonzentrationen_beispiel()
       if (kontrollknoten == 0) then
-         print*,"### special option #### only writing output variable list ausgabekonzentrationen_beispiel.txt"
-         call qerror('modeverz: control node = 0  ### special option #### (error is regular exit)')
+         print*,"special option: only writing output variable list ausgabekonzentrationen_beispiel.txt"
+         call qerror('modeverz: control node = 0 - special option (error is regular exit)')
       endif
    endif ! only prozessor 0
+   
    call mpi_barrier (mpi_komm_welt, ierr)
    call show_mesh()
    call ini_zeit() ! initialise time preliminary to reference-year
@@ -98,12 +106,15 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
             call transinfo_sichten()      ! Transportinformationen sichten:
          endif ! only prozessor 0
          call mpi_barrier (mpi_komm_welt, ierr)
+      
       case(2) ! Untrim² netCDF
          call nc_sichten()
+      
       case(3) ! SCHISM netCDF
          !!call screen_schism_nc()
-         case default
-         call qerror('Hydraulischer Antrieb unbekannt; sichten')
+      
+      case default
+         call qerror('Unknown hydrodynamical driver.')
    end select
    
    !#FG: reading model settings here to ensure iEros is known (required for SS from file)
@@ -117,9 +128,9 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call ereigg_modell() ! read time-stepping information at first
       call ereigg_Randbedingungen_lesen() ! next read BC-development
+     
       ! read global model-parameters now in module ::uebergabe_werte
-      write(cpfad,*,iostat = ierr)trim(adjustl(modellverzeichnis))
-      if (ierr /= 0) call qerror('eingabe: write(cpfad went wrong')
+      cpfad = trim(adjustl(modellverzeichnis))
       
       call read_aparam(cpfad, iwsim, icoli, ischwer)
       call extnct_lesen()
@@ -127,7 +138,6 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
       call wetter_readallo0()
-      print*,"wetter_readallo0() gemacht"
       call ganglinien_lesen()
       querschneiden = querschnitt_lesen()
       if (querschneiden) then
@@ -141,110 +151,97 @@ subroutine eingabe()   !!!! arbeite nur auf Prozessor 0 !!!!
       !! Daten für die Aufenthaltszeitberrechnung von Datei alter.txt lesen
       if (nur_alter) call alter_lesen()
    endif ! only prozessor 0
+   
    call aparam_parallel()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
-   222 format (A,'rechenzeit = ',I15,' Temperatur_Wasser = ',F8.3,' Temperatur_Sediment = ',F8.3)
+   
 end subroutine eingabe
+
 !----+-----+----
-!> die Subroutine ereigg_modell()\n
-!! Die <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> Dateien für QSim sind weiterverwendbar,\n
-!! hier wird zunächst nur die Zeitsteuerung (Anfang, Ende, Zeitschrittweite) daraus gelesen. \n
-!! Die SUBROUTINE ereigg_Randbedingungen_lesen() entnimmt dann die Rand-Werte aus der Datei \n
-!! \n\n
+!! Die <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> Dateien für QSim sind weiterverwendbar,
+!! hier wird zunächst nur die Zeitsteuerung (Anfang, Ende, Zeitschrittweite) daraus gelesen.
+!! Die SUBROUTINE ereigg_Randbedingungen_lesen() entnimmt dann die Rand-Werte aus der Datei 
+!! 
 !! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellerstellung
 subroutine ereigg_modell()
    use modell
    use QSimDatenfelder
    implicit none
-   character (len = 500) :: dateiname
-   integer :: open_error, ion, read_error
-   real :: dt_min, tictac
-   !      real :: lesezeit
-   write(dateiname,'(2A)')trim(modellverzeichnis),'/EREIGG.txt'
+   
+   character(500) :: dateiname
+   integer        :: open_error, ion, read_error
+   real           :: dt_min, tictac
+   
+   dateiname = trim(modellverzeichnis) // '/EREIGG.txt'
    ion = 92
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error EREIGG.txt ... Datei vorhanden?'
-      call qerror(fehler)
-   endif ! open_error.ne.0
+   open(unit = ion, file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open EreigG.txt")
    rewind (ion)
-   !
+   
    if ( .not. zeile(ion)) call qerror('ereigg_modell 1 read_error /= 0')
    print*,'EREIGG Version: ', trim(ctext)
    if ( .not. zeile(ion)) call qerror('ereigg_modell 2 read_error /= 0')
    print*,'EREIGG Modell: ', trim(ctext)
    if ( .not. zeile(ion)) call qerror('ereigg_modell 3 read_error /= 0')
    print*,'EREIGG Ereignis: ', trim(ctext)
-   !
+   
    if ( .not. zeile(ion)) call qerror('Zeile 3 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde ! itags,monats,jahrs,uhrs
-   !if(read_error.ne.0) call qerror('read_error in Zeile 3 von EREIGG.txt; Anfangszeitpunkt der Berechnung')
-   !tictac=int(uhrzeit_stunde)+((uhrzeit_stunde-int(uhrzeit_stunde))/0.6) ! Umrechnung stunde.minute in dezimal-stunden
-   !print*,"gelesen start:", tag, monat, jahr, uhrzeit_stunde,int(uhrzeit_stunde),uhrzeit_stunde-int(uhrzeit_stunde),tictac
-   !uhrzeit_stunde = tictac
    call sekundenzeit(2)
+   
    startzeitpunkt = zeitpunkt
    itags = tag
    monats = monat
    jahrs = jahr
    uhrs = uhrzeit_stunde
    print*,'EREIGG.txt, Berechnungsbeginn: tag,monat,jahr, Uhrzeit, Startzeitpunkt' &
-   , itags, monats, jahrs, uhrs, startzeitpunkt
-   !
+         , itags, monats, jahrs, uhrs, startzeitpunkt
+   
    if ( .not. zeile(ion)) call qerror('Zeile 4 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde, dt_min ! itage,monate,jahre,uhren,izdt
    if (read_error /= 0) call qerror('read_error in Zeile 4 von EREIGG.txt; Endzeitpunkt der Berechnung')
-   !print*,"gelesen ende:", tag, monat, jahr, uhrzeit_stunde,int(uhrzeit_stunde),uhrzeit_stunde-int(uhrzeit_stunde)
-   !uhrzeit_stunde = int(uhrzeit_stunde)+((uhrzeit_stunde-int(uhrzeit_stunde))/0.6) ! Umrechnung stunde.minute in dezimal-stunden
    call sekundenzeit(2)
+   
    endzeitpunkt = zeitpunkt
    itage = tag
    monate = monat
    jahre = jahr
    uhren = uhrzeit_stunde
+   
    print*,'EREIGG.txt,   Berechnungsende: tag,monat,jahr, Uhrzeit, Endzeitpunkt' &
-   , itage, monate, jahre, uhren, endzeitpunkt
+         , itage, monate, jahre, uhren, endzeitpunkt
    deltat = int(dt_min*60)
-   if (deltat <= 0) then
-      write(fehler,*)'ereigg_modell: zeitschrittweite = ',deltat,' , und das ist falsch!'
-      call qerror(fehler)
-   endif ! zeitschrittweite deltat ist falsch
+   if (deltat <= 0) call qerror("Timestep given in EreigG.txt is negativ.")
+   
    if (abs(real(deltat)-(dt_min*60)) > 0.01) then
       write(fehler,*)'ereigg_modell: angegebene zeitschrittweite = ',dt_min,' minuten d.h.',(dt_min*60)  &
                     ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
       call qerror(fehler)
    endif ! Zeitschritt als ganze sekunden
+   
    zeitschrittanzahl = (endzeitpunkt-startzeitpunkt)/(deltat)
    print*,'zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat = ',zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat
-   if (zeitschrittanzahl <= 0) then
-      print*,'WARNUNG zeitschrittanzahl = ',zeitschrittanzahl,' , wollen Sie das wirklich ????'
-      !! zeitschrittanzahl=null durchlaufen lassen, um Initialisierung ausgeben zu können
-      if (zeitschrittanzahl < 0) then !! nur abbrechen wenn unter null.
-         call qerror('zeitschrittanzahl < 0')
-      endif ! zeitschrittanzahl.lt.0
-   endif ! zeitschrittanzahl.le.0
-   !if(hydro_trieb.eq. 3)then !## preliminary SCHISM all hydro steps
-   !   deltat=dttrans
-   !   startzeitpunkt=transinfo_zeit(transinfo_zuord(1))
-   !   endzeitpunkt  =transinfo_zeit(transinfo_zuord(transinfo_anzahl))
-   !   zeitschrittanzahl=(endzeitpunkt-startzeitpunkt)/deltat
-   !   print*,'##preliminary## all ',zeitschrittanzahl,' SCHISM steps ',startzeitpunkt,' until ',endzeitpunkt,' deltat=',deltat
-   !endif !SCHISM
-   print*,"hydro_trieb = ",hydro_trieb      !case(2) ! Untrim² netCDF
+   
+   if (zeitschrittanzahl < 0) call qerror('zeitschrittanzahl < 0')
+      
+   print*,"hydro_trieb = ", hydro_trieb      !case(2) ! Untrim² netCDF
    
    print*,'transinfo_zeit,Anfang+Ende = ',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
+   
    if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
       print*,"startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1) = "
       print*,startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1)
       call qerror('### Abbruch ### zum startzeitpunkt liegen noch keine Transportinformationen vor')
    endif !wrong start time
-   if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl)))  &
-       call qerror('### Abbruch ### zum endzeitpunkt liegen keine Transportinformationen mehr vor')
+   
+   if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+       call qerror('zum endzeitpunkt liegen keine Transportinformationen mehr vor')
+   endif
    print*,'EREIGG.txt, Berechnungs-Zeitraum von ',startzeitpunkt,' bis ', endzeitpunkt  &
-   ,' mit zeitschrittweite ',deltat  &
-   ,' liegt innerhalb des Zeitraums ',transinfo_zeit(transinfo_zuord(1)),' bis '  &
-   ,transinfo_zeit(transinfo_zuord(transinfo_anzahl)),', in dem Transportinformationen vorliegen.'
+         ,' mit zeitschrittweite ',deltat  &
+         ,' liegt innerhalb des Zeitraums ',transinfo_zeit(transinfo_zuord(1)),' bis '  &
+         ,transinfo_zeit(transinfo_zuord(transinfo_anzahl)),', in dem Transportinformationen vorliegen.'
    rechenzeit = startzeitpunkt
    if ( .not. zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
    read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
