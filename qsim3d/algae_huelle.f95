@@ -425,7 +425,7 @@ subroutine algae_huelle(i)
    
    call algaeski(schwi, tflie, tempw, tempwz, rau, tiefe, vmitt, vno3, vnh4,   &
                  gelp, svhemk, svhemb, svhemg, chla, si, dalgki, dalgak, flag, &
-                 elen, anze, sedalk, algzok, echla, qeinl, vabfl, dkimor,      &
+                 anze, sedalk, algzok, echla, qeinl, vabfl, dkimor,            &
                  jiein, evkigr, vkigr, antbl, eantbl, saettk, akbcm, abbcm,    &
                  agbcm, aki, abl, agr, extk, extk_lamda, ilamda, eta, aw, ack, &
                  acg, acb, ah, as, al, sised, tpki, iwied, akmuea, ftaaus,     &
