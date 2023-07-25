@@ -28,8 +28,8 @@
 !> Define version.
 subroutine version_string(versionstext)
    implicit none
-   character(len=8), intent(out) :: versionstext !< current version number
+   character(8), intent(out) :: versionstext !< current version number
    
-   versionstext = '14.09.35'
+   versionstext = '14.09.36'
    return
 end subroutine version_string
