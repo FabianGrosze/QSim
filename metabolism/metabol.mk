@@ -6,6 +6,7 @@
 
 META= ../metabolism/module_alloc_dimensions.o \
 	../metabolism/module_aparam.o \
+	../metabolism/module_datetime.o \
 	../metabolism/coliform_bacteria/module_coliform_bacteria.o \
     ../metabolism/erosion/module_erosion.o \
 	../metabolism/organic_carbon/module_organic_carbon.o \
