@@ -121,7 +121,7 @@ module modell
    
    
    character(200) :: time_offset_string
-   integer        :: rechenzeit            !> \anchor rechenzeit aktuelle rechenzeit in ganzen Sekunden
+   integer(int64) :: rechenzeit            !> \anchor rechenzeit current time of running simulation in unixtime
    integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
    integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
    integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
@@ -483,16 +483,16 @@ module modell
    ! ausgabe_datenfelder
    !---------------------------------------------------------------------------
    ! Beschreibung in ausgabe.f95
-   logical                                    :: bali
-   integer                                    :: knotenanzahl_ausgabe      !< Knotenanzahl
-   integer                                    :: anzahl_auskonz            !< Anzahl der insgesamt vorhandenen Übergabe-Konzentrationens
-   integer                                    :: n_ausgabe                 !< Ausgabezeitpunkte
-   integer                                    :: k_ausgabe                 !< output-concentrations
-   integer,       allocatable, dimension(:)   :: ausgabe_zeitpunkt
-   integer,       allocatable, dimension(:)   :: ausgabe_bahnlinie
-   integer,       allocatable, dimension(:)   :: ausgabe_konz
-   real,          allocatable, dimension(:,:) :: ausgabe_konzentration     !< Datenfeld für alle Feldgrößen,die in QSim nur zwischen den Modulen übergeben werden.
-   character(18), allocatable, dimension(:)   :: ausgabeKonzentrationsName !< Namen der Transportkonzentrationen für Ausgabe
+   logical                                     :: bali
+   integer                                     :: knotenanzahl_ausgabe      !< Knotenanzahl
+   integer                                     :: anzahl_auskonz            !< Anzahl der insgesamt vorhandenen Übergabe-Konzentrationens
+   integer                                     :: n_output                  !< number of output times
+   integer                                     :: k_ausgabe                 !< output-concentrations
+   integer(int64), allocatable, dimension(:)   :: ausgabe_zeitpunkt         !< output times in unixtime
+   integer,        allocatable, dimension(:)   :: ausgabe_bahnlinie
+   integer,        allocatable, dimension(:)   :: ausgabe_konz
+   real,           allocatable, dimension(:,:) :: ausgabe_konzentration     !< Datenfeld für alle Feldgrößen,die in QSim nur zwischen den Modulen übergeben werden.
+   character(18),  allocatable, dimension(:)   :: ausgabeKonzentrationsName !< Namen der Transportkonzentrationen für Ausgabe
    
    ! -------------------------------------------------------------------------
    ! ganglinien_datenfelder
@@ -820,11 +820,8 @@ contains
       tag = 0
       zeitpunkt = zeitpunkt + time_offset
       tage = int(zeitpunkt/86400)
-      if ((tage >= 7*1461) .or. (tage < 0)) then
-         write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
-              ,zeitpunkt,tage,referenzjahr
-         call qerror(fehler)
-      endif
+      
+      
       uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
       stunde = (zeitpunkt-(tage*86400))/3600
       minute = (zeitpunkt-(tage*86400)-(stunde*3600))/60

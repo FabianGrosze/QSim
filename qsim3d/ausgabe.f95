@@ -383,96 +383,111 @@ subroutine ausgabekonzentrationen_beispiel()
    close (104)
    return
 end subroutine ausgabekonzentrationen_beispiel
-!----+-----+----
-!> Die suboutine ausgabezeitpunkte() ließt Datei ausgabezeitpunkte.txt und schreibt Feld ausgabe_zeitpunkt
-!! \n\n
+
+
+!> Read file `ausgabezeitpunkte.txt` 
+!!
+!! Datetime defined in `ausgabezeitpunkte.txt` are stored in variable 
+!! `ausgabe_zeitpunkt`.
 subroutine ausgabezeitpunkte()
    use modell
+   use module_datetime
    implicit none
-   integer :: n, ion, open_error, io_error, alloc_status, nba
-   character (len = 200) :: dateiname
-   !integer :: n_ausgabe
-   !integer , allocatable , dimension (:) :: ausgabe_punkt
-   write(dateiname,'(2A)')trim(modellverzeichnis),'ausgabezeitpunkte.txt'
-   ion = 103
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0) then
-      print*,'keine Ausgabezeitpunkte, open_error = ',open_error
-      n_ausgabe = 0
-      close (ion)
-      return
-   endif ! open_error.ne.0
+   
+   integer        :: n, u_out, open_error, io_error, nba
+   integer        :: day, month, year, hour, second
+   character(200) :: filename
+   type(datetime), dimension(:), allocatable :: datetime_output
+   
+   
+   filename = trim(modellverzeichnis) // 'ausgabezeitpunkte.txt'
+   u_out = 103
+   open(newunit = u_out , file = filename, status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror ("could not open " // trim(filename))
+   
+   
+   ! determine number of output times
+   n_output = 0
+   do while (zeile(u_out))
+      ! commented lines ('#') are skipped
+      if (ctext(1:1) /= '#') then
+         n_output = n_output + 1
+         read(ctext,*, iostat = io_error) day, month, year, hour, minute, second
+         if (io_error /= 0) call qerror("error while reading " // trim(filename))
+      endif 
+   enddo 
+   
+   allocate(ausgabe_zeitpunkt(n_output))
+   allocate(ausgabe_bahnlinie(n_output))
+   allocate(datetime_output(n_output))
+
+   
+   ! --- read dates for output ---
+   rewind(u_out)
    n = 0
-   do while ( zeile(ion))
-      if (ctext(1:1) /= '#') then ! keine Kommentarzeile
-         !print*,'1 ',trim(ctext)
-         n = n+1
-         read(ctext,*, iostat = io_error)tag, monat, jahr, stunde, minute, sekunde !, uhrzeit_stunde
-         if (io_error /= 0) then
-            print*,'unlesbare Angabe in ausgabezeitpunkte.txt'
-            write(fehler,*)trim(ctext)
-            call qerror(fehler)
-         endif ! io_error.ne.0
-         !call sekundenzeit()
-      endif ! keine Kommentarzeile
-   enddo ! zeile
-   n_ausgabe = n
-   print*,n_ausgabe,' Ausgabezeitpunkte'
-   allocate (ausgabe_zeitpunkt(n_ausgabe), stat = alloc_status )
-   allocate (ausgabe_bahnlinie(n_ausgabe), stat = alloc_status )
-   rewind (ion)
-   n = 0
-   do while ( zeile(ion))
-      if (ctext(1:1) /= '#') then ! keine Kommentarzeile
-         !print*,'2 ',trim(ctext)
-         n = n+1
-         read(ctext,*, iostat = io_error)tag, monat, jahr, stunde, minute, sekunde !, uhrzeit_stunde
-         print*,"ausgabezeitpunkt = ",tag, monat, jahr, stunde, minute, sekunde
-         call sekundenzeit(1)
-         !call zeitsekunde() !! damit auch die Uhrzeit stimmt
-         ausgabe_zeitpunkt(n) = zeitpunkt
-         print*,'Ausgabezeitpunkt ',n,' Datum: ', tag, monat, jahr,' ; Uhrzeit', stunde, minute, sekunde,  &
-         ' uhrzeit_stunde = ',uhrzeit_stunde,  &
-         'Stunden |  ergibt: ',zeitpunkt,' Sekunden seit ', trim(time_offset_string)
-         if (zeitpunkt < startzeitpunkt)print*,'### keine Ausgabe ### liegt vor dem startzeitpunkt. \n'
-         if (zeitpunkt > endzeitpunkt)print*,'### keine Ausgabe ### liegt nach dem endzeitpunkt. \n'
-         read(ctext,*, iostat = io_error)tag, monat, jahr, stunde, minute, sekunde, nba
+   do while (zeile(u_out))
+      if (ctext(1:1) /= '#') then ! keine kommentarzeile
+         n = n + 1
+         read(ctext,*) day, month, year, hour, minute, second
+         
+         datetime_output(n) = datetime(year, month, day, hour, minute, tz = tz_qsim)
+         ausgabe_zeitpunkt(n) = datetime_output(n) % seconds_since_epoch()
+         
+         ! check for trajectory output
+         read(ctext,*, iostat = io_error) day, month, year, hour, minute, second, nba
          if (io_error == 0) then
             ausgabe_bahnlinie(n) = nba
-            print*,'mit Bahnlinienausgabe ',ausgabe_bahnlinie(n)
          else
             ausgabe_bahnlinie(n) = 0
-         endif ! io_error.ne.0
-      endif ! keine Kommentarzeile
-   enddo ! zeile
-   close (ion)
-   return
+         endif 
+      endif 
+   enddo 
+   close (u_out)
+   
+   
+   ! --- print summary to console ---
+   print* 
+   print "(a)", repeat("-", 80)
+   print "(a)", "output settings"
+   print "(a)", repeat("-", 80)
+   
+   print "(a,i0)",  "n_output = ", n_output
+   print "(3a,i0)", "first output = ", datetime_output(1) % date_string(),        " | ",  ausgabe_zeitpunkt(1) 
+   print "(3a,i0)", "last output =  ", datetime_output(n_output) % date_string(), " | ",  ausgabe_zeitpunkt(n_output) 
+   
+   if (any(ausgabe_zeitpunkt < startzeitpunkt .or. ausgabe_zeitpunkt > endzeitpunkt)) then
+      print*
+      print "(a)", "note:"
+      print "(a)", "  some output dates are outside of the simulated timeperiod and will "
+      print "(a)", "  not be included in the model results."
+   
+   endif
+   
 end subroutine ausgabezeitpunkte
-!-----+-----+-----+-----+
+
 !> true if output required now
-!! \n\n
 subroutine ausgeben_parallel()
    use modell
    implicit none
    integer :: alloc_status
-   !print*,meinrang,'ausgeben_parallel() n_ausgabe=',n_ausgabe
-   call MPI_Bcast(n_ausgabe,1,MPI_INT,0,mpi_komm_welt,ierr)
+   !print*,meinrang,'ausgeben_parallel() n_output=',n_output
+   call MPI_Bcast(n_output,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
-      write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_ausgabe,  ierr = ', ierr
+      write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_output,  ierr = ', ierr
       call qerror(fehler)
    endif
-   !print*,'MPI_Bcast(n_ausgabe gemacht',meinrang
+   !print*,'MPI_Bcast(n_output gemacht',meinrang
    if (meinrang /= 0) then
-      allocate (ausgabe_zeitpunkt(n_ausgabe), stat = alloc_status )
-      allocate (ausgabe_bahnlinie(n_ausgabe), stat = alloc_status )
+      allocate (ausgabe_zeitpunkt(n_output), stat = alloc_status )
+      allocate (ausgabe_bahnlinie(n_output), stat = alloc_status )
    endif
-   call MPI_Bcast(ausgabe_zeitpunkt,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ausgabe_zeitpunkt,n_output,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_zeitpunkt,  ierr = ', ierr
       call qerror(fehler)
    endif
    !print*,'MPI_Bcast(ausgabe_zeitpunkt gemacht',meinrang
-   call MPI_Bcast(ausgabe_bahnlinie,n_ausgabe,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(ausgabe_bahnlinie,n_output,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_bahnlinie,  ierr = ', ierr
       call qerror(fehler)
@@ -495,7 +510,7 @@ logical function jetzt_ausgeben()
    !   return
    !endif ! SCHISM
    
-   do n = 1,n_ausgabe,1
+   do n = 1,n_output,1
       diff = ausgabe_zeitpunkt(n)-rechenzeit
       if ( (diff >= (-1*(deltat/2))) .and. (diff < (deltat/2)) ) then
          jetzt_ausgeben = .TRUE.
