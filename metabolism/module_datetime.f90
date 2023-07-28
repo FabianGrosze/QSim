@@ -62,6 +62,7 @@ module module_datetime
 
       ! public methods
       procedure, pass(self), public :: isoformat
+      procedure, pass(self), public :: date_string
       procedure, pass(self), public :: is_valid
       procedure, nopass,     public :: now
       procedure, pass(self), public :: seconds_since_epoch
@@ -418,6 +419,23 @@ contains
                   int2str(self % millisecond,3)
 
    end function isoformat
+   
+   pure elemental character(25) function date_string(self)
+      ! returns character string of datetime including its timezone
+      class(datetime), intent(in)           :: self
+      integer :: tz_hour, tz_minute
+      
+      tz_hour = int(self % tz)
+      tz_minute = int((self % tz - floor(self % tz)) * 100.)
+      
+      date_string = int2str(self % year,   4) // '-' //   &
+                    int2str(self % month,  2) // '-' //   &
+                    int2str(self % day,    2) // ' ' //   &
+                    int2str(self % hour,   2) // ':' //   &
+                    int2str(self % minute, 2) // ':' //   &
+                    int2str(self % second, 2) // ' ' //   &
+                    int2str(tz_hour,2) // ':' // int2str(tz_minute,2)
+   end function date_string
 
 
    pure elemental logical function is_valid(self)
