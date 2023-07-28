@@ -700,7 +700,7 @@ subroutine ereigg_Randbedingungen_lesen()
    endif ! open_error.ne.0
    rewind (ion)
    ! erster Lesedurchgang:
-   do n = 1,6  ! Kopf überlesen (modell::ereigg_modell())
+   do n = 1,6  ! Kopf überlesen (modell::read_ereigg_model())
       if ( .not. zeile(ion)) call qerror('Kopf überlesen in ereigg_Randbedingungen_lesen() schlägt fehl')
    enddo ! Kopf überlesen
    ianz_rb = 0

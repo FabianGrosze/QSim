@@ -74,7 +74,7 @@ module modell
    
    ! --- simulation settings ---
    integer :: imitt       !< \anchor imitt Tagesmittelwertausgabe=1 Zeitwerte=0 | nicht aktiv in 3D
-   integer :: ipH         !< \anchor iph Schalter für die ph-Wert-berechnung; 1-ein , 0-aus ; wird von ereigg_modell() eingelesen.
+   integer :: ipH         !< \anchor iph Schalter für die ph-Wert-berechnung; 1-ein , 0-aus ; wird von read_ereigg_model() eingelesen.
    integer :: idl         !< \anchor idl Dispersionskoeffizienten einlesen=0 berechnen=1 in QSim3D bisher unbenutzt
    integer :: itemp       !< \anchor itemp nur Temperatursimulation=1 alles=0 in QSim3D bisher unbenutzt
    integer :: itracer     !< \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
@@ -554,7 +554,8 @@ contains
       
       ! Art des hydraulichen Antriebs ermitteln:
       hydro_trieb = antriebsart()
-      return
+      print*,"hydro_trieb = ", hydro_trieb 
+      
    end subroutine modeverz
    
    
