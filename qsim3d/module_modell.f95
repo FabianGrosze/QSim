@@ -125,9 +125,9 @@ module modell
    integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
    integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
    integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
-   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in ganzen Sekunden
-   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in ganzen Sekunden
-   integer        :: time_offset           !! von transinfo/meta
+   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in unixtime
+   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in unixtime
+   integer(int64) :: time_offset           !! \anchor time_offset reference time of NetCDF file in unixtime
    integer        :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
    integer        :: jahr                  !> \anchor jahr jahr berechnet von zeitsekunde() aus \ref zeitpunkt
    integer        :: monat                 !> \anchor monat monat berechnet von zeitsekunde() aus \ref zeitpunkt
@@ -279,26 +279,27 @@ module modell
    ! --------------------------------------------------------------------------
    ! Beschreibung in stofftransport()
   
-   integer                              :: hydro_trieb                !< Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)
-   integer                              :: ncid                       !< Pointer auf die netCDF Datei(en), aus der der hydraulische Antrieb gelesen wird (Untrim² und SCHISM)
-   integer                              :: advect_algo                !< Flag für den Advektionsalgorithmus (noch unbenutzt, d.h. z.Z. casu lin. ELM,)
-   integer                              :: nonu                       !< Knotenanzahl als Kontrollwert zum Strömungsfeld.
-   integer                              :: transinfo_anzahl, maxstack
-   integer                              :: na_transinfo, ne_transinfo !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-   integer                              :: anz_transinfo, n_trans     !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-   integer                              :: deltatrans                 !< \anchor deltatrans timestep for transport simulation in whole sec. (integer)
-   integer                              :: nub_sub_trans              !< \anchor nub_sub_trans number of sub-steps in transport simulation
-   integer                              :: nst_prev                   !< stack number of preveously read timestep
-   integer                              :: n_stacks                   !< SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
-   integer, allocatable, dimension(:,:) :: ielg_sc, iplg_sc, islg_sc  !< global numbers all ranks on process 0
-   integer, allocatable, dimension(:)   :: transinfo_stack            !< (SCHISM) stack in which the timestep is stored
-   integer, allocatable, dimension(:)   :: transinfo_instack          !v (SCHISM) stack in which the timestep is stored
-   integer, allocatable, dimension(:)   :: transinfo_zuord            !< Zuordnungsfeld in welcher Reihenfolge die Transportinfo Dateien aufeinander folgen
-   integer, allocatable, dimension(:)   :: transinfo_zeit             !< Feld der Zeitpunkte, an denen Transportinfo Dateien vorliegen
-   integer, allocatable, dimension(:)   :: ne_sc, np_sc, ns_sc        ! all numbers on process 0
-   integer, allocatable, dimension(:)   :: intereck                   !< Felder für die 4 Eckknoten-Nummern des Elements aus dem die Strombahn kommt,
-                                                                      !! immer 4 hintereinander (ELM,semi-lagrange casu hydro_trieb=1 )
-                                                                      !! (Untrim, FV,Euler hydro_trieb=2) immer
+   integer                                     :: hydro_trieb                !< Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)
+   integer                                     :: ncid                       !< Pointer auf die netCDF Datei(en), aus der der hydraulische Antrieb gelesen wird (Untrim² und SCHISM)
+   integer                                     :: advect_algo                !< Flag für den Advektionsalgorithmus (noch unbenutzt, d.h. z.Z. casu lin. ELM,)
+   integer                                     :: nonu                       !< Knotenanzahl als Kontrollwert zum Strömungsfeld.
+   integer                                     :: transinfo_anzahl, maxstack
+   integer                                     :: na_transinfo, ne_transinfo !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
+   integer                                     :: anz_transinfo, n_trans     !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
+   integer                                     :: deltatrans                 !< \anchor deltatrans timestep for transport simulation in whole sec. (integer)
+   integer                                     :: nub_sub_trans              !< \anchor nub_sub_trans number of sub-steps in transport simulation
+   integer                                     :: nst_prev                   !< stack number of preveously read timestep
+   integer                                     :: n_stacks                   !< SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
+   integer,        allocatable, dimension(:,:) :: ielg_sc, iplg_sc, islg_sc  !< global numbers all ranks on process 0
+   integer,        allocatable, dimension(:)   :: transinfo_stack            !< (SCHISM) stack in which the timestep is stored
+   integer,        allocatable, dimension(:)   :: transinfo_instack          !v (SCHISM) stack in which the timestep is stored
+   integer,        allocatable, dimension(:)   :: transinfo_zuord            !< Zuordnungsfeld in welcher Reihenfolge die Transportinfo Dateien aufeinander folgen
+   integer(int64), allocatable, dimension(:)   :: transinfo_zeit             !< timestamps of transport file in unixtime
+   integer,        allocatable, dimension(:)   :: ne_sc, np_sc, ns_sc        ! all numbers on process 0
+   integer,        allocatable, dimension(:)   :: intereck                   !< Felder für die 4 Eckknoten-Nummern des Elements aus dem die Strombahn kommt,
+                                                                             !! immer 4 hintereinander (ELM,semi-lagrange casu hydro_trieb=1 )
+                                                                             !! (Untrim, FV,Euler hydro_trieb=2) immer
+                                                                             
    real                            :: dttrans                    !> \anchor dttrans timestep for transport simulation in sec.
    real, allocatable, dimension(:) :: cu                         ! Courant-zahl bei Untrim
    real, allocatable, dimension(:) :: p, u, dir, w, vel_x, vel_y !> Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w

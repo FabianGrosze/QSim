@@ -759,115 +759,125 @@ subroutine read_elemente_gerris()
    enddo ! alle n Elemente
    return
 end subroutine read_elemente_gerris
-!----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+
+
 subroutine nc_sichten()
    use netcdf
    use modell
+   use module_datetime
    implicit none
    include 'netcdf.inc'
-   integer, parameter :: attstrlen = 2000
-   character(attstrlen) :: attstring
-   character(256) :: aname
-   integer i,j,k,n, alloc_status, didi, io_error, nnn, timesteps
-   real delt, parttime
-   real , allocatable , dimension (:) :: zeitstunde, secuz
-   if (meinrang == 0) then ! prozess 0 only
-      !! nMesh2_time ist leer
-      ! call check_err( nf90_inq_dimid(ncid, "nMesh2_time", didi) )
-      ! call check_err( nf90_Inquire_Dimension(ncid, didi, aname, timesteps) )
-      ! print*,"read_mesh_nc: nMesh2_time zeitschritte=",timesteps," ",trim(aname)
-      ! call check_err(  nf90_inq_varid(ncid,"nMesh2_time", didi) )
-      ! allocate (secuz(timesteps), stat = alloc_status )
-      ! call check_err(  nf90_get_var(ncid, didi, secuz) )
-      ! print*,"netcdf nMesh2_time",timesteps," Zeitschritte von: ",secuz(1)," bis: " &
-      !&      ,secuz(timesteps)," Sekunden"
+
+   integer, parameter                         :: attstrlen = 2000
+   character(attstrlen)                       :: attstring
+   integer                                    :: i, n, alloc_status, didi
+   integer                                    :: year, month, day, hour, minutes, second, tz_hour, tz_minute
+   integer                                    :: expected_deltat, delta_t, time_seconds
+   real                                       :: tz
+   real, dimension(:), allocatable            :: time_hours
+   type(datetime)                             :: datetime_reference
+   type(datetime), dimension(:), allocatable  :: datetime_step
+   type(timedelta)                            :: timedelta_step
+   
+   if (meinrang == 0) then
       ! transinfo_anzahl bereits bekannt
-      if (transinfo_anzahl < 1)call qerror('No transport info')
-      allocate (zeitstunde(transinfo_anzahl), stat = alloc_status )
-      if (alloc_status /= 0) call qerror("allocate (zeitstunde(transinfo_anzahl) failed")
+      if (transinfo_anzahl < 1) call qerror('No transport info')
+      
+      allocate (time_hours(transinfo_anzahl), stat = alloc_status )
+      if (alloc_status /= 0) call qerror("allocate (time_hours(transinfo_anzahl) failed")
+      
       allocate (transinfo_zeit(transinfo_anzahl),transinfo_zuord(transinfo_anzahl), stat = alloc_status )
       if (alloc_status /= 0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")
-      call check_err( nf90_inq_dimid(ncid,"nMesh2_data_time", didi) )
-      call check_err( nf90_inq_varid(ncid,"nMesh2_data_time", didi) )
-      call check_err( nf90_get_var(ncid, didi, zeitstunde) )
-      print*,'netcdf nMesh2_data_time ',transinfo_anzahl,' timesteps starting: ',zeitstunde(1),' until: ' &
-      ,zeitstunde(transinfo_anzahl),' h'
-      !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
-      delt = (zeitstunde(transinfo_anzahl)-zeitstunde(1))/(transinfo_anzahl-1)
-      !print*,'nc_sichten: delt=',delt,(delt*3600.0),nint(delt*3600.0)
-      do n = 1,transinfo_anzahl ! timestep exactly equal
-         transinfo_zeit(n) = (n-1)*nint(delt*3600.0) + nint(zeitstunde(1)*3600.0)
-         transinfo_zuord(n) = n
-         !nnn=n-1-(((n-1)/3)*3)
-         !transinfo_zeit(n)= transinfo_zeit(n)+ 1200.0*real(nnn) !Elbe
-         !transinfo_zeit(n)= transinfo_zeit(n)+ 600.0*real(nnn) !Weser
-      enddo ! alle Transportzeitschritte
+      
+      allocate(datetime_step(transinfo_anzahl))
+      
+      ! --- read timestamps from NetCDF file ---
       do i = 1,attstrlen
          attstring(i:i) = ' '
       enddo
-      call check_err( nf_get_att_text(ncid, didi, 'units', attstring) )
-      print*,'nc_sichten, nMesh2_data_time units = ',trim(attstring)
-      do i = 13,len(time_offset_string)+12
-         time_offset_string(i-12:i-12) = attstring(i:i)
-      enddo
-      !write(time_offset_string,'(A)')attstring(13 : len(trim(attstring)))
-      time_offset = 0
-      print*,'time_offset_string = ',trim(time_offset_string)
-      !time_offset=2010-01-01 00:30:00 01:00
-      time_offset_string(5:5) = ' '
-      time_offset_string(8:8) = ' '
-      time_offset_string(14:14) = ' '
-      time_offset_string(17:17) = ' '
-      read(time_offset_string,*,iostat = io_error) jahr, monat, tag, stunde, minute, sekunde
-      print*," nMesh2_data_time units time_offset = ",tag, monat, jahr, stunde, minute, sekunde
-      if (io_error /= 0)call qerror('nc_sichten: time_offset-Lesefehler')
-      call sekundenzeit(1)
-      write(*,227)'nc_sichten time-offset = '  &
-                                            ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
-      time_offset = zeitpunkt !! Offset vom Referenzjahr zum netcdf-Zeitursprung
-      !do n=1,transinfo_anzahl ! Stunden in Sekunden
-      !  transinfo_zeit(n)= transinfo_zeit(n)+time_offset
-      !enddo ! alle Transportzeitschritte
+      
+      call check_err(nf90_inq_varid(ncid,"nMesh2_data_time", didi))
+      
+      
+      ! --- get reference date ---
+      ! attsting should look like this: "hours since 2010-01-01 03:00:00 01:00
+      call check_err(nf_get_att_text(ncid, didi, 'units', attstring))
+      if (attstring(1:5) /= "hours") then
+         call qerror("Error in transport.nc: Unit of variable `nMesh2_data_time` must be hours.")
+      endif
+      
+      read(attstring(13:16), "(i4)") year
+      read(attstring(18:19), "(i2)") month
+      read(attstring(21:22), "(i2)") day
+      read(attstring(24:25), "(i2)") hour
+      read(attstring(27:28), "(i2)") minutes
+      read(attstring(30:31), "(i2)") second
+      read(attstring(33:34), "(i2)") tz_hour
+      read(attstring(36:37), "(i2)") tz_minute
+      
+      ! convert timezone into hours
+      tz = real(tz_hour) + real(tz_minute) / 60.
+      datetime_reference = datetime(year, month, day, hour, minutes, second, tz = tz)
+      
+      
+      ! --- get timestamps ---
+      ! timestamps are given in hours since reference time
+      call check_err(nf90_get_var(ncid, didi, time_hours))
+      
+      ! convert timestamps into unixtime
       do n = 1,transinfo_anzahl
-         if (iabs(transinfo_zeit(n)-nint(zeitstunde(n)*3600.0)) > 5) then ! wrong times
-            write(fehler,*)'nc_sichten: ERROR nMesh2_data_time does not fit'
-            print*,n,' times do not fit = ',zeitstunde(n),' h, ', nint(zeitstunde(n)*3600.0),transinfo_zeit(n),' s'
-            call qerror(fehler)
+         time_seconds = nint(time_hours(n) * 3600.)
+         timedelta_step = timedelta(seconds = time_seconds)
+         
+         ! datetime of timestep
+         datetime_step(n) = datetime_reference + timedelta_step
+         
+         ! unixtime of timestep
+         transinfo_zeit(n) = datetime_step(n) % seconds_since_epoch()
+         transinfo_zuord(n) = n
+      enddo
+      
+      expected_deltat = transinfo_zeit(2) - transinfo_zeit(1)
+      do n = 2, transinfo_anzahl
+         delta_t = transinfo_zeit(n) - transinfo_zeit(n-1)
+         
+         ! In the NetCDF file the timestep is defined as `double`. Therefore
+         ! some timesteps are not represented exactly, i.e. a timestep of
+         ! 20 minutes is represented as 0.3333.. hours. When converted to an 
+         ! integer, as we do here, this can cause small rounding issues.
+         ! Therefore we use a tolerance of 10 seconds when checking for 
+         ! equality
+         if (abs(delta_t - expected_deltat) > 10) then 
+            print*, n , abs(delta_t - expected_deltat)
+            call qerror("Error in transport.nc: Timestep is not constant.")
          endif
-      enddo ! alle Transportzeitschritte ab 2
-      dttrans = transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
-      do n = 3,transinfo_anzahl,1
-         delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
-         if ((delt /= dttrans) .or. (delt < 1.0)) then
-            print*,n,' = n dttrans = ',dttrans," transinfos_zeit (n) und (n-1) = "  &
-                  ,transinfo_zeit(transinfo_zuord(n)),transinfo_zeit(transinfo_zuord(n-1))  &
-                  ,"transinfo_zuord(n)und(n-1) = ",transinfo_zuord(n),transinfo_zuord(n-1)
-            print*,'transinfo_zuord(n),transinfo_zuord(n-1) = ',transinfo_zuord(n),transinfo_zuord(n-1)
-            do nnn = 1,15,1
-               print*,nnn,' = n transinfo_zeit = ',transinfo_zeit(transinfo_zuord(nnn)),transinfo_zuord(nnn)
-            enddo
-            write(fehler,*)'nc_sichten: ERROR unequal timestep = ',delt, ' should be: ', dttrans
-            print*,'nMesh2_data_time = ',zeitstunde(n-1),zeitstunde(n),' h'
-            call qerror(fehler)
-         endif ! wrong timestep
-      enddo ! alle Transportzeitschritte ab 2
-      print*,'all netcdf timesteps = ',dttrans,' seconds, checked.'
-      print*,'nc_sichten ', transinfo_anzahl,' transport-timesteps'
-      zeitpunkt = transinfo_zeit(transinfo_zuord(1))
-      call zeitsekunde()
-      write(*,228)'from: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
-      zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
-      call zeitsekunde()
-      write(*,228)'until: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string)
-      !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
-      deallocate(zeitstunde) !,secuz)
-   endif ! only prozessor 0
+      enddo
+   
+      deallocate(time_hours)
+      
+      ! -----------------------------------------------------------------------
+      ! print summary to console
+      ! -----------------------------------------------------------------------
+      print*
+      print*, repeat("-", 80)
+      print*, "timesteps transport.nc"
+      print*, repeat("-", 80)
+      
+      print "(a,i0)",   "n-timesteps:    ", transinfo_anzahl
+      print "(2a)",     "unit string:    ", trim(attstring)
+      print "(3a,i0)",  "reference time: ", datetime_reference % date_string(), " | ", datetime_reference % seconds_since_epoch()
+      print "(3a,i0)",  "start time:     ", datetime_step(1) % date_string() ,               " | ", transinfo_zeit(1)
+      print "(3a,i0)",  "end time:       ", datetime_step(transinfo_anzahl) % date_string(), " | ", transinfo_zeit(transinfo_anzahl)
+      print "(a,i0,a)", "timestep:       ", expected_deltat, " seconds"
+      
+   endif
+   
+   
    call mpi_barrier (mpi_komm_welt, ierr)
-   return
-   227 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock = ",I9," sec. since start of year ",I4)
-   228 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," o'clock = ",I9," sec. since ",A)
+   
 end subroutine nc_sichten
-!----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+
+
 !! nv_read.f95
 subroutine nvread()
    use netcdf

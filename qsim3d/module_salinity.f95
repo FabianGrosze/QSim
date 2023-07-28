@@ -111,7 +111,7 @@ contains
       if (meinrang == 0) then
          ! get Salinity data for current time step
          if (rechenzeit < transinfo_zeit(transinfo_zuord(1)) .or. &
-             rechenzeit > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+            rechenzeit > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
             call qerror('step_salinity: Time outside of available time period')
          endif
          ! read data closest to center of current time step

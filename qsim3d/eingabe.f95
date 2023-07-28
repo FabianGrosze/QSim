@@ -241,13 +241,13 @@ subroutine read_ereigg_model()
       call qerror("Error in EreigG.txt: start time is after end time.")
    endif
    
-   if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
-      call qerror("Start time given in EreigG.txt is before start time of hydrodynamic driver.")
-   endif
+   ! if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
+      ! call qerror("Start time given in EreigG.txt is before start time of hydrodynamic driver.")
+   ! endif
    
-   if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
-      call qerror("End time given in EreigG.txt is after end time of hydrodynamic driver.")
-   endif
+   ! if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+      ! call qerror("End time given in EreigG.txt is after end time of hydrodynamic driver.")
+   ! endif
    
    
    !--- convert timestep into seconds ---
@@ -312,8 +312,8 @@ subroutine read_ereigg_model()
    print '(a)','instance: ' // trim(instance)
    print*
    
-   print '(3a,i0)',  "  start       = ", datetime_start%isoformat(), " | ",  startzeitpunkt
-   print '(3a,i0)',  "  end         = ", datetime_end%isoformat(),   " | ", endzeitpunkt
+   print '(3a,i0)',  "  start       = ", datetime_start%date_string(), " | ", startzeitpunkt
+   print '(3a,i0)',  "  end         = ", datetime_end%date_string(),   " | ", endzeitpunkt
    print '(a,i0,a)', "  delta t     = ", deltat, " seconds"
    print '(a,i0)',   "  timesteps   = ", zeitschrittanzahl
    print '(a,i1)',   "  iMitt       = ", imitt
