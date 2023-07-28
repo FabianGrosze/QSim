@@ -42,6 +42,7 @@
 !! \n\n
 !! aus Datei module_modell.f95
 module modell
+   use iso_fortran_env
    implicit none
    
    public :: modeverz, zeile, zeitschritt_halb, ini_zeit, sekundenzeit,       &
@@ -112,18 +113,20 @@ module modell
    character (len = 2000) :: ctext 
    
    ! --- time variables ---
-   integer , parameter :: referenzjahr = 2008  !> \anchor referenzjahr Referenzjahr\n
+   integer, parameter :: referenzjahr = 2008  !> \anchor referenzjahr Referenzjahr\n
                                                !! Darf nur ein Schaltjahr sein, sonst werden die Tage flasch gezählt\n
                                                !! darf nur max. 65 Jahre vor Berechnungsjahr liegen damit int*4 zum Sekunden zählen reicht und\n
                                                !! darf nur max. 20 Jahre vor Berechnungsjahr liegen, um Zeitfehler abfangen zu können.
+   real, parameter :: tz_qsim = 1.0        !> standard timezone of QSim
+   
    
    character(200) :: time_offset_string
    integer        :: rechenzeit            !> \anchor rechenzeit aktuelle rechenzeit in ganzen Sekunden
    integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
    integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
    integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
-   integer        :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in ganzen Sekunden
-   integer        :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in ganzen Sekunden
+   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in ganzen Sekunden
+   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in ganzen Sekunden
    integer        :: time_offset           !! von transinfo/meta
    integer        :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
    integer        :: jahr                  !> \anchor jahr jahr berechnet von zeitsekunde() aus \ref zeitpunkt

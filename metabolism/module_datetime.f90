@@ -18,6 +18,7 @@ module module_datetime
    public :: epochdatetime
    public :: local_time
    public :: gmtime
+   public :: datetime_constructor
    
    real(real64), parameter :: zero = 0._real64, one = 1._real64
 
@@ -37,9 +38,7 @@ module module_datetime
    integer, parameter :: maxstrlen = 99 ! maximum string length for strftime
 
    type :: datetime
-   
-      private
-
+      
       integer      :: year = 1        ! year [1-huge(year)]
       integer      :: month = 1       ! month in year [1-12]
       integer      :: day = 1         ! day in month [1-31]

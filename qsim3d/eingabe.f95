@@ -163,11 +163,14 @@ end subroutine eingabe
 subroutine read_ereigg_model()
    use modell
    use qsimdatenfelder
+   use module_datetime
    implicit none
    
    character(500) :: dateiname, version, model, instance
    integer        :: open_error, ion, read_error
-   real           :: dt_min, tictac
+   integer        :: year, month, day, hour, minutes, dt_minutes
+   real           :: dt_min, tictac, pseudo_time
+   type(datetime) :: datetime_start, datetime_end
    
    dateiname = trim(modellverzeichnis) // '/EREIGG.txt'
    ion = 92
@@ -192,31 +195,46 @@ subroutine read_ereigg_model()
    ! --------------------------------------------------------------------------
    
    ! --- read simulation start time ---
+   if (.not. zeile(ion)) call qerror("Error while reading start time from EreigG.txt")
+   
    ! date format: "01  01  2010  03.00"
-   if ( .not. zeile(ion)) call qerror('Zeile 3 von EREIGG.txt nicht da')
+   read(ctext(1:2),   "(i2)")   day
+   read(ctext(5:6),   "(i2)")   month
+   read(ctext(9:12),  "(i4)")   year
+   read(ctext(15:16), "(i2)")   hour
+   read(ctext(18:19), "(i2)")   minutes
+   read(ctext(15:19), "(f5.2)") pseudo_time
    
-   read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde 
-   call sekundenzeit(2)
+   datetime_start = datetime()
+   datetime_start = datetime(year, month, day, hour, minutes, tz = tz_qsim)
    
-   startzeitpunkt = zeitpunkt
-   itags = tag
-   monats = monat
-   jahrs = jahr
-   uhrs = uhrzeit_stunde
+   startzeitpunkt = datetime_start % seconds_since_epoch()
    rechenzeit = startzeitpunkt
    
-   ! --- read simulation end time and timestep ---
-   ! date format: "30  01  2010  01.00  20"
-   if ( .not. zeile(ion)) call qerror('Zeile 4 von EREIGG.txt nicht da')
-   read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde, dt_min ! itage,monate,jahre,uhren,izdt
-   if (read_error /= 0) call qerror('read_error in Zeile 4 von EREIGG.txt; Endzeitpunkt der Berechnung')
-   call sekundenzeit(2)
+   itags = day
+   monats = month
+   jahrs = year
+   uhrs = pseudo_time
    
-   endzeitpunkt = zeitpunkt
-   itage = tag
-   monate = monat
-   jahre = jahr
-   uhren = uhrzeit_stunde
+   ! --- read simulation end time and timestep ---
+   if (.not. zeile(ion)) call qerror("Error while reading end time from EreigG.txt")
+   
+   ! date format: "30  01  2010  01.00  20"
+   read(ctext(1:2),   "(i2)")   day
+   read(ctext(5:6),   "(i2)")   month
+   read(ctext(9:12),  "(i4)")   year
+   read(ctext(15:16), "(i2)")   hour
+   read(ctext(18:19), "(i2)")   minutes
+   read(ctext(15:19), "(f5.2)") pseudo_time
+   read(ctext(22:40), "(i3)")   dt_minutes
+   
+   datetime_end = datetime(year, month, day, hour, minutes, tz = tz_qsim)
+   endzeitpunkt = datetime_end % seconds_since_epoch()
+   
+   itage = day
+   monate = month
+   jahre = year
+   uhren = pseudo_time
    
    ! --- check start and end time ----
    if (startzeitpunkt >= endzeitpunkt) then
@@ -233,7 +251,7 @@ subroutine read_ereigg_model()
    
    
    !--- convert timestep into seconds ---
-   deltat = int(dt_min*60)
+   deltat = dt_minutes * 60
    if (deltat <= 0) call qerror("Timestep given in EreigG.txt is negativ.")
    if (modulo(deltat, 2) == 1) call qerror("Timestep given in EreiG must be an even number.")
    
@@ -294,9 +312,9 @@ subroutine read_ereigg_model()
    print '(a)','instance: ' // trim(instance)
    print*
    
-   print '(a,i0)',   "  start       = ", startzeitpunkt
-   print '(a,i0)',   "  end         = ", endzeitpunkt
-   print '(a,i0)',   "  delta t     = ", deltat
+   print '(3a,i0)',  "  start       = ", datetime_start%isoformat(), " | ",  startzeitpunkt
+   print '(3a,i0)',  "  end         = ", datetime_end%isoformat(),   " | ", endzeitpunkt
+   print '(a,i0,a)', "  delta t     = ", deltat, " seconds"
    print '(a,i0)',   "  timesteps   = ", zeitschrittanzahl
    print '(a,i1)',   "  iMitt       = ", imitt
    print '(a,i1)',   "  ipH         = ", iph
@@ -323,5 +341,5 @@ subroutine read_ereigg_model()
    if (idl == 0)     print*, "  Reading despersion coefficient from external sources is not implemented."
    if (idl == 1)     print*, "  Calculation of despersion coefficient is not implemented."
    if (itracer == 1) print*, "  Simulation of tracers is not implemented."
-
+   
 end subroutine read_ereigg_model
