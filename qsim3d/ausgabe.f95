@@ -469,35 +469,27 @@ end subroutine ausgabezeitpunkte
 subroutine ausgeben_parallel()
    use modell
    implicit none
+   
    integer :: alloc_status
-   !print*,meinrang,'ausgeben_parallel() n_output=',n_output
-   call MPI_Bcast(n_output,1,MPI_INT,0,mpi_komm_welt,ierr)
-   if (ierr /= 0) then
-      write(fehler,*)'14  ',meinrang, 'MPI_Bcast(n_output,  ierr = ', ierr
-      call qerror(fehler)
-   endif
-   !print*,'MPI_Bcast(n_output gemacht',meinrang
+   
+   call MPI_Bcast(n_output, 1, MPI_INT, 0, mpi_komm_welt, ierr)
+   if (ierr /= 0) call qerror("Error while mpi_bcast of variable `n_output`.")
+      
    if (meinrang /= 0) then
-      allocate (ausgabe_zeitpunkt(n_output), stat = alloc_status )
-      allocate (ausgabe_bahnlinie(n_output), stat = alloc_status )
+      allocate(ausgabe_zeitpunkt(n_output), stat = alloc_status)
+      allocate(ausgabe_bahnlinie(n_output), stat = alloc_status)
    endif
-   call MPI_Bcast(ausgabe_zeitpunkt,n_output,MPI_INT,0,mpi_komm_welt,ierr)
-   if (ierr /= 0) then
-      write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_zeitpunkt,  ierr = ', ierr
-      call qerror(fehler)
-   endif
-   !print*,'MPI_Bcast(ausgabe_zeitpunkt gemacht',meinrang
+
+   call MPI_Bcast(ausgabe_zeitpunkt, n_output, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   if (ierr /= 0) call qerror("Error while mpi_bcast of variable `ausgabe_zeitpunkt`.")
+   
    call MPI_Bcast(ausgabe_bahnlinie,n_output,MPI_INT,0,mpi_komm_welt,ierr)
-   if (ierr /= 0) then
-      write(fehler,*)meinrang, 'MPI_Bcast(ausgabe_bahnlinie,  ierr = ', ierr
-      call qerror(fehler)
-   endif
-   !print*,'MPI_Bcast(ausgabe_bahnlinie gemacht',meinrang
-   return
+   if (ierr /= 0) call qerror("Error while mpi_bcast of variable `ausgabe_bahnlinie`.")
+   
 end subroutine ausgeben_parallel
-!-----+-----+-----+-----+
+
+
 !> true if output required now
-!! \n\n
 logical function jetzt_ausgeben()
    use modell
    implicit none

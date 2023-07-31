@@ -125,30 +125,33 @@ subroutine modell_parallel()
    use QSimDatenfelder
    implicit none
    integer n, alloc_status
-   !print*,meinrang," modell_parallel() ... startet"
-   call MPI_Bcast(deltat,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(rechenzeit,1,MPI_INT,0,mpi_komm_welt,ierr)
+   
+   call MPI_Bcast(deltat,           1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(rechenzeit,       1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(zeitpunkt,        1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(zeitschrittanzahl,1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(time_offset,      1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(knotenanzahl3D,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(knotenanzahl2D,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(n_elemente,       1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(kontrollknoten,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(modell_geob,      1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
+   call MPI_Bcast(modell_geol,      1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
+   
    zeitpunkt = rechenzeit
-   call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(time_offset,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(knotenanzahl3D,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(knotenanzahl2D,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(n_elemente,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(kontrollknoten,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(modell_geob,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(modell_geol,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   
    ! start + end time
-   call MPI_Bcast(itags,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(monats,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(jahrs,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(uhrs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(startzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(itage,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(monate,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(jahre,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(uhren,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(endzeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(itags,          1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(monats,         1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(jahrs,          1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(uhrs,           1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
+   call MPI_Bcast(startzeitpunkt, 1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(itage,          1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(monate,         1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(jahre,          1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(uhren,          1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
+   call MPI_Bcast(endzeitpunkt,   1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   
    ! Berechnung- und Ausgabeflags
    !read(92,9220)imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy  aus EREIGG.txt
    call MPI_Bcast(imitt,1,MPI_INT,0,mpi_komm_welt,ierr)

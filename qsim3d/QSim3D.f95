@@ -61,10 +61,11 @@ program QSim3D
    call ganglinien_zeitschritt(1)
    
    
-   !==== Start of time-loop, time (zeitpunkt) in seconds (integer) =================================================================
+   !==== Start of time-loop =================================================================
    do izeit = 1,zeitschrittanzahl !------------------------------------------------- proceed in time
       call zeitschritt_halb(.true.) ! --- increment time and compute boundary-values in the middle of the timestep
-      call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr);call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
+      call MPI_Bcast(zeitpunkt, 1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+      call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
       call zeitsekunde()
       call fortschritt(0,real(izeit)/real(zeitschrittanzahl)) ! update progess display
       call mpi_barrier (mpi_komm_welt, ierr)

@@ -128,7 +128,7 @@ module modell
    integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in unixtime
    integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in unixtime
    integer(int64) :: time_offset           !! \anchor time_offset reference time of NetCDF file in unixtime
-   integer        :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
+   integer(int64) :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
    integer        :: jahr                  !> \anchor jahr jahr berechnet von zeitsekunde() aus \ref zeitpunkt
    integer        :: monat                 !> \anchor monat monat berechnet von zeitsekunde() aus \ref zeitpunkt
    integer        :: tagdesjahres          !> \anchor tagdesjahres tagdesjahres berechnet von zeitsekunde() aus \ref zeitpunkt
@@ -692,8 +692,8 @@ contains
       return
    end function naechste_zeile
    
-   !----+-----+----
-   !> Führt das Voranschreiten der Zeit aus.
+  
+   !> Increment simulation time.
    subroutine zeitschritt_halb(vorher)
       logical :: vorher
       
@@ -739,15 +739,6 @@ contains
       if (mod(jahr,4) == 0) schaltjahr = .true.
       jahre = jahr-referenzjahr
       
-      if (jahre > 25)call qerror('sekundenzeit: Berechnungsjahr zu lange nach Referenzjahr')
-      if (jahre < 0 )call qerror('sekundenzeit: Berechnungsjahr vor Referenzjahr')
-      
-      maxjahre = huge(zeitpunkt)/(365*86400)
-      if (jahre >= (maxjahre-1)) then
-         write(fehler,*)'zeitpunkt in sec. nicht als integer angebbar, weil Referenzjahr zu klein'  &
-         ,maxjahre,jahre,jahr,referenzjahr
-         call qerror(fehler)
-      endif
       jahrestage = int(jahre/4)*1461 ! Schaltjahperioden als ganzes abziehen
       jahre = jahre - (int(jahre/4)*4)
       if (jahre > 0) then ! Referenzjahr immer Schaltjahr !!!
