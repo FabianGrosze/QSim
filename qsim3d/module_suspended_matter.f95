@@ -78,21 +78,24 @@ contains
    subroutine init_suspended_matter
       ! initialise data arrays for reading SPM from file
       
-      integer              :: alloc_status   ! success status of array allocation
+      character(len = 50), parameter :: calling_routine = 'init_suspended_matter'
       
-      character(len = 200) :: text_string    ! self-explanatory
+      integer                        :: alloc_status           ! success status of array allocation
       
-      ! data fields for NetCDF access
+      character(len = 500)           :: nc_error_prefix = ''   ! prefix added to netcdf error message
+      character(len = 200)           :: text_string            ! self-explanatory
+      
+      ! data fields for NetCDF access      
       if (meinrang == 0) then
          
-         if (iEros>=0) call qerror('init_suspended_matter: iEros >= 0 invalid for reading SPM from file.')
+         if (iEros>=0) call qerror(trim(calling_routine)//': iEros >= 0 invalid for reading SPM from file.')
          n_classes = abs(iEros)
          
          select case (hydro_trieb)
          case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/SPM
-            ! read number of SPM classes and check against input 'n_classes'
-            call check_err( nf90_inq_dimid(ncid, 'nMesh2_suspension_classes', varid) )
-            call check_err( nf90_inquire_dimension(ncid, varid, text_string, n_classes_file) )
+            nc_error_prefix = trim(calling_routine)//' - nMesh2_suspension_classes")'
+            call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid, 'nMesh2_suspension_classes', varid) )
+            call check_err( trim(nc_error_prefix), nf90_inquire_dimension(ncid, varid, text_string, n_classes_file) )
             if (n_classes_file-1 < n_classes) then
                write(text_string, '(a,i2,a,i2,a)') 'init_suspended_matter: Number of selected SPM classes (',       &
                                                    n_classes, ') exceeds number of available classes (', n_classes_file-1, ').'
@@ -106,7 +109,7 @@ contains
          allocate ( spm_classes_element(number_plankt_point, n_classes),   &
                     vol_element(number_plankt_point)                   ,   &
                     spm_element(part * proz_anz), stat = alloc_status )
-         if (alloc_status /= 0) call qerror('init_suspended_matter: Error allocating SPM fields for NetCDF reading.')
+         if (alloc_status /= 0) call qerror(trim(calling_routine)//': Error allocating SPM fields for NetCDF reading.')
          
          spm_classes_element(:,:) = 0.
          spm_element(:)           = 0.
@@ -201,40 +204,43 @@ contains
    subroutine get_suspended_matter_UnTRIM2(i_time)
       ! read SPM and volume from from UnTRIM netCDF file and convert kg to mg L-1
       
-      integer, intent(in) :: i_time                 ! ID of time record to be read
+      integer, intent(in)             :: i_time                 ! ID of time record to be read
       
-      real   , parameter  :: one = 1.
+      real               , parameter :: one = 1.
+      character(len = 50), parameter :: calling_routine = 'get_suspended_matter_UnTRIM2'
       
-      integer             :: i                      ! loop index
-      integer             :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
-      integer             :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
-      integer             :: i_fill(2)              ! is fill value used (0) or not (1) in .nc file?
+      integer                        :: i                      ! loop index
+      integer                        :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
+      integer                        :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
+      integer                        :: i_fill(2)              ! is fill value used (0) or not (1) in .nc file?
       
-      real                :: fill_value(2)          ! fill value of netCDF variables
+      real                           :: fill_value(2)          ! fill value of netCDF variables
       
-      character(len = 200)  :: text_string    ! self-explanatory
+      character(len = 500)           :: nc_error_prefix        ! prefix added to netcdf error message
       
       ! read data from netCDF file
       ! read mean SPM mass
       start4 = (/                   1, 1, n_classes_file - n_classes + 1, i_time /)
       count4 = (/ number_plankt_point, 1, n_classes                     ,      1 /)
-      call check_err( nf90_inq_varid(ncid,'Mesh2_face_Schwebstoffmenge_2d', varid) )
-      call check_err( nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
-      call check_err( nf90_inq_var_fill(ncid, varid, i_fill(1), fill_value(1)) )
+      nc_error_prefix = trim(calling_routine)//" - Mesh2_face_Schwebstoffmenge_2d"
+      call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_Schwebstoffmenge_2d', varid) )
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
+      call check_err( trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill(1), fill_value(1)) )
       
       ! read mean water volume
       start3 = (/                   1, 1, i_time /)
       count3 = (/ number_plankt_point, 1,      1 /)
-      call check_err( nf90_inq_varid(ncid,'Mesh2_face_mittleres_Wasservolumen_2d', varid) )
-      call check_err( nf90_get_var(ncid, varid, vol_element, start3, count3 ) )
-      call check_err( nf90_inq_var_fill(ncid, varid, i_fill(2), fill_value(2)) )
+      nc_error_prefix = trim(calling_routine)//" - Mesh2_face_mittleres_Wasservolumen_2d"
+      call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_mittleres_Wasservolumen_2d', varid) )
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, vol_element, start3, count3 ) )
+      call check_err( trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill(2), fill_value(2)) )
       
       ! sum up SPM mass fractions and calculate concentration
       do i = 1,number_plankt_point
          spm_element(i) = sum(spm_classes_element(i,:))
          if (min(spm_element(i), vol_element(i)) <= 0. .or. &
-             (i_fill(1) == 0 .and. abs(spm_element(i)/n_classes - fill_value(1)) <= one) .or. &
-             (i_fill(2) == 0 .and. abs(vol_element(i)           - fill_value(2)) <= one)      ) then
+             (i_fill(1) == 0 .and. abs(spm_element(i)/real(n_classes) - fill_value(1)) <= one) .or. &
+             (i_fill(2) == 0 .and. abs(vol_element(i)                 - fill_value(2)) <= one)      ) then
             ! set land values to 0
             spm_element(i) = 0.
          else

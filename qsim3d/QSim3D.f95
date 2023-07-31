@@ -101,7 +101,7 @@ program QSim3D
    call ganglinien_schliessen() !! write and close time series files
    call ausgeben() !! output at the end
    !call aus_grd() !! aufsummierte Überstaudauer für Janet ausgeben
-   if (hydro_trieb == 3)call check_err( nf_close(ncid) ) ! close SCHISM netCDF files
+   if (hydro_trieb == 3) call check_err( 'QSim3D', nf_close(ncid) ) ! close SCHISM netCDF files
    call mpi_barrier (mpi_komm_welt, ierr)
    call fortschritt(-1,0.0) !! write closing message, delete file "fortschritt"
    call mpi_finalize(ierr)

@@ -34,8 +34,10 @@ subroutine screen_schism_nc()
    !subroutine nc_sc_sichten()
    use netcdf
    use modell
+   
    implicit none
    include 'netcdf.inc'
+   
    integer :: i,j,k,l,m,n, istat
    character (len = 400) :: dateiname,systemaufruf, chari
    integer :: iret, ndims, nVars, nGlobalAtts, unlimdimid, nAtts
@@ -50,6 +52,9 @@ subroutine screen_schism_nc()
    real zeit_min, zeit_max
    real zeit_delta
    integer :: nnd, nnv, sumtra, nnt
+   
+   character(len= 50), parameter      :: calling_routine = 'screen_schism_nc'
+   character(len=300)                 :: nc_error_prefix
    
    if (meinrang == 0) print*,'screen_schism_nc starts'
    
@@ -73,7 +78,7 @@ subroutine screen_schism_nc()
          !if(meinrang.eq.0)print*,'screen_schism_nc: systemaufruf',trim(adjustl(systemaufruf))
       endif
    enddo
-   if (meinrang == 0)print*,"screen_schism_nc,n_stacks = ",n_stacks
+   if (meinrang == 0) print*,"screen_schism_nc,n_stacks = ",n_stacks
    call mpi_barrier (mpi_komm_welt, ierr)
    transinfo_anzahl = 0
    zeit_min = 3153600000.0
@@ -83,101 +88,75 @@ subroutine screen_schism_nc()
       write(chari,*),i
       write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
       print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
-      iret = nf_open(dateiname, NF_NOWRITE, ncid)
-      if (iret /= 0) then
-         call check_err(iret)
-         write(fehler,*)meinrang,i,' screen_schism_nc: nf_open failed ',dateiname,iret
-         call qerror(fehler)
-      else
-         print*,"screen_schism_nc: nf_open(ncid = ",ncid
-      endif ! open failed
-      call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
+      nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
+      call check_err( trim(nc_error_prefix), nf_open(dateiname, NF_NOWRITE, ncid))
+      print*,"screen_schism_nc: nf_open(ncid) = ",ncid
+      call check_err( trim(nc_error_prefix), nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) )!--- overview
       !! dimensions
-      if (i == 1)allocate (dlength(ndims),dname(ndims), stat = istat)
-      if (i == 1)allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
+      if (i == 1) allocate (dlength(ndims),dname(ndims), stat = istat)
+      if (i == 1) allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
       do j = 1,ndims
-         iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
-         call check_err(iret)
-         if ((meinrang == 2) .and. (i == 1))  &
-             print*,meinrang,i,j,' screen_schism_nc: dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
+         call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j)))
+         if ((meinrang /= 2) .or. (i /= 1)) cycle
+         print*,meinrang,i,j,' screen_schism_nc: dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
       enddo !all j dimension
       !! Variables
       do j = 1,nVars
-         iret = nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts)
-         call check_err(iret)
-         if ((meinrang == 0) .and. (i == 1))  &
-             print*, j,'-th variable; name = ' ,trim(adjustl(vname(j))),' , vxtype = ',vxtype(j)
+         call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts))
+         if ((meinrang /= 0) .or. (i /= 1)) cycle
+         print*, j,'-th variable; name = ' ,trim(adjustl(vname(j))),' , vxtype = ',vxtype(j)
          do k = 1,vndims(j)
-            if ((meinrang == 0) .and. (i == 1))  &
-                print*, k,'-th dimension; name = ',trim(adjustl(dname(dimids(k)))),' dim.length = '  &
-                ,dlength(dimids(k)),' dimid = ' ,dimids(k)
+            print*, k,'-th dimension; name = ',trim(adjustl(dname(dimids(k)))),' dim.length = ',dlength(dimids(k)),' dimid = ' ,dimids(k)
          enddo !k Dimensionen von Variable j
          !print*,"Attribute : "
          !call print_attributes(j, nAtts)
       enddo ! Variable j
+      
       !! time-steps
-      iret = nf_inq_varid(ncid,'time', varid)
-      if (iret /= 0) then
-         call check_err( iret )
-         write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > time <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      endif
-      iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-      call check_err(iret)
+      nc_error_prefix = ''
+      write(nc_error_prefix, '(a," - Rank ",i," - time")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'time', varid))
+      call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts))
       print*,meinrang,i,' read_mesh_nc_sc: nf90_inquire_variable   varid = ',varid,iret,ncid
       n = dlength(dimids(1))
       if (n > 0) then
          transinfo_anzahl = transinfo_anzahl+n
          print*,i,'read_mesh_nc_sc: transinfo_anzahl = ',transinfo_anzahl,n
          allocate (zeiten(n), stat = istat )
-         iret = nf90_get_var(ncid, varid, zeiten)
-         call check_err(iret)
-         if (iret /= 0) then
-            print*,meinrang,i,' screen_schism_nc: nf90_get_var  varid = ',varid,iret,ncid
-            call qerror('screen_schism_nc: nf90_get_var failed')
-         endif !
+         call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, zeiten) )
          if ( zeit_min >= zeiten(1) ) zeit_min = zeiten(1)
          if ( zeit_max <= zeiten(n) ) zeit_max = zeiten(n)
-         if (n > 1) then
-            zeit_delta = zeiten(2)-zeiten(1)
-         endif ! more than one timestep
+         if (n > 1) zeit_delta = zeiten(2)-zeiten(1)
          print*,meinrang,' screen_schism_nc Zeit stack ',i,' zeiten 1,2 = ',zeiten(1), zeiten(2),zeit_delta
          deallocate(zeiten)
       endif ! dlength ok
       !! checking necessary variables
-      iret = nf_inq_varid(ncid,'elev', varid)
-      if (iret /= 0) then
-         if (meinrang == 0) print*,'screen_schism_nc: water level elevation needed by QSim , param.nml: iof_hydro(1) = 1'
-         call check_err( iret )
-         write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > elev <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      endif
-      iret = nf_inq_varid(ncid,'dahv', varid)
-      if (iret /= 0) then
-         if (meinrang == 0) print*,'screen_schism_nc: node veocities needed by QSim, param.nml: iof_hydro(16) = 1'
-         call check_err( iret )
-         write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > dahv <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      endif
-      iret = nf_inq_varid(ncid,'hvel_side', varid)
-      if (iret /= 0) then
-         if (meinrang == 0) print*,'screen_schism_nc: side velocities needed by QSim, param.nml: iof_hydro(26) = 1'
-         call check_err( iret )
-         write(fehler,*)'screen_schism_nc: nf_inq_varid(ncid, > > hvel_side <  < failed, iret = ',iret, " rank = ",meinrang
-         call qerror(fehler)
-      endif
-      call check_err( nf_close(ncid) )
+      nc_error_prefix = ''
+      write(nc_error_prefix, '(a," - Rank ",i," - elev")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf_inq_varid(ncid, 'elev', varid) )
+      write(nc_error_prefix, '(a," - Rank ",i," - dahv")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf_inq_varid(ncid, 'dahv', varid) )
+      write(nc_error_prefix, '(a," - Rank ",i," - hvel_side")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf_inq_varid(ncid, 'hvel_side', varid) )
+      nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
+      call check_err( trim(nc_error_prefix), nf_close(ncid) )
    enddo !all i stacks
-   if (transinfo_anzahl < 1)call qerror('No transport info')
+   if (transinfo_anzahl < 1) call qerror('No transport info')
    !print*,meinrang,' screen_schism_nc Zeit  von:',zeit_min,' bis: ',zeit_max,' zeit_delta=',zeit_delta
    call MPI_Allreduce(zeit_delta, dttrans, 1, MPI_FLOAT, MPI_SUM, mpi_komm_welt, iret)
-   call check_err(iret)
+   if (iret /= 0) then
+      write(fehler,*)"screen_schism_nc MPI_Allreduce(zeit_delta) failed : ", iret
+      call qerror(fehler)
+   endif
    !print*,meinrang,' screen_schism_nc: zeit_delta, dttrans= ',zeit_delta, dttrans
    dttrans = dttrans/real(proz_anz)
    if (int(zeit_delta) /= int(dttrans))call qerror('timestep length unclear screen_schism_nc')
    if (meinrang == 0)print*,meinrang,'screen_schism_nc time delta = ',zeit_delta, dttrans
    call MPI_Allreduce(transinfo_anzahl, sumtra, 1, MPI_INT, MPI_SUM, mpi_komm_welt, iret)
-   call check_err(iret)
+   if (iret /= 0) then
+      write(fehler,*)"screen_schism_nc MPI_Allreduce(transinfo_anzahl) failed : ", iret
+      call qerror(fehler)
+   endif
    sumtra = sumtra/proz_anz
    !print*,meinrang,'screen_schism_nc timestep number=',transinfo_anzahl, sumtra, n_stacks ! if(meinrang.eq.0)
    if (transinfo_anzahl /= sumtra)call qerror('timestep number unclear screen_schism_nc')
@@ -191,20 +170,18 @@ subroutine screen_schism_nc()
       do i = 1,n_stacks ! reread all stacks
          write(chari,*),i
          write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-         iret = nf_open(dateiname, NF_NOWRITE, ncid)
-         if (iret /= 0) print*,meinrang,i,' screen_schism_nc reread 0: nf_open failed   iret = ',iret
+         nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
+         call check_err( trim(nc_error_prefix), nf_open(dateiname, NF_NOWRITE, ncid) )
          do j = 1,ndims
-            iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
-            call check_err(iret)
+            call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j)) )
          enddo ! all j Dimensions
-         iret = nf_inq_varid(ncid,'time', varid)
-         call check_err(iret)
-         iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-         call check_err(iret)
+         nc_error_prefix = ''
+         write(nc_error_prefix, '(a," - Rank ",i," - time")') trim(calling_routine), meinrang
+         call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'time', varid) )
+         check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
          n = dlength(dimids(1))
          allocate (zeiten(n), stat = istat )
-         iret = nf90_get_var(ncid, varid, zeiten)
-         call check_err(iret)
+         check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, zeiten) )
          !print*,i,' screen_schism_nc reread ',n, nnt, dimids(1), varid, iret
          do j = 1,n
             transinfo_zeit(nnt+j) = zeiten(j)
@@ -215,8 +192,8 @@ subroutine screen_schism_nc()
          enddo ! all j timesteps of this stack i
          nnt = nnt+n
          deallocate(zeiten)
-         iret = nf_close(ncid)
-         call check_err(iret)
+         nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
+         call check_err( trim(nc_error_prefix), nf_close(ncid) )
       enddo !all i stacks
       print*,'screen_schism_nc reread 0 timestep number = ',transinfo_anzahl, nnt, n_stacks
       if (nnt /= transinfo_anzahl)call qerror('screen_schism_nc reread 0 timestep number unclear ')

@@ -153,24 +153,23 @@ contains
    subroutine get_salinity_UnTRIM2(i_time)
       ! read salinity from from UnTRIM netCDF file
       
-      integer, intent(in)   :: i_time                 ! ID of time record to be read
+      integer, intent(in)            :: i_time                 ! ID of time record to be read
       
-      real, parameter       :: one = 1.
+      real                , parameter :: one = 1.
+      character(len = 100), parameter :: nc_error_prefix = 'get_salinity_UnTRIM2 - Mesh2_face_Salzgehalt_2d'
       
-      integer               :: i                      ! loop index
-      integer               :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
-      integer               :: i_fill                 ! is fill value used (0) or not (1) in .nc file?
+      integer                         :: i                      ! loop index
+      integer                         :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
+      integer                         :: i_fill                 ! is fill value used (0) or not (1) in .nc file?
       
-      real                  :: fill_value             ! fill value of netCDF variables
-      
-      character(len = 200)  :: text_string            ! self-explanatory
+      real                            :: fill_value             ! fill value of netCDF variables
       
       ! read data from netCDF file
       start3 = (/                   1, 1, i_time /)
       count3 = (/ number_plankt_point, 1,      1 /)
-      call check_err(nf90_inq_varid    (ncid, 'Mesh2_face_Salzgehalt_2d', varid))
-      call check_err(nf90_get_var      (ncid, varid, salinity_element(1:number_plankt_point), start3, count3))
-      call check_err(nf90_inq_var_fill (ncid, varid, i_fill, fill_value))
+      call check_err(trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_Salzgehalt_2d', varid))
+      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, salinity_element(1:number_plankt_point), start3, count3))
+      call check_err(trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill, fill_value))
       
       do i = 1,number_plankt_point
          if (i_fill == 0 .and. abs(salinity_element(i) - fill_value) <= one) then
