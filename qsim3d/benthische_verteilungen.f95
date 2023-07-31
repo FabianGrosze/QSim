@@ -24,45 +24,31 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!----+-----+----
+
 !> Verteilen der benthischen verteilungen auf die parallelen Prozesse.
-!! \n\n
 subroutine benthic_parallel()
    use modell
    implicit none
-   integer :: i,j,as
-   !print*,meinrang,'benthic_parallel'
+   integer :: as
+
    call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierr)
-   allocate (benthic_distribution_p(number_benth_distr*part), stat = as )
+   ! initialisierung aller konzentrationen zunächt auf 0.0
+   allocate (benthic_distribution_p(number_benth_distr*part), source = 0.0, stat = as )
    
    if (as /= 0) then
       write(fehler,*)' Rueckgabewert von benthic_distribution_p :', as
       call qerror(fehler)
    endif
-   
-   do i = 1,part ! i
-      do j = 1,number_benth_distr ! initialisierung aller konzentrationen zunächt auf 0.0 minus 1
-         benthic_distribution_p(j+(i-1)*number_benth_distr) = 0.0 !!!####!-1.0
-      enddo
-   enddo
-   ! if(meinrang.eq.0)then ! prozess 0 only
-   !    do i=1,number_benthic_points ! all i verticals
-   !       do j=1,number_benth_distr ! initialise
-   !          benthic_distribution(j+(i-1)*number_benth_distr)=i*100+j
-   !       enddo
-   !    enddo
-   !  endif ! only prozessor 0
+      
    call scatter_benthic()
-   ! call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine benthic_parallel
+
 !----+-----+----
 !> Verteilen der benthischen verteilungen auf die parallelen Prozesse.
-!! \n\n
 subroutine scatter_benthic()
    use modell
    implicit none
-   !print*,'scatter_benthic'
    
    call MPI_Scatter(benthic_distribution, part*number_benth_distr, MPI_FLOAT,  &
                     benthic_distribution_p, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -70,16 +56,14 @@ subroutine scatter_benthic()
       write(fehler,*)' 13 MPI_Scatter(benthic_distribution failed :', ierr
       call qerror(fehler)
    endif
-   !call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine scatter_benthic
+
 !----+-----+----
 !> wieder zusammensammeln der benthischen verteilungen von den parallelen Prozesse.
-!! \n\n
 subroutine gather_benthic()
    use modell
    implicit none
-   !print*,'gather_benthic'
    
    call MPI_Gather(benthic_distribution_p, part*number_benth_distr, MPI_FLOAT,  &
                    benthic_distribution, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -88,13 +72,11 @@ subroutine gather_benthic()
       call qerror(fehler)
    endif
    
-   !call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine gather_benthic
 
 !----+-----+----
 !> Initialisierung der lokalen Konzentrationen.
-!! \n\n
 subroutine ini_benthic0(nk)
    use modell
    implicit none
@@ -186,21 +168,16 @@ subroutine ini_benthic0(nk)
       !benth_distr_name(46)= "           uedau25" ! Überstaudauer 25-35
       !benth_distr_name(47)= "           uedau35" ! Überstaudauer 35-unendl.
       !benth_distr_name()= "            " !
-      !allocate (benthic_distribution(number_benth_distr*number_benthic_points), stat = as )
-      allocate(benthic_distribution(number_benth_distr*part*proz_anz), stat = as)
+      
+      allocate(benthic_distribution(number_benth_distr*part*proz_anz), source = 0.0, stat = as)
       
       if (as /= 0) then
          write(fehler,*)' Rueckgabewert   von   allocate benthic_distribution :', as
          call qerror(fehler)
       endif
       
-      do i = 1,number_benthic_points ! all i verticals
-         do j = 1,number_benth_distr ! initialise
-            benthic_distribution(j+(i-1)*number_benth_distr) = 0.0
-         enddo
-      enddo
-      
-      do j = 1,number_benth_distr ! default no output
+      do j = 1,number_benth_distr 
+         ! default no output
          output_benth_distr(j) = .false.
       enddo
       
@@ -215,4 +192,3 @@ subroutine ini_benthic0(nk)
       
    endif ! only prozessor 0
 end subroutine ini_benthic0
-!----+-----+----
