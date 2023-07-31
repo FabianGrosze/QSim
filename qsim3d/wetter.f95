@@ -163,350 +163,304 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
       schwi_t(:) = 0.0
    endif
    
-   call MPI_Bcast(Wetterstationskennung_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(iWSta_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(mwetts_T,IWETTs_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(itagw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(monatw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(jahrw_T,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(uhrzw_T,IWETTs_T*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(zeitpunktw,IWETTs_T*mwettmax_T,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(wertw_T,IWETTs_T*7*mwettmax_T,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(Wetterstationskennung_T,IWETTs_T, MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(iWSta_T,    IWETTs_T,             MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(mwetts_T,   IWETTs_T,             MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(itagw_T,    IWETTs_T*mwettmax_T,  MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(monatw_T,   IWETTs_T*mwettmax_T,  MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(jahrw_T,    IWETTs_T*mwettmax_T,  MPI_INTEGER,  0, mpi_komm_welt, ierr)
+   call MPI_Bcast(uhrzw_T,    IWETTs_T*mwettmax_T,  MPI_FLOAT,    0, mpi_komm_welt, ierr)
+   call MPI_Bcast(zeitpunktw, IWETTs_T*mwettmax_T,  MPI_INTEGER8, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(wertw_T,    IWETTs_T*7*mwettmax_T,MPI_FLOAT,    0, mpi_komm_welt, ierr)
    
    return
 end subroutine wetter_parallel
 
 
-!> Dient der eingabe() von  Wetterdaten aus <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>.\n
-!! In QSim-3D können die selben Dateien verwendet werden wie in QSim-1D.\n
+!> Dient der eingabe() von  Wetterdaten aus <a href="./exp/WETTER.txt" target="_blank">WETTER.txt</a>.
+!!
+!! In QSim-3D können die selben Dateien verwendet werden wie in QSim-1D.
 !! Die Wetterdaten sind die wesentlichen Randbedingungen für die Berechnung der Wärmebilanz mittels water_temperature_wrapper_3d(),
-!! deren Resultat die Temperaturverteilung im Wasserkörper ist.\n\n
-!! \n\n
-subroutine wetter_readallo0()  ! called only from process 0 (eingabe)
+!! deren Resultat die Temperaturverteilung im Wasserkörper ist.
+subroutine wetter_readallo0()
    use modell
+   use module_datetime
    implicit none
-   character(300) dateiname, text
-   character(300) systemaufruf
-   ! integer iWETTs, IMET, iWSta(20), mwetts(20), itagw(20,10000), monatw(20,10000), jahrw(20,10000)
-   ! real wertw(7,10000), uhrzw(20,10000)
-   integer :: alloc_status , dealloc_status, flag, open_error, io_error ,i,j
-   integer :: ifehl_T, ifhStr_T, ixw_T, mwett_T, iWETT_T
-   real hcTmx2_T, dummreal
-   character(300) txt
-   integer ANZT,sysa
-   real geob,geol,sa,su,zg,zlk,dk
-   logical logi,existing_station
-   real t1, t2, dlt  !delta
-   if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
-      write(dateiname,'(2A)')trim(modellverzeichnis),'WETTER.txt'
-      open(unit = 86, file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-      if (open_error /= 0) then
-         write(fehler,*)'Die Datei WETTER.txt läßt sich nicht öffnen'
-         call qerror(fehler)
-      endif ! open_error.ne.0
-      rewind (86)
-      ! vier Zeilen Dateikopf:Versionsname, Modellnahme, Ereignisnahme, Anzahl der Wetterstationen(Datenblöcke)IWETTs
-      read(86,'(A40)', iostat = io_error) VERSION_T
-      if (io_error /= 0) then
-         write(fehler,*)'io_error VERSION_T subroutine wetter'
-         call qerror(fehler)
-      endif ! open_error.ne.0
-      read(86,'(A40)', iostat = io_error) MODNAME_T
-      if (io_error /= 0) then
-         write(fehler,*)'io_error MODNAME subroutine wetter'
-         call qerror(fehler)
-      endif ! open_error.ne.0
-      !print*,'MODNAME=', MODNAME
-      read(86,'(A40)', iostat = io_error)ERENAME_T
-      if (io_error /= 0) then
-         write(fehler,*)'io_error ERENAME subroutine wetter'
-         call qerror(fehler)
-      endif ! io_error.ne.0
-      print*,'WETTER.txt MODELLNAME:',trim(MODNAME_T), '  EREIGNISNAME:', trim(ERENAME_T)
-      read(86,*,iostat = io_error)IWETTs_T,IMET_T
-      if (io_error /= 0) then
-         write(fehler,*)'Lesefehler wetter() IWETTs,IMET'
-         call qerror(fehler)
-      endif
-      if (IMET_T /= 1) then
-         write(text,'(A)')'Tagesmittelwerten'
-      else
-         write(text,'(A)')'Stundenwerten'
-      endif ! IMET
-      print*, IWETTs_T, ' Wetterstationen mit ', trim(text)
-      allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate Wetterstationskennung :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (iWSta_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate iWSta :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (mwetts_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate mwetts :', alloc_status
-         call qerror(fehler)
-      endif
-      ! 1. Schleife über alle Wetterstationen(Datenblöcke)
-      ! nur Datenblockköpfe lesen, um Dimensionierung zu ermitteln ... allokieren.
-      mwettmax_T = 0
-      do 7227 iWETT_T = 1,iWETTs_T ! Schleife über alle Wetterstationen
-         read(86, * ,iostat = io_error )Wetterstationskennung_T(iwett_T),mWetts_T(iwett_T)
-         if (io_error /= 0) then
-            write(fehler,*)'Lesefehler wetter() iWSta(iwett),mWetts(iwett)'
-            call qerror(fehler)
-         else
-            iWSta_T(iwett_T) = iwett_T
-            !print*,'Wetterstation(', iWSta_T(iwett_T), ') #', Wetterstationskennung_T(iwett_T),' , ', mWetts_T(iwett_T),' Werte'
-            print*, iWETT_T,'te Wetterstation soll ',mWetts_T(iwett_T),' Werte haben'
-         endif
-         if (mWetts_T(iwett_T) >= mwettmax_T)mwettmax_T = mWetts_T(iwett_T)
-         if (mWetts_T(iwett_T) <= 0) then
-            print*,'WETTER.txt: keine Werte an Wetterstation ',iwett_T, 'geht nicht'
-         endif
-         do 7123 mWett_T = 1,mWetts_T(iwett_T)
-            read(86,*,iostat = io_error )txt !! dummy einlesen um Felddimensionen zu ermitteln
-         7123    continue
-      7227 continue! ende Schleife über alle Wetterstationen
-      print*, 'Wetterstationen haben maximal ',mwettmax_T,' Werte.'
-      allocate (itagw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate itagw :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate monatw :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate jahrw :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate uhrzw_T:', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate zeitpunktw:', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate wertw :', alloc_status
-         call qerror(fehler)
-      endif
-      !dlt=2.0 ! 87 delta
-      !write(dateiname,'(2A)')trim(modellverzeichnis),'WETTER.delta_2.0.txt' ! 87 delta
-      !write(systemaufruf,'(2A)')'rm -rf ',trim(dateiname)
-      !call system(systemaufruf,sysa)
-      !if(sysa.ne.0) then
-      !   print*,'entfernen der alten WETTER.delta.txt schlug fehl'
-      !   stop
-      !endif ! sysa.ne.0
-      !open(unit=87, file=dateiname, status ='new', action ='write', iostat = open_error ) ! 87 delta
-      !if(open_error.ne.0) then ! 87 delta
-      !   print*,'Die Datei WETTER.delta.txt läßt sich nicht öffnen' ! 87 delta
-      !   stop ! 87 delta
-      !endif ! open_error.ne.0 ! 87 delta
-      !rewind (87) ! 87 delta
-      ! 2. Lesevorgang über WETTER.txt
-      rewind (86)
-      read(86,*,iostat = io_error )txt !! Datei Kopf Überlesen
-      !write(87,'(A40)')adjustl(VERSION_T) ! 87 delta
-      read(86,*,iostat = io_error )txt !! Datei Kopf Überlesen
-      !write(87,'(A40)')adjustl(MODNAME_T) ! 87 delta
-      read(86,*,iostat = io_error )txt
-      !write(87,'(A40)')adjustl(ERENAME_T) ! 87 delta
-      read(86,*,iostat = io_error )txt
-      !write(87,'(I1,2x,I1)')IWETTs_T,IMET_T  ! 87 delta
-      do 227 iWETT_T = 1,iWETTs_T
-         read(86,*,iostat = io_error )txt !! Block Kopf Überlesen
-         !write(87,'(I8,2x,I5)')Wetterstationskennung_T(iwett_T),mWetts_T(iwett_T)  ! 87 delta
-         !qsim.f90_13.10 read(86,'(I8,2x,I5)',end=161)IWSta(iwett),mWetts(iwett)
-         if (IMET_T /= 1) then
-            !           Tagesmittelwerte
-            hcTmx2_T = -999.
-            do 123 mWett_T = 1,mWetts_T(iwett_T) !! Wetterdaten an der jeweiligen Station für den jeweiligen Tag lesen ...
-               !read(86,2013,iostat=io_error )itagw(iwett,mwett),monatw(iwett,mwett) &
-               logi = zeile(86)
-               read(ctext,*,iostat = io_error )itagw_T(iwett_T,mwett_T),monatw_T(iwett_T,mwett_T) &
-                    ,jahrw_T(iwett_T,mwett_T),uhrzw_T(iwett_T,mwett_T), (wertw_T(iwett_T,ixw_T,mwett_T),ixw_T = 1,7)
-               if (io_error /= 0) then
-                  print*,trim(ctext)
-                  write(fehler,*)'Lesefehler in obiger Zeile von WETTER.txt'
-                  call qerror(fehler)
-               else
-                  t1 = wertw_T(iwett_T,2,mwett_T)
-                  t2 = wertw_T(iwett_T,3,mwett_T)
-                  if (t1 <= -99.98) then
-                     t1 = -99.99
-                  else
-                     t1 = t1 + dlt
-                  endif
-                  if (t2 <= -99.98) then
-                     t2 = -99.99
-                  else
-                     t2 = t2 + dlt
-                  endif
-                  !write(87,2023)itagw_T(iwett_T,mwett_T),monatw_T(iwett_T,mwett_T)  &
-                  !             ,jahrw_T(iwett_T,mwett_T),uhrzw_T(iwett_T,mwett_T) &
-                  !,wertw_T(iwett_T,1,mwett_T) &
-                  !,t1 , t2  &  !delta
-                  !,(wertw_T(iwett_T,ixw_T,mwett_T),ixw_T=4,7)
-                  2023 format(i2,2x,i2,2x,I4,2x,f5.2,2x  &
-                  ,f7.2,2x,  f6.2,2x,f6.2,2x,  f6.2,2x,f6.2,2x,f4.1,2x,f4.1)
-               endif
-               if (wertw_T(iwett_T,3,mwett_T) > hcTmx2_T)hcTmx2_T = wertw_T(iwett_T,3,mwett_T)
-               !               if(wertw(iwett,3,mwett).gt.hcTmx2)hcTmx2 = wertw(iwett,3,mwett)
-               uhrzw_T(iwett_T,mwett_T) = 12.0
-            123       continue
-            ! Fehlermeldung keine Minimumtemperaturen an einer oder mehrer Wetterstationen
-            if (hcTmx2_T == (-1.)) then
-               ifehl_T = 4
-               ifhStr_T = IWETT_T
-               !              goto 989 -->Fehlermeldung
-               write(fehler,*)'Fehler wetter_qsim hcTmx2 == (-1.)'
-               call qerror(fehler)
-            endif
-         else
-            ! Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) )
-            do 124 mWett_T = 1,mWetts_T(iwett_T) !! Wetterdaten an der jeweiligen Station für die jeweilige Stunde lesen ...
-               !read(86,2023,iostat=io_error )itagw(iwett,mwett),monatw(iwett,mwett) &
-               read(86,*,iostat = io_error )itagw_T(iwett_T,mwett_T),monatw_T(iwett_T,mwett_T) &
-                    ,jahrw_T(iwett_T,mwett_T),uhrzw_T(iwett_T,mwett_T) &
-                    ,(wertw_T(iwett_T,ixw_T,mwett_T),ixw_T = 1,7)
-               if (io_error /= 0) then
-                  write(fehler,*)'Lesefehler wetter()itagw(iwett,mwett)....Stundenwerte'
-                  call qerror(fehler)
-               endif
-            124       continue
-         endif ! (IMET.ne.1)
-         do mWett_T = 1,mWetts_T(iwett_T) !! Zeitpunkte in Sekunden ermitteln:
-            if (IMET_T /= 1) then
-               !Tagesmittelwerte Zeitpunkt high noon
-               uhrzeit_stunde = 12.0
-            else
-               !Zeitreihe (Stundenmittelwerte (IMET_T.eq.1) ) in der Stundenmitte
-               uhrzeit_stunde = uhrzw_T(iwett_T,mwett_T)
-            endif ! (IMET.ne.1)
-            tag = itagw_T(iwett_T,mwett_T)
-            monat = monatw_T(iwett_T,mwett_T)
-            jahr = jahrw_T(iwett_T,mwett_T)
-            call sekundenzeit(2)
-            zeitpunktw(iwett_T,mwett_T) = zeitpunkt
-            ! call zeitsekunde(tag, monat, jahr, uhrzeit_stunde, zeitpunktw(iwett_T,mwett_T),tagdesjahres)
-            ! print*, 'hin:',itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T), jahrw_T(iwett_T,mwett_T) &
-            ! &            , 'sec:', zeitpunktw(iwett_T,mwett_T)
-            ! &            , 'zurück:',tagdesjahres,tag, monat, jahr
-            call zeitsekunde() !! damit auch die Uhrzeit stimmt
-            ! print *,"wetter_readallo0: zeitpunktw",jahr, monat, tag, stunde, minute, sekunde, zeitpunktw(iwett_T,mwett_T) &
-            !       , wertw_T(iwett_T,2,mwett_T), wertw_T(iwett_T,3,mwett_T)
-            ! 229 FORMAT ("wetter_readallo0: ",I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2,"    ",F7.2)
-         enddo !mWett_T
-         do mWett_T = 2,mWetts_T(iwett_T) !! Zeitfolge prüfen:
-            if (zeitpunktw(iwett_T,mwett_T) <= zeitpunktw(iwett_T,mwett_T-1)) then
-               write(fehler,*)' zeitliche Abfolge der Wetterdaten fehlerhaft Station # ',iwett_T, ' Zeile # ', mWett_T &
-               ,'tag,monat,jahr:', itagw_T(iwett_T,mwett_T), monatw_T(iwett_T,mwett_T) &
-               , jahrw_T(iwett_T,mwett_T),'zeitpunktw(t-1),zeitpunktw(t)'  &
-               , zeitpunktw(iwett_T,mwett_T-1), zeitpunktw(iwett_T,mwett_T)
-               call qerror(fehler)
-            endif
-         enddo
-         print*,'Wetterstation(', iWSta_T(iwett_T), ') #', Wetterstationskennung_T(iwett_T),' , ', mWetts_T(iwett_T),' Werte' &
-               ,' Sekundenzeitpunkte von bis',zeitpunktw(iwett_T,1),zeitpunktw(iwett_T,mWetts_T(iwett_T))
-      227 continue !! enddo alle Wetterstationen
-      close (86) !! WETTER.txt schließen
-      close (87) !! WETTER.delta.txt schließen
-      !     allokieren der Felder für die Momentan-Werte
-      allocate (glob_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate glob_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (tlmax_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate tlmax_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (tlmin_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate tlmin_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (tlmed_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate tlmin_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (ro_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate ro_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (wge_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate wge_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (cloud_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate cloud_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (wtyp_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate wtyp_T :', alloc_status
-         call qerror(fehler)
-      endif
-      allocate (schwi_T(IWETTs_T), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate strahlung :', alloc_status
-         call qerror(fehler)
-      endif
-      ! check zone <-> weather-station connectivity
-      do i = 1,zonen_anzahl
-         existing_station = .false.
-         do j = 1,iWETTs_T
-            if ( zone(i)%wettstat%wetterstations_nummer == Wetterstationskennung_T(j)) then
-               existing_station = .true.
-               zone(i)%wettstat%wetterstations_nummer = j
-            endif ! Wetterstation, die von der Zone in MODELLG.3D.txt in WETTER.txt vorhanden
-         enddo ! alle wetterstationen
-         if ( .not. existing_station) then
-            write(fehler,*)'Die von Zone ',i ,' mit der Zonen-Kennnummer = ',zone(i)%zonen_nummer,  &
-                  ' benötigte Wetterstation mit der Kennung '&
-                  ,zone(i)%wettstat%wetterstations_nummer,'ist in WETTER.txt nicht vorhanden'
-            call qerror(fehler)
-         else ! existing_station
-            print*, "Der",i,"-ten Zone mit der (Kenn)-Nummer = ",zone(i)%zonen_nummer," wurde die "  &
-                  , zone(i)%wettstat%wetterstations_nummer,"-te Wetterstation mit der (Kenn)-Nummer = "  &
-                  , Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
-         endif ! nicht vorhanden
-      enddo ! alle Zonen
-      !
+
+   character(300) :: file_name, dummy
+   character(100) :: version_t, modname_t, erename_t
+   logical        :: existing_station
+   integer        :: alloc_status , open_error, io_error ,i, j
+   integer        :: mwett_t, iwett_t, ixw_t
+   integer        :: year, month, day, hour
+   type(datetime), dimension(:,:), allocatable :: datetime_weather
+   
+   if (meinrang /= 0) return
+   
+   
+   file_name = trim(modellverzeichnis) // 'WETTER.txt'
+   open(unit = 86, file = file_name, status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
+   rewind (86)
+   
+   ! read file header
+   read(86,'(a40)', iostat = io_error) version_t
+   if (io_error /= 0) call qerror("Error while reading " // trim(file_name))
+
+   read(86,'(a40)', iostat = io_error) modname_t
+   if (io_error /= 0) call qerror("Error while reading " // trim(file_name))
+
+   read(86,'(a40)', iostat = io_error) erename_t
+   if (io_error /= 0) call qerror("Error while reading " // trim(file_name))
+
+   ! iwetts_t: number of weather stations
+   ! imet_t:   switch to indicate daily means
+   read(86,*,iostat = io_error) iwetts_t, imet_t
+   if (io_error /= 0) call qerror("Error while reading " // trim(file_name))
+
+   
+   
+   allocate (wetterstationskennung_t(iwetts_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `wetterstationskennung_t`")
+   
+   allocate (iwsta_t(iwetts_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `iwsta_t`")
+   
+   allocate (mwetts_t(iwetts_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `mwetts_t`")
+   
+   ! -----------------------------------------------------------------------
+   ! determine dimensions
+   ! -----------------------------------------------------------------------
+   do iwett_t = 1,iwetts_t 
+      read(86, * ,iostat = io_error ) wetterstationskennung_t(iwett_t), mwetts_t(iwett_t)
       
-      !?! ..Ermittlung der Wetterdaten für den Zeitschritt
-      !?
-      !? 9191 continue
-      !?      if(iwsim.eq.4)goto 344
-      !?      hconuh = uhrz
-      !?      uhrn = uhrz+tflie*24.
-      !?      call wettles(itags,monats,jahrs,uhrz,uhrn,itagw,monatw,jahrw,uhrzw&
-      !?     &,wertw,glob,tlmax,tlmin,ro,wge,cloud,wtyp,mwetts                  &
-      !?     &,imet,iWSta,iwetts)
-      !?!
-      !?      uhrz = hconuh
-      !?!
-      !?  344 continue
-   endif !! nur prozessor 0
-   return
+      if (io_error /= 0) call qerror("error while reading " // trim(file_name))
+      iwsta_t(iwett_t) = iwett_t
+      
+      if (mwetts_t(iwett_t) <= 0) then
+         write(fehler, "(a,i0,a)") "Error in wetter.txt: Timeseries for station ", &
+                                    wetterstationskennung_t(iwett_t), " is missing."
+         call qerror(fehler)
+      endif
+      
+      ! skip timeseries elements
+      do mwett_t = 1,mwetts_t(iwett_t)
+         read(86,*,iostat = io_error ) dummy
+      enddo
+   enddo
+   
+   
+   ! --- allocate arrays ---
+   mwettmax_t = maxval(mwetts_t)
+   
+   allocate(itagw_t(iwetts_t,mwettmax_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("error while allocating `itagw_t`")
+   
+   allocate (monatw_t(iwetts_t,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `monatw_t`")
+   
+   allocate (jahrw_t(iwetts_t,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `jahrw_t`")
+   
+   allocate (uhrzw_t(iwetts_t,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `uhrzw_t`")
+   
+   allocate (zeitpunktw(iwetts_t,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `zeitpunktw`")
+   
+   allocate (datetime_weather(iwetts_t,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `datetime_weather`")
+   
+   allocate (wertw_t(iwetts_t,7,mwettmax_t), stat = alloc_status )
+   if (alloc_status /= 0) call qerror("error while allocating `wertw_t`")
+   
+   allocate(glob_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `glob_t`")
+   
+   allocate(tlmax_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `tlmax_t`")
+   
+   allocate(tlmin_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `tlmin_t`")
+   
+   allocate(tlmed_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `tlmed_t`")
+   
+   allocate(ro_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `ro_t`")
+   
+   allocate(wge_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `wge_t`")
+   
+   allocate(cloud_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `cloud_t`")
+   
+   allocate(wtyp_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `wtyp_t`")
+   
+   allocate(schwi_t(iwetts_t), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating `schwi_t`")
+   
+   
+   
+   ! -----------------------------------------------------------------------
+   ! read timeseries
+   ! -----------------------------------------------------------------------
+   rewind (86)
+   
+   ! skip header
+   read(86,*) dummy
+   read(86,*) dummy
+   read(86,*) dummy
+   read(86,*) dummy
+   
+   
+   do iwett_t = 1,iwetts_t
+      ! block header
+      read(86, *, iostat = io_error) dummy
+      
+      ! actual data
+      do mWett_T = 1,mWetts_T(iwett_T) 
+      
+         ! 1: GStrahl
+         ! 2: MaxTemp
+         ! 3: MinTemp
+         ! 4: Feuchte
+         ! 5: Wind
+         ! 6: Wdichte
+         ! 7: Wtyp" 
+         read(86,*,iostat = io_error) itagw_t(iwett_t,mwett_t),  &
+                                      monatw_t(iwett_t,mwett_t), &
+                                      jahrw_t(iwett_t,mwett_t),  &
+                                      uhrzw_t(iwett_t,mwett_t),  &
+                                     (wertw_t(iwett_t,ixw_t,mwett_t),ixw_t = 1,7)
+        
+         if (io_error /= 0) call qerror("Error while reading // ", trim(file_name))
+      
+      enddo
+      
+      ! check timeseries
+      if (imet_t /= 1) then
+         ! missing values are indicated by -99.99
+         if (all(wertw_T(iwett_T,2,:) < -99.)) then
+            call qerror("Error in wetter.txt: timeseries for maximum air temperature is missing.")
+         endif
+         
+         if (all(wertw_T(iwett_T,3,:) < -99.)) then
+            call qerror("Error in wetter.txt: timeseries for minimum air temperature is missing.")
+         endif
+      endif
+      
+      
+      ! convert datetimes to unixtime
+      do mwett_t = 1,mwetts_t(iwett_t) 
+         
+         day = itagw_t(iwett_t,mwett_t)
+         month = monatw_t(iwett_t,mwett_t)
+         year = jahrw_t(iwett_t,mwett_t)
+         
+         if (imet_t == 0) then
+            ! if weather is given as daily means all datetimes are assumed 
+            ! to be 12 o'clock
+            uhrzw_t(iwett_t,mwett_t) = 12.0
+            hour = 12
+            minute = 0
+         else
+            hour = int(uhrzw_t(iwett_t,mwett_t))
+            minute = int((uhrzw_t(iwett_t,mwett_t) - floor(uhrzw_t(iwett_t,mwett_t))) * 100.)
+         endif
+         
+         
+         datetime_weather(iwett_t,mwett_t) = datetime(year, month, day, hour, minute, tz = tz_qsim)
+         zeitpunktw(iwett_t,mwett_t) = datetime_weather(iwett_t,mwett_t) % seconds_since_epoch()
+      enddo
+      
+      
+      
+      ! check order of timeseries
+      do mWett_T = 2,mWetts_T(iwett_T) 
+         if (zeitpunktw(iwett_T,mwett_T) <= zeitpunktw(iwett_T,mwett_T-1)) then
+            write(fehler, "(a,a,i0,a,i0,a,a)")                             & 
+                     "Error in wetter.txt: timeseries are not in order.",  &
+                     " line: ", mWett_T,                                   &
+                     ", station: ", iwett_T,                               &  
+                     ", date: ", datetime_weather(iwett_t,mwett_t)%date_string()
+            call qerror(fehler)
+         endif
+      enddo
+      
+   enddo
+   
+   close(86) ! WETTER.txt
+   
+  
+   ! check zone assignment
+   do i = 1,zonen_anzahl
+      existing_station = .false.
+      do j = 1,iwetts_t
+         if (zone(i)%wettstat%wetterstations_nummer == wetterstationskennung_t(j)) then
+            existing_station = .true.
+            zone(i)%wettstat%wetterstations_nummer = j
+         endif
+      enddo
+      
+      if (.not. existing_station) then
+         write(fehler,"(2(a,i0))") "Weatherstation ", zone(i)%wettstat%wetterstations_nummer, &
+                                   " is missing, but needed for zone ", zone(i)%zonen_nummer
+         call qerror(fehler)
+      else 
+      
+         print*, "der",i,"-ten zone mit der (kenn)-nummer = ",zone(i)%zonen_nummer," wurde die "      &
+               , zone(i)%wettstat%wetterstations_nummer,"-te wetterstation mit der (kenn)-nummer = "  &
+               , wetterstationskennung_t(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
+      endif 
+   enddo 
+   
+   ! --------------------------------------------------------------------------
+   ! print summary to console
+   ! --------------------------------------------------------------------------
+   print*
+   print*, repeat("-", 80)
+   print*, "wetter.txt"
+   print*, repeat("-", 80)
+   
+   print*, "version:  ", version_t
+   print*, "model:    ", modname_t
+   print*, "instance: ", erename_t
+   print*
+   
+   print "(2x,a,i0)", "iwetts_t = ", iwetts_t
+   print "(2x,a,i0)", "imet_t   = ", imet_t
+   
+   print*
+   print "(2x,a)", "timeseries:"
+   print "(4x,a)", "station   id  values  time range"
+   print "(4x,a)", "-------  ---  ------  -----------------------------------------------------"
+   
+   do iwett_t = 1,iwetts_t
+      print "(4x,i7,2x,i3,2x,i6,2x,a25,a,a25)",                         &
+               iwsta_t(iwett_t),  wetterstationskennung_t(iwett_t),    &
+               mwetts_t(iwett_t),                                      &
+               datetime_weather(iwett_t,1) % date_string(), " - ",     &
+               datetime_weather(iwett_t,mwetts_t(iwett_t)) % date_string()
+   enddo
+   
+   
+   ! zones
+   print*
+   print "(2x,a)", "zones assignment:"
+   print "(4x,a)", "zone  zone_id  station  station_id"
+   print "(4x,a)", "----  -------  -------  ----------"
+   
+   do i = 1,zonen_anzahl
+      print "(4x,i4,2x,i7,2x,i7,2x,i10)",                                         &
+               i, zone(i)%zonen_nummer, zone(i)%wettstat%wetterstations_nummer,&
+               Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer)
+   enddo
+   
 end subroutine wetter_readallo0
+
 
 !> Wetterdaten für Waermebilanz in diesem Zeitschritt  
 !! runs at all processes parallel
@@ -515,7 +469,7 @@ subroutine update_weather()
    implicit none
    integer i, nuzo, i2
    ! update weather station values *_T values
-   call wettles_wetter()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt
+   call interpolate_weather()  ! ersetzt wettles(), interpoliert Wetterdaten für den aktuellen Zeitpunkt
    call temperl_wetter()  ! ersetzt Temperl(), berechnet Lufttemperatur und legt sie in tlmax_T ab.
    call strahlg_wetter()  ! berechnet aus der Globalstrahlung den Strahlungsanteil, der im Gewässer ankommt.
    do i2 = 1,IWETTs_T   !! Schleife über alle Wetterstationen
@@ -546,7 +500,7 @@ end subroutine update_weather
 !! Ersetzt die QSim1D Subroutine Wettles()  
 !! wird von allen Prozessen aufgerufen  
 !! all processes do all weather-stations
-subroutine wettles_wetter()
+subroutine interpolate_weather()
    use modell
    implicit none
    integer     :: i, j, ipw, z1, z2
@@ -554,7 +508,7 @@ subroutine wettles_wetter()
    logical     :: found1, found2, wert_gueltig
    
    if (meinrang == 0) then 
-      print '(a,i0,a)',   "* wettles_wetter(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
+      print '(a,i0,a)',   "* interpolate_weather(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
       print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","wtyp_T"
    endif
    
@@ -631,7 +585,7 @@ subroutine wettles_wetter()
             if (ipw == 7) then
                call set_cloud_reflectance(-1, Ywert)
             else
-               write(fehler,*)'wettles_wetter: no valid data at weather station ',i,' for value ',ipw,"  ",w1
+               write(fehler,*)'interpolate_weather: no valid data at weather station ',i,' for value ',ipw,"  ",w1
                call qerror(fehler)
             endif
          endif
@@ -646,7 +600,7 @@ subroutine wettles_wetter()
             case(6); cloud_T(i) = ywert
             case(7); wtyp_T(i) = ywert
             case default
-               write(fehler,*)'wettles_wetter: wrong number in variable ipw', ipw
+               write(fehler,*)'interpolate_weather: wrong number in variable ipw', ipw
                call qerror(fehler)
          end select
       enddo
@@ -658,7 +612,7 @@ subroutine wettles_wetter()
    enddo 
    
    if (meinrang == 0) print*, ""
-end subroutine wettles_wetter
+end subroutine interpolate_weather
 
 
 logical function wert_gueltig(ipw,wert,imet)

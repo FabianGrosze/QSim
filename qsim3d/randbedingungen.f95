@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 ! hier enthalten:
 ! randbedingungen_setzen() ; randwert_planktonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ;
-! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; ereigg_Randbedingungen_lesen() ;
+! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; read_boundary_timeseries() ;
 ! extnct_lesen() ;  alloc_hydraul_BC()
 
 subroutine randbedingungen_setzen()
@@ -34,10 +34,10 @@ subroutine randbedingungen_setzen()
    use QSimDatenfelder
    use module_aparam
    implicit none
-   integer :: j, RB_zaehl
-   logical einmalig
-   !print*,'randbedingungen_setzen'
-   !!wy call gather_planktkon() ! syncronize non-parallel fields to paralell ones
+   
+   integer :: j, rb_zaehl
+   logical :: einmalig
+   
    
    ! Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP)
    call scatter_rb_hydraul()
@@ -50,6 +50,7 @@ subroutine randbedingungen_setzen()
    
    if (meinrang == 0) then !! nur prozessor 0
       einmalig = .true. ! Fehlermeldung nur einmal ausgeben
+      
       call RB_werte_aktualisieren(rechenzeit)
       
       do j = 1,number_plankt_point ! nur bei casu=knotenanzahl2D
@@ -76,20 +77,19 @@ subroutine randbedingungen_setzen()
                endif
                call randbedingungen_ergaenzen(j,einmalig)
                call tiefenprofil(j)
-               !if(j .eq. kontrollknoten)then ! Ausgabe
-               !    print*,'kontrollknoten Randknoten: inflow =', inflow(j),' #', j,  &
-               !    ' lf=',planktonic_variable(65+nk)
-               !endif !kontrollknoten
+               
+               
             endif ! Zufluss-Randknoten
          endif ! bedienter Randknoten
       enddo ! alle j Knoten
+      
       ! meteorological Boundary Conditions
-      !      templ(1)=temperatur_lu       ! Lufttemperatur aus Wetterstationsdaten
-      !      ro(1)=luftfeuchte            ! relative Luftfeuchte in %
-      !      wge(1)=wind                  ! Windgeschwindigkeit  aus Wetterstationsdaten
-      !      schwi(1)=strahlung           ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
-      !      cloud(1)=bewoelkung          ! Bewölkungsdichte  aus Wetterstationsdaten
-      !      wtyp(1)=Cloud reflectance(?) ! Derived from cloud type (0-9)
+      ! templ(1)=temperatur_lu       ! Lufttemperatur aus Wetterstationsdaten
+      ! ro(1)=luftfeuchte            ! relative Luftfeuchte in %
+      ! wge(1)=wind                  ! Windgeschwindigkeit  aus Wetterstationsdaten
+      ! schwi(1)=strahlung           ! Globalstrahlung in cal/(cm2*h) von strahlg() berechnet
+      ! cloud(1)=bewoelkung          ! Bewölkungsdichte  aus Wetterstationsdaten
+      ! wtyp(1)=Cloud reflectance(?) ! Derived from cloud type (0-9)
       
       if (kontrollknoten > 0) then
           print*,'randbedingungen_setzen, prozessor 0, chla(kontrollknoten) = ',  &
@@ -134,11 +134,12 @@ subroutine randbedingungen_setzen()
       print*,'agbcm  = ', planktonic_variable_p(25+(j-1)*number_plankt_vari)
       print*,'abbcm  = ', planktonic_variable_p(26+(j-1)*number_plankt_vari)
       print*,'ph     = ', planktonic_variable_p(66+(j-1)*number_plankt_vari)
-   endif  ! kontrollknoten
-   return
+   endif 
+   
 end subroutine randbedingungen_setzen
-!----+-----+----
-!
+
+
+
 subroutine scatter_rb_hydraul()
    use modell
    implicit none
@@ -554,20 +555,23 @@ subroutine scatter_BC()
    endif
    return
 end subroutine scatter_BC
+
+
 !----+-----+----
-!> <h1>Randwert-Interpolation</h1>
-!! lineare Interpolation zwischen den gültigen Randwerten:\n
-!! davor und danach konstant \n
-!! analog zu QSim-1D/funkstar.f90
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
+!> Interpolate Boundary Conditions
 !!
+!! Linear temporal interpolation of boundary conditions.
 subroutine RB_werte_aktualisieren(t)
    use modell
    implicit none
-   integer n,j,k
-   integer t, zeit_vor, zeit_nach
-   real ::a, wert_vor, wert_nach, wert
+   
+   integer(int64), intent(in) :: t
+   
+   integer :: n,j,k
+   integer :: zeit_vor, zeit_nach
    logical :: randwert_gueltig, vor_da, nach_da
+   real    :: a, wert_vor, wert_nach, wert
+
    do n = 1,ianz_rb !! alle Randbedingungen
       rabe(n)%wert_jetzt(:) = 0.0 ! initialize unused boundary concentrations
       do k = 1,n_active_concentrations !all active boundary concentrations
@@ -586,11 +590,12 @@ subroutine RB_werte_aktualisieren(t)
                      wert_nach = wert
                      zeit_nach = rabe(n)%punkt(j)%zeit_sek
                   endif
-               endif ! Zeitpunkt vorher
-               !else ! randwert_gueltig
-               !   print*,'randwert_gueltig .FALSE. Rand-n, Variable-k, Zeitpunkt-j,wert',n,k,j,wert
-            endif ! randwert_gueltig
-         enddo ! alle Zeitintervalle in dieser Randbedingung
+               endif
+               
+            endif 
+         enddo 
+         
+         
          if (vor_da .and. nach_da) then
             a = real(t-zeit_vor)/real(zeit_nach-zeit_vor)
             rabe(n)%wert_jetzt(k) = (1.0 - a)*wert_vor + a*wert_nach
@@ -598,6 +603,7 @@ subroutine RB_werte_aktualisieren(t)
                print*, 'Rand', n, ' t,zeit_vor,zeit_nach,wert_vor,wert_nach,a,k,rabe(n)%wert_jetzt(k) = ',  &
                        t, zeit_vor, zeit_nach, wert_vor, wert_nach, a, k, rabe(n)%wert_jetzt(k)
             endif
+         
          elseif (vor_da) then
             rabe(n)%wert_jetzt(k) = wert_vor
             if (kontrollknoten > 0) then
@@ -610,244 +616,254 @@ subroutine RB_werte_aktualisieren(t)
                 print*, 'Rand', n,' t,zeit_nach,wert_nach,k,rabe(n)%wert_jetzt(k) = ',  &
                         t, zeit_nach, wert_nach, k, rabe(n)%wert_jetzt(k)
             endif
+         
          else ! no valid value
             select case (k) ! which value
-            case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
-               rabe(n)%wert_jetzt(k) = 0.0
-               !case (22) ! Wassertemperatur
-            case (24) ! CHNF Heterotrophe Nanoflagelaten, not present
-               rabe(n)%wert_jetzt(k) = 0.0
-            case (25) ! BVHNF Biovolumen der HNF, not present
-               rabe(n)%wert_jetzt(k) = 0.0
-            case (26) ! COLI Fäkalcoliforme Bakterien, not present
-               rabe(n)%wert_jetzt(k) = 0.0
-               !case (27) ! EWAERM Wärmeeinleitung ### egal
-               !case (28) ! Tracer ### egal
-            case default ! alle anderen
-               print*,'rabe(n)%punkt(j)%zeil%werts(k)',(rabe(n)%punkt(j)%zeil%werts(k),j = 1,rabe(n)%anz_rb)
-               print*,'ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt',ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt
-               print*,'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable ',k,' an Rand ',n, ' für Zeitpunkt ',t
-               write(fehler,*)'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable '  &
-               ,k,' an Rand ',n, ' für Zeitpunkt ',t
-               call qerror(fehler)
+
+               case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
+                  rabe(n)%wert_jetzt(k) = 0.0
+
+               case (24) ! CHNF Heterotrophe Nanoflagelaten, not present
+                  rabe(n)%wert_jetzt(k) = 0.0
+
+               case (25) ! BVHNF Biovolumen der HNF, not present
+                  rabe(n)%wert_jetzt(k) = 0.0
+
+               case (26) ! COLI Fäkalcoliforme Bakterien, not present
+                  rabe(n)%wert_jetzt(k) = 0.0
+            
+               case default ! alle anderen
+                  print*,'rabe(n)%punkt(j)%zeil%werts(k)',(rabe(n)%punkt(j)%zeil%werts(k),j = 1,rabe(n)%anz_rb)
+                  print*,'ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt',ianz_rb, anzrawe, rabe(n)%anz_rb, rabe(n)%t_guelt
+                  print*,'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable ',k,' an Rand ',n, ' für Zeitpunkt ',t
+                  write(fehler,*)'RB_werte_aktualisieren: Kein wert nirgends für Rand-variable '  &
+                  ,k,' an Rand ',n, ' für Zeitpunkt ',t
+                  call qerror(fehler)
             end select ! k
-         endif ! no valid value
-      enddo ! alle k werte
-   enddo ! alle n Randbedingungen
-   !if(hydro_trieb.eq.2)then ! untrim
-   !   rabe(2)%wert_jetzt(28)= 1.0 ! untrim Tracer inflow test
-   !   print*,'### untrim boundary 2 Tracer constant 1.0 ###'
-   !endif
-   return
+         endif
+      enddo
+   enddo
+
 end subroutine RB_werte_aktualisieren
-!----+-----+----
-!> <h1>Randwert gueltig?</h1>
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
-logical function randwert_gueltig(wert,n)
+
+!> Randwert gueltig
+logical function randwert_gueltig(wert, n)
    use modell
    implicit none
-   integer :: n
-   real :: wert
-   randwert_gueltig = .false.
-   if ((n > n_active_concentrations) .or. (n <= 0)) then
-      write(fehler,*)n,' keine gültige Randwertnummer #### Abbruch ####'
-      call qerror(fehler)
-   endif
-   select case (n) ! Unterscheidung Randwert-variable
-      case (1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
+   real, intent(in)    :: wert
+   integer, intent(in) :: n
+  
+  randwert_gueltig = .false.
+   if (n > n_active_concentrations .or. n <= 0) call qerror("Invalid boundarynumber")
+   
+   select case (n) 
+      case(1) ! Abfluss alle Werte gültig (in QSim-3D unbenutzt)
          randwert_gueltig = .TRUE.
-         !case (22) ! Wassertemperatur
-         !   randwert_gueltig = (wert.gt. -9.99)
-         !case (24) ! CHNF Heterotrophe Nanoflagelaten ### egal
-         !   randwert_gueltig = .TRUE.
-         !case (25) ! BVHNF Biovolumen der HNF  ### egal
-         !   randwert_gueltig = .TRUE.
-         !case (26) ! COLI Fäkalcoliforme Bakterien  ### egal
-         !   randwert_gueltig = .TRUE.
-      case (27) ! EWAERM Wärmeeinleitung ### egal
-         ! randwert_gueltig = (wert.gt. -99.9)
+      
+      case(27) ! EWAERM Wärmeeinleitung
          randwert_gueltig = .TRUE.
-      case (28) ! Tracer ### egal
+      
+      case(28) ! Tracer
          randwert_gueltig = .TRUE.
-         case default ! alle anderen
+      
+      case default ! alle anderen
          randwert_gueltig = (wert >= 0.0)
    end select
-   return
-end function randwert_gueltig
-!----+-----+----
-!> ereigg_Randbedingungen_lesen() wird beschrieben in: \ref lnk_randbedingungen
-!! \n\n aus randbedingungen.f95
-subroutine ereigg_Randbedingungen_lesen()
-   use modell
-   implicit none
-   character(500) dateiname, text
-   integer :: open_error, ion, read_error, alloc_status, ini
-   integer :: idumm, anzi, i, j, n, m, min_nr, nr, maxrandnr, nini
-   integer :: anzmax = -1
-   logical :: rb_vorhanden, randwert_gueltig
-   integer , allocatable , dimension (:) :: nr_vorhanden, rb_vorkommen
-   type(rb_zeile) , allocatable , dimension (:) :: lesezeil
-   print*,'ereigg_Randbedingungen_lesen() startet:'
    
-   n_active_concentrations = anzrawe
-   if (ischwer == 0 .and. ikonss == 0)n_active_concentrations = 28
-   write(dateiname,'(2A)')trim(modellverzeichnis),'EREIGG.txt'
-   ion = 92
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error EREIGG.txt ... Datei vorhanden?'
-      call qerror(fehler)
-   endif ! open_error.ne.0
-   rewind (ion)
-   ! erster Lesedurchgang:
-   do n = 1,6  ! Kopf überlesen (modell::read_ereigg_model())
-      if ( .not. zeile(ion)) call qerror('Kopf überlesen in ereigg_Randbedingungen_lesen() schlägt fehl')
-   enddo ! Kopf überlesen
+end function randwert_gueltig
+
+
+!> Read boundary conditions from file EreigG.txt
+!!
+!! Details in \ref lnk_randbedingungen
+subroutine read_boundary_timeseries()
+   use modell
+   use module_datetime
+   implicit none
+   
+   type(datetime) :: datetime_boundary
+   character(500) :: dateiname
+   real           :: pseudo_time
+   logical        :: rb_vorhanden, randwert_gueltig
+   integer        :: open_error, u_ereigg, read_error, alloc_status, ini
+   integer        :: idummy, anzi, i, j, n, m, min_nr, nr, maxrandnr, nini
+   integer        :: anzmax, year, month, day, hour
+   integer,        dimension(:), allocatable :: nr_vorhanden, rb_vorkommen
+   type(rb_zeile), dimension(:), allocatable :: lesezeil
+
+
+   print*
+   print "(a)", repeat("-", 80)
+   print "(a)", "EreigG.txt: boundary conditions"
+   print "(a)", repeat("-", 80)
+   
+   if (ischwer == 0 .and. ikonss == 0) then
+      n_active_concentrations = 28
+   else
+      n_active_concentrations = anzrawe
+   endif
+   
+   
+   dateiname = trim(modellverzeichnis) // 'EREIGG.txt'
+   open (newunit = u_ereigg , file = trim(dateiname), status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(dateiname))
+   rewind (u_ereigg)
+   
+   
+   ! skip file header and model settings
+   do n = 1,6 
+      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+   enddo
+   
+   ! --------------------------------------------------------------------------
+   ! determine timeseries length
+   ! --------------------------------------------------------------------------
    ianz_rb = 0
    min_nr = 9999
    max_rand_nr = -9999
-   ! 343 read(ion,*, iostat = read_error,end=341)nr,idumm,idumm,anzi
-   343 continue
-   if ( .not. zeile(ion)) goto 341
-   read(ctext, *, iostat = read_error) nr,idumm,idumm,anzi
-   if (read_error /= 0) then
-      print*,trim(ctext)
-      write(fehler,*)' 343 ereigg_Randbedingungen_lesen() read_error /= 0 ianz_rb = ', ianz_rb
-      call qerror(fehler)
-   endif
-   !print*,'RB; nr,anzi=',nr,anzi
-   if (min_nr > nr) min_nr = nr
-   if (max_rand_nr < nr) max_rand_nr = nr
-   ianz_rb = ianz_rb+1
-   if (anzi > anzmax)anzmax = anzi
-   if (anzi == 0)goto 343
-   do n = 1,anzi  ! Datenzeilen im Ersten Durchgang überlesen.
-      if ( .not. zeile(ion)) then
-         write(fehler,*)'read_error in EREIGG.txt; Randbedingung # ',ianz_rb,' Zeile ',n
-         call qerror(fehler)
-      endif ! open_error.ne.0
+   anzmax = -1
+   do
+      if (.not. zeile(u_ereigg)) exit
+      
+      ! read block header
+      read(ctext, "(i5,2x,i5,2x,i1,2x,i5)", iostat = read_error) nr, idummy, idummy, anzi
+      if (read_error /= 0) call qerror("Error while reading " // trim(dateiname))
+      
+      min_nr = min(min_nr, nr)
+      max_rand_nr = max(max_rand_nr, nr)
+      anzmax = max(anzi, anzmax)
+      ianz_rb = ianz_rb + 1
+      
+      ! skip block body
+      if (anzi == 0) cycle
+      do n = 1,anzi
+         if (.not. zeile(u_ereigg)) then
+            write(fehler,"(a,i0,a,i0)") "Error while reading " // trim(dateiname) // " at boundary ", &
+                                       ianz_rb, " line ", n
+            call qerror(fehler)
+         endif 
+      
+      enddo
+   
    enddo
-   !imstr(ianzRB) = mstr
-   !iRBNR(ianzRB) = RBNR
-   !ianzW(ianzRB) = NrSchr(mstr,RBNR)
-   !
-   !      do 226 iwe = 1,NrSchr(mstr,RBNR)
-   !      read(92,9240)                                                     &
-   !     &itagl(ianzRB,iwe),monatl(ianzRB,iwe),jahrl(ianzRB,iwe)            &
-   !     &,uhrl(ianzRB,iwe),(werts(ianzRB,ixpp,iwe),ixpp=1,28)
-   !  226 continue
-   goto 343
-   341  continue
-   print*,'ereigg_Randbedingungen_lesen --- ',ianz_rb,' Randbedingungen mit maximal ', anzmax, ' Zeilen'
-   !
-   allocate (rabe(ianz_rb), stat = alloc_status )
-   if (alloc_status /= 0) then
-      write(fehler,*)'rabe konnte nicht allokiert werden ', alloc_status
-      call qerror(fehler)
-   endif ! alloc_status .ne.0
-   do ini = 1,ianz_rb
-      rabe(ini)%anz_rb = 0
-   enddo
-   if ((max_rand_nr <= 0) .or. (max_rand_nr > 9999)) then
-      write(fehler,*)'eine maximale Randbedingungsnummer von: ', max_rand_nr, ' ist doch wohl nicht sinnvoll?'
-      call qerror(fehler)
-   endif ! Randbedingungsnummer
-   !
-   ! zweiter Lesedurchgang:
-   rewind (ion)
-   do n = 1,6  ! Kopf überlesen
-      if ( .not. zeile(ion)) call qerror('zweiter Lesedurchgang ereigg_Randbedingungen_lesen() Kopf überlesen schlägt fehl')
-   enddo ! Kopf überlesen
-   do n = 1,ianz_rb !! alle Randbedingungsblöcke nochmal lesen
-      if ( .not. zeile(ion)) call qerror(' ereigg_Randbedingungen_lesen() Randbedingungsblöcke nochmal lesen schlägt fehl')
-      read(ctext, *, iostat = read_error) rabe(n)%nr_rb, idumm, rabe(n)%tagesmittelwert_flag, anzi
-      if (read_error /= 0) then
-         write(fehler,*)' 344 read_error /= 0 ereigg_Randbedingungen_lesen()'
-         call qerror(fehler)
-      endif
-      !print*,'block-Kopf:',rabe(n)%nr_rb, idumm, rabe(n)%tagesmittelwert_flag, anzi
+   
+   if ((max_rand_nr <= 0) .or. (max_rand_nr > 9999)) call qerror("Invalid boundary number in " // trim(dateiname))
+   
+   print "(a,i0)", "ianz_rb = ", ianz_rb
+   print "(a,i0)", "anzmax  = ", anzmax
+   
+   allocate(rabe(ianz_rb), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating variable `rabe`")
+   
+   rabe(:)%anz_rb = 0
+   
+  
+   ! --------------------------------------------------------------------------
+   ! read data
+   ! --------------------------------------------------------------------------
+   rewind(u_ereigg)
+   ! skip file header
+   do n = 1,6  
+      if ( .not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+   enddo 
+   
+   do n = 1,ianz_rb 
+      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+      
+      ! --- read block header ---
+      read(ctext, *, iostat = read_error) rabe(n)%nr_rb, idummy, rabe(n)%tagesmittelwert_flag, anzi
+      if (read_error /= 0) call qerror("Error while reading " // trim(dateiname))
+   
+      
       allocate (lesezeil(anzi), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)'lesezeil konnte nicht allokiert werden ', alloc_status
-         call qerror(fehler)
-      endif ! alloc_status .ne.0
+      if (alloc_status /= 0) call qerror("Error while allocating variable `lesezeil`.")
+      
       do ini = 1,anzi
          lesezeil(ini)%itag = 0
       enddo
       
       i = 0
+      
+      ! --- read block body ---
       do m = 1,anzi !alle Zeitpunkte dieser Randlinie
-         !! HIER !! wird die Randbedingungszeile in die Struktur rb_zeile gelesen    !! HIER !!
-         if ( .not. zeile(ion)) call qerror('ereigg_Randbedingungen_lesen() alle Zeitpunkte dieser Randlinie lesen schlägt fehl')
+         if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+         
          lesezeil(m)%werts(:) = -1.0
-         read(ctext, *, iostat = read_error)lesezeil(m)%itag, lesezeil(m)%imonat , lesezeil(m)%ijahrl, lesezeil(m)%uhrl  &
-              ,lesezeil(m)%werts(1:n_active_concentrations)
-         if (read_error /= 0) then
-            print*,read_error,' = read_error n_active_concentrations,anzrawe = '
-            print*,n_active_concentrations,anzrawe, ischwer,' = ischwer ikonss',ikonss
-            print*,m,anzi,n,' = m-th line of anzi in n-th RB , ctext:'
-            print*,trim(ctext)
-            print*,'lesezeil(m):'
-            print*,lesezeil(m)
-            call qerror("read_error EREIGG.txt ... Zeitpunkt Datenzeile lesen")
+         read(ctext, *, iostat = read_error) lesezeil(m)%itag,     &               
+                                             lesezeil(m)%imonat,   &
+                                             lesezeil(m)%ijahrl,   &
+                                             lesezeil(m)%uhrl,     &
+                                             lesezeil(m)%werts(1:n_active_concentrations)
+         
+         if (read_error /= 0 .or. any(isnan(lesezeil(m)%werts(:)))) then
+            write(fehler, "(a,i0,a,i0)") "Error while reading boundary ", rabe(n)%nr_rb, ", line ", m
+            call qerror(fehler)
          endif
-         do j = 1,anzrawe
-            if (isNaN(lesezeil(m)%werts(j))) then
-               print*,m,j,"isNaN(lesezeil(m)%werts(j))"
-               print*,trim(ctext)
-               print*,'lesezeil(m):'
-               print*,lesezeil(m)
-               call qerror("isNaN(lesezeil(m)%werts(j)")
-            endif !isnan
-         enddo !anzrawe
-         if (randwert_gueltig(lesezeil(m)%werts(22),22)) then
+         
+         if (randwert_gueltig(lesezeil(m)%werts(22), 22)) then
             i = i+1
-         endif ! temperatur positif
-      enddo !! all m time-points at this boundary
+         endif
+      enddo
+      
+      
+      
       rabe(n)%t_guelt = i
       rabe(n)%anz_rb = anzi
       allocate (rabe(n)%punkt(rabe(n)%anz_rb), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)'ereigg_Randbedingungen_lesen():allocate (rabe(n)%punkt(i) fehlgeschlagen ', alloc_status
-         call qerror(fehler)
-      endif ! alloc_status .ne.0
+      if (alloc_status /= 0) call qerror("Error while allocation variable `rabe(n)%punkt(i)`")
+
       do ini = 1,rabe(n)%anz_rb
-         rabe(n)%punkt(ini)%zeit_sek = 0
+         rabe(n) % punkt(ini) % zeit_sek = 0
       enddo
-      do i = 1,rabe(n)%anz_rb !alle Zeitpunkte dieser Randlinie
-         !! HIER !! wird die Randbedingungszeile in die Struktur rb eingefügt  !! HIER !!
+      
+      
+      ! convert time into unixtime
+      do i = 1,rabe(n)%anz_rb 
+         jahr        = lesezeil(i)%ijahrl
+         tag         = lesezeil(i)%itag
+         monat       = lesezeil(i)%imonat
+         pseudo_time = lesezeil(i)%uhrl
+         
+         hour = int(pseudo_time)
+         minute = int((pseudo_time - floor(pseudo_time)) * 100.)
+         
+         datetime_boundary = datetime(year, month, day, hour, minute, tz = tz_qsim)
+         
+         rabe(n)%punkt(i)%zeit_sek = datetime_boundary % seconds_since_epoch()
          rabe(n)%punkt(i)%zeil = lesezeil(i)
-         tag = rabe(n)%punkt(i)%zeil%itag
-         monat = rabe(n)%punkt(i)%zeil%imonat
-         jahr = rabe(n)%punkt(i)%zeil%ijahrl
-         uhrzeit_stunde = rabe(n)%punkt(i)%zeil%uhrl
-         call sekundenzeit(2)
-         rabe(n)%punkt(i)%zeit_sek = zeitpunkt
-         call zeitsekunde() !! damit auch die Uhrzeit stimmt
-         !print 228, jahr, monat, tag, stunde, minute, sekunde &
-         !         , rabe(n)%punkt(i)%zeil%werts(22)
-         !228 FORMAT (I4.2,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,"    ",F7.2)
-      enddo !! alle Zeitpunkte dieser Randlinie
+         
+      enddo
+   
       deallocate (lesezeil)
-      print*,'Randbedingung ',n,' hat Nr. ',rabe(n)%nr_rb,' und enthält ',rabe(n)%anz_rb &
-      ,' Zeitpunkte, von denen ',rabe(n)%t_guelt  &
-      ,' sinnvolle Temperatur-Werts(22) enthalten; Tagesmittelwert-0 oder Zeitwert-1 ? ' &
-      , rabe(n)%tagesmittelwert_flag
-      if (rabe(n)%nr_rb <= 0) then
-         write(fehler,*)'###Abbruch 345 ### Randbedingungsnummern müssen größer als 0 sein !!'
-         call qerror(fehler)
-      endif
-   enddo !! alle Randbedingungslinien nochmal lesen
-   !! Nummerierung der Ränder eindeutig?
+    
+      if (rabe(n)%nr_rb <= 0) call qerror("Invalid boundary number in " // dateiname)
+   enddo
+   
+   close(u_ereigg)
+   
+   ! print summary to console
+   print*
+   print "(a)",   "boundary timeseries:"
+   print "(2x,a)", "     |   id  n_values  valid_values  averaged?"
+   print "(2x,a)", "---- | ----  --------  ------------  ---------"
+   do n = 1,ianz_rb 
+      print "(2x,i4,a,i4,2x,i8,2x,i12,2x,l9)", n, " | ", rabe(n)%nr_rb,  &
+               rabe(n)%anz_rb, rabe(n)%t_guelt, (rabe(n)%tagesmittelwert_flag == 0)
+   enddo
+   print*
+   
+   ! Check boundary ids
    do i = 1,ianz_rb
       do n = i+1,ianz_rb
-         if ( rabe(i)%nr_rb == rabe(n)%nr_rb) then
-            write(fehler,*)' 11 Randnummer von Rand', i, ' = ',rabe(i)%nr_rb,' ist gleich Randnummer von Rand ',n
+         
+         if (rabe(i)%nr_rb == rabe(n)%nr_rb) then
+            write(fehler,*)'Randnummer von Rand', i, ' = ',rabe(i)%nr_rb,' ist gleich Randnummer von Rand ',n
             call qerror(fehler)
          endif
-      enddo ! alle n Zonen
-   enddo ! alle i Zonen
-   !
+      enddo
+   enddo
+   
+   
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          maxrandnr = 0
@@ -855,29 +871,25 @@ subroutine ereigg_Randbedingungen_lesen()
             if (knoten_rand(j) > 0) then !! Randknoten
                if (knoten_rand(j) > maxrandnr)maxrandnr = knoten_rand(j)
             endif ! Randknoten
-         enddo ! alle j Knoten
-         allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
-         do ini = 1,maxrandnr !! Randnummernvorkommen initialisieren
-            nr_vorhanden(ini) = 0
          enddo
-         allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
-         if (alloc_status /= 0) then
-            write(fehler,*)'nr_vorhanden(maxrandnr) konnte nicht allokiert werden ', alloc_status
-            call qerror(fehler)
-         endif ! alloc_status .ne.0
-         do ini = 1,maxrandnr !! Rand-vorkommen initialisieren
-            rb_vorkommen(ini) = 0
-         enddo
-         do j = 1,knotenanzahl2D !! vorhandene Randummern durchzählen.
-            if (knoten_rand(j) > 0)nr_vorhanden(knoten_rand(j)) = nr_vorhanden(knoten_rand(j)) + 1
-         enddo ! alle j Knoten
-         do j = 1,maxrandnr !! alle Randnummern ausgeben:
+         
+         allocate (nr_vorhanden(maxrandnr), source = 0, stat = alloc_status )
+         
+         allocate (rb_vorkommen(maxrandnr), source = 0, stat = alloc_status )
+         if (alloc_status /= 0) call qerror("Error while allocating variable `rb_vorkommen`")
+         
+         do j = 1,knotenanzahl2D
+            if (knoten_rand(j) > 0) nr_vorhanden(knoten_rand(j)) = nr_vorhanden(knoten_rand(j)) + 1
+         enddo 
+         
+         do j = 1,maxrandnr
             if (nr_vorhanden(j) > 0) then
                print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Knoten vor.'
             else
                print*,'Randnummer ',j,' kommt nie vor.'
-            endif !
-         enddo ! alle j Randnummern
+            endif 
+         enddo 
+         
          do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
             rb_vorkommen(j) = 0
             do n = 1,ianz_rb !! alle Randbedingungen
@@ -885,16 +897,17 @@ subroutine ereigg_Randbedingungen_lesen()
                   print*,'Randnummer mit dem Zähler',n,' bedient die Randbedingung mit der Nummer ',rabe(n)%nr_rb
                   rb_vorkommen(j) = rb_vorkommen(j) + 1
                endif
-            enddo !! alle n Randbedingungen
+            enddo
+            
             if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben.'
             if (rb_vorkommen(j) > 1) then
                write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j), ' Randbedingungen angegeben.'
                call qerror(fehler)
             endif
-         enddo ! alle j Randnummern
+         enddo 
+         
          !! Randzähler in Feld knoten_rand() schreiben
          do j = 1,knotenanzahl2D
-            !if(j.eq.kontrollknoten)print*,"Kontrollknoten #",j
             if (knoten_rand(j) > 0) then !! falls Randknoten
                if (rb_vorkommen(knoten_rand(j)) == 0) then !! nicht bediente Randnummern ausrangieren.
                   knoten_rand(j) = 999999
@@ -907,6 +920,7 @@ subroutine ereigg_Randbedingungen_lesen()
                   enddo !! alle n Randbedingungen
                   knoten_rand(j) = nini
                endif !! nicht bediente Randnummer
+         
                if (j == kontrollknoten) then
                   print*,"Kontrollknoten #",j," ist Randknoten mit der Rand-zähler ", knoten_rand(j)
                   if (knoten_rand(j) <= ianz_rb) then
@@ -917,8 +931,10 @@ subroutine ereigg_Randbedingungen_lesen()
                endif ! kontrollknoten
             endif ! Randknoten
          enddo ! alle j Knoten
+         
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
+      
       case(2) ! Untrim² netCDF
          min_nr = 99999
          maxrandnr = 0
@@ -926,47 +942,52 @@ subroutine ereigg_Randbedingungen_lesen()
             if (element_rand(j) > maxrandnr) maxrandnr = element_rand(j)
             if ( (element_rand(j) < min_nr) .and. (element_rand(j) > 0) )min_nr = element_rand(j)
             rb_vorhanden = .false.
-            do n = 1,ianz_rb !! alle Randbedingungen
-               if (element_rand(j) == rabe(n)%nr_rb)rb_vorhanden = .true.
-            enddo !! alle n Randbedingungen
-            if (( .not. rb_vorhanden) .and. (element_rand(j) /= 0))  &
-                print*,'ereigg_Randbedingungen_lesen Untrim: element ',j,' randnummer = ' &
-                ,element_rand(j),' zugehörige Randbedingung fehlt'
-         enddo
-         allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
-         allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
-         do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
-            nr_vorhanden(j) = 0
-            rb_vorkommen(j) = 0
-            do n = 1,ianz_rb !! alle Randbedingungen
-               if (j == rabe(n)%nr_rb) then
-                  print*,'Randvorgabe mit dem Zähler',n,' bedient die Randbedingung mit der Nummer ',rabe(n)%nr_rb
-                  rb_vorkommen(j) = rb_vorkommen(j) + 1
-               endif
-            enddo !! alle n Randbedingungen
-            if (rb_vorkommen(j) < 1)print*,'### Warnung ###: für Randnummer ',j,' wurde keine Randbedingung vorgegeben.'
-            if (rb_vorkommen(j) > 1) then
-               write(fehler,*)'### Abbruch 284 ### für Randnummer ',j,' wurden ',rb_vorkommen(j), ' Randbedingungen angegeben.'
+            
+            do n = 1,ianz_rb
+               if (element_rand(j) == rabe(n)%nr_rb) rb_vorhanden = .true.
+            enddo
+      
+            if (.not. rb_vorhanden .and. element_rand(j) /= 0)  then
+               write(fehler, "(a,i0,a,i0)")                                                      &
+                  "Error in read_boundary_timeseries. Missing boundary condition for element ",  &
+                  j, " of bounday ", element_rand(j)
                call qerror(fehler)
             endif
-         enddo ! alle j Randnummern
+         enddo
+         
+         allocate (nr_vorhanden(maxrandnr), source = 0, stat = alloc_status )
+         allocate (rb_vorkommen(maxrandnr), source = 0, stat = alloc_status )
+         
+         
+         ! check, if all boundary conditions are given
+         do j = 1,maxrandnr 
+            do n = 1,ianz_rb
+               if (j == rabe(n)%nr_rb) then
+                  rb_vorkommen(j) = rb_vorkommen(j) + 1
+               endif
+            enddo
+            
+            if (rb_vorkommen(j) > 1) then
+               write(fehler, "(a,i0,a,i0,a)") "Boundary ", j, " has ",  rb_vorkommen(j), " boundary conditions."
+               call qerror(fehler)
+            endif
+         enddo
+         
          do j = 1,n_elemente !! vorhandene Randummern durchzählen.
-            if (element_rand(j) > 0)nr_vorhanden(element_rand(j)) = nr_vorhanden(element_rand(j)) + 1
-         enddo ! alle j Elemente
-         do j = 1,maxrandnr !! alle Randnummern ausgeben:
-            if (nr_vorhanden(j) > 0) then
-               print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Elementen vor.'
-            else
-               print*,'Randnummer ',j,' kommt nie vor.'
-            endif !
-         enddo ! alle j Randnummern
-         print*,'### ereigg_Randbedingungen_lesen: Untrim netCDF Randnummern momentan nur von ',min_nr,' bis ',maxrandnr
-         do n = 1,ianz_rb !! alle Randbedingungen
-            if (rabe(n)%nr_rb < min_nr)  &
-                print*,'ereigg_Randbedingungen_lesen Untrim: ',n,'-ter Rand mit nr = ',rabe(n)%nr_rb,' unbenutzt'
-            if (rabe(n)%nr_rb > maxrandnr)  &
-                print*,'ereigg_Randbedingungen_lesen Untrim: ',n,'-ter Rand mit nr = ',rabe(n)%nr_rb,' unbenutzt'
-         enddo !! alle n Randbedingungen
+            if (element_rand(j) > 0) nr_vorhanden(element_rand(j)) = nr_vorhanden(element_rand(j)) + 1
+         enddo
+        
+         do j = 1,maxrandnr
+            print "(a,i0,a,i0,a)", "Boundary ", j , " is assigned to ", nr_vorhanden(j), " elements."
+         enddo 
+        
+        
+         do n = 1,ianz_rb
+            if (rabe(n)%nr_rb < min_nr .or. rabe(n)%nr_rb > maxrandnr)  then
+               print "(a,i0,a,i0,a)", "Note: Boundary ", n, "(nr = ", rabe(n)%nr_rb, ") is not used."
+            endif
+         enddo
+         
          !! Randnummer in Randzähler umwandeln.
          do j = 1,n_elemente
             if (element_rand(j) > 0) then !! falls Rand
@@ -974,13 +995,15 @@ subroutine ereigg_Randbedingungen_lesen()
                   element_rand(j) = 999999
                else
                   nini = -7
-                  do n = 1,ianz_rb !! alle Randbedingungen
+                  do n = 1,ianz_rb 
                      if (element_rand(j) == rabe(n)%nr_rb) then
                         nini = n
                      endif
-                  enddo !! alle n Randbedingungen
+                  enddo
+
                   element_rand(j) = nini
-               endif !! nicht bediente Randnummer
+               endif 
+               
                if (j == kontrollknoten) then
                   print*,"control-Element #",j," hat Rand-zähler ", element_rand(j)
                   if (element_rand(j) <= ianz_rb) then
@@ -991,8 +1014,11 @@ subroutine ereigg_Randbedingungen_lesen()
                endif ! kontrollknoten
             endif ! Randknoten
          enddo ! alle j Elemente
+         
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
+      
+      
       case(3) ! SCHISM
          maxrandnr = 0
          do j = 1,knotenanzahl2D !! max Randnummer ermitteln:
@@ -1000,21 +1026,19 @@ subroutine ereigg_Randbedingungen_lesen()
                if (knoten_rand(j) > maxrandnr)maxrandnr = knoten_rand(j)
             endif ! Randknoten
          enddo ! alle j Knoten
-         allocate (nr_vorhanden(maxrandnr), stat = alloc_status )
-         do ini = 1,maxrandnr !! Randnummernvorkommen initialisieren
-            nr_vorhanden(ini) = 0
-         enddo
-         allocate (rb_vorkommen(maxrandnr), stat = alloc_status )
+         
+         allocate (nr_vorhanden(maxrandnr), source = 0, stat = alloc_status )
+         allocate (rb_vorkommen(maxrandnr), source = 0, stat = alloc_status )
          if (alloc_status /= 0) then
             write(fehler,*)'nr_vorhanden(maxrandnr) konnte nicht allokiert werden ', alloc_status
             call qerror(fehler)
          endif ! alloc_status .ne.0
-         do ini = 1,maxrandnr !! Rand-vorkommen initialisieren
-            rb_vorkommen(ini) = 0
-         enddo
+         
+         
          do j = 1,knotenanzahl2D !! vorhandene Randummern durchzählen.
             if (knoten_rand(j) > 0)nr_vorhanden(knoten_rand(j)) = nr_vorhanden(knoten_rand(j)) + 1
          enddo ! alle j Knoten
+         
          do j = 1,maxrandnr !! alle Randnummern ausgeben:
             if (nr_vorhanden(j) > 0) then
                print*,'Randnummer ',j,' kommt an ',nr_vorhanden(j),' Knoten vor. -SCHISM'
@@ -1022,6 +1046,7 @@ subroutine ereigg_Randbedingungen_lesen()
                print*,'Randnummer ',j,' kommt nie vor. -SCHISM'
             endif !
          enddo ! alle j Randnummern
+         
          do j = 1,maxrandnr !! Randbedingung für alle Randnummern vorhanden?
             rb_vorkommen(j) = 0
             do n = 1,ianz_rb !! alle Randbedingungen
@@ -1037,9 +1062,9 @@ subroutine ereigg_Randbedingungen_lesen()
                call qerror(fehler)
             endif
          enddo ! alle j Randnummern
+         
          !! Randnummer in Feld knoten_rand() durch Randzähler ersetzen !!
          do j = 1,knotenanzahl2D
-            !if(j.eq.kontrollknoten)print*,"Kontrollknoten #",j
             if (knoten_rand(j) > 0) then !! falls Randknoten
                if (rb_vorkommen(knoten_rand(j)) == 0) then !! nicht bediente Randnummern ausrangieren.
                   knoten_rand(j) = 999999
@@ -1052,6 +1077,7 @@ subroutine ereigg_Randbedingungen_lesen()
                   enddo !! alle n Randbedingungen
                   knoten_rand(j) = nini
                endif !! nicht bediente Randnummer
+         
                if (j == kontrollknoten) then
                   print*,"Kontrollknoten #",j," ist Randknoten mit der Rand-zähler ", knoten_rand(j)
                   if (knoten_rand(j) <= ianz_rb) then
@@ -1062,16 +1088,18 @@ subroutine ereigg_Randbedingungen_lesen()
                endif ! kontrollknoten
             endif ! Randknoten
          enddo ! alle j Knoten
+         
          deallocate (nr_vorhanden)
          deallocate (rb_vorkommen)
-         case default
-         call qerror('ereigg_Randbedingungen_lesen: Hydraulischer Antrieb unbekannt')
+         
+      case default
+          call qerror("read_boundary_timeseries: invalid value for variable `hydro_trieb`.")
    end select
-   close (ion)
-   print*,"ereigg_Randbedingungen_lesen Ende"
-end subroutine ereigg_Randbedingungen_lesen
-!----+-----+----
-!
+   
+  
+end subroutine read_boundary_timeseries
+
+
 !> <h1>Datei e_extnct.dat Lesen</h1>
 !! aus <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
 !! siehe \ref lnk_extnct_rb aus \ref lnk_datenmodell

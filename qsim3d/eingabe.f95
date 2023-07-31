@@ -127,7 +127,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
       call read_ereigg_model() ! read time-stepping information at first
-      call ereigg_Randbedingungen_lesen() ! next read BC-development
+      call read_boundary_timeseries() ! next read BC-development
      
       ! read global model-parameters now in module ::uebergabe_werte
       cpfad = trim(adjustl(modellverzeichnis))
@@ -304,7 +304,7 @@ subroutine read_ereigg_model()
    ! --------------------------------------------------------------------------
    print*
    print '(a)', repeat("-", 80)
-   print '(a)', "EreigG.txt"
+   print '(a)', "EreigG.txt: model settings"
    print '(a)', repeat("-", 80)
    
    print '(a)','version:  ' // trim(version)
@@ -316,22 +316,22 @@ subroutine read_ereigg_model()
    print '(3a,i0)',  "  end         = ", datetime_end%date_string(),   " | ", endzeitpunkt
    print '(a,i0,a)', "  delta t     = ", deltat, " seconds"
    print '(a,i0)',   "  timesteps   = ", zeitschrittanzahl
-   print '(a,i1)',   "  iMitt       = ", imitt
-   print '(a,i1)',   "  ipH         = ", iph
+   print '(a,i1)',   "  imitt       = ", imitt
+   print '(a,i1)',   "  iph         = ", iph
    print '(a,i1)',   "  idl         = ", idl
-   print '(a,i1)',   "  iTemp       = ", itemp
-   print '(a,i1)',   "  iTracer     = ", itracer
-   print '(a,i1)',   "  iEros       = ", ieros
-   print '(a,i1)',   "  iSchwa      = ", ischwa
-   print '(a,i1)',   "  iVerfahren  = ", iverfahren
-   print '(a,i1)',   "  iLongDis    = ", ilongDis
-   print '(a,f0.2)', "  FlongDis    = ", FlongDis
-   print '(a,i1)',   "  iColi       = ", iColi
-   print '(a,i1)',   "  iKonsS      = ", ikonsS
-   print '(a,i1)',   "  iSchwer     = ", iSchwer
-   print '(a,i1)',   "  iPhy        = ", iphy
-   print '(a,i1)',   "  iFormVert   = ", iformVert
-   print '(a,i1)',   "  iForm_VerdR = ", iform_VerdR
+   print '(a,i1)',   "  itemp       = ", itemp
+   print '(a,i1)',   "  itracer     = ", itracer
+   print '(a,i1)',   "  ieros       = ", ieros
+   print '(a,i1)',   "  ischwa      = ", ischwa
+   print '(a,i1)',   "  iverfahren  = ", iverfahren
+   print '(a,i1)',   "  ilongdis    = ", ilongdis
+   print '(a,f0.2)', "  flongdis    = ", flongdis
+   print '(a,i1)',   "  icoli       = ", icoli
+   print '(a,i1)',   "  ikonss      = ", ikonss
+   print '(a,i1)',   "  ischwer     = ", ischwer
+   print '(a,i1)',   "  iphy        = ", iphy
+   print '(a,i1)',   "  iformvert   = ", iformvert
+   print '(a,i1)',   "  iform_verdr = ", iform_verdr
    print *
    print '(a)', "Warnings:"
    

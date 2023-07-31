@@ -258,20 +258,17 @@ module modell
    ! --------------------------------------------------------------------------
    ! wetter_datenfelder
    ! --------------------------------------------------------------------------
-   character(100)                         :: version_t                         !< model version Modell- und Ereignisname.
-   character(100)                         :: modname_t                         !< model name
-   character(100)                         :: erename_t                         !< Ereignisname
-   integer                                :: iwetts_t, mwettmax_t              !< Anzahl der Wetterstationen
-   integer                                :: imet_t                            !< Kennung 1=Stundenwerte 0=Tagesmittelwerte
-   integer, allocatable, dimension(:)     :: iwsta_t, wetterstationskennung_T  !< Stationsnummer, Stationskennung  ACHTUNG UMSTELLUNG
-   integer, allocatable, dimension(:)     :: mwetts_t                          !< Anzahl der Wetterwerte
-   integer, allocatable, dimension(:,:)   :: itagw_T, monatw_T, jahrw_T        !< Datum des Wetterwertes
-   integer, allocatable, dimension(:,:)   :: zeitpunktw                        !< Zeitpunkt des Wetterwertes
-   real,    allocatable, dimension(:)     :: glob_T, tlmax_T, tlmin_T, tlmed_T !< Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
-   real,    allocatable, dimension(:)     :: ro_T, wge_T, cloud_T,  wtyp_T
-   real,    allocatable, dimension(:)     :: schwi_T                           !< Globalstrahlung
-   real,    allocatable, dimension(:,:)   :: uhrzw_T                           !< Uhrzeit des Wetterwertes in Sekunden
-   real,    allocatable, dimension(:,:,:) :: wertw_T                           !< Wertefeld für den jeweiligen Zeitpunkt
+   integer                                       :: iwetts_t, mwettmax_t              !< Anzahl der Wetterstationen
+   integer                                       :: imet_t                            !< Kennung 1=Stundenwerte 0=Tagesmittelwerte
+   integer,        allocatable, dimension(:)     :: iwsta_t, wetterstationskennung_T  !< Stationsnummer, Stationskennung  ACHTUNG UMSTELLUNG
+   integer,        allocatable, dimension(:)     :: mwetts_t                          !< Anzahl der Wetterwerte
+   integer,        allocatable, dimension(:,:)   :: itagw_T, monatw_T, jahrw_T        !< Datum des Wetterwertes
+   integer(int64), allocatable, dimension(:,:)   :: zeitpunktw                        !< Zeitpunkt des Wetterwertes
+   real,           allocatable, dimension(:)     :: glob_T, tlmax_T, tlmin_T, tlmed_T !< Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
+   real,           allocatable, dimension(:)     :: ro_T, wge_T, cloud_T,  wtyp_T
+   real,           allocatable, dimension(:)     :: schwi_T                           !< Globalstrahlung
+   real,           allocatable, dimension(:,:)   :: uhrzw_T                           !< Uhrzeit des Wetterwertes in Sekunden
+   real,           allocatable, dimension(:,:,:) :: wertw_T                           !< Wertefeld für den jeweiligen Zeitpunkt
    
    
    ! --------------------------------------------------------------------------
@@ -401,12 +398,13 @@ module modell
    
    ! Beschreibung in benthische_verteilungen.f95
    type :: rb_zeile
-      integer :: itag,imonat,ijahrl
-      real    :: uhrl, werts(anzrawe)
+      integer                  :: itag,imonat,ijahrl
+      real                     :: uhrl
+      real, dimension(anzrawe) :: werts
    end type rb_zeile
    
    type :: rb_punkt
-      integer        :: zeit_sek
+      integer(int64) :: zeit_sek
       type(rb_zeile) :: zeil
    end type rb_punkt
    
@@ -423,10 +421,13 @@ module modell
    
    !> \anchor rb rb Randbedingungs-Struktur
    type :: rb
-      integer                 :: anz_rb, nr_rb, tagesmittelwert_flag,t_guelt
-      type(rb_punkt), pointer :: punkt(:)
-      real                    :: wert_jetzt(anzrawe)
-      type(rb_streckenzug)    :: randlinie
+      integer                               :: anz_rb
+      integer                               :: nr_rb
+      integer                               :: tagesmittelwert_flag
+      integer                               :: t_guelt
+      type(rb_punkt), dimension(:), pointer :: punkt
+      real, dimension(anzrawe)              :: wert_jetzt
+      type(rb_streckenzug)                  :: randlinie
    end type rb
    
    
