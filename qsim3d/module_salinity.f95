@@ -169,7 +169,7 @@ contains
       start3 = (/                   1, 1, i_time /)
       count3 = (/ number_plankt_point, 1,      1 /)
       call check_err(nf90_inq_varid    (ncid, 'Mesh2_face_Salzgehalt_2d', varid))
-      call check_err(nf90_get_var      (ncid, varid, salinity_element, start3, count3))
+      call check_err(nf90_get_var      (ncid, varid, salinity_element(1:number_plankt_point), start3, count3))
       call check_err(nf90_inq_var_fill (ncid, varid, i_fill, fill_value))
       
       do i = 1,number_plankt_point
