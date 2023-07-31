@@ -108,16 +108,16 @@ contains
                     spm_element(part * proz_anz), stat = alloc_status )
          if (alloc_status /= 0) call qerror('init_suspended_matter: Error allocating SPM fields for NetCDF reading.')
          
-         spm_classes_element = 0.
-         spm_element = 0.
-         vol_element = 0.
+         spm_classes_element(:,:) = 0.
+         spm_element(:)           = 0.
+         vol_element(:)           = 0.
          
       endif
       
       ! initialize data field used on MPI processes
       allocate ( spm_element_p(part), stat = alloc_status )
       if (alloc_status /= 0) call qerror('init_suspended_matter: Error allocating SPM partial fields for MPI processes.')
-      spm_element_p = 0.
+      spm_element_p(:) = 0.
       
       ! read first time step for initialisation
       call step_suspended_matter

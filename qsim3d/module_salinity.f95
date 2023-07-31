@@ -74,13 +74,13 @@ contains
          ! initialize data arrays for entire domain
          allocate (salinity_element(part * proz_anz), stat = alloc_status)
          if (alloc_status /= 0) call qerror('init_salinity: Error allocating salinity for NetCDF reading.')
-         salinity_element = 0.
+         salinity_element(:) = 0.
       endif
       
       ! initialize data field used on MPI processes
       allocate (salinity_element_p(part), stat = alloc_status)
       if (alloc_status /= 0) call qerror('init_salinity: Error allocating Salinity partial fields for MPI processes.')
-      salinity_element_p = 0.
+      salinity_element_p(:) = 0.
       
       ! read first time step for initialisation
       call step_salinity
