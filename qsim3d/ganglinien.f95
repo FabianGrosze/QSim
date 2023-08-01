@@ -266,18 +266,13 @@ subroutine ganglinien_zeitschritt(izeit_gang)
          ! c3Ammonium(i)=planktonic_variable(3,knot_gangl(i))
       endif ! knoten auf diesem Prozess
    enddo ! alle i Ausgabe-Knoten
+   
    if (meinrang == 0) then
       if (hydro_trieb == 1) then ! hydro_trieb=1=casu
          if ( nur_alter ) call alter_zeitschritt(izeit+1)
-         !   call tagesmittelwert()
          if (n_pl > 200)call qerror("n_pl > 200 geht nicht wegen fester Feldgröße massen_flux")
-         !print*,'ganglinien_zeitschritt:, izeit_gang=',izeit_gang,' zeitpunkt=',zeitpunkt,'  Knoten-Werte notiert'
-         !call rand_flux(izeit+1)
-         !print*,'ganglinien_zeitschritt: rand_flux durchgelaufen'
-         !call querschnitt_flux(izeit+1)
-         !print*,'ganglinien_zeitschritt: querschnitt_flux durchgelaufen'
-      endif ! hydro_trieb=1=casu
-   endif ! meinrang.eq. 0
+      endif
+      endif ! meinrang.eq. 0
    call mpi_barrier (mpi_komm_welt, ierr)
 end subroutine ganglinien_zeitschritt
 !!

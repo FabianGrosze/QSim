@@ -48,18 +48,20 @@ subroutine ausgeben()
    call mpi_barrier (mpi_komm_welt, ierr)
    return
 end subroutine ausgeben
-!----+-----+----+-----+----+-----+----+-----+----
-!> Suboutine tagesmittelwert() macht tagesmittelwerte
-!! \n\n
+
+!> Calculate Daily Means for vtk Output
 subroutine tagesmittelwert()
    use modell
    implicit none
-   integer j,n, ion, open_error, system_error, errcode
-   real tagesanteil, null
-   character(len = longname) :: dateiname, dateiname2, systemaufruf, zahl
-   character(50) tm,tt,tj
+   
+   integer             :: j,n, ion, open_error, system_error, errcode
+   real                :: tagesanteil, null
+   character(longname) :: dateiname, dateiname2, systemaufruf, zahl
+   character(50)       :: tm,tt,tj
+   
+   
    null = 0.0
-   !if(.true.) then ! heute mittelwertausgabe
+   
    if ((monat == 7) .and. (tag >= 5).and.(tag <= 25)) then ! heute mittelwertausgabe
       if (uhrzeit_stunde < uhrzeit_stunde_vorher) then ! Tageswechsel
          write(zahl,*)rechenzeit
