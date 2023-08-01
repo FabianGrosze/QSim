@@ -113,7 +113,7 @@ module modell
    character (len = 2000) :: ctext 
    
    ! --- time variables ---
-   integer, parameter :: referenzjahr = 2008  !> \anchor referenzjahr Referenzjahr\n
+   integer, parameter :: referenzjahr = 1970  !> \anchor referenzjahr Referenzjahr\n
                                                !! Darf nur ein Schaltjahr sein, sonst werden die Tage flasch gezählt\n
                                                !! darf nur max. 65 Jahre vor Berechnungsjahr liegen damit int*4 zum Sekunden zählen reicht und\n
                                                !! darf nur max. 20 Jahre vor Berechnungsjahr liegen, um Zeitfehler abfangen zu können.
@@ -139,7 +139,7 @@ module modell
    integer        :: anzZeit               !> \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurÃ¼ck: \ref lnk_schwermetalle
    real           :: uhrzeit_stunde        !> \anchor uhrzeit_stunde Uhrzeit als Stunde.Minute zum Einlesen von EREIGG.txt. sekundenzeit(2) rechnet es Stundendezimale um
    real           :: uhrzeit_stunde_vorher
-   
+      
    ! --- Vermaschung Elemente ---
    logical                              :: element_vorhanden
    integer                              :: n_elemente, summ_ne

@@ -180,9 +180,9 @@ contains
    end subroutine reset
 
 
-  pure elemental subroutine tick(self)
-    ! increments the currenttime of the clock instance by one tickinterval.
-    class(clock), intent(inout) :: self
+   pure elemental subroutine tick(self)
+      ! increments the currenttime of the clock instance by one tickinterval.
+      class(clock), intent(inout) :: self
     
       if (self % stopped) return
       if (.not. self % started) then
@@ -191,7 +191,7 @@ contains
       endif
       self % current_time = self % current_time + self % tickinterval
       if (self % current_time >= self % stop_time) self % stopped = .true.
-  end subroutine tick
+   end subroutine tick
 
 
    pure elemental type(datetime) function datetime_constructor(    &

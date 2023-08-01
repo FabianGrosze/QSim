@@ -50,6 +50,5 @@ void versionsdatum_(){
    monat=jahr/10000; jahr=jahr-monat*10000;
    sprintf(versiontext,"%i. %i. %i",tag,monat,jahr);
    //printf("heute ist der %s \n",versiontext);
-   cout<<"Diese Version wurde zuletzt compiliert am: "<<versiontext<<endl;
-
+   cout<<"last compiled:  "<<versiontext<<endl;
 return;}
