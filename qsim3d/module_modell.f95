@@ -486,7 +486,6 @@ module modell
    ! Beschreibung in ausgabe.f95
    logical                                     :: bali
    integer                                     :: knotenanzahl_ausgabe      !< Knotenanzahl
-   integer                                     :: anzahl_auskonz            !< Anzahl der insgesamt vorhandenen Übergabe-Konzentrationens
    integer                                     :: n_output                  !< number of output times
    integer                                     :: k_ausgabe                 !< output-concentrations
    integer(int64), allocatable, dimension(:)   :: ausgabe_zeitpunkt         !< output times in unixtime

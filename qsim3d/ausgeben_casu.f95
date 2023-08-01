@@ -366,6 +366,5 @@ subroutine ausgeben_casu()
    !    print*,'Aufruf von visu fehlgeschalgen'
    !    ! call qerror(fehler) 7
    ! endif ! systemaufruf fehlgeschlagen
-   ! call aus_grd() !! Ausgabe als Janet-lesbare Datei
    return
 end subroutine ausgeben_casu
