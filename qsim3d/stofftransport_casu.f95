@@ -173,68 +173,79 @@ subroutine stofftransport_casu()
    enddo ! nt, alle Transport (zwischen) Zeitschritte
    
 end subroutine stofftransport_casu
-!----+-----+----
+
 
 !> Die subroutine holen_trans(nt) , mit nt - Zeitschrittzähler,
 !! holt die Transportinformationen für einen Zeitschritt mittels der 
-!! c++-Funktion trans_read() aus Datei trans_read.c.\n
+!! c++-Funktion trans_read() aus Datei trans_read.c.
+!!
 !! In den Dateien aus dem Verzeichnis transinfo, deren Name mit t beginnt und 
 !! danach den Zeitpunkt als Zahl enthält, ist der Strombahnursprung, 
-!! die Wasserspiegellage und der Geschwindigkeitsbetrag abgelegt.\n
+!! die Wasserspiegellage und der Geschwindigkeitsbetrag abgelegt
+!!
 !! holen_trans() macht daraus die \ref lnk_hydraul_rb Geschwindigkeitsbetrag, 
 !! Wassertiefe und Wasserspiegellage.\n
 !! holen_trans() wird nur aus stofftransport() heraus von Prozess 0 aufgerufen
-!! \n\n 
-!! aus Datei stofftransport_casu.f95; zurück:\ref lnk_transport_numerik
-
 subroutine holen_trans(nt)
    use modell
    implicit none
-   integer :: nt, ntist, trockzae
-   integer :: wrong, lang, j,i,jj,ll
-   real :: ubetr, utau, infl, flaeche, volumen, anteil, ks, zet, tief
-   character(500) vollerdateiname
+   
+   integer, intent(in) :: nt
+   
+   integer        :: ntist, trockzae
+   integer        :: wrong, lang, j,i,jj,ll
+   real           :: ubetr, utau, infl, flaeche, volumen, anteil, ks, zet, tief
+   character(500) :: vollerdateiname
+   
    trockzae = 0
    if (stationaer) then
       ntist = 1
    else !! instationaer
       ntist = nt
    endif
+   
    write(vollerdateiname,'(3A)')trim(modellverzeichnis),'transinfo/',trim(transinfo_datei(transinfo_zuord(ntist)))
-   ! lang=len(trim(transinfo_datei(transinfo_zuord(nt))))
    lang = len(trim(vollerdateiname))
-   !if((.not. stationaer).or.(nt.eq.1))then !! instationär oder erster Schritt stationär
    call trans_read(trim(vollerdateiname), lang, &
                    nonu, intereck, wicht, wrong, p, u, dir, kontrollknoten)
+   
    if (wrong /= 0) then
       write(fehler,*)' trans_read Lesen der Transportinformationen fehlgeschlagen ', wrong
       call qerror(fehler)
    endif
+   
    if (nonu /= number_plankt_point) then
       write(fehler,*)'holen_trans: nonu /= number_plankt_point',nonu,number_plankt_point
       call qerror(fehler)
    endif ! nonu
+   
    do jj = 1,number_plankt_point ! alle j Knoten
       do ll = 1,4
-         if (isNaN( wicht((jj-1)*4+ll) ))print*,'holen_trans: isNaN( wicht((jj-1)*4+ll)  jj,ll,((jj-1)*4+ll) = ' &
-             ,jj,ll,((jj-1)*4+ll)
+         if (isNaN( wicht((jj-1)*4+ll))) then
+            print*,'holen_trans: isNaN( wicht((jj-1)*4+ll)  jj,ll,((jj-1)*4+ll) = ' &
+                    ,jj,ll,((jj-1)*4+ll)
+         endif
       enddo ! alle 4 wichtungsfaktoren
    enddo ! all jj nodes
+   
    flaeche = 0.0
    volumen = 0.0
    anteil = 1.0/real(zeitschrittanzahl*anz_transinfo) !! Zeit-Anteil am Gesamt-Simulations-Zeitraum
+   
    do j = 1,nonu !! 2D-Knoten
-      tief = p(j)-knoten_z(j)  ! Wassertiefe ermitteln:
+      tief = p(j) - knoten_z(j)  ! Wassertiefe ermitteln:
       if (tief <= min_tief ) then ! trocken ! min_tief parameter aus module_modell
-         trockzae = trockzae+1
+         trockzae = trockzae + 1
       else ! nass
-         flaeche = flaeche+knoten_flaeche(j)
-         volumen = volumen+(tief*knoten_flaeche(j))
+         flaeche = flaeche + knoten_flaeche(j)
+         volumen = volumen + (tief * knoten_flaeche(j))
          if (uedau_flag) call qerror(" holen_trans(nt) Überstaudauer nicht mehr implementiert")
-      endif ! trocken
-   enddo ! alle j Knoten
-   mittelflaech = mittelflaech+(flaeche*anteil)
-   mittelvolumen = mittelvolumen+(volumen*anteil)
+      endif
+   enddo
+   
+   mittelflaech  = mittelflaech  + (flaeche * anteil)
+   mittelvolumen = mittelvolumen + (volumen * anteil)
+   
    ! Bahnlinienursprünge ermitteln +
    ! Zuflussränder detektieren: d.h. Rand an dem Geschwindigkeit ohne Bahnlinielänge
    do j = 1,nonu ! all nodes
@@ -243,28 +254,30 @@ subroutine holen_trans(nt)
       ur_y(j) = 0.0
       ur_z(j) = 0.0
       do i = 1,4
-         if (intereck((j-1)*4+i) > 0) then !! nur bei vierecken 4.Knoten
-            ur_x(j) = ur_x(j)+knoten_x(intereck((j-1)*4+i))*wicht((j-1)*4+i)
-            ur_y(j) = ur_y(j)+knoten_y(intereck((j-1)*4+i))*wicht((j-1)*4+i)
-            ur_z(j) = ur_z(j)+knoten_z(intereck((j-1)*4+i))*wicht((j-1)*4+i)
+         if (intereck((j-1)*4+i) > 0) then ! nur bei vierecken 4.Knoten
+            ur_x(j) = ur_x(j) + knoten_x(intereck((j-1)*4+i)) * wicht((j-1)*4+i)
+            ur_y(j) = ur_y(j) + knoten_y(intereck((j-1)*4+i)) * wicht((j-1)*4+i)
+            ur_z(j) = ur_z(j) + knoten_z(intereck((j-1)*4+i)) * wicht((j-1)*4+i)
          endif
       enddo ! alle 4 ecken
       ubetr = (((knoten_x(j)-ur_x(j))**2 + (knoten_y(j)-ur_y(j))**2 + (knoten_z(j)-ur_z(j))**2)**0.5)/dttrans
       infl = 10.0
-      if (u(j) > 0.0)infl = ubetr/u(j)
+   
+      if (u(j) > 0.0) infl = ubetr / u(j)
       if ((infl < 0.1) .and. (knoten_rand(j) > 0)) then
          inflow(j) = .true.
-         !print*,'Zuflussknoten ',j
       endif
+      
       !! Sohlschubspannungsgeschwindigkeit berechnen (Nikuradse-Sandrauh Darcy-Weißbach)
       !!lami=0.1 !! ### vorläufig =zone(point_zone(j))%reib_ks reib_ks(point_zone(j))
       if (tief <= min_tief ) then ! trocken ! min_tief parameter aus module_modell
          utau = 0.0
       else ! nass
          ks = zone(point_zone(j))%reib
-         zet = tief*0.4665; !! 2D
-         utau = ((lambda(ks,zet)/8.0)**0.5)*u(j)
+         zet = tief * 0.4665 ! 2D
+         utau = ((lambda(ks,zet) / 8.)**0.5) * u(j)
       endif
+      
       !!if(meinrang.eq.0)then !! nur prozessor 0
       !!do j=1,knotenanzahl2D
       rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
@@ -274,9 +287,13 @@ subroutine holen_trans(nt)
       benthic_distribution(45+(j-1)*number_benth_distr) = utau
       !!enddo !! alle j knoten
       !!endif !! nur prozessor 0
-      if (j == kontrollknoten)print*,'holen_trans: ', j,' p = ',p(j),' u = ', u(j), ' tief = ',tief,   &
+      
+      if (j == kontrollknoten) then
+         print*,'holen_trans: ', j,' p = ',p(j),' u = ', u(j), ' tief = ',tief,   &
           " utau = ",utau," Ks = ",zone(point_zone(j))%reib,' knoten_lage = ',knoten_x(j),knoten_y(j),knoten_z(j),  &
           ' ursprung',ur_x(j),ur_y(j),ur_z(j), ' inflow',inflow(j), ' ubetr', ubetr,' nt = ',nt
+      endif
+      
    enddo ! all j nodes
    print*,'Transport mit Datei ',trim(vollerdateiname),' nt = ',nt,' Wasserpiegelflaeche = ',flaeche  &
          ,' Wasservolumen = ',volumen,' Anzahl trockene Knoten = ',trockzae
@@ -355,114 +372,110 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
    ," werden ", anz_transinfo," Transportzeitschritte verwendet."
    
 end subroutine transinfo_schritte
-!----+-----+----
-!> Transportinformationen sichten und sortieren
-!! \n\n
+
+
+!> Read and order transport information.
 subroutine transinfo_sichten()
+   use module_datetime
    use modell
    implicit none
-   character(200) irgendeinstring
-   character(len = longname) :: dateiname, systemaufruf
-   integer :: system_error, open_error, alloc_status, io_error, errcode
-   integer :: n, nt, nz, np, i, ion, zwischenwert, delt, didi
-   logical :: offsetvorhanden
+   
+   character(200)      :: irgendeinstring
+   character(longname) :: file_name, systemaufruf
+   integer             :: system_error, open_error, alloc_status, io_error, errcode
+   integer             :: n, nt, nz, np, i, ion, zwischenwert, delt, didi
+   logical             :: offset_exists
+   type(datetime)      :: datetime_meta, datetime_tmp
+   
    print*,'Transportinformationen casu-transinfo sichten ...'
-   write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'trafo'
+   file_name = trim(modellverzeichnis) // 'trafo'
+   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'transinfo > ', trim(file_name)
    if (errcode /= 0)call qerror('transinfo_sichten writing filename elemente_ failed')
-   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'transinfo > ', trim(dateiname)
-   if (errcode /= 0)call qerror('transinfo_sichten writing filename elemente_ failed')
+   
    call system(trim(systemaufruf),system_error)
    if (system_error /= 0) then
       print*,trim(systemaufruf)
       call qerror('Auflisten der Transportinformationen fehlgeschlagen.')
-   endif ! io_error.ne.0
-   ion = 333
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
-   if (open_error /= 0) then
-      call qerror('open_error trafo')
-      !else
-      !   print*,"trafo offen"
    endif
+   
+   ion = 333
+   open(unit = ion , file = file_name, status = 'old', action = 'read', iostat = open_error)
+   if (open_error /= 0) call qerror('open_error trafo')
+
    nz = 0
    nt = 0
    do while (zeile(ion))
-      !print*,trim(ctext)
       nz = nz+1
-      if (ctext(1:1) == 't')nt = nt+1
-   enddo ! while Zeile
-   !print*,'trafo hat ',nt," Zeilen"
+      if (ctext(1:1) == 't') nt = nt+1
+   enddo
+   
    transinfo_anzahl = nt
-   if (transinfo_anzahl < 1)call qerror('No transport info')
+   if (transinfo_anzahl < 1) call qerror('No transport info')
+   
    rewind(ion)
-   allocate (transinfo_zeit(transinfo_anzahl), stat = alloc_status )
-   allocate (transinfo_datei(transinfo_anzahl), stat = alloc_status )
-   allocate (transinfo_zuord(transinfo_anzahl), stat = alloc_status )
+   allocate(transinfo_zeit(transinfo_anzahl),  stat = alloc_status)
+   allocate(transinfo_datei(transinfo_anzahl), stat = alloc_status)
+   allocate(transinfo_zuord(transinfo_anzahl), stat = alloc_status)
+   
    nt = 0
    np = 0
    do n = 1,nz,1
-      if ( .not. zeile(ion))call qerror('2 .not. zeile(ion)')
-      !write(*,*)trim(ctext)
+      if (.not. zeile(ion)) call qerror('2 .not. zeile(ion)')
+      
       if (ctext(1:1) == 't') then
          nt = nt+1
-         write(transinfo_datei(nt),'(A)')trim(ctext)
+         transinfo_datei(nt) = trim(ctext)
+         
          i = len(trim(ctext))
          do while (ctext(i:i) /= 't')
             i = i-1
-         enddo ! while Zeile
-         write(irgendeinstring,'(A)')ctext(i+1:len(trim(ctext)))
-         !print*,'irgendeinstring:',trim(irgendeinstring)
-         read(irgendeinstring,*)transinfo_zeit(nt)
+         enddo
+         write(irgendeinstring,'(A)') ctext(i+1:len(trim(ctext)))
+         read(irgendeinstring,*) transinfo_zeit(nt)
+         
          transinfo_zuord(nt) = nt
-         !print*,"transinfo   zuord=", transinfo_zuord(n), '  transinfo_zeit=',transinfo_zeit(n), &
-         !       '  Datei:', trim(transinfo_datei(n))
       endif !! alle t* Dateien
    enddo ! alle zeilen aus trafo
+   
    close(ion)
-   write(dateiname,'(2A)')trim(modellverzeichnis),'transinfo/meta'
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = open_error )
-   if (open_error /= 0)call qerror('open_error transinfo/meta')
-   offsetvorhanden = .false.
+   
+   
+   file_name = trim(modellverzeichnis) // "transinfo/meta"
+   open(unit = ion , file = file_name, status = 'old', action = 'read', iostat = open_error)
+   if (open_error /= 0) call qerror('open_error transinfo/meta')
+   
+   offset_exists = .false.
    do while (zeile(ion))
-      if (ctext(1:1) == '#') then !! Infos zum Modell
-         print*,trim(ctext)
+      if (ctext(1:1) == '#') then ! Infos zum Modell
+         print*, trim(ctext)
+      
       else
+         ! get timestep
          read(ctext,*,iostat = io_error) dttrans
-         if (io_error /= 0) then
-            write(fehler,*)'Transportinfo-Zeitschritt in /transinfo/meta nicht lesbar',io_error
-            call qerror(fehler)
+         if (io_error /= 0) call qerror("Could not read `dttrans` from /transinfo/meta.")
+            
+         if (.not. zeile(ion)) then
+            call qerror("Could not read second line in " // trim(file_name))
          endif
-         if ( .not. zeile(ion)) then
-            write(fehler,*)'2. Datenzeile in ', trim(dateiname),' nicht lesbar'
-            call qerror(fehler)
-         endif
-         if ( .not. offsetvorhanden) then
-            !read(ctext,*,iostat=io_error)time_offset
+         
+         if (.not. offset_exists) then
             read(ctext,*,iostat = io_error) tag, monat, jahr, stunde, minute, sekunde
-            if (io_error /= 0) then
-               write(fehler,*)'time_offset-Lesefehler in der Datei ', trim(dateiname)
-               call qerror(fehler)
-            else
-               print*,"meta-zeit = ",tag, monat, jahr, stunde, minute, sekunde
-               offsetvorhanden = .true.
-               time_offset = 0
-               call sekundenzeit(1)
-               print*,"meta-sekundenzeit = ",zeitpunkt,tag, monat, jahr, stunde, minute, sekunde
-               !call zeitsekunde() !! damit auch die Uhrzeit stimmt
-               write(*,227)'time-offset(transportinfo/meta) '  &
-                     ,tag,monat,jahr,stunde,minute,sekunde,zeitpunkt,referenzjahr
-               time_offset = zeitpunkt !! Offset vom Referenzjahr zum transinfo/meta Zeitursprung
-               write(time_offset_string,'(I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr")')  &
-                     tag,monat,jahr,stunde,minute,sekunde
-            endif ! io_error.ne.0
-         endif ! not vorhanden
-      endif ! not #
-   enddo ! Zeile in /transinfo/meta'
-   if ( .not. offsetvorhanden) then
-      write(fehler,*)'Fehler in der Datei ', trim(dateiname), ' beim Lesen der Verschiebung', &
-                     ' der Zeitskalen zwischen Hydraulik und Qualitätsmodell. '
-      call qerror(fehler)
-   endif ! offset nicht vorhanden
-   ! write(*,'(A,2x,F15.2,2x,I9)')'time-offset=',real(time_offset),time_offset
+            if (io_error /= 0) call qerror("Error while reading time_offset from file " // trim(file_name))
+            
+            offset_exists = .true.
+            datetime_meta = datetime(jahr, monat, tag, stunde, minute, sekunde, tz = tz_qsim)
+            time_offset = datetime_meta%seconds_since_epoch()
+            time_offset_string = datetime_meta % date_string()
+            
+            print "(a,*(i0,x))", "meta-zeit = ", tag, monat, jahr, stunde, minute, sekunde
+            print "(a,i0)",      "meta-sekundenzeit = ", time_offset
+            
+         endif 
+      endif 
+   enddo
+   
+   if (.not. offset_exists) call qerror("Could not find time offset in file " // file_name)
+   
    do n = 1,transinfo_anzahl,1
       do i = n+1,transinfo_anzahl,1
          if (transinfo_zeit(transinfo_zuord(n)) > transinfo_zeit(transinfo_zuord(i))) then ! tauschen
@@ -472,39 +485,26 @@ subroutine transinfo_sichten()
          endif ! Zeitreihenfolge falsch
       enddo ! alle weiteren i durch
    enddo ! alle n durch
-   !do n=1,transinfo_anzahl,1
-   !    transinfo_zeit(transinfo_zuord(n))=transinfo_zeit(transinfo_zuord(n))+real(time_offset)
-   !enddo ! alle n durch
-   !do n=1,transinfo_anzahl,1
-   !   transinfo_zeit(transinfo_zuord(n))=time_offset+transinfo_zeit(transinfo_zuord(n))
-   !enddo ! alle n durch
-   !dttrans=1 !! jetzt aus meta lesen!
-   !if(transinfo_anzahl.gt.1)then
-   !   dttrans=transinfo_zeit(transinfo_zuord(2))-transinfo_zeit(transinfo_zuord(1))
-   !   print*,'Transport Zeitschrittweite=',dttrans
-   !endif ! mehr als ein Transportzeitschritt
+   
+   
    do n = 2,transinfo_anzahl,1
-      delt = transinfo_zeit(transinfo_zuord(n))-transinfo_zeit(transinfo_zuord(n-1))
+      delt = transinfo_zeit(transinfo_zuord(n)) - transinfo_zeit(transinfo_zuord(n-1))
       if (delt /= dttrans) then
          write(fehler,*)' ERROR unregelmäßiger Transportzeitschritt ',delt, 'sollte sein: ', dttrans &
          ,' n = ', n,trim(transinfo_datei(transinfo_zuord(n)))
          call qerror(fehler)
-      endif ! mehr als ein Transportzeitschritt
-   enddo ! alle Transportzeitschritte ab 2
-   print*, transinfo_anzahl,' Transport-Zeitschritte'
-   zeitpunkt = transinfo_zeit(transinfo_zuord(1))
-   call zeitsekunde()
-   write(*,228)'von: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                trim(transinfo_datei(transinfo_zuord(1)))
-   zeitpunkt = transinfo_zeit(transinfo_zuord(transinfo_anzahl))
-   call zeitsekunde()
-   write(*,228)'bis: ',tag,monat,jahr,stunde,minute,sekunde, zeitpunkt, trim(time_offset_string),  &
-                       trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
-   !print*,' transinfo_sichten rechenzeit=', rechenzeit, ' startzeitpunkt=',startzeitpunkt
-   print*,'in regelmäßigen Schritten von  ',dttrans, ' Sekunden'
-   return
-   227 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit 1.Jan.",I4)
-   228 format (A,2x,I2.2,".",I2.2,".",I4,2x,I2.2,":",I2.2,":",I2.2," Uhr = ",I9," sek. seit ",A,2x,A)
+      endif 
+   enddo
+   
+   
+   print "(i0,a)", transinfo_anzahl,' transport  timesteps'
+   datetime_tmp = gmtime(transinfo_zeit(transinfo_zuord(1)))
+   print*, "from: ", datetime_tmp%date_string(), " ", trim(transinfo_datei(transinfo_zuord(1)))
+   
+   datetime_tmp = gmtime(transinfo_zeit(transinfo_zuord(transinfo_anzahl)))
+   print*, "to: ", datetime_tmp%date_string(), " ", trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
+   print*, "with timesteps of ", dttrans, " seconds."
+
 end subroutine transinfo_sichten
 !----+-----+----
 !> Die suboutine netz_lesen() ließt:\n
