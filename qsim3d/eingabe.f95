@@ -132,7 +132,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
       cpfad = trim(adjustl(modellverzeichnis))
       
       call read_aparam(cpfad, iwsim, icoli, ischwer)
-      call extnct_lesen()
+      call read_extnct()
       call ausgabezeitpunkte()      ! reading points in time for output
       call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren

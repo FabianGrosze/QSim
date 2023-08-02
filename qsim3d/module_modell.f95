@@ -612,15 +612,15 @@ contains
       read(ctext, *, iostat = read_error) modell_geob, modell_geol
       if (read_error /= 0) call qerror("Error while reading coordinates from ModellA.txt")
       
-      print*, ""
-      print*, repeat("-", 80)
-      print*, "ModellA.txt"
-      print*, repeat("-", 80)
+      print*
+      print "(a)", repeat("-", 80)
+      print "(a)", "ModellA.txt"
+      print "(a)", repeat("-", 80)
       
-      print"(a,a)",     'version   = ', trim(version)
-      print"(a,a)",     'name      = ', trim(mod_name)
-      print "(a,f0.5)", 'latitude  = ', modell_geob
-      print "(a,f0.5)", 'longitude = ', modell_geol
+      print "(a,a)",    'version:   ', trim(version)
+      print "(a,a)",    'name:      ', trim(mod_name)
+      print "(a,f0.5)", 'latitude:  ', modell_geob
+      print "(a,f0.5)", 'longitude: ', modell_geol
      
       close (ion)
       

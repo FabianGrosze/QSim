@@ -27,7 +27,7 @@
 ! hier enthalten:
 ! randbedingungen_setzen() ; randwert_planktonic() ; randbedingungen_ergaenzen() ; randbedingungen_parallel() ;
 ! scatter_BC() ; RB_werte_aktualisieren() ; function randwert_gueltig() ; read_boundary_timeseries() ;
-! extnct_lesen() ;  alloc_hydraul_BC()
+! read_extnct() ;  alloc_hydraul_BC()
 
 subroutine randbedingungen_setzen()
    use modell
@@ -682,7 +682,7 @@ subroutine read_boundary_timeseries()
    implicit none
    
    type(datetime) :: datetime_boundary
-   character(500) :: dateiname
+   character(500) :: file_name
    real           :: pseudo_time
    logical        :: rb_vorhanden, randwert_gueltig
    integer        :: open_error, u_ereigg, read_error, alloc_status, ini
@@ -704,15 +704,15 @@ subroutine read_boundary_timeseries()
    endif
    
    
-   dateiname = trim(modellverzeichnis) // 'EREIGG.txt'
-   open (newunit = u_ereigg , file = trim(dateiname), status = 'old', action = 'read ', iostat = open_error)
-   if (open_error /= 0) call qerror("Could not open " // trim(dateiname))
+   file_name = trim(modellverzeichnis) // 'EREIGG.txt'
+   open (newunit = u_ereigg , file = trim(file_name), status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
    rewind (u_ereigg)
    
    
    ! skip file header and model settings
    do n = 1,6 
-      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(file_name))
    enddo
    
    ! --------------------------------------------------------------------------
@@ -727,7 +727,7 @@ subroutine read_boundary_timeseries()
       
       ! read block header
       read(ctext, "(i5,2x,i5,2x,i1,2x,i5)", iostat = read_error) nr, idummy, idummy, anzi
-      if (read_error /= 0) call qerror("Error while reading " // trim(dateiname))
+      if (read_error /= 0) call qerror("Error while reading " // trim(file_name))
       
       min_nr = min(min_nr, nr)
       max_rand_nr = max(max_rand_nr, nr)
@@ -738,7 +738,7 @@ subroutine read_boundary_timeseries()
       if (anzi == 0) cycle
       do n = 1,anzi
          if (.not. zeile(u_ereigg)) then
-            write(fehler,"(a,i0,a,i0)") "Error while reading " // trim(dateiname) // " at boundary ", &
+            write(fehler,"(a,i0,a,i0)") "Error while reading " // trim(file_name) // " at boundary ", &
                                        ianz_rb, " line ", n
             call qerror(fehler)
          endif 
@@ -747,7 +747,7 @@ subroutine read_boundary_timeseries()
    
    enddo
    
-   if ((max_rand_nr <= 0) .or. (max_rand_nr > 9999)) call qerror("Invalid boundary number in " // trim(dateiname))
+   if ((max_rand_nr <= 0) .or. (max_rand_nr > 9999)) call qerror("Invalid boundary number in " // trim(file_name))
    
    print "(a,i0)", "ianz_rb = ", ianz_rb
    print "(a,i0)", "anzmax  = ", anzmax
@@ -764,15 +764,15 @@ subroutine read_boundary_timeseries()
    rewind(u_ereigg)
    ! skip file header
    do n = 1,6  
-      if ( .not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+      if ( .not. zeile(u_ereigg)) call qerror("Error while reading " // trim(file_name))
    enddo 
    
    do n = 1,ianz_rb 
-      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+      if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(file_name))
       
       ! --- read block header ---
       read(ctext, *, iostat = read_error) rabe(n)%nr_rb, idummy, rabe(n)%tagesmittelwert_flag, anzi
-      if (read_error /= 0) call qerror("Error while reading " // trim(dateiname))
+      if (read_error /= 0) call qerror("Error while reading " // trim(file_name))
    
       
       allocate (lesezeil(anzi), stat = alloc_status )
@@ -786,7 +786,7 @@ subroutine read_boundary_timeseries()
       
       ! --- read block body ---
       do m = 1,anzi !alle Zeitpunkte dieser Randlinie
-         if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(dateiname))
+         if (.not. zeile(u_ereigg)) call qerror("Error while reading " // trim(file_name))
          
          lesezeil(m)%werts(:) = -1.0
          read(ctext, *, iostat = read_error) lesezeil(m)%itag,     &               
@@ -836,7 +836,7 @@ subroutine read_boundary_timeseries()
    
       deallocate (lesezeil)
     
-      if (rabe(n)%nr_rb <= 0) call qerror("Invalid boundary number in " // dateiname)
+      if (rabe(n)%nr_rb <= 0) call qerror("Invalid boundary number in " // file_name)
    enddo
    
    close(u_ereigg)
@@ -1100,33 +1100,26 @@ subroutine read_boundary_timeseries()
 end subroutine read_boundary_timeseries
 
 
-!> <h1>Datei e_extnct.dat Lesen</h1>
-!! aus <a href="./exp/e_extnct.dat" target="_blank">e_extnct.dat</a>
-!! siehe \ref lnk_extnct_rb aus \ref lnk_datenmodell
-!! \n\n Quelle: randbedingungen.f95 , zurück: \ref lnk_randbedingungen
+!> Read Parameters for Light Extinction
 !!
-subroutine extnct_lesen()
+!! Details in \ref lnk_extnct_rb in \ref lnk_datenmodell
+subroutine read_extnct()
    use modell
    use QSimDatenfelder
    use module_aparam
    implicit none
-   character(500) dateiname, text
-   integer :: io_error,i, alloc_status, ini
-   if (meinrang /= 0) then ! prozess 0 only
-      write(fehler,*)' 724 extnct_lesen darf nur von Prozess 0 aufgerufen werden'
-      call qerror(fehler)
-   endif
-   write(cpfad,'(A)')trim(modellverzeichnis)
-   call e_extnct_lesen(ilamda,eta,aw,ack,acg,acb,ah,as,al,cpfad)
+   
+   integer :: i, alloc_status
+   
+   if (meinrang /= 0) call qerror("subroutine read_extnct must only be called from processor 0")
+   
+   cpfad = trim(modellverzeichnis)
+   call e_extnct_lesen(ilamda, eta, aw, ack, acg, acb, ah, as, al, cpfad)
    rb_extnct_ilamda = ilamda
-   allocate (rb_extnct_p(rb_extnct_ilamda*anz_extnct_koeff), stat = alloc_status )
-   if (alloc_status /= 0) then
-      write(fehler,*)'103 rb_extnct_p auf prozessor 0 konnte nicht allokiert werden ', alloc_status
-      call qerror(fehler)
-   endif ! alloc_status .ne.0
-   do ini = 1,rb_extnct_ilamda*anz_extnct_koeff
-      rb_extnct_p(ini) = 0.0
-   enddo
+
+   allocate(rb_extnct_p(rb_extnct_ilamda*anz_extnct_koeff), source = 0., stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating variable `rb_etnct_p`.")
+
    do i = 1,ilamda
       rb_extnct_p(1 + (i-1)*anz_extnct_koeff) = eta(i)
       rb_extnct_p(2 + (i-1)*anz_extnct_koeff) = aw(i)
@@ -1136,11 +1129,9 @@ subroutine extnct_lesen()
       rb_extnct_p(6 + (i-1)*anz_extnct_koeff) = ah(i)
       rb_extnct_p(7 + (i-1)*anz_extnct_koeff) = as(i)
       rb_extnct_p(8 + (i-1)*anz_extnct_koeff) = al(i)
-      if (i == 1)print*,'e_extnct.dat: Wellenlänge eta(1) = ',eta(1),' Nano-Meter'
-      if (i == ilamda)print*,'e_extnct.dat: Wellenlänge eta(',ilamda,') = ',eta(ilamda),' Nano-Meter'
    enddo
-   return
-end subroutine extnct_lesen
+   
+end subroutine read_extnct
 !----+-----+----
 !
 !> <h1>Felder allocieren für die hydraulischen Randbedingungen</h1>
