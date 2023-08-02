@@ -102,29 +102,34 @@ subroutine schwebstoff_salz()
    endif
    
 end subroutine schwebstoff_salz
+
+
 !----+-----+----
 !> die Subroutine ini_schwebstoff_salz() setzt die Anfangswerte für
-!! Leitfähigkeit - planktonic_variable_name(65)= "                lf"\n
-!!          planktonic_variable_p(53+nk)= trueb(iglob) !  Schwebstoff\n
-!!          planktonic_variable_name(53)= "                ss"\n
-!!          planktonic_variable_name(65)= "                lf"\n
-!!         planktonic_variable_name(72)= "              salz"\n
+!! Leitfähigkeit - planktonic_variable_name(65)= "                lf"
+!! planktonic_variable_p(53+nk)= trueb(iglob) !  Schwebstoff\n
+!! planktonic_variable_name(53)= "                ss"\n
+!! planktonic_variable_name(65)= "                lf"\n
+!! planktonic_variable_name(72)= "              salz"\n
 !!
-!! aus Datei initialisieren.f95 ; zurück: \ref lnk_anfangsbedingungen \n\n
 subroutine ini_schwebstoff_salz()
    use modell
    implicit none
    integer :: j, k
-   if (meinrang /= 0)call qerror('ini_schwebstoff_salz() darf nur auf prozess 0')
+   
+   if (meinrang /= 0) call qerror('ini_schwebstoff_salz() must only be called from processor 0.')
+   
    print*,' ini_schwebstoff_salz() rechenzeit = ',rechenzeit
    call schwebstoff_salz()
-   !do k=1,number_plankt_point ! i
-   !   planktonic_variable(53+(k-1)*number_plankt_vari) = 0.0  !  Schwebstoffgehalt ss
-   !   planktonic_variable(65+(k-1)*number_plankt_vari) = 0.0  !  Leitfähigkeit lf
-   !   planktonic_variable(72+(k-1)*number_plankt_vari) = 0.0  !  salz
-   !enddo
-   return
+   
+   ! do k=1,number_plankt_point ! i
+   !    planktonic_variable(53+(k-1)*number_plankt_vari) = 0.0  !  Schwebstoffgehalt ss
+   !    planktonic_variable(65+(k-1)*number_plankt_vari) = 0.0  !  Leitfähigkeit lf
+   !    planktonic_variable(72+(k-1)*number_plankt_vari) = 0.0  !  salz
+   ! enddo
+   
 end subroutine ini_schwebstoff_salz
+
 !> verteilung_holen_gr3 ließt aus unterverzeichnis trueb die angegebene Datei im gr3 (Elcirc) Format.
 !! und gibt die dort angegebene Geländehöhe als verteilung zurück.
 !! \n\n
