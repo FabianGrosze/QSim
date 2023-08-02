@@ -80,7 +80,7 @@ subroutine alter_lesen()
    use modell
    
    implicit none
-   character(300) :: dateiname, b
+   character(300) :: file_name, b
    integer        :: open_error, ion, i, j, read_stat, alloc_status, altzaehl
    logical        :: dummy
    
@@ -91,8 +91,8 @@ subroutine alter_lesen()
    
    print*, " "
    print*, "alter_lesen() ..."
-   write(dateiname,'(2A)') trim(modellverzeichnis), 'alter.txt'
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
+   write(file_name,'(2A)') trim(modellverzeichnis), 'alter.txt'
+   open ( unit = ion , file = file_name, status = 'old', action = 'read ', iostat = open_error )
    if (open_error /= 0) call qerror('alter.txt lässt sich nicht öffnen ?')
    
    do while ( zeile(ion) .and. (wie_altern == 0) )
@@ -245,91 +245,93 @@ subroutine alter_ini()
 end subroutine alter_ini
 !----+-----+----
 
-!> Integration der Tracer-"Masse" und des Wasservolumens
-!! innerhalb jeder Zone \n
-!! und \n
-!! Integration der Flüsse von Tracer-"Masse" und des Wasservolumen
-!! über alle Ränder \n
-!! sowie Vorbereitung zur Ausgabe mit den Ganglinien in die Datei tracer.txt\n
+!> Integration der Tracer-"Masse" und des Wasservolumens innerhalb jeder Zone 
+!! und  Integration der Flüsse von Tracer-"Masse" und des Wasservolumen über 
+!! alle Ränder sowie Vorbereitung zur Ausgabe mit den Ganglinien in die Datei
+!! `tracer.txt`
+!!
 !! nur auf prozessor 0, Variablenfelder werden in alter_lesen() angelegt.
-!! \n\n
 subroutine alter_zeitschritt(izeit_gang)
-   
    use modell
-   
    implicit none
+   
    integer :: j, izeit_gang
    real    :: volumen, tracer, entropy, c, tief
    
    do j = 1,number_plankt_point
       tief = rb_hydraul_p(2+(j-1)*number_rb_hydraul)
+      
       if (tief >= min_tief ) then
          volumen = tief * knoten_flaeche(j)
-         vol_integral_zone(point_zone(j), izeit_gang) =            &
-            vol_integral_zone(point_zone(j), izeit_gang) + volumen
+         vol_integral_zone(point_zone(j), izeit_gang) = vol_integral_zone(point_zone(j), izeit_gang) + volumen
          c = planktonic_variable(71 + (j - 1) * number_plankt_vari)
          tracer = volumen * c
-         tr_integral_zone(point_zone(j), izeit_gang) =             &
-            tr_integral_zone(point_zone(j), izeit_gang) + tracer
-         !! Entropie wie Lauritzen und Thuburn 2011 (http://doi.wiley.com/10.1002/qj.986)
-         if ( tracer > 0.0) then
+         tr_integral_zone(point_zone(j), izeit_gang) =  tr_integral_zone(point_zone(j), izeit_gang) + tracer
+         
+         ! Entropie wie Lauritzen und Thuburn 2011 (http://doi.wiley.com/10.1002/qj.986)
+         if (tracer > 0.0) then
             entropy = tracer * log10(c)
             ent_integral_zone(point_zone(j),izeit_gang) = ent_integral_zone(point_zone(j),izeit_gang) - entropy
          else
             entropy = 0.0
          endif
+         
          if (j == kontrollknoten) then ! Ausgabe kontrollknoten
             print*, 'tracer_volumen_gangl: c,tief,flaech,point_zone,zonen_nummer, volumen, tracer, entropy = ', &
                     c, tief, knoten_flaeche(j),                                                                 &
                     point_zone(j), zone(point_zone(j))%zonen_nummer, volumen, tracer, entropy
-         endif ! kontrollknoten
-      endif ! Knoten nass
-   enddo ! alle j Knoten
+         endif
+      endif
+   enddo
    
 end subroutine alter_zeitschritt
-!----+-----+----
+
 
 !> alter_ausgabe Integrale zusammen mit den ganglinien ausgeben in jedem Zeitschritt
 !!
 !! läuft nur auf prozessor 0
 subroutine alter_ausgabe()
-   
+   use module_datetime
    use modell
    
    implicit none
-   character(4000) :: beschriftung1
-   character(300)  :: dateiname, zeitig
-   integer         :: i, j, open_error
+   
+   character(4000)     :: beschriftung1
+   character(longname) :: file_name
+   integer             :: i, j, open_error, u_age
+   integer             :: year, month, day, hour, second
+   type(datetime)      :: datetime_output
    
    ! Ganglinienausgabe Tracer+Volumen-Integrale auf tracer.txt
-   write(dateiname,'(4A)')trim(modellverzeichnis),'ganglinien/tracer_zonen_integrale.txt'
-   print*,'Tracer+Volumen-Integrale Ausgabe auf:', trim(dateiname), ' meinrang = ',meinrang
+   file_name = trim(modellverzeichnis) // 'ganglinien/tracer_zonen_integrale.txt'
+   open(newunit = u_age , file = file_name, status = 'new', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
    
-   open ( unit = 444444 , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
-   if (open_error /= 0) then
-      print*,'ganglinien/tracer_zonen_integrale.txt lässt sich nicht öffnen'
-      return
-   endif ! open_error.ne.0
-   rewind (444444) ! tracer.txt zurückspulen
+   write(u_age,*)'# Zonen-Anzahl = ',zonen_anzahl,'jeweils Tracermasse | Wasservolumen | Entropie '
    
-   write(444444,*)'# Zonen-Anzahl = ',zonen_anzahl,'jeweils Tracermasse | Wasservolumen | Entropie '
    do j = 1,zeitschrittanzahl+1
-      zeitpunkt = r_gang(1,j)
-      call zeitsekunde()
-      write(zeitig,'(I4,"-",I2.2,"-",I2.2,X,I2.2,":",I2.2,":",I2.2)') &
-            jahr, monat, tag, stunde, minute, sekunde
-      write(beschriftung1,'(A)')trim(zeitig)
+      datetime_output = gmtime(r_gang(1,j))
+      year   = datetime_output % get_year()
+      month  = datetime_output % get_month()
+      day    = datetime_output % get_day()
+      hour   = datetime_output % get_hour()
+      minute = datetime_output % get_minute()
+      second = datetime_output % get_second()
+      
+      write(beschriftung1,'(I4,"-",I2.2,"-",I2.2,X,I2.2,":",I2.2,":",I2.2)') &
+            year, month, day, hour, minute, second
+      
+   
       ! Ganglinienausgabe zonenintegrale auf tracer.txt
       do i = 1,zonen_anzahl
          write(beschriftung1,'(A,7X,F16.0,X,F16.0,X,F18.2)') trim(beschriftung1),  &
                tr_integral_zone(i,j), vol_integral_zone(i,j), ent_integral_zone(i,j)
-      enddo ! alle i zonen
-      write(444444,'(A)')trim(beschriftung1)
-   enddo ! alle j Zeitpunkte
+      enddo 
+      
+      write(u_age,'(A)')trim(beschriftung1)
+   enddo
    
-   close (444444) ! Dateien tracer.txt wieder schließen
-   
-   return
+   close(u_age)
    
 end subroutine alter_ausgabe
 !----+-----+----
@@ -372,4 +374,3 @@ subroutine alter_rand(j)
    return
    
 end subroutine alter_rand
-!----+-----+----
