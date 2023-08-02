@@ -2,6 +2,11 @@
 
 ## 14.09
 
+### 14.09.37
+* qsim3d/check_err now aborts simulation in case of netcdf error. Additionally requires string input for further (QSim-specific) error message
+* fixed bugs in qsim3d/module_salinity
+* snake case introduced to qsim3d/module_suspended_matter
+
 ### 14.09.36
 * Bugfix in algae_huelle.f95: Correct arguments for subroutine call.
 
