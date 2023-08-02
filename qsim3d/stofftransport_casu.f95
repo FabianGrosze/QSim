@@ -29,31 +29,32 @@
 subroutine stofftransport_casu()
    use modell
    implicit none
-   integer :: i, wrong, n, j, as, l, ieck(4), nullzae, trockzae
-   integer :: nt, stranglang
-   real , allocatable , dimension (:,:) :: zwischen
-   real :: summ, tiwicht(4), anteil, tracervolumen, tief
-   logical :: negativ(number_plankt_vari)
-   !
-   !! ###print*,'stofftransport zu Testzwecken überbrückt, keine Advektion' !! ###
-   !! ###return !! ###
-   if (meinrang /= 0)call qerror('stofftransport_casu darf nur von prozessor 0 aufgerufen werden')
-   !stationaer=.true. !! wird in TQsim.f95 gesetzt; erprobung einde
+   
+   integer                                :: i, wrong, n, j, as, l, nullzae, trockzae
+   integer                                :: nt, stranglang
+   integer, dimension(4)                  :: ieck
+   real, dimension(:,:), allocatable      :: zwischen
+   real, dimension(4)                     :: tiwicht
+   real                                   :: summ, anteil, tracervolumen, tief
+   logical, dimension(number_plankt_vari) :: negativ
+   
+   if (meinrang /= 0)call qerror('stofftransport_casu must only be called from processor 0.')
+   
+   
+   ! stationaer=.true. !! wird in TQsim.f95 gesetzt; erprobung einde
    if (stationaer) then
       write(fehler,*)'stationaer so noch nicht vorgesehen (stofftransport.f95)'
       call qerror(fehler)
-   endif ! stationaer
+   endif
+   
    call transinfo_schritte(startzeitpunkt, endzeitpunkt)
-   print*,'stofftransport: von Zeitschrittt ... bis', na_transinfo, ne_transinfo
+   print "(2(a,i0))", "stofftransport: timestep from ", na_transinfo, " to ", ne_transinfo
+   
    do nt = na_transinfo, ne_transinfo ! alle Transport (zwischen) Zeitschritte
       call holen_trans(nt)
-      !print*,'stofftransport: Zeit=',transinfo_zeit(transinfo_zuord(nt)), &
-      !          ' Datei: ',trim(transinfo_datei(transinfo_zuord(nt)))
-      !     vorläufige Advektion (noch nicht parallelisiert)
       allocate (zwischen(number_plankt_vari, number_plankt_point), stat = as )
-      do n = 1,number_plankt_vari !!
-         negativ(n) = .false.
-      enddo ! alle planktischen variablen
+      
+      negativ(:) = .false.
       nullzae = 0
       trockzae = 0
       do j = 1,number_plankt_point ! alle j Knoten
@@ -61,23 +62,25 @@ subroutine stofftransport_casu()
          do n = 1,number_plankt_vari !! Kontrolle auf negative Werte vorab:
             if (planktonic_variable(n+(j-1)*number_plankt_vari) < 0.0) then
                negativ(n) = .true.
-               !write(7,*)'An Knoten #',j,' hat planktonic_variable #',n,' i.e. '  &
-               !      ,planktonic_variable_name( n),' den Wert=' &
-               !      ,planktonic_variable(n+(j-1)*number_plankt_vari)
             endif
-            if (isNaN( planktonic_variable(n+(j-1)*number_plankt_vari) ))  &
-                print*,'isNaN_planktonic_variable plankt_vari = ',n,' plankt_point = ',j
+      
+            if (isNaN( planktonic_variable(n+(j-1)*number_plankt_vari) ))  then
+               print*,'isNaN_planktonic_variable plankt_vari = ',n,' plankt_point = ',j
+            endif
          enddo ! alle variablen
+      
          do l = 1,4
             ieck(l) = intereck((j-1)*4+l)
-            if (isNaN( wicht((j-1)*4+l) ))print*,'isNaN_wicht,j,l,intereck',wicht((j-1)*4+l),j,l,intereck((j-1)*4+l)
+            if (isNaN( wicht((j-1)*4+l) )) print*,'isNaN_wicht,j,l,intereck',wicht((j-1)*4+l),j,l,intereck((j-1)*4+l)
          enddo ! alle 4 wichtungsfaktoren
+         
          do l = 1,3
             !1! tiwicht(l)=wicht(nm*4+l)
             !2! tiwicht(l)=wicht(nm*4+l)*tief(ieck(l))
             tiwicht(l) = wicht((j-1)*4+l) * rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul) !  neu31jan14 * tief(ieck(l))
             if ( rb_hydraul(2+(ieck(l)-1)*number_rb_hydraul) <= min_tief)tiwicht(l) = 0.0
          enddo ! alle 3 wichtungsfaktoren
+         
          if (ieck(4) > 0) then !! nur bei vierecken 4.Knoten
             !1! tiwicht(4)=wicht(nm*4+4)
             !2! tiwicht(4)=wicht(nm*4+4)*tief(ieck(4))
@@ -86,10 +89,9 @@ subroutine stofftransport_casu()
          else  !3!
             tiwicht(4) = 0.0  !3!
          endif
-         summ = 0.0
-         do l = 1,4
-            summ = summ+tiwicht(l)
-         enddo ! alle 4 wichtungsfaktoren
+         
+         summ = sum(tiwicht)
+         
          if (summ > 0.0) then
             do l = 1,4
                tiwicht(l) = tiwicht(l)/summ
@@ -101,22 +103,30 @@ subroutine stofftransport_casu()
             !enddo ! alle 4 wichtungsfaktoren
             nullzae = nullzae+1
          endif ! summ.gt.0
+         
          if (tief <= min_tief) then
             trockzae = trockzae+1
          endif ! trocken
-         if (j == kontrollknoten)print*,'ieck,l = 1,4',(ieck(l),l = 1,4),'tiwicht,l = 1,4',(tiwicht(l),l = 1,4), summ
+         
+         if (j == kontrollknoten) then
+            print*,'ieck,l = 1,4',(ieck(l),l = 1,4),'tiwicht,l = 1,4',(tiwicht(l),l = 1,4), summ
+         endif
+         
          if ((summ <= 0.0) .or. (tief <= min_tief)) then ! summ=0 oder alles trocken?, Wert bleibt | 19jul17 wy
             do n = 1,number_plankt_vari
                zwischen(n,j) = planktonic_variable(n+(j-1)*number_plankt_vari)
             enddo ! alle n Konzentrationen
+         
          else ! summ!=0 und nass?
             do n = 1,number_plankt_vari
                zwischen(n,j) = planktonic_variable(n+(ieck(1)-1)*number_plankt_vari)*tiwicht(1) +  &
                                planktonic_variable(n+(ieck(2)-1)*number_plankt_vari)*tiwicht(2) +  &
                                planktonic_variable(n+(ieck(3)-1)*number_plankt_vari)*tiwicht(3)
+         
                if (ieck(4) > 0) then !! nur bei vierecken 4.Knoten
                   zwischen(n,j) = zwischen(n,j) + planktonic_variable(n+(ieck(4)-1)*number_plankt_vari)*tiwicht(4)
                endif
+               
                if (isNaN(zwischen(n,j))) then
                   print*,'stofftransport isNaN(zwischen(',n,',',j,')), summ',zwischen(n,j),summ
                   print*,'ieck,l = 1,4',(ieck(l),l = 1,4)
@@ -134,23 +144,23 @@ subroutine stofftransport_casu()
             enddo ! alle n Konzentrationen
          endif ! summ=0 alles trocken?, Wert bleibt
       enddo ! alle j Knoten
+      
       do j = 1,number_plankt_point ! alle j Knoten
-         !if(j .eq. kontrollknoten)then ! Ausgabe kontrollknoten
-         !   print*,'kontrollknoten vor Stofftransport lf=',planktonic_variable(65+(j-1)*number_plankt_vari)
-         !endif ! kontrollknoten
          do n = 1,number_plankt_vari
             planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
          enddo ! alle n Konzentrationen
-         !if(j .eq. kontrollknoten)then ! Ausgabe kontrollknoten
-         !   print*,'kontrollknoten nach Stofftransport lf=',planktonic_variable(65+(j-1)*number_plankt_vari)
-         !endif ! kontrollknoten
       enddo ! alle j Knoten
-      deallocate (zwischen, stat = as )
+      
+      deallocate(zwischen, stat = as)
       do n = 1,number_plankt_vari !!
-         if (negativ(n))print*,'stofftransport negativ, planktonic_variable #',n,' ',planktonic_variable_name(n)
+         if (negativ(n)) then
+            print*,'stofftransport negativ, planktonic_variable #',n,' ',planktonic_variable_name(n)
+         endif
       enddo ! alle planktischen variablen
-      if (nullzae > 0)print*,'stofftransport_casu: an ',nullzae,' Berechnungspunkten war die Wichtungssumme Null ?!'
-      if (trockzae > 0)print*,'stofftransport_casu: ',trockzae,' Berechnungspunkte waren trocken'
+      
+      if (nullzae > 0)  print*,'stofftransport_casu: an ',nullzae,' Berechnungspunkten war die Wichtungssumme Null ?!'
+      if (trockzae > 0) print*,'stofftransport_casu: ',trockzae,' Berechnungspunkte waren trocken'
+      
       tracervolumen = 0.0
       do j = 1,number_plankt_point ! alle j Knoten
          tief = rb_hydraul(2+(j-1)*number_rb_hydraul)
@@ -159,14 +169,9 @@ subroutine stofftransport_casu()
          endif !nass
       enddo ! alle j Knoten
       print*,'tracervolumen = ', transinfo_zeit(transinfo_zuord(nt)), tracervolumen
-      !!if((kontrollknoten.gt.0).and.(kontrollknoten.le.number_plankt_point))then ! Ausgabe
-      !!   print*,' nt= ', nt  &
-      !!   ,' T_wass=', planktonic_variable(1*kontrollknoten) &
-      !!   ,' Tracer=', planktonic_variable(71*kontrollknoten)
-      !!endif
-      !!print*,'transport nt=',nt,' start ende= ',startzeitpunkt, endzeitpunkt
+   
    enddo ! nt, alle Transport (zwischen) Zeitschritte
-   return
+   
 end subroutine stofftransport_casu
 !----+-----+----
 
