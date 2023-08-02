@@ -192,7 +192,7 @@ subroutine wetter_readallo0()
    logical        :: existing_station
    integer        :: alloc_status , open_error, io_error ,i, j
    integer        :: mwett_t, iwett_t, ixw_t
-   integer        :: year, month, day, hour
+   integer        :: year, month, day, hour, minute
    type(datetime), dimension(:,:), allocatable :: datetime_weather
    
    if (meinrang /= 0) return
@@ -508,7 +508,7 @@ subroutine interpolate_weather()
    logical     :: found1, found2, wert_gueltig
    
    if (meinrang == 0) then 
-      print '(a,i0,a)',   "* interpolate_weather(): Interpolation Weather Boundaries [time: ", zeitpunkt, "]"
+      print '(a,i0,a)',   "Interpolation Weather Boundaries"
       print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","wtyp_T"
    endif
    
@@ -517,9 +517,9 @@ subroutine interpolate_weather()
       ! Schleife über alle 7 Wetterwerte
       do ipw = 1,7
          
-         if (zeitpunkt < (zeitpunktw(i,1)-43200) .or. zeitpunkt > (zeitpunktw(i,mwetts_T(i))+43200)) then
+         if (rechenzeit < (zeitpunktw(i,1)-43200) .or. rechenzeit > (zeitpunktw(i,mwetts_T(i))+43200)) then
             print*,'Zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor.'
-            print*,'zeitpunkt = ', zeitpunkt
+            print*,'rechenzeit = ', rechenzeit
             write(fehler,*)'zeitpunktw(i,1) = ',zeitpunktw(i,1),' zeitpunktw(i,mwetts_T(i)) = ',zeitpunktw(i,mwetts_T(i))
             call qerror(fehler)
          endif
@@ -535,7 +535,7 @@ subroutine interpolate_weather()
          
          ! find closest valid datapoint before current time
          do j = 1,mwetts_T(i),1 ! alle j zeitintervalle vorwärts
-            if (zeitpunktw(i,j) <= zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+            if (zeitpunktw(i,j) <= rechenzeit) then ! bis zum aktuellen Zeitpunkt
                if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t) ) then
                   found1 = .true.
                   w1 = wertw_T(i,ipw,j)
@@ -549,7 +549,7 @@ subroutine interpolate_weather()
          
          ! find closest valid datapoint after current time
          do j = mwetts_T(i),1,-1 ! alle j zeitintervalle rückwärts
-            if (zeitpunktw(i,j) > zeitpunkt) then ! bis zum aktuellen Zeitpunkt
+            if (zeitpunktw(i,j) > rechenzeit) then ! bis zum aktuellen Zeitpunkt
                if (wert_gueltig(ipw,wertw_T(i,ipw,j),imet_t)) then
                   found2 = .true.
                   w2 = wertw_T(i,ipw,j)
@@ -569,7 +569,7 @@ subroutine interpolate_weather()
          
          ! Interpolation
          if (found1 .and. found2) then
-            b = real(zeitpunkt-z1)/real(z2-z1)
+            b = real(rechenzeit-z1)/real(z2-z1)
             ywert = (1.0 - b) * w1 + b * w2
          
          else if (found1 .and. .not.found2) then
@@ -652,32 +652,45 @@ end function wert_gueltig
 !! \n
 subroutine temperl_wetter()
    use modell
+   use module_datetime
    use QSimDatenfelder
    implicit none
-   integer i
-   real dk, sa, su, zg, zlk, geol, geob
-   integer tdj, imet
-   real, dimension(20)              :: TLMAX, TLMIN
-   do i = 1,IWETTs_T   !! Schleife über alle Wetterstationen
+   
+   integer             :: i
+   integer             :: tdj, imet
+   integer             :: day, month, hour, minute
+   real                :: dk, sa, su, zg, zlk, geol, geob, time_hours
+   real, dimension(20) :: tlmax, tlmin
+   type(datetime)      :: datetime_now
+   
+   
+   datetime_now = gmtime(rechenzeit)
+   day   = datetime_now % get_day()
+   month = datetime_now % get_month()
+   hour   = datetime_now % get_hour()
+   minute = datetime_now % get_minute()
+   time_hours = real(hour) + real(minute) / 60.
+  
+   ! Schleife über alle Wetterstationen
+   do i = 1,iwetts_t   
       geol = modell_geol
       geob = modell_geob
-      uhrz = uhrzeit_stunde
-      tdj = tagdesjahres !! wird von sasu verändert (wozu ist unklar)
-      call SASU(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
+      call sasu(day, month, geob, geol, sa, su, zg, zlk, dk, tdj)
       sonnenaufgang = sa
       sonnenuntergang = su
-      IDWe(1,1) = 1
-      IDWe(1,2) = 1
+      idwe(1,1) = 1
+      idwe(1,2) = 1
       anze = 1
-      imet = IMET_T
+      imet = imet_t
       mstr = 1
-      TLMAX(1) = tlmax_T(i)
-      TLMIN(1) = tlmin_T(i)
-      call temperl(sa,su,uhrz,templ,mstr,idwe,tlmax,tlmin,anze,imet)
+      tlmax(1) = tlmax_t(i)
+      tlmin(1) = tlmin_t(i)
+      call temperl(sa, su, time_hours, templ, mstr, idwe, tlmax, tlmin, anze, imet)
       tlmed_T(i) = TEMPL(1)
-      if ((kontrollknoten > 0) .and. (meinrang == 0))      &
-          print*,'temperl_wetter: Station ',i,' Uhrz,TLMAX,TLMIN,TEMPL',Uhrz,TLMAX(1),TLMIN(1),TEMPL(1)
-   enddo ! alle Wetterstationen i
+      if ((kontrollknoten > 0) .and. (meinrang == 0)) then
+         print*,'temperl_wetter: Station ',i,' time_hours,TLMAX,TLMIN,TEMPL',time_hours,TLMAX(1),TLMIN(1),TEMPL(1)
+      endif
+   enddo 
 end subroutine temperl_wetter
 !----+-----+----
 
@@ -691,6 +704,7 @@ subroutine strahlg_wetter()
    use module_alloc_dimensions
    use modell
    use qsimdatenfelder
+   use module_datetime
    
    implicit none
    
@@ -702,26 +716,31 @@ subroutine strahlg_wetter()
    real, dimension(1000,14)   :: VTYP
    real, dimension(1000)      :: VALTBL, EDUFBL, VALTBR, EDUFBR
    real, dimension(50)        :: SHtest
-   real                       :: dk, sa, su, schwia, zg, zlk, geol, geob
+   real                       :: dk, sa, su, schwia, zg, zlk, geol, geob, time_hours
    logical                    :: printi
    integer                    :: i, tdj, azStr
+   integer                    :: day, month, hour, minute
+   type(datetime)             :: datetime_now
    
    ! loop all weather stations
    do i = 1,IWETTs_T
       ! Eingangsdaten
       glob(1) = glob_T(i)     
-      uhrz = uhrzeit_stunde
-      ! call zeitsekunde()    ! Rückrechnung der Uhrzeit aus dem sekunden zeitpunkt # wird schon in Zeitschleife Qsim3D gemacht
-      
-      ! wird von sasu verändert (wozu ist unklar)
-      tdj = tagdesjahres 
       
       geol = modell_geol
       geob = modell_geob
-      call sasu(tag, monat, geob, geol, sa, su, zg, zlk, dk, tdj)
+      
+      datetime_now = gmtime(rechenzeit)
+      day    = datetime_now % get_day()
+      month  = datetime_now % get_month()
+      hour   = datetime_now % get_hour()
+      minute = datetime_now % get_minute()
+      time_hours = real(hour) + real(minute) / 60.
+      
+      call sasu(day, month, geob, geol, sa, su, zg, zlk, dk, tdj)
       if (sa > su) then
          print*,"strahlg_wetter: tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj" &
-         ,tag, monat, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj
+         ,day, month, modell_geob, modell_geol, sa, su, zg, zlk, dk, tdj
          call qerror("strahlg_wetter: computing daylight hours went wrong")
       endif
       
@@ -757,8 +776,8 @@ subroutine strahlg_wetter()
       ! Zeitschritt-Nummer während eines Tages (unbenutzt in 3D)
       ij = 1 
       
-      call strahlg(glob, uhrz, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
-                   cloud, schwia, IMET_T, mstr, IDWe, tag, monat, VTYP, VALTBL,&
+      call strahlg(glob, time_hours, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
+                   cloud, schwia, IMET_T, mstr, IDWe, day, month, VTYP, VALTBL,&
                    EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
                    ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr)
       schwi_T(i) = schwi(1)    ! global radiation at weather station

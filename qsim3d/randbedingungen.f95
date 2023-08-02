@@ -687,7 +687,7 @@ subroutine read_boundary_timeseries()
    logical        :: rb_vorhanden, randwert_gueltig
    integer        :: open_error, u_ereigg, read_error, alloc_status, ini
    integer        :: idummy, anzi, i, j, n, m, min_nr, nr, maxrandnr, nini
-   integer        :: anzmax, year, month, day, hour
+   integer        :: anzmax, year, month, day, hour, minute
    integer,        dimension(:), allocatable :: nr_vorhanden, rb_vorkommen
    type(rb_zeile), dimension(:), allocatable :: lesezeil
 
@@ -819,9 +819,9 @@ subroutine read_boundary_timeseries()
       
       ! convert time into unixtime
       do i = 1,rabe(n)%anz_rb 
-         jahr        = lesezeil(i)%ijahrl
-         tag         = lesezeil(i)%itag
-         monat       = lesezeil(i)%imonat
+         year        = lesezeil(i)%ijahrl
+         day         = lesezeil(i)%itag
+         month       = lesezeil(i)%imonat
          pseudo_time = lesezeil(i)%uhrl
          
          hour = int(pseudo_time)

@@ -45,8 +45,8 @@ module modell
    use iso_fortran_env
    implicit none
    
-   public :: modeverz, zeile, zeitschritt_halb, ini_zeit, sekundenzeit,       &
-             zeitsekunde, modell_vollstaendig, strickler, lambda, antriebsart
+   public :: modeverz, zeile, zeitschritt_halb, ini_zeit, &
+             modell_vollstaendig, strickler, lambda, antriebsart
    
    
    include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mpif.h: integer*8 und real*8 raus
@@ -113,33 +113,18 @@ module modell
    character (len = 2000) :: ctext 
    
    ! --- time variables ---
-   integer, parameter :: referenzjahr = 1970  !> \anchor referenzjahr Referenzjahr\n
-                                               !! Darf nur ein Schaltjahr sein, sonst werden die Tage flasch gezählt\n
-                                               !! darf nur max. 65 Jahre vor Berechnungsjahr liegen damit int*4 zum Sekunden zählen reicht und\n
-                                               !! darf nur max. 20 Jahre vor Berechnungsjahr liegen, um Zeitfehler abfangen zu können.
-   real, parameter :: tz_qsim = 1.0        !> standard timezone of QSim
+   ! TODO (Schönung, August 2023)
+   ! This should be user definable.
+   real, parameter :: tz_qsim = 1.0        !> \anchor tz_qsim standard timezone that QSim uses in its input files [UTC + 1]
    
-   
-   character(200) :: time_offset_string
    integer(int64) :: rechenzeit            !> \anchor rechenzeit current time of running simulation in unixtime
+   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt start time of current timestep in unixtime
+   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt end time of current timestep in unixtime
    integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
    integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
    integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
-   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in unixtime
-   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in unixtime
-   integer(int64) :: time_offset           !! \anchor time_offset reference time of NetCDF file in unixtime
-   integer(int64) :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
-   integer        :: jahr                  !> \anchor jahr jahr berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: monat                 !> \anchor monat monat berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: tagdesjahres          !> \anchor tagdesjahres tagdesjahres berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: tag                   !> \anchor tag tag berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: stunde                !> \anchor stunde Stunde als ganze Zahl berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: minute                !> \anchor minute minute berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: sekunde               !> \anchor sekunde sekunde berechnet von zeitsekunde() aus \ref zeitpunkt
    integer        :: anzZeit               !> \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurÃ¼ck: \ref lnk_schwermetalle
-   real           :: uhrzeit_stunde        !> \anchor uhrzeit_stunde Uhrzeit als Stunde.Minute zum Einlesen von EREIGG.txt. sekundenzeit(2) rechnet es Stundendezimale um
-   real           :: uhrzeit_stunde_vorher
-      
+   
    ! --- Vermaschung Elemente ---
    logical                              :: element_vorhanden
    integer                              :: n_elemente, summ_ne
@@ -694,17 +679,19 @@ contains
   
    !> Increment simulation time.
    subroutine zeitschritt_halb(vorher)
-      logical :: vorher
+      use module_datetime
+      
+      logical, intent(in) :: vorher
+      type(datetime)      :: datetime_now
       
       rechenzeit = rechenzeit + (deltat / 2)
-      uhrzeit_stunde = uhrzeit_stunde + (real((deltat / 2)) / 3600.)
-      if (uhrzeit_stunde >= 24.0) uhrzeit_stunde = uhrzeit_stunde-24.0
-      zeitpunkt = rechenzeit
       
-      if (vorher) then ! vor dem Zeitschritt
-         startzeitpunkt = rechenzeit-(deltat/2)
-         endzeitpunkt = startzeitpunkt+deltat
+      ! vor dem Zeitschritt
+      if (vorher) then 
+         startzeitpunkt = rechenzeit - (deltat / 2)
+         endzeitpunkt = startzeitpunkt + deltat
       endif
+   
    end subroutine zeitschritt_halb
    
    !----+-----+----
@@ -716,210 +703,11 @@ contains
          rechenzeit = 0
          !deltat=900 !3600
          deltat = 3600
-         uhrzeit_stunde = 12.0
          izeit = 0
          zeitschrittanzahl = 1
       endif ! only prozessor 0
    end subroutine ini_zeit
    
-   !----+-----+----
-   !> Dient der Berechnung von zeitpunkt in ganzen sekunden aus 
-   !! sekunde,minute,stunde Opt=1 
-   !! uhrzeit_stunde Opt=2 
-   !! tag, monat, jahr
-   !! Quelle: module_modell.f95
-   subroutine sekundenzeit(opt)
-      integer, intent(in) :: opt
-      integer             :: vormonatstage, jahrestage, jahre, maxjahre
-      logical             :: schaltjahr
-      real                :: ustunde, uminute
-      
-      schaltjahr = .false.
-      if (mod(jahr,4) == 0) schaltjahr = .true.
-      jahre = jahr-referenzjahr
-      
-      jahrestage = int(jahre/4)*1461 ! Schaltjahperioden als ganzes abziehen
-      jahre = jahre - (int(jahre/4)*4)
-      if (jahre > 0) then ! Referenzjahr immer Schaltjahr !!!
-         jahrestage = jahrestage+366
-         jahre = jahre-1
-      endif
-      jahrestage = jahrestage+jahre*365 ! 0 ... 2 verbleibende jahre in Schaltjahperiode nach Schaltjahr
-      select case (monat)
-         case (1) !Januar
-            vormonatstage = 0
-         case (2) !Februar
-            vormonatstage = 31
-         case (3) !März
-            vormonatstage = 59
-         case (4) !April
-            vormonatstage = 90
-         case (5) !Mai
-            vormonatstage = 120
-         case (6) !Juni
-            vormonatstage = 151
-         case (7) !Juli
-            vormonatstage = 181
-         case (8) !August
-            vormonatstage = 212
-         case (9) !September
-            vormonatstage = 243
-         case (10) !Oktober
-            vormonatstage = 273
-         case (11) !November
-            vormonatstage = 304
-         case (12) !Dezember
-            vormonatstage = 334
-            case default
-            print*,'Monate gibt es nur von 1 bis 12, Fehler in sekundenzeit'
-            write(fehler,*)'tag = ',tag,' monat = ',monat,' jahr = ',jahr,' Uhrzeit = ',uhrzeit_stunde
-            call qerror(fehler)
-      end select
-      if (schaltjahr .and. (monat > 2))vormonatstage = vormonatstage+1
-      
-      zeitpunkt = 0
-      zeitpunkt = zeitpunkt+(jahrestage*86400)
-      zeitpunkt = zeitpunkt+(vormonatstage*86400)
-      zeitpunkt = zeitpunkt+((tag-1)*86400) ! erster Tag beginnt bei 0 Sekunden !!!
-      select case (opt)
-         case (1) !stunde,minute,sekunde
-            zeitpunkt = zeitpunkt+(stunde*3600)
-            zeitpunkt = zeitpunkt+(minute*60)
-            zeitpunkt = zeitpunkt+sekunde
-         case (2) !stunde.minute
-            !! zuerst Umwandeln in Stundendezimale
-            ustunde = aint(uhrzeit_stunde)
-            uminute = aint((uhrzeit_stunde-ustunde)*100.0)
-            zeitpunkt = zeitpunkt+int(ustunde)*3600+int(uminute)*60
-            !uhrzeit_stunde=aint(uhrzeit_stunde)+(uhrzeit_stunde-aint(uhrzeit_stunde))*(100.0/60.0) !! vormals minu_stund()
-            !zeitpunkt=zeitpunkt+int(uhrzeit_stunde*3600)
-            case default
-            call qerror("Diese option der Zeitangabe ist in subroutine sekundenzeit nicht vorgesehen")
-      end select
-      zeitpunkt = zeitpunkt-time_offset
-   end subroutine sekundenzeit
-   
-   !----+-----+----
-   !> Dient der Rückrechnung von sekunde,minute,stunde,Tag,Monat,Jahr aus zeitpunkt in ganzen Sekunden seit Beginn Referenzjahr\n
-   !! Quelle: module_modell.f95
-   subroutine zeitsekunde()
-      integer :: schaltjahre, monatstage, tage
-      logical :: schaltjahr
-      
-      uhrzeit_stunde = 0.0
-      monat = 0
-      tag = 0
-      zeitpunkt = zeitpunkt + time_offset
-      tage = int(zeitpunkt/86400)
-      
-      
-      uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
-      stunde = (zeitpunkt-(tage*86400))/3600
-      minute = (zeitpunkt-(tage*86400)-(stunde*3600))/60
-      sekunde = (zeitpunkt-(tage*86400)-(stunde*3600)-(minute*60))
-      schaltjahre = tage/1461 !(3*365+366)
-      tage = tage-(schaltjahre*1461)
-      jahr = schaltjahre*4
-      
-      if (tage >= 366) then ! 4-Jahresperode beginnt mit schaltjahr
-         jahr = jahr+1
-         tage = tage-366
-         do while (tage >= 365) ! weitere Jahre
-            jahr = jahr+1
-            tage = tage-365
-         enddo !while
-      endif
-      
-      jahr = jahr+referenzjahr
-      schaltjahr = .false.
-      
-      if ( mod(jahr,4) == 0 ) then
-         schaltjahr = .true.
-         !print*,'zeitsekunde: schaltjahr'
-      endif
-      !print*,'zeitsekunde: tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)',  &
-      !          tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)
-      tag = tage+1 ! erster tag nach 0 tagen im Jahr
-      tagdesjahres = tag ! für Wetter und Licht
-      monat = 1 ! im Januar (oder später im Jahr)
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im Februar (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 28
-      if (schaltjahr)monatstage = 29
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im März (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im april (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im mai (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juni (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juli (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im august (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im september (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im oktober (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im november (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im dezember (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag > monatstage) then ! Jahr rum
-         write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
-               zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
-         call qerror(fehler)
-      endif
-      111    continue
-      zeitpunkt = zeitpunkt-time_offset
-   end subroutine zeitsekunde
-   
-   !-----+-----+-----+-----+
    !> Wenn die Nachkommastelle in lesezeit die Minuten angibt, in dezimaldarstellung rückrechnen
    real function minu_stund(lesezeit)
       real :: lesezeit

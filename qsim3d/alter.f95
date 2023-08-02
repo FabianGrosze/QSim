@@ -299,7 +299,7 @@ subroutine alter_ausgabe()
    character(4000)     :: beschriftung1
    character(longname) :: file_name
    integer             :: i, j, open_error, u_age
-   integer             :: year, month, day, hour, second
+   integer             :: year, month, day, hour, minute, second
    type(datetime)      :: datetime_output
    
    ! Ganglinienausgabe Tracer+Volumen-Integrale auf tracer.txt

@@ -128,17 +128,13 @@ subroutine modell_parallel()
    
    call MPI_Bcast(deltat,           1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
    call MPI_Bcast(rechenzeit,       1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
-   call MPI_Bcast(zeitpunkt,        1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
    call MPI_Bcast(zeitschrittanzahl,1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
-   call MPI_Bcast(time_offset,      1, MPI_INTEGER8, 0, mpi_komm_welt, ierr)
    call MPI_Bcast(knotenanzahl3D,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
    call MPI_Bcast(knotenanzahl2D,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
    call MPI_Bcast(n_elemente,       1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
    call MPI_Bcast(kontrollknoten,   1, MPI_INTEGER,  0, mpi_komm_welt, ierr)
    call MPI_Bcast(modell_geob,      1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
    call MPI_Bcast(modell_geol,      1, MPI_FLOAT,    0, mpi_komm_welt, ierr)
-   
-   zeitpunkt = rechenzeit
    
    ! start + end time
    call MPI_Bcast(itags,          1, MPI_INTEGER,  0, mpi_komm_welt, ierr)

@@ -132,8 +132,8 @@ subroutine stofftransport_untrim()
    if (meinrang /= 0)call qerror('stofftransport_untrim darf nur von prozessor 0 aufgerufen werden')
    allocate (zwischen(number_plankt_vari, number_plankt_point), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (zwischen(number_plankt_vari failed')
-   print*,'stofftransport_untrim: izeit, startzeitpunkt, zeitpunkt, deltat, endzeitpunkt' &
-   ,izeit,startzeitpunkt, zeitpunkt, deltat, endzeitpunkt
+   print*,'stofftransport_untrim: izeit, startzeitpunkt, rechenzeit, deltat, endzeitpunkt' &
+   ,izeit,startzeitpunkt, rechenzeit, deltat, endzeitpunkt
    dt_sub = real(deltat)/real(num_sub)
    print*,'stofftransport_untrim:',num_sub,' Sub-zeitschritte von der Länge = ',dt_sub
    do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
@@ -340,9 +340,9 @@ subroutine stofftransport_untrim()
    !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
    !allocate( el_vol(nonu), el_area(nonu), stat = alloc_status )
    do iq = 1,anzahl_quer !! all iq cross sections
-      q_gangl(izeit) = zeitpunkt
+      q_gangl(izeit) = rechenzeit
       schnittflux_gang(iq,izeit, 1 ) = schnittflux_gang(iq,izeit, 1 )/real(num_sub)
-      print*,"schnittflux: ",zeitpunkt,izeit,iq," flux = ",schnittflux_gang(iq,izeit, 1 )
+      print*,"schnittflux: ",rechenzeit,izeit,iq," flux = ",schnittflux_gang(iq,izeit, 1 )
    enddo
    return
 end subroutine stofftransport_untrim

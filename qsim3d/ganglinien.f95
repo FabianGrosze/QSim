@@ -203,7 +203,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
       nk = knot_gangl(i)-meinrang*part
       if ((nk > 0) .and. (nk <= part)) then
          ! Zeitpunkt
-         r_gang(i,izeit_gang) = zeitpunkt
+         r_gang(i,izeit_gang) = rechenzeit
    
          ! Randbedingungen:
          u_gang(i,izeit_gang) = rb_hydraul_p(1+(nk-1)*number_rb_hydraul) !u(knot_gangl(i))  randbedingungen.f95
@@ -309,7 +309,7 @@ subroutine ganglinien_schliessen()
    character(40000)    :: column_names, r_zeile
    character(3)        :: spalte
    integer             :: i,j,k,n, sys_error, open_error, nk, errcode, ngnu
-   integer             :: year, month, day, hour, second, u_cross
+   integer             :: year, month, day, hour, minute, second, u_cross
    real                :: h
    type(datetime)      :: datetime_output
    

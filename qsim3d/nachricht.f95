@@ -245,7 +245,7 @@ subroutine fortschritt(n, f)
    ! timestep in between ; controll values at non zero (central) process
    if (meinrang == (proz_anz-1) .and. n == 0) then  
       ! print current timestep to console
-      datetime_timestep = gmtime(zeitpunkt)
+      datetime_timestep = gmtime(rechenzeit)
       datetime_timestep_start = gmtime(startzeitpunkt)
       datetime_timestep_end = gmtime(endzeitpunkt)
       

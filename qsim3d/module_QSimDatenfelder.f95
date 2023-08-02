@@ -69,8 +69,6 @@ module QSimDatenfelder
    integer                             :: ior
    !> \anchor ilbuhn =0 keine Buhnen in QSim3D. Siehe dazu auch \ref lnk_huellen.
    integer                             :: ilbuhn
-   !> \anchor uhrz aus \ref uhrzeit_stunde berechnet von module::modell zeitsekunde()
-   real                                :: uhrz
    !> \anchor iwied  ### iwied = 0 : allererster Zeitschritt, danach iwied = 1 ###  in 3D immer 1
    integer                             :: iwied
    !> \anchor flag  flag(1+2)=0 d.h. keine Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.

@@ -384,6 +384,7 @@ subroutine transinfo_sichten()
    character(longname) :: file_name, systemaufruf
    integer             :: system_error, open_error, alloc_status, io_error, errcode
    integer             :: n, nt, nz, np, i, ion, zwischenwert, delt, didi
+   integer             :: year, month, day, hour, minute, second
    logical             :: offset_exists
    type(datetime)      :: datetime_meta, datetime_tmp
    
@@ -459,16 +460,14 @@ subroutine transinfo_sichten()
          endif
          
          if (.not. offset_exists) then
-            read(ctext,*,iostat = io_error) tag, monat, jahr, stunde, minute, sekunde
+            read(ctext,*,iostat = io_error) day, month, year, hour, minute, second
             if (io_error /= 0) call qerror("Error while reading time_offset from file " // trim(file_name))
             
             offset_exists = .true.
-            datetime_meta = datetime(jahr, monat, tag, stunde, minute, sekunde, tz = tz_qsim)
-            time_offset = datetime_meta%seconds_since_epoch()
-            time_offset_string = datetime_meta % date_string()
+            datetime_meta = datetime(year, month, day, hour, minute, second, tz = tz_qsim)
             
-            print "(a,*(i0,x))", "meta-zeit = ", tag, monat, jahr, stunde, minute, sekunde
-            print "(a,i0)",      "meta-sekundenzeit = ", time_offset
+            print "(a,*(i0,x))", "meta-time       = ", day, month, year, hour, minute, second
+            print "(a,i0)",      "meta-epoch-time = ", datetime_meta%seconds_since_epoch()
             
          endif 
       endif 

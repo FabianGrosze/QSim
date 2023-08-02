@@ -253,7 +253,7 @@ subroutine ausgabezeitpunkte()
    implicit none
    
    integer        :: n, u_out, open_error, io_error, nba
-   integer        :: day, month, year, hour, second
+   integer        :: day, month, year, hour, minute, second
    character(200) :: filename
    type(datetime), dimension(:), allocatable :: datetime_output
    
