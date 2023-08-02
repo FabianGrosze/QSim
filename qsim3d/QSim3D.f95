@@ -32,8 +32,8 @@ program QSim3D
    use netcdf
    use modell
    use QSimDatenfelder
-   use mod_suspendedMatter, only: step_suspendedMatter
-   use mod_salinity, only: step_salinity
+   use module_suspended_matter, only: step_suspended_matter
+   use module_salinity        , only: step_salinity
    !use netcdf
    !use mpi
    
@@ -75,7 +75,7 @@ program QSim3D
          call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
       else
-         call step_suspendedMatter
+         call step_suspended_matter
       endif
       !------------------------------------------------- all metabolic processes
       call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,7 +101,7 @@ program QSim3D
    call ganglinien_schliessen() !! write and close time series files
    call ausgeben() !! output at the end
    !call aus_grd() !! aufsummierte Überstaudauer für Janet ausgeben
-   if (hydro_trieb == 3)call check_err( nf_close(ncid) ) ! close SCHISM netCDF files
+   if (hydro_trieb == 3) call check_err( 'QSim3D', nf_close(ncid) ) ! close SCHISM netCDF files
    call mpi_barrier (mpi_komm_welt, ierr)
    call fortschritt(-1,0.0) !! write closing message, delete file "fortschritt"
    call mpi_finalize(ierr)

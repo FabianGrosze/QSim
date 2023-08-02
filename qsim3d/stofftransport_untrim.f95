@@ -30,31 +30,34 @@ subroutine holen_trans_untrim(nt)
    use modell
    implicit none
    include 'netcdf.inc'
-   integer   :: start3(3), count3(3)
-   integer   :: start2(2), count2(2)
-   integer   :: nt, n,j,k, varid, alloc_status
-   real      :: c
+   integer                      :: start3(3), count3(3)
+   integer                      :: start2(2), count2(2)
+   integer                      :: nt, n,j,k, varid, alloc_status
+   real                         :: c
+   
+   character(len=50), parameter :: nc_error_prefix = 'holen_trans_untrim'
+   
    !---------------elemente
    print*,'holen_trans_untrim: zeitpunkt,nt = ',transinfo_zeit(transinfo_zuord(nt)),nt
    start3 = (/ 1, 1, nt /)
    count3 = (/ n_elemente, 1, 1 /)
    !float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, el_vol, start3, count3 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, el_vol, start3, count3 ) )
    do n = 1,n_elemente !
       if ((el_vol(n) <= 0.0) .or. (el_vol(n) > 1.e+30)) el_vol(n) = 0.0
    enddo ! alle n elemente
    !print*,'stofftransport_untrim: got Mesh2_face_Wasservolumen_2d'
    start2 = (/ 1, nt /)
    count2 = (/ n_elemente, 1 /)
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, p, start2, count2 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, p, start2, count2 ) )
    do n = 1,n_elemente !
       if ( abs(p(n)) > 1.e+30)p(n) = -999.9
    enddo ! alle n elemente
    !print*,'stofftransport_untrim: got Mesh2_face_Wasserstand_2d'
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, el_area, start2, count2 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, el_area, start2, count2 ) )
    do n = 1,n_elemente !
       if ((el_area(n) <= 0.0) .or. (el_area(n) > 1.e+30)) el_area(n) = 0.0
    enddo ! alle n elemente
@@ -65,16 +68,16 @@ subroutine holen_trans_untrim(nt)
    start3 = (/ 1, 1, nt /)
    count3 = (/ kantenanzahl, 1, 1 /)
    !float Mesh2_edge_Durchflussflaeche_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
-   !call check_err( nf_inq_varid(ncid,'Mesh2_edge_mit_hor_durchstroemte_Kantenflaeche_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
+   !call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_mit_hor_durchstroemte_Kantenflaeche_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
    !float Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
-   !call check_err( nf_inq_varid(ncid,'Mesh2_edge_hor_Wassertransport_Kantenflaeche_2d', varid) )
-   !call check_err( nf90_get_var(ncid, varid, ed_flux, start3, count3 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
+   !call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_hor_Wassertransport_Kantenflaeche_2d', varid) )
+   !call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, ed_flux, start3, count3 ) )
    !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
    do n = 1,kantenanzahl
       !Mesh2_edge_Durchflussflaeche_2d:_FillValue = 1.e+31f ;
@@ -352,7 +355,7 @@ subroutine read_mesh_nc()
    use modell
    implicit none
    include 'netcdf.inc'
-   integer :: iret, ndims, nVars, nGlobalAtts, unlimdimid, nAtts, ndumm, errcode
+   integer :: ndims, nVars, nGlobalAtts, unlimdimid, nAtts, ndumm, errcode
    integer , allocatable , dimension (:) :: dlength, vxtype, vndims, nbc
    integer, dimension(nf90_max_var_dims) :: dimids
    character(256) , allocatable , dimension (:) :: dname, vname
@@ -364,23 +367,22 @@ subroutine read_mesh_nc()
    real minx,maxx,miny,maxy, nach_links
    logical nixlinks, nixrechts, singlenodes
    
+   character(len=50), parameter :: nc_error_prefix = 'read_mesh_nc'
+   
    write(*,*)'read_mesh_nc() started'
    open ( unit = 123 , file = 'netcdf.log', status = 'replace', action = 'write', iostat = open_error )
    write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'transport.nc'
-   if (errcode /= 0)call qerror('read_mesh_nc writing filename transport.nc failed')
-   iret = nf_open(dateiname, NF_NOWRITE, ncid)
-   call check_err(iret)
+   if (errcode /= 0) call qerror('read_mesh_nc writing filename transport.nc failed')
+   call check_err(trim(nc_error_prefix), nf_open(dateiname, NF_NOWRITE, ncid))
    write(*,*)'transport.nc ließ sich öffnen'
    !!----------------------------------------------------------------------  Überblick
-   iret = nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid)
-   call check_err(iret)
+   call check_err(trim(nc_error_prefix), nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid))
    write(123,*)"ndims, nVars, nGlobalAtts = ",ndims, nVars, nGlobalAtts
    !! Dimensionen
    allocate (dlength(ndims), stat = alloc_status )
    allocate (dname(ndims), stat = alloc_status )
    do j = 1,ndims
-      iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
-      call check_err(iret)
+      call check_err(trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j)))
       write(123,*)'dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
    enddo !j
    write(123,*)'--'
@@ -390,9 +392,7 @@ subroutine read_mesh_nc()
    allocate (vname(nVars), stat = alloc_status )
    !write(123,*)'NF_INT=', NF_INT," NF_FLOAT=", NF_FLOAT," NF_DOUBLE=", NF_DOUBLE
    do j = 1,nVars
-      !iret = nf90_inquire_variable(ncid,j,vname(j),xtype(j),ndims(j),dimids, nAtts)
-      iret = nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts)
-      call check_err(iret)
+      call check_err(trim(nc_error_prefix), nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts))
       if (vxtype(j) == NF_DOUBLE) write(123,*)'NF_DOUBLE '
       if (vxtype(j) == NF_FLOAT) write(123,*)'NF_FLOAT '
       if (vxtype(j) == NF_INT) write(123,*)'NF_INT '
@@ -416,48 +416,39 @@ subroutine read_mesh_nc()
    ! Dimension  nMesh2_edge wert=       25581
    ! Dimension  nMesh2_face wert=       11103
    ! Dimension  nMesh2_data_time wert=        8760
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_node", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, knotenanzahl2D) )
+   call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid, "nMesh2_node", didi) )
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, didi, aname, knotenanzahl2D) )
    print*,"read_mesh_nc: knotenanzahl2D = ",knotenanzahl2D," - ",aname
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_edge", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, kantenanzahl) )
+   call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid, "nMesh2_edge", didi) )
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, didi, aname, kantenanzahl) )
    kanten_vorhanden = .true.
    print*,"read_mesh_nc: kantenanzahl = ",kantenanzahl," - ",aname
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_face", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, n_elemente) )
+   call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid, "nMesh2_face", didi) )
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, didi, aname, n_elemente) )
    element_vorhanden = .true.
    print*,"read_mesh_nc: n_elemente = ",n_elemente," - ",aname
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_data_time", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, transinfo_anzahl) )
+   call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid, "nMesh2_data_time", didi) )
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, didi, aname, transinfo_anzahl) )
    print*,"read_mesh_nc: anzahl möglicher Transportzeitschritte = ",transinfo_anzahl," - ",aname
    !----------------------------------------------------------------------  nodes
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_x failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_node_x', didi) )
-   call check_err(  nf90_get_var(ncid, didi, knoten_x) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_node_x', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, knoten_x) )
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_y failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_node_y', didi) )
-   call check_err(  nf90_get_var(ncid, didi, knoten_y) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_node_y', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, knoten_y) )
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_z failed')
    knoten_z(1:knotenanzahl2D) = 0.0
-   !allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
-   !if(alloc_status.ne.0) call qerror('allocate (knoten_rand( failed')
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
+   
    allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_zone( failed')
    do n = 1,knotenanzahl2D !initialize zones
       knoten_zone(n) = 0
    enddo ! alle Knoten
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
-   !allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
-   !if(alloc_status.ne.0) call qerror('allocate (knoten_flaeche failed')
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
-   minx = 9999999.9
+   
    maxx = -9999999.9
    miny = 9999999.9
    maxy = -9999999.9
@@ -475,18 +466,18 @@ subroutine read_mesh_nc()
    !----------------------------------------------------------------------  elements/faces
    allocate (element_x(n_elemente),element_y(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate element_xy failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_face_x', didi) )
-   call check_err(  nf90_get_var(ncid, didi, element_x) )
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_face_y', didi) )
-   call check_err(  nf90_get_var(ncid, didi, element_y) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_face_x', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, element_x) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_face_y', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, element_y) )
    allocate (fa_no(4,n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate fa_no( failed')
    allocate (elementnodes(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementnodes( failed')
    allocate (cornernumber(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (cornernumber( failed')
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_nodes', didi) )
-   call check_err( nf90_get_var(ncid, didi, fa_no) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_nodes', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, fa_no) )
    summ_ne = 0
    do n = 1,n_elemente ! alle Elemente
       if (fa_no(4,n) < 0) then
@@ -523,8 +514,8 @@ subroutine read_mesh_nc()
    if (singlenodes) call qerror('read_mesh_nc: nodes belonging to no element in mesh')
    allocate (element_rand(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (element_rand failed')
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
-   call check_err( nf90_get_var(ncid, didi, element_rand) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, element_rand) )
    allocate (element_zone(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) then
       call qerror('allocate (element_zone failed')
@@ -538,8 +529,8 @@ subroutine read_mesh_nc()
    allocate (elementedges(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementedges failed')
    elementedges = 0
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_edges', didi) )
-   call check_err( nf90_get_var(ncid, didi, fa_no) )
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_edges', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, fa_no) )
    do n = 1,n_elemente ! alle Elemente
       do k = 1,cornernumber(n)
          elementedges(n,k) = fa_no(k,n)+1
@@ -552,22 +543,14 @@ subroutine read_mesh_nc()
    deallocate (fa_no, stat = alloc_status )
    !----------------------------------------------------------------------  edges,Kanten
    kanten_vorhanden = .true.
-   !allocate (edge_x(kantenanzahl), stat = alloc_status )
-   !if(alloc_status.ne.0) call qerror('allocate (edge_x failed')
-   !call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_x', didi) )
-   !call check_err(  nf90_get_var(ncid, didi, edge_x) )
-   !allocate (edge_y(kantenanzahl), stat = alloc_status )
-   !if(alloc_status.ne.0) call qerror('allocate (edge_y failed')
-   !call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_y', didi) )
-   !call check_err(  nf90_get_var(ncid, didi, edge_y) )
    allocate (top_node(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror(' allocate (top_node failed')
    allocate (bottom_node(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (bottom_node failed')
    allocate (ed_fa(2,kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (ed_fa(2 failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_nodes', didi) )
-   call check_err(  nf90_get_var(ncid, didi, ed_fa) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_edge_nodes', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, ed_fa) )
    do n = 1,kantenanzahl ! alle Kanten
       bottom_node(n) = ed_fa(1,n)+1
       if ((bottom_node(n) < 1) .or. (bottom_node(n) > knotenanzahl2D))call qerror("read_mesh_nc:bottom_node falsch")
@@ -583,8 +566,8 @@ subroutine read_mesh_nc()
    enddo ! alle n Kanten
    allocate (left_element(kantenanzahl),right_element(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (left,right_element  failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_faces', didi) )
-   call check_err(  nf90_get_var(ncid, didi, ed_fa) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_edge_faces', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, ed_fa) )
    ! links-rechts-sortieren, Randkanten
    allocate (boundary_number(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (boundary_number(kantenanzahl) failed')
@@ -629,8 +612,8 @@ subroutine read_mesh_nc()
    !     Mesh2_edge_bc:flag_values = 0, 1, 2 ;
    allocate (nbc(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (nbc( failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_bc', didi) )
-   call check_err(  nf90_get_var(ncid, didi, nbc ) )
+   call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,'Mesh2_edge_bc', didi) )
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, nbc ) )
    do n = 1,kantenanzahl ! alle Kanten
       if (boundary_number(n) == 0) then ! Kante mit zwei Elementen links und rechts
          if (nbc(n) /= 0)call qerror("Randkantenfehler 00")
@@ -771,25 +754,19 @@ subroutine nc_sichten()
    integer i,j,k,n, alloc_status, didi, io_error, nnn, timesteps
    real delt, parttime
    real , allocatable , dimension (:) :: zeitstunde, secuz
+   
+   character(len=50), parameter :: nc_error_prefix = 'nc_sichten'
+   
    if (meinrang == 0) then ! prozess 0 only
-      !! nMesh2_time ist leer
-      ! call check_err( nf90_inq_dimid(ncid, "nMesh2_time", didi) )
-      ! call check_err( nf90_Inquire_Dimension(ncid, didi, aname, timesteps) )
-      ! print*,"read_mesh_nc: nMesh2_time zeitschritte=",timesteps," ",trim(aname)
-      ! call check_err(  nf90_inq_varid(ncid,"nMesh2_time", didi) )
-      ! allocate (secuz(timesteps), stat = alloc_status )
-      ! call check_err(  nf90_get_var(ncid, didi, secuz) )
-      ! print*,"netcdf nMesh2_time",timesteps," Zeitschritte von: ",secuz(1)," bis: " &
-      !&      ,secuz(timesteps)," Sekunden"
       ! transinfo_anzahl bereits bekannt
-      if (transinfo_anzahl < 1)call qerror('No transport info')
+      if (transinfo_anzahl < 1) call qerror('No transport info')
       allocate (zeitstunde(transinfo_anzahl), stat = alloc_status )
       if (alloc_status /= 0) call qerror("allocate (zeitstunde(transinfo_anzahl) failed")
       allocate (transinfo_zeit(transinfo_anzahl),transinfo_zuord(transinfo_anzahl), stat = alloc_status )
       if (alloc_status /= 0) call qerror("allocate (transinfo_zeit(transinfo_anzahl) failed")
-      call check_err( nf90_inq_dimid(ncid,"nMesh2_data_time", didi) )
-      call check_err( nf90_inq_varid(ncid,"nMesh2_data_time", didi) )
-      call check_err( nf90_get_var(ncid, didi, zeitstunde) )
+      call check_err( trim(nc_error_prefix), nf90_inq_dimid(ncid,"nMesh2_data_time", didi) )
+      call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid,"nMesh2_data_time", didi) )
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, didi, zeitstunde) )
       print*,'netcdf nMesh2_data_time ',transinfo_anzahl,' timesteps starting: ',zeitstunde(1),' until: ' &
       ,zeitstunde(transinfo_anzahl),' h'
       !! es wird jetzt einfach mal angenommen, dass die Zeitschritte gleichmäßig sind !!
@@ -805,7 +782,7 @@ subroutine nc_sichten()
       do i = 1,attstrlen
          attstring(i:i) = ' '
       enddo
-      call check_err( nf_get_att_text(ncid, didi, 'units', attstring) )
+      call check_err( trim(nc_error_prefix), nf_get_att_text(ncid, didi, 'units', attstring) )
       print*,'nc_sichten, nMesh2_data_time units = ',trim(attstring)
       do i = 13,len(time_offset_string)+12
          time_offset_string(i-12:i-12) = attstring(i:i)
@@ -874,7 +851,7 @@ subroutine nvread()
    use modell
    implicit none
    include 'netcdf.inc'
-   integer iret,j,k
+   integer j,k
    character (len = longname) :: dateiname
    integer :: ndims, nVars, nGlobalAtts, unlimdimid
    integer alloc_status, open_error, errcode
@@ -890,22 +867,22 @@ subroutine nvread()
    real(4) :: rval
    real(8) :: dval
    real , allocatable , dimension (:) :: zeiten
+   
+   character(len=50), parameter :: nc_error_prefix = 'nvread'
+   
    write(*,*)'nvread() started'
    open ( unit = 123 , file = 'netcdf.log', status = 'replace', action = 'write', iostat = open_error )
    write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'transport.nc'
-   if (errcode /= 0)call qerror('nvread writing filename transport.nc failed')
-   iret = nf_open(dateiname, NF_NOWRITE, ncid)
-   call check_err(iret)
+   if (errcode /= 0) call qerror('nvread writing filename transport.nc failed')
+   call check_err( trim(nc_error_prefix), nf_open(dateiname, NF_NOWRITE, ncid))
    !!  Überblick
-   iret = nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid)
-   call check_err(iret)
-   write(123,*)"ndims, nVars, nGlobalAtts = ",ndims, nVars, nGlobalAtts
+   call check_err( trim(nc_error_prefix), nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid))
+   write(123,*)"ndims, nVars, nGlobalAtts = ", ndims, nVars, nGlobalAtts
    !! Dimensionen
    allocate (dlength(ndims), stat = alloc_status )
    allocate (dname(ndims), stat = alloc_status )
    do j = 1,ndims
-      iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j)))
       write(123,*)'dimension  ' ,trim(adjustl(dname(j))),' wert = ', dlength(j)
    enddo !j
    write(123,*)'--'
@@ -914,9 +891,7 @@ subroutine nvread()
    allocate (vndims(nVars), stat = alloc_status )
    allocate (vname(nVars), stat = alloc_status )
    do j = 1,nVars
-      !iret = nf90_inquire_variable(ncid,j,vname(j),xtype(j),ndims(j),dimids, nAtts)
-      iret = nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,j,vname(j),vxtype(j),vndims(j),dimids, nAtts))
       write(123,*)'Variable : ' ,trim(adjustl(vname(j)))
       write(123,*)"Dimensionen: "
       do k = 1,vndims(j)
@@ -937,19 +912,16 @@ subroutine nvread()
    !! Zeiten:
    !! double nMesh2_data_time(nMesh2_data_time)
    write(123,*)'Ausgabe Zeiten'
-   iret = nf_inq_varid(ncid,'nMesh2_data_time', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'nMesh2_data_time', varid))
    write(123,*)'nMesh2_data_time: '," varid = ",varid
-   iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts))
    do k = 1,vndims(varid)
       write(123,*)'   nMesh2_data_time:dim  ', trim(adjustl(dname(dimids(k)))), dlength(dimids(k))
    enddo !k Dimensionen von Variable j
    if (dlength(dimids(1)) > 0) then
       allocate (zeiten(dlength(dimids(1))), stat = alloc_status )
-      iret = nf90_get_var(ncid, varid, zeiten)
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, zeiten))
       write(123,*)'Zeit  von:',zeiten(1),zeiten(2),' bis: ',zeiten(dlength(dimids(1)))
-      call check_err(iret)
       do k = dlength(dimids(1))-12,dlength(dimids(1))!! nur mal die letzten 12 Zeitschritte ausgeben
          !do k=4320,5400
          !write(123,*)'Zeit  ',k,zeiten(k)
@@ -959,21 +931,31 @@ subroutine nvread()
       enddo !k Dimensionen von Variable j
    endif !more than 0 timesteps
    write(123,*)'--'
-   iret = nf_close(ncid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_close(ncid))
    close(123)
    write(*,*)'nvread() regular end'
    return
 end subroutine nvread
 !-----------------------------------------------------------------------
-subroutine check_err(iret)
+subroutine check_err(nc_error_prefix, i_netcdf_error)
    implicit none
-   integer iret
+   
+   character(len=*), intent(in) :: nc_error_prefix
+   integer         , intent(in) :: i_netcdf_error
+   
+   character(len=1000)          :: error_message
+   
    include 'netcdf.inc'
-   if (iret /= NF_NOERR) then
-      write(*,*) nf_strerror(iret)
+   
+   error_message = ''
+   
+   if (i_netcdf_error /= NF_NOERR) then
+      write(error_message , '(a,": ",a)') trim(nc_error_prefix), trim(nf_strerror(i_netcdf_error))
+      call qerror(trim(error_message))
    endif
+   
    return
+   
 end subroutine check_err
 !-----------------------------------------------------------------------
 subroutine print_attributes( nvar, nAtts)
@@ -982,52 +964,46 @@ subroutine print_attributes( nvar, nAtts)
    implicit none
    include 'netcdf.inc'
    integer, parameter :: attstrlen = 2000
-   integer iret,i,j,k,nvar, nd, nv, nAtts, xtype, alen, attnum
+   integer i, j, k, nvar, nd, nv, nAtts, xtype, alen, attnum
    character(256) :: aname
    character(attstrlen) :: attstring
    integer :: ival
    real(4) :: rval
    real(8) :: dval
-   do k = 1, nAtts
-      iret = nf_inq_attname(ncid, nvar, k, aname)
-      call check_err(iret)
+   
+   character(len=50), parameter :: nc_error_prefix = 'print_attributes'
+   
+   do k = 1,nAtts
+      call check_err( trim(nc_error_prefix), nf_inq_attname(ncid, nvar, k, aname))
       !print*,trim(adjustl(aname))," = "
       !print*,'Attribute ',k, trim(adjustl(aname))
-      !iret = nf_inq_atttype(ncid, nvar, xtype, aname)
-      iret = nf90_Inquire_Attribute(ncid, nvar, aname, xtype, alen, attnum)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Attribute(ncid, nvar, aname, xtype, alen, attnum))
       !print*,'type=',xtype
       select case (xtype)
-            ! NF90_BYTE, NF90_CHAR, N90_SHORT, NF90_INT, NF90_FLOAT, NF90_DOUBLE
-         case(NF90_BYTE)
-            iret = nf_get_att_int(ncid, nvar, aname, ival)
-            call check_err(iret)
-            write(123,*)'b   ',trim(adjustl(aname))," = ", ival
-         case(NF90_CHAR)
-            do i = 1,attstrlen
-               attstring(i:i) = ' '
-            enddo
-            iret = nf_get_att_text(ncid, nvar, aname, attstring)
-            call check_err(iret)
-            write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = ",len(trim(attstring)),trim(adjustl(attstring))
-         case(nf90_short)
-            iret = nf_get_att_int(ncid, nvar, aname, ival)
-            call check_err(iret)
-            write(123,*)'ishort   ',trim(adjustl(aname))," = ", ival
-         case(NF90_INT)
-            iret = nf_get_att_int(ncid, nvar, aname, ival)
-            call check_err(iret)
-            write(123,*)'i   ',trim(adjustl(aname))," = ", ival
-         case(NF90_FLOAT)
-            iret = nf_get_att_real(ncid, nvar, aname, rval)
-            call check_err(iret)
-            write(123,*)'i   ',trim(adjustl(aname))," = ", rval
-         case(NF90_DOUBLE)
-            iret = nf_get_att_double (ncid, nvar, aname, dval )
-            call check_err(iret)
-            write(123,*)'d   ',trim(adjustl(aname))," = ", dval
-            case default
-            call qerror('netCDF external data typ unkown')
+         ! NF90_BYTE, NF90_CHAR, N90_SHORT, NF90_INT, NF90_FLOAT, NF90_DOUBLE
+      case(NF90_BYTE)
+         call check_err( trim(nc_error_prefix), nf_get_att_int(ncid, nvar, aname, ival))
+         write(123,*)'b   ',trim(adjustl(aname))," = ", ival
+      case(NF90_CHAR)
+         do i = 1,attstrlen
+            attstring(i:i) = ' '
+         enddo
+         call check_err( trim(nc_error_prefix), nf_get_att_text(ncid, nvar, aname, attstring))
+         write(123,"(3A,3x,I10,3x,A)")'c   ',trim(adjustl(aname))," has length = ",len(trim(attstring)),trim(adjustl(attstring))
+      case(nf90_short)
+         call check_err( trim(nc_error_prefix), nf_get_att_int(ncid, nvar, aname, ival))
+         write(123,*)'ishort   ',trim(adjustl(aname))," = ", ival
+      case(NF90_INT)
+         call check_err( trim(nc_error_prefix), nf_get_att_int(ncid, nvar, aname, ival))
+         write(123,*)'i   ',trim(adjustl(aname))," = ", ival
+      case(NF90_FLOAT)
+         call check_err( trim(nc_error_prefix), nf_get_att_real(ncid, nvar, aname, rval))
+         write(123,*)'i   ',trim(adjustl(aname))," = ", rval
+      case(NF90_DOUBLE)
+         call check_err( trim(nc_error_prefix), nf_get_att_double (ncid, nvar, aname, dval))
+         write(123,*)'d   ',trim(adjustl(aname))," = ", dval
+      case default
+         call qerror('netCDF external data typ unkown')
       end select
    enddo !k Attribute von Variable nvar
    return
@@ -1039,7 +1015,7 @@ subroutine untrim_vtk(nt)
    implicit none
    include 'netcdf.inc'
    integer alloc_status, open_error, errcode
-   integer iret,j,k,n, nvar, nt, ion, varid, vxtype, vndims, dlength
+   integer j, k, n, nvar, nt, ion, varid, vxtype, vndims, dlength
    integer, dimension(nf90_max_var_dims) :: dimids
    character(256) :: dname
    character (len = longname) :: dateiname, systemaufruf, zahl, vname
@@ -1047,6 +1023,9 @@ subroutine untrim_vtk(nt)
    integer :: start3(3), count3(3)
    integer i_corn, kantenanzahl2D
    real , allocatable , dimension (:) :: wsp, volume, qarea, velmag
+   
+   character(len=50), parameter :: nc_error_prefix = 'untrim_vtk'
+   
    write(*,*)"untrim_vtk"
    if (nt > 0) then ! there are timesteps
       write(zahl,*)nt
@@ -1072,18 +1051,14 @@ subroutine untrim_vtk(nt)
    write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
    !Variable :   Mesh2_face_x
    !Dimensionen: nMesh2_face       11103
-   iret = nf_inq_varid(ncid,'Mesh2_face_x', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_x', varid))
    write(*,*)'Mesh2_face_x: varid = ',varid
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       write(*,*)'   Mesh2_face_x:dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
-   iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength))
    knotenanzahl2D = dlength
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
@@ -1102,12 +1077,9 @@ subroutine untrim_vtk(nt)
    endif
    allocate (wsp(knotenanzahl2D), stat = alloc_status )
    allocate (volume(knotenanzahl2D), stat = alloc_status )
-   iret = nf90_get_var(ncid, varid, knoten_x)
-   call check_err(iret)
-   iret = nf_inq_varid(ncid,'Mesh2_face_y', varid)
-   call check_err(iret)
-   iret = nf90_get_var(ncid, varid, knoten_y)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_x))
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_y', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_y))
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
    do n = 1,knotenanzahl2D
@@ -1125,13 +1097,10 @@ subroutine untrim_vtk(nt)
    ! Dimensionen:
    !    nMesh2_face       11103
    !    nMesh2_data_time        8760
-   iret = nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid)
-   call check_err(iret)
-   !check(nf90_get_var(nc_id,var_id,var_dummy,start=(/1,1,1,ist/),count=(/lo,la,le,1/)))
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid))
    start2 = (/ 1, nt /)
    count2 = (/ knotenanzahl2D, 1 /)
-   iret = nf90_get_var(ncid, varid, wsp, start2, count2 )
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, wsp, start2, count2 ))
    write(ion,'(A)')'SCALARS WSP float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
@@ -1142,23 +1111,19 @@ subroutine untrim_vtk(nt)
    !    nMesh2_face       11103
    !    nMesh2_layer_2d           1
    !    nMesh2_data_time        8760
-   iret = nf_inq_varid(ncid,'Mesh2_face_Salzgehalt_2d', varid)
-   call check_err(iret)
    start3 = (/ 1, 1, nt /)
    count3 = (/ knotenanzahl2D, 1, 1 /)
-   iret = nf90_get_var(ncid, varid, knoten_z, start3, count3 )
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Salzgehalt_2d', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_z, start3, count3 ))
    write(ion,'(A)')'SCALARS Salz_PSU float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       write(ion,*) knoten_z(n)
    enddo ! alle Knoten
-   iret = nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid)
-   call check_err(iret)
    start3 = (/ 1, 1, nt /)
    count3 = (/ knotenanzahl2D, 1, 1 /)
-   iret = nf90_get_var(ncid, varid, volume, start3, count3 )
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, volume, start3, count3 ))
    write(ion,'(A)')'SCALARS Wasservolumen float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
@@ -1172,12 +1137,12 @@ subroutine untrim_vtk(nt)
       write(zahl,*)nt
       zahl = adjustl(zahl)
       write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'netcdf_edge_',trim(zahl),'.vtk'
-      if (errcode /= 0)call qerror('untrim_vtk writing filename netcdf_edge_ failed')
+      if (errcode /= 0) call qerror('untrim_vtk writing filename netcdf_edge_ failed')
    else ! no timesteps
       return
    endif
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('untrim_vtk writing systemcall rm -rf dateiname edges failed')
+   if (errcode /= 0) call qerror('untrim_vtk writing systemcall rm -rf dateiname edges failed')
    call system(systemaufruf)
    ion = 106
    open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
@@ -1191,30 +1156,23 @@ subroutine untrim_vtk(nt)
    !write(ion,'(A)')'DATASET POLYDATA'
    write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
    !Mesh2_edge_x
-   iret = nf_inq_varid(ncid,'Mesh2_edge_x', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_x', varid))
    write(*,*)'Mesh2_edge_x: varid = ',varid
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       write(*,*)'   Mesh2_edge_x:dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
-   iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength))
    kantenanzahl2D = dlength
    allocate (knoten_x(kantenanzahl2D),knoten_y(kantenanzahl2D),knoten_z(kantenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
       write(fehler,*)' Rueckgabewert   von   allocate knoten_x(kantenanzahl2D) :', alloc_status
       call qerror(fehler)
    endif
-   iret = nf90_get_var(ncid, varid, knoten_x)
-   call check_err(iret)
-   iret = nf_inq_varid(ncid,'Mesh2_edge_y', varid)
-   call check_err(iret)
-   iret = nf90_get_var(ncid, varid, knoten_y)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_x))
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid, 'Mesh2_edge_y', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_y))
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',kantenanzahl2D, ' float'
    do n = 1,kantenanzahl2D
@@ -1228,34 +1186,28 @@ subroutine untrim_vtk(nt)
    !    nMesh2_edge       25581
    !    nMesh2_layer_2d           1
    !    nMesh2_data_time        8760
-   iret = nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid)
-   call check_err(iret)
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid))
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    print *,'Mesh2_edge_Durchflussflaeche_2d: vndims = ',vndims
-   call check_err(iret)
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       print *,'   Mesh2_edge_Durchflussflaeche_2d::dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
    allocate (qarea(kantenanzahl2D), stat = alloc_status )
    allocate (velmag(kantenanzahl2D), stat = alloc_status )
    start3 = (/ 1, 1, nt /)
    count3 = (/ kantenanzahl2D, 1, 1 /)
-   iret = nf90_get_var(ncid, varid, qarea, start3, count3 )
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, qarea, start3, count3 ))
    write(ion,'(A)')'SCALARS Qflaech float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,kantenanzahl2D
       !write(ion,'(f27.6)') p(n)
       write(ion,*) qarea(n)
    enddo ! alle Knoten
-   iret = nf_inq_varid(ncid,'Mesh2_edge_skalare_Stroemungsgeschwindigkeit_2d', varid)
-   call check_err(iret)
    start3 = (/ 1, 1, nt /)
    count3 = (/ kantenanzahl2D, 1, 1 /)
-   iret = nf90_get_var(ncid, varid, velmag, start3, count3 )
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_skalare_Stroemungsgeschwindigkeit_2d', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, velmag, start3, count3 ))
    write(ion,'(A)')'SCALARS vbetr float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,kantenanzahl2D
@@ -1276,13 +1228,16 @@ subroutine netcdf_mesh_only()
    integer , allocatable , dimension (:,:) :: fa_no, ed_fa
    real minx,maxx,miny,maxy
    integer  ion, alloc_status, open_error, errcode
-   integer iret,j,k,n, nvar, varid, vxtype, vndims, dlength
+   integer  j, k, n, nvar, varid, vxtype, vndims, dlength
    integer, dimension(nf90_max_var_dims) :: dimids
    character(256) :: dname
    character(len = longname) :: dateiname, systemaufruf, vname
    integer :: start2(2), count2(2)
    integer :: start3(3), count3(3)
    integer i_corn, kantenanzahl2D
+   
+   character(len=50), parameter :: nc_error_prefix = 'netcdf_mesh_only'
+   
    !-------------------------------------------------------------------------------------------- nodes
    write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'netcdf_mesh_node.vtk'
    if (errcode /= 0)call qerror('netcdf_mesh_only writing filename netcdf_mesh_node.vtk failed')
@@ -1300,19 +1255,14 @@ subroutine netcdf_mesh_only()
    write(ion,'(A)')'ASCII'
    !write(ion,'(A)')'DATASET POLYDATA'
    write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-   iret = nf_inq_varid(ncid,'Mesh2_node_x', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_node_x', varid))
    write(*,*)'Mesh2_node_x: varid = ',varid
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       write(*,*)'   Mesh2_node_x:dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
-   iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
-   call check_err(iret)
-   knotenanzahl2D = dlength
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(1), dname, knotenanzahl2D))
    print*,'knotenanzahl2D nodes = ', knotenanzahl2D
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
@@ -1329,21 +1279,18 @@ subroutine netcdf_mesh_only()
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
    endif
-   iret = nf90_get_var(ncid, varid, knoten_x)
-   call check_err(iret)
-   iret = nf_inq_varid(ncid,'Mesh2_node_y', varid)
-   call check_err(iret)
-   iret = nf90_get_var(ncid, varid, knoten_y)
-   call check_err(iret)
-   minx = 9999999.9
-   maxx = -9999999.9
-   miny = 9999999.9
-   maxy = -9999999.9
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_x))
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_node_y', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_y))
+   minx =  9999999.9
+   maxx = -minx
+   miny =  minx
+   maxy = -minx
    do n = 1,knotenanzahl2D
-      if (knoten_x(n) > maxx)maxx = knoten_x(n)
-      if (knoten_y(n) > maxy)maxy = knoten_y(n)
-      if (knoten_x(n) < minx)minx = knoten_x(n)
-      if (knoten_y(n) < miny)miny = knoten_y(n)
+      if (knoten_x(n) > maxx) maxx = knoten_x(n)
+      if (knoten_y(n) > maxy) maxy = knoten_y(n)
+      if (knoten_x(n) < minx) minx = knoten_x(n)
+      if (knoten_y(n) < miny) miny = knoten_y(n)
    enddo ! alle Knoten
    print*,'netcdf_mesh_only minx, maxx,miny,maxy = ',minx,maxx,miny,maxy
    !do n=1,knotenanzahl2D
@@ -1356,24 +1303,16 @@ subroutine netcdf_mesh_only()
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
    enddo ! alle Knoten
-   iret = nf_inq_varid(ncid,'Mesh2_face_nodes', varid)
-   call check_err(iret)
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
-   call check_err(iret)
-   !do k=1,vndims
-   iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_nodes', varid))
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength))
    write(*,*)'   Mesh2_face_nodes:dim 1  ', trim(adjustl(dname)), dlength
-   iret = nf90_Inquire_Dimension(ncid, dimids(2), dname, dlength)
-   call check_err(iret)
-   write(*,*)'   Mesh2_face_nodes:dim 2  ', trim(adjustl(dname)), dlength
-   n_elemente = dlength
-   !enddo !k Dimensionen von Variable j
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(2), dname, n_elemente))
+   write(*,*)'   Mesh2_face_nodes:dim 2  ', trim(adjustl(dname)), n_elemente
    allocate (fa_no(4,n_elemente), stat = alloc_status )
    allocate (elementnodes(n_elemente,4), stat = alloc_status )
    allocate (cornernumber(n_elemente), stat = alloc_status )
-   iret = nf90_get_var(ncid, varid, fa_no)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, fa_no))
    i_corn = 0
    do n = 1,n_elemente ! alle Elemente
       if (fa_no(4,n) < 0) then
@@ -1441,19 +1380,14 @@ subroutine netcdf_mesh_only()
    write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
    !Variable :   Mesh2_face_x
    !Dimensionen: nMesh2_face       11103
-   iret = nf_inq_varid(ncid,'Mesh2_face_x', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_x', varid))
    write(*,*)'Mesh2_face_x: varid = ',varid
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       write(*,*)'   Mesh2_face_x:dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
-   iret = nf90_Inquire_Dimension(ncid, dimids(1), dname, dlength)
-   call check_err(iret)
-   knotenanzahl2D = dlength
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(1), dname, knotenanzahl2D))
    print*,'knotenanzahl2D faces = ', knotenanzahl2D
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) then
@@ -1470,35 +1404,26 @@ subroutine netcdf_mesh_only()
       write(fehler,*)' Rueckgabewert   von   allocate knoten_z(knotenanzahl2D) :', alloc_status
       call qerror(fehler)
    endif
-   iret = nf90_get_var(ncid, varid, knoten_x)
-   call check_err(iret)
-   iret = nf_inq_varid(ncid,'Mesh2_face_y', varid)
-   call check_err(iret)
-   iret = nf90_get_var(ncid, varid, knoten_y)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_x))
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_face_y', varid))
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, knoten_y))
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
    do n = 1,knotenanzahl2D
       knoten_z(n) = 0.0
       write(ion,'(f17.5,2x,f17.5,2x,f8.3)') knoten_x(n), knoten_y(n), knoten_z(n)
    enddo ! alle Knoten
-   iret = nf_inq_varid(ncid,'Mesh2_edge_faces', varid)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,'Mesh2_edge_faces', varid))
    print *,'Mesh2_edge_faces: varid = ',varid
-   iret = nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids)
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname,vxtype,vndims,dimids))
    print *,'Mesh2_edge_faces: vndims = ',vndims
-   call check_err(iret)
    do k = 1,vndims
-      iret = nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength)
-      call check_err(iret)
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(k), dname, dlength))
       print *,'   Mesh2_edge_faces::dim  ', trim(adjustl(dname)), dlength
    enddo !k Dimensionen von Variable j
-   iret = nf90_Inquire_Dimension(ncid, dimids(2), dname, dlength)
-   call check_err(iret)
-   kantenanzahl2D = dlength
+   call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, dimids(2), dname, kantenanzahl2D))
    allocate (ed_fa(2,kantenanzahl2D), stat = alloc_status )
-   iret = nf90_get_var(ncid, varid, ed_fa)
-   call check_err(iret)
+   call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, ed_fa))
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,I12)')'CELLS ', kantenanzahl2D, 3*kantenanzahl2D
    do n = 1,kantenanzahl2D

@@ -132,7 +132,7 @@ Q3 = version.co \
    schnitt.o\
    planktische_variablen.o \
    module_salinity.o \
-   module_suspendedMatter.o \
+   module_suspended_matter.o \
    parallel.o \
    water_temperature_wrapper_3d.o \
    alter.o\
