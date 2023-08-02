@@ -498,15 +498,15 @@ module modell
    ! ganglinien_datenfelder
    ! -------------------------------------------------------------------------
    ! Beschreibung in ganglinien.f95
-   integer                                :: anz_gangl, ionumber
-   integer                                :: n_pl, n_ue, n_bn
-   real,    allocatable, dimension(:)     :: c3ammonium, intammonium
-   real,    allocatable, dimension(:,:)   :: t_gang, u_gang, tlmax_gang,  tlmin_gang
-   real,    allocatable, dimension(:,:,:) :: pl_gang, ue_gang, bn_gang
-   real,    allocatable, dimension(:,:,:) :: randflux_gang, schnittflux_gang
-   integer, allocatable, dimension(:)     :: knot_gangl
-   integer, allocatable, dimension(:)     :: q_gangl
-   integer, allocatable, dimension(:,:)   :: r_gang
+   integer                                       :: anz_gangl, ionumber
+   integer                                       :: n_pl, n_ue, n_bn
+   real,           allocatable, dimension(:)     :: c3ammonium, intammonium
+   real,           allocatable, dimension(:,:)   :: t_gang, u_gang, tlmax_gang,  tlmin_gang
+   real,           allocatable, dimension(:,:,:) :: pl_gang, ue_gang, bn_gang
+   real,           allocatable, dimension(:,:,:) :: randflux_gang, schnittflux_gang
+   integer,        allocatable, dimension(:)     :: knot_gangl
+   integer(int64), allocatable, dimension(:)     :: q_gangl
+   integer(int64), allocatable, dimension(:,:)   :: r_gang
    
    integer, parameter :: gangl_level = 1
    
