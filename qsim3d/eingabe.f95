@@ -68,7 +68,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
          ! call read_mesh_nc_sc()
          n_cal = n_elemente !!??
          n_cal = knotenanzahl2D
-         if (meinrang == 0) print*,'got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?????????########'
+         if (meinrang == 0) print*, "got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?"
       
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
@@ -80,8 +80,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
    if (n < n_cal) part = part+1
    
    print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
-                  ," modell_parallel() n_cal = ", n_cal
-   print*, ""
+                  ," n_cal = ", n_cal
    
    call mpi_barrier (mpi_komm_welt, ierr)
    call ini_planktkon0(n_cal)

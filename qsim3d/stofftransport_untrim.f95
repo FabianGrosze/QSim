@@ -352,6 +352,7 @@ subroutine read_mesh_nc()
    use modell
    implicit none
    include 'netcdf.inc'
+   
    integer :: iret, ndims, nVars, nGlobalAtts, unlimdimid, nAtts, ndumm, errcode
    integer , allocatable , dimension (:) :: dlength, vxtype, vndims, nbc
    integer, dimension(nf90_max_var_dims) :: dimids
@@ -361,16 +362,22 @@ subroutine read_mesh_nc()
    character(256) :: aname
    character (len = longname) :: dateiname
    real , allocatable , dimension (:) :: zeiten
-   real minx,maxx,miny,maxy, nach_links
+   real :: nach_links
    logical nixlinks, nixrechts, singlenodes
    
-   write(*,*)'read_mesh_nc() started'
+   print*
+   print "(a)", repeat("-", 80)
+   print "(a)", "read_mesh_nc"
+   print "(a)", repeat("-", 80)
+   
+   
    open ( unit = 123 , file = 'netcdf.log', status = 'replace', action = 'write', iostat = open_error )
    write(dateiname,'(2A)',iostat = errcode)trim(modellverzeichnis),'transport.nc'
    if (errcode /= 0)call qerror('read_mesh_nc writing filename transport.nc failed')
    iret = nf_open(dateiname, NF_NOWRITE, ncid)
    call check_err(iret)
-   write(*,*)'transport.nc ließ sich öffnen'
+   
+   
    !!----------------------------------------------------------------------  Überblick
    iret = nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid)
    call check_err(iret)
@@ -411,25 +418,30 @@ subroutine read_mesh_nc()
    call print_attributes(NF90_GLOBAL, nGlobalAtts)
    write(123,*)'--'
    close (123)
-   !----------------------------------------------------------------------  Dimensionen
-   ! Dimension  nMesh2_node wert=       14464
-   ! Dimension  nMesh2_edge wert=       25581
-   ! Dimension  nMesh2_face wert=       11103
-   ! Dimension  nMesh2_data_time wert=        8760
+   
+   ! -------------------------------------------------------------------------
+   ! dimensions
+   ! -------------------------------------------------------------------------
    call check_err( nf90_inq_dimid(ncid, "nMesh2_node", didi) )
    call check_err( nf90_Inquire_Dimension(ncid, didi, aname, knotenanzahl2D) )
-   print*,"read_mesh_nc: knotenanzahl2D = ",knotenanzahl2D," - ",aname
+   
    call check_err( nf90_inq_dimid(ncid, "nMesh2_edge", didi) )
    call check_err( nf90_Inquire_Dimension(ncid, didi, aname, kantenanzahl) )
    kanten_vorhanden = .true.
-   print*,"read_mesh_nc: kantenanzahl = ",kantenanzahl," - ",aname
+   
    call check_err( nf90_inq_dimid(ncid, "nMesh2_face", didi) )
    call check_err( nf90_Inquire_Dimension(ncid, didi, aname, n_elemente) )
    element_vorhanden = .true.
-   print*,"read_mesh_nc: n_elemente = ",n_elemente," - ",aname
+   
    call check_err( nf90_inq_dimid(ncid, "nMesh2_data_time", didi) )
    call check_err( nf90_Inquire_Dimension(ncid, didi, aname, transinfo_anzahl) )
-   print*,"read_mesh_nc: anzahl möglicher Transportzeitschritte = ",transinfo_anzahl," - ",aname
+   
+   print "(a)",    "dimensions:"
+   print "(a,i0)", "   nMesh2_node      = ", knotenanzahl2D
+   print "(a,i0)", "   nMesh2_edge      = ", kantenanzahl
+   print "(a,i0)", "   nMesh2_face      = ", n_elemente
+   print "(a,i0)", "   nMesh2_data_time = ", transinfo_anzahl
+   
    !----------------------------------------------------------------------  nodes
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_x failed')
@@ -457,21 +469,12 @@ subroutine read_mesh_nc()
    !if(alloc_status.ne.0) call qerror('allocate (knoten_flaeche failed')
    !call check_err(  nf_inq_varid(ncid,'', didi) )
    !call check_err(  nf90_get_var(ncid, didi,  )
-   minx = 9999999.9
-   maxx = -9999999.9
-   miny = 9999999.9
-   maxy = -9999999.9
-   do n = 1,knotenanzahl2D
-      if (knoten_x(n) > maxx)maxx = knoten_x(n)
-      if (knoten_y(n) > maxy)maxy = knoten_y(n)
-      if (knoten_x(n) < minx)minx = knoten_x(n)
-      if (knoten_y(n) < miny)miny = knoten_y(n)
-   enddo ! alle Knoten
-   print*,'read_mesh_nc: minx, maxx,miny,maxy = ',minx,maxx,miny,maxy
-   !do n=1,knotenanzahl2D
-   !   knoten_x(n)=knoten_x(n)-minx
-   !   knoten_y(n)=knoten_y(n)-miny
-   !enddo ! alle Knoten
+   
+   print*
+   print "(a)", "bounding box of nodes:"
+   print "(3x,a,f0.2,x,f0.2)", "x: ", minval(knoten_x), maxval(knoten_x)
+   print "(3x,a,f0.2,x,f0.2)", "y: ", minval(knoten_y), maxval(knoten_y)
+   
    !----------------------------------------------------------------------  elements/faces
    allocate (element_x(n_elemente),element_y(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate element_xy failed')
@@ -526,11 +529,8 @@ subroutine read_mesh_nc()
    call check_err( nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
    call check_err( nf90_get_var(ncid, didi, element_rand) )
    allocate (element_zone(n_elemente), stat = alloc_status )
-   if (alloc_status /= 0) then
-      call qerror('allocate (element_zone failed')
-   else
-      print*,' allocate (element_zone(n_elemente) worked read_mesh_nc',meinrang,n_elemente
-   endif
+   if (alloc_status /= 0) call qerror('allocate (element_zone failed')
+   
    do n = 1,n_elemente ! alle Elemente
       element_zone(n) = 0
    enddo ! alle Elemente
@@ -624,9 +624,10 @@ subroutine read_mesh_nc()
       endif ! left_element(n) vorhanden ???
    enddo ! alle n Kanten
    deallocate (ed_fa, stat = alloc_status )
-   print*,'read_mesh_nc: von ',kantenanzahl,' Kanten, sind ',anzahl_randkanten,' Randkanten.'
-   !     Mesh2_edge_bc:flag_meanings = "none closed dirichlet" ;
-   !     Mesh2_edge_bc:flag_values = 0, 1, 2 ;
+   
+   print*
+   print "(a,i0)", "boundary edges = ", anzahl_randkanten
+   
    allocate (nbc(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (nbc( failed')
    call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_bc', didi) )
@@ -678,7 +679,7 @@ subroutine read_mesh_nc()
          endif !Randunummernkonflikt
       endif ! Element hatte schon Randnummer
    enddo ! alle n Elemente
-   return
+   
 end subroutine read_mesh_nc
 !----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
 !> Zonen und Randnummern von der Datei ELEMENTE.txt einlesen,
@@ -698,26 +699,16 @@ subroutine read_elemente_gerris()
       call qerror(fehler)
    endif ! open_error.ne.0
    
-   if (zeile(22)) then
-      print*,'ELEMENTE.txt erste Zeile:',ctext(1:50)
-   else
-      write(fehler,*)'Lesen erste Zeile von ELEMENTE.txt fehlgeschlagen'
-      call qerror(fehler)
-   endif
-   if (zeile(22)) then
-      print*,'ELEMENTE.txt zweite Zeile:',ctext(1:50)
-   else
-      write(fehler,*)'Lesen zweite Zeile von ELEMENTE.txt fehlgeschlagen'
-      call qerror(fehler)
-   endif
-   if ( .not. zeile(22))call qerror('Zeile 2(3) in ELEMENTE.txt fehlt')
+   if (.not. zeile(22)) call qerror('Lesen erste Zeile von ELEMENTE.txt fehlgeschlagen')
+   if (.not. zeile(22)) call qerror('Lesen zweite Zeile von ELEMENTE.txt fehlgeschlagen')
+   if (.not. zeile(22)) call qerror('Zeile 2(3) in ELEMENTE.txt fehlt')
+   
    read(ctext, *, iostat = io_error) nelli
    if ( (io_error /= 0) .or. ( nelli /= n_elemente) ) then
       write(fehler,*)'Elementanzahl in ELEMENTE.txt falsch oder nicht lesbar',nelli,n_elemente,io_error
       call qerror(fehler)
-   else!Elementanzahl o.k.
-      print*,'read_elemente_gerris: Elementanzahl in ELEMENTE.txt o.k.',nelli
-   endif !Elementanzahl falsch
+   endif
+   
    do n = 1,n_elemente ! alle Elemente
       if ( .not. zeile(22))call qerror('Zeile in ELEMENTE.txt nicht lesbar')
       read(ctext, *, iostat = io_error) neln, elx, ely, nelz, nelr
@@ -1284,7 +1275,6 @@ subroutine netcdf_mesh_only()
    implicit none
    include 'netcdf.inc'
    integer , allocatable , dimension (:,:) :: fa_no, ed_fa
-   real minx,maxx,miny,maxy
    integer  ion, alloc_status, open_error, errcode
    integer iret,j,k,n, nvar, varid, vxtype, vndims, dlength
    integer, dimension(nf90_max_var_dims) :: dimids
@@ -1345,21 +1335,7 @@ subroutine netcdf_mesh_only()
    call check_err(iret)
    iret = nf90_get_var(ncid, varid, knoten_y)
    call check_err(iret)
-   minx = 9999999.9
-   maxx = -9999999.9
-   miny = 9999999.9
-   maxy = -9999999.9
-   do n = 1,knotenanzahl2D
-      if (knoten_x(n) > maxx)maxx = knoten_x(n)
-      if (knoten_y(n) > maxy)maxy = knoten_y(n)
-      if (knoten_x(n) < minx)minx = knoten_x(n)
-      if (knoten_y(n) < miny)miny = knoten_y(n)
-   enddo ! alle Knoten
-   print*,'netcdf_mesh_only minx, maxx,miny,maxy = ',minx,maxx,miny,maxy
-   !do n=1,knotenanzahl2D
-   !   knoten_x(n)=knoten_x(n)-minx
-   !   knoten_y(n)=knoten_y(n)-miny
-   !enddo ! alle Knoten
+
    write(ion,'(A)')' '
    write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D, ' float'
    do n = 1,knotenanzahl2D
@@ -1543,6 +1519,7 @@ subroutine netcdf_mesh_only()
    !      Mesh2_edge_nodes:cf_role = "edge_node_connectivity" ;
    !      Mesh2_edge_nodes:start_index = 0 ;
    print*,'netcdf_mesh_only under development'
-   return
+   
+   
 end subroutine netcdf_mesh_only
 !----+-----+----
