@@ -30,7 +30,8 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    use modell
    implicit none
 
-   integer :: alloc_status
+   integer             :: alloc_status
+   character(longname) :: error_msg
 
 
    call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -44,121 +45,121 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    if (meinrang /= 0) then ! alle Prozesse ausser 0
       allocate (Wetterstationskennung_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
+         write(error_msg,*)' allocate failed in wetter_parallel Wetterstationskennung_T(IWETTs_T) :'  &
                         , meinrang, alloc_status
-         call qerror(fehler)
+         call qerror(error_msg)
       endif
       
       allocate (iWSta_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel iWSta :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel iWSta :', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (mwetts_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel mwetts :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel mwetts :', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (itagw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel itagw :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel itagw :', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (monatw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel monatw :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel monatw :', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (jahrw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel jahrw :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel jahrw :', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (uhrzw_T(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel uhrzw_T:', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel uhrzw_T:', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (zeitpunktw(IWETTs_T,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel zeitpunktw:', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel zeitpunktw:', alloc_status
+         call qerror(error_msg)
       endif
       
       allocate (wertw_T(IWETTs_T,7,mwettmax_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel wertw :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel wertw :', alloc_status
+         call qerror(error_msg)
       endif
       
       
       ! allocate and initialize arrays for time-values
       allocate (glob_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel glob_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel glob_T :', alloc_status
+         call qerror(error_msg)
       endif
       glob_t(:) = 0.0
       
       allocate (tlmax_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel tlmax_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel tlmax_T :', alloc_status
+         call qerror(error_msg)
       endif
       tlmax_t(:) = 0.0
       
       allocate (tlmin_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
+         call qerror(error_msg)
       endif
       tlmin_t(:) = 0.0
       
       allocate (tlmed_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel tlmin_T :', alloc_status
+         call qerror(error_msg)
       endif
       tlmed_t(:) = 0.0
       
       allocate (ro_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel ro_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel ro_T :', alloc_status
+         call qerror(error_msg)
       endif
       ro_t(:) = 0.0
       
       allocate (wge_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel wge_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel wge_T :', alloc_status
+         call qerror(error_msg)
       endif
       wge_t(:) = 0.0
       
       allocate (cloud_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel cloud_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel cloud_T :', alloc_status
+         call qerror(error_msg)
       endif
       cloud_t(:) = 0.0
       
       allocate (wtyp_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel wtyp_T :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel wtyp_T :', alloc_status
+         call qerror(error_msg)
       endif
       wtyp_t(:) = 0.0
       
       allocate (schwi_T(IWETTs_T), stat = alloc_status )
       if (alloc_status /= 0) then
-         write(fehler,*)' allocate failed in wetter_parallel strahlung :', alloc_status
-         call qerror(fehler)
+         write(error_msg,*)' allocate failed in wetter_parallel strahlung :', alloc_status
+         call qerror(error_msg)
       endif
       schwi_t(:) = 0.0
    endif
@@ -187,16 +188,16 @@ subroutine wetter_readallo0()
    use module_datetime
    implicit none
 
-   character(300) :: file_name, dummy
-   character(100) :: version_t, modname_t, erename_t
-   logical        :: existing_station
-   integer        :: alloc_status , open_error, io_error ,i, j
-   integer        :: mwett_t, iwett_t, ixw_t
-   integer        :: year, month, day, hour, minute
+   character(300)      :: file_name, dummy
+   character(100)      :: version_t, modname_t, erename_t
+   character(longname) :: error_msg
+   logical             :: existing_station
+   integer             :: alloc_status, open_error, io_error, i, j
+   integer             :: mwett_t, iwett_t, ixw_t
+   integer             :: year, month, day, hour, minute
    type(datetime), dimension(:,:), allocatable :: datetime_weather
    
    if (meinrang /= 0) return
-   
    
    file_name = trim(modellverzeichnis) // 'WETTER.txt'
    open(unit = 86, file = file_name, status = 'old', action = 'read ', iostat = open_error)
@@ -239,9 +240,9 @@ subroutine wetter_readallo0()
       iwsta_t(iwett_t) = iwett_t
       
       if (mwetts_t(iwett_t) <= 0) then
-         write(fehler, "(a,i0,a)") "Error in wetter.txt: Timeseries for station ", &
+         write(error_msg, "(a,i0,a)") "Error in wetter.txt: Timeseries for station ", &
                                     wetterstationskennung_t(iwett_t), " is missing."
-         call qerror(fehler)
+         call qerror(error_msg)
       endif
       
       ! skip timeseries elements
@@ -381,12 +382,12 @@ subroutine wetter_readallo0()
       ! check order of timeseries
       do mWett_T = 2,mWetts_T(iwett_T) 
          if (zeitpunktw(iwett_T,mwett_T) <= zeitpunktw(iwett_T,mwett_T-1)) then
-            write(fehler, "(a,a,i0,a,i0,a,a)")                             & 
+            write(error_msg, "(a,a,i0,a,i0,a,a)")                             & 
                      "Error in wetter.txt: timeseries are not in order.",  &
                      " line: ", mWett_T,                                   &
                      ", station: ", iwett_T,                               &  
                      ", date: ", datetime_weather(iwett_t,mwett_t)%date_string()
-            call qerror(fehler)
+            call qerror(error_msg)
          endif
       enddo
       
@@ -406,9 +407,9 @@ subroutine wetter_readallo0()
       enddo
       
       if (.not. existing_station) then
-         write(fehler,"(2(a,i0))") "Weatherstation ", zone(i)%wettstat%wetterstations_nummer, &
+         write(error_msg,"(2(a,i0))") "Weatherstation ", zone(i)%wettstat%wetterstations_nummer, &
                                    " is missing, but needed for zone ", zone(i)%zonen_nummer
-         call qerror(fehler)
+         call qerror(error_msg)
       endif 
    enddo 
    
@@ -498,27 +499,28 @@ end subroutine update_weather
 subroutine interpolate_weather()
    use modell
    implicit none
-   integer     :: i, j, ipw, z1, z2
-   real        :: b, ywert, w1, w2
-   logical     :: found1, found2, wert_gueltig
    
-   if (meinrang == 0) then 
-      print '(a,i0,a)',   "Interpolation Weather Boundaries"
-      print '(*(a9,1x))', "station","glob_T","tlmax_T2","tlmin_t","ro_T","wge_T","cloud_T","wtyp_T"
-   endif
-   
+   integer             :: i, j, ipw, z1, z2
+   real                :: b, ywert, w1, w2
+   logical             :: found1, found2, wert_gueltig
+   character(longname) :: error_msg
    ! Schleife über alle Wetterstationen
+   
    do i = 1, iwetts_t
       ! Schleife über alle 7 Wetterwerte
       do ipw = 1,7
          
-         if (rechenzeit < (zeitpunktw(i,1)-43200) .or. rechenzeit > (zeitpunktw(i,mwetts_T(i))+43200)) then
-            print*,'Zum Berechnungszeitpunkt liegen keine Daten an Wetterstation ',i,' vor.'
-            print*,'rechenzeit = ', rechenzeit
-            write(fehler,*)'zeitpunktw(i,1) = ',zeitpunktw(i,1),' zeitpunktw(i,mwetts_T(i)) = ',zeitpunktw(i,mwetts_T(i))
-            call qerror(fehler)
-         endif
+         ! check whether any data is given within 12 days before/after now
          
+         ! TODO (Schönung, August 2023): Why is there a limit of 12 days? It is
+         ! very likely that some weather data is only available in low temporal
+         ! resolution with gaps greater than 12 days. Also, Gerris interpolates
+         ! weather timeseries - so what's the difference if Gerris does the 
+         ! interpolation or QSim?
+         if (rechenzeit < (zeitpunktw(i,1)-43200) .or. rechenzeit > (zeitpunktw(i,mwetts_T(i))+43200)) then
+            write(error_msg, "(2(a,i0))") 'Weatherstation', i, 'has no data for current date. time = ', rechenzeit
+            call qerror(error_msg)
+         endif
          
          ywert = 0.0
          found1 = .false.
@@ -580,39 +582,54 @@ subroutine interpolate_weather()
             if (ipw == 7) then
                call set_cloud_reflectance(-1, Ywert)
             else
-               write(fehler,*)'interpolate_weather: no valid data at weather station ',i,' for value ',ipw,"  ",w1
-               call qerror(fehler)
+               write(error_msg,*)'interpolate_weather: no valid data at weather station ',i,' for value ',ipw,"  ",w1
+               call qerror(error_msg)
             endif
          endif
          
          ! set interpolated values to their variable
          select case(ipw)
-            case(1); glob_T(i) = ywert
+            case(1); glob_T(i)  = ywert
             case(2); tlmax_T(i) = ywert
             case(3); tlmin_T(i) = ywert
-            case(4); ro_T(i) = ywert
-            case(5); wge_T(i) = ywert
+            case(4); ro_T(i)    = ywert
+            case(5); wge_T(i)   = ywert
             case(6); cloud_T(i) = ywert
-            case(7); wtyp_T(i) = ywert
+            case(7); wtyp_T(i)  = ywert
             case default
-               write(fehler,*)'interpolate_weather: wrong number in variable ipw', ipw
-               call qerror(fehler)
+               write(error_msg,*)'interpolate_weather: wrong number in variable ipw', ipw
+               call qerror(error_msg)
          end select
       enddo
-      
-      if (meinrang == 0) then
-         print "(i9,1x,*(f9.2,1x))", i, glob_T(i), tlmax_T(i), tlmin_T(i), ro_T(i), wge_T(i), cloud_T(i), wtyp_T(i)
-      endif
-      
    enddo 
    
-   if (meinrang == 0) print*, ""
+   ! --------------------------------------------------------------------------
+   ! print summary to console
+   ! --------------------------------------------------------------------------
+   if (meinrang == 0) then 
+      print '(a,i0,a)', "interpolate weather:"
+      
+      ! table header
+      print '(3x,a)',   repeat("-", 63)
+      print '(3x,a)',   "station  glob     tlmax   tlmin      ro     wge   cloud    wtyp"
+      print '(3x,a)',   repeat("-", 63)
+      
+      ! table body
+      do i = 1, iwetts_t
+         print "(3x,i7,1x,*(f7.2,x))", i, glob_t(i), tlmax_t(i), tlmin_t(i), &
+                                       ro_t(i), wge_t(i), cloud_t(i), wtyp_t(i)
+      enddo
+      print '(3x,a)', repeat("-", 63)
+      
+      print*
+   endif
+
 end subroutine interpolate_weather
 
 
 logical function wert_gueltig(ipw,wert,imet)
    implicit none
-   character (300) :: fehler
+   character (300) :: error_msg
    integer ipw,imet
    real wert
    wert_gueltig = .false.
@@ -633,14 +650,14 @@ logical function wert_gueltig(ipw,wert,imet)
       case(7) ! wtyp_T(i) = ywert
          if (wert >= 0.0) wert_gueltig = .true.
          case default
-         write(fehler,*)'wert_gueltig: wrong number in variable ipw',ipw
-         call qerror(fehler)
+         write(error_msg,*)'wert_gueltig: wrong number in variable ipw',ipw
+         call qerror(error_msg)
    end select
 end function wert_gueltig
 !----+-----+----
 !> berechnet Lufttemperatur uhrzeitabhängig (cosinus-Verlauf) wenn die Wetterstationsdaten,
 !! als Tagesmittelwerte mit Min. und Max.-Temperatur angegeben werden.
-!! Bei Stundenwerten wird die Maxtemperatur genommen. Alles andere ist ein Fehler.\n
+!! Bei Stundenwerten wird die Maxtemperatur genommen. Alles andere ist ein error_msg.\n
 !! Hüllroutine für Temperl() \n\n
 !! wird von allen Prozessen aufgerufen\n
 !! all processes do all weather-stations\n
@@ -703,19 +720,14 @@ subroutine strahlg_wetter()
    
    implicit none
    
-   integer, dimension(8)      :: NRV
-   real                       :: maxi,lt
-   real, dimension(4)         :: ar, br
-   real, dimension(1000)      :: breite
-   real, dimension(14)        :: EVALT, EKRBRT, EDUFER, EVDICH, ESLEN, ESLENS
-   real, dimension(1000,14)   :: VTYP
-   real, dimension(1000)      :: VALTBL, EDUFBL, VALTBR, EDUFBR
-   real, dimension(50)        :: SHtest
-   real                       :: dk, sa, su, schwia, zg, zlk, geol, geob, time_hours
-   logical                    :: printi
-   integer                    :: i, tdj, azStr
-   integer                    :: day, month, hour, minute
-   type(datetime)             :: datetime_now
+   integer                     :: i, tdj, azstr
+   integer                     :: day, month, hour, minute
+   real                        :: dk, sa, su, schwia, zg, zlk, geol, geob, time_hours
+   real,    dimension(1000)    :: breite
+   real,    dimension(1000,14) :: vtyp
+   real,    dimension(1000)    :: valtbl, edufbl, valtbr, edufbr
+   character(longname)         :: error_msg 
+   type(datetime)              :: datetime_now
    
    ! loop all weather stations
    do i = 1,IWETTs_T
@@ -746,7 +758,7 @@ subroutine strahlg_wetter()
       ! To use it in QSim3D the following variables are adapted to this subroutine
       
       ! transform timestep from seconds (integer) to hours (real)
-      tflie = real(deltat)/3600.0 
+      tflie = real(deltat) / 3600.
       
       ! nur ein Strang
       mstr = 1
@@ -759,11 +771,11 @@ subroutine strahlg_wetter()
       cloud(1) = cloud_T(i)
       
       ! Kein Uferbewuchs
-      VTYP = 0
-      VALTBL(1) = 0
-      EDUFBL(1) = 0
-      VALTBR(1) = 0
-      EDUFBR(1) = 0
+      vtyp = 0
+      valtbl(1) = 0
+      edufbl(1) = 0
+      valtbr(1) = 0
+      edufbr(1) = 0
       
       breite(1) = 100.0
       dk = 0.0
@@ -772,15 +784,15 @@ subroutine strahlg_wetter()
       ij = 1 
       
       call strahlg(glob, time_hours, sa, su, schwi, tflie, geol, tdj, geob, dk,      &
-                   cloud, schwia, IMET_T, mstr, IDWe, day, month, VTYP, VALTBL,&
-                   EDUFBL, VALTBR, EDUFBR, breite, anze, it_h,                 &
-                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azStr)
+                   cloud, schwia, imet_t, mstr, idwe, day, month, vtyp, valtbl,&
+                   edufbl, valtbr, edufbr, breite, anze, it_h,                 &
+                   ij, jahrs, itage, monate, jahre, uhren, isim_end, azstr)
       schwi_T(i) = schwi(1)    ! global radiation at weather station
       
       !transfer to nodes in water_temperature_wrapper_3d: transfer_quantity_p(64+(i-1)*number_trans_quant) = schwi(1)
       if (isNaN(schwi_T(i))) then
-         write(fehler,*)'strahlg_wetter station',Wetterstationskennung_T(i),' IMET_T = ',IMET_T,' isNaN(schwi_T(i))'
-         call qerror(fehler)
+         write(error_msg,*)'strahlg_wetter station', wetterstationskennung_T(i),' IMET_T = ',IMET_T,' isNaN(schwi_T(i))'
+         call qerror(error_msg)
       endif
       transfer_value_p(10) = it_h(1,1) ! Anzahl der Zeitschritte während der Hellphase (unbenutzt in 3D)
       
