@@ -253,8 +253,8 @@ subroutine fortschritt(n, f)
       print "(a)", repeat("*", 80)
       print "(a,i0,2a)",  "timestep ", izeit, ": ", datetime_timestep%date_string()
       print*
-      print "(3x,3a,i0)", "from   ",   datetime_timestep_start%date_string(), " | ", datetime_timestep_start%seconds_since_epoch()
-      print "(3x,3a,i0)", "to     ",   datetime_timestep_end  %date_string(), " | ", datetime_timestep_end  %seconds_since_epoch()
+      print "(3x,3a,i0,a)", "from   ",   datetime_timestep_start%date_string(), " [", datetime_timestep_start%seconds_since_epoch(), "]"
+      print "(3x,3a,i0,a)", "to     ",   datetime_timestep_end  %date_string(), " [", datetime_timestep_end  %seconds_since_epoch(), "]"
       print "(a)", repeat("*", 80)
       
       

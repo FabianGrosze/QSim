@@ -69,8 +69,11 @@ subroutine ausgabekonzentrationen()
    
    integer        :: ion, ibei, open_error, io_error, alloc_status, iscan, j, n, sysa
    logical        :: found
-   character(200) :: dateiname, text
+   character(200) :: file_name, text
    character(300) :: systemaufruf
+   
+   
+   if (meinrang /= 0) call qerror("Subroutine `ausgabekonzentrationenen` must only be called form process 0.")
    
    output_plankt(:) = .false.
    output_plankt_vert(:) = .false.
@@ -79,14 +82,11 @@ subroutine ausgabekonzentrationen()
    output_trans_quant(:) = .false.
    output_trans_quant_vert(:) = .false.
    
-   dateiname = trim(modellverzeichnis) // 'ausgabekonzentrationen.txt'
-   ion = 103
-   open(unit = ion , file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+   file_name = trim(modellverzeichnis) // 'ausgabekonzentrationen.txt'
+   open(newunit = ion , file = file_name, status = 'old', action = 'read ', iostat = open_error)
    if (open_error /= 0) then
-      close (ion)
+      close(ion)
       return
-   else
-      print*,'open ausgabekonzentrationen.txt'
    endif
    
    do while (zeile(ion)) ! read all lines and understand
@@ -95,34 +95,31 @@ subroutine ausgabekonzentrationen()
       
       found = .false.
       
-      ! all depth averaged planktic con.
+      ! --- depth averaged planktic con. ---
       do j = 1,number_plankt_vari 
          write(text,'(A18)') trim(planktonic_variable_name(j))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
-            print*, meinrang, iscan,' output for planktic concentration j = ',j,' parameter: ',trim(text)
             output_plankt(j) = .true.
             found = .true.
          endif
       enddo 
       
-      ! all vertically distributed planktonic variables
+      ! --- vertically distributed planktonic variables ---
       do j = 1,number_plankt_vari_vert 
          write(text,'(A18)')trim(plankt_vari_vert_name(j))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
-            if (meinrang == 0)print*,'output only for level 1; plankt_vari_vert j = ',j,' parameter: ',trim(text)
             output_plankt_vert(j) = .true.
             found = .true.
          endif 
       enddo
       
-      ! all benthic distributions
+      ! --- benthic distributions ---
       do j = 1,number_benth_distr 
          write(text,'(a)')adjustl(trim(benth_distr_name(j)))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
-            if (meinrang == 0)print*,'output for benthic distribution j = ',j,' parameter: ',trim(text)
             output_benth_distr(j) = .true.
             found = .true.
          endif
@@ -130,43 +127,38 @@ subroutine ausgabekonzentrationen()
          ! ausgabe_bentver(j)=.false. ! überbrückt: ### keine
       enddo 
       
-      ! alle globalen Übergabe Werte
+      ! ---  global transfer variables ---
       do j = 1,number_trans_val  
-         write(text,'(a)')adjustl(trim(trans_val_name(j)))
+         write(text,'(a)') adjustl(trim(trans_val_name(j)))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
-            print*,'ausgabe globaler uebergabe wert j = ',j,' parameter: ',trim(text)
             output_trans_val(j) = .true.
             found = .true.
-         endif !! in string ctext
+         endif 
       enddo
       
-      ! all exchange con.
+      ! --- transfer variables ---
       do j = 1,number_trans_quant 
-         write(text,'(A)')ADJUSTL(trim(trans_quant_name(j)))
-         iscan = index(trim(ctext),trim(text))
+         write(text,'(a)')adjustl(trim(trans_quant_name(j)))
+         iscan = index(trim(ctext), trim(text))
          if (iscan > 0) then ! found
-            if (meinrang == 0)print*,'output for exchange concentration j = ',j,' parameter: ',trim(text)
             output_trans_quant(j) = .true.
             found = .true.
-         endif !! in string ctext
+         endif 
          ! output_trans_quant(j)=.true.  überbrückt: alle
          ! output_trans_quant(j)=.false. überbrückt: keine
       enddo 
       
-      ! all vertically distributed transfer quantities
+      ! --- vertically distributed transfer quantities ---
       do j = 1,number_trans_quant_vert  
          write(text,'(A)')ADJUSTL(trim(trans_quant_vert_name(j)))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
-            if (meinrang == 0)print*,'output only for level 1; trans_quant_vert j = ',j,' parameter: ',trim(text)
             output_trans_quant_vert(j) = .true.
             found = .true.
          endif
       enddo
-      
-      if (.not. found) print*,'no parameter found for choice:'
-      
+   
    enddo 
    close(ion)
    
@@ -182,8 +174,26 @@ subroutine ausgabekonzentrationen()
    n_pl = count(output_plankt) + count(output_plankt_vert)
    n_ue = count(output_trans_val) + count(output_trans_quant) + count(output_trans_quant_vert)
    
-   print*,'ausgabekonzentrationen n_pl,n_bn,n_ue = ',n_pl,n_bn,n_ue
+   ! --------------------------------------------------------------------------
+   ! print summary to console
+   ! --------------------------------------------------------------------------
+   print*
+   print "(a)", repeat("-", 80)
+   print "(a)", 'ausgabekonzentrationen.txt'
+   print "(a)", repeat("-", 80)
    
+   print "(i5,x,a)", count(output_benth_distr),      "benthic variables"
+   print "(i5,x,a)", count(output_plankt),           "planktic variables"
+   print "(i5,x,a)", count(output_plankt_vert),      "vertical planktic variables"
+   print "(i5,x,a)", count(output_trans_val),        "global transfer variables"
+   print "(i5,x,a)", count(output_trans_quant),      "transfer variables"
+   print "(i5,x,a)", count(output_trans_quant_vert), "vertical transfer variables"
+   
+   print*
+   print "(a,i0)", 'n_bn = ', n_bn
+   print "(a,i0)", 'n_pl = ', n_pl
+   print "(a,i0)", 'n_ue = ', n_ue
+
 end subroutine ausgabekonzentrationen
 
 !> Write file `ausgabekonzentrationen_beispiel.txt`
@@ -194,11 +204,11 @@ subroutine ausgabekonzentrationen_beispiel()
    implicit none
    
    integer             :: j,open_error
-   character(longname) :: dateiname
+   character(longname) :: file_name
    
-   dateiname = trim(modellverzeichnis) // 'ausgabekonzentrationen_beispiel.txt'
-   open(unit = 104 , file = dateiname, status = 'replace', action = 'write ', iostat = open_error)
-   if (open_error /= 0) call qerror("Could not open file " // dateiname)
+   file_name = trim(modellverzeichnis) // 'ausgabekonzentrationen_beispiel.txt'
+   open(unit = 104 , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open file " // file_name)
 
    print*,'ausgabekonzentrationen_beispiel.txt opened for write ...'
    
@@ -316,7 +326,7 @@ subroutine ausgabezeitpunkte()
    if (any(ausgabe_zeitpunkt < startzeitpunkt .or. ausgabe_zeitpunkt > endzeitpunkt)) then
       print*
       print "(a)", "note:"
-      print "(a)", "  some output dates are outside of the simulated timeperiod and will "
+      print "(a)", "  Some output dates are outside of the simulated timeperiod and will "
       print "(a)", "  not be included in the model results."
    
    endif
@@ -376,7 +386,7 @@ end function jetzt_ausgeben
 subroutine show_mesh()
    use modell
    implicit none
-   character(longname) :: dateiname, systemaufruf
+   character(longname) :: file_name, systemaufruf
    integer             :: n, ion, open_error, nel, ner, alloc_status,errcode
    real                :: dummy
    
@@ -386,12 +396,12 @@ subroutine show_mesh()
    ! --------------------------------------------------------------------------
    ! nodes
    ! --------------------------------------------------------------------------
-   dateiname = trim(modellverzeichnis) // 'mesh_node.vtk'
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
+   file_name = trim(modellverzeichnis) // 'mesh_node.vtk'
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(file_name)
    
    ion = 106
-   open(unit = ion , file = dateiname, status = 'replace', action = 'write ', iostat = open_error)
-   if (open_error /= 0) call qerror("Could not open " // trim(dateiname))
+   open(unit = ion , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
    call mesh_output(ion)
    print*,'show_mesh:mesh_node.vtk done'
    
@@ -401,9 +411,9 @@ subroutine show_mesh()
    ! edges
    ! --------------------------------------------------------------------------
    if (hydro_trieb == 3) then ! schism
-      dateiname = trim(modellverzeichnis) // 'mesh_midedge.vtk'
-      open(unit = ion , file = dateiname, status = 'replace', action = 'write', iostat = open_error)
-      if (open_error /= 0) call qerror("Could not open "// trim(dateiname))
+      file_name = trim(modellverzeichnis) // 'mesh_midedge.vtk'
+      open(unit = ion , file = file_name, status = 'replace', action = 'write', iostat = open_error)
+      if (open_error /= 0) call qerror("Could not open "// trim(file_name))
       
       write(ion,'(A)') '# vtk DataFile Version 3.0'
       write(ion,'(A)') 'Simlation QSim3D SCHISM'
@@ -447,9 +457,9 @@ subroutine show_mesh()
       close (ion)
       print*,'show_mesh:mesh_midedge.vtk schism done',kantenanzahl
       
-      dateiname = trim(modellverzeichnis) // 'mesh_side.vtk'
-      open(unit = ion , file = dateiname, status = 'replace', action = 'write', iostat = open_error )
-      if (open_error /= 0) call qerror("Could not open " // trim(dateiname))
+      file_name = trim(modellverzeichnis) // 'mesh_side.vtk'
+      open(unit = ion , file = file_name, status = 'replace', action = 'write', iostat = open_error )
+      if (open_error /= 0) call qerror("Could not open " // trim(file_name))
 
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'Simlation QSim3D SCHISM'
@@ -493,10 +503,10 @@ subroutine show_mesh()
    kanten_vorhanden = .false. !! geht schief bei casu ????
   
    if ((hydro_trieb == 2) .or. (kanten_vorhanden)) then ! untrim
-      dateiname = trim(modellverzeichnis) // 'mesh_element.vtk'
+      file_name = trim(modellverzeichnis) // 'mesh_element.vtk'
       ion = 106
-      open(unit = ion, file = dateiname, status = 'replace', action = 'write ', iostat = open_error )
-      if (open_error /= 0) call qerror("Could not open " // dateiname)
+      open(unit = ion, file = file_name, status = 'replace', action = 'write ', iostat = open_error )
+      if (open_error /= 0) call qerror("Could not open " // file_name)
 
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'mesh_element '
@@ -555,7 +565,7 @@ subroutine mesh_output(ion)
    use modell
    implicit none
 
-   character(longname) :: dateiname
+   character(longname) :: file_name
    integer             :: ion, n, igr3, io_error
    
    ! --------------------------------------------------------------------------
@@ -636,9 +646,9 @@ subroutine mesh_output(ion)
    ! --------------------------------------------------------------------------
    if (meinrang /= 0) call qerror("mesh_output may only be called from process 0") 
    
-   dateiname = trim(modellverzeichnis) // 'mesh.gr3'
-   open (newunit = igr3, file = dateiname, status = 'unknown', action = 'write ', iostat = io_error)
-   if (io_error /= 0) call qerror("Could not open " // trim(dateiname))
+   file_name = trim(modellverzeichnis) // 'mesh.gr3'
+   open (newunit = igr3, file = file_name, status = 'unknown', action = 'write ', iostat = io_error)
+   if (io_error /= 0) call qerror("Could not open " // trim(file_name))
    
    write(igr3,'(A,2x,A)') 'Grid written by QSim3D', modellverzeichnis
    write(igr3,*) n_elemente, knotenanzahl2D

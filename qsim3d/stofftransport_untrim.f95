@@ -30,51 +30,60 @@ subroutine holen_trans_untrim(nt)
    use modell
    implicit none
    include 'netcdf.inc'
-   integer   :: start3(3), count3(3)
-   integer   :: start2(2), count2(2)
-   integer   :: nt, n,j,k, varid, alloc_status
-   real      :: c
-   !---------------elemente
-   print*,'holen_trans_untrim: zeitpunkt,nt = ',transinfo_zeit(transinfo_zuord(nt)),nt
+   
+   integer, intent(in)   :: nt
+   
+   integer, dimension(3) :: start3, count3
+   integer, dimension(2) :: start2, count2
+   integer               :: n,j,k, varid, alloc_status
+   real                  :: c
+   
+   ! --------------------------------------------------------------------------
+   ! elements
+   ! --------------------------------------------------------------------------
+   print "(3x,a,2i0)", 'holen_trans_untrim: time, nt = ', transinfo_zeit(transinfo_zuord(nt)), nt
+   
    start3 = (/ 1, 1, nt /)
    count3 = (/ n_elemente, 1, 1 /)
-   !float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, el_vol, start3, count3 ) )
+   ! float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_Wasservolumen_2d', varid))
+   call check_err(nf90_get_var(ncid, varid, el_vol, start3, count3 ))
    do n = 1,n_elemente !
       if ((el_vol(n) <= 0.0) .or. (el_vol(n) > 1.e+30)) el_vol(n) = 0.0
    enddo ! alle n elemente
-   !print*,'stofftransport_untrim: got Mesh2_face_Wasservolumen_2d'
+   
    start2 = (/ 1, nt /)
    count2 = (/ n_elemente, 1 /)
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, p, start2, count2 ) )
-   do n = 1,n_elemente !
-      if ( abs(p(n)) > 1.e+30)p(n) = -999.9
-   enddo ! alle n elemente
-   !print*,'stofftransport_untrim: got Mesh2_face_Wasserstand_2d'
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, el_area, start2, count2 ) )
-   do n = 1,n_elemente !
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_Wasserstand_2d', varid))
+   call check_err(nf90_get_var(ncid, varid, p, start2, count2))
+   do n = 1,n_elemente
+      if (abs(p(n)) > 1.e+30) p(n) = -999.9
+   enddo
+   
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_Wasserflaeche_2d', varid))
+   call check_err(nf90_get_var(ncid, varid, el_area, start2, count2))
+   do n = 1,n_elemente 
       if ((el_area(n) <= 0.0) .or. (el_area(n) > 1.e+30)) el_area(n) = 0.0
-   enddo ! alle n elemente
-   !print*,'stofftransport_untrim: got Mesh2_face_Wasserflaeche_2d'
-   !---------------kanten
+   enddo 
+     
+   ! --------------------------------------------------------------------------
+   ! edges
+   ! --------------------------------------------------------------------------
    ed_vel_x(:) = 0.0
    ed_vel_y(:) = 0.0
    start3 = (/ 1, 1, nt /)
    count3 = (/ kantenanzahl, 1, 1 /)
    !float Mesh2_edge_Durchflussflaeche_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
-   !call check_err( nf_inq_varid(ncid,'Mesh2_edge_mit_hor_durchstroemte_Kantenflaeche_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_edge_Durchflussflaeche_2d', varid) )
+   !call check_err(nf_inq_varid(ncid,'Mesh2_edge_mit_hor_durchstroemte_Kantenflaeche_2d', varid) )
+   call check_err(nf90_get_var(ncid, varid, ed_area, start3, count3 ) )
    !float Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_edge) ;
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
-   call check_err( nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
-   call check_err( nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
-   !call check_err( nf_inq_varid(ncid,'Mesh2_edge_hor_Wassertransport_Kantenflaeche_2d', varid) )
-   !call check_err( nf90_get_var(ncid, varid, ed_flux, start3, count3 ) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_x_R_2d', varid) )
+   call check_err(nf90_get_var(ncid, varid, ed_vel_x, start3, count3 ) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_edge_Stroemungsgeschwindigkeit_y_R_2d', varid) )
+   call check_err(nf90_get_var(ncid, varid, ed_vel_y, start3, count3 ) )
+   !call check_err(nf_inq_varid(ncid,'Mesh2_edge_hor_Wassertransport_Kantenflaeche_2d', varid) )
+   !call check_err(nf90_get_var(ncid, varid, ed_flux, start3, count3 ) )
    !print*,"Mesh2_edge_Stroemungsgeschwindigkeit"
    do n = 1,kantenanzahl
       !Mesh2_edge_Durchflussflaeche_2d:_FillValue = 1.e+31f ;
@@ -88,6 +97,7 @@ subroutine holen_trans_untrim(nt)
       if (ed_vel_x(n) > 100.0)ed_vel_x(n) = 0.0
       if (ed_vel_y(n) > 100.0)ed_vel_y(n) = 0.0
    enddo ! alle n kanten
+   
    do n = 1,n_elemente ! mean velocity magnitude in element
       u(n) = 0.0
       do k = 1,cornernumber(n)
@@ -98,24 +108,31 @@ subroutine holen_trans_untrim(nt)
             call qerror("holen_trans_untrim u infinity")
          endif
       enddo ! alle k Kanten im Element
+      
       c = real(cornernumber(n))
-      if (c <= 0.0)call qerror("cornernumber(n) ist null ???")
+      if (c <= 0.0)call qerror("cornernumber(n) is less or equal 0.")
       u(n) = u(n)/c
       inflow(n) = .false.
       if (element_rand(n) > 0) inflow(n) = .true.
    enddo ! alle n Elemente
-   print*,'### stofftransport_untrim: all boundaries inflow ###'
-   do j = 1,number_plankt_point ! all j elements
+   
+   print "(3x,a)", "stofftransport_untrim: all boundaries inflow"
+   
+   do j = 1,number_plankt_point 
       rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
-      rb_hydraul(2+(j-1)*number_rb_hydraul) = 0.0 !  Tiefe zunächst null
-      if ((el_area(j) > 0.0) .and. (el_vol(j) > 0.0)) &
-          rb_hydraul(2+(j-1)*number_rb_hydraul) = el_vol(j)/el_area(j) ! Mittlere Tiefe im Element
+      
+      ! mean depth in element
+      if ((el_area(j) > 0.0) .and. (el_vol(j) > 0.0)) then
+         rb_hydraul(2+(j-1)*number_rb_hydraul) = el_vol(j) / el_area(j) 
+      else
+         rb_hydraul(2+(j-1)*number_rb_hydraul) = 0.0 !  Tiefe zunächst null
+      endif
+      
       rb_hydraul(3+(j-1)*number_rb_hydraul) = p(j)
-      benthic_distribution(44+(j-1)*number_benth_distr) = 0.1      ! ks ######### jetzt anders zone()%reib
-      benthic_distribution(45+(j-1)*number_benth_distr) = 0.1*u(j) ! utau
-   enddo ! all j elements
-   print*,'### stofftransport_untrim: ks and utau, only first guess ###'
-   return
+      benthic_distribution(44+(j-1)*number_benth_distr) = 0.1        ! ks - jetzt anders zone()%reib
+      benthic_distribution(45+(j-1)*number_benth_distr) = 0.1 * u(j) ! utau
+   enddo
+   
 end subroutine holen_trans_untrim
 
 
@@ -283,12 +300,16 @@ subroutine stofftransport_untrim()
          endif ! sumwicht.gt.0.0
       enddo ! alle n Elemente
       
-      ! calculate water volume fraction with Courant number > 1 and average cu in cells with cu > 1
-      cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
-      volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
-      print*,'stofftransport_untrim: cu_max, cu_min, cu_mean (cu > 1), volume fraction (cu > 1), deltat = ', &
-              cu_max, cu_min, cu_mean_CuGT1, volFrac_cuGT1, deltat
+      ! calculate water volume fraction with Courant number > 1 and 
+      ! average cu in cells with cu > 1
+      cu_mean_cugt1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
+      volfrac_cugt1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
+      print "(3x,a,f0.3)", "stofftransport_untrim: cu_max                   = ", cu_max
+      print "(3x,a,f0.3)", "                       cu_min                   = ", cu_min
+      print "(3x,a,f0.3)", "                       cu_mean(cu > 1)          = ", cu_mean_cugt1
+      print "(3x,a,f0.3)", "                       volumen fraction(cu > 1) = ", volfrac_cugt1
 
+     
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! module_suspendedMatter: skip SSalg and SS if SS read from file
@@ -302,18 +323,21 @@ subroutine stofftransport_untrim()
       enddo ! alle j Elemente
       
       do j = 1,number_plankt_point ! alle j Elemente
-         if ( .not. inflow(j)) then ! Zuflusselemente auslassen
+         
+         ! Zuflusselemente auslassen
+         if ( .not. inflow(j)) then 
             do n = 1,number_plankt_vari
                if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! module_suspendedMatter: skip SSalg and SS if SS read from file
                if (n == 72) cycle                                   ! module_salinity: skip transport of salinity read from file
-               if (isNaN(zwischen(n,j))) then
+              
+              if (isNaN(zwischen(n,j))) then
                   print*,'stofftransport_untrim isNaN(zwischen) , plankt_point = ',j,' plankt_vari = ',n
                   print*,'planktonic_variable_name',n, planktonic_variable_name(n)
                   print*,'self !! wicht,plankt =',wicht((j-1)*5+1),planktonic_variable(n+(j-1)*number_plankt_vari)
                   print*,'intereck((j-1)*4+k) = ',( intereck((j-1)*4+k),k = 1,4 )
                   print*,'wicht !! neighbours = ',(wicht((j-1)*5+1+k),k=1,4)
                   do k = 1,4 ! all 4 neighbour (elements) if existing
-                     if ( intereck((j-1)*4+k) > 0) then
+                     if (intereck((j-1)*4+k) > 0) then
                         print*,'planktonic_variable(',k,') = '                                      &
                               , planktonic_variable(n+(intereck((j-1)*4+k)-1)*number_plankt_vari)   &
                               ,' tief = ',rb_hydraul(2+(intereck((j-1)*4+k)-1)*number_rb_hydraul)
@@ -321,13 +345,13 @@ subroutine stofftransport_untrim()
                   enddo !all 4 k
                   write(fehler,*)'stofftransport_untrim: isNaN(zwischen planktonic_variable_name', planktonic_variable_name(n)
                   call qerror(fehler)
-               else
-                  planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
                endif
+               
+               planktonic_variable(n+(j-1)*number_plankt_vari) = zwischen(n,j)
+               
             enddo ! alle n Konzentrationen
          endif !kein Zuflusselement
       enddo ! alle j Elemente
-      !call ausgeben_untrim( subtim )
       
       if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
          print*,'Nach transportschritt untrim am kontrollelement:'
@@ -338,7 +362,9 @@ subroutine stofftransport_untrim()
          print*,'intereck((j-1)*4+k) = ',( intereck((kontrollknoten-1)*4+k),k = 1,4 )
          print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
       endif
-      print*,'transport nt = ',nt,' start ende = ',startzeitpunkt, endzeitpunkt
+      
+      print "(3x,3(a,i0))", "transport nt = ", nt, ", start = ", startzeitpunkt, &
+                            ", ende = ", endzeitpunkt
       
    enddo ! alle nt Subzeitschritte
    
@@ -431,19 +457,19 @@ subroutine read_mesh_nc()
    ! -------------------------------------------------------------------------
    ! dimensions
    ! -------------------------------------------------------------------------
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_node", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, knotenanzahl2D) )
+   call check_err(nf90_inq_dimid(ncid, "nMesh2_node", didi) )
+   call check_err(nf90_Inquire_Dimension(ncid, didi, aname, knotenanzahl2D) )
    
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_edge", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, kantenanzahl) )
+   call check_err(nf90_inq_dimid(ncid, "nMesh2_edge", didi) )
+   call check_err(nf90_Inquire_Dimension(ncid, didi, aname, kantenanzahl) )
    kanten_vorhanden = .true.
    
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_face", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, n_elemente) )
+   call check_err(nf90_inq_dimid(ncid, "nMesh2_face", didi) )
+   call check_err(nf90_Inquire_Dimension(ncid, didi, aname, n_elemente) )
    element_vorhanden = .true.
    
-   call check_err( nf90_inq_dimid(ncid, "nMesh2_data_time", didi) )
-   call check_err( nf90_Inquire_Dimension(ncid, didi, aname, transinfo_anzahl) )
+   call check_err(nf90_inq_dimid(ncid, "nMesh2_data_time", didi) )
+   call check_err(nf90_Inquire_Dimension(ncid, didi, aname, transinfo_anzahl) )
    
    print "(a)",    "dimensions:"
    print "(a,i0)", "   nMesh2_node      = ", knotenanzahl2D
@@ -454,30 +480,30 @@ subroutine read_mesh_nc()
    !----------------------------------------------------------------------  nodes
    allocate (knoten_x(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_x failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_node_x', didi) )
-   call check_err(  nf90_get_var(ncid, didi, knoten_x) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_node_x', didi) )
+   call check_err( nf90_get_var(ncid, didi, knoten_x) )
    allocate (knoten_y(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_y failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_node_y', didi) )
-   call check_err(  nf90_get_var(ncid, didi, knoten_y) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_node_y', didi) )
+   call check_err( nf90_get_var(ncid, didi, knoten_y) )
    allocate (knoten_z(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_z failed')
    knoten_z(1:knotenanzahl2D) = 0.0
    !allocate (knoten_rand(knotenanzahl2D), stat = alloc_status )
    !if(alloc_status.ne.0) call qerror('allocate (knoten_rand( failed')
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
+   !call check_err( nf_inq_varid(ncid,'', didi) )
+   !call check_err( nf90_get_var(ncid, didi,  )
    allocate (knoten_zone(knotenanzahl2D), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (knoten_zone( failed')
    do n = 1,knotenanzahl2D !initialize zones
       knoten_zone(n) = 0
    enddo ! alle Knoten
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
+   !call check_err( nf_inq_varid(ncid,'', didi) )
+   !call check_err( nf90_get_var(ncid, didi,  )
    !allocate (knoten_flaeche(knotenanzahl2D), stat = alloc_status )
    !if(alloc_status.ne.0) call qerror('allocate (knoten_flaeche failed')
-   !call check_err(  nf_inq_varid(ncid,'', didi) )
-   !call check_err(  nf90_get_var(ncid, didi,  )
+   !call check_err( nf_inq_varid(ncid,'', didi) )
+   !call check_err( nf90_get_var(ncid, didi,  )
    
    print*
    print "(a)", "bounding box of nodes:"
@@ -487,18 +513,18 @@ subroutine read_mesh_nc()
    !----------------------------------------------------------------------  elements/faces
    allocate (element_x(n_elemente),element_y(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate element_xy failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_face_x', didi) )
-   call check_err(  nf90_get_var(ncid, didi, element_x) )
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_face_y', didi) )
-   call check_err(  nf90_get_var(ncid, didi, element_y) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_face_x', didi) )
+   call check_err( nf90_get_var(ncid, didi, element_x) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_face_y', didi) )
+   call check_err( nf90_get_var(ncid, didi, element_y) )
    allocate (fa_no(4,n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate fa_no( failed')
    allocate (elementnodes(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementnodes( failed')
    allocate (cornernumber(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (cornernumber( failed')
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_nodes', didi) )
-   call check_err( nf90_get_var(ncid, didi, fa_no) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_nodes', didi) )
+   call check_err(nf90_get_var(ncid, didi, fa_no) )
    summ_ne = 0
    do n = 1,n_elemente ! alle Elemente
       if (fa_no(4,n) < 0) then
@@ -535,8 +561,8 @@ subroutine read_mesh_nc()
    if (singlenodes) call qerror('read_mesh_nc: nodes belonging to no element in mesh')
    allocate (element_rand(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (element_rand failed')
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
-   call check_err( nf90_get_var(ncid, didi, element_rand) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_bc', didi) )
+   call check_err(nf90_get_var(ncid, didi, element_rand) )
    allocate (element_zone(n_elemente), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (element_zone failed')
    
@@ -547,8 +573,8 @@ subroutine read_mesh_nc()
    allocate (elementedges(n_elemente,4), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (elementedges failed')
    elementedges = 0
-   call check_err( nf_inq_varid(ncid,'Mesh2_face_edges', didi) )
-   call check_err( nf90_get_var(ncid, didi, fa_no) )
+   call check_err(nf_inq_varid(ncid,'Mesh2_face_edges', didi) )
+   call check_err(nf90_get_var(ncid, didi, fa_no) )
    do n = 1,n_elemente ! alle Elemente
       do k = 1,cornernumber(n)
          elementedges(n,k) = fa_no(k,n)+1
@@ -563,20 +589,20 @@ subroutine read_mesh_nc()
    kanten_vorhanden = .true.
    !allocate (edge_x(kantenanzahl), stat = alloc_status )
    !if(alloc_status.ne.0) call qerror('allocate (edge_x failed')
-   !call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_x', didi) )
-   !call check_err(  nf90_get_var(ncid, didi, edge_x) )
+   !call check_err( nf90_inq_varid(ncid,'Mesh2_edge_x', didi) )
+   !call check_err( nf90_get_var(ncid, didi, edge_x) )
    !allocate (edge_y(kantenanzahl), stat = alloc_status )
    !if(alloc_status.ne.0) call qerror('allocate (edge_y failed')
-   !call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_y', didi) )
-   !call check_err(  nf90_get_var(ncid, didi, edge_y) )
+   !call check_err( nf90_inq_varid(ncid,'Mesh2_edge_y', didi) )
+   !call check_err( nf90_get_var(ncid, didi, edge_y) )
    allocate (top_node(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror(' allocate (top_node failed')
    allocate (bottom_node(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (bottom_node failed')
    allocate (ed_fa(2,kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (ed_fa(2 failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_nodes', didi) )
-   call check_err(  nf90_get_var(ncid, didi, ed_fa) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_edge_nodes', didi) )
+   call check_err( nf90_get_var(ncid, didi, ed_fa) )
    do n = 1,kantenanzahl ! alle Kanten
       bottom_node(n) = ed_fa(1,n)+1
       if ((bottom_node(n) < 1) .or. (bottom_node(n) > knotenanzahl2D))call qerror("read_mesh_nc:bottom_node falsch")
@@ -592,8 +618,8 @@ subroutine read_mesh_nc()
    enddo ! alle n Kanten
    allocate (left_element(kantenanzahl),right_element(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (left,right_element  failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_faces', didi) )
-   call check_err(  nf90_get_var(ncid, didi, ed_fa) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_edge_faces', didi) )
+   call check_err( nf90_get_var(ncid, didi, ed_fa) )
    ! links-rechts-sortieren, Randkanten
    allocate (boundary_number(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (boundary_number(kantenanzahl) failed')
@@ -639,8 +665,8 @@ subroutine read_mesh_nc()
    
    allocate (nbc(kantenanzahl), stat = alloc_status )
    if (alloc_status /= 0) call qerror('allocate (nbc( failed')
-   call check_err(  nf90_inq_varid(ncid,'Mesh2_edge_bc', didi) )
-   call check_err(  nf90_get_var(ncid, didi, nbc ) )
+   call check_err( nf90_inq_varid(ncid,'Mesh2_edge_bc', didi) )
+   call check_err( nf90_get_var(ncid, didi, nbc ) )
    do n = 1,kantenanzahl ! alle Kanten
       if (boundary_number(n) == 0) then ! Kante mit zwei Elementen links und rechts
          if (nbc(n) /= 0)call qerror("Randkantenfehler 00")

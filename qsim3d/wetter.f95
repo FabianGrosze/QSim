@@ -417,44 +417,52 @@ subroutine wetter_readallo0()
    ! print summary to console
    ! --------------------------------------------------------------------------
    print*
-   print*, repeat("-", 80)
-   print*, "wetter.txt"
-   print*, repeat("-", 80)
+   print "(a)", repeat("-", 80)
+   print "(a)", "wetter.txt"
+   print "(a)", repeat("-", 80)
    
-   print*, "version:  ", version_t
-   print*, "model:    ", modname_t
-   print*, "instance: ", erename_t
+   print "(2a)", "version:  ", version_t
+   print "(2a)", "model:    ", modname_t
+   print "(2a)", "instance: ", erename_t
    print*
    
-   print "(2x,a,i0)", "iwetts_t = ", iwetts_t
-   print "(2x,a,i0)", "imet_t   = ", imet_t
+   print "(a,i0)", "iwetts_t = ", iwetts_t
+   print "(a,i0)", "imet_t   = ", imet_t
    
+   ! --- Timeseries ---
+   ! table header
    print*
-   print "(2x,a)", "timeseries:"
-   print "(4x,a)", "station   id  values  time range"
-   print "(4x,a)", "-------  ---  ------  -----------------------------------------------------"
+   print "(a)",    "timeseries:"
+   print "(3x,a)", repeat("-", 75)
+   print "(3x,a)", "station   id  values  time range"
+   print "(3x,a)", repeat("-", 75)
    
+   ! table body
    do iwett_t = 1,iwetts_t
-      print "(4x,i7,2x,i3,2x,i6,2x,a25,a,a25)",                         &
+      print "(3x,i7,2x,i3,2x,i6,2x,a25,a,a25)",                        &
                iwsta_t(iwett_t),  wetterstationskennung_t(iwett_t),    &
                mwetts_t(iwett_t),                                      &
                datetime_weather(iwett_t,1) % date_string(), " - ",     &
                datetime_weather(iwett_t,mwetts_t(iwett_t)) % date_string()
    enddo
-   
-   
-   ! zones
+   print "(3x,a)", repeat("-", 75)
+  
+   ! --- zones --- 
+   ! table header
    print*
-   print "(2x,a)", "zones assignment:"
-   print "(4x,a)", "zone  zone_id  station  station_id"
-   print "(4x,a)", "----  -------  -------  ----------"
+   print "(a)",   "zones assignment:"
+   print "(3x,a)", repeat("-", 34)
+   print "(3x,a)", "zone  zone_id  station  station_id"
+   print "(3x,a)", repeat("-", 34)
    
+   ! table body
    do i = 1,zonen_anzahl
-      print "(4x,i4,2x,i7,2x,i7,2x,i10)",                                         &
+      print "(3x,i4,2x,i7,2x,i7,2x,i10)",                                         &
                i, zone(i)%zonen_nummer, zone(i)%wettstat%wetterstations_nummer,&
                Wetterstationskennung_T(zone(i)%wettstat%wetterstations_nummer)
    enddo
-   
+   print "(3x,a)", repeat("-", 34)
+ 
 end subroutine wetter_readallo0
 
 

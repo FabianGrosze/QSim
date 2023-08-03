@@ -840,16 +840,25 @@ subroutine read_boundary_timeseries()
    enddo
    
    close(u_ereigg)
-   
-   ! print summary to console
+
+   ! --- print summary to console ---
    print*
-   print "(a)",   "boundary timeseries:"
-   print "(2x,a)", "     |   id  n_values  valid_values  averaged?"
-   print "(2x,a)", "---- | ----  --------  ------------  ---------"
+   
+   ! table header
+   print "(a)",   "boundary timeseries"
+   print "(3x,a)", repeat("-", 45)
+   print "(3x,a)", "        id  n_values  valid_values  averaged?"
+   print "(3x,a)", repeat("-", 45)
+   
+   ! table body
    do n = 1,ianz_rb 
-      print "(2x,i4,a,i4,2x,i8,2x,i12,2x,l9)", n, " | ", rabe(n)%nr_rb,  &
-               rabe(n)%anz_rb, rabe(n)%t_guelt, (rabe(n)%tagesmittelwert_flag == 0)
+      print "(3x,i4,2x,i4,2x,i8,2x,i12,2x,l9)", &
+            n, rabe(n) % nr_rb,                 &
+               rabe(n) % anz_rb,                &
+               rabe(n) % t_guelt,               &
+              (rabe(n) % tagesmittelwert_flag == 0)
    enddo
+   print "(3x,a)", repeat("-", 45)
    print*
    
    ! Check boundary ids
@@ -978,9 +987,8 @@ subroutine read_boundary_timeseries()
          enddo
         
          do j = 1,maxrandnr
-            print "(a,i0,a,i0,a)", "Boundary ", j , " is assigned to ", nr_vorhanden(j), " elements."
+            print "(a,i3,a,i5,a)", "Boundary ", j , " is assigned to ", nr_vorhanden(j), " elements."
          enddo 
-        
         
          do n = 1,ianz_rb
             if (rabe(n)%nr_rb < min_nr .or. rabe(n)%nr_rb > maxrandnr)  then

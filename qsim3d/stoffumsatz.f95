@@ -40,7 +40,6 @@ subroutine stoffumsatz()
    real, allocatable, dimension(:) :: planktonic_variable_before   ! temporary copy of values before process calculations
    
    
-   if (meinrang == 0) print*,'stoffumsatz start'
    ! Stoffumsätze parallelisiert
    do i = 1,part ! Alle Knoten auf diesem Prozessor
       iglob = i + meinrang * part

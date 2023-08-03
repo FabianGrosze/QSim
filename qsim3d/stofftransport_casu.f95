@@ -359,17 +359,19 @@ subroutine transinfo_schritte(start_zeitschritt, ende_zeitschritt)
       deti = deti + dttrans
    endif
    
-   if (deti /= deltat) then
+   if (deti /= deltat .and. hydro_trieb == 1) then
+      ! nur bei casu-Strombahnen abbrechen
       print*,'Zeitschrittweiten Transport = ',dttrans,' - Güte = ',deltat,' passen nicht zueinander.'
       print*,'ganzzahlige Vielfache erforderlich.'
       print*,'deti = ',deti
       print*,'anfang ',na_transinfo, transinfo_zuord(na_transinfo), transinfo_zeit(transinfo_zuord(na_transinfo))
       print*,'  ende ',ne_transinfo, transinfo_zuord(ne_transinfo), transinfo_zeit(transinfo_zuord(ne_transinfo))
-      if (hydro_trieb == 1)call qerror('deti /= deltat')!! nur bei casu-Strombahnen abbrechen
+      call qerror('deti /= deltat')
    endif
    
-   print*," Für den Transport im Gütezeitschritt von ",start_zeitschritt," bis ", ende_zeitschritt  &
-   ," werden ", anz_transinfo," Transportzeitschritte verwendet."
+   print "(3(a,i0),a)", "Transport from ", start_zeitschritt,    &
+                        " until ", ende_zeitschritt , " uses ",  &
+                        anz_transinfo, " transport timesteps"
    
 end subroutine transinfo_schritte
 
