@@ -1132,28 +1132,21 @@ subroutine read_extnct()
    enddo
    
 end subroutine read_extnct
-!----+-----+----
-!
-!> <h1>Felder allocieren für die hydraulischen Randbedingungen</h1>
-!!
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
+
+!> Allocate data array for hydraulic boundary conditions
 subroutine alloc_hydraul_BC(nk)
    use modell
    implicit none
-   integer :: nk, as, ini
-   !allocate (rb_hydraul(nk*number_rb_hydraul), stat = as )
-   allocate (rb_hydraul(part*proz_anz*number_rb_hydraul), stat = as )
-   if (as /= 0) then
-      write(fehler,*)' return value rb_hydraul(nk*   :', as
-      call qerror(fehler)
-   endif
-   do ini = 1,nk*number_rb_hydraul
-      rb_hydraul(ini) = 0.0
-   enddo
-   return
+   
+   integer, intent(in) :: nk
+   integer             :: as
+   
+   ! allocate (rb_hydraul(nk*number_rb_hydraul), stat = as )
+   allocate(rb_hydraul(part*proz_anz*number_rb_hydraul), source = 0., stat = as)
+   if (as /= 0) call qerror("Error while allocating variable `rb_hydraul`.")
+   
 end subroutine alloc_hydraul_BC
-!----+-----+----
-!
+
 !> <h1>Volumenstrom und Tracerflüsse entlang aller ianz_rb Ränder ermitteln</h1>
 !! ruft subroutine flux() aus schnitt.f95 auf
 !! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen

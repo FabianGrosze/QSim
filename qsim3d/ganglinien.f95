@@ -33,7 +33,7 @@ subroutine ganglinien_parallel()
    integer :: i,j, alloc_status, agp
    
    call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
-   if (meinrang /= 0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
+   if (meinrang /= 0) allocate(knot_gangl(anz_gangl), stat = alloc_status)
    call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
    
    !! Knoten aussortieren, die nicht zu diesem Prozess gehören
@@ -41,11 +41,14 @@ subroutine ganglinien_parallel()
    do i = 1,anz_gangl
       if ((knot_gangl(i) > meinrang*part) .and. (knot_gangl(i) <= (meinrang+1)*part)) then
          agp = agp+1
-         print*,'ganglinien_parallel: Knoten #', knot_gangl(i),' macht Prozess #',meinrang," part = ",part
-      else
+         print ("(3(a,i0))"), 'ganglinien_parallel: Node #', knot_gangl(i), &
+                             ' has process #', meinrang,                    &
+                             ', part = ', part 
+      else 
          knot_gangl(i) = 0
       endif
    enddo
+   
    call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (r_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
    allocate (t_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )

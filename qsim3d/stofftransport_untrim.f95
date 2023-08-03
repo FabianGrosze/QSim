@@ -117,60 +117,64 @@ subroutine holen_trans_untrim(nt)
    print*,'### stofftransport_untrim: ks and utau, only first guess ###'
    return
 end subroutine holen_trans_untrim
-!----+-----+----
+
+
+! TODO: add description
 subroutine stofftransport_untrim()
    use netcdf
    use modell
    implicit none
    include 'netcdf.inc'
-   integer nti, nt, n,j,k, subtim, diff, diffprev, alloc_status, iq, jq, no, nedel
-   real :: laeng, cu_max, cu_min, dt_sub, sumwicht, cu_mean_CuGT1, volFrac_CuGT1, fluxi, flow
-   real , allocatable , dimension (:,:) :: zwischen
-   !integer , parameter :: num_sub=12
+   
+   integer        :: nti, nt, n, j, k, alloc_status, iq, jq, no, nedel
+   integer(int64) :: subtim, diffprev, diff
+   logical        :: found
+   real           :: laeng, cu_max, cu_min, dt_sub, sumwicht
+   real           :: cu_mean_cugt1, volfrac_cugt1, fluxi, flow
+   real, allocatable, dimension(:,:) :: zwischen
+   
    integer , parameter :: num_sub = 6
-   logical found
-   if (meinrang /= 0)call qerror('stofftransport_untrim darf nur von prozessor 0 aufgerufen werden')
-   allocate (zwischen(number_plankt_vari, number_plankt_point), stat = alloc_status )
-   if (alloc_status /= 0) call qerror('allocate (zwischen(number_plankt_vari failed')
-   print*,'stofftransport_untrim: izeit, startzeitpunkt, rechenzeit, deltat, endzeitpunkt' &
-   ,izeit,startzeitpunkt, rechenzeit, deltat, endzeitpunkt
+   
+   if (meinrang /= 0) call qerror('subroutine `stofftransport_untrim` must only be called from processor 0.')
+   
+   allocate(zwischen(number_plankt_vari, number_plankt_point), stat = alloc_status)
+   if (alloc_status /= 0) call qerror('Error while allocating variable `zwischen`.')
+   
    dt_sub = real(deltat)/real(num_sub)
-   print*,'stofftransport_untrim:',num_sub,' Sub-zeitschritte von der Länge = ',dt_sub
+   print "(a,i0,a,f0.2,a)", "stofftransport_untrim: ", num_sub," subtimesteps of length ", dt_sub, " seconds"
+   
    do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
-      if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
-         print*  &
-         ,' vor transportschritt untrim T_wass(kontrollelement) = '  &
-         , planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari) &
-         ,' Tracer = ', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
-      endif !kontrollknoten
-      subtim = startzeitpunkt + nint( real((2*nt-1)*deltat)/real(num_sub*2) )
       
-      if (subtim < transinfo_zeit(transinfo_zuord(1)))call qerror('subzeitpunkt vor untrim Zeitraum')
-      if (subtim > transinfo_zeit(transinfo_zuord(transinfo_anzahl)))call qerror('subzeitpunkt nach untrim Zeitraum')
-      nti = 0
-      diffprev = transinfo_zeit(transinfo_zuord(transinfo_anzahl))-transinfo_zeit(transinfo_zuord(1))
-      do n = 1,transinfo_anzahl
-         diff = abs(subtim-transinfo_zeit(transinfo_zuord(n)) )
-         if (diff <= diffprev) then
-            nti = n
-         endif
-         diffprev = diff
-      enddo ! alle n Zeitschritte
-      print*,'stofftransport_untrim: substep-time,nti,diff = ',subtim,nti,diff
-      if (nti <= 0) then
-         call qerror('stofftransport_untrim: kein untrim Zeitpunkt identifiziert')
-      else
-         print*,'transportiert mit untrim-Strömungsfeld zeit = ',transinfo_zeit(transinfo_zuord(nti))
+      ! control output
+      if (kontrollknoten > 0 .and. kontrollknoten <= number_plankt_point) then 
+         print "(2(a, f0.3))", ' vor transportschritt untrim T_wass(kontrollelement) = ',      &
+                                planktonic_variable(1+(kontrollknoten-1)*number_plankt_vari),  &
+                               ' Tracer = ', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
       endif
+      
+      subtim = startzeitpunkt + nint(real((2*nt-1)*deltat) / real(2*num_sub) )
+      
+      if (subtim < transinfo_zeit(transinfo_zuord(1)) .or. &
+          subtim > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+         call qerror("stofftransport_untrim: subtimestep outside range of current timestep")
+      endif
+      
+      nti = 0
+      diffprev = transinfo_zeit(transinfo_zuord(transinfo_anzahl)) - transinfo_zeit(transinfo_zuord(1))
+      do n = 1,transinfo_anzahl
+         diff = abs(subtim - transinfo_zeit(transinfo_zuord(n)))
+         if (diff <= diffprev) nti = n
+         diffprev = diff
+      enddo 
+      if (nti <= 0) call qerror('stofftransport_untrim: No untrim timestamp identified.')
+      
+      print "(3(a,i0))", "stofftransport_untrim: substep-time = ", subtim, ", nti = ", nti, ", diff = ", diff
+      
       call holen_trans_untrim(nti)
-      !do n=1,number_plankt_point
-      !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim  ################
-      !enddo ! alle n Elemente
-      do n = 1,number_plankt_point ! initialize volume exchange
-         do j = 1,5
-            wicht((n-1)*5+j) = 0.0
-         enddo !alle 5
-      enddo ! alle n Elemente
+      
+      ! initialize volume exchange
+      wicht(:) = 0.
+      
       do n = 1,kantenanzahl ! edge fluxes
          laeng = ( (edge_normal_x(n)**2.0)+(edge_normal_y(n)**2.0) )**0.5
          ed_flux(n) = 0.0
@@ -179,6 +183,7 @@ subroutine stofftransport_untrim()
             ed_flux(n) = (ed_vel_x(n)*edge_normal_x(n)+ed_vel_y(n)*edge_normal_y(n))/laeng
             ed_flux(n) = ed_flux(n)*ed_area(n)
          endif
+         
          ! --- summing outflow into my own wicht
          ! left_element !flux to the right
          if ( (left_element(n) > 0) .and. (ed_flux(n) < 0.0) )  &
@@ -195,29 +200,31 @@ subroutine stofftransport_untrim()
                      if (fluxi <= 0.0)nedel = right_element(n)
                      found = .true.
                   endif
+                  
                   if ((-1*n) == querschnitt(iq)%schnittlinie%kante(jq)%num) then
                      fluxi = (-1)*ed_flux(n)*dt_sub
                      nedel = right_element(n)
                      if (fluxi <= 0.0)nedel = left_element(n)
                      found = .true.
                   endif
+                  
                   if (found) then
                      flow = 0.0
                      if (ed_area(n) > 0.0)flow = ed_flux(n)/ed_area(n)
-                     !print*,fluxi,'fluxi edge n=',n,' part=',jq,' of section=',iq,  &
-                     !      'l,A,fl,v=',laeng,ed_area(n),flow,((ed_vel_x(n)**2.0)+(ed_vel_y(n)**2.0) )**0.5 ,  &
-                     !      'left,right=',left_element(n),right_element(n)
+                     
                      schnittflux_gang(iq,izeit, 1 ) = schnittflux_gang(iq,izeit, 1 )+ fluxi/dt_sub
                      schnittflux_gang(iq,izeit, 2 ) = schnittflux_gang(iq,izeit, 2 )+ fluxi
+                     
                      if ((nedel < 1) .or. (nedel > n_elemente)) then
                         write(fehler,*)'nedel not in range n,nedel,iq,jq,izeit = ',n,nedel,iq,jq,izeit
                         call qerror(fehler)
                      endif
+                     
                      no = 0
                      do k = 1,number_plankt_vari
                         if (output_plankt(k)) then ! planktic output conc.
                            no = no+1
-                           schnittflux_gang(iq,izeit, no+2 ) = schnittflux_gang(iq,izeit, no+2 )+  &
+                           schnittflux_gang(iq,izeit, no+2) = schnittflux_gang(iq,izeit, no+2 )+  &
                                                                fluxi * planktonic_variable(k+(nedel-1)*number_plankt_vari)
                         endif ! planktic output conc.
                      enddo ! all k planktic variables
@@ -255,16 +262,19 @@ subroutine stofftransport_untrim()
                wicht((n-1)*5+j) = 0.0
             enddo !alle 5
          endif !Element wet
+         
+         ! clipping 
          sumwicht = 0.0
-         do j = 1,5 !clipping ######
+         do j = 1,5 
             if (wicht((n-1)*5+j) < 0.0) wicht((n-1)*5+j) = 0.0
             if (wicht((n-1)*5+j) > 1.0) wicht((n-1)*5+j) = 1.0
             sumwicht = sumwicht+wicht((n-1)*5+j)
-         enddo !alle 5
+         enddo
+         
          if (sumwicht > 0.0) then
             do j = 1,5 !
                wicht((n-1)*5+j) = wicht((n-1)*5+j)/sumwicht
-            enddo !alle 5
+            enddo
          else
             wicht((n-1)*5+1) = 1.0 ! Wert belibt wie er ist
             do j = 2,5
@@ -272,6 +282,7 @@ subroutine stofftransport_untrim()
             enddo !alle 5
          endif ! sumwicht.gt.0.0
       enddo ! alle n Elemente
+      
       ! calculate water volume fraction with Courant number > 1 and average cu in cells with cu > 1
       cu_mean_CuGT1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volFrac_CuGT1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
@@ -317,6 +328,7 @@ subroutine stofftransport_untrim()
          endif !kein Zuflusselement
       enddo ! alle j Elemente
       !call ausgeben_untrim( subtim )
+      
       if ((kontrollknoten > 0) .and. (kontrollknoten <= number_plankt_point)) then ! Ausgabe
          print*,'Nach transportschritt untrim am kontrollelement:'
          print*,'Wassertiefe = ',rb_hydraul(2+(kontrollknoten-1)*number_rb_hydraul)          &
@@ -327,26 +339,23 @@ subroutine stofftransport_untrim()
          print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
       endif
       print*,'transport nt = ',nt,' start ende = ',startzeitpunkt, endzeitpunkt
-      !do iq=1,anzahl_quer !! all iq cross sections
-      !   print*,nt,"schnittflux: ",zeitpunkt,izeit,iq," flux,volume="  &
-      !         ,schnittflux_gang(iq,izeit, 1 ),schnittflux_gang(iq,izeit, 2 )
-      !enddo
+      
    enddo ! alle nt Subzeitschritte
-   !do n=1,number_plankt_point
-   !   if(inflow(n))planktonic_variable(71+(n-1)*number_plankt_vari)=1.0 ! test tracer zuflussränder untrim ##############
-   !enddo ! alle n Elemente
-   deallocate (zwischen, stat = alloc_status )
-   if (alloc_status /= 0) call qerror('deallocate (zwischen, failed')
-   !call allo_trans(n_elemente) !! Felder für Transportinformationen und Strömungsfeld allocieren
-   !allocate( el_vol(nonu), el_area(nonu), stat = alloc_status )
-   do iq = 1,anzahl_quer !! all iq cross sections
+   
+   deallocate(zwischen, stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while deallocating variable `zwischen`.")
+   
+   ! all iq cross sections
+   do iq = 1,anzahl_quer 
       q_gangl(izeit) = rechenzeit
       schnittflux_gang(iq,izeit, 1 ) = schnittflux_gang(iq,izeit, 1 )/real(num_sub)
       print*,"schnittflux: ",rechenzeit,izeit,iq," flux = ",schnittflux_gang(iq,izeit, 1 )
    enddo
-   return
+   
 end subroutine stofftransport_untrim
-!----+-----+----
+
+
+
 subroutine read_mesh_nc()
    use netcdf
    use modell
@@ -850,16 +859,16 @@ subroutine nc_sichten()
       ! print summary to console
       ! -----------------------------------------------------------------------
       print*
-      print*, repeat("-", 80)
-      print*, "timesteps transport.nc"
-      print*, repeat("-", 80)
+      print "(a)", repeat("-", 80)
+      print "(a)", "timesteps transport.nc"
+      print "(a)", repeat("-", 80)
       
-      print "(a,i0)",   "n-timesteps:    ", transinfo_anzahl
-      print "(2a)",     "unit string:    ", trim(attstring)
-      print "(3a,i0)",  "reference time: ", datetime_reference % date_string(), " | ", datetime_reference % seconds_since_epoch()
-      print "(3a,i0)",  "start time:     ", datetime_step(1) % date_string() ,               " | ", transinfo_zeit(1)
-      print "(3a,i0)",  "end time:       ", datetime_step(transinfo_anzahl) % date_string(), " | ", transinfo_zeit(transinfo_anzahl)
-      print "(a,i0,a)", "timestep:       ", expected_deltat, " seconds"
+      print "(a,i0)",    "n-timesteps:    ", transinfo_anzahl
+      print "(2a)",      "unit string:    ", trim(attstring)
+      print "(3a,i0,a)", "reference time: ", datetime_reference % date_string(), " [", datetime_reference % seconds_since_epoch(), "]"
+      print "(3a,i0,a)", "start time:     ", datetime_step(1) % date_string() ,               " [", transinfo_zeit(1),"]"
+      print "(3a,i0,a)", "end time:       ", datetime_step(transinfo_anzahl) % date_string(), " [", transinfo_zeit(transinfo_anzahl),"]"
+      print "(a,i0,a)",  "timestep:       ", expected_deltat, " seconds"
       
    endif
    

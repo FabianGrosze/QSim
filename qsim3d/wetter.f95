@@ -409,11 +409,6 @@ subroutine wetter_readallo0()
          write(fehler,"(2(a,i0))") "Weatherstation ", zone(i)%wettstat%wetterstations_nummer, &
                                    " is missing, but needed for zone ", zone(i)%zonen_nummer
          call qerror(fehler)
-      else 
-      
-         print*, "der",i,"-ten zone mit der (kenn)-nummer = ",zone(i)%zonen_nummer," wurde die "      &
-               , zone(i)%wettstat%wetterstations_nummer,"-te wetterstation mit der (kenn)-nummer = "  &
-               , wetterstationskennung_t(zone(i)%wettstat%wetterstations_nummer), "zugeordnet."
       endif 
    enddo 
    
