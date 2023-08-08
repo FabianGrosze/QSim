@@ -146,7 +146,7 @@ subroutine stofftransport_untrim()
    integer        :: nti, nt, n, j, k, alloc_status, iq, jq, no, nedel
    integer(int64) :: subtim, diffprev, diff
    logical        :: found
-   real           :: laeng, cu_max, cu_min, dt_sub, sumwicht
+   real           :: laeng, dt_sub, sumwicht
    real           :: cu_mean_cugt1, volfrac_cugt1, fluxi, flow
    real, allocatable, dimension(:,:) :: zwischen
    
@@ -253,32 +253,31 @@ subroutine stofftransport_untrim()
       enddo ! alle n edges
       do n = 1,n_elemente ! gathering inflows
          do k = 1,cornernumber(n)
-            !if I am the left_element of my n-th edge and the flux is to the left
+            ! if I am the left_element of my n-th edge and the flux is to the left
             if ( (left_element(elementedges(n,k)) == n) .and. (ed_flux(elementedges(n,k)) > 0.0) )  &
                 wicht((n-1)*5+(1+k)) = ed_flux(elementedges(n,k))
-            !if I am the right_element of my n-th edge and the flux is to the right
+            ! if I am the right_element of my n-th edge and the flux is to the right
             if ( (right_element(elementedges(n,k)) == n) .and. (ed_flux(elementedges(n,k)) < 0.0) )  &
                 wicht((n-1)*5+(1+k)) = -1.0 * ed_flux(elementedges(n,k))
-         enddo ! alle k Kanten im Element
-      enddo ! alle n Elemente
-      cu_max = -50000.0
-      cu_min = 50000.0
+         enddo
+      enddo
+     
+      ! Gewichtsfaktoren aus Volumenverhältnissen ermitteln
       cu = 0.
-      do n = 1,n_elemente ! Gewichtsfaktoren aus Volumenverhältnissen ermitteln
+      do n = 1,n_elemente 
          if (el_vol(n) > 0.0) then ! Element wet
             cu(n) = (wicht((n-1)*5+1)*dt_sub)/el_vol(n)
-            if (cu(n) > cu_max)cu_max = cu(n)
-            if (cu(n) < cu_min)cu_min = cu(n)
             wicht((n-1)*5+1) = 1.0 - cu(n)
             do j = 2,5
                wicht((n-1)*5+j) = (wicht((n-1)*5+j)*dt_sub)/el_vol(n)
-            enddo !alle 5
-         else !Element dry
+            enddo
+         else 
+            ! element dry
             wicht((n-1)*5+1) = 1.0
             do j = 2,5
                wicht((n-1)*5+j) = 0.0
-            enddo !alle 5
-         endif !Element wet
+            enddo
+         endif
          
          ! clipping 
          sumwicht = 0.0
@@ -296,20 +295,21 @@ subroutine stofftransport_untrim()
             wicht((n-1)*5+1) = 1.0 ! Wert belibt wie er ist
             do j = 2,5
                wicht((n-1)*5+j) = 0.0
-            enddo !alle 5
-         endif ! sumwicht.gt.0.0
-      enddo ! alle n Elemente
+            enddo
+         endif
+      enddo
       
       ! calculate water volume fraction with Courant number > 1 and 
       ! average cu in cells with cu > 1
       cu_mean_cugt1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volfrac_cugt1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
-      print "(3x,a,f0.3)", "stofftransport_untrim: cu_max                   = ", cu_max
-      print "(3x,a,f0.3)", "                       cu_min                   = ", cu_min
-      print "(3x,a,f0.3)", "                       cu_mean(cu > 1)          = ", cu_mean_cugt1
-      print "(3x,a,f0.3)", "                       volumen fraction(cu > 1) = ", volfrac_cugt1
-
-     
+      
+      print "(3x,a,e10.3)", "stofftransport_untrim: cu_max                   = ", maxval(cu)
+      print "(3x,a,e10.3)", "                       cu_min                   = ", minval(cu)
+      print "(3x,a,e10.3)", "                       cu_mean(cu > 1)          = ", cu_mean_cugt1
+      print "(3x,a,e10.3)", "                       volumen fraction(cu > 1) = ", volfrac_cugt1
+      
+      
       do j = 1,number_plankt_point ! all j elements (*levels?)
          do n = 1,number_plankt_vari ! all transported concentrations i.e. variables
             if (iEros < 0 .and. (n == 52 .or. n == 53)) cycle    ! module_suspendedMatter: skip SSalg and SS if SS read from file
