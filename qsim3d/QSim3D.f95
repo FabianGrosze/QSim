@@ -93,8 +93,8 @@ program QSim3D
       call ganglinien_zeitschritt(izeit+1) !! store values for time series
       call mpi_barrier (mpi_komm_welt, ierr)
    enddo
-   !==== End of time-loop   =================================================================
-   write(*,*)meinrang,' end of time-loop'
+   !==== End of time-loop   =========
+   
    !-------------------------------------------------
    !call mpi_barrier (mpi_komm_welt, ierr)
    !call gather_planktkon()

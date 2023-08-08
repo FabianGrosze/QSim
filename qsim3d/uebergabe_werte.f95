@@ -259,9 +259,6 @@ subroutine ini_ueber(nk)
          call qerror(fehler)
       endif
       
-      print*,            "allocated `transfer_quantity` with these dimensions:"
-      print "(3x,3(a,i0))", "part*proz_anz = ", part*proz_anz, ", part = ", part, ", proz_anz = ", proz_anz
-      
       ! Initailize as no output
       do j = 1,number_trans_quant
          output_trans_quant(j) = .false.

@@ -25,32 +25,30 @@
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
 !> Ausgabe der Ergebnisse auf untrim-Basis
-!! \n\n
-!! aus: ausgeben_untrim.f95 ; zurück: \ref lnk_ergebnisausgabe
 subroutine ausgeben_untrim(itime)
    use modell
    implicit none
-   character(len = longname) :: dateiname, systemaufruf, zahl
-   integer :: i,j,k,n, open_error, ion, system_error, string_read_error, alloc_status
-   integer :: sysa, itime, errcode
-   real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy
-   real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al,aufenthaltszeit
-   real , allocatable , dimension (:) :: output
-   if (meinrang /= 0)call qerror('ausgeben_untrim() sollte eigentlich nur von Prozessor 0 aufgerufen werden')
+   
+   integer, intent(in) :: itime
+   character(longname) :: file_name, systemaufruf, zahl
+   integer             :: i,j,k,n, open_error, ion, system_error, string_read_error, alloc_status
+   integer             :: sysa, errcode
+   real                :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy
+   real                :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al, aufenthaltszeit
+   real, allocatable, dimension (:) :: output
+   
+   if (meinrang /= 0) call qerror('subroutine ausgeben_untrim must onyl be called from processor 0.')
+   
    write(zahl,*)itime
    zahl = adjustl(zahl)
-   print*,'ausgeben_untrim aufgerufen für t, rechenzeit = ',trim(zahl), rechenzeit
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'elemente_',trim(zahl),'.vtk'
-   if (errcode /= 0)call qerror('ausgeben_untrim writing filename elemente_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname failed')
-   call system(systemaufruf)
-   ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error elemente_.vtk'
-      call qerror(fehler)
-   endif ! open_error.ne.0
+   
+   ! --------------------------------------------------------------------------
+   ! elemente_*.vtk
+   ! --------------------------------------------------------------------------
+   file_name = trim(modellverzeichnis) // 'elemente_'// trim(zahl) // '.vtk'
+   open(newunit = ion , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
+  
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'Simlation QSim3D untrim'
    write(ion,'(A)')'ASCII'
@@ -175,12 +173,10 @@ subroutine ausgeben_untrim(itime)
          do n = 1,number_plankt_point ! alle Knoten
             aus = planktonic_variable(j+(n-1)*number_plankt_vari)
             write(ion,'(f27.6)') aus
-         enddo ! alle Elemente
-         !   print*,'ausgeben_untrim: done output for ',ADJUSTL(trim(planktonic_variable_name(j)))
-         !else
-         !   print*,'ausgeben_untrim: no output for ',ADJUSTL(trim(planktonic_variable_name(j)))
-      endif ! zur ausgabe vorgesehen
-   enddo ! alle planktonic_variable
+         enddo 
+      endif
+   enddo
+   
    do j = 1,number_plankt_vari_vert ! alle tiefenaufgelösten z.Z. nur level 1
       if (output_plankt_vert(j)) then ! zur ausgabe vorgesehen
          write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(plankt_vari_vert_name(j))),' float 1'
@@ -188,9 +184,10 @@ subroutine ausgeben_untrim(itime)
          do n = 1,number_plankt_point ! alle Knoten
             aus = plankt_vari_vert(1+(j-1)*num_lev+(n-1)*number_plankt_vari_vert*num_lev)
             write(ion,'(f27.6)') aus
-         enddo ! alle Knoten
-      endif ! zur ausgabe vorgesehen
-   enddo ! done all plankt_vari_vert
+         enddo 
+      endif
+   enddo 
+   
    ! Übergabe_Konzentrationen entsprechend ausgabeflag
    do j = 1,number_trans_quant ! alle tiefengemittelten
       if (output_trans_quant(j)) then ! zur ausgabe vorgesehen
@@ -198,9 +195,10 @@ subroutine ausgeben_untrim(itime)
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,number_plankt_point
             write(ion,'(f27.6)') transfer_quantity(j+(n-1)*number_trans_quant)
-         enddo ! alle Knoten
-      endif ! zur ausgabe vorgesehen
-   enddo ! alle transkon
+         enddo
+      endif
+   enddo
+   
    do j = 1,number_trans_quant_vert ! alle tiefenaufgelösten z.Z. nur level 1
       if (output_trans_quant_vert(j)) then ! zur ausgabe vorgesehen
          write(ion,'(3A)')'SCALARS ',ADJUSTL(trim(trans_quant_vert_name(j))),' float 1'
@@ -208,9 +206,10 @@ subroutine ausgeben_untrim(itime)
          do n = 1,number_plankt_point
             aus = trans_quant_vert(1+(j-1)*num_lev_trans+(n-1)*num_lev_trans*number_trans_quant_vert)
             write(ion,'(f27.6)') aus
-         enddo ! alle Knoten
-      endif ! zur ausgabe vorgesehen
-   enddo ! done all vertically distributed transfer quantities
+         enddo
+      endif 
+   enddo
+   
    ! benthic distributions according to output flag
    if(number_benthic_points .ne. number_plankt_point)call qerror('number_benthic_points .ne. number_plankt_point') 
    do j = 1,number_benth_distr ! all benthic distributions
@@ -219,23 +218,20 @@ subroutine ausgeben_untrim(itime)
          write(ion,'(A)')'LOOKUP_TABLE default'
          do n = 1,number_plankt_point ! all nodes number_benthic_points
             write(ion,'(f27.6)') benthic_distribution(j+(n-1)*number_benth_distr)
-         enddo ! all nodes
-      endif ! flagged
-   enddo ! all benthic distributions
-   close (ion) ! close vtk
+         enddo
+      endif
+   enddo 
    
-   print*,'elemente_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
-   if (errcode /= 0)call qerror('ausgeben_untrim writing filename kanten_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname kanten_ failed')
-   call system(systemaufruf)
-   ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error elemente_.vtk'
-      call qerror(fehler)
-   endif ! open_error.ne.0
+   close(ion) ! close vtk
+   
+   
+   ! --------------------------------------------------------------------------
+   ! kanten_*.vtk
+   ! --------------------------------------------------------------------------
+   file_name = trim(modellverzeichnis) // 'kanten_' // trim(zahl) // '.vtk'
+   open(newunit = ion, file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name)) 
+   
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'Simlation QSim3D untrim'
    write(ion,'(A)')'ASCII'
@@ -284,18 +280,14 @@ subroutine ausgeben_untrim(itime)
       write(ion,'(6x, f11.6, 2x, f11.6, A)') edge_normal_x(n), edge_normal_y(n),'   0.0'
    enddo ! alle Knoten
    close (ion)
-   print*,'kanten_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'knoten_',trim(zahl),'.vtk'
-   if (errcode /= 0)call qerror('ausgeben_untrim writing filename knoten_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_untrim writing system call rm -rf dateiname knoten_ failed')
-   call system(systemaufruf)
-   ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error knoten_.vtk'
-      call qerror(fehler)
-   endif ! open_error.ne.0
+   
+   ! --------------------------------------------------------------------------
+   ! knoten_*.vtk
+   ! --------------------------------------------------------------------------
+   file_name = trim(modellverzeichnis) // 'knoten_' // trim(zahl) // '.vtk'
+   open(newunit = ion , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
+   
    write(ion,'(A)')'# vtk DataFile Version 3.0'
    write(ion,'(A)')'Simlation QSim3D untrim'
    write(ion,'(A)')'ASCII'
@@ -341,6 +333,7 @@ subroutine ausgeben_untrim(itime)
       write(ion,'(6x,f27.6)') real( knoten_zone(n) )
    enddo
    allocate (output(knotenanzahl2D), stat = alloc_status )
+   
    ! planktische, transportierte Konzentrationen entsprechend ausgabeflag
    do j = 1,number_plankt_vari ! alle tiefengemittelten
       if (output_plankt(j)) then ! zur ausgabe vorgesehen
@@ -359,6 +352,7 @@ subroutine ausgeben_untrim(itime)
          enddo ! alle Knoten
       endif ! zur ausgabe vorgesehen
    enddo ! alle planktonic_variable
+   
    if (nur_alter) then ! Aufenthaltszeit in Tagen ! Altersberechnung wie in Shen&Wang 2007 mit real function aufenthaltszeit (tracer,alter)
       write(ion,'(A)')'SCALARS Tage_Aufenthalt float 1'
       write(ion,'(A)')'LOOKUP_TABLE default'
@@ -378,8 +372,7 @@ subroutine ausgeben_untrim(itime)
          write(ion,'(f27.6)') output(n)/real(knot_ele(n))
       enddo ! alle Knoten
    endif !nur_alter
-   deallocate (output, stat = alloc_status )
-   close (ion)
-   print*,'knoten_ ausgeben_untrim gemacht'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   return
+   close(ion)
+   
+   deallocate(output)
 end subroutine ausgeben_untrim

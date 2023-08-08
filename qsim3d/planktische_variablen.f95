@@ -123,7 +123,6 @@ subroutine ini_planktkon0(nk)
    implicit none
    integer nk,k,n,as,j,l,ini
    if (meinrang == 0) then ! prozess 0 only
-      print*,'ini_planktkon0'
       number_plankt_point = nk
       ! number_plankt_vari= s. o.
       !------- tiefengemittelte planktische variablen
@@ -137,26 +136,11 @@ subroutine ini_planktkon0(nk)
          output_plankt(j) = .false.
       enddo
       
-      !!!!!!!!! allocate and initialize planktonic_variable
-      print*,"ini_planktkon0 going to: allocate (planktonic_variable( "  &
-      ,"part*proz_anz,part,proz_anz,number_plankt_point,number_plankt_vari = " &
-      ,part*proz_anz,part,proz_anz,number_plankt_point,number_plankt_vari
-      allocate (planktonic_variable(number_plankt_vari*part*proz_anz), stat = as )
-      !allocate (planktonic_variable(number_plankt_vari*number_plankt_point), stat = as )
-      if (as /= 0) then
-         write(fehler,*)' Rueckgabewert   von   allocate planktonic_variable_ :', as
-         call qerror(fehler)
-      else
-         print*,'planktonic_variable allocated to array size = ',  &
-                                                               size(planktonic_variable)
-      endif
-      do k = 1,number_plankt_point ! i
-         do j = 1,number_plankt_vari ! initialisierung aller konzentrationen zunächt auf Null
-            planktonic_variable(j+(k-1)*number_plankt_vari) = 0.0 !!!####! 0.0
-            !planktonic_variable(71+(k-1)*number_plankt_vari) = real(knoten_zone(k))  !  tracer test annu ####
-            !planktonic_variable(72+(k-1)*number_plankt_vari) = 10*real(knoten_zone(k))  !  salz test annu ####
-         enddo
-      enddo
+      ! allocate and initialize planktonic_variable
+      allocate (planktonic_variable(number_plankt_vari*part*proz_anz), source = 0., stat = as)
+      if (as /= 0) call qerror("Error while allocating variable `planktonic_variable`")
+      
+      
       ! ------- tiefenaufgelöst, planktonic variables
       do j = 1,number_plankt_vari_vert ! initialise
          write(plankt_vari_vert_name(j),'(18x)')
@@ -165,29 +149,13 @@ subroutine ini_planktkon0(nk)
       plankt_vari_vert_name = adjustl(plankt_vari_vert_name)
       
       ! allocate and initialize plankt_vari_vert
-      allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*part*proz_anz), stat = as )
-      !allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*number_plankt_point), stat = as )
-      if (as /= 0) then
-         write(fehler,*)' Rueckgabewert   von   plankt_vari_vert :', as
-         call qerror(fehler)
-      endif
-      do k = 1,number_plankt_point ! initialisierung aller konzentrationen zunächt auf Null
-         do j = 1,number_plankt_vari_vert !
-            do l = 1,num_lev
-               plankt_vari_vert(l+(j-1)*num_lev+(k-1)*number_plankt_vari_vert*num_lev) = 0.0 !!!####! 0.0
-               !plankt_vari_vert(i,j,k)=0.0
-               !plankt_vari_vert(k)%level(j)%value(i)=0.0
-            enddo ! i alle
-         enddo ! j alle levels
-      enddo
-      do j = 1,number_plankt_vari_vert ! zunächst nix ausgeben
-         output_plankt_vert(j) = .false.
-      enddo
+      allocate (plankt_vari_vert(num_lev*number_plankt_vari_vert*part*proz_anz), source = 0., stat = as )
+      if (as /= 0) call qerror("Error while allocating variable `plankt_vari_vert`")
+      output_plankt_vert(:) = .false.
+      
       allocate (point_zone(number_plankt_point), stat = as )
-      if (as /= 0) then
-         print*,' allocate failed in zonen_parallel point_zone :', as
-         call qerror(fehler)
-      endif
+      if (as /= 0) call qerror("Error while allocating variable `point_zone`")
+      
       select case (hydro_trieb)
       case(1) ! casu-transinfo
          do ini = 1,number_plankt_point

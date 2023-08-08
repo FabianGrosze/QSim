@@ -41,8 +41,6 @@ subroutine holen_trans_untrim(nt)
    ! --------------------------------------------------------------------------
    ! elements
    ! --------------------------------------------------------------------------
-   print "(3x,a,2i0)", 'holen_trans_untrim: time, nt = ', transinfo_zeit(transinfo_zuord(nt)), nt
-   
    start3 = (/ 1, 1, nt /)
    count3 = (/ n_elemente, 1, 1 /)
    ! float Mesh2_face_Wasservolumen_2d(nMesh2_data_time, nMesh2_layer_2d, nMesh2_face) ;
@@ -116,8 +114,6 @@ subroutine holen_trans_untrim(nt)
       if (element_rand(n) > 0) inflow(n) = .true.
    enddo ! alle n Elemente
    
-   print "(3x,a)", "stofftransport_untrim: all boundaries inflow"
-   
    do j = 1,number_plankt_point 
       rb_hydraul(1+(j-1)*number_rb_hydraul) = u(j)
       
@@ -140,15 +136,17 @@ end subroutine holen_trans_untrim
 subroutine stofftransport_untrim()
    use netcdf
    use modell
+   use module_datetime
    implicit none
    include 'netcdf.inc'
    
    integer        :: nti, nt, n, j, k, alloc_status, iq, jq, no, nedel
-   integer(int64) :: subtim, diffprev, diff
+   integer(int64) :: subtime, diffprev, diff
    logical        :: found
    real           :: laeng, dt_sub, sumwicht
    real           :: cu_mean_cugt1, volfrac_cugt1, fluxi, flow
    real, allocatable, dimension(:,:) :: zwischen
+   type(datetime) :: datetime_sub
    
    integer , parameter :: num_sub = 6
    
@@ -158,7 +156,7 @@ subroutine stofftransport_untrim()
    if (alloc_status /= 0) call qerror('Error while allocating variable `zwischen`.')
    
    dt_sub = real(deltat)/real(num_sub)
-   print "(a,i0,a,f0.2,a)", "stofftransport_untrim: ", num_sub," subtimesteps of length ", dt_sub, " seconds"
+   print "(i0,a,f0.2,a)", num_sub," subtimesteps of length ", dt_sub, " seconds"
    
    do nt = 1,num_sub ! alle Transport (zwischen) Zeitschritte
       
@@ -169,23 +167,25 @@ subroutine stofftransport_untrim()
                                ' Tracer = ', planktonic_variable(71+(kontrollknoten-1)*number_plankt_vari)
       endif
       
-      subtim = startzeitpunkt + nint(real((2*nt-1)*deltat) / real(2*num_sub) )
+      subtime = startzeitpunkt + nint(real((2*nt-1)*deltat) / real(2*num_sub) )
+      datetime_sub = as_datetime(subtime, tz_qsim)
       
-      if (subtim < transinfo_zeit(transinfo_zuord(1)) .or. &
-          subtim > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+      if (subtime < transinfo_zeit(transinfo_zuord(1)) .or. &
+          subtime > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
          call qerror("stofftransport_untrim: subtimestep outside range of current timestep")
       endif
       
       nti = 0
       diffprev = transinfo_zeit(transinfo_zuord(transinfo_anzahl)) - transinfo_zeit(transinfo_zuord(1))
       do n = 1,transinfo_anzahl
-         diff = abs(subtim - transinfo_zeit(transinfo_zuord(n)))
+         diff = abs(subtime - transinfo_zeit(transinfo_zuord(n)))
          if (diff <= diffprev) nti = n
          diffprev = diff
       enddo 
       if (nti <= 0) call qerror('stofftransport_untrim: No untrim timestamp identified.')
+      diff = transinfo_zeit(transinfo_zuord(nti)) - subtime      
       
-      print "(3(a,i0))", "stofftransport_untrim: substep-time = ", subtim, ", nti = ", nti, ", diff = ", diff
+      print "(a,i0,2a,2(a,i0))", "subtimestep ", nt, ": ", datetime_sub % date_string(),  ", nti = ", nti, ", diff = ", diff
       
       call holen_trans_untrim(nti)
       
@@ -304,10 +304,10 @@ subroutine stofftransport_untrim()
       cu_mean_cugt1 = sum(el_vol * cu, cu > 1.) / max(1., sum(el_vol, cu > 1.))
       volfrac_cugt1 = sum(el_vol     , cu > 1.) / max(1., sum(el_vol))
       
-      print "(3x,a,e10.3)", "stofftransport_untrim: cu_max                   = ", maxval(cu)
-      print "(3x,a,e10.3)", "                       cu_min                   = ", minval(cu)
-      print "(3x,a,e10.3)", "                       cu_mean(cu > 1)          = ", cu_mean_cugt1
-      print "(3x,a,e10.3)", "                       volumen fraction(cu > 1) = ", volfrac_cugt1
+      print "(3x,a,e10.3)", "cu_max                   = ", maxval(cu)
+      print "(3x,a,e10.3)", "cu_min                   = ", minval(cu)
+      print "(3x,a,e10.3)", "cu_mean(cu > 1)          = ", cu_mean_cugt1
+      print "(3x,a,e10.3)", "volumen fraction(cu > 1) = ", volfrac_cugt1
       
       
       do j = 1,number_plankt_point ! all j elements (*levels?)
@@ -362,10 +362,7 @@ subroutine stofftransport_untrim()
          print*,'intereck((j-1)*4+k) = ',( intereck((kontrollknoten-1)*4+k),k = 1,4 )
          print*,'wicht !! neighbours = ',(wicht((kontrollknoten-1)*5+1+k),k=1,4)
       endif
-      
-      print "(3x,3(a,i0))", "transport nt = ", nt, ", start = ", startzeitpunkt, &
-                            ", ende = ", endzeitpunkt
-      
+   
    enddo ! alle nt Subzeitschritte
    
    deallocate(zwischen, stat = alloc_status)

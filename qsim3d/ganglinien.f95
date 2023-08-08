@@ -337,9 +337,6 @@ subroutine ganglinien_schliessen()
                                          ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
       call system(systemaufruf,sys_error)
-      if (sys_error /= 0) then
-         print*,'mv -f ganglinien ganglinien_bisher  meldet: sys_error = ', sys_error
-      endif 
       
       ! --- create directory `ganglinien` ---
       write(systemaufruf,'(3A)',iostat = errcode)'mkdir ',trim(modellverzeichnis),'ganglinien'

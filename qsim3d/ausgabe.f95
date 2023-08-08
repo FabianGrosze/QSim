@@ -209,8 +209,6 @@ subroutine ausgabekonzentrationen_beispiel()
    file_name = trim(modellverzeichnis) // 'ausgabekonzentrationen_beispiel.txt'
    open(unit = 104 , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open file " // file_name)
-
-   print*,'ausgabekonzentrationen_beispiel.txt opened for write ...'
    
    ! depth averaged planktic variables
    write(104,'(A)')"# depth averaged, planctonic, transported concentrations"
@@ -399,12 +397,9 @@ subroutine show_mesh()
    file_name = trim(modellverzeichnis) // 'mesh_node.vtk'
    write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(file_name)
    
-   ion = 106
-   open(unit = ion , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   open(newunit = ion , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open " // trim(file_name))
    call mesh_output(ion)
-   print*,'show_mesh:mesh_node.vtk done'
-   
    close (ion)
    
    ! --------------------------------------------------------------------------
@@ -504,8 +499,7 @@ subroutine show_mesh()
   
    if ((hydro_trieb == 2) .or. (kanten_vorhanden)) then ! untrim
       file_name = trim(modellverzeichnis) // 'mesh_element.vtk'
-      ion = 106
-      open(unit = ion, file = file_name, status = 'replace', action = 'write ', iostat = open_error )
+      open(newunit = ion, file = file_name, status = 'replace', action = 'write ', iostat = open_error )
       if (open_error /= 0) call qerror("Could not open " // file_name)
 
       write(ion,'(A)')'# vtk DataFile Version 3.0'
@@ -554,7 +548,6 @@ subroutine show_mesh()
          write(ion,'(f27.6)') real(knoten_rand(n))
       enddo
       
-      print*,'show_mesh: mesh_element.vtk done'
       close (ion)
    endif! edges
    

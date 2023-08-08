@@ -510,7 +510,7 @@ contains
    subroutine modeverz()
       character(longname) :: aufrufargument, systemaufruf, cmd
       integer             :: io_error, sysa, icount, i, stat, length, errcode
-      
+      logical             :: exists
       call get_command(cmd, length, stat)
       
       icount = command_argument_count()
@@ -523,27 +523,24 @@ contains
       
       if (icount == 2) then ! kontrollknoten angegeben
          call get_command_argument(2, aufrufargument)
-         read(aufrufargument, * , iostat = io_error) kontrollknoten
+         read(aufrufargument, *) kontrollknoten
          if (kontrollknoten < 0) call qerror('modeverz: negative control node not permitted')
-         print*,'control node, kontrollknoten #', kontrollknoten
-      else! no controll node
+         print "(a,i0)", 'control node: ', kontrollknoten
+      else
          kontrollknoten = -1
-         print*, "control node: none."
+         print "(a)", "control node: -"
       endif 
       
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
-      call system(systemaufruf, sysa)
-      
-      if (sysa /= 0) then
+      inquire(file = trim(modellverzeichnis), exist = exists)
+      if (.not. exists) then
          call qerror('Could not find model directory: ' // trim(modellverzeichnis))
       else
-         print*,'QSim3D Modell: ' // trim(modellverzeichnis)
+         print "(2a)",'model directory: ', trim(modellverzeichnis)
       endif
       
       ! Art des hydraulichen Antriebs ermitteln:
       hydro_trieb = antriebsart()
-      print*,"hydro_trieb = ", hydro_trieb 
+      print "(a,i0)", "hydro_trieb = ", hydro_trieb 
       
    end subroutine modeverz
    
@@ -560,7 +557,7 @@ contains
       ! casu
       inquire(file = trim(modellverzeichnis) // 'transinfo', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: casu"
+         print "(a)", "Hydrodynamic driver: casu"
          antriebsart = 1
          return
       endif
@@ -568,7 +565,7 @@ contains
       ! UnTrim²
       inquire(file = trim(modellverzeichnis) // 'transport.nc', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: NetCDF UnTrim2"
+         print"(a)", "Hydrodynamic driver: NetCDF UnTrim2"
          antriebsart = 2
          return
       endif
@@ -576,7 +573,7 @@ contains
       ! SCHISM
       inquire(file = trim(modellverzeichnis) // 'outputs_schism', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: NetCDF SCHISM"
+         print "(a)", "Hydrodynamic driver: NetCDF SCHISM"
          antriebsart = 3
          return
       endif
@@ -718,7 +715,7 @@ contains
    logical function modell_vollstaendig()
       character(len = longname) :: aufrufargument, systemaufruf
       integer                   :: io_error,sysa, ia, ion, errcode
-      logical                   :: zeile_vorhanden
+      logical                   :: zeile_vorhanden, age_exists
       
       modell_vollstaendig = .true.
       
@@ -846,6 +843,8 @@ contains
          modell_vollstaendig = .false.
          print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
       endif
+      
+      ! ausgabekonzentrationen.txt
       write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis), &
                                                  'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
       if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
@@ -856,27 +855,24 @@ contains
       endif
       
       ! alter.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         print*,'Datei alter.txt nicht vorhanden, ergo: vollständige Gütesimulation'
-         nur_alter = .false.
-      else
-         print*,'##### Datei alter.txt vorhanden, nur Aufenthaltszeit-Simulation, ggf incl. Temp. #####'
+      inquire(file = trim(modellverzeichnis) // "alter.txt", exist = age_exists) 
+      if (age_exists) then
+         print "(a)", "alter.txt detected: Simulation will only calculate water age"
          nur_alter = .true.
+      else
+         nur_alter = .false.
       endif
       
       ! qusave
       call system('which qusave >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'Script `qusave` is not available. Input data will not be archived.'
+         print "(a)", 'Script `qusave` is not available. Input data will not be archived.'
       endif
       
       ! quzip
       call system('which quzip  >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'Script `quzip` is not available. Input data will not be archived.'
+         print "(a)", 'Script `quzip`  is not available. Input data will not be archived.'
       endif
       
    end function modell_vollstaendig

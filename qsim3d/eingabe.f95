@@ -59,7 +59,6 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
             call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
             n_cal = n_elemente
-            print*,'Untrim netCDF read mesh'
          endif 
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -79,10 +78,16 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
    n = part * proz_anz
    if (n < n_cal) part = part+1
    
-   print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
-                  ," n_cal = ", n_cal
-   
+   if (meinrang == 0) then
+      print*
+      print "(a)", repeat("-", 80)
+      print "(a)", "partitions"
+      print "(a)", repeat("-", 80)
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
+   print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
+                    ," n_cal = ", n_cal
+   
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)
    call ini_ueber(n_cal)

@@ -90,6 +90,7 @@ subroutine fortschritt(n, f)
       select case (n)
          case (1) ! start
             call version_string(qsim_version)
+            print*
             print "(a)", repeat("=", 80)
             print "(a)", repeat(" ", 32) // "QSim3D " // qsim_version
             print "(a)", repeat("=", 80)
@@ -121,19 +122,8 @@ subroutine fortschritt(n, f)
             rewind(u_progress)
             write(u_progress,'(f9.6)') 0.0
             close(u_progress)
-            
-            
-            ! --- source code ---
-            ! TODO (Schönung, August 2023): Should we really keep this? This information
-            ! makes sense while developing, but when distributed this may contain outdated
-            ! and potentially private data
-            
-            ! z.B. write(codesource,*) "/home/jwyrwa/QSim3D" (wird vom Makefile geschrieben)
-            include "code_source.h"
-            print*, "progress_file = ", adjustl(trim(progress_file))
-            print*, "codesource    = ", adjustl(trim(codesource))
-            
-            
+           
+           
          case (0) ! making progress
             progress_file = adjustl(trim(modellverzeichnis) // 'fortschritt')
             open(file = progress_file, newunit = u_progress, status = 'old', action = 'readwrite', iostat = open_error)
@@ -221,17 +211,20 @@ subroutine fortschritt(n, f)
             
             call version_string(qsim_version)
             
+            ! print summary to console
             print*
             print "(a)", repeat("=", 80)
             print "(a)", "End of Simulation"
             print "(a)", repeat("=", 80)
+            call versionsdatum()
+            
+            print*
             print "(a,a)",       "QSim3D version:  ", qsim_version
             print "(a,a)",       "execution start: ", datetime_execution_start % date_string()
             print "(a,a)",       "execution end:   ", datetime_execution_end % date_string()
             print "(a,*(i0,a))", "runtime:         ", runtime_hours, "h ", runtime_minutes, "min ", runtime_seconds, "sec"
-            
             print*
-            call versionsdatum()
+            print "(a)", "QSim3D ends normally"
             
          case default
             call qerror ('fortschritt, Auswahlparameter n falsch')
