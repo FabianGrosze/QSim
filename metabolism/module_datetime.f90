@@ -18,6 +18,7 @@ module module_datetime
    public :: epochdatetime
    public :: local_time
    public :: gmtime
+   public :: as_datetime
    public :: datetime_constructor
    
    real(real64), parameter :: zero = 0._real64, one = 1._real64
@@ -1141,6 +1142,16 @@ contains
       td = timedelta(days=day, seconds=sec)
       gmtime = datetime_from_epoch + td
    end function gmtime
+   
+   pure elemental type(datetime) function as_datetime(epoch, tz)
+      ! returns a `datetime` instance from epoch with given timezone
+      integer(int64), intent(in) :: epoch
+      real, intent(in), optional :: tz
+      
+      as_datetime = gmtime(epoch)
+      if (present(tz)) as_datetime = as_datetime % with_tz(tz)
+   end function as_datetime
+   
 
    pure function int2str(i, length)
       ! converts an integer `i` into a character string of requested length,
