@@ -71,6 +71,7 @@ module module_datetime
       procedure, pass(self), public :: isoweekday_long
       procedure, pass(self), public :: isoweekday_short
       procedure, pass(self), public :: utc
+      procedure, pass(self), public :: with_tz
       procedure, pass(self), public :: weekday
       procedure, pass(self), public :: weekday_long
       procedure, pass(self), public :: weekday_short
@@ -420,13 +421,22 @@ contains
 
    end function isoformat
    
-   pure elemental character(25) function date_string(self)
+   pure elemental character(26) function date_string(self)
       ! returns character string of datetime including its timezone
       class(datetime), intent(in)           :: self
-      integer :: tz_hour, tz_minute
+      integer   :: tz_hour, tz_minute, total_minutes
+      character :: prefix
       
-      tz_hour = int(self % tz)
-      tz_minute = int((self % tz - floor(self % tz)) * 100.)
+      ! sign of timezone
+      if (self % tz >= 0.) then
+         prefix = '+'
+      else
+         prefix = '-'
+      endif
+            
+      total_minutes = nint(abs(self % tz) * 60.)
+      tz_hour = total_minutes / 60
+      tz_minute = modulo(total_minutes, 60)
       
       date_string = int2str(self % year,   4) // '-' //   &
                     int2str(self % month,  2) // '-' //   &
@@ -434,7 +444,7 @@ contains
                     int2str(self % hour,   2) // ':' //   &
                     int2str(self % minute, 2) // ':' //   &
                     int2str(self % second, 2) // ' ' //   &
-                    int2str(tz_hour,2) // ':' // int2str(tz_minute,2)
+                    prefix // int2str(tz_hour,2) // ':' // int2str(tz_minute,2)
    end function date_string
 
 
@@ -664,7 +674,22 @@ contains
       sgn = int(sign(one, self % tz))
       utc = self - timedelta(hours=sgn * hours, minutes=sgn * minutes)
       utc % tz = 0
-  end function utc
+   end function utc
+   
+   
+   pure elemental type(datetime) function with_tz(self, tz)
+      ! changes timezone of a `datetime` instance. The actual moment of time
+      ! measured does not change, just the time zone it is measured in.
+      class(datetime), intent(in) :: self
+      real, intent(in) :: tz
+      integer :: delta_tz
+      
+      ! difference between new and old timezone in minutes
+      delta_tz = nint((tz - self % tz) * 60.)
+      
+      with_tz = self + timedelta(minutes = delta_tz)
+      with_tz % tz = tz
+   end function with_tz      
 
 
    pure elemental integer function yearday(self)
