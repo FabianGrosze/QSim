@@ -684,7 +684,7 @@ subroutine temperl_wetter()
    type(datetime)      :: datetime_now
    
    
-   datetime_now = gmtime(rechenzeit)
+   datetime_now = as_datetime(rechenzeit, tz_qsim)
    day   = datetime_now % get_day()
    month = datetime_now % get_month()
    hour   = datetime_now % get_hour()
@@ -745,7 +745,7 @@ subroutine strahlg_wetter()
       geol = modell_geol
       geob = modell_geob
       
-      datetime_now = gmtime(rechenzeit)
+      datetime_now = as_datetime(rechenzeit, tz_qsim)
       day    = datetime_now % get_day()
       month  = datetime_now % get_month()
       hour   = datetime_now % get_hour()

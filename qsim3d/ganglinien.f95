@@ -472,7 +472,7 @@ subroutine ganglinien_schliessen()
             ! write header
             write(u_cross,*) trim(adjustl(r_zeile))
             do j = 1,zeitschrittanzahl
-               datetime_output = gmtime(q_gangl(j))
+               datetime_output = as_datetime(q_gangl(j), tz = tz_qsim)
                write(r_zeile,'(I4.4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
                   datetime_output % get_year(),            &
                   datetime_output % get_month(),           &
@@ -520,7 +520,8 @@ subroutine ganglinien_schliessen()
          
          ! --- write data ---
          do j = 1,zeitschrittanzahl+1
-            datetime_output = gmtime(r_gang(i,j))
+            datetime_output = as_datetime(r_gang(i,j), tz = tz_qsim)
+            
             year   = datetime_output % get_year()
             month  = datetime_output % get_month()
             day    = datetime_output % get_day()

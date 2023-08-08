@@ -35,7 +35,7 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 
 # set executable name
 PV=qsim3d_$(QSim_version)_dev
-
+PV=qsim3d_timezone
 
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2

@@ -499,10 +499,10 @@ subroutine transinfo_sichten()
    
    
    print "(i0,a)", transinfo_anzahl,' transport  timesteps'
-   datetime_tmp = gmtime(transinfo_zeit(transinfo_zuord(1)))
+   datetime_tmp = as_datetime(transinfo_zeit(transinfo_zuord(1)), tz_qsim)
    print*, "from: ", datetime_tmp%date_string(), " ", trim(transinfo_datei(transinfo_zuord(1)))
    
-   datetime_tmp = gmtime(transinfo_zeit(transinfo_zuord(transinfo_anzahl)))
+   datetime_tmp = as_datetime(transinfo_zeit(transinfo_zuord(transinfo_anzahl)), tz_qsim)
    print*, "to: ", datetime_tmp%date_string(), " ", trim(transinfo_datei(transinfo_zuord(transinfo_anzahl)))
    print*, "with timesteps of ", dttrans, " seconds."
 

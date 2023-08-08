@@ -310,7 +310,8 @@ subroutine alter_ausgabe()
    write(u_age,*)'# Zonen-Anzahl = ',zonen_anzahl,'jeweils Tracermasse | Wasservolumen | Entropie '
    
    do j = 1,zeitschrittanzahl+1
-      datetime_output = gmtime(r_gang(1,j))
+      datetime_output = as_datetime(r_gang(1,j), tz_qsim)
+      
       year   = datetime_output % get_year()
       month  = datetime_output % get_month()
       day    = datetime_output % get_day()
