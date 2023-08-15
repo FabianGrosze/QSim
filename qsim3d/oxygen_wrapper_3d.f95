@@ -146,6 +146,5 @@ subroutine oxygen_wrapper_3d(i)
       endif
    enddo
    
-   return
 end subroutine oxygen_wrapper_3d
 

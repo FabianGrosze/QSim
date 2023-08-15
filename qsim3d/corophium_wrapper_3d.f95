@@ -33,12 +33,10 @@ subroutine corophium_wrapper_3d(i)
    implicit none
    
    integer, intent(in) :: i
-   integer             :: j
    
    iglob = i + meinrang * part
    
    ! This module is currently turned off
    ! call corophium(...)
-   
-   return
+
 end subroutine corophium_wrapper_3d

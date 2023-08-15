@@ -100,7 +100,6 @@ module modell
     
    
    ! --- mesh variables ---
-   integer                            :: min_rand, max_rand, min_zone, max_zone
    integer                            :: knotenanzahl2D, knotenanzahl3D
    integer, allocatable, dimension(:) :: knoten_rand
    integer, allocatable, dimension(:) :: knoten_zone, knoten_rang !< \anchor knoten_zone Zonen-zähler an den Knoten bei Antrieb mit casu-Hydraulik aus points
@@ -590,14 +589,12 @@ contains
    !!
    !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modella()
-      character(500) :: dateiname, text, version, mod_name
+      character(500) :: filename, text, version, mod_name
       integer        :: open_error, ion, read_error
       
-      dateiname = trim(modellverzeichnis) // '/MODELLA.txt'
-      ion = 103
-      open(unit = ion, file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+      filename = trim(modellverzeichnis) // '/MODELLA.txt'
+      open(newunit = ion, file = filename, status = 'old', action = 'read ', iostat = open_error)
       if (open_error /= 0) call qerror('Could not open MODELLA.txt')
-      
       
       if (.not. zeile(ion)) call qerror('Model version is missing in ModellA.txt')
       version = ctext
@@ -609,6 +606,9 @@ contains
       read(ctext, *, iostat = read_error) modell_geob, modell_geol
       if (read_error /= 0) call qerror("Error while reading coordinates from ModellA.txt")
       
+      close(ion)
+      
+      ! --- print summary to console ---
       print*
       print "(a)", repeat("-", 80)
       print "(a)", "ModellA.txt"
@@ -618,9 +618,7 @@ contains
       print "(a,a)",    'name:      ', trim(mod_name)
       print "(a,f0.5)", 'latitude:  ', modell_geob
       print "(a,f0.5)", 'longitude: ', modell_geol
-     
-      close (ion)
-      
+   
    end subroutine modella
    
    !----+-----+----
@@ -628,8 +626,6 @@ contains
    logical function zeile(ion)
       integer, intent(in) :: ion
       integer             :: io_error
-      
-      zeile = .FALSE.
       
       do
          read(ion, '(A)', iostat = io_error) ctext
@@ -639,9 +635,7 @@ contains
          endif
          if (ctext(1:1) /= '#') exit
       enddo
-      
       zeile = .TRUE.
-      return
    end function zeile
    
    !----+-----+----
@@ -654,7 +648,7 @@ contains
       do i = 1,len(trim(ctext))
          if (ctext(i:i) /= " ") leerzeile = .false.
       enddo 
-      return
+   
    end function leerzeile
    
    !----+-----+----
@@ -670,7 +664,6 @@ contains
       enddo 
       
       naechste_zeile = .false.
-      return
    end function naechste_zeile
    
   
@@ -688,194 +681,98 @@ contains
          startzeitpunkt = rechenzeit - (deltat / 2)
          endzeitpunkt = startzeitpunkt + deltat
       endif
-   
    end subroutine zeitschritt_halb
    
    !----+-----+----
    !> Dient der initialisierung der Zeitsteuerung.
    subroutine ini_zeit()
       if (meinrang == 0) then ! prozess 0 only
-         !rechenzeit=252590400  ! 2008
-         !rechenzeit=189432000  ! 2006
          rechenzeit = 0
-         !deltat=900 !3600
          deltat = 3600
          izeit = 0
          zeitschrittanzahl = 1
-      endif ! only prozessor 0
+      endif
    end subroutine ini_zeit
    
-   !> Wenn die Nachkommastelle in lesezeit die Minuten angibt, in dezimaldarstellung rückrechnen
-   real function minu_stund(lesezeit)
-      real :: lesezeit
-      minu_stund = aint(lesezeit)+(lesezeit-aint(lesezeit))*(100.0/60.0)
-   end function minu_stund
-   
    !> Prüfen, ob alle notwendigen Dateien im Modellverzeichnis vorliegen.
-   logical function modell_vollstaendig()
-      character(len = longname) :: aufrufargument, systemaufruf
-      integer                   :: io_error,sysa, ia, ion, errcode
-      logical                   :: zeile_vorhanden, age_exists
-      
-      modell_vollstaendig = .true.
-      
-      ! EREIGG.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
-      endif
-      
-      ! MODELLA.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
-      endif
-      
-      ! WETTER.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
-      endif
-      
-      ! MODELLG.3D.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
-      endif
-      
-      ! APARAM.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
-      endif
-      
-      ! e_extnct.dat
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei e_extnct.dat'
-      endif
-      
+   subroutine modell_vollstaendig()
+      logical :: exists, input_complete
+      integer :: i, sysa
+      character(longname), dimension(:), allocatable :: input_files
       
       select case (hydro_trieb)
-         case(1) ! casu-transinfo
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
-            endif
+         case(1) 
+            ! casu specific files
+            allocate(input_files(12))
+            input_files(10) = trim(modellverzeichnis) // 'transinfo/meta'
+            input_files(11) = trim(modellverzeichnis) // 'transinfo/points'
+            input_files(12) = trim(modellverzeichnis) // 'transinfo/file.elements'
             
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/points'
-               !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
-               !else
-            endif
-
-            write(systemaufruf,'(3A)',iostat = errcode) &
-               'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
-            endif
+         case(2) 
+            ! Untrim² specific files
+            allocate(input_files(11))
+            input_files(10) = trim(modellverzeichnis) // 'transport.nc'
+            input_files(11) = trim(modellverzeichnis) // 'ELEMENTE.txt'
             
-         case(2) ! Untrim² netCDF
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transport.nc'
-            endif
-            
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei ELEMENTE.txt'
-            endif
-         
-         case(3) ! SCHISM netCDF
+         case(3) 
+            ! SCHISM netCDF
             print*,'not yet checking completeness of SCHISM model'
-            case default
+         
+         case default
             call qerror('Hydraulischer Antrieb unbekannt')
       end select
       
-      ! ganglinien_knoten.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
-      endif
+      input_files(1) = trim(Modellverzeichnis) // "APARAM.txt"
+      input_files(2) = trim(Modellverzeichnis) // "EREIGG.txt"
+      input_files(3) = trim(Modellverzeichnis) // "MODELLA.txt"
+      input_files(4) = trim(Modellverzeichnis) // "WETTER.txt"
+      input_files(5) = trim(Modellverzeichnis) // "MODELLG.3D.txt"
+      input_files(6) = trim(Modellverzeichnis) // "e_extnct.dat"
+      input_files(7) = trim(Modellverzeichnis) // "ganglinien_knoten.txt"
+      input_files(8) = trim(Modellverzeichnis) // "ausgabezeitpunkte.txt"
+      input_files(9) = trim(Modellverzeichnis) // "ausgabekonzentrationen.txt"
       
-      ! ausgabezeitpunkte.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
-      endif
+      print*, 
+      print "(a)", repeat("=", 80)
+      print "(a)", "input files"
+      print "(a)", repeat("=", 80)
       
-      ! ausgabekonzentrationen.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis), &
-                                                 'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
-      endif
+      input_complete = .true.
+      do i = 1, size(input_files)
+         inquire(file = input_files(i), exist = exists)
+         if (exists) then
+            print "(2a)", "* ", trim(input_files(i))
+         else
+            print "(a)", "Missing input file: " // trim(input_files(i))
+            input_complete = .false.
+         endif
+      enddo
+      
+      if (.not. input_complete) call qerror("Input files is incomplete.")
       
       ! alter.txt
-      inquire(file = trim(modellverzeichnis) // "alter.txt", exist = age_exists) 
-      if (age_exists) then
+      inquire(file = trim(modellverzeichnis) // "alter.txt", exist = exists) 
+      if (exists) then
          print "(a)", "alter.txt detected: Simulation will only calculate water age"
          nur_alter = .true.
       else
+         print "(a)", "File `alter.txt` is not available. Water age will not be calculated."
          nur_alter = .false.
       endif
       
       ! qusave
       call system('which qusave >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print "(a)", 'Script `qusave` is not available. Input data will not be archived.'
+         print "(a)", 'Script `qusave`  is not available. Input data will not be archived.'
       endif
       
       ! quzip
       call system('which quzip  >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print "(a)", 'Script `quzip`  is not available. Input data will not be archived.'
+         print "(a)", 'Script `quzip`   is not available. Input data will not be archived.'
       endif
       
-   end function modell_vollstaendig
+   end subroutine modell_vollstaendig
    
    !----+-----+----
    !> Reibungsbeiwert \f$ \lambda \f$ aus Wassertiefe/Sohlabstand und Rauheitshöhe gemäß dem Colebrook-White Gesetz berechnen (nach DVWK 220).\n
@@ -900,8 +797,6 @@ contains
          l = (1.0/kappa) * (log10(zet/ks)) + 8.5
          if (l > 0.0) lambda = 8/(l**2)
       endif
-      
-      return
    end function lambda
    
    
@@ -928,7 +823,6 @@ contains
       else ! trocken
          strickler = 1.0
       endif
-      return
    end function strickler
    
 end module modell

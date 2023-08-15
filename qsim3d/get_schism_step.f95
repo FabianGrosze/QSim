@@ -35,11 +35,13 @@ subroutine get_schism_step(nt)
    ,npa, nsa, nea, nvrt, ns_global,ne_global,np_global  &
    ,ielg,iplg,islg,isidenode, znl, zs
    use schism_msgp, only: myrank,nproc,parallel_abort
+   
    implicit none
    include "netcdf.inc"
+   
    integer :: nt, nst, nin ,iret, varid !, np_p
    integer :: i,j,k,l,m,n, istat
-   character (len = 400) :: dateiname, chari
+   character (len = 400) :: filename, chari
    integer :: start4(4), count4(4)
    integer :: start3(3), count3(3)
    integer :: start2(2), count2(2)
@@ -59,6 +61,9 @@ subroutine get_schism_step(nt)
    real , allocatable , dimension (:) :: var1_g
    real , allocatable , dimension (:) :: var2_g
    
+   character(len= 50), parameter      :: calling_routine = 'get_schism_step'
+   character(len=300)                 :: nc_error_prefix
+   
    if (meinrang == 0) then
       allocate(var_g(proz_anz*maxstack),var1_g(proz_anz*maxstack),var2_g(proz_anz*maxstack),stat = istat)
       if (istat /= 0) call qerror("allocate var_g( failed")
@@ -74,38 +79,40 @@ subroutine get_schism_step(nt)
    call MPI_Bcast(nst,1,MPI_INT,0,mpi_komm_welt,ierr)
    call MPI_Bcast(nin,1,MPI_INT,0,mpi_komm_welt,ierr)
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    if (nst /= nst_prev) then ! proceed to next stack
       if (meinrang == 0)print*,"get_schism_step proceeds to next stack ",nst,ncid
-      if (ncid /= -333) call check_err( nf_close(ncid) ) ! close previous
+      if (ncid /= -333) then
+         nc_error_prefix = ''
+         write(nc_error_prefix, '(a," - Rank ",i)') trim(calling_routine), meinrang
+         call check_err( trim(nc_error_prefix), nf_close(ncid) ) ! close previous
+      endif
       !! open nc files
       write(chari,*),nst
-      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
-      iret = nf_open(dateiname, NF_NOWRITE, ncid)
-      if (iret /= 0) then ! open error
-         call check_err( iret )
-         write(fehler,*)" get_schism_step: nf_open failed, iret = ",iret, " rank = ",meinrang
-         call qerror(fehler)
-         !else ! no open error
-         !   print*,meinrang,"get_schism_step opens: ", trim(adjustl(dateiname)), ncid
-      endif ! open error
+      write(filename,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
+      nc_error_prefix = trim(calling_routine)//" - "//trim(filename)
+      call check_err( trim(nc_error_prefix), nf_open(filename, NF_NOWRITE, ncid) )
       nst_prev = nst
    endif !next stack
    call mpi_barrier (mpi_komm_welt, ierr)!#!
+   
    !! get Dimensions
-   call check_err( nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
+   nc_error_prefix = trim(calling_routine)//" - "//trim(filename)
+   call check_err( trim(nc_error_prefix), nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
    allocate (dlength(ndims),dname(ndims), stat = istat)
    allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )
    do j = 1,ndims
-      iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
-      call check_err(iret)
-      if (iret /= 0) print*,meinrang,j," get_schism_step nf90_Inquire_Dimension failed iret = ",iret
+      call check_err( trim(nc_error_prefix), nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j)) )
    enddo ! all dimensions
    call mpi_barrier (mpi_komm_welt, ierr)!#!
+   
    !!!!! elev -> p
-   call check_err( nf_inq_varid(ncid,"elev", varid) )
-   call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - elev")') trim(calling_routine), meinrang
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,"elev", varid) )
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
    call mpi_barrier (mpi_komm_welt, ierr)!#!
-   if (dlength(dimids(1)) > maxstack)call qerror("elev:dlength(dimids(1)) > maxstack")
+   if (dlength(dimids(1)) > maxstack) call qerror("elev:dlength(dimids(1)) > maxstack")
    !! initialize
    do j = 1,maxstack
       var_p(j) = 666.666
@@ -119,9 +126,7 @@ subroutine get_schism_step(nt)
    !! get data
    start2 = (/ 1, nin /)
    count2 = (/ npa, 1 /) ! nodenumber first dimension
-   iret = nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 )
-   call check_err(iret)
-   if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var elev failed iret = ",iret
+   call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start2, count2 ))
    eta2(1:npa) = var_p(1:npa)
    !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
    !print*,meinrang," get_schism_step eta2(3)=",eta2(3),iplg(3)
@@ -144,8 +149,8 @@ subroutine get_schism_step(nt)
             p(iplg_sc(j,k)) = var_g((j-1)*maxstack+k)
          enddo
       enddo
-      minwert = 99999.9
-      maxwert = -99999.9
+      minwert =  99999.9
+      maxwert = -minwert
       do j = 1,knotenanzahl2D
          if (p(j) > maxwert)maxwert = p(j)
          if (p(j) < minwert)minwert = p(j)
@@ -154,17 +159,14 @@ subroutine get_schism_step(nt)
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
    !print*,meinrang," get_schism_step elev recombined"
+   
    !!!!! dahv -> u,dir
-   iret = nf_inq_varid(ncid,"dahv", varid)
-   if (iret /= 0) then
-      call check_err( iret )
-      write(fehler,*)" get_schism_step: nf_inq_varid(ncid, >  > dahv <  < failed, iret = ",iret, " rank = ",meinrang
-      call qerror(fehler)
-   endif
-   iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-   call check_err( iret )
-   if (iret /= 0)call qerror("get_schism_step nf90_inquire_variable dahv failed")
-   if (dlength(dimids(2)) > maxstack)call qerror("dahv:dlength(dimids(2)) > maxstack")
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - dahv")') trim(calling_routine), meinrang
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid, "dahv", varid) )
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+   if (dlength(dimids(2)) > maxstack) call qerror("dahv:dlength(dimids(2)) > maxstack")
+   
    !! initialize
    do j = 1,maxstack
       var_p(j) = 666.666
@@ -175,13 +177,13 @@ subroutine get_schism_step(nt)
       enddo ! all j
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    !! get data vel-x
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - dahv1")') trim(calling_routine), meinrang
    start3 = (/1, 1, nin /)
    count3 = (/1, npa, 1 /) ! nodenumber second dimension
-   iret = 0
-   iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
-   if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dahv1 failed iret = ",iret
-   call check_err(iret)
+   call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ))
    !print*,meinrang," dahv_x (topnode side 7",isidenode(1,7),") =",var_p(isidenode(1,7))
    !print*,meinrang," dahv_x (bottomnode side 7",isidenode(2,7),") =",var_p(isidenode(2,7))
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -201,12 +203,13 @@ subroutine get_schism_step(nt)
       enddo
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    !! get data vel-y
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - dahv2")') trim(calling_routine), meinrang
    start3 = (/2, 1, nin /)
    count3 = (/1, npa, 1 /) ! nodenumber second dimension
-   iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
-   if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var dahv2 failed iret = ",iret
-   call check_err(iret)
+   call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ))
    !print*,meinrang," dahv_y (topnode side 7",isidenode(1,7),") =",var_p(isidenode(1,7))
    !print*,meinrang," dahv_y (bottomnode side 7",isidenode(2,7),") =",var_p(isidenode(2,7))
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -235,8 +238,8 @@ subroutine get_schism_step(nt)
          u(j) = vel_norm
          dir(j) = vel_dir
       enddo
-      minwert = 99999.9
-      maxwert = -99999.9
+      minwert =  99999.9
+      maxwert = -minwert
       do j = 1,knotenanzahl2D
          if (u(j) > maxwert)maxwert = u(j)
          if (u(j) < minwert)minwert = u(j)
@@ -247,34 +250,28 @@ subroutine get_schism_step(nt)
    
    !!!!! hvel_side -> su2,sv2
    ! if(iof_hydro(26)==1) call writeout_nc(id_out_var(30),'hvel_side',8,nvrt,nsa,su2,sv2)
-   iret = nf_inq_varid(ncid,"hvel_side", varid)
-   if (iret /= 0) then
-      call check_err( iret )
-      write(fehler,*)" get_schism_step: nf_inq_varid(ncid, >  > hvel_side <  < failed, iret = ",iret, " rank = ",meinrang
-      call qerror(fehler)
-   endif
-   iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-   call check_err( iret )
-   if (iret /= 0)call qerror("get_schism_step nf90_inquire_variable hvel_side failed")
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - hvel_side")') trim(calling_routine), meinrang
+   call check_err(trim(nc_error_prefix), nf_inq_varid(ncid,"hvel_side", varid))
+   call check_err(trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts))
+   
    !! initialize
    var_p(:) = 666.666
-   if (meinrang == 0) then
-      var_g(:) = 777.777
-   endif ! proc. 0 only
+   if (meinrang == 0) var_g(:) = 777.777
    call mpi_barrier (mpi_komm_welt, ierr)
+   
+   nc_error_prefix = ''
    do i = 1,nvrt
       ! float hvel_side(time, nSCHISM_hgrid_edge, nSCHISM_vgrid_layers, two) ;
       start4 = (/1, i, 1  , nin /)
       count4 = (/1, 1, nsa, 1 /) ! side/edgenumber second dimension ??
-      iret = nf90_get_var(ncid, varid, var1_p(1:nsa), start4, count4 )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var hvel_side failed iret = ",iret
-      call check_err(iret)
+      write(nc_error_prefix, '(a," - Rank ",i," - hvel_side1")') trim(calling_routine), meinrang
+      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var1_p(1:nsa), start4, count4 ))
       su2(i,1:nsa) = var1_p(1:nsa)
       start4 = (/2, i, 1  , nin /)
       count4 = (/1, 1, nsa, 1 /) ! side/edgenumber second dimension ??
-      iret = nf90_get_var(ncid, varid, var2_p(1:nsa), start4, count4 )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var hvel_side failed iret = ",iret
-      call check_err(iret)
+      write(nc_error_prefix, '(a," - Rank ",i," - hvel_side2")') trim(calling_routine), meinrang
+      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var2_p(1:nsa), start4, count4 ))
       sv2(i,1:nsa) = var2_p(1:nsa)
       call mpi_barrier (mpi_komm_welt, ierr)
       call MPI_Gather(var1_p, maxstack, MPI_FLOAT, var1_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
@@ -307,12 +304,15 @@ subroutine get_schism_step(nt)
    if (meinrang == 0) var_g(:) = 777.777
    var_p(:) = 0.0
    call mpi_barrier (mpi_komm_welt, ierr)
-   call check_err( nf_inq_varid(ncid,"zs", varid) )
-   call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+   
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - zs")') trim(calling_routine), meinrang
+   call check_err(trim(nc_error_prefix), nf_inq_varid(ncid,"zs", varid))
+   call check_err(trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts))
    do i = 1,nvrt
       start3 = (/i, 1, nin /)
       count3 = (/1, nsa, 1 /) ! nodenumber second dimension
-      call check_err( nf90_get_var(ncid, varid, var_p(1:nsa), start3, count3 ) )
+      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:nsa), start3, count3 ))
       zs(i,1:nsa) = var_p(1:nsa)
    enddo ! all i levels
    !print*,meinrang," zs(7)=",zs(1,7),zs(2,7)
@@ -322,12 +322,15 @@ subroutine get_schism_step(nt)
    if (meinrang == 0) var_g(:) = 777.777
    var_p(:) = 0.0
    call mpi_barrier (mpi_komm_welt, ierr)
-   call check_err( nf_inq_varid(ncid,"znl", varid) )
-   call check_err( nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+   
+   nc_error_prefix = ''
+   write(nc_error_prefix, '(a," - Rank ",i," - znl")') trim(calling_routine), meinrang
+   call check_err( trim(nc_error_prefix), nf_inq_varid(ncid,"znl", varid) )
+   call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
    do i = 1,nvrt
       start3 = (/i, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
-      call check_err( nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ) )
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ) )
       znl(i,1:npa) = var_p(1:npa)
       !#############
    enddo ! all i levels
@@ -360,10 +363,10 @@ subroutine get_schism_step(nt)
       enddo ! all j
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
-   iret = nf_inq_varid(ncid,"temp", varid)
-   if (iret /= 0) then !no temp?
+   
+   iret = nf_inq_varid(ncid, "temp", varid)
+   if (iret /= 0) then !no temp
       if (meinrang == 0) then ! message only once
-         call check_err( iret )
          print*,"get_schism_step: nf_inq_varid(ncid, >  > temp <  < failed, iret = ",iret, " rank = ",meinrang
          print*,"initialize temp to zero "
       endif ! message only once
@@ -371,10 +374,10 @@ subroutine get_schism_step(nt)
          var_p(j) = 0.0
       enddo ! all j
    else ! with temp
-      iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-      call check_err( iret )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_inquire_variable temp failed iret = ",iret
-      if (dlength(dimids(2)) > maxstack)call qerror("temp:dlength(dimids(2)) > maxstack")
+      nc_error_prefix = ''
+      write(nc_error_prefix, '(a," - Rank ",i," - temp")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      if (dlength(dimids(2)) > maxstack) call qerror("temp:dlength(dimids(2)) > maxstack")
       !! initialize
       do j = 1,maxstack
          var_p(j) = 666.666
@@ -382,14 +385,10 @@ subroutine get_schism_step(nt)
       !! get data vel-x
       start3 = (/1, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
-      iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
-      call check_err(iret)
-      if (iret /= 0) then
-         write(fehler,*)meinrang," get_schism_step nf90_get_var temp failed iret = ",iret
-         call qerror(fehler)
-      endif
-   endif ! with salt
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ))
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    ! gather var_p into var_g
    call MPI_Gather(var_p, maxstack, MPI_FLOAT, var_g, maxstack, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
@@ -416,6 +415,7 @@ subroutine get_schism_step(nt)
       !!### if(maxwert.gt. 90.0)call qerror("This is no steam simulation")
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    !!!!! salt -> planktonic_variable_name(72)
    if (meinrang == 0) then
       do j = 1,proz_anz*maxstack
@@ -423,21 +423,21 @@ subroutine get_schism_step(nt)
       enddo ! all j
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
-   iret = nf_inq_varid(ncid,"salt", varid)
-   if (iret /= 0) then ! salt?
+   
+   iret = nf_inq_varid(ncid, "salt", varid)
+   if (iret /= 0) then ! no salt
       if (meinrang == 0) then ! message only once
-         call check_err( iret )
          print*,"get_schism_step: nf_inq_varid(ncid, >  > salt <  < failed, iret = ",iret, " rank = ",meinrang
          print*,"initialize salt to zero "
       endif ! message only once
       do j = 1,maxstack
          var_p(j) = 0.0
       enddo ! all j
-   else ! no salt
-      iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-      call check_err( iret )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_inquire_variable salt failed iret = ",iret
-      if (dlength(dimids(2)) > maxstack)call qerror("salt:dlength(dimids(2)) > maxstack")
+   else ! with salt
+      nc_error_prefix = ''
+      write(nc_error_prefix, '(a," - Rank ",i," - salt")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
+      if (dlength(dimids(2)) > maxstack) call qerror("salt:dlength(dimids(2)) > maxstack")
       !! initialize
       do j = 1,maxstack
          var_p(j) = 666.666
@@ -445,12 +445,7 @@ subroutine get_schism_step(nt)
       !! get data vel-x
       start3 = (/1, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
-      iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
-      call check_err(iret)
-      if (iret /= 0) then
-         write(fehler,*)meinrang," get_schism_step nf90_get_var salt failed iret = ",iret
-         call qerror(fehler)
-      endif
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ))
    endif ! with salt
    call mpi_barrier (mpi_komm_welt, ierr)
    ! gather var_p into var_g
@@ -476,20 +471,20 @@ subroutine get_schism_step(nt)
       enddo ! all j
    endif ! proc. 0 only
    call mpi_barrier (mpi_komm_welt, ierr)
+   
    iret = nf_inq_varid(ncid,"AGE_1", varid)
-   if (iret /= 0) then ! with age1 ?
+   if (iret /= 0) then ! no AGE_1
       if (meinrang == 0) then ! message only once
-         call check_err( iret )
          print*,"get_schism_step: nf_inq_varid(ncid, >  > AGE_1 <  < failed, iret = ",iret, " rank = ",meinrang
          print*,"initialize age_1 to zero "
       endif ! message only once
       do j = 1,maxstack
          var_p(j) = 0.0
       enddo ! all j
-   else ! no age
-      iret = nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts)
-      call check_err( iret )
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_inquire_variable AGE_1 failed iret = ",iret
+   else ! with AGE_1
+      nc_error_prefix = ''
+      write(nc_error_prefix, '(a," - Rank ",i," - AGE_1")') trim(calling_routine), meinrang
+      call check_err( trim(nc_error_prefix), nf90_inquire_variable(ncid,varid,vname(varid),vxtype(varid),vndims(varid),dimids, nAtts) )
       if (dlength(dimids(2)) > maxstack)call qerror("AGE_1:dlength(dimids(2)) > maxstack")
       !! initialize
       do j = 1,maxstack
@@ -498,9 +493,7 @@ subroutine get_schism_step(nt)
       !! get data vel-x
       start3 = (/1, 1, nin /)
       count3 = (/1, npa, 1 /) ! nodenumber second dimension
-      iret = nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 )
-      call check_err(iret)
-      if (iret /= 0) print*,meinrang," get_schism_step nf90_get_var AGE_1 failed iret = ",iret
+      call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, var_p(1:npa), start3, count3 ))
    endif ! with age
    call mpi_barrier (mpi_komm_welt, ierr)
    ! gather var_p into var_g

@@ -80,5 +80,4 @@ subroutine suspended_matter_wrapper_3d(i)
                control    = control,                                            &
                jjj        = iglob)
 
-   return
 end subroutine suspended_matter_wrapper_3d

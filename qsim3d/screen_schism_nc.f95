@@ -47,7 +47,7 @@ end subroutine screen_schism_nc()
 !   implicit none
 !   
 !   integer :: i,j,k,l,m,n, istat
-!   character (len = 400) :: dateiname,systemaufruf, chari
+!   character (len = 400) :: filename,systemaufruf, chari
 !   integer :: iret, ndims, nVars, nGlobalAtts, unlimdimid, nAtts
 !   integer , allocatable , dimension (:) :: dlength
 !   character(256) , allocatable , dimension (:) :: dname
@@ -73,8 +73,8 @@ end subroutine screen_schism_nc()
 !   nVars = 0
 !   do while (weiter)
 !      write(chari,*),i
-!      write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-!      systemaufruf = 'stat '//trim(adjustl(dateiname))//' >/dev/null 2>/dev/null'
+!      write(filename,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+!      systemaufruf = 'stat '//trim(adjustl(filename))//' >/dev/null 2>/dev/null'
 !      call system(trim(systemaufruf),istat)
 !      if (istat == 0) then
 !         n_stacks = i
@@ -92,12 +92,12 @@ end subroutine screen_schism_nc()
 !   do i = 1,n_stacks
 !      !do i=1,10
 !      write(chari,*),i
-!      write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-!      print*,"screen_schism_nc: nf_open(dateiname,NF_NOWRITE, ncid,meinrang ",adjustl(trim(dateiname)),NF_NOWRITE, ncid,meinrang
-!      iret = nf_open(dateiname, NF_NOWRITE, ncid)
+!      write(filename,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+!      print*,"screen_schism_nc: nf_open(filename,NF_NOWRITE, ncid,meinrang ",adjustl(trim(filename)),NF_NOWRITE, ncid,meinrang
+!      iret = nf_open(filename, NF_NOWRITE, ncid)
 !      if (iret /= 0) then
 !         call check_err(iret)
-!         write(fehler,*)meinrang,i,' screen_schism_nc: nf_open failed ',dateiname,iret
+!         write(fehler,*)meinrang,i,' screen_schism_nc: nf_open failed ',filename,iret
 !         call qerror(fehler)
 !      else
 !         print*,"screen_schism_nc: nf_open(ncid = ",ncid
@@ -201,8 +201,8 @@ end subroutine screen_schism_nc()
 !      nnt = 0
 !      do i = 1,n_stacks ! reread all stacks
 !         write(chari,*),i
-!         write(dateiname,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
-!         iret = nf_open(dateiname, NF_NOWRITE, ncid)
+!         write(filename,'(2A,I4.4,3A)')trim(modellverzeichnis),'outputs_schism/schout_',meinrang,'_',trim(adjustl(chari)),'.nc' !schout_0001_1.nc
+!         iret = nf_open(filename, NF_NOWRITE, ncid)
 !         if (iret /= 0) print*,meinrang,i,' screen_schism_nc reread 0: nf_open failed   iret = ',iret
 !         do j = 1,ndims
 !            iret = nf90_Inquire_Dimension(ncid, j, dname(j), dlength(j))
@@ -222,7 +222,7 @@ end subroutine screen_schism_nc()
 !            transinfo_zuord(nnt+j) = nnt+j
 !            transinfo_stack(nnt+j) = i
 !            transinfo_instack(nnt+j) = j
-!            write(transinfo_datei(nnt+j),'(A)')trim(adjustl(dateiname))
+!            write(transinfo_datei(nnt+j),'(A)')trim(adjustl(filename))
 !         enddo ! all j timesteps of this stack i
 !         nnt = nnt+n
 !         deallocate(zeiten)

@@ -26,36 +26,40 @@
 ! --------------------------------------------------------------------------- !
 
 !> Ausgabe von Fehlermeldungen
-subroutine qerror(fehlermeldung)
+subroutine qerror(message)
    use modell
    implicit none
-   character fehlermeldung*(*)
-   character (len = longname) :: systemaufruf
-   integer errcode,sysa
-   print*,'qsim3d-error: ',trim(fehlermeldung)
-   write(*,*)meinrang,' exiting '
-   write(systemaufruf,'(3A)',iostat = errcode)'rm -rf ',trim(modellverzeichnis),'fortschritt'
-   if (errcode /= 0) then
-      !print*,systemaufruf
-      print*,'qerror system call rm -rf fortschritt failed'
+   
+   character, intent(in) :: message*(*)
+   
+   character(longname)   :: systemaufruf, filename
+   integer               :: errcode, sysa, u_prog, u_abort, open_error, close_error
+   
+   ! --- write to stdout ---
+   print* 
+   print "(a,i0,a)", "QSim3D Error on process ", meinrang, ":"
+   print "(2x,a)",    trim(message)
+   
+   ! --- delete file `fortschritt` ---
+   filename = trim(modellverzeichnis) // "fortschritt"
+   open(newunit = u_prog, file = filename, iostat = open_error)
+   close(u_prog, status = "delete", iostat = close_error)
+   if (open_error /= 0 .or. close_error /= 0) then
+      print*,'qerror could not delete file `fortschritt`'
       call MPI_Abort(mpi_komm_welt, errcode, ierr)
-   endif !
-   call system(systemaufruf,sysa)
-   if (sysa /= 0) then
-      print*,'deleting file fortschritt when error exit failed'
-   endif !
-   write(systemaufruf,'(5A)',iostat = errcode)'echo "',trim(fehlermeldung),'" > ',trim(modellverzeichnis),'abbruch'
-   if (errcode /= 0) then
-      print*,'qerror system call echo abbruch failed'
-      call MPI_Abort(mpi_komm_welt, errcode, ierr)
-   endif !
-   call system(systemaufruf,sysa)
-   if (sysa /= 0) then
-      print*,'writing error message into file abbruch failed'
-   endif !
-   write(errcode,*)' ### controlled error exit ### QSim3D ### '
+   endif 
+   
+   ! --- write to file `abbruch` ---
+   filename = trim(modellverzeichnis) // "abbruch"
+   open(newunit = u_abort, file = filename)
+   write(u_abort, "(a)") trim(message)
+   close(u_abort)
+   
+   ! --- write to stderr ---
+   write(error_unit, "(2a)") "QSim3D Error: " , trim(message)
+  
    call MPI_Abort(mpi_komm_welt, errcode, ierr)
-   stop
+   stop "QSim terminated with an error!"
 end subroutine qerror
 
 !> Update Model Progress
@@ -99,7 +103,7 @@ subroutine fortschritt(n, f)
             
             ! check mnodel directory for completeness
             call modeverz()
-            if (.not. modell_vollstaendig()) call qerror("Model directory does not contain all input files.")
+            call modell_vollstaendig()
             
             ! --- file `start` ---
             datetime_execution_start = datetime()
@@ -147,7 +151,8 @@ subroutine fortschritt(n, f)
             datetime_execution_end = datetime()
             datetime_execution_end = datetime_execution_end%now()
             
-            runtime = datetime_execution_end%seconds_since_epoch() - datetime_execution_start%seconds_since_epoch()
+            runtime = datetime_execution_end   % seconds_since_epoch() &
+                    - datetime_execution_start % seconds_since_epoch()
             runtime_hours = runtime / 3600
             runtime = modulo(runtime, 3600)
             runtime_minutes = runtime / 60
@@ -211,7 +216,7 @@ subroutine fortschritt(n, f)
             
             call version_string(qsim_version)
             
-            ! print summary to console
+            ! --- print summary to console ---
             print*
             print "(a)", repeat("=", 80)
             print "(a)", "End of Simulation"
@@ -219,7 +224,7 @@ subroutine fortschritt(n, f)
             call versionsdatum()
             
             print*
-            print "(a,a)",       "QSim3D version:  ", qsim_version
+            print "(a,a)",       "QSim version:    ", qsim_version
             print "(a,a)",       "execution start: ", datetime_execution_start % date_string()
             print "(a,a)",       "execution end:   ", datetime_execution_end % date_string()
             print "(a,*(i0,a))", "runtime:         ", runtime_hours, "h ", runtime_minutes, "min ", runtime_seconds, "sec"
@@ -249,8 +254,6 @@ subroutine fortschritt(n, f)
       print "(3x,3a,i0,a)", "from   ",   datetime_timestep_start%date_string(), " [", datetime_timestep_start%seconds_since_epoch(), "]"
       print "(3x,3a,i0,a)", "to     ",   datetime_timestep_end  %date_string(), " [", datetime_timestep_end  %seconds_since_epoch(), "]"
       print "(a)", repeat("*", 80)
-      
-      
    endif
    
    call mpi_barrier (mpi_komm_welt, ierr)

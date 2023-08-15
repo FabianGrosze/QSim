@@ -32,18 +32,13 @@ program QSim3D
    use netcdf
    use modell
    use QSimDatenfelder
-   use mod_suspendedMatter, only: step_suspendedMatter
-   use mod_salinity, only: step_salinity
-   !use netcdf
-   !use mpi
+   use module_suspended_matter, only: step_suspended_matter
+   use module_salinity        , only: step_salinity
    
    implicit none
-   
    include 'netcdf.inc'
    
-   integer :: i,ni,j,k,n, system_error
-   character(300) systemaufruf
-   logical :: raus, jetzt_ausgeben
+   logical :: jetzt_ausgeben
    
    !----initialize parallel computing:
    call parallel_ini()
@@ -59,7 +54,6 @@ program QSim3D
    !! mirror inital values
    call ausgeben()
    call ganglinien_zeitschritt(1)
-   
    
    !==== Start of time-loop =================================================================
    do izeit = 1,zeitschrittanzahl !------------------------------------------------- proceed in time
@@ -79,18 +73,24 @@ program QSim3D
          call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
       else
-         call step_suspendedMatter
+         call step_suspended_matter
       endif
-      !------------------------------------------------- all metabolic processes
-      call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      !------------------------------------------------- transport all concentrations (advection-diffusion) ...
-      call stofftransport()  !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< if (hydro_trieb.ne. 3) für SCHISM erstmal nicht #########
-      !------------------------------------------------- finish time step
+      ! all metabolic processes
+      call stoffumsatz() 
+      
+      ! transport all concentrations (advection-diffusion) ...
+      call stofftransport() 
+      
+      ! finish time step
       call zeitschritt_halb(.false.)
       call mpi_barrier (mpi_komm_welt, ierr)
-      !------------------------------------------------- output ...
-      if (jetzt_ausgeben()) call ausgeben() !! output concentration fields if required
-      call ganglinien_zeitschritt(izeit+1) !! store values for time series
+      
+      ! output 
+      ! output concentration fields if required
+      if (jetzt_ausgeben()) call ausgeben() 
+      
+      ! store values for time series
+      call ganglinien_zeitschritt(izeit+1) 
       call mpi_barrier (mpi_komm_welt, ierr)
    enddo
    !==== End of time-loop   =========
@@ -104,15 +104,14 @@ program QSim3D
    !-------------------------------------------------
    call ganglinien_schliessen() !! write and close time series files
    call ausgeben() !! output at the end
-   if (hydro_trieb == 3)call check_err( nf_close(ncid) ) ! close SCHISM netCDF files
+   if (hydro_trieb == 3) call check_err( 'QSim3D', nf_close(ncid) ) ! close SCHISM netCDF files
    call mpi_barrier (mpi_komm_welt, ierr)
    call fortschritt(-1,0.0) !! write closing message, delete file "fortschritt"
    call mpi_finalize(ierr)
    if (ierr /= 0) then
       print*,'mpi_finalize(ierr) /= 0'
       call exit(7)
-      !else
-      !   print*,'mpi_finalized'
    endif
    call exit(0)
+
 end program QSim3D

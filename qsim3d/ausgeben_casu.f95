@@ -33,13 +33,13 @@
 subroutine ausgeben_casu()
    use modell
    implicit none
-   character(len = longname) :: dateiname, systemaufruf, zahl
-   integer :: i,j,n, open_error, ion, system_error, string_read_error, alloc_status
-   integer :: sysa, errcode
-   real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, summwicht
-   real :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al
-   !bali=.false. !! z. Z. Keine bahnlinien_ausgabe
-   !bali=.true.  jetzt in jetzt_ausgeben !! bahnlinien_ausgabe bitte
+   
+   character(longname) :: filename, systemaufruf, zahl
+   integer             :: i,j,n, open_error, ion, system_error, string_read_error, alloc_status
+   integer             :: sysa, errcode
+   real                :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, summwicht
+   real                :: ubetr, infl, aus, nx, ny,nz, relnumdiff, tr,al
+   
    if (meinrang /= 0)call qerror('ausgeben_casu sollte eigentlich nur von Prozessor 0 aufgerufen werden')
    if (knotenanzahl2D /= number_plankt_point) then
       write(fehler,*)'knotenanzahl2D /= number_plankt_point ',knotenanzahl2D, number_plankt_point
@@ -53,29 +53,25 @@ subroutine ausgeben_casu()
       write(fehler,*)'knotenanzahl2D /= number_benthic_points ... full 3D output not yet implemented'
       call qerror(fehler)
    endif
+   
    write(zahl,*)rechenzeit
    zahl = adjustl(zahl)
+   
    !-------------------------------------
    if (bali) then !! kontrollausgabe der Bahnlinien
       print*,'Ausgabe bahnlinien/stromstriche'
-      write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'bahnlinien_',trim(zahl),'.vtk'
-      if (errcode /= 0)call qerror('ausgeben_casu writing filename bahnlinien_ failed')
-      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-      if (errcode /= 0)call qerror('ausgeben_casu writing system call rm -rf dateiname bahnlinien_ failed')
-      call system(systemaufruf)
-      ion = 104
-      open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
-      if (open_error /= 0) then
-         write(fehler,*)'open_error bahnlinien.vtk'
-         call qerror(fehler)
-      endif ! open_error.ne.0
-      !write(ion,*)'huhu ausgabe'
+      filename = trim(modellverzeichnis) // 'bahnlinien_' // trim(zahl) // '.vtk'
+      write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(filename)
+      
+      open(newunit = ion , file = filename, status = 'replace', action = 'write', iostat = open_error)
+      if (open_error /= 0) call qerror("Could not open " // trim(filename))
+      
       write(ion,'(A)')'# vtk DataFile Version 3.0'
       write(ion,'(A)')'Simulation QSim3D casu'
       write(ion,'(A)')'ASCII'
       !write(ion,'(A)')'DATASET POLYDATA'
       write(ion,'(A)')'DATASET UNSTRUCTURED_GRID'
-      !
+      
       write(ion,'(A)')' '
       write(ion,'(A,2x,I12,2x,A)')'POINTS ',knotenanzahl2D*2, ' float'
       do n = 1,knotenanzahl2D
@@ -95,47 +91,36 @@ subroutine ausgeben_casu()
       do n = 1,knotenanzahl2D
          write(ion,'(A)')'3'
       enddo ! alle Knoten
-      !print*,"-------- Bahnlinien gemacht, jetzt beginnen Randnormalvektoren ---------------",ianz_rb
+      
       !write(ion,'(A)')' '
       !write(ion,'(A,2x,I12)')'POINT_DATA ',knotenanzahl2D*2
-      222  continue
-      close (ion)
+      
+      close(ion)
    endif ! bali
+   
+   
    !-------------------------------------
-   !print*,"Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte Ausgabe Knotenpunkte1234567890123"
    print*,"Ausgabe Knotenpunkte"
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ausgabe_',trim(zahl),'.vtk'
-   if (errcode /= 0)call qerror('ausgeben_casu writing filename ausgabe_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_casu writing system call rm -rf dateiname ausgabe_ failed')
-   call system(systemaufruf)
-   ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = open_error )
-   if (open_error /= 0) then
-      write(fehler,*)'open_error ausgabe.vtk'
-      call qerror(fehler)
-   endif ! open_error.ne.0
-   if (knotenanzahl2D /= number_benthic_points) then
-      write(fehler,*)'3D noch nicht vorgesehen hier'
-      call qerror(fehler)
-   endif !
-   if (number_plankt_point /= knotenanzahl2D) then
-      write(fehler,*)'number_plankt_point und knotenanzahl2D passen nicht zusammen ???'
-      call qerror(fehler)
-   endif !
+   filename = trim(modellverzeichnis) // 'ausgabe_' // trim(zahl) // '.vtk'
+   open(newunit = ion , file = filename, status = 'unknown', action = 'write ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(filename))
+   
+   if (knotenanzahl2D /= number_benthic_points) call qerror('3D noch nicht vorgesehen hier')
+   if (number_plankt_point /= knotenanzahl2D)   call qerror('number_plankt_point und knotenanzahl2D passen nicht zusammen')
+   
    call mesh_output(ion)
    write(ion,'(A)')'SCALARS WSP float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
-      !write(ion,'(f27.6)') p(n)
       write(ion,'(f27.6)') rb_hydraul(3+(n-1)*number_rb_hydraul)
-   enddo ! alle Knoten
+   enddo
+   
    write(ion,'(A)')'SCALARS tief float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
-      !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') rb_hydraul(2+(n-1)*number_rb_hydraul)
-   enddo ! alle Knoten
+   enddo 
+   
    write(ion,'(A)')'SCALARS summwicht float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
@@ -151,15 +136,15 @@ subroutine ausgeben_casu()
       !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') real(n/part)
    enddo ! alle Knoten
-   ! Birte Anfang 17.02.2016
+   
    write(ion,'(A)')'SCALARS flaeche float 1'
    write(ion,'(A)')'LOOKUP_TABLE default'
    do n = 1,knotenanzahl2D
       !write(ion,'(f27.6)') tief(n)
       write(ion,'(f27.6)') knoten_flaeche(n)
    enddo ! alle Knoten
-   ! Birte Ende
    write(ion,'(A)')'VECTORS u float'
+   
    !write(ion,'(A)')'LOOKUP_TABLE default' ! nicht bei Vektoren ??
    do n = 1,knotenanzahl2D
       nx = u(n)*cos(dir(n))
@@ -366,5 +351,4 @@ subroutine ausgeben_casu()
    !    print*,'Aufruf von visu fehlgeschalgen'
    !    ! call qerror(fehler) 7
    ! endif ! systemaufruf fehlgeschlagen
-   return
 end subroutine ausgeben_casu

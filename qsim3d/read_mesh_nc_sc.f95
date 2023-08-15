@@ -24,14 +24,13 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-!> SUBROUTINE read_mesh_nc_sc()
-!!    get SCHISM mesh and partitioning \n
-!!    check for necessary variables  \n
-!!    elev=iof_hydro(1) in param.nml \n
-!!    (dahv)=iof_hydro(16) in param.nml \n
-!!    hvel_side=iof_hydro(26) in param.nml \n
-!! \n\n
-!! aus Datei read_mesh_nc_sc.f95; zurück zu \ref lnk_transport_schism
+!> read_mesh_nc_sc()
+!! 
+!! get SCHISM mesh and partitioning
+!! check for necessary variables 
+!! elev=iof_hydro(1) in param.nml
+!! (dahv)=iof_hydro(16) in param.nml 
+!! hvel_side=iof_hydro(26) in param.nml 
 subroutine read_mesh_nc_sc() !meinrang.eq.0
    use netcdf
    use modell
@@ -46,7 +45,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    integer                           :: IPRE,IBC,IBTP,NTRACER_GEN,NTRACER_AGE,SED_CLASS,ECO_CLASS,IHFSKIP,MSC2,MDC2
    integer                           :: i,j,k,n,m,mm,ne,np,ns, neta_global,nr
    integer                           :: lfdb, istat
-   character (len = longname)        :: dateiname,systemaufruf
+   character (len = longname)        :: filename,systemaufruf
    integer                           :: start_year,start_month,start_day
    real*8                            :: start_hour,utc_start !, dt
    character(len = 72)               :: fgb,fgb2,fdb  ! Processor specific global output file name
@@ -66,8 +65,8 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       print*,'read_mesh_nc_sc starts'
       
       ! read param.out.nml
-      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
-      open(15,file = dateiname,delim = 'apostrophe',status = 'old')
+      write(filename,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/param.out.nml"
+      open(15,file = filename,delim = 'apostrophe',status = 'old')
       read(15,nml = CORE)
       deltat = int(dt)
       print*,"read_mesh_nc_sc: param.out.nml DT,RNDAY = ",DT,deltat,RNDAY
@@ -108,14 +107,14 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       print*,'y-koordinate max+min', ymax, ymin
       print*,'Zone max+min', nmax, nmin
       !Read local_to_global_0000 for global info
-      write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
-      open(10, file = dateiname, status = 'old', iostat = istat)
+      write(filename,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
+      open(10, file = filename, status = 'old', iostat = istat)
       if (istat /= 0) then
          write(fehler,*)'read_mesh_nc_sc local_to_global_0000 failed, rank = ',meinrang
          call qerror(trim(fehler))
       endif
       read(10,*)ns_global,ne_global,np_global,nvrt,nproc !,ntracers
-      print*,'read_mesh_nc_sc: local_to_global_0000 ',trim(adjustl(dateiname)), &
+      print*,'read_mesh_nc_sc: local_to_global_0000 ',trim(adjustl(filename)), &
              ' points, elements, sides levels, processes'                       &
             ,np_global,ne_global,ns_global,nvrt,nproc
       rewind(10)
@@ -139,10 +138,10 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       !if(istat/=0) call qerror('Allocation error np')
       !do i=0,proz_anz-1
       !   ! Read in local-global mappings from all ranks
-      !   lfdb=len_trim(dateiname)
+      !   lfdb=len_trim(filename)
       !   !Find max. for dimensioning
-      !   write(dateiname(lfdb-3:lfdb),'(i4.4)') i
-      !   open(10,file=dateiname,status='old')
+      !   write(filename(lfdb-3:lfdb),'(i4.4)') i
+      !   open(10,file=filename,status='old')
       !   if(.not.zeile(10))call qerror('get_local_to_global erste zeile')
       !   if(.not.zeile(10))call qerror('get_local_to_global zweite zeile')
       !   read(10,*)ne(i)
@@ -177,11 +176,11 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    !!!! read first part: local_to_global_meinrang !!!!
    !print*,meinrang,'-',adjustl(trim(modellverzeichnis)),'outputs_schism','/','local_to_global_0000'
    if (longname < len(adjustl(trim(modellverzeichnis)))+36)call qerror('read_mesh_nc_sc: longname too short')
-   write(dateiname,'(4A)')adjustl(trim(modellverzeichnis)),'outputs_schism','/','local_to_global_0000'
-   lfdb = len_trim(dateiname)
-   write(dateiname(lfdb-3:lfdb),'(i4.4)') meinrang
-   open(10+meinrang, file = trim(dateiname), status = 'old', iostat = istat)
-   !print*,"read_mesh_nc_sc read:  dateiname ",trim(dateiname)
+   write(filename,'(4A)')adjustl(trim(modellverzeichnis)),'outputs_schism','/','local_to_global_0000'
+   lfdb = len_trim(filename)
+   write(filename(lfdb-3:lfdb),'(i4.4)') meinrang
+   open(10+meinrang, file = trim(filename), status = 'old', iostat = istat)
+   !print*,"read_mesh_nc_sc read:  filename ",trim(filename)
    if (istat /= 0) then
       write(fehler,*)'read_mesh_nc_sc open local_to_global_* failed, rank = ',meinrang
       call qerror(trim(fehler))
@@ -195,7 +194,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    do i = 1,nea
       read(10+meinrang,*)j,ielg(i)
    enddo !i
-   !print*, trim(adjustl(dateiname)),' local number elements=',nea,j,ielg(j)
+   !print*, trim(adjustl(filename)),' local number elements=',nea,j,ielg(j)
    read(10+meinrang,*)npa
    allocate(eta2(npa))
    allocate(xnd(npa),ynd(npa),dp00(npa),kbp00(npa))
@@ -204,7 +203,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
    do i = 1,npa
       read(10+meinrang,*)j,iplg(i)
    enddo !i
-   ! print*, trim(adjustl(dateiname)),' local number points=',npa,j,iplg(j)
+   ! print*, trim(adjustl(filename)),' local number points=',npa,j,iplg(j)
    
    read(10+meinrang,*)nsa
    allocate( su2(nvrt,nsa),sv2(nvrt,nsa) )
@@ -289,18 +288,18 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
       enddo ! alle Elemente!
       print*,"read_mesh_nc_sc: allocate 0 4"
       ! reread on process 0
-      write(dateiname,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
-      print*,"read_mesh_nc_sc reread:  dateiname ",trim(dateiname)
-      lfdb = len_trim(dateiname)
+      write(filename,'(4A)')trim(modellverzeichnis),'outputs_schism','/','local_to_global_0000'
+      print*,"read_mesh_nc_sc reread:  filename ",trim(filename)
+      lfdb = len_trim(filename)
       maxstack = 0
       do irank = 1,proz_anz,1 ! all ranks
-         write(dateiname(lfdb-3:lfdb),'(i4.4)') irank-1
-         open(10, file = dateiname, status = 'old', iostat = istat)
-         !print*,"do irank dateiname=",trim(adjustl(dateiname))
+         write(filename(lfdb-3:lfdb),'(i4.4)') irank-1
+         open(10, file = filename, status = 'old', iostat = istat)
+         !print*,"do irank filename=",trim(adjustl(filename))
          if (istat /= 0) then
             call qerror('open 10 failed')
             !else
-            !print*,'success open 10 ',trim(adjustl(dateiname))
+            !print*,'success open 10 ',trim(adjustl(filename))
          endif ! open failed
          if ( .not. zeile(10))call qerror('Lesefehler 1')
          if ( .not. zeile(10))call qerror('Lesefehler 2')
@@ -309,7 +308,7 @@ subroutine read_mesh_nc_sc() !meinrang.eq.0
             read(10,*)j,ielg_sc(irank,k)
          enddo !k
          read(10,*)np_l
-         !print*,'irank,np_l=',irank,np_l,trim(adjustl(dateiname))
+         !print*,'irank,np_l=',irank,np_l,trim(adjustl(filename))
          do k = 1,np_l
             read(10,*)j,iplg_sc(irank,k)
             knoten_rang(iplg_sc(irank,k)) = irank

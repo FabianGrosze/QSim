@@ -34,9 +34,9 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    character(longname) :: error_msg
 
 
-   call MPI_Bcast(IWETTs_T,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(IMET_T,1,MPI_INT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(mwettmax_T,1,MPI_INT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(IWETTs_T,  1, MPI_INT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(IMET_T,    1, MPI_INT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(mwettmax_T,1, MPI_INT, 0, mpi_komm_welt, ierr)
    if (meinrang == 0)print*,'meinrang, IWETTs_T, IMET_T, mwettmax_T'
    print*, meinrang, IWETTs_T, IMET_T, mwettmax_T
    call mpi_barrier (mpi_komm_welt, ierr)
@@ -174,7 +174,6 @@ subroutine wetter_parallel()  ! called from all processes randbedingungen_parall
    call MPI_Bcast(zeitpunktw, IWETTs_T*mwettmax_T,  MPI_INTEGER8, 0, mpi_komm_welt, ierr)
    call MPI_Bcast(wertw_T,    IWETTs_T*7*mwettmax_T,MPI_FLOAT,    0, mpi_komm_welt, ierr)
    
-   return
 end subroutine wetter_parallel
 
 

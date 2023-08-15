@@ -170,15 +170,15 @@ subroutine read_ereigg_model()
    use module_datetime
    implicit none
    
-   character(500) :: dateiname, version, model, instance
+   character(500) :: filename, version, model, instance
    integer        :: open_error, ion, read_error
    integer        :: year, month, day, hour, minutes, dt_minutes
    real           :: dt_min, tictac, pseudo_time
    type(datetime) :: datetime_start, datetime_end
    
-   dateiname = trim(modellverzeichnis) // '/EREIGG.txt'
+   filename = trim(modellverzeichnis) // '/EREIGG.txt'
    ion = 92
-   open(unit = ion, file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+   open(unit = ion, file = filename, status = 'old', action = 'read ', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open EreigG.txt")
    rewind (ion)
    

@@ -35,7 +35,6 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 
 # set executable name
 PV=qsim3d_$(QSim_version)_dev
-PV=qsim3d_timezone
 
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
@@ -132,7 +131,7 @@ Q3 = version.co \
    schnitt.o\
    planktische_variablen.o \
    module_salinity.o \
-   module_suspendedMatter.o \
+   module_suspended_matter.o \
    parallel.o \
    water_temperature_wrapper_3d.o \
    alter.o\

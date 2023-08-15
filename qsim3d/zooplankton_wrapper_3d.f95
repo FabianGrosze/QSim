@@ -70,7 +70,7 @@ subroutine zooplankton_wrapper_3d(i)
             transfer_quantity_p(77 + nt),   & ! rakr
             transfer_quantity_p(78 + nt),   & ! rbar
             transfer_quantity_p(75 + nt),   & ! hnfza
-            control,                       & !
+            control,                        & !
             iglob)
    
    return

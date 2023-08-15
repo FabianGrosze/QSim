@@ -69,7 +69,7 @@ subroutine randbedingungen_setzen()
             if (j == kontrollknoten) print*,'Konrollstelle #',j,' ist Rand mit RB_zaehl = ',RB_zaehl
             if (inflow(j)) then !! alle Zufluss-Knoten
                if (j == kontrollknoten)print*,'Konrollstelle #',j,' ist inflow Rand mit ',inflow(j)
-               call randwert_planktonic(j,RB_zaehl,einmalig)
+               call randwert_planktonic(j,RB_zaehl)
                if (j == kontrollknoten) then
                    print*,'RB gesetzt tracer = ', planktonic_variable(71+(j-1)*number_plankt_vari),  &
                                      'tempw = ' , planktonic_variable(1+(j-1)*number_plankt_vari),   &
@@ -106,8 +106,8 @@ subroutine randbedingungen_setzen()
    if (j >= 1 .and. j <= part) then
       print*,'nach randbedingungen_setzen am Kontrollknoten:',kontrollknoten,meinrang,part,j
       print*,'Tiefe  = ', rb_hydraul_p(2+(j-1)*number_rb_hydraul)
-      print*,'tempw  = ', planktonic_variable_p(1+(j-1)*number_plankt_vari), 1+(j-1)*number_plankt_vari
-      print*,'O2     = ', planktonic_variable_p(2+(j-1)*number_plankt_vari), 2+(j-1)*number_plankt_vari ! Sauerstoffgehalt tiefengemittelt
+      print*,'tempw  = ', planktonic_variable_p( 1+(j-1)*number_plankt_vari), 1+(j-1)*number_plankt_vari
+      print*,'O2     = ', planktonic_variable_p( 2+(j-1)*number_plankt_vari), 2+(j-1)*number_plankt_vari ! Sauerstoffgehalt tiefengemittelt
       print*,'obsb   = ', planktonic_variable_p(17+(j-1)*number_plankt_vari)
       print*,'ocsb   = ', planktonic_variable_p(18+(j-1)*number_plankt_vari)
       print*,'cd1    = ', planktonic_variable_p(37+(j-1)*number_plankt_vari) ! leicht abbaubare gelöste organische C-Verbindungen    mg C / l
@@ -127,8 +127,8 @@ subroutine randbedingungen_setzen()
       print*,'chlaki = ', planktonic_variable_p(12+(j-1)*number_plankt_vari)
       print*,'chlagr = ', planktonic_variable_p(13+(j-1)*number_plankt_vari)
       print*,'chlabl = ', planktonic_variable_p(14+(j-1)*number_plankt_vari)
-      print*,'aki    = ', planktonic_variable_p(8+(j-1)*number_plankt_vari)
-      print*,'agr    = ', planktonic_variable_p(9+(j-1)*number_plankt_vari)
+      print*,'aki    = ', planktonic_variable_p( 8+(j-1)*number_plankt_vari)
+      print*,'agr    = ', planktonic_variable_p( 9+(j-1)*number_plankt_vari)
       print*,'abl    = ', planktonic_variable_p(10+(j-1)*number_plankt_vari)
       print*,'akbcm  = ', planktonic_variable_p(24+(j-1)*number_plankt_vari)
       print*,'agbcm  = ', planktonic_variable_p(25+(j-1)*number_plankt_vari)
@@ -144,15 +144,9 @@ subroutine scatter_rb_hydraul()
    use modell
    implicit none
    integer :: j, RB_zaehl
-   !>>>> Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   ! Hydraulik-Randbedingungen (Geschwindigkeit, Wassertiefe und WSP)
    ! wurden von prozess 0 in holen_trans() gelesen und werden hier auf alle Prozesse gescattert.
-   !if(meinrang.eq.0)then !! nur prozessor 0
-   !      do j=1,knotenanzahl2D
-   !         rb_hydraul(1+(j-1)*number_rb_hydraul)    = u(j)
-   !         rb_hydraul(2+(j-1)*number_rb_hydraul)    = tief(j)
-   !         rb_hydraul(3+(j-1)*number_rb_hydraul)    = p(j)
-   !      enddo !! alle j knoten
-   !endif !! nur prozessor 0
+   
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
@@ -160,28 +154,26 @@ subroutine scatter_rb_hydraul()
       call qerror(fehler)
    endif
    call mpi_barrier (mpi_komm_welt, ierr)
-   return
-end subroutine scatter_rb_hydraul
-!----+-----+----
-!
-subroutine randwert_planktonic(jjj,zaehl,logi)
+ end subroutine scatter_rb_hydraul
+
+
+subroutine randwert_planktonic(jjj,zaehl)
    use modell
    use QSimDatenfelder
    use module_aparam
    implicit none
-   !!  \anchor jjj wahrscheinlich ein Zähler (def. in randbedingungen; referenziert in N subroutine!?)
+   
    integer :: jjj, zaehl, nk, i, l
-   logical logi
-   if (meinrang > 0) then !! nur prozessor 0
-      write(fehler,*)' 789 subroutine randwert_planktonic darf nur auf prozess 0'
-      call qerror(fehler)
-   endif
-   if (jjj > number_plankt_point)call qerror('randwert_planktonic: jjj > number_plankt_point')
+   
+   if (meinrang > 0) call qerror(' 789 subroutine randwert_planktonic darf nur auf prozess 0')
+   if (jjj > number_plankt_point) call qerror('randwert_planktonic: jjj > number_plankt_point')
+   
    nk = (jjj-1)*number_plankt_vari
    if (nk+number_plankt_vari > number_plankt_vari*number_plankt_point) then
       print*,'randwert_planktonic: jjj,zaehl = ',jjj,zaehl, number_plankt_vari, number_plankt_point
       call qerror('planktonic_variable unterdimensioniert')
    endif
+   
    if (zaehl > 0) then !! Randbedingung zu dieser Nummer vorhanden
       !!if(rabe(zaehl)%zufluss)then !! z.Z. Zufluss über diesen Rand?
       planktonic_variable( 1+nk) = rabe(zaehl)%wert_jetzt(22) !  Tempw 
@@ -289,31 +281,34 @@ subroutine randwert_planktonic(jjj,zaehl,logi)
       planktonic_variable(99+nk) = rabe(zaehl)%wert_jetzt(41) ! Mangan gelöst
       planktonic_variable(100+nk) = rabe(zaehl)%wert_jetzt(46) ! Uran gesamt
       planktonic_variable(101+nk) = rabe(zaehl)%wert_jetzt(47) ! Uran gelöst
-      !                  if(jjj.eq.kontrollknoten)print*,"randwert_planktonic: OBSB=",planktonic_variable(17+nk)  &
-      !     &                                           ," OCSB=",planktonic_variable(18+nk)
+      
       if (nur_alter .and. (wie_altern == 2))call alter_rand(jjj)
    endif !! RandbedingungsNummer größer 0
-   return
+   
 end subroutine randwert_planktonic
-!----+-----+----
+
+
 !> bisher plankt_vari_vert konstant über die Tiefe d.h. 2D tiefengemittelt
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 subroutine tiefenprofil(jjj)
    use modell
    implicit none
-   integer :: jjj, nk, i, l
+   integer, intent(in) :: jjj
+   integer             :: nk, i, l
+   
    if (jjj > number_plankt_point)call qerror('tiefenprofil: jjj > number_plankt_point')
-   nk = (jjj-1)*number_plankt_vari
+   nk = (jjj-1) * number_plankt_vari
    if (nk+number_plankt_vari > number_plankt_vari*number_plankt_point) then
       print*,'tiefenprofil: jjj,zaehl = ',jjj, number_plankt_vari, number_plankt_point
       call qerror('planktonic_variable unterdimensioniert 2')
    endif
+   
    ! konstante Verteilung in der Vertikalen
    do i = 1,14 ! tiefenprofile der ersten 14 konzentrationen
       do l = 1,num_lev
          plankt_vari_vert(l+(i-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(i+nk)
-      enddo ! alle l levels
-   enddo ! alle ersten 14 konzentrationen
+      enddo
+   enddo
+   
    do l = 1,num_lev
       plankt_vari_vert(l+(16-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(67+nk) !  hgesNz = GESN
       plankt_vari_vert(l+(15-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(68+nk) !  hgesPz = GESP
@@ -323,28 +318,31 @@ subroutine tiefenprofil(jjj)
       plankt_vari_vert(l+(20-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(24+nk) !  hCChlkz = akbcm
       plankt_vari_vert(l+(21-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(25+nk) !  hCChlgz = agbcm
       plankt_vari_vert(l+(22-1)*num_lev+(jjj-1)*number_plankt_vari_vert*num_lev) = planktonic_variable(26+nk) !  hCChlbz = abbcm
-   enddo ! alle l levels
-   return
+   enddo
+   
 end subroutine tiefenprofil
-!----+-----+----
 
-subroutine randbedingungen_ergaenzen(j,einmalig)
+
+subroutine randbedingungen_ergaenzen(j, einmalig)
    use modell
    use QSimDatenfelder
    use module_aparam
    use module_ph, only: pwert
    
    implicit none
-   integer :: j,nk
-   real :: CPges,CDges,Cref,TOC
-   logical einmalig
+   integer, intent(in) :: j
+   logical, intent(in) :: einmalig
+   
+   integer :: nk
+   real    :: cpges, cdges, cref, toc
+   
    
    nk = (j-1)*number_plankt_vari
    
    control = .false.
    if (j == kontrollknoten) control = .true.
    
-   !     ini_algae in initialisieren() initialisieren.f95
+   ! ini_algae in initialisieren() initialisieren.f95
    call algae_start(planktonic_variable(11+nk),      & ! CHLA chlas(mstr,mRB)
                     planktonic_variable(19+nk),      & ! VKIGR vkigrs(mstr,mRB)
                     planktonic_variable(20+nk),      & ! ANTBL antbls(mstr,mRB)
@@ -362,7 +360,7 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
    
    ! qsim.f90:!...Festlegung der Anfangs-Sedimenttemperatur Tsed = TWasser
    benthic_distribution(1+(j-1)*number_benth_distr) = planktonic_variable(1+((j-1)*number_plankt_vari))
-   !!!!!! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen ...
+   ! für orgC() : CSB(ocsb) und C-BSB5(obsb) in die Berechnungskonzentrationen aufteilen Bakterienmenge abschätzen
    
    if (control) then
       print*, 'randbedingungen_ergaenzen: before orgc_start'
@@ -385,25 +383,25 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
       print*, ' frfgr  = ', planktonic_variable(56+nk)
    endif
    
-   call orgc_start(TOC_CSB,bsbZoo,                  & ! globale Parameter direkt aus QSimDatenfelder
-                   planktonic_variable( 8+nk),      & ! aki | akis
-                   planktonic_variable(10+nk),      & ! abl | abls
-                   planktonic_variable( 9+nk),      & ! agr | agrs
-                   planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                   planktonic_variable(46+nk),      & ! vbsb  BSB5 incl. lebender Organismen, messbar, Randwert | vbsbs
-                   planktonic_variable(47+nk),      & ! vcsb  CSB incl. lebender Organismen , messbar, Randwert | vcsbs
-                   planktonic_variable(17+nk),      & ! OBSB  C-BSB5, kohlenstoffbürtig | obsbs
-                   planktonic_variable(18+nk),      & ! OCSB  CSB, Kohlenstoffbürtig    | ocsbs
-                   planktonic_variable(41+nk),      & ! CM   |  CMs
-                   planktonic_variable(37+nk),      & ! CD(1 |  CDs1
-                   planktonic_variable(38+nk),      & ! CD(2 |  CDs2
-                   planktonic_variable(39+nk),      & ! CP(1 |  CPs1
-                   planktonic_variable(40+nk),      & ! CP(2 |  CPs2
-                   planktonic_variable(52+nk),      & ! ssalg | ssalgs
-                   planktonic_variable(56+nk),      & ! frfgr | frfgrs
-                   planktonic_variable(42+nk),      & ! BAC   | BACs
-                   planktonic_variable(48+nk),      & ! CHNF  | CHNFs,
-                   CPges, CDges, Cref, TOC )          ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
+   call orgc_start(toc_csb,bsbzoo,                  & ! globale Parameter direkt aus qsimdatenfelder
+                   planktonic_variable( 8+nk),      & ! aki
+                   planktonic_variable(10+nk),      & ! abl
+                   planktonic_variable( 9+nk),      & ! agr
+                   planktonic_variable(50+nk),      & ! zooind 
+                   planktonic_variable(46+nk),      & ! vbsb  bsb5 incl. lebender organismen
+                   planktonic_variable(47+nk),      & ! vcsb  csb incl. lebender organismen
+                   planktonic_variable(17+nk),      & ! obsb  c-bsb5, kohlenstoffbürtig
+                   planktonic_variable(18+nk),      & ! ocsb  csb, kohlenstoffbürtig
+                   planktonic_variable(41+nk),      & ! cm
+                   planktonic_variable(37+nk),      & ! cd(1)
+                   planktonic_variable(38+nk),      & ! cd(2)
+                   planktonic_variable(39+nk),      & ! cp(1)
+                   planktonic_variable(40+nk),      & ! cp(2)
+                   planktonic_variable(52+nk),      & ! ssalg
+                   planktonic_variable(56+nk),      & ! frfgr
+                   planktonic_variable(42+nk),      & ! bac
+                   planktonic_variable(48+nk),      & ! chnf
+                   cpges, cdges, cref, toc )          ! Übergabewerte spez. für den jeweiligen Rand
    
    if (control) then
       print*, 'randbedingungen_ergaenzen: after orgc_start'
@@ -426,30 +424,30 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
       print*, ' frfgr  = ', planktonic_variable(56+nk)
    endif
    
-   call naehr_start(planktonic_variable( 8+nk),      & ! aki | akis
-                    planktonic_variable(10+nk),      & ! abl | abls
-                    planktonic_variable( 9+nk),      & ! agr | agrs
-                    planktonic_variable( 3+nk),      & ! VNH4 | vnh4s,
-                    planktonic_variable( 5+nk),      & ! VNO3 | vNO3s,
-                    planktonic_variable( 4+nk),      & ! VNO2 | vno2s,
-                    planktonic_variable(67+nk),      & ! GESN | gesNs,
-                    planktonic_variable(50+nk),      & ! ZOOIND | zooins
-                    planktonic_variable( 6+nk),      & ! GELP | gelPs,
-                    planktonic_variable(68+nk),      & ! GESP | gesPs,
-                    planktonic_variable(30+nk),      & ! Q_NK  | Q_NKs
-                    planktonic_variable(31+nk),      & ! Q_PK  | Q_PKs
-                    planktonic_variable(32+nk),      & ! Q_SK  | Q_SKs
-                    planktonic_variable(33+nk),      & ! Q_NG  | Q_NGs
-                    planktonic_variable(34+nk),      & ! Q_PG  | Q_PGs
-                    planktonic_variable(35+nk),      & ! Q_NB  | Q_NBs
-                    planktonic_variable(36+nk),      & ! Q_PB  | Q_PBs
+   call naehr_start(planktonic_variable( 8+nk),      & ! aki
+                    planktonic_variable(10+nk),      & ! abl
+                    planktonic_variable( 9+nk),      & ! agr
+                    planktonic_variable( 3+nk),      & ! VNH4
+                    planktonic_variable( 5+nk),      & ! VNO3
+                    planktonic_variable( 4+nk),      & ! VNO2
+                    planktonic_variable(67+nk),      & ! GESN
+                    planktonic_variable(50+nk),      & ! ZOOIND
+                    planktonic_variable( 6+nk),      & ! GELP
+                    planktonic_variable(68+nk),      & ! GESP
+                    planktonic_variable(30+nk),      & ! Q_NK
+                    planktonic_variable(31+nk),      & ! Q_PK
+                    planktonic_variable(32+nk),      & ! Q_SK
+                    planktonic_variable(33+nk),      & ! Q_NG
+                    planktonic_variable(34+nk),      & ! Q_PG
+                    planktonic_variable(35+nk),      & ! Q_NB
+                    planktonic_variable(36+nk),      & ! Q_PB
                     CPges,CDges,Cref,                & ! Übergabewerte spez. für den jeweiligen Rand, nur hier definiert
-                    planktonic_variable(42+nk),      & ! BAC   | BACs
-                    planktonic_variable(41+nk),      & ! CM   |  CMs
-                    planktonic_variable(57+nk),      & ! nl0 Stickstoff zu Kohlenstoff in organischem Material | nl0s,
-                    planktonic_variable(58+nk),      & ! pl0 Phosphor zu Kohlenstoff in organischem Material | pl0s,
-                    planktonic_variable(53+nk),      & ! SS suspendierte Sedimente ohne lebende Organismen | sss,
-                    planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE | ssalgs,
+                    planktonic_variable(42+nk),      & ! BAC 
+                    planktonic_variable(41+nk),      & ! CM
+                    planktonic_variable(57+nk),      & ! nl0 Stickstoff zu Kohlenstoff in organischem Material
+                    planktonic_variable(58+nk),      & ! pl0 Phosphor zu Kohlenstoff in organischem Material
+                    planktonic_variable(53+nk),      & ! SS suspendierte Sedimente ohne lebende Organismen
+                    planktonic_variable(52+nk),      & ! ssalg GESAMTSCHWEBSTOFFE
                     0,0,                             & ! mstr,mRB für Kontrollausgaben in 1D benötigt
                     einmalig,control,j)
    
@@ -471,93 +469,67 @@ subroutine randbedingungen_ergaenzen(j,einmalig)
 
    return
 end subroutine randbedingungen_ergaenzen
-!----+-----+----
-!> <h1>Legt die Randbedingungs-Datenfelder an </h1>
-!! .... to be done PARALLEL\n
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
+
+!> Legt die Randbedingungs-Datenfelder an
 !!
+!! to be done PARALLEL
 subroutine randbedingungen_parallel()
    use modell
    implicit none
-   integer :: as, ini
+   integer :: as
    
-   ! print*,meinrang,' randbedingungen_parallel() ,part, number_rb_hydraul,number_rb_wetter='  &
-   !       ,part, number_rb_hydraul,number_rb_wetter
-   allocate (rb_hydraul_p(part*number_rb_hydraul), stat = as )
-   if (as /= 0) then
-      write(fehler,*)' Rueckgabewert allocate  von rb_hydraul_p(part   :', as
-      call qerror(fehler)
-   endif
-   do ini = 1,part*number_rb_hydraul
-      rb_hydraul_p(ini) = 0.0
-   enddo
+   allocate (rb_hydraul_p(part*number_rb_hydraul), source = 0.0, stat = as )
+   if (as /= 0) call qerror("Error while allocating variable `rb_hydraul_p`.")
+   
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)'randbedingungen_parallel MPI_Scatter(rb_hydraul failed :', ierr
       call qerror(fehler)
    endif
-   !print*,'rb_hydraul_p successfully allocated and scattered',meinrang
+   
    call mpi_barrier (mpi_komm_welt, ierr)
-   !      allocate (rb_wetter_p(part*number_rb_wetter), stat = as )
-   !      if(as.ne.0)then
-   !         write(fehler,*)' Rueckgabewert von allocate rb_wetter_p(part   :', as
-   !         call qerror(fehler)
-   !      endif
-   !      do ini=1,part*number_rb_wetter
-   !         rb_wetter_p(ini)=0.0
-   !      enddo
    call MPI_Bcast(rb_extnct_ilamda,1,MPI_INT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)meinrang, 'MPI_Bcast(rb_extnct_ilamda,  ierr = ', ierr
       call qerror(fehler)
    endif
-   !print*,meinrang, 'nachher rb_extnct_ilamda=', rb_extnct_ilamda
    call mpi_barrier (mpi_komm_welt, ierr)
-   !print*,meinrang, ' anz_extnct_koeff=', anz_extnct_koeff
-   !! parameter nicht broadcasten !!!! call MPI_Bcast(anz_extnct_koeff,1,MPI_INT,0,mpi_komm_welt,ierr)
+   
    if (meinrang /= 0) then
-      allocate (rb_extnct_p(rb_extnct_ilamda*anz_extnct_koeff), stat = as )
+      allocate (rb_extnct_p(rb_extnct_ilamda*anz_extnct_koeff), source = 0.0, stat = as )
       if (as /= 0) then
          write(fehler,*)'rb_extnct_p konnte nicht allokiert werden ', as, ' prozess = ', meinrang
          call qerror(fehler)
-      endif ! alloc_status .ne.0
-      do ini = 1,rb_extnct_ilamda*anz_extnct_koeff
-         rb_extnct_p(ini) = 0.0
-      enddo
-   endif ! meinrang.ne.0
-   !   ### call MPI_Scatter(rb_extnct, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT,  &
-   !& rb_extnct_p, rb_extnct_ilamda*anz_extnct_koeff, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+      endif
+   endif 
+   
    call MPI_Bcast(rb_extnct_p,rb_extnct_ilamda*anz_extnct_koeff,MPI_FLOAT,0,mpi_komm_welt,ierr)
    if (ierr /= 0) then
       write(fehler,*)'randbedingungen_parallel MPI_Bcast(rb_extnct_p failed :', ierr
       call qerror(fehler)
    endif
-   !print*,'eta(ilamda)=rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang'  &
-   !      ,rb_extnct_p(1 + (rb_extnct_ilamda-1)*anz_extnct_koeff),meinrang
-   !call MPI_Bcast(transfer_parameter_p,number_trans_aparam,MPI_FLOAT,0,mpi_komm_welt,ierr
-   return
+  
 end subroutine randbedingungen_parallel
-!----+-----+----
-!> <h1>Verteilen der Datenstrukturen auf die parallelen Prozesse</h1>
-!! .... to be done PARALLEL\n
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
+
+
+!> Verteilen der Datenstrukturen auf die parallelen Prozesse
 !!
-subroutine scatter_BC()
+!! to be done PARALLEL\n
+subroutine scatter_bc()
    use modell
    implicit none
    integer :: i
+   
    call MPI_Scatter(rb_hydraul, part*number_rb_hydraul, MPI_FLOAT,  &
                     rb_hydraul_p, part*number_rb_hydraul, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    if (ierr /= 0) then
       write(fehler,*)' MPI_Scatter(rb_hydraul failed :', ierr
       call qerror(fehler)
    endif
-   return
 end subroutine scatter_BC
 
 
-!----+-----+----
 !> Interpolate Boundary Conditions
 !!
 !! Linear temporal interpolation of boundary conditions.
@@ -594,7 +566,6 @@ subroutine RB_werte_aktualisieren(t)
                
             endif 
          enddo 
-         
          
          if (vor_da .and. nach_da) then
             a = real(t-zeit_vor)/real(zeit_nach-zeit_vor)
@@ -1155,127 +1126,117 @@ subroutine alloc_hydraul_BC(nk)
    
 end subroutine alloc_hydraul_BC
 
-!> <h1>Volumenstrom und Tracerflüsse entlang aller ianz_rb Ränder ermitteln</h1>
+!> Volumenstrom und Tracerflüsse entlang aller ianz_rb Ränder ermitteln
+!! 
 !! ruft subroutine flux() aus schnitt.f95 auf
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
-!!
 subroutine rand_flux(zeitzaehler)
    use modell
    implicit none
-   integer :: zeitzaehler, n, i, k
+   
+   integer, intent(in) :: zeitzaehler
+   
+   integer ::  n, i, k
    integer :: nbot, ntop, fall
-   real :: deltax, d1, d2, deltad, x_kreuz, u1, u2, v1x,v1y,v2x,v2y, vox2, volst2
-   real :: lang, flaeche, vol_strom, pot_ener_flux, kin_ener_flux
-   real :: la,flae,vox,pox,kix
-   real :: c1, c2, masx, massen_flux
-   ! real , allocatable , dimension (:) :: c1, c2, masx, massen_flux
-   ! allocate(c1(n_pl))
-   ! allocate(c2(n_pl))
-   ! allocate(masx(n_pl))
-   ! allocate(massen_flux(n_pl))
+   real    :: deltax, d1, d2, deltad, x_kreuz, u1, u2, v1x,v1y,v2x,v2y, vox2, volst2
+   real    :: lang, flaeche, vol_strom, pot_ener_flux, kin_ener_flux
+   real    :: la,flae,vox,pox,kix
+   real    :: c1, c2, masx, massen_flux
+   
    do n = 1,ianz_rb !! alle Randbedingungen
-      lang = 0.0
-      flaeche = 0.0
+      lang      = 0.0
+      flaeche   = 0.0
       vol_strom = 0.0
-      volst2 = 0.0
+      volst2    = 0.0
       pot_ener_flux = 0.0
       kin_ener_flux = 0.0
-      massen_flux = 0.0
-      !print*,"rand_flux: Rand #",n ," hat ",rabe(n)%randlinie%anzkanten," Kanten."
+      massen_flux   = 0.0
+      
       do i = 1, rabe(n)%randlinie%anzkanten ! alle i Kanten aus randlinie n
          nbot = rabe(n)%randlinie%kante(i)%bottom
          if (nbot <= 0) then
             write(fehler,*)nbot,' = nbot = rabe(',n,')%randlinie%kante(',i,')%bottom <= 0 '
             call qerror(fehler)
          endif
-         ntop = rabe(n)%randlinie%kante(i)%top
+      
+         ntop = rabe(n) % randlinie % kante(i) % top
          deltax = ( (rabe(n)%randlinie%kante(i)%normal_x**2) + (rabe(n)%randlinie%kante(i)%normal_y**2) )**0.5
-         !# tief(j)=p(j)-knoten_z(j) ! Wassertiefe
-         !# if(tief(j).le. min_tief )then ! min_tief parameter aus module_modell
-         !#    tief(j)= min_tief
-         d1 = p(nbot)-knoten_z(nbot)
-         d2 = p(ntop)-knoten_z(ntop)
-         v1x = u(nbot)*cos(dir(nbot))
-         v1y = u(nbot)*sin(dir(nbot))
-         v2x = u(ntop)*cos(dir(ntop))
-         v2y = u(ntop)*sin(dir(ntop))
-         u1 = rabe(n)%randlinie%kante(i)%normal_x*v1x   &
-              +rabe(n)%randlinie%kante(i)%normal_y*v1y
-         u2 = rabe(n)%randlinie%kante(i)%normal_x*v2x   &
-              +rabe(n)%randlinie%kante(i)%normal_y*v2y
+         d1 = p(nbot) - knoten_z(nbot)
+         d2 = p(ntop) - knoten_z(ntop)
+         v1x = u(nbot) * cos(dir(nbot))
+         v1y = u(nbot) * sin(dir(nbot))
+         v2x = u(ntop) * cos(dir(ntop))
+         v2y = u(ntop) * sin(dir(ntop))
+         u1 = rabe(n) % randlinie % kante(i) % normal_x * v1x   &
+            + rabe(n) % randlinie % kante(i) % normal_y * v1y
+         u2 = rabe(n) % randlinie % kante(i) % normal_x * v2x   &
+            + rabe(n) % randlinie % kante(i) % normal_y * v2y
+         
          c1 = planktonic_variable(71+(nbot-1)*number_plankt_vari) !! passiver alters-tracer
          c2 = planktonic_variable(71+(ntop-1)*number_plankt_vari)
-         ! print*,'rand_flux: kante', i,' nbot,ntop ', nbot,ntop
-         ! do k=1,n_pl ! ausgabe-plankt.vari. in Ganglinie speichern
-         !    print*,"rand_flux:c1(",k,")=",c1(k)," c2=",c2(k)," massen_flux=",massen_flux(k)," masx=", masx(k)
-         ! enddo! alle k Ausgabe-Variablen
+         
          call flux_casu(deltax,d1,d2,u1,u2,c1,c2,p(nbot),p(ntop),u(nbot),u(ntop),la,flae,vox,pox,kix,masx)
          vox2 = 0.5*(u1*d1 + u2*d2) !! Volumentromermittlung stückweise zu Testzwecken
-         !       print*,"Rand #",n," Kante #",i," pox=",pox
-         !&            ," deltax=",deltax," la=",la," vox=",vox," vox2=",vox2  &
-         !&            ," bottom #",nbot,"Tiefe1=",d1," u1, v1x, v1y=",u1/deltax, v1x, v1y &
-         !&            ," top #",ntop," Tiefe2=",d2," u2, v2x, v2y=",u2/deltax, v2x, v2y
          lang = lang + la
          flaeche = flaeche + flae
          vol_strom = vol_strom + vox
          pot_ener_flux = pot_ener_flux + pox
          kin_ener_flux = kin_ener_flux + kix
          volst2 = volst2+vox2
-         massen_flux = massen_flux + masx !!
-      enddo ! alle i Kanten
+         massen_flux = massen_flux + masx
+      enddo
+      
+      
       print*,"rand_flux: Rand #",n,' mit ',rabe(n)%randlinie%anzkanten ,' Kanten'&
       ," pot_ener_flux(MW) = ",pot_ener_flux/1000000," kin_ener_flux(MW) = ",kin_ener_flux/1000000
-      !&         ," vol_strom(Integral)=",vol_strom," mittlere Fließgeschwindigkeit=",vol_strom/flaeche  &
-      !&         ," vol_strom(stückweise)=",volst2," Vm daraus=",volst2/flaeche
+      
       ! Flux-Felder randflux_gang(Randzähler,Zeitpunkt,??) :
-      randflux_gang(n,zeitzaehler,1) = lang!!
-      randflux_gang(n,zeitzaehler,2) = flaeche !!
-      randflux_gang(n,zeitzaehler,3) = vol_strom !!
-      randflux_gang(n,zeitzaehler,4) = pot_ener_flux/1000000 !! in mega-Watt
-      randflux_gang(n,zeitzaehler,5) = kin_ener_flux/1000000 !! in mega-Watt
-      randflux_gang(n,zeitzaehler,6) = massen_flux !!
+      randflux_gang(n,zeitzaehler,1) = lang
+      randflux_gang(n,zeitzaehler,2) = flaeche
+      randflux_gang(n,zeitzaehler,3) = vol_strom
+      randflux_gang(n,zeitzaehler,4) = pot_ener_flux * 1e-6 ! in Mega-Watt
+      randflux_gang(n,zeitzaehler,5) = kin_ener_flux * 1e-6 ! in Mega-Watt
+      randflux_gang(n,zeitzaehler,6) = massen_flux 
    enddo ! alle n Randbedingungen
-   ! deallocate(c1)
-   ! deallocate(c2)
-   ! deallocate(masx)
-   ! deallocate(massen_flux)
-   return
+ 
+ 
 end subroutine rand_flux
-! Flux-Felder sollen mal: 1=Volumenrstrom, 2=potentieller und 3=kinetischer Energiefluss; n_pl=Anzahl der auszugebenden planktischen Variablen
+
+
+!Flux-Felder sollen mal: 1=Volumenrstrom, 2=potentieller und 3=kinetischer Energiefluss; n_pl=Anzahl der auszugebenden planktischen Variablen
 !----+-----+----
 !
-!> <h1>Randknoten zu einer Randlinie zusammenstellen</h1>
-!! , damit Durchfluss-Integrationen von rand_flux() ausgeführt werden können. \n
+!> Randknoten zu einer Randlinie zusammenstellen
+!!
+!! damit Durchfluss-Integrationen von rand_flux() ausgeführt werden können
 !! läuft nur auf Prozess 0
-!! \n\n aus randbedingungen.f95 , zurück: \ref lnk_randbedingungen
 subroutine randlinie_zusammenstellen()
    use modell
    implicit none
+   
    integer :: j,k, n, anzranz, nexi, anzel, alloc_status , dreidrin, vierdrin,nzwi
-   real :: kx,ky,nx,ny,einwaerts,lang,kantlang
+   real    :: kx,ky,nx,ny,einwaerts,lang,kantlang
    logical :: top
-   if (meinrang /= 0) then
-      write(fehler,*)'randlinie_zusammenstellen() darf nur auf Prozess 0'
-      call qerror(fehler)
-   else
-      print*,"randlinie_zusammenstellen() auf 0"
-   endif ! alloc_status .ne.0
-   ! print*,"randlinie_zusammenstellen zählt mal durch"
+   
+   if (meinrang /= 0) call qerror('randlinie_zusammenstellen() darf nur auf Prozess 0')
+   
+   print*,"randlinie_zusammenstellen() auf 0"
+
    do n = 1,ianz_rb !! alle Randbedingungen
       anzranz = 0
       lang = 0.0
       do j = 1,knotenanzahl2D ! alle j Knoten
          if (knoten_rand(j) == n ) then
             anzranz = anzranz+1
-         endif ! Randknoten
-      enddo ! alle j Knoten
+         endif
+      enddo 
+      
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzranz," Knoten"
+      
       rabe(n)%randlinie%anzkanten = anzranz-1
+      
       allocate (rabe(n)%randlinie%kante(rabe(n)%randlinie%anzkanten+1), stat = alloc_status )
-      if (alloc_status /= 0) then
-         write(fehler,*)'allocate (rabe(n)%randlinie%kante fehlgeschlagen'
-         call qerror(fehler)
-      endif ! alloc_status .ne.0
+      if (alloc_status /= 0) call qerror('allocate (rabe(n)%randlinie%kante fehlgeschlagen')
+      
       anzel = 0
       do j = 1,n_elemente ! alle j Elemente
          nexi = 0
@@ -1284,7 +1245,9 @@ subroutine randlinie_zusammenstellen()
          do k = 1,cornernumber(j) ! 3 oder 4
             if ( knoten_rand(elementnodes(j,k)) == n) nexi = nexi+1
          enddo ! alle k knoten im Element j
-         if (nexi == 2) then ! Normalfall, Element hat eine Kante auf dem Rand
+         
+         if (nexi == 2) then 
+            ! Normalfall, Element hat eine Kante auf dem Rand
             anzel = anzel+1
             rabe(n)%randlinie%kante(anzel)%element = j
             top = .true.
@@ -1300,12 +1263,17 @@ subroutine randlinie_zusammenstellen()
                   if (vierdrin == 0)dreidrin = elementnodes(j,k)
                endif ! Randknoten
             enddo ! alle k Knoten im Element j (2-Knoten-Randelement)
-            kx = knoten_x(rabe(n)%randlinie%kante(anzel)%top)-knoten_x(rabe(n)%randlinie%kante(anzel)%bottom)
-            ky = knoten_y(rabe(n)%randlinie%kante(anzel)%top)-knoten_y(rabe(n)%randlinie%kante(anzel)%bottom)
+            
+            kx = knoten_x(rabe(n) % randlinie % kante(anzel) % top)     &
+               - knoten_x(rabe(n) % randlinie % kante(anzel) % bottom)
+            ky = knoten_y(rabe(n) % randlinie % kante(anzel) % top)     &
+               - knoten_y(rabe(n) % randlinie % kante(anzel) % bottom)
+               
             nx = -1*ky
             ny = kx
-            kx = knoten_x(dreidrin)-knoten_x(rabe(n)%randlinie%kante(anzel)%bottom)
-            ky = knoten_y(dreidrin)-knoten_y(rabe(n)%randlinie%kante(anzel)%bottom)
+            kx = knoten_x(dreidrin) - knoten_x(rabe(n) % randlinie % kante(anzel) % bottom)
+            ky = knoten_y(dreidrin) - knoten_y(rabe(n) % randlinie % kante(anzel) % bottom)
+            
             einwaerts = kx*nx + ky*ny
             if (einwaerts >= 0.0) then ! Normalenvektor auswärts drehen + top-bottom tauschen
                rabe(n)%randlinie%kante(anzel)%normal_x = -1*nx
@@ -1320,14 +1288,13 @@ subroutine randlinie_zusammenstellen()
             kantlang = ( (rabe(n)%randlinie%kante(anzel)%normal_x**2) + (rabe(n)%randlinie%kante(anzel)%normal_y**2) )**0.5
             lang = lang+kantlang
          endif ! Normalfall
+         
          if (nexi >= 3) then ! unerwünschter Sonderfall
-            ! anzel=anzel+2 ! unerwünschter Sonderfall
             write(fehler,*),"Am Rand mit Nummer = ",rabe(n)%nr_rb," hat das Element #",j,  &
                             "hat mehr als eine Randkante, dies ist unerwünscht und wird zur Zeit nicht behandelt."  &
                            ," ACHTUNG dadurch sind an diesem Rand die Integrale unvollständig."
 
             print*,trim(fehler)
-            !call qerror(fehler)
          endif ! unerwünscht
          !if(nexi.eq.4)anzel=anzel+3 ! unerwünschter Sonderfall: 3 Kanten eines Vierecks sind Rand
          !if(nexi.gt.1)then !! Element j hat Kante an Rand n
@@ -1338,8 +1305,10 @@ subroutine randlinie_zusammenstellen()
          !&                         , knoten_y(rabe(n)%randlinie%kante(anzel)%bottom)
          !endif ! Randkante
       enddo ! alle j Elemente
+      
       print*,"randlinie_zusammenstellen: Der ",n,"-te Rand mit Nummer = ",rabe(n)%nr_rb," hat ",anzel  &
             ," Kanten und ist ",lang," m lang"
+      
       if (anzel == rabe(n)%randlinie%anzkanten) then
          print*,"Rand mit Nummer = ",rabe(n)%nr_rb,"regulär"
       else
@@ -1349,12 +1318,11 @@ subroutine randlinie_zusammenstellen()
          else
             write(*,*),"Am ",n,"-ten Rand mit Nummer = ",rabe(n)%nr_rb," passen Knotenanzahl = "  &
                       ,rabe(n)%randlinie%anzkanten+1 ," und Kantenanzahl",anzel," nicht zusammen"
-            !call qerror(fehler)
          endif
       endif
-   enddo ! alle n Ränder
+   enddo
    ! Das Allocieren der Flux-Felder geschieht erst in ganglinien_parallel()
    ! weil dort erst die Anzahl der Konzentrationen für die Massenflüsse zusammengezählt wird.
-   return
+   
 end subroutine randlinie_zusammenstellen
 

@@ -165,5 +165,4 @@ subroutine nitrogen_wrapper_3d(i)
       print*, ''
    endif
    
-   return
 end subroutine nitrogen_wrapper_3d

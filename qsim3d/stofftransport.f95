@@ -30,8 +30,8 @@ subroutine stofftransport()
    use modell
    implicit none
    
-   real , allocatable , dimension(:) :: planktonic_variable_before   ! temporary copy of values before transport
-   integer                           :: i, j, k, nk
+   real, allocatable, dimension(:) :: planktonic_variable_before   ! temporary copy of values before transport
+   integer                         :: i, j, k, nk
 
    call mpi_barrier(mpi_komm_welt, ierr)
    if (kontrollknoten > 0) then
@@ -209,12 +209,15 @@ subroutine allo_trans()
    endif ! only prozessor 0
    return
 end subroutine allo_trans
-!----+-----+----
+
+
+
 !> calculate proton concentration from pH
 subroutine ph2hplus()
    use modell
    implicit none
-   real*8 mue,ph,lf,hplus,hk,lgh
+
+   real(kind=8) :: mue, ph, lf, hplus, hk, lgh
    integer i
    
    do i = 1,part ! all i elements/nodes on this process
@@ -225,20 +228,19 @@ subroutine ph2hplus()
       hk = mue / (2. + 2.8 * mue)
       hplus = 10**(hk - ph)
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = hplus
-      if (iglob == kontrollknoten) print*, meinrang, i, ' ph2hplus: ph, hplus, part, number_plankt_vari = ',  &
+      if (iglob == kontrollknoten) then
+         print*, meinrang, i, ' ph2hplus: ph, hplus, part, number_plankt_vari = ',  &
           ph, hplus, part, number_plankt_vari
-   enddo ! all i elements/nodes on this process
-   
-   return
-end subroutine ph2hplus
-!----+-----+----
+      endif
+   enddo 
+ end subroutine ph2hplus
+
 !> calculate pH from proton concentration
-!! \n\n
 subroutine hplus2ph()
    use modell
    implicit none
-   real(8) :: mue, ph, lf, hplus, hk
-   integer :: i
+   real(kind=8) :: mue, ph, lf, hplus, hk
+   integer      :: i
    
    do i = 1,part ! all i elements/nodes on this process
       iglob = i + meinrang * part
@@ -248,9 +250,10 @@ subroutine hplus2ph()
       hk = mue / (2. + 2.8 * mue)
       ph = hk - log10(hplus)
       planktonic_variable_p(66+(i-1)*number_plankt_vari) = ph
-      if (iglob == kontrollknoten) print*, meinrang, i, ' hplus2ph: ph, hplus, part, number_plankt_vari = ',  &
+      if (iglob == kontrollknoten) then
+         print*, meinrang, i, ' hplus2ph: ph, hplus, part, number_plankt_vari = ',  &
           ph, hplus, part, number_plankt_vari
-   enddo ! alle j elements/nodes
-   
-   return
+      endif
+   enddo 
+  
 end subroutine hplus2ph

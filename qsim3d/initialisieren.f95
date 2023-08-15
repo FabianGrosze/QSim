@@ -106,7 +106,7 @@ subroutine initialisieren()
             call qerror(fehler)
          endif
          irn = zone(nuzo)%ini_randnr
-         call randwert_planktonic(j, irn,einmal)
+         call randwert_planktonic(j, irn)
          call randbedingungen_ergaenzen(j,einmal)
          call tiefenprofil(j)
       enddo ! alle j knoten

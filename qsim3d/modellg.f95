@@ -29,16 +29,16 @@ subroutine modellg()
    use modell
    implicit none
    
-   character(300) :: file_name, text
+   character(300) :: filename, text
    integer        :: open_error, read_error, nzon, ion, izoni, alloc_status, n, i, ini
    integer        :: tfolgt, rfolgt, ifolgt, knozoanz
    logical        :: vorhanden
    real           :: anfangsKm, endKm, zonflae
    character      :: token
    
-   file_name = trim(modellverzeichnis) // 'MODELLG.3D.txt'
-   open (newunit = ion , file = file_name, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0) call qerror("Could not open " // trim(file_name))
+   filename = trim(modellverzeichnis) // 'MODELLG.3D.txt'
+   open (newunit = ion , file = filename, status = 'old', action = 'read ', iostat = open_error )
+   if (open_error /= 0) call qerror("Could not open " // trim(filename))
    
    print*
    print "(a)", repeat("-", 80)

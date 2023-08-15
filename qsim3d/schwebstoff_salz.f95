@@ -187,7 +187,7 @@ end subroutine verteilung_holen_gr3
 subroutine schwebstoff_salz_sichten()
    use modell
    implicit none
-   character (len = longname) :: systemaufruf, dateiname, irgendeinstring
+   character (len = longname) :: systemaufruf, filename, irgendeinstring
    integer sysa, nz, ion, n, is, i, zwischenwert, errcode
    if (meinrang /= 0)call qerror('schwebstoff_salz_sichten() darf nur auf prozess 0')
    write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'trueb >/dev/null 2>/dev/null'
@@ -200,9 +200,9 @@ subroutine schwebstoff_salz_sichten()
       print*,'schwebstoff_salz: Vorgabe von Schwebstoffdaten im Verzeichnis trueb'
    endif
    print*,'schwebstoff_salz Vorgaben sichten ...'
-   write(dateiname,'(2A)')trim(modellverzeichnis),'schwebe'
+   write(filename,'(2A)')trim(modellverzeichnis),'schwebe'
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
-   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'trueb > ', trim(dateiname)
+   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'trueb > ', trim(filename)
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
    call system(trim(systemaufruf),sysa)
    if (sysa /= 0) then
@@ -210,7 +210,7 @@ subroutine schwebstoff_salz_sichten()
       call qerror('Auflisten der Schwebstoffvorgaben fehlgeschlagen.')
    endif
    ion = 444
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = sysa )
+   open ( unit = ion , file = filename, status = 'old', action = 'read', iostat = sysa )
    if (sysa /= 0)call qerror('open_error schwebe')
    rewind(ion)
    trueb_anzahl = 0

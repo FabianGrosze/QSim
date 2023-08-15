@@ -73,5 +73,4 @@ subroutine albenth_wrapper_3d(i)
    !    benthic_distribution_p(9+(i-1)*number_benth_distr),              & ! cmatki
    !    control, jjj)
    
-   return
 end subroutine albenth_wrapper_3d

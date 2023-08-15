@@ -26,16 +26,12 @@
 ! --------------------------------------------------------------------------- !
 module isotope
    implicit none
-   save
-   
-   integer :: irgendeine_zahl
    
    public  :: isotop_no3konsum
 
 contains
 
-   subroutine isotop_no3konsum(f,control)
-      implicit none
+   subroutine isotop_no3konsum(f, control)
       real        :: c_source, delta_source, R_source
       real        :: c_sink, delta_sink, R_sink
       real        :: f, alpha, eps, dc, R_standard
