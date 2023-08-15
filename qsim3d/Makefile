@@ -135,7 +135,6 @@ Q3 = version.co \
    parallel.o \
    water_temperature_wrapper_3d.o \
    alter.o\
-   module_isotope.o \
    nitrogen_wrapper_3d.o \
    oxygen_wrapper_3d.o \
    phosphate_wrapper_3d.o \

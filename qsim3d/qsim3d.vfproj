@@ -162,7 +162,6 @@
 		<File RelativePath=".\konsum_huelle.f95"/>
 		<File RelativePath=".\macrophytes_wrapper_3d.f95"/>
 		<File RelativePath=".\modellg.f95"/>
-		<File RelativePath=".\module_isotope.f95"/>
 		<File RelativePath=".\module_modell.f95"/>
 		<File RelativePath=".\module_QSimDatenfelder.f95"/>
 		<File RelativePath=".\module_salinity.f95"/>
