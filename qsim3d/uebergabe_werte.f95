@@ -145,7 +145,7 @@ subroutine ini_ueber(nk)
       ! --- depth averaged quantities ---
       trans_quant_name(:) = "                  "
       
-      trans_quant_name( 1) = "              bsbt"
+      trans_quant_name( 1) = "              bsbt" !
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
       trans_quant_name( 3) = "               doN" ! Stickstofffreisetzung orgc
       trans_quant_name( 4) = "            BACmua" ! Ausgabekonzentration Summe Aufnahme+Respirationsrate heterotrophe Bakterien
@@ -188,17 +188,17 @@ subroutine ini_ueber(nk)
       trans_quant_name(41) = "            dalgao" ! Respiration (Sauerstoffverbrauch) der Gruen-, Kiesel-, und Blaualge
       trans_quant_name(42) = "                ir" ! Ingestionsrate der Rotatorien in mg/(l*h) | konsum()
       trans_quant_name(43) = "            zooro2" ! Sauerstoffverbrauch durch Zooplanktonrespiration
-      trans_quant_name(44) = "            rO2HNF" ! Respiration HNF ???
+      trans_quant_name(44) = "            rO2HNF" ! Respiration HNF?
       trans_quant_name(45) = "          empty_45" ! 
-      trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
-      trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
+      trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert? 
+      trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule
       trans_quant_name(48) = "            akitbr" !
       trans_quant_name(49) = "            agrtbr" !
       trans_quant_name(50) = "            abltbr" !
       trans_quant_name(51) = "             sgo2n" ! Aufsummierter Nitrifikationssauerstoffverbrauch, nur Ausgabe
       trans_quant_name(52) = "             susno" ! Sauerstoffverbr. d. Nitrifik. in der Wassersäule in mgO2/(l*h)
       trans_quant_name(53) = "            algzok" ! kiesel-Algen-Konsum Zoo-Plankton in mg/l
-      trans_quant_name(54) = "           ???extk" ! mittlerer Extinktionskoeffizient
+      trans_quant_name(54) = "              extk" ! mittlerer Extinktionskoeffizient
       trans_quant_name(55) = "              tpki" ! Ausgabeparameter algaeski()
       trans_quant_name(56) = "            akmuea" ! Ausgabeparameter algaeski()
       trans_quant_name(57) = "            ftaaus" ! Ausgabeparameter algaeski() fta
@@ -220,9 +220,9 @@ subroutine ini_ueber(nk)
       trans_quant_name(73) = "            algzob" ! blau-Algen-Konsum Zoo-Plankton in mg/l
       trans_quant_name(74) = "              zHNF" ! Aufnahmerate der HNF
       trans_quant_name(75) = "             HNFza" ! HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
-      trans_quant_name(76) = "             rmuas" !  = mueRot-respRg ! Nettowachstumsrate Rotatorien ?
-      trans_quant_name(77) = "              rakr" !  = iras(ior)*respaR ! Fraßabhängige Respiration ?
-      trans_quant_name(78) = "              rbar" !  = respRg ! GRund?-Respiration ?
+      trans_quant_name(76) = "             rmuas" ! Nettowachstumsrate Rotatorien?
+      trans_quant_name(77) = "              rakr" ! Fraßabhängige Respiration?
+      trans_quant_name(78) = "              rbar" ! Grundrespiration?
       trans_quant_name(79) = "              iras" ! Ausgabe Ingestionsrate
       trans_quant_name(80) = "              tpgr" ! Ausgabeparameter algaesgr()
       trans_quant_name(81) = "              tpbl" ! Ausgabeparameter algaesbl()

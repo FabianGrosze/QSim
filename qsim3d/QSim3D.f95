@@ -102,7 +102,7 @@ program QSim3D
    !call gather_ueber()
    !call mpi_barrier (mpi_komm_welt, ierr)
    !-------------------------------------------------
-   call ganglinien_schliessen() !! write and close time series files
+   call write_timeseries() !! write and close time series files
    call ausgeben() !! output at the end
    if (hydro_trieb == 3) call check_err( 'QSim3D', nf_close(ncid) ) ! close SCHISM netCDF files
    call mpi_barrier (mpi_komm_welt, ierr)

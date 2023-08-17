@@ -308,10 +308,10 @@ module modell
    integer, parameter :: number_plankt_vari_vert = 22 !< Number of vertically distributed planctonic, i.e. transported variables | depth-profiles
    integer, parameter :: num_lev = 1
    
-   integer                                      :: number_plankt_point !<   point-number
-   character(18), dimension(number_plankt_vari) ::  planktonic_variable_name !< QSim-1D Namen, die zu den planktischen, transportierten, tiefengemittelten Variablen gehören.
-   logical,       dimension(number_plankt_vari) ::  output_plankt            !< Kennzeichnung, ob diese Variable ausgegeben werden soll. Siehe dazu ausgabekonzentrationen()
-   real,    allocatable , dimension (:)         :: planktonic_variable       !< globales (Prozess 0) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. 
+   integer                                      :: number_plankt_point      !<   point-number
+   character(18), dimension(number_plankt_vari) :: planktonic_variable_name !< QSim-1D Namen, die zu den planktischen, transportierten, tiefengemittelten Variablen gehören.
+   logical,       dimension(number_plankt_vari) :: output_plankt            !< Kennzeichnung, ob diese Variable ausgegeben werden soll. Siehe dazu ausgabekonzentrationen()
+   real,    allocatable , dimension (:)         :: planktonic_variable      !< globales (Prozess 0) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. 
    
    !>    lokales (parallel alle Prozesse) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. \n
    !!    bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::planktonic_variable das zu den Knoten gehört,
