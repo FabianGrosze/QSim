@@ -212,7 +212,6 @@ contains
       integer                        :: i                      ! loop index
       integer                        :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
       integer                        :: start4(4), count4(4)   ! netCDF read start/count for 4D variable
-      integer                        :: i_fill(2)              ! is fill value used (0) or not (1) in .nc file?
       
       real                           :: fill_value(2)          ! fill value of netCDF variables
       
@@ -225,7 +224,7 @@ contains
       nc_error_prefix = trim(calling_routine)//" - Mesh2_face_Schwebstoffmenge_2d"
       call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_Schwebstoffmenge_2d', varid) )
       call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, spm_classes_element, start4, count4 ) )
-      call check_err( trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill(1), fill_value(1)) )
+      call check_err(trim(nc_error_prefix), nf90_get_att(ncid, varid, "_FillValue", fill_value(1)))
       
       ! read mean water volume
       start3 = (/                   1, 1, i_time /)
@@ -233,14 +232,15 @@ contains
       nc_error_prefix = trim(calling_routine)//" - Mesh2_face_mittleres_Wasservolumen_2d"
       call check_err( trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_mittleres_Wasservolumen_2d', varid) )
       call check_err( trim(nc_error_prefix), nf90_get_var(ncid, varid, vol_element, start3, count3 ) )
-      call check_err( trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill(2), fill_value(2)) )
+      call check_err(trim(nc_error_prefix), nf90_get_att(ncid, varid, "_FillValue", fill_value(2)))
+      
       
       ! sum up SPM mass fractions and calculate concentration
       do i = 1,number_plankt_point
          spm_element(i) = sum(spm_classes_element(i,:))
          if (min(spm_element(i), vol_element(i)) <= 0. .or. &
-             (i_fill(1) == 0 .and. abs(spm_element(i)/real(n_classes) - fill_value(1)) <= one) .or. &
-             (i_fill(2) == 0 .and. abs(vol_element(i)                 - fill_value(2)) <= one)      ) then
+             abs(spm_element(i)/real(n_classes) - fill_value(1)) <= one .or. &
+             abs(vol_element(i)                 - fill_value(2)) <= one      ) then
             ! set land values to 0
             spm_element(i) = 0.
          else
