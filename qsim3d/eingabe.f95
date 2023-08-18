@@ -138,7 +138,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
       
       call read_aparam(cpfad, iwsim, icoli, ischwer)
       call read_extnct()
-      call ausgabezeitpunkte()      ! reading points in time for output
+      call read_ausgabezeitpunkte() ! reading points in time for output
       call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
       call wetter_readallo0()

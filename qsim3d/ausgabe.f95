@@ -139,7 +139,7 @@ subroutine ausgabekonzentrationen()
       
       ! --- transfer variables ---
       do j = 1,number_trans_quant 
-         write(text,'(a)')adjustl(trim(trans_quant_name(j)))
+         write(text,'(a)') adjustl(trim(trans_quant_name(j)))
          iscan = index(trim(ctext), trim(text))
          if (iscan > 0) then ! found
             output_trans_quant(j) = .true.
@@ -151,7 +151,7 @@ subroutine ausgabekonzentrationen()
       
       ! --- vertically distributed transfer quantities ---
       do j = 1,number_trans_quant_vert  
-         write(text,'(A)')ADJUSTL(trim(trans_quant_vert_name(j)))
+         write(text,'(A)') adjustl(trim(trans_quant_vert_name(j)))
          iscan = index(trim(ctext),trim(text))
          if (iscan > 0) then ! found
             output_trans_quant_vert(j) = .true.
@@ -171,7 +171,7 @@ subroutine ausgabekonzentrationen()
    endif 
    
    n_bn = count(output_benth_distr)
-   n_pl = count(output_plankt) + count(output_plankt_vert)
+   n_pl = count(output_plankt)    + count(output_plankt_vert)
    n_ue = count(output_trans_val) + count(output_trans_quant) + count(output_trans_quant_vert)
    
    ! --------------------------------------------------------------------------
@@ -203,51 +203,50 @@ subroutine ausgabekonzentrationen_beispiel()
    use modell
    implicit none
    
-   integer             :: j,open_error
+   integer             :: j, open_error, u_out
    character(longname) :: file_name
    
    file_name = trim(modellverzeichnis) // 'ausgabekonzentrationen_beispiel.txt'
-   open(unit = 104 , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
+   open(unit = u_out , file = file_name, status = 'replace', action = 'write ', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open file " // file_name)
    
    ! depth averaged planktic variables
-   write(104,'(A)')"# depth averaged, planctonic, transported concentrations"
+   write(u_out,'(A)')"# depth averaged, planctonic, transported concentrations"
    do j = 1,number_plankt_vari 
-      write(104,'(A1,7x,I4,2x,A18)') "0", j, trim(planktonic_variable_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)') "0", j, trim(planktonic_variable_name(j))
    enddo 
    
    ! vertically distributed planktonic variables
-   write(104,'(A)')"# depth resolving, planctonic, transported concentrations"
+   write(u_out,'(A)')"# depth resolving, planctonic, transported concentrations"
    do j = 1,number_plankt_vari_vert 
-      write(104,'(A1,7x,I4,2x,A18)') "0", j, trim(plankt_vari_vert_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)') "0", j, trim(plankt_vari_vert_name(j))
    enddo 
    
    ! benthic distributions
-   write(104,'(A)')"# bentic distributions"
+   write(u_out,'(A)')"# bentic distributions"
    do j = 1,number_benth_distr 
-      write(104,'(A1,7x,I4,2x,A18)') "0", j, trim(benth_distr_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)') "0", j, trim(benth_distr_name(j))
    enddo 
    
    ! global transfer variables
-   write(104,'(A)')"# global transfer variables"
+   write(u_out,'(A)')"# global transfer variables"
    do j = 1,number_trans_val  
-      write(104,'(A1,7x,I4,2x,A18)') "0", j, trim(trans_val_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)') "0", j, trim(trans_val_name(j))
    enddo
    
    ! depth averaged transfer variables
-   write(104,'(A)')"# depth averaged transfer variables"
+   write(u_out,'(A)')"# depth averaged transfer variables"
    do j = 1,number_trans_quant 
-      write(104,'(A1,7x,I4,2x,A18)') "0", j, trim(trans_quant_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)') "0", j, trim(trans_quant_name(j))
    enddo
    
    ! vertically distributed transfer quantities
-   write(104,'(A)')"# depth resolving transfer variables"
+   write(u_out,'(A)')"# depth resolving transfer variables"
    do j = 1,number_trans_quant_vert  
-      write(104,'(A1,7x,I4,2x,A18)')"0",j,trim(trans_quant_vert_name(j))
+      write(u_out,'(A1,7x,I4,2x,A18)')"0",j,trim(trans_quant_vert_name(j))
    enddo
    
-   close(104)
-   
+   close(u_out)
 end subroutine ausgabekonzentrationen_beispiel
 
 
@@ -255,7 +254,7 @@ end subroutine ausgabekonzentrationen_beispiel
 !!
 !! Datetimes defined in `ausgabezeitpunkte.txt` are stored in variable 
 !! `ausgabe_zeitpunkt`.
-subroutine ausgabezeitpunkte()
+subroutine read_ausgabezeitpunkte()
    use modell
    use module_datetime
    implicit none
@@ -267,7 +266,6 @@ subroutine ausgabezeitpunkte()
    
    
    filename = trim(modellverzeichnis) // 'ausgabezeitpunkte.txt'
-   u_out = 103
    open(newunit = u_out , file = filename, status = 'old', action = 'read ', iostat = open_error)
    if (open_error /= 0) call qerror ("could not open " // trim(filename))
    
@@ -275,12 +273,9 @@ subroutine ausgabezeitpunkte()
    ! determine number of output times
    n_output = 0
    do while (zeile(u_out))
-      ! commented lines ('#') are skipped
-      if (ctext(1:1) /= '#') then
-         n_output = n_output + 1
-         read(ctext,*, iostat = io_error) day, month, year, hour, minute, second
-         if (io_error /= 0) call qerror("error while reading " // trim(filename))
-      endif 
+      n_output = n_output + 1
+      read(ctext,*, iostat = io_error) day, month, year, hour, minute, second
+      if (io_error /= 0) call qerror("error while reading " // trim(filename))
    enddo 
    
    allocate(ausgabe_zeitpunkt(n_output))
@@ -292,21 +287,24 @@ subroutine ausgabezeitpunkte()
    rewind(u_out)
    n = 0
    do while (zeile(u_out))
-      if (ctext(1:1) /= '#') then ! keine kommentarzeile
-         n = n + 1
-         read(ctext,*) day, month, year, hour, minute, second
-         
-         datetime_output(n) = datetime(year, month, day, hour, minute, tz = tz_qsim)
-         ausgabe_zeitpunkt(n) = datetime_output(n) % seconds_since_epoch()
-         
-         ! check for trajectory output
-         read(ctext,*, iostat = io_error) day, month, year, hour, minute, second, nba
-         if (io_error == 0) then
-            ausgabe_bahnlinie(n) = nba
-         else
-            ausgabe_bahnlinie(n) = 0
-         endif 
+      n = n + 1
+      read(ctext,*) day, month, year, hour, minute, second
+      datetime_output(n) = datetime(year, month, day, hour, minute, tz = tz_qsim)
+      
+      if (.not. datetime_output(n) % is_valid()) then
+         call qerror("Found invalid date in " // trim(filename) // ": " // datetime_output(n) % date_string())
+      endif
+      
+      ausgabe_zeitpunkt(n) = datetime_output(n) % seconds_since_epoch()
+      
+      ! check for trajectory output
+      read(ctext,*, iostat = io_error) day, month, year, hour, minute, second, nba
+      if (io_error == 0) then
+         ausgabe_bahnlinie(n) = nba
+      else
+         ausgabe_bahnlinie(n) = 0
       endif 
+   
    enddo 
    close (u_out)
    
@@ -317,9 +315,13 @@ subroutine ausgabezeitpunkte()
    print "(a)", "output settings"
    print "(a)", repeat("-", 80)
    
-   print "(a,i0)",  "n_output = ", n_output
-   print "(3a,i0)", "first output = ", datetime_output(1) % date_string(),        " | ",  ausgabe_zeitpunkt(1) 
-   print "(3a,i0)", "last output =  ", datetime_output(n_output) % date_string(), " | ",  ausgabe_zeitpunkt(n_output) 
+   if (n_output <= 0) then
+      print "(2a)", "No output defined in ", trim(filename)
+   else
+      print "(a,i0)",    "n_output = ", n_output
+      print "(3a,i0,a)", "first output = ", datetime_output(1) % date_string(),        " [",  ausgabe_zeitpunkt(1), "]"
+      print "(3a,i0,a)", "last output =  ", datetime_output(n_output) % date_string(), " [",  ausgabe_zeitpunkt(n_output),"]"
+   endif
    
    if (any(ausgabe_zeitpunkt < startzeitpunkt .or. ausgabe_zeitpunkt > endzeitpunkt)) then
       print*
@@ -329,7 +331,7 @@ subroutine ausgabezeitpunkte()
    
    endif
    
-end subroutine ausgabezeitpunkte
+end subroutine read_ausgabezeitpunkte
 
 !> true if output required now
 subroutine ausgeben_parallel()
