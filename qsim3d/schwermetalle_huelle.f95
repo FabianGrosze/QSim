@@ -38,12 +38,7 @@ subroutine schwermetalle_huelle(i)
    npla = (i-1)*number_plankt_vari ! Ort im Feld der transportierten planktischen Variablen
    ntra = (i-1)*number_trans_quant
    nben = (i-1)*number_benth_distr
-   !     subroutine schwermetalle_kern(hssalgs,SSalgs,hphs,vphs,SSeross,iformVert                      &
-   !         ,anzZeits,sedsss,sedalks,sedalbs,sedalgs                                                  &
-   !         ,gsZns,glZns,gsCads,glCads,gsCus,glCus,gsNis,glNis,gsAss,glAss,gsPbs,glPbs                &
-   !         ,gsCrs,glCrs,gsFes,glFes,gsHgs,glHgs,gsMns,glMns,gsUs,glUs                                &
-   !         ,control,jjj)
-   !!### Schwebstoff und ph: hssalg,hph aus vorangegangenem Zeitschritt in 3D noch nicht implementiert ###
+   
    call schwermetalle_kern(                                  &
                             planktonic_variable_p( 52+npla)  &
                            ,planktonic_variable_p( 52+npla)  &

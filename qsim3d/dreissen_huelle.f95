@@ -53,53 +53,52 @@ subroutine dreissen_huelle(i)
    zdreis(1:2,2) = benthic_distribution_p(57+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (1. Kohorte)
    zdreis(1:2,3) = benthic_distribution_p(58+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (2. Kohorte)
    zdreis(1:2,4) = benthic_distribution_p(59+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Sohle (3. Kohorte)
-   zdrei(1:2,1) = benthic_distribution_p(60+(i-1)*number_benth_distr)  ! Dreissenabiomasse pro Fläche Böschung (0. Kohorte)
-   zdrei(1:2,2) = benthic_distribution_p(61+(i-1)*number_benth_distr)  ! Dreissenabiomasse pro Fläche Böschung (1. Kohorte)
-   zdrei(1:2,3) = benthic_distribution_p(62+(i-1)*number_benth_distr)  ! Dreissenabiomasse pro Fläche Böschung (2. Kohorte)
-   zdrei(1:2,4) = benthic_distribution_p(63+(i-1)*number_benth_distr)  ! Dreissenabiomasse pro Fläche Böschung (3. Kohorte)
-   gewdr(1:2,1) = benthic_distribution_p(64+(i-1)*number_benth_distr)  ! Gewicht einer Dreissena-Muschel (0. Kohorte)
-   gewdr(1:2,2) = benthic_distribution_p(65+(i-1)*number_benth_distr)  ! Gewicht einer Dreissena-Muschel (1. Kohorte)
-   gewdr(1:2,3) = benthic_distribution_p(66+(i-1)*number_benth_distr)  ! Gewicht einer Dreissena-Muschel (2. Kohorte)
-   gewdr(1:2,4) = benthic_distribution_p(67+(i-1)*number_benth_distr)  ! Gewicht einer Dreissena-Muschel (3. Kohorte)
-   dlarvn(1:2) = planktonic_variable_p(60+(i-1)*number_plankt_vari)    ! Anzahl der Dreissena-Larven
-   dlmax(1:2) = benthic_distribution_p(68+(i-1)*number_benth_distr)    ! Dreissena Larven ??
-   dlmaxs(1:2) = benthic_distribution_p(69+(i-1)*number_benth_distr)   ! Dreissena Larven ??
-   gwdmax(1:2) = benthic_distribution_p(70+(i-1)*number_benth_distr)   ! Dreissena Larven ??
-   sgwmue(1:2) = benthic_distribution_p(71+(i-1)*number_benth_distr)   ! Dreissena Larven ??
-   
-   tempw(1:2) = planktonic_variable_p( 1+(i-1)*number_plankt_vari)      ! Wassertemperatur
-   aki(1:2) = planktonic_variable_p(8+(i-1)*number_plankt_vari)         ! Anteil kiesel-Algen
-   agr(1:2) = planktonic_variable_p(9+(i-1)*number_plankt_vari)         ! Anteil gruen-Algen
-   abl(1:2) = planktonic_variable_p(10+(i-1)*number_plankt_vari)        ! Anteil blau-Algen
-   vo2(1:2) = planktonic_variable_p( 2+(i-1)*number_plankt_vari)        ! Sauerstoffgehalt tiefengemittelt
-   ro2dr(1:2) = benthic_distribution_p(24+(i-1)*number_benth_distr)     ! Respiration Dreissena-Muscheln pro Zeitschritt in mgO2/l je Zeitschritt
-   algdrk(1:2) = benthic_distribution_p(38+(i-1)*number_benth_distr)    ! kiesel Algen-Konsum-bentisch (Muscheln) in mg/l
-   algdrg(1:2) = benthic_distribution_p(40+(i-1)*number_benth_distr)    ! grün-Algen-Konsum-bentisch (Muscheln) in mg/l
-   algdrb(1:2) = benthic_distribution_p(41+(i-1)*number_benth_distr)    ! blau-Algen-Konsum-bentisch (Muscheln) in mg/l
-   drfaek(1:2) = transfer_quantity_p(13+(i-1)*number_trans_quant)       ! Faecesbildung der Muscheln infolge Konsum Kieselalgen
-   drfaeg(1:2) = transfer_quantity_p(14+(i-1)*number_trans_quant)       ! Faecesbildung der Muscheln infolge Konsum Grünlalgen
-   drfaeb(1:2) = transfer_quantity_p(15+(i-1)*number_trans_quant)       ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Blaualgen
-   drfaes(1:2) = transfer_quantity_p(95+(i-1)*number_trans_quant)       ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen
-   ssdr(1:2) = benthic_distribution_p(4+(i-1)*number_benth_distr)       ! Schwebstoffaufnahme durch Dreissena ??
-   CHNF(1:2) = planktonic_variable_p(48+(i-1)*number_plankt_vari)       ! C-Masse der heterotrophen Nanoflagelaten
-   if (CHNF(1) <= 0.0) CHNF(1:2) = 0.0                                  ! CHNF=-1 meint keine HNF
-   akbcm(1:2) = planktonic_variable_p(24+(i-1)*number_plankt_vari)      ! Verhältnis Chlorophyll-a zu Kohlenstoff Kieselalgen
-   agbcm(1:2) = planktonic_variable_p(25+(i-1)*number_plankt_vari)      ! Verhältnis Chlorophyll-a zu Kohlenstoff Gruenalgen
-   abbcm(1:2) = planktonic_variable_p(26+(i-1)*number_plankt_vari)      ! Verhältnis Chlorophyll-a zu Kohlenstoff der blau-Algen
-   ssalg(1:2) = planktonic_variable_p(52+(i-1)*number_plankt_vari)      ! GESAMTSCHWEBSTOFFE incl. lebender Organismen, messbar, Randwert
-   coroi(1:2) = benthic_distribution_p(54+(i-1)*number_benth_distr)     ! Corophium Böschung
-   corois(1:2) = benthic_distribution_p(55+(i-1)*number_benth_distr)    ! Corophium Sohle
-   elen(1:2) = 1                                                        ! Elementlänge (nicht verwendet)
-   FLAE(1:2) = 500.0*rb_hydraul_p(2+(i-1)*number_rb_hydraul)            !500* tiefe(1) Wassertiefe !! Breite konstant 500 m
-   bsohlm(1:2) = 500.0                                                  ! Sohlbreite im 3D nicht verwendbar
-   lboem(1:2) = 0.01                                                    ! Böschungslänge  im 3D nicht verwendbar
-   anze = 1                                                             ! Anzahl der Profile im aktuellen Strang
-   azStr = 2                                                            ! Strangnummer dient nur zum Hochzählen
+   zdrei(1:2,1)  = benthic_distribution_p(60+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Böschung (0. Kohorte)
+   zdrei(1:2,2)  = benthic_distribution_p(61+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Böschung (1. Kohorte)
+   zdrei(1:2,3)  = benthic_distribution_p(62+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Böschung (2. Kohorte)
+   zdrei(1:2,4)  = benthic_distribution_p(63+(i-1)*number_benth_distr) ! Dreissenabiomasse pro Fläche Böschung (3. Kohorte)
+   gewdr(1:2,1)  = benthic_distribution_p(64+(i-1)*number_benth_distr) ! Gewicht einer Dreissena-Muschel (0. Kohorte)
+   gewdr(1:2,2)  = benthic_distribution_p(65+(i-1)*number_benth_distr) ! Gewicht einer Dreissena-Muschel (1. Kohorte)
+   gewdr(1:2,3)  = benthic_distribution_p(66+(i-1)*number_benth_distr) ! Gewicht einer Dreissena-Muschel (2. Kohorte)
+   gewdr(1:2,4)  = benthic_distribution_p(67+(i-1)*number_benth_distr) ! Gewicht einer Dreissena-Muschel (3. Kohorte)
+   dlarvn(1:2)   = planktonic_variable_p(60+(i-1)*number_plankt_vari)  ! Anzahl der Dreissena-Larven
+   dlmax(1:2)    = benthic_distribution_p(68+(i-1)*number_benth_distr) ! Dreissena Larven ??
+   dlmaxs(1:2)   = benthic_distribution_p(69+(i-1)*number_benth_distr) ! Dreissena Larven ??
+   gwdmax(1:2)   = benthic_distribution_p(70+(i-1)*number_benth_distr) ! Dreissena Larven ??
+   sgwmue(1:2)   = benthic_distribution_p(71+(i-1)*number_benth_distr) ! Dreissena Larven ??
+   tempw(1:2)    = planktonic_variable_p( 1+(i-1)*number_plankt_vari)  ! Wassertemperatur
+   aki(1:2)      = planktonic_variable_p(8+(i-1)*number_plankt_vari)   ! Anteil kiesel-Algen
+   agr(1:2)      = planktonic_variable_p(9+(i-1)*number_plankt_vari)   ! Anteil gruen-Algen
+   abl(1:2)      = planktonic_variable_p(10+(i-1)*number_plankt_vari)  ! Anteil blau-Algen
+   vo2(1:2)      = planktonic_variable_p( 2+(i-1)*number_plankt_vari)  ! Sauerstoffgehalt tiefengemittelt
+   ro2dr(1:2)    = benthic_distribution_p(24+(i-1)*number_benth_distr) ! Respiration Dreissena-Muscheln pro Zeitschritt in mgO2/l je Zeitschritt
+   algdrk(1:2)   = benthic_distribution_p(38+(i-1)*number_benth_distr) ! kiesel Algen-Konsum-bentisch (Muscheln) in mg/l
+   algdrg(1:2)   = benthic_distribution_p(40+(i-1)*number_benth_distr) ! grün-Algen-Konsum-bentisch (Muscheln) in mg/l
+   algdrb(1:2)   = benthic_distribution_p(41+(i-1)*number_benth_distr) ! blau-Algen-Konsum-bentisch (Muscheln) in mg/l
+   drfaek(1:2)   = transfer_quantity_p(13+(i-1)*number_trans_quant)    ! Faecesbildung der Muscheln infolge Konsum Kieselalgen
+   drfaeg(1:2)   = transfer_quantity_p(14+(i-1)*number_trans_quant)    ! Faecesbildung der Muscheln infolge Konsum Grünlalgen
+   drfaeb(1:2)   = transfer_quantity_p(15+(i-1)*number_trans_quant)    ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Blaualgen
+   drfaes(1:2)   = transfer_quantity_p(95+(i-1)*number_trans_quant)    ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen
+   ssdr(1:2)     = benthic_distribution_p(4+(i-1)*number_benth_distr)  ! Schwebstoffaufnahme durch Dreissena ??
+   CHNF(1:2)     = planktonic_variable_p(48+(i-1)*number_plankt_vari)  ! C-Masse der heterotrophen Nanoflagelaten
+   if (CHNF(1) <= 0.0) CHNF(1:2) = 0.0                                 ! CHNF=-1 meint keine HNF
+   akbcm(1:2)    = planktonic_variable_p(24+(i-1)*number_plankt_vari)  ! Verhältnis Chlorophyll-a zu Kohlenstoff Kieselalgen
+   agbcm(1:2)    = planktonic_variable_p(25+(i-1)*number_plankt_vari)  ! Verhältnis Chlorophyll-a zu Kohlenstoff Gruenalgen
+   abbcm(1:2)    = planktonic_variable_p(26+(i-1)*number_plankt_vari)  ! Verhältnis Chlorophyll-a zu Kohlenstoff der blau-Algen
+   ssalg(1:2)    = planktonic_variable_p(52+(i-1)*number_plankt_vari)  ! GESAMTSCHWEBSTOFFE incl. lebender Organismen, messbar, Randwert
+   coroi(1:2)    = benthic_distribution_p(54+(i-1)*number_benth_distr) ! Corophium Böschung
+   corois(1:2)   = benthic_distribution_p(55+(i-1)*number_benth_distr) ! Corophium Sohle
+   elen(1:2)     = 1                                                   ! Elementlänge (nicht verwendet)
+   FLAE(1:2)     = 500. * rb_hydraul_p(2+(i-1)*number_rb_hydraul)      !500* tiefe(1) Wassertiefe !! Breite konstant 500 m
+   bsohlm(1:2)   = 500.                                                ! Sohlbreite im 3D nicht verwendbar
+   lboem(1:2)    = 0.01                                                ! Böschungslänge  im 3D nicht verwendbar
+   anze          = 1                                                   ! Anzahl der Profile im aktuellen Strang
+   azStr         = 2                                                   ! Strangnummer dient nur zum Hochzählen
    if (iglob == 1) azStr = 1
-   volfdr(:) = 0.0                                                      ! unbenutzt
-   lait1 = zone(point_zone(iglob))%laich%lait                           ! Dreissena Laichperiode: Tag des Beginns der Laichperiode
-   laim1 = zone(point_zone(iglob))%laich%laim                           ! Dreissena Laichperiode: Monat des Beginns der Laichperiode
-   laid1 = zone(point_zone(iglob))%laich%laid                           ! Dreissena Laichperiode: Dauer der Laichperiode in Tagen
+   volfdr(:)     = 0.0                                                 ! unbenutzt
+   lait1 = zone(point_zone(iglob))%laich%lait                          ! Dreissena Laichperiode: Tag des Beginns der Laichperiode
+   laim1 = zone(point_zone(iglob))%laich%laim                          ! Dreissena Laichperiode: Monat des Beginns der Laichperiode
+   laid1 = zone(point_zone(iglob))%laich%laid                          ! Dreissena Laichperiode: Dauer der Laichperiode in Tagen
    !! <h2>Dreissena-Bewuchs</h2>
    !! Im 3D gibt es keine Böschungen, daher wird dort die Muscheldichte Null gesetzt.
    !! <code>\verbatim
@@ -136,16 +135,17 @@ subroutine dreissen_huelle(i)
    benthic_distribution_p(38+(i-1)*number_benth_distr) = algdrk(1)   ! kiesel Algen-Konsum-bentisch (Muscheln) in mg/l
    benthic_distribution_p(40+(i-1)*number_benth_distr) = algdrg(1)   ! grün-Algen-Konsum-bentisch (Muscheln) in mg/l
    benthic_distribution_p(41+(i-1)*number_benth_distr) = algdrb(1)   ! blau-Algen-Konsum-bentisch (Muscheln) in mg/l
-   transfer_quantity_p(13+(i-1)*number_trans_quant) = drfaek(1)      ! Faecesbildung der Muscheln infolge Konsum Kieselalgen
-   transfer_quantity_p(14+(i-1)*number_trans_quant) = drfaeg(1)      ! Faecesbildung der Muscheln infolge Konsum Grünlalgen
-   transfer_quantity_p(15+(i-1)*number_trans_quant) = drfaeb(1)      ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Blaualgen
-   transfer_quantity_p(95+(i-1)*number_trans_quant) = drfaes(1)      ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen
-   benthic_distribution_p(4+(i-1)*number_benth_distr) = ssdr(1)      ! Schwebstoffaufnahme durch Dreissena ??
+   transfer_quantity_p(13+(i-1)*number_trans_quant)    = drfaek(1)   ! Faecesbildung der Muscheln infolge Konsum Kieselalgen
+   transfer_quantity_p(14+(i-1)*number_trans_quant)    = drfaeg(1)   ! Faecesbildung der Muscheln infolge Konsum Grünlalgen
+   transfer_quantity_p(15+(i-1)*number_trans_quant)    = drfaeb(1)   ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Blaualgen
+   transfer_quantity_p(95+(i-1)*number_trans_quant)    = drfaes(1)   ! Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen
+   benthic_distribution_p(4 +(i-1)*number_benth_distr) = ssdr(1)     ! Schwebstoffaufnahme durch Dreissena ??
    benthic_distribution_p(29+(i-1)*number_benth_distr) = exdrvk(1)   ! exkretierte Biomasse der Muscheln beim Verzehr von Kiesel-algen
    benthic_distribution_p(30+(i-1)*number_benth_distr) = exdrvg(1)   ! exkretierte Biomasse der Muscheln beim Verzehr von Grünalgen
    benthic_distribution_p(31+(i-1)*number_benth_distr) = exdrvb(1)   ! exkretierte Biomasse der Muscheln beim Verzehr von Blau-algen
    benthic_distribution_p(15+(i-1)*number_benth_distr) = resdr(1)    ! Respirationsrate benthischer Filtrierer (Dreissena-Muscheln)
-   transfer_quantity_p(96+(i-1)*number_trans_quant) = drhnf(1)       !  Dreissena-Muscheln fressen HNF
+   transfer_quantity_p(96+(i-1)*number_trans_quant)    = drhnf(1)    !  Dreissena-Muscheln fressen HNF
+   
    ! Bilanz
    benthic_distribution_p(56+(i-1)*number_benth_distr) = zdreis(1,1) ! Dreissenabiomasse pro Fläche Sohle (0. Kohorte)
    benthic_distribution_p(57+(i-1)*number_benth_distr) = zdreis(1,2) ! Dreissenabiomasse pro Fläche Sohle (1. Kohorte)
@@ -159,7 +159,7 @@ subroutine dreissen_huelle(i)
    benthic_distribution_p(65+(i-1)*number_benth_distr) = gewdr(1,2)  ! Gewicht einer Dreissena-Muschel (1. Kohorte)
    benthic_distribution_p(66+(i-1)*number_benth_distr) = gewdr(1,3)  ! Gewicht einer Dreissena-Muschel (2. Kohorte)
    benthic_distribution_p(67+(i-1)*number_benth_distr) = gewdr(1,4)  ! Gewicht einer Dreissena-Muschel (3. Kohorte)
-   planktonic_variable_p(60+(i-1)*number_plankt_vari) = dlarvn(1)    ! Anzahl der Dreissena-Larven
+   planktonic_variable_p(60+(i-1)*number_plankt_vari)  = dlarvn(1)   ! Anzahl der Dreissena-Larven
    benthic_distribution_p(68+(i-1)*number_benth_distr) = dlmax(1)    ! Dreissena Larven ??
    benthic_distribution_p(69+(i-1)*number_benth_distr) = dlmaxs(1)   ! Dreissena Larven ??
    benthic_distribution_p(70+(i-1)*number_benth_distr) = gwdmax(1)   ! Dreissena Larven ??
@@ -176,5 +176,4 @@ subroutine dreissen_huelle(i)
       print*,'Flagellatenverlustrate durch Dreissena hnfdra = ',hnfdra(1)
    endif
    
-   return
 end subroutine dreissen_huelle

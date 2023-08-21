@@ -170,6 +170,4 @@ subroutine organic_carbon_wrapper_3d(i)
       endif
    enddo
     
-   return
-
 end subroutine organic_carbon_wrapper_3d

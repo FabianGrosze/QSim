@@ -28,8 +28,6 @@
 !> Volumenstrom und Tracerfluss (nach Backbord) entlang aller Querschnitte ermitteln
 !!
 !! wird von ganglinien_zeitschritt() aufgerufen
-!! 
-!! aus schnitt.f95, zurück: \ref lnk_ergebnisausgabe
 subroutine querschnitt_flux_casu(zeitzaehler)
    use modell
    implicit none
@@ -40,11 +38,6 @@ subroutine querschnitt_flux_casu(zeitzaehler)
    real    :: deltax, d1, d2, u1, u2, la, flae, vox, pox, kix
    real    :: lang, flaeche, vol_strom, pot_ener_flux, kin_ener_flux
    real    :: c1, c2, masx, massen_flux
-   ! real , allocatable , dimension (:) :: c1, c2, masx, massen_flux
-   ! allocate(c1(n_pl))
-   ! allocate(c2(n_pl))
-   ! allocate(masx(n_pl))
-   ! allocate(massen_flux(n_pl))
    
    do i = 1, anzahl_quer !! alle i Querschnitte
       lang = 0.0
@@ -58,9 +51,7 @@ subroutine querschnitt_flux_casu(zeitzaehler)
          tp = querschnitt(i)%schnittlinie%kante(j)%top
          deltax = ( (querschnitt(i)%schnittlinie%kante(j)%normal_x**2)   &
                   + (querschnitt(i)%schnittlinie%kante(j)%normal_y**2) )**0.5
-         !# tief(j)=p(j)-knoten_z(j) ! Wassertiefe
-         !# if(tief(j).le. min_tief )then ! min_tief parameter aus module_modell
-         !#    tief(j)= min_tief
+         
          d1 = p(bt) - knoten_z(bt)
          d2 = p(tp) - knoten_z(bt)
          u1 = querschnitt(i)%schnittlinie%kante(j)%normal_x*u(bt)*cos(dir(bt))   &
@@ -92,11 +83,7 @@ subroutine querschnitt_flux_casu(zeitzaehler)
       schnittflux_gang(i,zeitzaehler,6) = massen_flux !! 71
       
    enddo ! alle i Querschnitte
-   ! deallocate(c1)
-   ! deallocate(c2)
-   ! deallocate(masx)
-   ! deallocate(massen_flux)
-   return
+   
 end subroutine querschnitt_flux_casu
 
 
@@ -236,7 +223,7 @@ logical function querschnitt_lesen()
    integer               :: nio, io_error, alloc_status, i, j, n, k, l, l1, l2 
    integer               :: nel, bt, tp, nelkntp, nelknbt
    integer, dimension(2) :: el
-   character(len=300)    :: dateiname
+   character(len=300)    :: filename
    real                  :: lang
    
    ! --------------------------------------------------------------------------
@@ -245,8 +232,8 @@ logical function querschnitt_lesen()
    print*," "
    print*,"Reading schnitt.txt"
    
-   dateiname = trim(modellverzeichnis) // 'schnitt.txt'
-   open(newunit = nio , file = dateiname, status = 'old', action = 'read ', iostat = io_error)
+   filename = trim(modellverzeichnis) // 'schnitt.txt'
+   open(newunit = nio , file = filename, status = 'old', action = 'read ', iostat = io_error)
    if (io_error /= 0) then
       print*,"schnitt.txt nicht vorhanden, daher keine Querschnitte."
       querschnitt_lesen = .false.

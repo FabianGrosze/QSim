@@ -50,15 +50,15 @@ subroutine silicate_wrapper_3d(i)
    endif
    
    
-   call silicate(                                                                                  &
-            planktonic_variable_p(7+nk),                                                           &! si
-            benthic_distribution_p(46+(i-1)*number_benth_distr),                                   &! hJSi
-            trans_quant_vert_p(1+( 4-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert), &! up_Si
-            trans_quant_vert_p(1+(23-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert),&! akibr
-            algakz(1,1),                                                                           &! algakz (from QSimDatenfelder)
-            benthic_distribution_p(14+(i-1)*number_benth_distr),                                   &! albewk
-            rb_hydraul_p(2+(i-1)*number_rb_hydraul),                                               &! tiefe
-            tflie,                                                                                 &! tflie
+   call silicate(                                                                                   &
+            planktonic_variable_p(7+nk),                                                            & ! si
+            benthic_distribution_p(46+(i-1)*number_benth_distr),                                    & ! hJSi
+            trans_quant_vert_p(1+( 4-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert), & ! up_Si
+            trans_quant_vert_p(1+(23-1)*num_lev_trans+(i-1)*num_lev_trans*number_trans_quant_vert), & ! akibr
+            algakz(1,1),                                                                            & ! algakz (from QSimDatenfelder)
+            benthic_distribution_p(14+(i-1)*number_benth_distr),                                    & ! albewk
+            rb_hydraul_p(2+(i-1)*number_rb_hydraul),                                                & ! tiefe
+            tflie,                                                                                  & ! tflie
             control, iglob)
             
             
@@ -74,5 +74,4 @@ subroutine silicate_wrapper_3d(i)
       call qerror(fehler)
    endif
    
-   return
 end subroutine silicate_wrapper_3d

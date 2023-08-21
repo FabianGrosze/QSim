@@ -94,10 +94,6 @@
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\metabolism\macrophytes\module_macrophytes.f90">
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/></File></Filter>
-		<Filter Name="suspended_matter">
-		<File RelativePath="..\metabolism\suspended_matter\module_suspended_matter.f90"/>
-		<File RelativePath="..\metabolism\suspended_matter\suspended_matter.f90">
-			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="nitrogen">
 		<File RelativePath="..\metabolism\nitrogen\module_nitrogen.f90"/>
 		<File RelativePath="..\metabolism\nitrogen\nitrifiers.f90">
@@ -140,6 +136,10 @@
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="Debug|x64" ExcludedFromBuild="true"/>
 			<FileConfiguration Name="unused_parameters|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="suspended_matter">
+		<File RelativePath="..\metabolism\suspended_matter\module_suspended_matter.f90"/>
+		<File RelativePath="..\metabolism\suspended_matter\suspended_matter.f90">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
 		<Filter Name="water_temperature">
 		<File RelativePath="..\metabolism\water_temperature\module_water_temperature.f90"/>
 		<File RelativePath="..\metabolism\water_temperature\water_temperature.f90">
@@ -163,6 +163,7 @@
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
 		<File RelativePath="..\metabolism\module_alloc_dimensions.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
+		<File RelativePath="..\metabolism\module_datetime.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\sasu.f90"/>

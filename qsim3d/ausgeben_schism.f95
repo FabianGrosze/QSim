@@ -35,7 +35,7 @@ subroutine ausgeben_schism(itime)
    use schism_msgp, only: myrank,nproc,parallel_abort
    use schism_msgp, only: myrank,nproc,parallel_abort
    implicit none
-   character(len = longname) :: dateiname, systemaufruf, zahl
+   character(len = longname) :: filename, systemaufruf, zahl
    integer :: i,j,k,n, istat, ion, errcode
    integer :: sysa, itime
    real :: t, nue_num, nue_elder, reibgesch, sandrauh, wati, dummy, vx, vy, vz
@@ -45,13 +45,13 @@ subroutine ausgeben_schism(itime)
    write(zahl,*)itime
    zahl = adjustl(zahl)
    print*,'ausgeben_schism aufgerufen für t, rechenzeit, itime = ',trim(zahl), rechenzeit, itime
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'node',trim(zahl),'.vtk'
+   write(filename,'(4A)',iostat = errcode)trim(modellverzeichnis),'node',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename node_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf dateiname failed')
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(filename)
+   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf filename failed')
    call system(systemaufruf)
    ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = istat )
+   open ( unit = ion , file = filename, status = 'unknown', action = 'write ', iostat = istat )
    if (istat /= 0) then
       write(fehler,*)'open_error node_.vtk'
       call qerror(fehler)
@@ -105,13 +105,13 @@ subroutine ausgeben_schism(itime)
    print*,'node output ausgeben_schism done'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
    !!! Element sides, edges=kanten
-   write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
+   write(filename,'(4A)',iostat = errcode)trim(modellverzeichnis),'kanten_',trim(zahl),'.vtk'
    if (errcode /= 0)call qerror('ausgeben_schism writing filename kanten_ failed')
-   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(dateiname)
-   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf dateiname kanten_ failed')
+   write(systemaufruf,'(2A)',iostat = errcode)'rm -rf ',trim(filename)
+   if (errcode /= 0)call qerror('ausgeben_schism writing system call rm -rf filename kanten_ failed')
    call system(systemaufruf)
    ion = 106
-   open ( unit = ion , file = dateiname, status = 'unknown', action = 'write ', iostat = istat )
+   open ( unit = ion , file = filename, status = 'unknown', action = 'write ', iostat = istat )
    if (istat /= 0) then
       write(fehler,*)'open_error kanten.vtk'
       call qerror(fehler)

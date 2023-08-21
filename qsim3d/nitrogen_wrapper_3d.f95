@@ -27,9 +27,8 @@
 
 subroutine nitrogen_wrapper_3d(i)
    use modell
-   use isotope
    use QSimDatenfelder
-   use module_nitrogen, only: nitrifiers, nitrogen
+   use module_nitrogen
    use module_aparam
    implicit none
    
@@ -165,5 +164,4 @@ subroutine nitrogen_wrapper_3d(i)
       print*, ''
    endif
    
-   return
 end subroutine nitrogen_wrapper_3d

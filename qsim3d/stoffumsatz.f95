@@ -26,21 +26,12 @@
 ! --------------------------------------------------------------------------- !
 subroutine stoffumsatz()
    use modell
-   use module_organic_carbon, only: organic_carbon
-   
    
    implicit none
-   integer :: i, j , i1, i2, i3, n,k,nk
-   logical :: printi, nix, fehler_nan
-   integer :: ilast, i1last
-   real    :: rlast,rcount
-   real    :: temperatur_lu, luftfeuchte, wind, strahlung, bewoelkung, wolkentyp
-   real, allocatable, dimension(:) :: tempw_k_part, tempsed_k_part, tief_part, u_part
-   real, allocatable, dimension(:) :: tempsed_k, tempw_k
+   integer :: i, k, nk
    real, allocatable, dimension(:) :: planktonic_variable_before   ! temporary copy of values before process calculations
    
    
-   if (meinrang == 0) print*,'stoffumsatz start'
    ! Stoffumsätze parallelisiert
    do i = 1,part ! Alle Knoten auf diesem Prozessor
       iglob = i + meinrang * part
@@ -128,6 +119,5 @@ subroutine stoffumsatz()
          endif ! Knoten nass
       endif ! Knotennummer existiert(letzter Prozess)
    enddo ! Alle Knoten auf diesem Prozess
-   
-   return
+
 end subroutine stoffumsatz

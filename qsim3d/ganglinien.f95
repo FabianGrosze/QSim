@@ -26,24 +26,29 @@
 ! --------------------------------------------------------------------------- !
 
 !> ganglinien_parallel
-!! \n\n
 subroutine ganglinien_parallel()
    use modell
    implicit none
+
    integer :: i,j, alloc_status, agp
+   
    call MPI_Bcast(anz_gangl,1,MPI_INT,0,mpi_komm_welt,ierr)
-   if (meinrang /= 0) allocate (knot_gangl(anz_gangl), stat = alloc_status )
+   if (meinrang /= 0) allocate(knot_gangl(anz_gangl), stat = alloc_status)
    call MPI_Bcast(knot_gangl,anz_gangl,MPI_INT,0,mpi_komm_welt,ierr)
+   
    !! Knoten aussortieren, die nicht zu diesem Prozess gehören
    agp = 0 !!
    do i = 1,anz_gangl
       if ((knot_gangl(i) > meinrang*part) .and. (knot_gangl(i) <= (meinrang+1)*part)) then
          agp = agp+1
-         print*,'ganglinien_parallel: Knoten #', knot_gangl(i),' macht Prozess #',meinrang," part = ",part
-      else
+         print ("(3(a,i0))"), 'ganglinien_parallel: Node #', knot_gangl(i), &
+                             ' has process #', meinrang,                    &
+                             ', part = ', part 
+      else 
          knot_gangl(i) = 0
       endif
    enddo
+   
    call MPI_Bcast(zeitschrittanzahl,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (r_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
    allocate (t_gang(anz_gangl,zeitschrittanzahl+1), stat = alloc_status )
@@ -53,146 +58,162 @@ subroutine ganglinien_parallel()
    call MPI_Bcast(output_plankt,number_plankt_vari,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(output_plankt_vert,number_plankt_vari_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_pl,1,MPI_INT,0,mpi_komm_welt,ierr)
+   
    print*,'ganglinien_parallel:', n_pl,' planktische Variablen für ganglinienausgabe (n_pl)'
    allocate (pl_gang(anz_gangl,zeitschrittanzahl+1,n_pl), stat = alloc_status )
    if (alloc_status /= 0) call qerror("allocate (pl_gang fehlgeschlagen")
    
    ! Randflüsse:
-   ! 1 WSP-Länge, 2 Querschnittsfläche 3=Volumenrstrom, 4=potentielle und 5=kinetische Energie;
-   ! 6 = Fluss des passiven alters-tracers planktonic_variable(71
+   ! 1 WSP-Länge, 
+   ! 2 Querschnittsfläche 
+   ! 3 Volumenrstrom
+   ! 4 potentielle 
+   ! 5 kinetische Energie
+   ! 6 Fluss des passiven alters-tracers planktonic_variable(71
    allocate (randflux_gang(ianz_rb,zeitschrittanzahl+1,6), stat = alloc_status )
-   if (alloc_status /= 0) then
-      write(fehler,*)'allocate (randflux_gang(ianz_rb, fehlgeschlagen'
-      call qerror(fehler)
-      !         else
-      !            print*,"Speicherplatz wurde allociert für Randflüsse an ",ianz_rb," Rändern für ",zeitschrittanzahl+1  &
-      !     &            ," Zeitpunkte (Initialisierung wird mitnotiert)."
-      !            print*,"An diesen Rändern werden 5 Größen ermittelt"  &
-      !     &            ," (Wasserspiegellänge, Querschnittsfläche, Volumenstrom, Fluss der potentiellen und kinetischen Energie)."  &
-      !     &            ," Ausserdem werden die Massenflüsse für die ",n_pl  &
-      !     &            ," Variablen bestimmt, die in ausgabekonzentrationen.txt gewählt wurden."
-   endif ! alloc_status .ne.0
+   if (alloc_status /= 0) call qerror("Error while allocating variable `randflux_gang`.")
+   
    ! benthic distributions are not gathered. therefore process 0 can do no time-series output
    call MPI_Bcast(output_benth_distr,number_benth_distr,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_bn,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (bn_gang(anz_gangl,zeitschrittanzahl+1,n_bn), stat = alloc_status )
-   !transfer_quantities
+   
+   ! transfer_quantities
    call MPI_Bcast(output_trans_val,number_trans_val,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(output_trans_quant,number_trans_quant,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(output_trans_quant_vert,number_trans_quant_vert,MPI_LOGICAL,0,mpi_komm_welt,ierr)
    call MPI_Bcast(n_ue,1,MPI_INT,0,mpi_komm_welt,ierr)
    allocate (ue_gang(anz_gangl,zeitschrittanzahl+1,n_ue), stat = alloc_status )
 end subroutine ganglinien_parallel
-!
-!----+-----+----
+
 !> ganglinien_oeffnen
-!! \n\n
 subroutine ganglinien_lesen()
    use modell
    implicit none
-   character(200) dateiname, nummer, systemaufruf
-   integer :: open_error, io_error, alloc_status, knumm, nn, i, sys_error, j
-   logical :: querschnitt_lesen
-   if (meinrang > 0) then !! has to be on process 0
-      write(fehler,*)' 7 ganglinien_oeffnen auf process #',meinrang,' ... darf nicht sein'
-      call qerror(fehler)
-   endif
+   
+   character(200) :: filename, sys_call
+   integer        :: open_error, io_error, alloc_status, knumm, nn, i, sys_error, j
+   logical        :: querschnitt_lesen
+   
+   if (meinrang > 0) call qerror("ganglinien_lesen() must only be called from processor 0.")
+   
    anz_gangl = 0
    nn = 0
-   ionumber = 777
-   write(dateiname,'(2A)')trim(modellverzeichnis),'ganglinien_knoten.txt'
-   open ( unit = ionumber , file = dateiname, status = 'old', action = 'read ', iostat = open_error )
-   if (open_error /= 0) then
-      print*,'keine ganglinien_knoten.txt'
-      return
-   endif ! open_error.ne.0
-   do while ( zeile(ionumber)) !! zunächst Anzahl der Ganglinien feststellen
+   
+   filename = trim(modellverzeichnis) // 'ganglinien_knoten.txt'
+   open(newunit = ionumber , file = filename, status = 'old', action = 'read ', iostat = open_error)
+   if (open_error /= 0) call qerror("Could not open " // trim(filename))
+   
+   
+   ! --------------------------------------------------------------------------
+   ! determine number of nodes
+   ! --------------------------------------------------------------------------
+   do while (zeile(ionumber)) 
       if (ctext(1:1) /= '#') then !! keine Kommentarzeile
-         anz_gangl = anz_gangl+1
+         anz_gangl = anz_gangl + 1
          read(ctext,*,iostat = io_error)knumm
-         if (io_error /= 0) then
-            write(fehler,*)'knumm nicht richtig aus ganglinien_knoten.txt gelesen'
-            call qerror(fehler)
-         endif ! io_error.ne.0
-         print*,'ganglinien_knoten.txt  ',anz_gangl,' :', trim(ctext), ' #',knumm
-      endif !! keine Kommentarzeile
-   enddo ! zeile
-   rewind (ionumber) ! ganglinien_knoten.txt zurückspulen
-   allocate (knot_gangl(anz_gangl), stat = alloc_status )
-   !allocate (c3Ammonium(anz_gangl), stat = alloc_status )
-   !allocate (IntAmmonium(anz_gangl), stat = alloc_status )
-   if (alloc_status /= 0) then
-      write(fehler,*)'allocate knot_gangl(anz_gangl) fehlgeschlagen alloc_status = ', alloc_status
-      call qerror(fehler)
-   endif !
-   do while ( zeile(ionumber)) !! alle Zeilen
+         if (io_error /= 0) call qerror("Error while reading " // trim(filename))
+      endif
+   enddo
+   
+   ! --------------------------------------------------------------------------
+   ! read nodes
+   ! --------------------------------------------------------------------------
+   rewind(ionumber) 
+   allocate (knot_gangl(anz_gangl), stat = alloc_status)
+   if (alloc_status /= 0) call qerror("Error while allocating variable `knot_gangl`.")
+   
+   do while (zeile(ionumber)) !! alle Zeilen
       if (ctext(1:1) /= '#') then !! keine Kommentarzeile
          nn = nn+1
-         if (nn > anz_gangl) then
-            write(fehler,*)'Fehler bei ganglinien_knoten.txt nochmal lesen ',nn,anz_gangl
-            call qerror(fehler)
-         endif
-         read(ctext,*,iostat = io_error)knot_gangl(nn)
-      endif !! keine Kommentarzeile
-   enddo ! alle zeilen
-   close (ionumber) ! ganglinien_knoten.txt wieder geschlossen
-   print*,' ganglinien_lesen fertig | anz_gangl = ',anz_gangl
-   !do i=1,anz_gangl
-   !   print*,'knot_gangl(',i,')=', knot_gangl(i)
-   !enddo
+         if (nn > anz_gangl) call qerror("Error while reading " // trim(filename))
+         read(ctext,*,iostat = io_error) knot_gangl(nn)
+      endif
+   enddo 
+   close(ionumber)
+   
+   
+   ! --------------------------------------------------------------------------
+   ! check nodes
+   ! --------------------------------------------------------------------------
    select case (hydro_trieb)
       case(1) ! casu-transinfo
          call randlinie_zusammenstellen()
          do i = 1,anz_gangl
-            if ((knot_gangl(i) <= 0) .or. (knot_gangl(i) > knotenanzahl2D)) then
-               write(fehler,*)i,'ganglinien_knoten.txt nummer ',knot_gangl(i),' nicht zwischen 1 und ',knotenanzahl2D
+            if (knot_gangl(i) <= 0 .or. knot_gangl(i) > knotenanzahl2D) then
+               write(fehler, "(4a,i0,a)") "Invalid node number in ", trim(filename), &
+                                          " Node", knot_gangl(i), " does not exist."
                call qerror(fehler)
-            endif ! Knotennummer ungültig in diesem Modell
+            endif 
          enddo
+      
       case(2) ! Untrim² netCDF
-         print*,'Konzentrationsvariablen bei Untrim-Netzen sind Element-Mitten,'
-         print*,'daher müssen in ganglinien_knoten.txt Elementnummern eingetragen werden'
          do i = 1,anz_gangl
-            if ((knot_gangl(i) < 1) .or. (knot_gangl(i) > n_elemente)) then
-               write(fehler,*)'ganglinien_lesen,Untrim ### Element-Nummer falsch ###: knot_gangl(',i,') = ' &
-                     ,knot_gangl(i),'nicht zwischen 1 und ',n_elemente
+            if (knot_gangl(i) < 1 .or. knot_gangl(i) > n_elemente) then
+               write(fehler, "(4a,i0,a)") "Invalid element number in ", trim(filename), &
+                                          " Element ", knot_gangl(i), " does not exist."
                call qerror(fehler)
-            else
-               print*,'ganglinien nr. ',i,' am Element ',knot_gangl(i),' Ort: ',element_x(knot_gangl(i)), element_y(knot_gangl(i))
             endif
          enddo
-         !print*,'### randlinie_zusammenstellen und querschnitt_lesen für Untrim netCDF noch nicht implementiert ###'
+         
       case(3) ! SCHISM
          print*,'no cross sections possible with SCHISM'
-         case default
+      
+      case default
          call qerror('ganglinien_lesen: Hydraulischer Antrieb unbekannt')
    end select
    
-end subroutine ganglinien_lesen
-!
-!----+-----+----
-!> ganglinien_zeitschritt
-!! \n\n
-subroutine ganglinien_zeitschritt(izeit_gang)
+   ! --------------------------------------------------------------------------
+   ! print summary to console
+   ! --------------------------------------------------------------------------
+   print*
+   print "(a)", repeat("-", 80)
+   print "(a)", "ganglinien_knoten.txt"
+   print "(a)", repeat("-", 80)
    
+   select case(hydro_trieb)
+      case(1)
+         print "(a,i0)", "number of nodes: ", anz_gangl
+         do i = 1,anz_gangl
+            print "(3x,i4, a,i0)", i, ":  node ", knot_gangl(i)
+         enddo
+      
+      case(2)
+         print "(a,i0)", "number of elements: ", anz_gangl
+         print*
+         do i = 1,anz_gangl
+            print "(3x,i4, a,i0)", i, ":  element ", knot_gangl(i)
+         enddo
+         
+         print*
+         print "(a)", "Note: On UnTrim meshes metabolism variables are located at element"
+         print "(a)", "      centers. Therefore numbers in `ganglinien_knoten.txt` are"
+         print "(a)", "      expected to be element numbers."
+   end select
+   
+end subroutine ganglinien_lesen
+
+
+!> ganglinien_zeitschritt
+subroutine ganglinien_zeitschritt(izeit_gang)
    use modell
    implicit none
    
-   integer :: i, k, izeit_gang, n,nk !! Zeitschrittzähler
-   real    :: age_tracer ! concentration of passive tracer used for age calculation after Shen & Wang (2007)
+   integer :: i, k, izeit_gang, n, nk
+   real    :: age_tracer
    
-   !print*,'ganglinien_zeitschritt meinrang=', meinrang,' izeit_gang=',izeit_gang,' anz_gangl=',anz_gangl
+   
    do i = 1,anz_gangl
       nk = knot_gangl(i)-meinrang*part
       if ((nk > 0) .and. (nk <= part)) then
-         !            print*,'ganglinien_zeitschritt knot_gangl(',i,')=', knot_gangl(i),  &
-         !    &              ' macht Prozess #',meinrang, ' part=',part,' zeitpunkt=',zeitpunkt
          ! Zeitpunkt
-         r_gang(i,izeit_gang) = zeitpunkt
+         r_gang(i,izeit_gang) = rechenzeit
+   
          ! Randbedingungen:
          u_gang(i,izeit_gang) = rb_hydraul_p(1+(nk-1)*number_rb_hydraul) !u(knot_gangl(i))  randbedingungen.f95
          !t_gang(i,izeit_gang)= rb_hydraul_p(2+(nk-1)*number_rb_hydraul) !tief(knot_gangl(i))   randbedingungen.f95
          t_gang(i,izeit_gang) = rb_hydraul_p(3+(nk-1)*number_rb_hydraul) !wsp
+         
          !planktonic_variable
          n = 0
          do k = 1,number_plankt_vari
@@ -200,11 +221,13 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                n = n+1
                if (n > n_pl) then
                   write(fehler,*)'ganglinien_zeitschritt output_plankt(k) (n > n_pl)'  &
-                                                                         ,k,n,n_pl, trim(planktonic_variable_name(k))
+                                  ,k,n,n_pl, trim(planktonic_variable_name(k))
                   call qerror(fehler)
                endif
+               
                if (nur_alter .and. k == 74) then
                   ! calculate mean age
+                  ! concentration of passive tracer used for age calculation after Shen & Wang (2007)
                   age_tracer = planktonic_variable_p(71+(nk-1)*number_plankt_vari)
                   if (age_tracer > minimum_age_tracer) then
                      pl_gang(i,izeit_gang,n) = planktonic_variable_p(k+(nk-1)*number_plankt_vari) / age_tracer
@@ -216,6 +239,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
                endif
             endif ! planktic output conc.
          enddo ! alle k planktonic_variable
+         
          do k = 1,number_plankt_vari_vert
             if (output_plankt_vert(k)) then ! planktic_vert output conc.
                n = n+1
@@ -229,6 +253,7 @@ subroutine ganglinien_zeitschritt(izeit_gang)
             endif ! planktic output conc.
          enddo ! alle k planktonic_variable
          ! benthic distributions are not gathered. therefore process 0 can do no time-series output
+         
          n = 0
          do k = 1,number_benth_distr
             if (output_benth_distr(k)) then ! benth. distr. output
@@ -266,257 +291,284 @@ subroutine ganglinien_zeitschritt(izeit_gang)
          ! c3Ammonium(i)=planktonic_variable(3,knot_gangl(i))
       endif ! knoten auf diesem Prozess
    enddo ! alle i Ausgabe-Knoten
+   
    if (meinrang == 0) then
       if (hydro_trieb == 1) then ! hydro_trieb=1=casu
          if ( nur_alter ) call alter_zeitschritt(izeit+1)
-         !   call tagesmittelwert()
          if (n_pl > 200)call qerror("n_pl > 200 geht nicht wegen fester Feldgröße massen_flux")
-         !print*,'ganglinien_zeitschritt:, izeit_gang=',izeit_gang,' zeitpunkt=',zeitpunkt,'  Knoten-Werte notiert'
-         !call rand_flux(izeit+1)
-         !print*,'ganglinien_zeitschritt: rand_flux durchgelaufen'
-         !call querschnitt_flux(izeit+1)
-         !print*,'ganglinien_zeitschritt: querschnitt_flux durchgelaufen'
-      endif ! hydro_trieb=1=casu
-   endif ! meinrang.eq. 0
+      endif
+      endif ! meinrang.eq. 0
    call mpi_barrier (mpi_komm_welt, ierr)
 end subroutine ganglinien_zeitschritt
-!!
-!----+-----+----
-!> ganglinien_schliessen
-!! \n\n
-subroutine ganglinien_schliessen()
+
+
+subroutine write_timeseries()
    use modell
+   use module_datetime
    implicit none
-   character (len = longname) :: systemaufruf, dateiname
-   character (len = 300) nummer
-   character(40000) beschriftung, r_zeile
-   character(3) spalte
-   integer :: i,j,k,n, sys_error, open_error, ngnu, nk, errcode
-   integer :: time_style
-   time_style = 0 ! Gerris
-   !time_style=1 ! Ausgabeformat Stil wsa_cux
-   !time_style=2 ! sekunden a la SCHISM
+   
+   
+   character(longname) :: sys_call, filename
+   character(300)      :: number_out
+   character(40000)    :: column_names, r_line, data_line
+   integer             :: i, j, k, n, sys_error, open_error, nk
+   integer             :: year, month, day, hour, minute, second
+   integer             :: u_bnd, u_cross, u_ts
+   integer(int64)      :: unixtime
+   real                :: ground_level
+   type(datetime)      :: datetime_output
+   
+   integer, parameter  :: time_style = 0
+   ! 0: Gerris
+   ! 1: wsa_cux
+   ! 2: SCHISM
+
    if (meinrang == 0) then ! prozess 0 only
-      if (time_style == 0)print*,"ganglinien_schliessen: Ausgabeformat Stil: portal-Tideelbe + gerris"
-      if (time_style == 1)print*,"ganglinien_schliessen: Ausgabeformat Stil wsa_cux"
-      if (time_style == 2)print*,"ganglinien_schliessen: Ausgabeformat Stil SCHISM"
-      !write(dateiname,'(2A)')trim(modellverzeichnis),'ganglinien_knoten.txt'
-      write(systemaufruf,'(3A)',iostat = errcode)'rm -rf ',trim(modellverzeichnis),'ganglinien_bisher'
-      if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall rm -rf ganglinien_bisher failed')
-      call system(systemaufruf,sys_error)
-      if (sys_error /= 0) then
-         write(fehler,*)'rm -rf ganglinien_bisher  failed sys_error = ', sys_error
-         call qerror(fehler)
-      endif !
-      write(systemaufruf,'(5A)',iostat = errcode)'mv -f ',trim(modellverzeichnis),'ganglinien '  &
-                                         ,trim(modellverzeichnis),'ganglinien_bisher >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mv ganglinien failed')
-      call system(systemaufruf,sys_error)
-      if (sys_error /= 0) then
-         print*,'mv -f ganglinien ganglinien_bisher  meldet: sys_error = ', sys_error
-         !write(fehler,*)'mv -f ganglinien ganglinien_bisher  meldet: sys_error=', sys_error
-         !call qerror(fehler)
-      endif !
-      write(systemaufruf,'(3A)',iostat = errcode)'mkdir ',trim(modellverzeichnis),'ganglinien'
-      if (errcode /= 0)call qerror('ganglinien_schliessen writing systemcall mkdir ganglinien failed')
-      call system(systemaufruf,sys_error)
-      if (sys_error /= 0) then
-         write(fehler,*)'mkdir ganglinien  fehlgeschlagen sys_error = ', sys_error
-         call qerror(fehler)
-      endif !
-      do i = 1,40000
-         beschriftung(i:i) = ' '
-      enddo
+      
+      print*, 
+      print "(a)", repeat("-", 80)
+      print "(a)", "results (ganglinen)"
+      print "(a)", repeat("-", 80)
+   
+      
+      ! --- remove files `ganglinien_bisher` ---
+      sys_call = 'rm -rf ' // trim(modellverzeichnis) // 'ganglinien_bisher'
+      call system(sys_call, sys_error)
+      if (sys_error /= 0) call qerror("Could not delete directory `ganglinien_bisher`")
+         
+      ! --- move existing ganglinen files into `ganglinien_bisher` ---
+      sys_call = 'mv -f ' // trim(modellverzeichnis) // 'ganglinien ' // &
+                     trim(modellverzeichnis) // 'ganglinien_bisher >/dev/null 2>/dev/null'
+      call system(sys_call, sys_error)
+      
+      ! --- create directory `ganglinien` ---
+      sys_call = 'mkdir ' // trim(modellverzeichnis) // 'ganglinien'
+      call system(sys_call, sys_error)
+      if (sys_error /= 0) call qerror("Could not create new directory `ganglinen`.")
+      
+      
+      ! -----------------------------------------------------------------------
+      ! create file header
+      ! -----------------------------------------------------------------------
+      column_names = repeat(" ", len(column_names))
       
       select case (time_style)
          case(0) !  Gerris
-            write(beschriftung,'(A)')"#   Datum| Uhrzeit|    Zeitpunkt|       WSP004|   Geschw.005|"
-            !                         2011-03-01 00:03:00      36622980          1.43          0.27
-            !write(beschriftung,'(A)')"#            Datum|    Zeitpunkt|     Tiefe004|   Geschw.005|"
-            !write(beschriftung,'(A)')"#        Zeitpunkt|     Tiefe003|   Geschw.004|"
-            ! write(beschriftung,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-            !&                     jahr  ,monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
-            ngnu = 5
+            write(column_names,'(a20,2x,a12,2(2x,a8))') "datetime,", "timestamp,", "WSP,", "Geschw,"
+            
          case(1) ! Ausgabeformat Stil wsa_cux
-            write(beschriftung,'(A)')"#        Zeitpunkt|     Tiefe003|   Geschw.004|"
-            !   write(beschriftung,'(I2.2,".",I2.2,".",I4.4," ",I2.2,":",I2.2,":",I2.2)') &
-            !&                                 tag  ,monat ,Jahr   ,stunde,minute,sekunde
-            ngnu = 4
+            write(column_names,'(a20,2(2x,a8))') "datetime,", "Tiefe,", "Geschw,"
+            
          case(2) !  sekunden a la SCHISM
-            write(beschriftung,'(A)')"#        Zeitpunkt|"
-            !   write(beschriftung,*) zeitpunkt
-            ngnu = 2
-            case default
-            call qerror("time_style falsch in Kopfzeile ganglinien_schliessen()")
+            write(column_names,'(a12,2(2x,a8))') "timestamp,", "WSP,", "Geschw,"
+            
+         case default
+            call qerror("Invalid time_style in subroutine `write_timeseries`.")
       end select
-      !! planktonic variables
+      
+      ! --- planktonic variables ---
       do i = 1,number_plankt_vari
-         if (output_plankt(i)) then ! planktic output conc.
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(planktonic_variable_name(i))//spalte//"|"
-            !print*,"output_plankt:",i,ngnu,trim(beschriftung)
+         if (output_plankt(i)) then
+            column_names = trim(column_names) // adjustr(planktonic_variable_name(i)) // ",  "
          endif
       enddo
+      
       do i = 1,number_plankt_vari_vert
-         if (output_plankt_vert(i)) then ! planktic_vert output conc.
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(plankt_vari_vert_name(i))//spalte//"|"
-            !print*,"output_plankt_vert:",i,ngnu,trim(beschriftung)
+         if (output_plankt_vert(i)) then
+            column_names = trim(column_names) // adjustr(plankt_vari_vert_name(i))  // ",  "
          endif
       enddo
-      !! benthic distributions are not gathered. therefore process 0 can do no time-series output
+      
+      ! --- benthic distributions ---
       do i = 1,number_benth_distr
          if (output_benth_distr(i)) then ! benth. distr. output
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(benth_distr_name(i))//spalte//"|"
-            !print*,"output_benth_distr:",i,ngnu,trim(beschriftung)
+            column_names = trim(column_names) // adjustr(benth_distr_name(i)) // ",  "
          endif
       enddo
-      !transfer_quantities
+      
+      ! --- transfer_quantities ---
       do i = 1,number_trans_val
          if (output_trans_val(i)) then ! globale Übergabe Werte
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(trans_val_name(i))//spalte//"|"
-            !print*,"output_trans_val:",i,ngnu,trim(beschriftung)
+            column_names = trim(column_names) // adjustr(trans_val_name(i)) // ",  "
          endif
       enddo
+      
+      ! --- exchange concentrations ---
       do i = 1,number_trans_quant
-         if (output_trans_quant(i)) then ! exchange con. output
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(trans_quant_name(i))//spalte//"|"
-            !print*,"output_trans_quant:",i,ngnu,trim(beschriftung)
+         if (output_trans_quant(i)) then 
+            column_names = trim(column_names) // adjustr(trans_quant_name(i)) // ",  "
          endif
       enddo
+      
+      
       do i = 1,number_trans_quant_vert
-         if (output_trans_quant_vert(i)) then ! exchange con. output
-            ngnu = ngnu+1
-            write(spalte,'(I3.3)')ngnu
-            beschriftung = trim(beschriftung)//adjustr(trans_quant_vert_name(i))//spalte//"|"
-            !print*,"output_trans_quant_vert:",i,ngnu,trim(beschriftung)
+         if (output_trans_quant_vert(i)) then
+            column_names = trim(column_names) // adjustr(trans_quant_vert_name(i)) // ",  "
          endif
       enddo
-      print*,'Ganglinenausgabe der tiefenverteilten Variablen nur in der Schicht gangl_level = ',gangl_level
+
+      
       ! if(nur_alter) call alter_ausgabe() !! Alters-Ausgabe
+      
       ! Rand-Flüsse ausgeben
-      print*,'Z.Z. keine Ausgabe von Rand-Flüssen'
-      goto 123
-      do n = 1,ianz_rb !! alle Ränder
-         write(nummer,*)rabe(n)%nr_rb
-         write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/r',trim(adjustl(nummer)),'.txt'
-         if (errcode /= 0)call qerror('ganglinien_schliessen writing filename ganglinien/r*.txt failed')
-         open ( unit = 12345+n , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
-         write(12345+n,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
-                         ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##" ! Kopfzeile schreiben
-         do j = 1,zeitschrittanzahl+1
-            zeitpunkt = r_gang(1,j)
-            call zeitsekunde()
-            write(r_zeile,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-                  jahr  ,monat ,  tag  ,   stunde , minute , sekunde
-            do i = 1, 6
-               write(r_zeile,'(A,6x,F16.9)')trim(r_zeile), randflux_gang(n,j,i)   ! r_gang(i,j)
-            enddo ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
-            write(12345+n,'(A)')trim(adjustl(r_zeile))
-         enddo ! alle j Zeitschritte
-         rewind(12345+n)
-         close(12345+n) !
-         print*,'Ausgabe Rand-Fluss ', trim(dateiname), ' meinrang = ',meinrang," n_pl = ",n_pl
-      enddo ! alle Ränder
-      123  continue
-      ! --- output cross section fluxes ---
+      ! do n = 1,ianz_rb !! alle Ränder
+      !    write(number_out,*) rabe(n)%nr_rb
+      !    filename = trim(modellverzeichnis) // 'ganglinien/r' // trim(adjustl(number_out)) // '.txt'
+      !    
+      !    open(newunit = u_bnd , file = filename, status = 'new', action = 'write ', iostat = open_error)
+      !    if (open_error /= 0) call qerror("Could not open " // trim(filename))
+      !    
+      !    ! header
+      !    write(u_bnd,*)"## Randflüsse (lang,flaeche,vol_strom, pot_ener_flux(MW), kin_ener_flux, massen_flux71) für "  &
+      !                    ,n,"-ten Rand, Nr. = ",rabe(n)%nr_rb,"  ##"
+      !    
+      !    do j = 1, zeitschrittanzahl+1
+      !       ! get components of current date
+      !       datetime_output = as_datetime(r_gang(n,j), tz = tz_qsim)
+      !       year     = datetime_output % get_year()
+      !       month    = datetime_output % get_month()
+      !       day      = datetime_output % get_day()
+      !       hour     = datetime_output % get_hour()
+      !       minute   = datetime_output % get_minute()
+      !       second   = datetime_output % get_second()
+      !       
+      !       write(r_line,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
+      !             year, month, day, hour, minute, second
+      !       
+      !        do i = 1, 6
+      !           write(r_line,'(A,6x,F16.9)') trim(r_line), randflux_gang(n,j,i)   ! r_gang(i,j)
+      !       enddo ! 5 (eigentlich alle Randfüsse incl. Massenflüsse)
+      !       write(u_bnd,'(A)') trim(adjustl(r_line))
+      !    enddo
+      !    
+      !    close(u_bnd)
+      !    print "(a)", "Writing boundary fluxes to `" // trim(adjustl(number_out)) // '.txt`'
+      ! enddo 
+      ! print* 
+      
+      ! -----------------------------------------------------------------------
+      ! write crosssection
+      ! -----------------------------------------------------------------------
       if (querschneiden) then
          do n = 1,anzahl_quer !! all n cross sections
-            write(nummer,*)n
-            write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/q',trim(adjustl(nummer)),'.txt'
-            if (errcode /= 0)call qerror('ganglinien_schliessen writing filename ganglinien/q*.txt failed')
-            open ( unit = 9876+n , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
-            write(r_zeile,*)"#   Datum| Uhrzeit| Zeitpunkt(sec.) | Durchfluss | Wasservolumen im Zeitschritt = ",deltat
+            write(number_out,"(i0)") n
+            filename = trim(modellverzeichnis) // 'ganglinien/q' // trim(adjustl(number_out)) // '.txt'
+            
+            open(newunit = u_cross , file = filename, status = 'new', action = 'write ', iostat = open_error)
+            write(r_line,*)"#   Datum| Uhrzeit| Zeitpunkt(sec.) | Durchfluss | Wasservolumen im Zeitschritt = ",deltat
+            
             do i = 1,number_plankt_vari
                if (output_plankt(i)) then ! planktic output conc.
-                  r_zeile = trim(r_zeile)//planktonic_variable_name(i)//" | "
+                  r_line = trim(r_line)//planktonic_variable_name(i)//" | "
                endif
             enddo
-            write(9876+n,*)trim(adjustl(r_zeile))! write header
+            
+            ! write header
+            write(u_cross,*) trim(adjustl(r_line))
             do j = 1,zeitschrittanzahl
-               zeitpunkt = q_gangl(j)
-               call zeitsekunde()
-               write(r_zeile,'(I4.4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
-                  jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt
+               datetime_output = as_datetime(q_gangl(j), tz = tz_qsim)
+               write(r_line,'(I4.4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)')  &
+                  datetime_output % get_year(),            &
+                  datetime_output % get_month(),           &
+                  datetime_output % get_day(),             &
+                  datetime_output % get_hour(),            &
+                  datetime_output % get_minute(),          &
+                  datetime_output % get_second(),          &
+                  datetime_output % seconds_since_epoch()
+                  
+                  
                do i = 1,n_pl+2
-                  write(r_zeile,'(A,6X,E16.10)')trim(r_zeile),schnittflux_gang(n,j,i)
-               enddo ! all i fluxes
-               write(9876+n,'(A)')trim(r_zeile)
-            enddo ! all j timesteps
-            rewind(9876+n) !
-            close(9876+n) !
-            print*,'Ausgabe Querschnitts-Fluss ', trim(dateiname), ' meinrang = ',meinrang," n_pl = ",n_pl
-         enddo ! alle n cross sections
-      endif ! querschneiden
+                  write(r_line,'(A,6X,E16.10)') trim(r_line), schnittflux_gang(n,j,i)
+               enddo 
+               write(u_cross,'(a)') trim(r_line)
+            enddo
+            
+            close(u_cross)
+            print*,'Ausgabe Querschnitts-Fluss ', trim(filename), ' meinrang = ',meinrang," n_pl = ",n_pl
+         enddo 
+      endif 
+   
+   
    endif ! only prozessor 0
-   call mpi_barrier (mpi_komm_welt, ierr)
-   call MPI_Bcast(beschriftung,40000,MPI_CHARACTER,0,mpi_komm_welt,ierr)
-   ! lueftung! beschriftung=trim(beschriftung)//"|        delo2_last|"
+   
+   call mpi_barrier(mpi_komm_welt, ierr)
+   call MPI_Bcast(column_names, len(column_names), MPI_CHARACTER, 0, mpi_komm_welt, ierr)
+   call mpi_barrier(mpi_komm_welt, ierr)
+   
    do i = 1,anz_gangl
-      if (knot_gangl(i) > 0) then !Knoten auf diesem Prozess
-         write(nummer,*)knot_gangl(i)
-         write(dateiname,'(4A)',iostat = errcode)trim(modellverzeichnis),'ganglinien/g',trim(adjustl(nummer)),'.txt'
-         if (errcode /= 0)call qerror('ganglinien_schliessen writing filename ganglinien/g*.txt failed')
-         open ( unit = ionumber+i , file = dateiname, status = 'new', action = 'write ', iostat = open_error )
-         if (open_error /= 0) then
-            print*,'Ganglinien-Ausgabedatei #',i," fuer Knoten ",knot_gangl(i),' geht nicht'
-            return
-         endif ! open_error.ne.0
-         write(ionumber+i,'(A)')trim(beschriftung) ! Kopfzeile schreiben
-         nk = knot_gangl(i)-meinrang*part
-         write(ionumber+i,*)"# Gelaendehoehe = ", &
-                                               rb_hydraul_p(3+(nk-1)*number_rb_hydraul)-rb_hydraul_p(2+(nk-1)*number_rb_hydraul) ! Geländehöhe rückrechnen
-      endif ! knoten auf diesem Prozess
-   enddo ! alle Ausgabe-Knoten
-   do i = 1,anz_gangl
-      if (knot_gangl(i) > 0) then !Knoten auf diesem Prozess
+      
+      if (knot_gangl(i) > 0) then ! Knoten auf diesem Prozess
+         write(number_out,*) knot_gangl(i)
+         filename =  trim(modellverzeichnis) // 'ganglinien/g' // trim(adjustl(number_out)) // '.csv'
+         
+         print "(3a)", "Writing timeseries to `g", trim(adjustl(number_out)), '.csv`'
+         open(newunit = u_ts , file = filename, status = 'new', action = 'write ', iostat = open_error)
+         if (open_error /= 0) call qerror("Could not open " // filename)
+         
+         ! --------------------------------------------------------------------
+         ! write fileheader
+         ! --------------------------------------------------------------------
+         ! Geländehöhe rückrechnen
+         nk = knot_gangl(i) - meinrang * part
+         ground_level = rb_hydraul_p(3+(nk-1)*number_rb_hydraul) - rb_hydraul_p(2+(nk-1)*number_rb_hydraul) 
+         write(u_ts,"(a,f0.10)") "# ground level = ", ground_level
+            
+         write(u_ts,'(A)') trim(column_names) 
+         
+         ! --------------------------------------------------------------------
+         ! write data
+         ! --------------------------------------------------------------------
+         data_line = repeat(" ", len(data_line))
          do j = 1,zeitschrittanzahl+1
-            !write(beschriftung,'(I12.2, 2("    ",F7.2))')r_gang(i,j), t_gang(i,j), u_gang(i,j)
-            zeitpunkt = r_gang(i,j)
-            call zeitsekunde()
+            
+            ! get components of current date
+            datetime_output = as_datetime(r_gang(i,j), tz = tz_qsim)
+            year     = datetime_output % get_year()
+            month    = datetime_output % get_month()
+            day      = datetime_output % get_day()
+            hour     = datetime_output % get_hour()
+            minute   = datetime_output % get_minute()
+            second   = datetime_output % get_second()
+            unixtime = datetime_output % seconds_since_epoch()
+            
+            ! date
             select case (time_style)
-               case(0) !  Gerris
-                  write(beschriftung,'(I4,"-",I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2,x,I13)') &
-                     jahr  ,monat ,tag   ,stunde,minute,sekunde,zeitpunkt   !r_gang(i,j)
-               case(1) ! Ausgabeformat Stil wsa_cux
-                  write(beschriftung,'(I2.2,".",I2.2,".",I4.4," ",I2.2,":",I2.2,":",I2.2)') &
-                     tag  ,monat ,Jahr   ,stunde,minute,sekunde
-               case(2) !  sekunden a la SCHISM
-                  write(beschriftung,*) zeitpunkt
-                  case default
-                  call qerror("time_style falsch in ganglinien_schliessen()")
-            end select
-            ! write(beschriftung,'(I2.2,"-",I2.2," ",I2.2,":",I2.2,":",I2.2)') &
-            !  monat ,tag   ,stunde,minute,sekunde   !r_gang(i,j)
-            write(beschriftung,'(A, 2("       ",F7.2))')trim(beschriftung), t_gang(i,j), u_gang(i,j)
+               case(0) ! gerris
+                  write(data_line,'(i4,"-",i2.2,"-",i2.2," ",i2.2,":",i2.2,":",i2.2,",",2x,i11,",")') &
+                     year, month, day, hour, minute, second, unixtime
+               
+               case(1) ! wsa_cux
+                  write(data_line,'(i2.2,".",i2.2,".",i4.4," ",i2.2,":",i2.2,":",i2.2,",")') &
+                     day, month, year, hour, minute, second
+               
+               case(2) ! schism
+                  write(data_line, '(i11,",")') unixtime
+               
+               case default
+                  call qerror("Invalid time_style in subroutine write_timeseries.")
+               end select
+            
+            ! variables
+            write(data_line,'(a, 2(2x,f7.2,","))') trim(data_line), t_gang(i,j), u_gang(i,j)
+            
             do k = 1,n_pl
-               write(beschriftung,2578)trim(beschriftung),pl_gang(i,j,k)
+               write(data_line,2578) trim(data_line), pl_gang(i,j,k)
             enddo
+            
             do k = 1,n_bn
-               write(beschriftung,2578)trim(beschriftung),bn_gang(i,j,k)
+               write(data_line,2578) trim(data_line), bn_gang(i,j,k)
             enddo
+            
             do k = 1,n_ue
-               write(beschriftung,2578)trim(beschriftung),ue_gang(i,j,k)
+               write(data_line,2578) trim(data_line), ue_gang(i,j,k)
             enddo
-            2578       format( A,6X,E16.10 )
-            ! 2578       format(A,6X,F16.9)
-            write(ionumber+i,'(A)')trim(beschriftung) ! final line output
-         enddo ! alle j Zeitschritte
-      endif ! knoten auf diesem Prozess
-   enddo ! alle i Ausgabe-Knoten
-   do i = 1,anz_gangl
-      if (knot_gangl(i) > 0) then !Knoten auf diesem Prozess
-         close (ionumber+i) ! Dateien glk... schließen
-         !print*,'IntAmmonium(',knot_gangl(i),')=',(IntAmmonium(i)*real(deltat)), deltat
-         !print*,' ganglinien_schliessen ',knot_gangl(i) , ionumber+i,' meinrang=',meinrang
-      endif ! knoten auf diesem Prozess
-   enddo ! alle Ausgabe-Knoten
-end subroutine ganglinien_schliessen
+            2578 format(a,2x,e16.10,",")
+            
+            ! write to file
+            write(u_ts,'(A)') trim(data_line) 
+         enddo 
+   
+         close(u_ts)
+      endif
+   enddo 
+end subroutine write_timeseries

@@ -32,19 +32,14 @@ subroutine benthic_parallel()
    integer :: as
 
    call MPI_Bcast(number_benthic_points,1,MPI_INT,0,mpi_komm_welt,ierr)
+   
    ! initialisierung aller konzentrationen zunächt auf 0.0
    allocate (benthic_distribution_p(number_benth_distr*part), source = 0.0, stat = as )
-   
-   if (as /= 0) then
-      write(fehler,*)' Rueckgabewert von benthic_distribution_p :', as
-      call qerror(fehler)
-   endif
+   if (as /= 0) call qerror("Error while allocating variable `benthic_distribution_p`")
       
    call scatter_benthic()
-   return
 end subroutine benthic_parallel
 
-!----+-----+----
 !> Verteilen der benthischen verteilungen auf die parallelen Prozesse.
 subroutine scatter_benthic()
    use modell
@@ -52,11 +47,8 @@ subroutine scatter_benthic()
    
    call MPI_Scatter(benthic_distribution, part*number_benth_distr, MPI_FLOAT,  &
                     benthic_distribution_p, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-   if (ierr /= 0) then
-      write(fehler,*)' 13 MPI_Scatter(benthic_distribution failed :', ierr
-      call qerror(fehler)
-   endif
-   return
+   if (ierr /= 0) call qerror('13 MPI_Scatter(benthic_distribution failed')
+   
 end subroutine scatter_benthic
 
 !----+-----+----
@@ -67,12 +59,7 @@ subroutine gather_benthic()
    
    call MPI_Gather(benthic_distribution_p, part*number_benth_distr, MPI_FLOAT,  &
                    benthic_distribution, part*number_benth_distr, MPI_FLOAT, 0, mpi_komm_welt, ierr)
-   if (ierr /= 0) then
-      write(fehler,*)' 13b MPI_Gather(benthic_distribution_p failed :', ierr
-      call qerror(fehler)
-   endif
-   
-   return
+   if (ierr /= 0) call qerror("MPI_Gather(benthic_distribution_p failed")
 end subroutine gather_benthic
 
 !----+-----+----
@@ -80,7 +67,7 @@ end subroutine gather_benthic
 subroutine ini_benthic0(nk)
    use modell
    implicit none
-   integer nk,j,i, as
+   integer :: nk, j, i, as
    
    if (meinrang == 0) then ! prozess 0 only
       number_benthic_points = nk

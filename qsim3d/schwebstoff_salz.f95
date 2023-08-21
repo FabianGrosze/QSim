@@ -29,90 +29,107 @@ subroutine schwebstoff_salz()
    use modell
    implicit none
    save
-   integer :: i,j,n, nk, nvor, nach, nvor_alt, nach_alt, error
-   real a
-   logical aenderung
-   if (trueb_anzahl < 1)return ! keine Schwebstoffvorgaben ...
-   !print*,'schwebstoff_salz() momentan=',rechenzeit,' startet.', meinrang
-   !call mpi_barrier (mpi_komm_welt, ierr)
-   if (meinrang == 0) then ! nur auf Prozessor 0 bearbeiten
-      nvor = 0
-      nach = 0
-      do n = 1,trueb_anzahl,1
-         if (trueb_zeit(trueb_zuord(n)) <= rechenzeit)nvor = n
-         if (trueb_zeit(trueb_zuord(1+trueb_anzahl-n)) > rechenzeit)nach = 1+trueb_anzahl-n
-      enddo ! alle n durch
-      aenderung = (nvor /= nvor_alt) .or. (nach /= nach_alt)
-      
-      if ((nvor > 0) .and. (nach <= 0)) then
-         print*,'aktuelle rechenzeit nach Schwebstoffvorgabe-Zeitpunkt ',trueb_zeit(trueb_zuord(nvor))
-         if (aenderung) then
-            call verteilung_holen_gr3(trueb_datei(trueb_zuord(nvor)),vert1,knotenanzahl2D)
-            print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nvor))
-         endif
-         do i = 1,knotenanzahl2D ! Alle Knoten
-            planktonic_variable(53+(i-1)*number_plankt_vari) = vert1(i)
-         enddo ! alle i Knoten
-      endif
-      if ((nvor > 0) .and. (nach > 0)) then
-         print*,'Schwebstoffvorgabe zwischen',trueb_zeit(trueb_zuord(nvor)),' und ', trueb_zeit(trueb_zuord(nach))
-         if (aenderung) then
-            call verteilung_holen_gr3(trueb_datei(trueb_zuord(nvor)),vert1,knotenanzahl2D)
-            call verteilung_holen_gr3(trueb_datei(trueb_zuord(nach)),vert2,knotenanzahl2D)
-            print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nvor))  &
-            ,' und ', trueb_datei(trueb_zuord(nach))
-         endif
-         a = real(trueb_zeit(trueb_zuord(nach))-trueb_zeit(trueb_zuord(nvor)))
-         if (a > 0.0) then
-            a = real(rechenzeit-trueb_zeit(trueb_zuord(nvor)))/a
-         else
-            call qerror('schwebstoff_salz trueb_zeit davor ist danach')
-         endif
-         print*,'schwebstoff_salz() anteil = ',a
-         do i = 1,knotenanzahl2D ! Alle Knoten
-            planktonic_variable(53+(i-1)*number_plankt_vari) = ((1.0-a)*vert1(i))+(a*vert2(i))
-         enddo ! alle i Knoten
-      endif
-      if ((nvor <= 0) .and. (nach > 0)) then
-         print*,'aktuelle rechenzeit vor Schwebstoffvorgabe-Zeitpunkt', trueb_zeit(trueb_zuord(nach))
-         if (aenderung) then
-            call verteilung_holen_gr3(trueb_datei(trueb_zuord(nach)),vert2,knotenanzahl2D)
-            print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nach))
-         endif
-         do i = 1,knotenanzahl2D ! Alle Knoten
-            planktonic_variable(53+(i-1)*number_plankt_vari) = vert2(i)
-         enddo ! alle i Knoten
-      endif
+   
+   integer :: i, j, n, nk, nvor, nach, nvor_alt, nach_alt, error
+   real    :: a
+   logical :: aenderung
+   
+   ! keine Schwebstoffvorgaben
+   if (trueb_anzahl < 1) return 
+   
+   ! nur auf Prozessor 0 bearbeiten
+   if (meinrang /= 0) return
+   
+   
+   
+   nvor = 0
+   nach = 0
+   do n = 1,trueb_anzahl,1
+      if (trueb_zeit(trueb_zuord(n)) <= rechenzeit)nvor = n
+      if (trueb_zeit(trueb_zuord(1+trueb_anzahl-n)) > rechenzeit)nach = 1+trueb_anzahl-n
+   enddo
+   
+   aenderung = (nvor /= nvor_alt) .or. (nach /= nach_alt)
+   
+   if ((nvor > 0) .and. (nach <= 0)) then
+      print*,'aktuelle rechenzeit nach Schwebstoffvorgabe-Zeitpunkt ',trueb_zeit(trueb_zuord(nvor))
       if (aenderung) then
-         nvor_alt = nvor
-         nach_alt = nach
+         call verteilung_holen_gr3(trueb_datei(trueb_zuord(nvor)),vert1,knotenanzahl2D)
+         print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nvor))
       endif
-   endif ! nur auf Prozessor 0 bearbeiten
-   return
+   
+      do i = 1,knotenanzahl2D ! Alle Knoten
+         planktonic_variable(53+(i-1)*number_plankt_vari) = vert1(i)
+      enddo 
+   endif
+   
+   if ((nvor > 0) .and. (nach > 0)) then
+      print*,'Schwebstoffvorgabe zwischen',trueb_zeit(trueb_zuord(nvor)),' und ', trueb_zeit(trueb_zuord(nach))
+   
+      if (aenderung) then
+         call verteilung_holen_gr3(trueb_datei(trueb_zuord(nvor)),vert1,knotenanzahl2D)
+         call verteilung_holen_gr3(trueb_datei(trueb_zuord(nach)),vert2,knotenanzahl2D)
+         print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nvor))  &
+         ,' und ', trueb_datei(trueb_zuord(nach))
+      endif
+      
+      a = real(trueb_zeit(trueb_zuord(nach))-trueb_zeit(trueb_zuord(nvor)))
+      if (a <= 0.0)  call qerror('schwebstoff_salz trueb_zeit davor ist danach')
+      
+      a = real(rechenzeit-trueb_zeit(trueb_zuord(nvor)))/a
+      
+      print*,'schwebstoff_salz() anteil = ',a
+      do i = 1,knotenanzahl2D ! Alle Knoten
+         planktonic_variable(53+(i-1)*number_plankt_vari) = ((1.0-a)*vert1(i))+(a*vert2(i))
+      enddo
+   endif
+   
+   if ((nvor <= 0) .and. (nach > 0)) then
+      print*,'aktuelle rechenzeit vor Schwebstoffvorgabe-Zeitpunkt', trueb_zeit(trueb_zuord(nach))
+      if (aenderung) then
+         call verteilung_holen_gr3(trueb_datei(trueb_zuord(nach)),vert2,knotenanzahl2D)
+         print*,'geänderte Schwebstoffvorgabe geholt aus: ', trueb_datei(trueb_zuord(nach))
+      endif
+   
+      do i = 1,knotenanzahl2D ! Alle Knoten
+         planktonic_variable(53+(i-1)*number_plankt_vari) = vert2(i)
+      enddo ! alle i Knoten
+   endif
+   
+   if (aenderung) then
+      nvor_alt = nvor
+      nach_alt = nach
+   endif
+   
 end subroutine schwebstoff_salz
+
+
 !----+-----+----
 !> die Subroutine ini_schwebstoff_salz() setzt die Anfangswerte für
-!! Leitfähigkeit - planktonic_variable_name(65)= "                lf"\n
-!!          planktonic_variable_p(53+nk)= trueb(iglob) !  Schwebstoff\n
-!!          planktonic_variable_name(53)= "                ss"\n
-!!          planktonic_variable_name(65)= "                lf"\n
-!!         planktonic_variable_name(72)= "              salz"\n
+!! Leitfähigkeit - planktonic_variable_name(65)= "                lf"
+!! planktonic_variable_p(53+nk)= trueb(iglob) !  Schwebstoff\n
+!! planktonic_variable_name(53)= "                ss"\n
+!! planktonic_variable_name(65)= "                lf"\n
+!! planktonic_variable_name(72)= "              salz"\n
 !!
-!! aus Datei initialisieren.f95 ; zurück: \ref lnk_anfangsbedingungen \n\n
 subroutine ini_schwebstoff_salz()
    use modell
    implicit none
    integer :: j, k
-   if (meinrang /= 0)call qerror('ini_schwebstoff_salz() darf nur auf prozess 0')
+   
+   if (meinrang /= 0) call qerror('ini_schwebstoff_salz() must only be called from processor 0.')
+   
    print*,' ini_schwebstoff_salz() rechenzeit = ',rechenzeit
    call schwebstoff_salz()
-   !do k=1,number_plankt_point ! i
-   !   planktonic_variable(53+(k-1)*number_plankt_vari) = 0.0  !  Schwebstoffgehalt ss
-   !   planktonic_variable(65+(k-1)*number_plankt_vari) = 0.0  !  Leitfähigkeit lf
-   !   planktonic_variable(72+(k-1)*number_plankt_vari) = 0.0  !  salz
-   !enddo
-   return
+   
+   ! do k=1,number_plankt_point ! i
+   !    planktonic_variable(53+(k-1)*number_plankt_vari) = 0.0  !  Schwebstoffgehalt ss
+   !    planktonic_variable(65+(k-1)*number_plankt_vari) = 0.0  !  Leitfähigkeit lf
+   !    planktonic_variable(72+(k-1)*number_plankt_vari) = 0.0  !  salz
+   ! enddo
+   
 end subroutine ini_schwebstoff_salz
+
 !> verteilung_holen_gr3 ließt aus unterverzeichnis trueb die angegebene Datei im gr3 (Elcirc) Format.
 !! und gibt die dort angegebene Geländehöhe als verteilung zurück.
 !! \n\n
@@ -170,7 +187,7 @@ end subroutine verteilung_holen_gr3
 subroutine schwebstoff_salz_sichten()
    use modell
    implicit none
-   character (len = longname) :: systemaufruf, dateiname, irgendeinstring
+   character (len = longname) :: systemaufruf, filename, irgendeinstring
    integer sysa, nz, ion, n, is, i, zwischenwert, errcode
    if (meinrang /= 0)call qerror('schwebstoff_salz_sichten() darf nur auf prozess 0')
    write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'trueb >/dev/null 2>/dev/null'
@@ -183,9 +200,9 @@ subroutine schwebstoff_salz_sichten()
       print*,'schwebstoff_salz: Vorgabe von Schwebstoffdaten im Verzeichnis trueb'
    endif
    print*,'schwebstoff_salz Vorgaben sichten ...'
-   write(dateiname,'(2A)')trim(modellverzeichnis),'schwebe'
+   write(filename,'(2A)')trim(modellverzeichnis),'schwebe'
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
-   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'trueb > ', trim(dateiname)
+   write(systemaufruf,'(4A)',iostat = errcode)'ls ',trim(modellverzeichnis),'trueb > ', trim(filename)
    if (errcode /= 0)call qerror('schwebstoff_salz_sichten writing system call failed')
    call system(trim(systemaufruf),sysa)
    if (sysa /= 0) then
@@ -193,7 +210,7 @@ subroutine schwebstoff_salz_sichten()
       call qerror('Auflisten der Schwebstoffvorgaben fehlgeschlagen.')
    endif
    ion = 444
-   open ( unit = ion , file = dateiname, status = 'old', action = 'read', iostat = sysa )
+   open ( unit = ion , file = filename, status = 'old', action = 'read', iostat = sysa )
    if (sysa /= 0)call qerror('open_error schwebe')
    rewind(ion)
    trueb_anzahl = 0

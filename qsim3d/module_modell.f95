@@ -42,10 +42,11 @@
 !! \n\n
 !! aus Datei module_modell.f95
 module modell
+   use iso_fortran_env
    implicit none
    
-   public :: modeverz, zeile, zeitschritt_halb, ini_zeit, sekundenzeit,       &
-             zeitsekunde, modell_vollstaendig, strickler, lambda, antriebsart
+   public :: modeverz, zeile, zeitschritt_halb, ini_zeit, &
+             modell_vollstaendig, strickler, lambda, antriebsart
    
    
    include 'mpif.h' !!/mreferate/wyrwa/casulli/mpich2/mpich2-1.3.2p1/src/include/mpif.h: integer*8 und real*8 raus
@@ -74,7 +75,7 @@ module modell
    
    ! --- simulation settings ---
    integer :: imitt       !< \anchor imitt Tagesmittelwertausgabe=1 Zeitwerte=0 | nicht aktiv in 3D
-   integer :: ipH         !< \anchor iph Schalter für die ph-Wert-berechnung; 1-ein , 0-aus ; wird von ereigg_modell() eingelesen.
+   integer :: ipH         !< \anchor iph Schalter für die ph-Wert-berechnung; 1-ein , 0-aus ; wird von read_ereigg_model() eingelesen.
    integer :: idl         !< \anchor idl Dispersionskoeffizienten einlesen=0 berechnen=1 in QSim3D bisher unbenutzt
    integer :: itemp       !< \anchor itemp nur Temperatursimulation=1 alles=0 in QSim3D bisher unbenutzt
    integer :: itracer     !< \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
@@ -99,7 +100,6 @@ module modell
     
    
    ! --- mesh variables ---
-   integer                            :: min_rand, max_rand, min_zone, max_zone
    integer                            :: knotenanzahl2D, knotenanzahl3D
    integer, allocatable, dimension(:) :: knoten_rand
    integer, allocatable, dimension(:) :: knoten_zone, knoten_rang !< \anchor knoten_zone Zonen-zähler an den Knoten bei Antrieb mit casu-Hydraulik aus points
@@ -112,30 +112,17 @@ module modell
    character (len = 2000) :: ctext 
    
    ! --- time variables ---
-   integer , parameter :: referenzjahr = 2008  !> \anchor referenzjahr Referenzjahr\n
-                                               !! Darf nur ein Schaltjahr sein, sonst werden die Tage flasch gezählt\n
-                                               !! darf nur max. 65 Jahre vor Berechnungsjahr liegen damit int*4 zum Sekunden zählen reicht und\n
-                                               !! darf nur max. 20 Jahre vor Berechnungsjahr liegen, um Zeitfehler abfangen zu können.
+   ! TODO (Schönung, August 2023)
+   ! This should be user definable.
+   real, parameter :: tz_qsim = 1.0        !> \anchor tz_qsim standard timezone that QSim uses in its input files [UTC + 1]
    
-   character(200) :: time_offset_string
-   integer        :: rechenzeit            !> \anchor rechenzeit aktuelle rechenzeit in ganzen Sekunden
+   integer(int64) :: rechenzeit            !> \anchor rechenzeit current time of running simulation in unixtime
+   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt start time of current timestep in unixtime
+   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt end time of current timestep in unixtime
    integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
    integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
    integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
-   integer        :: startzeitpunkt        !> \anchor startzeitpunkt startzeitpunkt in ganzen Sekunden
-   integer        :: endzeitpunkt          !> \anchor endzeitpunkt endzeitpunkt in ganzen Sekunden
-   integer        :: time_offset           !! von transinfo/meta
-   integer        :: zeitpunkt             !> \anchor zeitpunkt Variable zur Zwischenspeicherung eines Zeitpunkts in ganzen Sekunden (siehe \ref rechenzeit)
-   integer        :: jahr                  !> \anchor jahr jahr berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: monat                 !> \anchor monat monat berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: tagdesjahres          !> \anchor tagdesjahres tagdesjahres berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: tag                   !> \anchor tag tag berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: stunde                !> \anchor stunde Stunde als ganze Zahl berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: minute                !> \anchor minute minute berechnet von zeitsekunde() aus \ref zeitpunkt
-   integer        :: sekunde               !> \anchor sekunde sekunde berechnet von zeitsekunde() aus \ref zeitpunkt
    integer        :: anzZeit               !> \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurÃ¼ck: \ref lnk_schwermetalle
-   real           :: uhrzeit_stunde        !> \anchor uhrzeit_stunde Uhrzeit als Stunde.Minute zum Einlesen von EREIGG.txt. sekundenzeit(2) rechnet es Stundendezimale um
-   real           :: uhrzeit_stunde_vorher
    
    ! --- Vermaschung Elemente ---
    logical                              :: element_vorhanden
@@ -255,20 +242,17 @@ module modell
    ! --------------------------------------------------------------------------
    ! wetter_datenfelder
    ! --------------------------------------------------------------------------
-   character(100)                         :: version_t                         !< model version Modell- und Ereignisname.
-   character(100)                         :: modname_t                         !< model name
-   character(100)                         :: erename_t                         !< Ereignisname
-   integer                                :: iwetts_t, mwettmax_t              !< Anzahl der Wetterstationen
-   integer                                :: imet_t                            !< Kennung 1=Stundenwerte 0=Tagesmittelwerte
-   integer, allocatable, dimension(:)     :: iwsta_t, wetterstationskennung_T  !< Stationsnummer, Stationskennung  ACHTUNG UMSTELLUNG
-   integer, allocatable, dimension(:)     :: mwetts_t                          !< Anzahl der Wetterwerte
-   integer, allocatable, dimension(:,:)   :: itagw_T, monatw_T, jahrw_T        !< Datum des Wetterwertes
-   integer, allocatable, dimension(:,:)   :: zeitpunktw                        !< Zeitpunkt des Wetterwertes
-   real,    allocatable, dimension(:)     :: glob_T, tlmax_T, tlmin_T, tlmed_T !< Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
-   real,    allocatable, dimension(:)     :: ro_T, wge_T, cloud_T,  wtyp_T
-   real,    allocatable, dimension(:)     :: schwi_T                           !< Globalstrahlung
-   real,    allocatable, dimension(:,:)   :: uhrzw_T                           !< Uhrzeit des Wetterwertes in Sekunden
-   real,    allocatable, dimension(:,:,:) :: wertw_T                           !< Wertefeld für den jeweiligen Zeitpunkt
+   integer                                       :: iwetts_t, mwettmax_t              !< Anzahl der Wetterstationen
+   integer                                       :: imet_t                            !< Kennung 1=Stundenwerte 0=Tagesmittelwerte
+   integer,        allocatable, dimension(:)     :: iwsta_t, wetterstationskennung_T  !< Stationsnummer, Stationskennung  ACHTUNG UMSTELLUNG
+   integer,        allocatable, dimension(:)     :: mwetts_t                          !< Anzahl der Wetterwerte
+   integer,        allocatable, dimension(:,:)   :: itagw_T, monatw_T, jahrw_T        !< Datum des Wetterwertes
+   integer(int64), allocatable, dimension(:,:)   :: zeitpunktw                        !< Zeitpunkt des Wetterwertes
+   real,           allocatable, dimension(:)     :: glob_T, tlmax_T, tlmin_T, tlmed_T !< Interploierte Wetterwerte am jeweiligen Berechnungszeitpunkt:
+   real,           allocatable, dimension(:)     :: ro_T, wge_T, cloud_T,  wtyp_T
+   real,           allocatable, dimension(:)     :: schwi_T                           !< Globalstrahlung
+   real,           allocatable, dimension(:,:)   :: uhrzw_T                           !< Uhrzeit des Wetterwertes in Sekunden
+   real,           allocatable, dimension(:,:,:) :: wertw_T                           !< Wertefeld für den jeweiligen Zeitpunkt
    
    
    ! --------------------------------------------------------------------------
@@ -276,26 +260,27 @@ module modell
    ! --------------------------------------------------------------------------
    ! Beschreibung in stofftransport()
   
-   integer                              :: hydro_trieb                !< Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)
-   integer                              :: ncid                       !< Pointer auf die netCDF Datei(en), aus der der hydraulische Antrieb gelesen wird (Untrim² und SCHISM)
-   integer                              :: advect_algo                !< Flag für den Advektionsalgorithmus (noch unbenutzt, d.h. z.Z. casu lin. ELM,)
-   integer                              :: nonu                       !< Knotenanzahl als Kontrollwert zum Strömungsfeld.
-   integer                              :: transinfo_anzahl, maxstack
-   integer                              :: na_transinfo, ne_transinfo !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-   integer                              :: anz_transinfo, n_trans     !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
-   integer                              :: deltatrans                 !< \anchor deltatrans timestep for transport simulation in whole sec. (integer)
-   integer                              :: nub_sub_trans              !< \anchor nub_sub_trans number of sub-steps in transport simulation
-   integer                              :: nst_prev                   !< stack number of preveously read timestep
-   integer                              :: n_stacks                   !< SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
-   integer, allocatable, dimension(:,:) :: ielg_sc, iplg_sc, islg_sc  !< global numbers all ranks on process 0
-   integer, allocatable, dimension(:)   :: transinfo_stack            !< (SCHISM) stack in which the timestep is stored
-   integer, allocatable, dimension(:)   :: transinfo_instack          !v (SCHISM) stack in which the timestep is stored
-   integer, allocatable, dimension(:)   :: transinfo_zuord            !< Zuordnungsfeld in welcher Reihenfolge die Transportinfo Dateien aufeinander folgen
-   integer, allocatable, dimension(:)   :: transinfo_zeit             !< Feld der Zeitpunkte, an denen Transportinfo Dateien vorliegen
-   integer, allocatable, dimension(:)   :: ne_sc, np_sc, ns_sc        ! all numbers on process 0
-   integer, allocatable, dimension(:)   :: intereck                   !< Felder für die 4 Eckknoten-Nummern des Elements aus dem die Strombahn kommt,
-                                                                      !! immer 4 hintereinander (ELM,semi-lagrange casu hydro_trieb=1 )
-                                                                      !! (Untrim, FV,Euler hydro_trieb=2) immer
+   integer                                     :: hydro_trieb                !< Flag für die Quelle des hydraulischen Antriebs: =1 Knotenbahnlinien aus casu (transinfo); =2 Elementrandflüsse aus Untrim² (netCDF)
+   integer                                     :: ncid                       !< Pointer auf die netCDF Datei(en), aus der der hydraulische Antrieb gelesen wird (Untrim² und SCHISM)
+   integer                                     :: advect_algo                !< Flag für den Advektionsalgorithmus (noch unbenutzt, d.h. z.Z. casu lin. ELM,)
+   integer                                     :: nonu                       !< Knotenanzahl als Kontrollwert zum Strömungsfeld.
+   integer                                     :: transinfo_anzahl, maxstack
+   integer                                     :: na_transinfo, ne_transinfo !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
+   integer                                     :: anz_transinfo, n_trans     !< Anfang und Ende (Transportzähler) im Gütezeitschritt, Anzahl
+   integer                                     :: deltatrans                 !< \anchor deltatrans timestep for transport simulation in whole sec. (integer)
+   integer                                     :: nub_sub_trans              !< \anchor nub_sub_trans number of sub-steps in transport simulation
+   integer                                     :: nst_prev                   !< stack number of preveously read timestep
+   integer                                     :: n_stacks                   !< SCHISM netCDF output, number of stacks (output is subdivided in stacks, each containing only a part of the simulated time interval)
+   integer,        allocatable, dimension(:,:) :: ielg_sc, iplg_sc, islg_sc  !< global numbers all ranks on process 0
+   integer,        allocatable, dimension(:)   :: transinfo_stack            !< (SCHISM) stack in which the timestep is stored
+   integer,        allocatable, dimension(:)   :: transinfo_instack          !v (SCHISM) stack in which the timestep is stored
+   integer,        allocatable, dimension(:)   :: transinfo_zuord            !< Zuordnungsfeld in welcher Reihenfolge die Transportinfo Dateien aufeinander folgen
+   integer(int64), allocatable, dimension(:)   :: transinfo_zeit             !< timestamps of transport file in unixtime
+   integer,        allocatable, dimension(:)   :: ne_sc, np_sc, ns_sc        ! all numbers on process 0
+   integer,        allocatable, dimension(:)   :: intereck                   !< Felder für die 4 Eckknoten-Nummern des Elements aus dem die Strombahn kommt,
+                                                                             !! immer 4 hintereinander (ELM,semi-lagrange casu hydro_trieb=1 )
+                                                                             !! (Untrim, FV,Euler hydro_trieb=2) immer
+                                                                             
    real                            :: dttrans                    !> \anchor dttrans timestep for transport simulation in sec.
    real, allocatable, dimension(:) :: cu                         ! Courant-zahl bei Untrim
    real, allocatable, dimension(:) :: p, u, dir, w, vel_x, vel_y !> Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w
@@ -323,10 +308,10 @@ module modell
    integer, parameter :: number_plankt_vari_vert = 22 !< Number of vertically distributed planctonic, i.e. transported variables | depth-profiles
    integer, parameter :: num_lev = 1
    
-   integer                                      :: number_plankt_point !<   point-number
-   character(18), dimension(number_plankt_vari) ::  planktonic_variable_name !< QSim-1D Namen, die zu den planktischen, transportierten, tiefengemittelten Variablen gehören.
-   logical,       dimension(number_plankt_vari) ::  output_plankt            !< Kennzeichnung, ob diese Variable ausgegeben werden soll. Siehe dazu ausgabekonzentrationen()
-   real,    allocatable , dimension (:)         :: planktonic_variable       !< globales (Prozess 0) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. 
+   integer                                      :: number_plankt_point      !<   point-number
+   character(18), dimension(number_plankt_vari) :: planktonic_variable_name !< QSim-1D Namen, die zu den planktischen, transportierten, tiefengemittelten Variablen gehören.
+   logical,       dimension(number_plankt_vari) :: output_plankt            !< Kennzeichnung, ob diese Variable ausgegeben werden soll. Siehe dazu ausgabekonzentrationen()
+   real,    allocatable , dimension (:)         :: planktonic_variable      !< globales (Prozess 0) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. 
    
    !>    lokales (parallel alle Prozesse) Datenfeld für alle planktischen, transportierten, tiefengemittelten Variablen. \n
    !!    bei parallelen Rechnungen enthält es nur einen Teil des Datenfeldes modell::planktonic_variable das zu den Knoten gehört,
@@ -397,12 +382,13 @@ module modell
    
    ! Beschreibung in benthische_verteilungen.f95
    type :: rb_zeile
-      integer :: itag,imonat,ijahrl
-      real    :: uhrl, werts(anzrawe)
+      integer                  :: itag,imonat,ijahrl
+      real                     :: uhrl
+      real, dimension(anzrawe) :: werts
    end type rb_zeile
    
    type :: rb_punkt
-      integer        :: zeit_sek
+      integer(int64) :: zeit_sek
       type(rb_zeile) :: zeil
    end type rb_punkt
    
@@ -419,10 +405,13 @@ module modell
    
    !> \anchor rb rb Randbedingungs-Struktur
    type :: rb
-      integer                 :: anz_rb, nr_rb, tagesmittelwert_flag,t_guelt
-      type(rb_punkt), pointer :: punkt(:)
-      real                    :: wert_jetzt(anzrawe)
-      type(rb_streckenzug)    :: randlinie
+      integer                               :: anz_rb
+      integer                               :: nr_rb
+      integer                               :: tagesmittelwert_flag
+      integer                               :: t_guelt
+      type(rb_punkt), dimension(:), pointer :: punkt
+      real, dimension(anzrawe)              :: wert_jetzt
+      type(rb_streckenzug)                  :: randlinie
    end type rb
    
    
@@ -479,30 +468,29 @@ module modell
    ! ausgabe_datenfelder
    !---------------------------------------------------------------------------
    ! Beschreibung in ausgabe.f95
-   logical                                    :: bali
-   integer                                    :: knotenanzahl_ausgabe      !< Knotenanzahl
-   integer                                    :: anzahl_auskonz            !< Anzahl der insgesamt vorhandenen Übergabe-Konzentrationens
-   integer                                    :: n_ausgabe                 !< Ausgabezeitpunkte
-   integer                                    :: k_ausgabe                 !< output-concentrations
-   integer,       allocatable, dimension(:)   :: ausgabe_zeitpunkt
-   integer,       allocatable, dimension(:)   :: ausgabe_bahnlinie
-   integer,       allocatable, dimension(:)   :: ausgabe_konz
-   real,          allocatable, dimension(:,:) :: ausgabe_konzentration     !< Datenfeld für alle Feldgrößen,die in QSim nur zwischen den Modulen übergeben werden.
-   character(18), allocatable, dimension(:)   :: ausgabeKonzentrationsName !< Namen der Transportkonzentrationen für Ausgabe
+   logical                                     :: bali
+   integer                                     :: knotenanzahl_ausgabe      !< Knotenanzahl
+   integer                                     :: n_output                  !< number of output times
+   integer                                     :: k_ausgabe                 !< output-concentrations
+   integer(int64), allocatable, dimension(:)   :: ausgabe_zeitpunkt         !< output times in unixtime
+   integer,        allocatable, dimension(:)   :: ausgabe_bahnlinie
+   integer,        allocatable, dimension(:)   :: ausgabe_konz
+   real,           allocatable, dimension(:,:) :: ausgabe_konzentration     !< Datenfeld für alle Feldgrößen,die in QSim nur zwischen den Modulen übergeben werden.
+   character(18),  allocatable, dimension(:)   :: ausgabeKonzentrationsName !< Namen der Transportkonzentrationen für Ausgabe
    
    ! -------------------------------------------------------------------------
    ! ganglinien_datenfelder
    ! -------------------------------------------------------------------------
    ! Beschreibung in ganglinien.f95
-   integer                                :: anz_gangl, ionumber
-   integer                                :: n_pl, n_ue, n_bn
-   real,    allocatable, dimension(:)     :: c3ammonium, intammonium
-   real,    allocatable, dimension(:,:)   :: t_gang, u_gang, tlmax_gang,  tlmin_gang
-   real,    allocatable, dimension(:,:,:) :: pl_gang, ue_gang, bn_gang
-   real,    allocatable, dimension(:,:,:) :: randflux_gang, schnittflux_gang
-   integer, allocatable, dimension(:)     :: knot_gangl
-   integer, allocatable, dimension(:)     :: q_gangl
-   integer, allocatable, dimension(:,:)   :: r_gang
+   integer                                       :: anz_gangl, ionumber
+   integer                                       :: n_pl, n_ue, n_bn
+   real,           allocatable, dimension(:)     :: c3ammonium, intammonium
+   real,           allocatable, dimension(:,:)   :: t_gang, u_gang, tlmax_gang,  tlmin_gang
+   real,           allocatable, dimension(:,:,:) :: pl_gang, ue_gang, bn_gang
+   real,           allocatable, dimension(:,:,:) :: randflux_gang, schnittflux_gang
+   integer,        allocatable, dimension(:)     :: knot_gangl
+   integer(int64), allocatable, dimension(:)     :: q_gangl
+   integer(int64), allocatable, dimension(:,:)   :: r_gang
    
    integer, parameter :: gangl_level = 1
    
@@ -521,7 +509,7 @@ contains
    subroutine modeverz()
       character(longname) :: aufrufargument, systemaufruf, cmd
       integer             :: io_error, sysa, icount, i, stat, length, errcode
-      
+      logical             :: exists
       call get_command(cmd, length, stat)
       
       icount = command_argument_count()
@@ -534,27 +522,25 @@ contains
       
       if (icount == 2) then ! kontrollknoten angegeben
          call get_command_argument(2, aufrufargument)
-         read(aufrufargument, * , iostat = io_error) kontrollknoten
+         read(aufrufargument, *) kontrollknoten
          if (kontrollknoten < 0) call qerror('modeverz: negative control node not permitted')
-         print*,'control node, kontrollknoten #', kontrollknoten
-      else! no controll node
+         print "(a,i0)", 'control node: ', kontrollknoten
+      else
          kontrollknoten = -1
-         print*, "control node: none."
+         print "(a)", "control node: -"
       endif 
       
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),' >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modeverz writing filename elemente_ failed')
-      call system(systemaufruf, sysa)
-      
-      if (sysa /= 0) then
+      inquire(file = trim(modellverzeichnis), exist = exists)
+      if (.not. exists) then
          call qerror('Could not find model directory: ' // trim(modellverzeichnis))
       else
-         print*,'QSim3D Modell: ' // trim(modellverzeichnis)
+         print "(2a)",'model directory: ', trim(modellverzeichnis)
       endif
       
       ! Art des hydraulichen Antriebs ermitteln:
       hydro_trieb = antriebsart()
-      return
+      print "(a,i0)", "hydro_trieb = ", hydro_trieb 
+      
    end subroutine modeverz
    
    
@@ -570,7 +556,7 @@ contains
       ! casu
       inquire(file = trim(modellverzeichnis) // 'transinfo', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: casu"
+         print "(a)", "Hydrodynamic driver: casu"
          antriebsart = 1
          return
       endif
@@ -578,7 +564,7 @@ contains
       ! UnTrim²
       inquire(file = trim(modellverzeichnis) // 'transport.nc', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: NetCDF UnTrim2"
+         print"(a)", "Hydrodynamic driver: NetCDF UnTrim2"
          antriebsart = 2
          return
       endif
@@ -586,7 +572,7 @@ contains
       ! SCHISM
       inquire(file = trim(modellverzeichnis) // 'outputs_schism', exist = exists)
       if (exists) then
-         print*, "Hydrodynamic driver: NetCDF SCHISM"
+         print "(a)", "Hydrodynamic driver: NetCDF SCHISM"
          antriebsart = 3
          return
       endif
@@ -603,14 +589,12 @@ contains
    !!
    !! aus Datei module_modell.f95 ; zurück zu \ref lnk_modellerstellung
    subroutine modella()
-      character(500) :: dateiname, text, version, mod_name
+      character(500) :: filename, text, version, mod_name
       integer        :: open_error, ion, read_error
       
-      dateiname = trim(modellverzeichnis) // '/MODELLA.txt'
-      ion = 103
-      open(unit = ion, file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+      filename = trim(modellverzeichnis) // '/MODELLA.txt'
+      open(newunit = ion, file = filename, status = 'old', action = 'read ', iostat = open_error)
       if (open_error /= 0) call qerror('Could not open MODELLA.txt')
-      
       
       if (.not. zeile(ion)) call qerror('Model version is missing in ModellA.txt')
       version = ctext
@@ -622,18 +606,19 @@ contains
       read(ctext, *, iostat = read_error) modell_geob, modell_geol
       if (read_error /= 0) call qerror("Error while reading coordinates from ModellA.txt")
       
-      print*, ""
-      print*, repeat("-", 80)
-      print*, "ModellA.txt"
-      print*, repeat("-", 80)
+      close(ion)
       
-      print"(a,a)",     'version   = ', trim(version)
-      print"(a,a)",     'name      = ', trim(mod_name)
-      print "(a,f0.5)", 'latitude  = ', modell_geob
-      print "(a,f0.5)", 'longitude = ', modell_geol
-     
-      close (ion)
+      ! --- print summary to console ---
+      print*
+      print "(a)", repeat("-", 80)
+      print "(a)", "ModellA.txt"
+      print "(a)", repeat("-", 80)
       
+      print "(a,a)",    'version:   ', trim(version)
+      print "(a,a)",    'name:      ', trim(mod_name)
+      print "(a,f0.5)", 'latitude:  ', modell_geob
+      print "(a,f0.5)", 'longitude: ', modell_geol
+   
    end subroutine modella
    
    !----+-----+----
@@ -641,8 +626,6 @@ contains
    logical function zeile(ion)
       integer, intent(in) :: ion
       integer             :: io_error
-      
-      zeile = .FALSE.
       
       do
          read(ion, '(A)', iostat = io_error) ctext
@@ -652,9 +635,7 @@ contains
          endif
          if (ctext(1:1) /= '#') exit
       enddo
-      
       zeile = .TRUE.
-      return
    end function zeile
    
    !----+-----+----
@@ -667,7 +648,7 @@ contains
       do i = 1,len(trim(ctext))
          if (ctext(i:i) /= " ") leerzeile = .false.
       enddo 
-      return
+   
    end function leerzeile
    
    !----+-----+----
@@ -683,22 +664,22 @@ contains
       enddo 
       
       naechste_zeile = .false.
-      return
    end function naechste_zeile
    
-   !----+-----+----
-   !> Führt das Voranschreiten der Zeit aus.
+  
+   !> Increment simulation time.
    subroutine zeitschritt_halb(vorher)
-      logical :: vorher
+      use module_datetime
+      
+      logical, intent(in) :: vorher
+      type(datetime)      :: datetime_now
       
       rechenzeit = rechenzeit + (deltat / 2)
-      uhrzeit_stunde = uhrzeit_stunde + (real((deltat / 2)) / 3600.)
-      if (uhrzeit_stunde >= 24.0) uhrzeit_stunde = uhrzeit_stunde-24.0
-      zeitpunkt = rechenzeit
       
-      if (vorher) then ! vor dem Zeitschritt
-         startzeitpunkt = rechenzeit-(deltat/2)
-         endzeitpunkt = startzeitpunkt+deltat
+      ! vor dem Zeitschritt
+      if (vorher) then 
+         startzeitpunkt = rechenzeit - (deltat / 2)
+         endzeitpunkt = startzeitpunkt + deltat
       endif
    end subroutine zeitschritt_halb
    
@@ -706,399 +687,92 @@ contains
    !> Dient der initialisierung der Zeitsteuerung.
    subroutine ini_zeit()
       if (meinrang == 0) then ! prozess 0 only
-         !rechenzeit=252590400  ! 2008
-         !rechenzeit=189432000  ! 2006
          rechenzeit = 0
-         !deltat=900 !3600
          deltat = 3600
-         uhrzeit_stunde = 12.0
          izeit = 0
          zeitschrittanzahl = 1
-      endif ! only prozessor 0
+      endif
    end subroutine ini_zeit
    
-   !----+-----+----
-   !> Dient der Berechnung von zeitpunkt in ganzen sekunden aus 
-   !! sekunde,minute,stunde Opt=1 
-   !! uhrzeit_stunde Opt=2 
-   !! tag, monat, jahr
-   !! Quelle: module_modell.f95
-   subroutine sekundenzeit(opt)
-      integer, intent(in) :: opt
-      integer             :: vormonatstage, jahrestage, jahre, maxjahre
-      logical             :: schaltjahr
-      real                :: ustunde, uminute
-      
-      schaltjahr = .false.
-      if (mod(jahr,4) == 0) schaltjahr = .true.
-      jahre = jahr-referenzjahr
-      
-      if (jahre > 25)call qerror('sekundenzeit: Berechnungsjahr zu lange nach Referenzjahr')
-      if (jahre < 0 )call qerror('sekundenzeit: Berechnungsjahr vor Referenzjahr')
-      
-      maxjahre = huge(zeitpunkt)/(365*86400)
-      if (jahre >= (maxjahre-1)) then
-         write(fehler,*)'zeitpunkt in sec. nicht als integer angebbar, weil Referenzjahr zu klein'  &
-         ,maxjahre,jahre,jahr,referenzjahr
-         call qerror(fehler)
-      endif
-      jahrestage = int(jahre/4)*1461 ! Schaltjahperioden als ganzes abziehen
-      jahre = jahre - (int(jahre/4)*4)
-      if (jahre > 0) then ! Referenzjahr immer Schaltjahr !!!
-         jahrestage = jahrestage+366
-         jahre = jahre-1
-      endif
-      jahrestage = jahrestage+jahre*365 ! 0 ... 2 verbleibende jahre in Schaltjahperiode nach Schaltjahr
-      select case (monat)
-         case (1) !Januar
-            vormonatstage = 0
-         case (2) !Februar
-            vormonatstage = 31
-         case (3) !März
-            vormonatstage = 59
-         case (4) !April
-            vormonatstage = 90
-         case (5) !Mai
-            vormonatstage = 120
-         case (6) !Juni
-            vormonatstage = 151
-         case (7) !Juli
-            vormonatstage = 181
-         case (8) !August
-            vormonatstage = 212
-         case (9) !September
-            vormonatstage = 243
-         case (10) !Oktober
-            vormonatstage = 273
-         case (11) !November
-            vormonatstage = 304
-         case (12) !Dezember
-            vormonatstage = 334
-            case default
-            print*,'Monate gibt es nur von 1 bis 12, Fehler in sekundenzeit'
-            write(fehler,*)'tag = ',tag,' monat = ',monat,' jahr = ',jahr,' Uhrzeit = ',uhrzeit_stunde
-            call qerror(fehler)
-      end select
-      if (schaltjahr .and. (monat > 2))vormonatstage = vormonatstage+1
-      
-      zeitpunkt = 0
-      zeitpunkt = zeitpunkt+(jahrestage*86400)
-      zeitpunkt = zeitpunkt+(vormonatstage*86400)
-      zeitpunkt = zeitpunkt+((tag-1)*86400) ! erster Tag beginnt bei 0 Sekunden !!!
-      select case (opt)
-         case (1) !stunde,minute,sekunde
-            zeitpunkt = zeitpunkt+(stunde*3600)
-            zeitpunkt = zeitpunkt+(minute*60)
-            zeitpunkt = zeitpunkt+sekunde
-         case (2) !stunde.minute
-            !! zuerst Umwandeln in Stundendezimale
-            ustunde = aint(uhrzeit_stunde)
-            uminute = aint((uhrzeit_stunde-ustunde)*100.0)
-            zeitpunkt = zeitpunkt+int(ustunde)*3600+int(uminute)*60
-            !uhrzeit_stunde=aint(uhrzeit_stunde)+(uhrzeit_stunde-aint(uhrzeit_stunde))*(100.0/60.0) !! vormals minu_stund()
-            !zeitpunkt=zeitpunkt+int(uhrzeit_stunde*3600)
-            case default
-            call qerror("Diese option der Zeitangabe ist in subroutine sekundenzeit nicht vorgesehen")
-      end select
-      zeitpunkt = zeitpunkt-time_offset
-   end subroutine sekundenzeit
-   
-   !----+-----+----
-   !> Dient der Rückrechnung von sekunde,minute,stunde,Tag,Monat,Jahr aus zeitpunkt in ganzen Sekunden seit Beginn Referenzjahr\n
-   !! Quelle: module_modell.f95
-   subroutine zeitsekunde()
-      integer :: schaltjahre, monatstage, tage
-      logical :: schaltjahr
-      
-      uhrzeit_stunde = 0.0
-      monat = 0
-      tag = 0
-      zeitpunkt = zeitpunkt + time_offset
-      tage = int(zeitpunkt/86400)
-      if ((tage >= 7*1461) .or. (tage < 0)) then
-         write(fehler,*)'zeitsekunde: zeitpunkt vor oder zu lang nach Referenzjahr| zeitpunkt,tage,referenzjahr = ' &
-              ,zeitpunkt,tage,referenzjahr
-         call qerror(fehler)
-      endif
-      uhrzeit_stunde = real(zeitpunkt-(tage*86400))/3600.0
-      stunde = (zeitpunkt-(tage*86400))/3600
-      minute = (zeitpunkt-(tage*86400)-(stunde*3600))/60
-      sekunde = (zeitpunkt-(tage*86400)-(stunde*3600)-(minute*60))
-      schaltjahre = tage/1461 !(3*365+366)
-      tage = tage-(schaltjahre*1461)
-      jahr = schaltjahre*4
-      
-      if (tage >= 366) then ! 4-Jahresperode beginnt mit schaltjahr
-         jahr = jahr+1
-         tage = tage-366
-         do while (tage >= 365) ! weitere Jahre
-            jahr = jahr+1
-            tage = tage-365
-         enddo !while
-      endif
-      
-      jahr = jahr+referenzjahr
-      schaltjahr = .false.
-      
-      if ( mod(jahr,4) == 0 ) then
-         schaltjahr = .true.
-         !print*,'zeitsekunde: schaltjahr'
-      endif
-      !print*,'zeitsekunde: tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)',  &
-      !          tage, jahr, schaltjahre,zeitpunkt,zeitpunkt-time_offset,mod(jahr,4)
-      tag = tage+1 ! erster tag nach 0 tagen im Jahr
-      tagdesjahres = tag ! für Wetter und Licht
-      monat = 1 ! im Januar (oder später im Jahr)
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im Februar (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 28
-      if (schaltjahr)monatstage = 29
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im März (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im april (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im mai (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juni (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im juli (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im august (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im september (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im oktober (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im november (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 30
-      if (tag <= monatstage) goto 111
-      if (tag > monatstage) then ! im dezember (oder später im Jahr)
-         monat = monat+1
-         tag = tag-monatstage
-      endif
-      monatstage = 31
-      if (tag > monatstage) then ! Jahr rum
-         write(fehler,*)'Jahr rum: zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset = ',  &
-               zeitpunkt,jahr,monat,tag,stunde,minute,sekunde,referenzjahr,time_offset
-         call qerror(fehler)
-      endif
-      111    continue
-      zeitpunkt = zeitpunkt-time_offset
-   end subroutine zeitsekunde
-   
-   !-----+-----+-----+-----+
-   !> Wenn die Nachkommastelle in lesezeit die Minuten angibt, in dezimaldarstellung rückrechnen
-   real function minu_stund(lesezeit)
-      real :: lesezeit
-      minu_stund = aint(lesezeit)+(lesezeit-aint(lesezeit))*(100.0/60.0)
-   end function minu_stund
-   
    !> Prüfen, ob alle notwendigen Dateien im Modellverzeichnis vorliegen.
-   logical function modell_vollstaendig()
-      character(len = longname) :: aufrufargument, systemaufruf
-      integer                   :: io_error,sysa, ia, ion, errcode
-      logical                   :: zeile_vorhanden
-      
-      modell_vollstaendig = .true.
-      
-      ! EREIGG.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'EREIGG.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei EREIGG.txt'
-      endif
-      
-      ! MODELLA.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLA.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLA.txt'
-      endif
-      
-      ! WETTER.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'WETTER.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei WETTER.txt'
-      endif
-      
-      ! MODELLG.3D.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'MODELLG.3D.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*, 'In Ihrem Modellverzeichnis fehlt die Datei MODELLG.3D.txt'
-      endif
-      
-      ! APARAM.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'APARAM.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei APARAM.txt'
-      endif
-      
-      ! e_extnct.dat
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'e_extnct.dat >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei e_extnct.dat'
-      endif
-      
+   subroutine modell_vollstaendig()
+      logical :: exists, input_complete
+      integer :: i, sysa
+      character(longname), dimension(:), allocatable :: input_files
       
       select case (hydro_trieb)
-         case(1) ! casu-transinfo
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/meta >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei /transinfo/meta'
-            endif
+         case(1) 
+            ! casu specific files
+            allocate(input_files(12))
+            input_files(10) = trim(modellverzeichnis) // 'transinfo/meta'
+            input_files(11) = trim(modellverzeichnis) // 'transinfo/points'
+            input_files(12) = trim(modellverzeichnis) // 'transinfo/file.elements'
             
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transinfo/points >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/points'
-               !print*,'sysa=',sysa,' systemaufruf=',trim(systemaufruf)
-               !else
-            endif
-
-            write(systemaufruf,'(3A)',iostat = errcode) &
-               'stat ',trim(modellverzeichnis),'transinfo/file.elements >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transinfo/file.elements'
-            endif
+         case(2) 
+            ! Untrim² specific files
+            allocate(input_files(11))
+            input_files(10) = trim(modellverzeichnis) // 'transport.nc'
+            input_files(11) = trim(modellverzeichnis) // 'ELEMENTE.txt'
             
-         case(2) ! Untrim² netCDF
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'transport.nc >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei transport.nc'
-            endif
-            
-            write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ELEMENTE.txt >/dev/null 2>/dev/null'
-            if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-            call system(systemaufruf,sysa)
-            if (sysa /= 0) then
-               modell_vollstaendig = .false.
-               print*,'In Ihrem Modellverzeichnis fehlt die Datei ELEMENTE.txt'
-            endif
-         
-         case(3) ! SCHISM netCDF
+         case(3) 
+            ! SCHISM netCDF
             print*,'not yet checking completeness of SCHISM model'
-            case default
+         
+         case default
             call qerror('Hydraulischer Antrieb unbekannt')
       end select
       
-      ! ganglinien_knoten.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ganglinien_knoten.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ganglinien_knoten.txt'
-      endif
+      input_files(1) = trim(Modellverzeichnis) // "APARAM.txt"
+      input_files(2) = trim(Modellverzeichnis) // "EREIGG.txt"
+      input_files(3) = trim(Modellverzeichnis) // "MODELLA.txt"
+      input_files(4) = trim(Modellverzeichnis) // "WETTER.txt"
+      input_files(5) = trim(Modellverzeichnis) // "MODELLG.3D.txt"
+      input_files(6) = trim(Modellverzeichnis) // "e_extnct.dat"
+      input_files(7) = trim(Modellverzeichnis) // "ganglinien_knoten.txt"
+      input_files(8) = trim(Modellverzeichnis) // "ausgabezeitpunkte.txt"
+      input_files(9) = trim(Modellverzeichnis) // "ausgabekonzentrationen.txt"
       
-      ! ausgabezeitpunkte.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'ausgabezeitpunkte.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabezeitpunkte.txt'
-      endif
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis), &
-                                                 'ausgabekonzentrationen.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         modell_vollstaendig = .false.
-         print*,'In Ihrem Modellverzeichnis fehlt die Datei ausgabekonzentrationen.txt'
-      endif
+      print*, 
+      print "(a)", repeat("=", 80)
+      print "(a)", "input files"
+      print "(a)", repeat("=", 80)
+      
+      input_complete = .true.
+      do i = 1, size(input_files)
+         inquire(file = input_files(i), exist = exists)
+         if (exists) then
+            print "(2a)", "* ", trim(input_files(i))
+         else
+            print "(a)", "Missing input file: " // trim(input_files(i))
+            input_complete = .false.
+         endif
+      enddo
+      
+      if (.not. input_complete) call qerror("Input files is incomplete.")
       
       ! alter.txt
-      write(systemaufruf,'(3A)',iostat = errcode)'stat ',trim(modellverzeichnis),'alter.txt >/dev/null 2>/dev/null'
-      if (errcode /= 0)call qerror('modell_vollstaendig writing filename elemente_ failed')
-      call system(systemaufruf,sysa)
-      if (sysa /= 0) then
-         print*,'Datei alter.txt nicht vorhanden, ergo: vollständige Gütesimulation'
-         nur_alter = .false.
-      else
-         print*,'##### Datei alter.txt vorhanden, nur Aufenthaltszeit-Simulation, ggf incl. Temp. #####'
+      inquire(file = trim(modellverzeichnis) // "alter.txt", exist = exists) 
+      if (exists) then
+         print "(a)", "alter.txt detected: Simulation will only calculate water age"
          nur_alter = .true.
+      else
+         print "(a)", "File `alter.txt` is not available. Water age will not be calculated."
+         nur_alter = .false.
       endif
       
       ! qusave
       call system('which qusave >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'Script `qusave` is not available. Input data will not be archived.'
+         print "(a)", 'Script `qusave`  is not available. Input data will not be archived.'
       endif
       
       ! quzip
       call system('which quzip  >/dev/null 2>/dev/null', sysa)
       if (sysa /= 0) then
-         print*, 'Script `quzip` is not available. Input data will not be archived.'
+         print "(a)", 'Script `quzip`   is not available. Input data will not be archived.'
       endif
       
-   end function modell_vollstaendig
+   end subroutine modell_vollstaendig
    
    !----+-----+----
    !> Reibungsbeiwert \f$ \lambda \f$ aus Wassertiefe/Sohlabstand und Rauheitshöhe gemäß dem Colebrook-White Gesetz berechnen (nach DVWK 220).\n
@@ -1123,8 +797,6 @@ contains
          l = (1.0/kappa) * (log10(zet/ks)) + 8.5
          if (l > 0.0) lambda = 8/(l**2)
       endif
-      
-      return
    end function lambda
    
    
@@ -1151,7 +823,6 @@ contains
       else ! trocken
          strickler = 1.0
       endif
-      return
    end function strickler
    
 end module modell

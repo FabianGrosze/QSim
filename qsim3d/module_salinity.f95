@@ -26,15 +26,15 @@
 ! --------------------------------------------------------------------------- !
 !> This module defines variables and subroutines for the use of Salinity read from hydrodynamic
 !! files within QSim3D. At the moment, this only works for UnTRIM2/SediMorph data.
-!!
 module module_salinity
    use netcdf
    use modell
    
    implicit none
    
-   private ! default: all is private
-   public  init_salinity, step_salinity
+   private 
+   public :: init_salinity
+   public :: step_salinity
    
    ! Module variables
    
@@ -46,41 +46,31 @@ module module_salinity
    !    routine that checketh the model options and seteth all tracer variable indices,
    !    then a dimension of the glorious new tracer array.
    !    QSim is dead, long live QSim!
-   integer, parameter                    :: hydro_UnTRIM2 = 2                    !< identifier of UnTRIM2 hydrodynamics
-   integer, parameter                    :: i_salinity    = 72                   !< tracer index of salinity
-   integer                               :: varid                                !< netCDF variable ID
- 
-   real, allocatable, dimension(:  )     :: salinity_element, salinity_element_p !< Salinity (psu) in water column
+   integer                         :: varid                                !< netCDF variable ID
+   real, allocatable, dimension(:) :: salinity_element, salinity_element_p !< Salinity (psu) in water column
    
-   logical, parameter                    :: debug       = .true.                 !< turn debugging on/off
+   integer, parameter              :: hydro_UnTRIM2 = 2                    !< identifier of UnTRIM2 hydrodynamics
+   integer, parameter              :: i_salinity    = 72                   !< tracer index of salinity
+   logical, parameter              :: debug       = .true.                 !< turn debugging on/off
    
-   ! module uses netcdf error check defined in stofftransport_untrim.f95
    external :: check_err
    
 contains
-   
-   ! =================================================================================
-   ! ========================= SUBROUTINES and FUNCTIONS =============================
-   ! =================================================================================
-   
+  
+   !> Initialise data arrays for reading salinity from file
    subroutine init_salinity
-      ! initialise data arrays for reading salinity from file
-      
       integer              :: alloc_status   ! success status of array allocation
-      
-      character(len = 200) :: text_string    ! self-explanatory
+      character(len = 200) :: text_string 
       
       if (meinrang == 0) then
          ! initialize data arrays for entire domain
-         allocate (salinity_element(part * proz_anz), stat = alloc_status)
+         allocate(salinity_element(part * proz_anz), source = 0., stat = alloc_status)
          if (alloc_status /= 0) call qerror('init_salinity: Error allocating salinity for NetCDF reading.')
-         salinity_element(:) = 0.
       endif
       
       ! initialize data field used on MPI processes
-      allocate (salinity_element_p(part), stat = alloc_status)
+      allocate(salinity_element_p(part), source = 0., stat = alloc_status)
       if (alloc_status /= 0) call qerror('init_salinity: Error allocating Salinity partial fields for MPI processes.')
-      salinity_element_p(:) = 0.
       
       ! read first time step for initialisation
       call step_salinity
@@ -94,13 +84,10 @@ contains
    end subroutine init_salinity
    
    ! =====================================================================
-   subroutine step_salinity
-      ! do time step for salinity
-      
-      integer             :: i, j, k          ! indices
-      integer             :: i_time           ! ID of time record to be read from file
-      
-      character(len = 200):: error_message    ! self-explanatory
+   !> Do time step for salinity.
+   subroutine step_salinity   
+      integer              :: i, j, ks, i_time
+      character(len = 200) :: error_message    
       
       ! get Salinity from file and distribute it over all processes
       if (meinrang == 0) then
@@ -112,18 +99,21 @@ contains
          endif
          
          ! read data closest to center of current time step
-         i_time = minloc(abs(transinfo_zeit - rechenzeit), 1)
+         i_time = minloc(abs(int(transinfo_zeit - rechenzeit, 4)), 1)
+         
          select case (hydro_trieb)
-         case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/Salinity
-            call get_salinity_UnTRIM2(i_time)
-         case default         ! any other hydrodynamics/Salinity
-            call qerror('step_salinity: Reading salinity from file only implemented for UnTRIM2 hydrodynamics')
+            case (hydro_UnTRIM2) ! UnTRIM2 hydrodynamics/Salinity
+               call get_salinity_UnTRIM2(i_time)
+            
+            case default
+               call qerror('step_salinity: Reading salinity from file only implemented for UnTRIM2 hydrodynamics')
          end select
          
-         ! write salinity min/max to log file
-         write(*,'(a,i8,a,F6.2,a,F6.2,a,F6.2,a)')                                                                  &
+         ! write salinity min/max to console
+         write(*,'(a,i0,a,f0.2,a,f0.2,a,f0.2,a)')                                                                  &
                'step_salinity: ', i_time, '-th record read from file - min = ', minval(salinity_element),          &
-               ', max = ', maxval(salinity_element), ', mean = ', sum(salinity_element)/real(max(1,size(salinity_element))), ' (psu)'
+               ', max = ',  maxval(salinity_element), &
+               ', mean = ', sum(salinity_element)/real(max(1,size(salinity_element))), ' (psu)'
       endif
       
       ! synchronize all parallel processes
@@ -150,36 +140,33 @@ contains
    end subroutine step_salinity
    
    ! =====================================================================
+   !> Read salinity from UnTRIM NetCDF file.
    subroutine get_salinity_UnTRIM2(i_time)
-      ! read salinity from from UnTRIM netCDF file
       
-      integer, intent(in)            :: i_time                 ! ID of time record to be read
+      integer, intent(in)   :: i_time    !< ID of time record to be read
       
-      real                , parameter :: one = 1.
-      character(len = 100), parameter :: nc_error_prefix = 'get_salinity_UnTRIM2 - Mesh2_face_Salzgehalt_2d'
+      integer               :: i                     
+      integer, dimension(3) :: start3, count3
+      real                  :: fill_value
       
-      integer                         :: i                      ! loop index
-      integer                         :: start3(3), count3(3)   ! netCDF read start/count for 3D variable
-      integer                         :: i_fill                 ! is fill value used (0) or not (1) in .nc file?
-      
-      real                            :: fill_value             ! fill value of netCDF variables
+      real,           parameter :: one = 1.
+      character(100), parameter :: nc_error_prefix = 'get_salinity_UnTRIM2 - Mesh2_face_Salzgehalt_2d'
       
       ! read data from netCDF file
-      start3 = (/                   1, 1, i_time /)
-      count3 = (/ number_plankt_point, 1,      1 /)
+      start3 = [                  1, 1, i_time]
+      count3 = [number_plankt_point, 1,      1]
       call check_err(trim(nc_error_prefix), nf90_inq_varid(ncid, 'Mesh2_face_Salzgehalt_2d', varid))
-      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, salinity_element(1:number_plankt_point), start3, count3))
-      call check_err(trim(nc_error_prefix), nf90_inq_var_fill(ncid, varid, i_fill, fill_value))
+      call check_err(trim(nc_error_prefix), nf90_get_var(ncid, varid, salinity_element, start3, count3))
+      call check_err(trim(nc_error_prefix), nf90_get_att(ncid, varid, "_FillValue", fill_value))
       
       do i = 1,number_plankt_point
-         if (i_fill == 0 .and. abs(salinity_element(i) - fill_value) <= one) then
+         if (abs(salinity_element(i) - fill_value) <= one) then
             ! set land values to 0
             salinity_element(i) = 0.
          else
             salinity_element(i) = max(0., salinity_element(i))
          endif
       enddo
-
    end subroutine get_salinity_UnTRIM2
    
 end module module_salinity

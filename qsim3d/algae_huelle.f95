@@ -165,8 +165,6 @@ subroutine algae_huelle(i)
    eantbl(1)   = 0.0  ! Einleitungswert (keine Einleitungen)
    dh2d        = 0.25 ! Dicke Tiefenschicht
    ilamda      = rb_extnct_ilamda
-   itags       = tag
-   monats      = monat
    
    saettk = transfer_value_p(6)
    tauscs = transfer_value_p(7) ! Schiffseinfluss 

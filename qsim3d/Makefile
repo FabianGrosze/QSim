@@ -36,7 +36,6 @@ QSim_version=`grep -i versionstext ../metabolism/version_string.f90 | tail -n1 |
 # set executable name
 PV=qsim3d_$(QSim_version)_dev
 
-
 # set additional libraries
 NETCDFF_HOME=/opt/produktiv/netcdf-fortran-4.4.2
 NETCDF_HOME=/opt/produktiv/netcdf-4.5.0
@@ -136,7 +135,6 @@ Q3 = version.co \
    parallel.o \
    water_temperature_wrapper_3d.o \
    alter.o\
-   module_isotope.o \
    nitrogen_wrapper_3d.o \
    oxygen_wrapper_3d.o \
    phosphate_wrapper_3d.o \
@@ -244,9 +242,9 @@ qsim3d: $(Q3)
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
-	mv -f $(PV) $(MY_BIN)/$(PV)
-	cp -f ./scripte/* $(MY_BIN)
-
+	@cp -f $(PV) $(MY_BIN)/$(PV)
+	@cp -f ./scripte/* $(MY_BIN)
+	@echo "Exe copied to" $(MY_BIN)/$(PV)
 KT = version.co trans_read.co \
      kombitransi.o
 

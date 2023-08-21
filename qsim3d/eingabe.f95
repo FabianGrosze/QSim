@@ -59,7 +59,6 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
             call read_mesh_nc()  ! Lage der Knoten und Vermaschung aus der netcdf-hydraulik-Datei einlesen
             call read_elemente_gerris()  ! Zonen und Randnummern von ELEMENTE.txt einlesen, die von Gerris erzeugt wurde
             n_cal = n_elemente
-            print*,'Untrim netCDF read mesh'
          endif 
          call mpi_barrier (mpi_komm_welt, ierr)
          call MPI_Bcast(n_cal,1,MPI_INT,0,mpi_komm_welt,ierr)
@@ -68,7 +67,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
          ! call read_mesh_nc_sc()
          n_cal = n_elemente !!??
          n_cal = knotenanzahl2D
-         if (meinrang == 0) print*,'got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?????????########'
+         if (meinrang == 0) print*, "got SCHISM netCDF mesh ##### but n_cal = knotenanzahl2D ?"
       
       case default
          call qerror('Hydraulischer Antrieb unbekannt netz_lesen')
@@ -79,11 +78,16 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
    n = part * proz_anz
    if (n < n_cal) part = part+1
    
-   print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
-                  ," modell_parallel() n_cal = ", n_cal
-   print*, ""
-   
+   if (meinrang == 0) then
+      print*
+      print "(a)", repeat("-", 80)
+      print "(a)", "partitions"
+      print "(a)", repeat("-", 80)
+   endif
    call mpi_barrier (mpi_komm_welt, ierr)
+   print "(*(a,i0))", 'part = ', part, ' part*proz_anz = ',part*proz_anz," meinrang = ",meinrang  &
+                    ," n_cal = ", n_cal
+   
    call ini_planktkon0(n_cal)
    call ini_benthic0(n_cal)
    call ini_ueber(n_cal)
@@ -118,7 +122,7 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
    end select
    
    !#FG: reading model settings here to ensure iEros is known (required for SS from file)
-   if (meinrang == 0) call ereigg_modell() ! read time-stepping information at first
+   if (meinrang == 0) call read_ereigg_model() ! read time-stepping information at first
    call mpi_barrier (mpi_komm_welt, ierr)
    call MPI_Bcast(iEros,1,MPI_INT,0,mpi_komm_welt,ierr)
    call allo_trans() ! Felder für Transportinformationen und Strömungsfeld allocieren
@@ -126,15 +130,15 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
    if (meinrang == 0) then ! only prozessor 0
       call modellg() ! read zone-information aus from MODELLG.3D.txt
       call modella() ! read lat. lon. at first ( zunächst nur Geographische Breiten- und Längenkoordinaten )
-      call ereigg_modell() ! read time-stepping information at first
-      call ereigg_Randbedingungen_lesen() ! next read BC-development
+      call read_ereigg_model() ! read time-stepping information at first
+      call read_boundary_timeseries() ! next read BC-development
      
       ! read global model-parameters now in module ::uebergabe_werte
       cpfad = trim(adjustl(modellverzeichnis))
       
       call read_aparam(cpfad, iwsim, icoli, ischwer)
-      call extnct_lesen()
-      call ausgabezeitpunkte()      ! reading points in time for output
+      call read_extnct()
+      call read_ausgabezeitpunkte() ! reading points in time for output
       call ausgabekonzentrationen() ! reading output-values
       call transinfo_schritte(startzeitpunkt, startzeitpunkt+deltat) !! sollte eigentlich für beide Antriebe gleichermaßen funktionieren
       call wetter_readallo0()
@@ -159,93 +163,119 @@ subroutine eingabe() ! arbeite nur auf Prozessor 0
 end subroutine eingabe
 
 !----+-----+----
-!! Die <a href="./exp/EREIGG.txt" target="_blank">EREIGG.txt</a> Dateien für QSim sind weiterverwendbar,
-!! hier wird zunächst nur die Zeitsteuerung (Anfang, Ende, Zeitschrittweite) daraus gelesen.
-!! Die SUBROUTINE ereigg_Randbedingungen_lesen() entnimmt dann die Rand-Werte aus der Datei 
-!! 
-!! aus Datei eingabe.f95 ; zurück zu \ref lnk_modellerstellung
-subroutine ereigg_modell()
+!> Read model settings from file `EreigG.txt`
+subroutine read_ereigg_model()
    use modell
-   use QSimDatenfelder
+   use qsimdatenfelder
+   use module_datetime
    implicit none
    
-   character(500) :: dateiname
+   character(500) :: filename, version, model, instance
    integer        :: open_error, ion, read_error
-   real           :: dt_min, tictac
+   integer        :: year, month, day, hour, minutes, dt_minutes
+   real           :: dt_min, tictac, pseudo_time
+   type(datetime) :: datetime_start, datetime_end
    
-   dateiname = trim(modellverzeichnis) // '/EREIGG.txt'
+   filename = trim(modellverzeichnis) // '/EREIGG.txt'
    ion = 92
-   open(unit = ion, file = dateiname, status = 'old', action = 'read ', iostat = open_error)
+   open(unit = ion, file = filename, status = 'old', action = 'read ', iostat = open_error)
    if (open_error /= 0) call qerror("Could not open EreigG.txt")
    rewind (ion)
    
+   
+   !---------------------------------------------------------------------------
+   ! file header
+   !---------------------------------------------------------------------------
    if ( .not. zeile(ion)) call qerror('ereigg_modell 1 read_error /= 0')
-   print*,'EREIGG Version: ', trim(ctext)
+   version = trim(ctext)
    if ( .not. zeile(ion)) call qerror('ereigg_modell 2 read_error /= 0')
-   print*,'EREIGG Modell: ', trim(ctext)
+   model = trim(ctext)
    if ( .not. zeile(ion)) call qerror('ereigg_modell 3 read_error /= 0')
-   print*,'EREIGG Ereignis: ', trim(ctext)
+   instance = trim(ctext)
    
-   if ( .not. zeile(ion)) call qerror('Zeile 3 von EREIGG.txt nicht da')
-   read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde ! itags,monats,jahrs,uhrs
-   call sekundenzeit(2)
    
-   startzeitpunkt = zeitpunkt
-   itags = tag
-   monats = monat
-   jahrs = jahr
-   uhrs = uhrzeit_stunde
-   print*,'EREIGG.txt, Berechnungsbeginn: tag,monat,jahr, Uhrzeit, Startzeitpunkt' &
-         , itags, monats, jahrs, uhrs, startzeitpunkt
+   ! --------------------------------------------------------------------------
+   ! time setttings
+   ! --------------------------------------------------------------------------
    
-   if ( .not. zeile(ion)) call qerror('Zeile 4 von EREIGG.txt nicht da')
-   read(ctext, *, iostat = read_error) tag, monat, jahr, uhrzeit_stunde, dt_min ! itage,monate,jahre,uhren,izdt
-   if (read_error /= 0) call qerror('read_error in Zeile 4 von EREIGG.txt; Endzeitpunkt der Berechnung')
-   call sekundenzeit(2)
+   ! --- read simulation start time ---
+   if (.not. zeile(ion)) call qerror("Error while reading start time from EreigG.txt")
    
-   endzeitpunkt = zeitpunkt
-   itage = tag
-   monate = monat
-   jahre = jahr
-   uhren = uhrzeit_stunde
+   ! date format: "01  01  2010  03.00"
+   read(ctext(1:2),   "(i2)")   day
+   read(ctext(5:6),   "(i2)")   month
+   read(ctext(9:12),  "(i4)")   year
+   read(ctext(15:16), "(i2)")   hour
+   read(ctext(18:19), "(i2)")   minutes
+   read(ctext(15:19), "(f5.2)") pseudo_time
    
-   print*,'EREIGG.txt,   Berechnungsende: tag,monat,jahr, Uhrzeit, Endzeitpunkt' &
-         , itage, monate, jahre, uhren, endzeitpunkt
-   deltat = int(dt_min*60)
-   if (deltat <= 0) call qerror("Timestep given in EreigG.txt is negativ.")
+   datetime_start = datetime()
+   datetime_start = datetime(year, month, day, hour, minutes, tz = tz_qsim)
    
-   if (abs(real(deltat)-(dt_min*60)) > 0.01) then
-      write(fehler,*)'ereigg_modell: angegebene zeitschrittweite = ',dt_min,' minuten d.h.',(dt_min*60)  &
-                    ,' sekunden ist falsch weil sekundenzeitschritt nicht ganzzahlig'
-      call qerror(fehler)
-   endif ! Zeitschritt als ganze sekunden
-   
-   zeitschrittanzahl = (endzeitpunkt-startzeitpunkt)/(deltat)
-   print*,'zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat = ',zeitschrittanzahl, startzeitpunkt, endzeitpunkt, deltat
-   
-   if (zeitschrittanzahl < 0) call qerror('zeitschrittanzahl < 0')
-      
-   print*,"hydro_trieb = ", hydro_trieb      !case(2) ! Untrim² netCDF
-   
-   print*,'transinfo_zeit,Anfang+Ende = ',transinfo_zeit(transinfo_zuord(1)), transinfo_zeit(transinfo_zuord(transinfo_anzahl))
-   
-   if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
-      print*,"startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1) = "
-      print*,startzeitpunkt, transinfo_zeit(transinfo_zuord(1)), transinfo_zuord(1)
-      call qerror('### Abbruch ### zum startzeitpunkt liegen noch keine Transportinformationen vor')
-   endif !wrong start time
-   
-   if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
-       call qerror('zum endzeitpunkt liegen keine Transportinformationen mehr vor')
-   endif
-   print*,'EREIGG.txt, Berechnungs-Zeitraum von ',startzeitpunkt,' bis ', endzeitpunkt  &
-         ,' mit zeitschrittweite ',deltat  &
-         ,' liegt innerhalb des Zeitraums ',transinfo_zeit(transinfo_zuord(1)),' bis '  &
-         ,transinfo_zeit(transinfo_zuord(transinfo_anzahl)),', in dem Transportinformationen vorliegen.'
+   startzeitpunkt = datetime_start % seconds_since_epoch()
    rechenzeit = startzeitpunkt
+   
+   itags = day
+   monats = month
+   jahrs = year
+   uhrs = pseudo_time
+   
+   ! --- read simulation end time and timestep ---
+   if (.not. zeile(ion)) call qerror("Error while reading end time from EreigG.txt")
+   
+   ! date format: "30  01  2010  01.00  20"
+   read(ctext(1:2),   "(i2)")   day
+   read(ctext(5:6),   "(i2)")   month
+   read(ctext(9:12),  "(i4)")   year
+   read(ctext(15:16), "(i2)")   hour
+   read(ctext(18:19), "(i2)")   minutes
+   read(ctext(15:19), "(f5.2)") pseudo_time
+   read(ctext(22:40), "(i3)")   dt_minutes
+   
+   datetime_end = datetime(year, month, day, hour, minutes, tz = tz_qsim)
+   endzeitpunkt = datetime_end % seconds_since_epoch()
+   
+   itage = day
+   monate = month
+   jahre = year
+   uhren = pseudo_time
+   
+   ! --- check start and end time ----
+   if (startzeitpunkt >= endzeitpunkt) then
+      call qerror("Error in EreigG.txt: start time is after end time.")
+   endif
+   
+   ! if (startzeitpunkt < transinfo_zeit(transinfo_zuord(1))) then
+      ! call qerror("Start time given in EreigG.txt is before start time of hydrodynamic driver.")
+   ! endif
+   
+   ! if (endzeitpunkt > transinfo_zeit(transinfo_zuord(transinfo_anzahl))) then
+      ! call qerror("End time given in EreigG.txt is after end time of hydrodynamic driver.")
+   ! endif
+   
+   
+   !--- convert timestep into seconds ---
+   deltat = dt_minutes * 60
+   if (deltat <= 0) call qerror("Timestep given in EreigG.txt is negativ.")
+   if (modulo(deltat, 2) == 1) call qerror("Timestep given in EreiG must be an even number.")
+   
+   zeitschrittanzahl = (endzeitpunkt - startzeitpunkt) / deltat
+   
+   ! -------------------------------------------------------------------------
+   ! model settings
+   ! -------------------------------------------------------------------------
+   ! TODO (Schönung, august 2023):
+   ! After reading these values it should be wether they are valid   
    if ( .not. zeile(ion)) call qerror('Zeile 5 von EREIGG.txt nicht da')
-   read(ctext, *, iostat = read_error) imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren  &
-        ,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
+   read(ctext, *, iostat = read_error) imitt, ipH, idl, itemp, itracer, ieros, &
+                                       ischwa, iverfahren, ilongDis, FlongDis, &
+                                       iColi, ikonsS, iSchwer, iphy, iformVert,&
+                                       iform_verdr
+                                       
+   if (read_error /= 0) call qerror("Error while reading model settings from EreigG.txt")
+   close(ion)
+   
+   nur_temp = itemp == 1
    
    ! Schönung, November 2022
    ! Schwermetalle sind noch nicht ausreichend getestet unter QSim3D
@@ -261,54 +291,59 @@ subroutine ereigg_modell()
       call qerror('Heavy metals not supported by this version of QSim3D')
    endif
    
-   print*,'Zeile 5 von EREIGG.txt:'
-   print*,'imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr'
-   print*, imitt,ipH,idl,itemp,itracer,ieros,ischwa,iverfahren,ilongDis,FlongDis,iColi,ikonsS,iSchwer,iphy,iformVert,iform_verdr
-   if (read_error /= 0) then
-      print*,'EREIGG.txt Zeilentext: ',trim(ctext)
-      write(fehler,*)'read_error in Zeile 5 von EREIGG.txt; Berechnungs-Flags'
-      call qerror(fehler)
-   endif ! open_error.ne.0
-   
-   !#FG: check that suspended matter ('SS') is only read from hydrodynamic forcing ('iEros<0') when UnTRIM2 is used ('hydro_trieb=2')
-   !#FG: dirty(!!!) temporary hack to use 'iEros' for this
+   ! TODO (Große)
+   ! check that suspended matter ('SS') is only read from hydrodynamic 
+   ! forcing ('iEros<0') when UnTRIM2 is used ('hydro_trieb=2')
+   ! dirty temporary hack to use 'iEros' for this
    if (iEros < 0 .and. hydro_trieb /= 2) then
-      write(fehler,'(a)') "eingabe.f95: Can only read 'SS' (iEros < 0) from UnTRIM hydrodynamics (hydro_trieb = 2)"
-      call qerror(fehler)
+      call qerror("eingabe.f95: Can only read 'SS' (iEros < 0) from UnTRIM &
+                 & hydrodynamics (hydro_trieb = 2)")
    endif
    
-   if (imitt == 1) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels imitt = 1 angeforderte Ausgabe von Tagesmittelwerten ', &
-       'ist in QSim3D nicht implementiert.'
-   if (ipH == 0) &
-       print*,'### Warnung ###, in EREIGG.txt wird mittels ipH = 0 eine Sim. ohne ph-Wert Berechnung angefordert !!!'
-   if (idl == 0) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 0 angeforderte Einlesen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
-   if (idl == 1) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels idl = 1 angeforderte Berechnen von Disp.Koeff.', &
-       'ist in QSim3D nicht implementiert.'
-   if (itemp == 1) then
-      print*,'### Warning ### Temperature-simulation only. Asked for by itemp = 1 in EREIGG.txt'
-      nur_temp = .true.
-   else
-      nur_temp = .false.
-   endif
-   if (itracer == 1) &
-       print*,'### Warnung ###, die in EREIGG.txt mittels itracer = 1 angeforderte Tracer-Sim.', &
-       'ist in QSim3D nicht implementiert.'
-   if ((iphy < 1) .or. (iphy > 4)) then
-      write(fehler,*)'ereigg_modell: aeration flag iphy out of bounds'
-      call qerror(fehler)
-   endif
-   !qsim_201314:
-   !             read(92,'(a50)')modell
-   !             read(92,'(a50)')cEreig
-   !             read(92,9200)itags,monats,jahrs,uhrs
-   !             read(92,9210)itage,monate,jahre,uhren,izdt
-   !             read(92,9220)imitt,ipH,idl,itemp,itracer,ieros                    &
-   !             ,ischwa,iverfahren,ilongDis,FlongDis
-   ! 9220 format(I1,2x,I1,2x,I1,2x,I1,2x,I1,2x,i1,2x,I1,2x,I1,2x,I1,2x,f4.2)
-   close (ion)
-   rewind (ion)
-end subroutine ereigg_modell
+   if (iphy < 1 .or. iphy > 4) call qerror("Aeration flag given in EreigG.txt is invalid.")
+   
+  
+   ! --------------------------------------------------------------------------
+   ! write summary to console
+   ! --------------------------------------------------------------------------
+   print*
+   print '(a)', repeat("-", 80)
+   print '(a)', "EreigG.txt: model settings"
+   print '(a)', repeat("-", 80)
+   
+   print '(a)','version:  ' // trim(version)
+   print '(a)','model:    ' // trim(model)
+   print '(a)','instance: ' // trim(instance)
+   print*
+   
+   print '(3a,i0)',  "  start       = ", datetime_start%date_string(), " | ", startzeitpunkt
+   print '(3a,i0)',  "  end         = ", datetime_end%date_string(),   " | ", endzeitpunkt
+   print '(a,i0,a)', "  delta t     = ", deltat, " seconds"
+   print '(a,i0)',   "  timesteps   = ", zeitschrittanzahl
+   print '(a,i1)',   "  imitt       = ", imitt
+   print '(a,i1)',   "  iph         = ", iph
+   print '(a,i1)',   "  idl         = ", idl
+   print '(a,i1)',   "  itemp       = ", itemp
+   print '(a,i1)',   "  itracer     = ", itracer
+   print '(a,i1)',   "  ieros       = ", ieros
+   print '(a,i1)',   "  ischwa      = ", ischwa
+   print '(a,i1)',   "  iverfahren  = ", iverfahren
+   print '(a,i1)',   "  ilongdis    = ", ilongdis
+   print '(a,f0.2)', "  flongdis    = ", flongdis
+   print '(a,i1)',   "  icoli       = ", icoli
+   print '(a,i1)',   "  ikonss      = ", ikonss
+   print '(a,i1)',   "  ischwer     = ", ischwer
+   print '(a,i1)',   "  iphy        = ", iphy
+   print '(a,i1)',   "  iformvert   = ", iformvert
+   print '(a,i1)',   "  iform_verdr = ", iform_verdr
+   print *
+   print '(a)', "Warnings:"
+   
+   ! TODO (Schönung):
+   ! Wouldn't it be more sensible to call qerror() in these cases?
+   if (imitt == 1)   print*, "  Output of daily means is not implemented."
+   if (idl == 0)     print*, "  Reading despersion coefficient from external sources is not implemented."
+   if (idl == 1)     print*, "  Calculation of despersion coefficient is not implemented."
+   if (itracer == 1) print*, "  Simulation of tracers is not implemented."
+   
+end subroutine read_ereigg_model

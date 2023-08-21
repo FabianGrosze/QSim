@@ -120,11 +120,9 @@ subroutine ini_ueber(nk)
       
       ! --- single (global) transfer values ---
       ! initialize
-      do j = 1,number_trans_val
-         trans_val_name(j)   = "                  "
-         transfer_value_p(j) = 0.0
-         output_trans_val(j) = .false.
-      enddo
+      trans_val_name(:)   = "                  "
+      transfer_value_p(:) = 0.0
+      output_trans_val(:) = .false.
       
       ! names
       trans_val_name( 1) = "          empty_01"
@@ -145,11 +143,9 @@ subroutine ini_ueber(nk)
       
       
       ! --- depth averaged quantities ---
-      do j = 1,number_trans_quant ! initialise
-         trans_quant_name(j) = "                  "
-      enddo
+      trans_quant_name(:) = "                  "
       
-      trans_quant_name( 1) = "              bsbt"
+      trans_quant_name( 1) = "              bsbt" !
       trans_quant_name( 2) = "            bsbctP" ! Phosphorfreisetzung orgc
       trans_quant_name( 3) = "               doN" ! Stickstofffreisetzung orgc
       trans_quant_name( 4) = "            BACmua" ! Ausgabekonzentration Summe Aufnahme+Respirationsrate heterotrophe Bakterien
@@ -192,17 +188,17 @@ subroutine ini_ueber(nk)
       trans_quant_name(41) = "            dalgao" ! Respiration (Sauerstoffverbrauch) der Gruen-, Kiesel-, und Blaualge
       trans_quant_name(42) = "                ir" ! Ingestionsrate der Rotatorien in mg/(l*h) | konsum()
       trans_quant_name(43) = "            zooro2" ! Sauerstoffverbrauch durch Zooplanktonrespiration
-      trans_quant_name(44) = "            rO2HNF" ! Respiration HNF ???
+      trans_quant_name(44) = "            rO2HNF" ! Respiration HNF?
       trans_quant_name(45) = "          empty_45" ! 
-      trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert ??? wohl Rückgabewert
-      trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule | Rückgabewert
+      trans_quant_name(46) = "            FluxT1" ! Wärmefluss tiefenintegriert? 
+      trans_quant_name(47) = "             bsbct" ! mineralisierter Kohlenstoffgehalt in der Wassersäule
       trans_quant_name(48) = "            akitbr" !
       trans_quant_name(49) = "            agrtbr" !
       trans_quant_name(50) = "            abltbr" !
       trans_quant_name(51) = "             sgo2n" ! Aufsummierter Nitrifikationssauerstoffverbrauch, nur Ausgabe
       trans_quant_name(52) = "             susno" ! Sauerstoffverbr. d. Nitrifik. in der Wassersäule in mgO2/(l*h)
       trans_quant_name(53) = "            algzok" ! kiesel-Algen-Konsum Zoo-Plankton in mg/l
-      trans_quant_name(54) = "           ???extk" ! mittlerer Extinktionskoeffizient
+      trans_quant_name(54) = "              extk" ! mittlerer Extinktionskoeffizient
       trans_quant_name(55) = "              tpki" ! Ausgabeparameter algaeski()
       trans_quant_name(56) = "            akmuea" ! Ausgabeparameter algaeski()
       trans_quant_name(57) = "            ftaaus" ! Ausgabeparameter algaeski() fta
@@ -224,9 +220,9 @@ subroutine ini_ueber(nk)
       trans_quant_name(73) = "            algzob" ! blau-Algen-Konsum Zoo-Plankton in mg/l
       trans_quant_name(74) = "              zHNF" ! Aufnahmerate der HNF
       trans_quant_name(75) = "             HNFza" ! HNFza(ior) = (zHNF(ior)/CHNF(ior))*24.
-      trans_quant_name(76) = "             rmuas" !  = mueRot-respRg ! Nettowachstumsrate Rotatorien ?
-      trans_quant_name(77) = "              rakr" !  = iras(ior)*respaR ! Fraßabhängige Respiration ?
-      trans_quant_name(78) = "              rbar" !  = respRg ! GRund?-Respiration ?
+      trans_quant_name(76) = "             rmuas" ! Nettowachstumsrate Rotatorien?
+      trans_quant_name(77) = "              rakr" ! Fraßabhängige Respiration?
+      trans_quant_name(78) = "              rbar" ! Grundrespiration?
       trans_quant_name(79) = "              iras" ! Ausgabe Ingestionsrate
       trans_quant_name(80) = "              tpgr" ! Ausgabeparameter algaesgr()
       trans_quant_name(81) = "              tpbl" ! Ausgabeparameter algaesbl()
@@ -259,13 +255,8 @@ subroutine ini_ueber(nk)
          call qerror(fehler)
       endif
       
-      print*,            "allocated `transfer_quantity` with these dimensions:"
-      print "(3x,3(a,i0))", "part*proz_anz = ", part*proz_anz, ", part = ", part, ", proz_anz = ", proz_anz
-      
       ! Initailize as no output
-      do j = 1,number_trans_quant
-         output_trans_quant(j) = .false.
-      enddo
+      output_trans_quant(:) = .false.
       
       !--------vertically distributed quantities
       do j = 1,number_trans_quant_vert ! initialise
@@ -309,10 +300,7 @@ subroutine ini_ueber(nk)
          call qerror(fehler)
       endif
       
-      do j = 1,number_trans_quant_vert 
-         ! default: no output
-         output_trans_quant_vert(j) = .false.
-      enddo
+      output_trans_quant_vert(:) = .false.
    endif
    
    ! make names available to all processes (e.g. for logging)
@@ -342,123 +330,122 @@ subroutine broadcast_parameter()
    implicit none
    
    ! APARAM.txt
-   call MPI_Bcast(agchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(aggmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(IKge,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(agksn,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(agksp,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(agremi,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(frmuge,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(bsbgr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(csbgr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_NG ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_PG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_NG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_PG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxNG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxPG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
+   call MPI_Bcast(agchl,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(aggmax,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(IKge,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(agksn,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(agksp,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(agremi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(frmuge,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(bsbgr,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(csbgr,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_NG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_PG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_NG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_PG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxNG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxPG,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
    
-   call MPI_Bcast(opgrmi,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(opgrma,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(asgre,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ToptG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(kTemp_Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akchl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akgmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(IKke,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akksn,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akksp ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akkssi,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(akremi,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(frmuke,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(bsbki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(csbki ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_NK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_PK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_SK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_NK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_PK ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_SK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxNK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxPK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxSK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(opkimi ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(opkima,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(askie,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ToptK,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(kTemp_Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(abchl ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(abgmax,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(IKbe,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(abksn,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(abksp,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(abremi ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(frmube,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(bsbbl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(csbbl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_NB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmx_PB ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_NB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Qmn_PB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxNB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upmxPB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(opblmi ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(opblma,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(asble,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ToptB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(kTemp_Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ifix,1,MPI_INT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(IRMAX,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(FOPTR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(GROT,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZRESG,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZAKI ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZAGR,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ZABL,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(YNMAX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(STKS1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ANITR1 ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(BNMX1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(BNKS1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(YNMAX2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(STKS2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(ANITR2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(BNMX2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(BNKS2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KNH4,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KapN3,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(HyP1 ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(hymxD,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KsD1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KsD2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KsM,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upBAC ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(YBAC,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(rsGBAC,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(FoptD,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(upHNF,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(BACks ,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(alamda,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(fPOC1,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(fPOC2,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(SorpCap,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(Klang,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(KdNh3,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ratecd,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(etacd,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(rateci,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(xnuec,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ratecg,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
-   call MPI_Bcast(ratecs,1,MPI_FLOAT,0,mpi_komm_welt,ierr)
+   call MPI_Bcast(opgrmi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(opgrma,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(asgre,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ToptG,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(kTemp_Gr, 1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akchl,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akgmax,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(IKke,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akksn,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akksp ,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akkssi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(akremi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(frmuke,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(bsbki,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(csbki ,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_NK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_PK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_SK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_NK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_PK ,  1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_SK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxNK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxPK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxSK,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(opkimi ,  1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(opkima,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(askie,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ToptK,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(kTemp_Ki, 1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(abchl,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(abgmax,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(IKbe,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(abksn,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(abksp,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(abremi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(frmube,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(bsbbl,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(csbbl,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_NB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmx_PB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_NB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Qmn_PB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxNB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upmxPB,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(opblmi,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(opblma,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(asble,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ToptB,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(kTemp_Bl, 1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ifix,     1, MPI_INT,   0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(IRMAX,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(FOPTR,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(GROT,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ZRESG,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ZAKI ,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ZAGR,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ZABL,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(YNMAX1,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(STKS1,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ANITR1,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(BNMX1,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(BNKS1,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(YNMAX2,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(STKS2,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(ANITR2,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(BNMX2,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(BNKS2,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KNH4,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KapN3,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(HyP1 ,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(hymxD,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KsD1,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KsD2,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KsM,      1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upBAC,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(YBAC,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(rsGBAC,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(FoptD,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(upHNF,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(BACks,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(alamda,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(fPOC1,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(fPOC2,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(SorpCap,  1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(Klang,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(KdNh3,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(ratecd,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(etacd,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(rateci,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(xnuec,    1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(ratecg,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
+   call MPI_Bcast(ratecs,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr)
    
-   ! weitere (ini_algae)
-   call MPI_Bcast(a1Ki,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a1Bl,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(a1Gr,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
+   !  weitere (ini_algae)
+   call MPI_Bcast(a1Ki,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(a1Bl,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(a1Gr,     1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
 
-   !  weitere (orgc_start)
-   call MPI_Bcast(TOC_CSB,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
-   call MPI_Bcast(bsbZoo,1,MPI_FLOAT,0,mpi_komm_welt,ierr) !
+   ! weitere (orgc_start)
+   call MPI_Bcast(TOC_CSB,  1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
+   call MPI_Bcast(bsbZoo,   1, MPI_FLOAT, 0, mpi_komm_welt, ierr) 
    
-   return
 end subroutine broadcast_parameter

@@ -41,7 +41,7 @@ subroutine get_schism_step(nt)
    
    integer :: nt, nst, nin ,iret, varid !, np_p
    integer :: i,j,k,l,m,n, istat
-   character (len = 400) :: dateiname, chari
+   character (len = 400) :: filename, chari
    integer :: start4(4), count4(4)
    integer :: start3(3), count3(3)
    integer :: start2(2), count2(2)
@@ -89,15 +89,15 @@ subroutine get_schism_step(nt)
       endif
       !! open nc files
       write(chari,*),nst
-      write(dateiname,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
-      nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
-      call check_err( trim(nc_error_prefix), nf_open(dateiname, NF_NOWRITE, ncid) )
+      write(filename,"(2A,I4.4,3A)")trim(modellverzeichnis),"outputs_schism/schout_",meinrang,"_",trim(adjustl(chari)),".nc" !schout_0001_1.nc
+      nc_error_prefix = trim(calling_routine)//" - "//trim(filename)
+      call check_err( trim(nc_error_prefix), nf_open(filename, NF_NOWRITE, ncid) )
       nst_prev = nst
    endif !next stack
    call mpi_barrier (mpi_komm_welt, ierr)!#!
    
    !! get Dimensions
-   nc_error_prefix = trim(calling_routine)//" - "//trim(dateiname)
+   nc_error_prefix = trim(calling_routine)//" - "//trim(filename)
    call check_err( trim(nc_error_prefix), nf90_inquire(ncid, ndims, nVars, nGlobalAtts, unlimdimid) ) !--- overview
    allocate (dlength(ndims),dname(ndims), stat = istat)
    allocate (vxtype(nVars),vndims(nVars),vname(nVars),  stat = istat )

@@ -34,12 +34,6 @@ subroutine ph_wrapper_3d(i)
    
    real    :: flaes, tiefes, raus
    
-   ! TODO (schoenung, july 2022): iPhy should be checked while it's read in, not here!
-   if (iphy < 1 .or. iphy > 4) then
-      write(fehler,*)'ph_huelle: aeration flag iphy',iphy,' out of bounds i,meinrang = ',i,meinrang
-      call qerror(fehler)
-   endif
-   
    iglob = i + meinrang * part 
    control = iglob == kontrollknoten
    tiefes = rb_hydraul_p(2+(i-1)*number_rb_hydraul)

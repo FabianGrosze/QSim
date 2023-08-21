@@ -34,16 +34,11 @@ program QSim3D
    use QSimDatenfelder
    use module_suspended_matter, only: step_suspended_matter
    use module_salinity        , only: step_salinity
-   !use netcdf
-   !use mpi
    
    implicit none
-   
    include 'netcdf.inc'
    
-   integer :: i,ni,j,k,n, system_error
-   character(300) systemaufruf
-   logical :: raus, jetzt_ausgeben
+   logical :: jetzt_ausgeben
    
    !----initialize parallel computing:
    call parallel_ini()
@@ -59,38 +54,47 @@ program QSim3D
    !! mirror inital values
    call ausgeben()
    call ganglinien_zeitschritt(1)
-   !==== Stat of time-loop, time (zeitpunkt) in seconds (integer) =================================================================
+   
+   !==== Start of time-loop =================================================================
    do izeit = 1,zeitschrittanzahl !------------------------------------------------- proceed in time
       call zeitschritt_halb(.true.) ! --- increment time and compute boundary-values in the middle of the timestep
-      call MPI_Bcast(zeitpunkt,1,MPI_INT,0,mpi_komm_welt,ierr);call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
-      call zeitsekunde()
+      call MPI_Bcast(izeit,1,MPI_INT,0,mpi_komm_welt,ierr)
       call fortschritt(0,real(izeit)/real(zeitschrittanzahl)) ! update progess display
       call mpi_barrier (mpi_komm_welt, ierr)
-      !------------------------------------------------- set Boundary-Conditions (incl. Weather and Flow)
+      
+      ! set Boundary-Conditions (incl. Weather and Flow)
       call randbedingungen_setzen()
-      !------------------------------------------------- salinity module
+      
+      ! salinity module
       call step_salinity
-	  !-------------------------------------------------- suspended matter module
+	   
+      ! suspended matter module
       if (iEros>=0) then
          call schwebstoff_salz()    ! currently only reading distribuions from input
          call mpi_barrier (mpi_komm_welt, ierr)
       else
          call step_suspended_matter
       endif
-      !------------------------------------------------- all metabolic processes
-      call stoffumsatz()     !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      !------------------------------------------------- transport all concentrations (advection-diffusion) ...
-      call stofftransport()  !!             <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< if (hydro_trieb.ne. 3) für SCHISM erstmal nicht #########
-      !------------------------------------------------- finish time step
+      ! all metabolic processes
+      call stoffumsatz() 
+      
+      ! transport all concentrations (advection-diffusion) ...
+      call stofftransport() 
+      
+      ! finish time step
       call zeitschritt_halb(.false.)
       call mpi_barrier (mpi_komm_welt, ierr)
-      !------------------------------------------------- output ...
-      if (jetzt_ausgeben()) call ausgeben() !! output concentration fields if required
-      call ganglinien_zeitschritt(izeit+1) !! store values for time series
+      
+      ! output 
+      ! output concentration fields if required
+      if (jetzt_ausgeben()) call ausgeben() 
+      
+      ! store values for time series
+      call ganglinien_zeitschritt(izeit+1) 
       call mpi_barrier (mpi_komm_welt, ierr)
    enddo
-   !==== End of time-loop   =================================================================
-   write(*,*)meinrang,' end of time-loop'
+   !==== End of time-loop   =========
+   
    !-------------------------------------------------
    !call mpi_barrier (mpi_komm_welt, ierr)
    !call gather_planktkon()
@@ -98,9 +102,8 @@ program QSim3D
    !call gather_ueber()
    !call mpi_barrier (mpi_komm_welt, ierr)
    !-------------------------------------------------
-   call ganglinien_schliessen() !! write and close time series files
+   call write_timeseries() !! write and close time series files
    call ausgeben() !! output at the end
-   !call aus_grd() !! aufsummierte Überstaudauer für Janet ausgeben
    if (hydro_trieb == 3) call check_err( 'QSim3D', nf_close(ncid) ) ! close SCHISM netCDF files
    call mpi_barrier (mpi_komm_welt, ierr)
    call fortschritt(-1,0.0) !! write closing message, delete file "fortschritt"
@@ -108,8 +111,7 @@ program QSim3D
    if (ierr /= 0) then
       print*,'mpi_finalize(ierr) /= 0'
       call exit(7)
-      !else
-      !   print*,'mpi_finalized'
    endif
    call exit(0)
+
 end program QSim3D
