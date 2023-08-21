@@ -116,6 +116,7 @@
 		<File RelativePath="..\metabolism\lin_sys.f90"/>
 		<File RelativePath="..\metabolism\module_alloc_dimensions.f90"/>
 		<File RelativePath="..\metabolism\module_aparam.f90"/>
+		<File RelativePath="..\metabolism\module_datetime.f90"/>
 		<File RelativePath="..\metabolism\module_metabolism.f90"/>
 		<File RelativePath="..\metabolism\print_clipping.f90"/>
 		<File RelativePath="..\metabolism\runge_kutta.f90"/>

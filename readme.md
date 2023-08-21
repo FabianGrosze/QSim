@@ -2,6 +2,14 @@
 
 ## 14.09
 
+### 14.09.38
+* New datetime handling in QSim3D:
+    * New module: `module_datetime` to provid functions for date and time manipulation
+    * All timestamps are now stored as Unixtime internally.
+    * Timezone offset is now taken into account when reading UnTrim data
+
+* Timeseries output is now formated in pure csv
+
 ### 14.09.37
 * qsim3d/check_err now aborts simulation in case of netcdf error. Additionally requires string input for further (QSim-specific) error message
 * fixed bugs in qsim3d/module_salinity

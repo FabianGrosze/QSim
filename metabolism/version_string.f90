@@ -30,6 +30,6 @@ subroutine version_string(versionstext)
    implicit none
    character(8), intent(out) :: versionstext !< current version number
    
-   versionstext = '14.00.99'
+   versionstext = '14.09.38'
 
 end subroutine version_string
