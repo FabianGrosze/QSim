@@ -242,9 +242,9 @@ qsim3d: $(Q3)
 #	$(FC) $(Q3) $(LDFLAGS) $(QSIM_LIB) $(SCHISM_LIB) -o $(PV)
 
 exe:
-	mv -f $(PV) $(MY_BIN)/$(PV)
-	cp -f ./scripte/* $(MY_BIN)
-
+	@cp -f $(PV) $(MY_BIN)/$(PV)
+	@cp -f ./scripte/* $(MY_BIN)
+	@echo "Exe copied to" $(MY_BIN)/$(PV)
 KT = version.co trans_read.co \
      kombitransi.o
 
