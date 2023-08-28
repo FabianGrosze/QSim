@@ -12,11 +12,11 @@ irmax  - max. Filtrierate in mueg Chl-a/(100 Ind*d) \n
 
 
 ## Schnittstellenbeschreibung
-     subroutine hnf(\ref chnf,\ref bvhnf,\ref bac,\ref tempw,\ref vo2,\ref tflie  &\n
-    &,\ref echnf,\ref ebvhnf,\ref flag,\ref elen,\ref ior,\ref anze,\ref qeinl,\ref vabfl                      &\n
-    &,\ref jiein,\ref drhnf,\ref zhnf,\ref hnfbac,\ref ro2hnf,\ref bsbhnf,\ref hnfmua,\ref uphnfe,\ref backse       &\n
-    &,\ref hnfrea,\ref hnfupa,\ref hnfmoa,\ref hnfexa,\ref fkm,\ref mstr,\ref itags,\ref monats,\ref uhrz           & \n
-    &,\ref kontroll ,\ref iglob ) wy  \n
+     subroutine hnf(\ chnf, \ref bac, \ref vo2, \ref tempw, \ref drhnf, &
+               \ref zhnf, \ref tflie,                          &
+               \ref hnfbac, \ref hnfupa, \ref hnfrea, \ref hnfexa, & 
+               \ref hnfmoa, \ref hnfmua, \ref ro2hnf, \ref bsbhnf, &
+               \ref control, *jjj*) wy  \n
 
 
 ## IT-Realisierung ##

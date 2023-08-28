@@ -58,116 +58,116 @@ module QSimDatenfelder
    ! --------------------------------------------------------------------------
    ! Modell- und Steuerparameter:
    ! --------------------------------------------------------------------------
-   integer                  :: anze   !> \anchor anze Anzahl der Profile im Strang. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
-   integer                  :: mstr   !> \anchor mstr Strangnummer. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
-   integer                  :: ior    !> \anchor ior Profilnummernzähler. Läuft in QSim3D immer von 1 bis 2. Siehe dazu auch \ref lnk_huellen.
-   integer                  :: ilbuhn !> \anchor ilbuhn =0 keine Buhnen in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   integer                  :: iwied  !> \anchor iwied  ### iwied = 0 : allererster Zeitschritt, danach iwied = 1 ###  in 3D immer 1
-   integer, dimension(1000) :: flag   !> \anchor flag  flag(1+2)=0 d.h. keine Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   integer, dimension(1000) :: jiein  !> \anchor jiein =0 keine Punkt-Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   integer, dimension(1000) :: ischif !> \anchor ischif  = 0 Keine Schiffahrt. Noch unbenutzt in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   integer, dimension(1000) :: nkzs   !> \anchor nkzs Anzahl Tiefenschichten (tiefenaufgelöste Variante von QSim1D). In QSim3d momentan immer 1. Siehe dazu auch \ref lnk_huellen.
-   real                     :: tflie  !> \anchor tflie Zeitschrittlänge in Tagen in QSim3D berechnet aus dem Zeitschritt in Sekunden \ref deltat \n
-   real                     :: dh2d   !> \anchor dh2d dH2D = 0.25 ! Dicke Tiefenschicht ??? Siehe dazu auch \ref lnk_huellen.
-   real, dimension(1000)    :: fkm    !> \anchor fkm =0.0 Flusskilometer unbenutzt. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(1000)    :: flae   !> \anchor flae Querschnittsfläche des Gewässerkörpers
+   integer                  :: anze   !< \anchor anze Anzahl der Profile im Strang. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
+   integer                  :: mstr   !< \anchor mstr Strangnummer. In QSim3d immer 1. Siehe dazu auch \ref lnk_huellen.
+   integer                  :: ior    !< \anchor ior Profilnummernzähler. Läuft in QSim3D immer von 1 bis 2. Siehe dazu auch \ref lnk_huellen.
+   integer                  :: ilbuhn !< \anchor ilbuhn =0 keine Buhnen in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   integer                  :: iwied  !< \anchor iwied  ### iwied = 0 : allererster Zeitschritt, danach iwied = 1 ###  in 3D immer 1
+   integer, dimension(1000) :: flag   !< \anchor flag  flag(1+2)=0 d.h. keine Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(1000) :: jiein  !< \anchor jiein =0 keine Punkt-Einleitungen in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(1000) :: ischif !< \anchor ischif  = 0 Keine Schiffahrt. Noch unbenutzt in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(1000) :: nkzs   !< \anchor nkzs Anzahl Tiefenschichten (tiefenaufgelöste Variante von QSim1D). In QSim3d momentan immer 1. Siehe dazu auch \ref lnk_huellen.
+   real                     :: tflie  !< \anchor tflie Zeitschrittlänge in Tagen in QSim3D berechnet aus dem Zeitschritt in Sekunden \ref deltat \n
+   real                     :: dh2d   !< \anchor dh2d dH2D = 0.25 ! Dicke Tiefenschicht ??? Siehe dazu auch \ref lnk_huellen.
+   real, dimension(1000)    :: fkm    !< \anchor fkm =0.0 Flusskilometer unbenutzt. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(1000)    :: flae   !< \anchor flae Querschnittsfläche des Gewässerkörpers
                                       !!     daraus wird die Breite berechnet, die in der Belüftungsformel verwendet wird. 
                                       !!     hat keine Entsprechung im Mehrdimensionalen, daher sinnvoller Wert fürs Ästuar, so dass Breite konstant 500 m beträgt ;\n
                                       !!     Siehe dazu auch \ref lnk_huellen.
    ! --------------------------------------------------------------------------
    ! hydraulische Parameter:
    ! --------------------------------------------------------------------------
-   real, dimension(1000) :: tiefe !> \ref tiefe : Wassertiefe
-   real, dimension(1000) :: vmitt !> \ref vmitt Fließgeschwindigkeit (Querschnittsgemittelt in QSim-1D)
-   real, dimension(1000) :: rhyd  !> \anchor rhyd rhyd, hydraulischer Radius, im Mehrdimensionalen der *TIEFE* gleichgesetzt.
+   real, dimension(1000) :: tiefe !< \ref tiefe : Wassertiefe
+   real, dimension(1000) :: vmitt !< \ref vmitt Fließgeschwindigkeit (Querschnittsgemittelt in QSim-1D)
+   real, dimension(1000) :: rhyd  !< \anchor rhyd rhyd, hydraulischer Radius, im Mehrdimensionalen der *TIEFE* gleichgesetzt.
    
    ! --------------------------------------------------------------------------
    ! planktische Konzentrationen, die es auch als Tiefenprofil gibt:
    ! --------------------------------------------------------------------------
-   real, dimension(1000) :: tempw !> \ref tempw  Wassertemperatur
-   real, dimension(1000) :: vo2   !> \ref vo2  Sauerstoffgehalt aus \ref lnk_var_planktisch
-   real, dimension(1000) :: vnh4  !> \ref vnh4 Ammonium
-   real, dimension(1000) :: vno2  !> \ref vno2 Nitrit
-   real, dimension(1000) :: vno3  !> \ref vno3 Nitrat
-   real, dimension(1000) :: gelP  !> \ref gelp Phosphor
-   real, dimension(1000) :: Si    !> \ref si Silizium
-   real, dimension(1000) :: aki   !> \ref aki Biomasse der Kieselalgen, \f$A_{ki}\f$ [mg L\f$^{-1}\f$]
-   real, dimension(1000) :: agr   !> \ref agr Biomasse der Gruenalgen, \f$A_{gr}\f$ [mg L\f$^{-1}\f$]
-   real, dimension(1000) :: abl   !> \ref abl Biomasse der Blaualgen, \f$A_{bl}\f$ [mg L\f$^{-1}\f$]
-   real, dimension(1000) :: chla  !> \ref chla Chlorophyll-a
+   real, dimension(1000) :: tempw !< \ref tempw  Wassertemperatur
+   real, dimension(1000) :: vo2   !< \ref vo2  Sauerstoffgehalt aus \ref lnk_var_planktisch
+   real, dimension(1000) :: vnh4  !< \ref vnh4 Ammonium
+   real, dimension(1000) :: vno2  !< \ref vno2 Nitrit
+   real, dimension(1000) :: vno3  !< \ref vno3 Nitrat
+   real, dimension(1000) :: gelP  !< \ref gelp Phosphor
+   real, dimension(1000) :: Si    !< \ref si Silizium
+   real, dimension(1000) :: aki   !< \ref aki Biomasse der Kieselalgen, \f$A_{ki}\f$ [mg L\f$^{-1}\f$]
+   real, dimension(1000) :: agr   !< \ref agr Biomasse der Gruenalgen, \f$A_{gr}\f$ [mg L\f$^{-1}\f$]
+   real, dimension(1000) :: abl   !< \ref abl Biomasse der Blaualgen, \f$A_{bl}\f$ [mg L\f$^{-1}\f$]
+   real, dimension(1000) :: chla  !< \ref chla Chlorophyll-a
    
    ! --------------------------------------------------------------------------
    ! tiefenaufgelöste planktische Konzentrationen:
    ! --------------------------------------------------------------------------
-   real, dimension(50,1000) :: tempwz !> \ref tempwz tiefenaufgelöst Wassertemperatur
-   real, dimension(50,1000) :: vo2z   !> \ref vo2z tiefenaufgelöst Sauerstoffgehalt
-   real, dimension(50,1000) :: vnh4z  !> \ref vnh4z tiefenaufgelöst Ammonium
-   real, dimension(50,1000) :: vno2z  !> \ref vno2z tiefenaufgelöst Nitrit
-   real, dimension(50,1000) :: vno3z  ! > \ref vno3z tiefenaufgelöst Nitrat
-   real, dimension(50,1000) :: gelPz  !> \ref gelpz tiefenaufgelöst Phosphor
-   real, dimension(50,1000) :: Siz    !> \ref siz tiefenaufgelöst Silizium
-   real, dimension(50,1000) :: akiz   !> \ref akiz tiefenaufgelöst Kieselalgen
-   real, dimension(50,1000) :: agrz   !> \ref agrz tiefenaufgelöst Gruenalgen
-   real, dimension(50,1000) :: ablz   !> \ref ablz tiefenaufgelöst Blaualgen
-   real, dimension(50,1000) :: chlaz  !> \ref chlaz tiefenaufgelöst Chlorophyll-a
+   real, dimension(50,1000) :: tempwz !< \ref tempwz tiefenaufgelöst Wassertemperatur
+   real, dimension(50,1000) :: vo2z   !< \ref vo2z tiefenaufgelöst Sauerstoffgehalt
+   real, dimension(50,1000) :: vnh4z  !< \ref vnh4z tiefenaufgelöst Ammonium
+   real, dimension(50,1000) :: vno2z  !< \ref vno2z tiefenaufgelöst Nitrit
+   real, dimension(50,1000) :: vno3z  !< \ref vno3z tiefenaufgelöst Nitrat
+   real, dimension(50,1000) :: gelPz  !< \ref gelpz tiefenaufgelöst Phosphor
+   real, dimension(50,1000) :: Siz    !< \ref siz tiefenaufgelöst Silizium
+   real, dimension(50,1000) :: akiz   !< \ref akiz tiefenaufgelöst Kieselalgen
+   real, dimension(50,1000) :: agrz   !< \ref agrz tiefenaufgelöst Gruenalgen
+   real, dimension(50,1000) :: ablz   !< \ref ablz tiefenaufgelöst Blaualgen
+   real, dimension(50,1000) :: chlaz  !< \ref chlaz tiefenaufgelöst Chlorophyll-a
    
    ! --------------------------------------------------------------------------
    ! weitere transportierte, nur tiefengemittelte, planktische Konzentrationen
    ! --------------------------------------------------------------------------
-   real, dimension(1000)   :: chlaki  !> \ref chlaki Chlorophyl-a Kiesela
-   real, dimension(1000)   :: chlagr  !> \ref chlagr Chlorophyl-a Grüna.
-   real, dimension(1000)   :: chlabl  !> \ref chlabl Chlorophyl-a Blaua
-   real, dimension(1000)   :: vx0     !> \ref vx0 Nitrosomonas
-   real, dimension(1000)   :: vx02    !> \ref vx02 Nitrobacter
-   real, dimension(1000)   :: obsb    !> \ref obsb kohlenstoffbürtiger biologischer Sauerstoffbedarf in 5 Tage
-   real, dimension(1000)   :: ocsb    !> \ref ocsb Kohlenstoffbürtiger chemischer Sauerstoffbedarf
-   real, dimension(1000)   :: vkigr   !> \ref vkigr Anteil Kiesela. an Gesamtalgenmasse
-   real, dimension(1000)   :: antbl   !> \ref antbl Anteil Blau an Gesamtalgenmasse
-   real, dimension(1000)   :: svhemk  !> \ref svhemk
-   real, dimension(1000)   :: svhemg  !> \ref svhemg
-   real, dimension(1000)   :: svhemb  !> \ref svhemb
-   real, dimension(1000)   :: akbcm   !> \ref akbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Kiesel-Algen
-   real, dimension(1000)   :: agbcm   !> \ref agbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Grün-Algen
-   real, dimension(1000)   :: abbcm   !> \ref abbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Blau-Algen
-   real, dimension(1000)   :: akiiv   !> \ref akiiv
-   real, dimension(1000)   :: agriv   !> \ref agriv
-   real, dimension(1000)   :: abliv   !> \ref abliv
-   real, dimension(1000)   :: Q_NK    !> \ref q_nk Sticktoff in Kieselalgen
-   real, dimension(1000)   :: Q_PK    !> \ref q_pk Phosphor in Kieselalgen
-   real, dimension(1000)   :: Q_SK    !> \ref q_sk Silizium in Kieselalgen
-   real, dimension(1000)   :: Q_NG    !> \ref q_ng Stickstoff in Grünalgen
-   real, dimension(1000)    :: Q_PG   !> \ref q_pg Phosphor in Grünalgen
-   real, dimension(1000)   :: Q_NB    !> \ref q_nb Stickstoff in Blaualgen
-   real, dimension(1000)   :: Q_PB    !> \ref q_pb Phosphor in Blaualgen
-   real, dimension(2,1000) :: CD      !> \ref cd CD = \ref cd1 + \ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
-   real, dimension(2,1000) :: CP      !> \ref cp CP = \ref cp1 + \ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
-   real, dimension(1000)   :: CM      !> \ref cm monomolekularen organischen C-Verbindungen
-   real, dimension(1000)   :: BAC     !> \ref bac Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
-   real, dimension(1000)   :: zBAC    !> \ref zBAC Aufnahmerate der Bakterien
-   real, dimension(1000)   :: O2BSB   !> \ref o2bsb Sauerstoff-Kohlenstoffverhältnis beim C-Abbau
-   real, dimension(1000)   :: BL01    !> \ref bl01 schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent
-   real, dimension(1000)   :: BL02    !> \ref bl02 leichtabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent
-   real, dimension(1000)   :: vbsb    !> \ref vbsb BSB5 incl. lebender Organismen
-   real, dimension(1000)   :: vcsb    !> \ref vcsb CSB incl. lebender Organismen
-   real, dimension(1000)   :: CHNF    !> \ref chnf C-Masse der heterotrophen Nanoflagelaten
-   real, dimension(1000)   :: BVHNF   !> \ref bvhnf Biovolumen der HNF  ?
-   real, dimension(1000)   :: zooind  !> \ref zooind Anzahl der Rotatorien
-   real, dimension(1,1000) :: TGZoo   !>  
-   real, dimension(1,1000) :: akmor_1 !> Kiesel-Algen
-   real, dimension(1,1000) :: agmor_1 !> Gruen-Algen
-   real, dimension(1,1000) :: abmor_1 !> Blau-Algen
-   real                    :: bsbZoo  !> biol. Sauerstoffbedarf in 5d je Biomasse Zooplankton =1.6 hard coded
-   real, dimension(1000)   :: abrzo1  !> \ref abrzo unbenutzt ??
-   real, dimension(1000)   :: ssalg   !> \ref ssalg
-   real, dimension(1000)   :: ss      !> \ref ss
-   real, dimension(1000)   :: fssgr   !> \ref fssgr
-   real, dimension(1000)   :: fbsgr   !> \ref fbsgr ablagerungsfreien Grenzkonzentration zehrungsfähig
-   real, dimension(1000)   :: frfgr   !> \ref frfgr ablagerungsfreien Grenzkonzentration refraktär
-   real, dimension(1000)   :: nl0     !> \ref nl0 N/C Verhältnis
-   real, dimension(1000)   :: pl0     !> \ref pl0 P/C Verhältnis
-   real, dimension(1000)   :: stind   !> \ref stind
-   real, dimension(1000)   :: dlarvn  !> \ref dlarvn Dreissena Larven im Wasser treibend, Ind/l
-   real, dimension(1000)   :: coli   !>  \ref coli
+   real, dimension(1000)   :: chlaki  !< \ref chlaki Chlorophyl-a Kiesela
+   real, dimension(1000)   :: chlagr  !< \ref chlagr Chlorophyl-a Grüna.
+   real, dimension(1000)   :: chlabl  !< \ref chlabl Chlorophyl-a Blaua
+   real, dimension(1000)   :: vx0     !< \ref vx0 Nitrosomonas
+   real, dimension(1000)   :: vx02    !< \ref vx02 Nitrobacter
+   real, dimension(1000)   :: obsb    !< \ref obsb kohlenstoffbürtiger biologischer Sauerstoffbedarf in 5 Tage
+   real, dimension(1000)   :: ocsb    !< \ref ocsb Kohlenstoffbürtiger chemischer Sauerstoffbedarf
+   real, dimension(1000)   :: vkigr   !< \ref vkigr Anteil Kiesela. an Gesamtalgenmasse
+   real, dimension(1000)   :: antbl   !< \ref antbl Anteil Blau an Gesamtalgenmasse
+   real, dimension(1000)   :: svhemk  !< \ref svhemk
+   real, dimension(1000)   :: svhemg  !< \ref svhemg
+   real, dimension(1000)   :: svhemb  !< \ref svhemb
+   real, dimension(1000)   :: akbcm   !< \ref akbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Kiesel-Algen
+   real, dimension(1000)   :: agbcm   !< \ref agbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Grün-Algen
+   real, dimension(1000)   :: abbcm   !< \ref abbcm Chlorophyl-a zu Kohlenstoff Verhältnis in Blau-Algen
+   real, dimension(1000)   :: akiiv   !< \ref akiiv
+   real, dimension(1000)   :: agriv   !< \ref agriv
+   real, dimension(1000)   :: abliv   !< \ref abliv
+   real, dimension(1000)   :: Q_NK    !< \ref q_nk Sticktoff in Kieselalgen
+   real, dimension(1000)   :: Q_PK    !< \ref q_pk Phosphor in Kieselalgen
+   real, dimension(1000)   :: Q_SK    !< \ref q_sk Silizium in Kieselalgen
+   real, dimension(1000)   :: Q_NG    !< \ref q_ng Stickstoff in Grünalgen
+   real, dimension(1000)    :: Q_PG   !< \ref q_pg Phosphor in Grünalgen
+   real, dimension(1000)   :: Q_NB    !< \ref q_nb Stickstoff in Blaualgen
+   real, dimension(1000)   :: Q_PB    !< \ref q_pb Phosphor in Blaualgen
+   real, dimension(2,1000) :: CD      !< \ref cd CD = \ref cd1 + \ref cd2 leicht und schwer abbaubare gelöste organische C-Verbindungen
+   real, dimension(2,1000) :: CP      !< \ref cp CP = \ref cp1 + \ref cp2 leicht und schwer abbaubare partikuläre organische C-Verbindungen
+   real, dimension(1000)   :: CM      !< \ref cm monomolekularen organischen C-Verbindungen
+   real, dimension(1000)   :: BAC     !< \ref bac Masse der in heterotrophen Bakterien gespeicherten C-Verbindungen
+   real, dimension(1000)   :: zBAC    !< \anchor zBAC Aufnahmerate der Bakterien
+   real, dimension(1000)   :: O2BSB   !< \ref o2bsb Sauerstoff-Kohlenstoffverhältnis beim C-Abbau
+   real, dimension(1000)   :: BL01    !< \ref bl01 schwerabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent
+   real, dimension(1000)   :: BL02    !< \ref bl02 leichtabbaubare Kohlenstoffverbindungen als Sauerstoffäquivalent
+   real, dimension(1000)   :: vbsb    !< \ref vbsb BSB5 incl. lebender Organismen
+   real, dimension(1000)   :: vcsb    !< \ref vcsb CSB incl. lebender Organismen
+   real, dimension(1000)   :: CHNF    !< \ref chnf C-Masse der heterotrophen Nanoflagelaten
+   real, dimension(1000)   :: BVHNF   !< \ref bvhnf Biovolumen der HNF  ?
+   real, dimension(1000)   :: zooind  !< \ref zooind Anzahl der Rotatorien
+   real, dimension(1,1000) :: TGZoo   !<  
+   real, dimension(1,1000) :: akmor_1 !< Kiesel-Algen
+   real, dimension(1,1000) :: agmor_1 !< Gruen-Algen
+   real, dimension(1,1000) :: abmor_1 !< Blau-Algen
+   real                    :: bsbZoo  !< biol. Sauerstoffbedarf in 5d je Biomasse Zooplankton =1.6 hard coded
+   real, dimension(1000)   :: abrzo1  !< \ref abrzo unbenutzt ??
+   real, dimension(1000)   :: ssalg   !< \ref ssalg
+   real, dimension(1000)   :: ss      !< \ref ss
+   real, dimension(1000)   :: fssgr   !< \ref fssgr
+   real, dimension(1000)   :: fbsgr   !< \ref fbsgr ablagerungsfreien Grenzkonzentration zehrungsfähig
+   real, dimension(1000)   :: frfgr   !< \ref frfgr ablagerungsfreien Grenzkonzentration refraktär
+   real, dimension(1000)   :: nl0     !< \ref nl0 N/C Verhältnis
+   real, dimension(1000)   :: pl0     !< \ref pl0 P/C Verhältnis
+   real, dimension(1000)   :: stind   !< \ref stind
+   real, dimension(1000)   :: dlarvn  !< \ref dlarvn Dreissena Larven im Wasser treibend, Ind/l
+   real, dimension(1000)   :: coli   !<  \ref coli
    real, dimension(1000)   :: mw
    real, dimension(1000)   :: pw
    real, dimension(1000)   :: ca
@@ -191,13 +191,13 @@ module QSimDatenfelder
    ! --------------------------------------------------------------------------
    ! benthische Verteilungen
    ! --------------------------------------------------------------------------
-   real                         :: akrema !>  \anchor akrema = 0.0 
-   real                         :: sbioki !>  \anchor sbioki = 0.0
+   real                         :: akrema !<  \anchor akrema = 0.0 
+   real                         :: sbioki !<  \anchor sbioki = 0.0
    real                         :: tauscs
    real                         :: NDR, KD_N2, KNH3_X1, KHNO2_X1, KNH3_X2, KHNO2_X2
    real                         :: nwgr, nwki, nhno, nreski, nresgr, nresbl, nl0t
    real, dimension(1000)        :: tsed    ! Temperatur des Sediments
-   real, dimension(1000)        :: sised   !>  \ref sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
+   real, dimension(1000)        :: sised   !<  \ref sised Menge an Silikat an der Gewässersohle infolge sedimentierter Algen
    real, dimension(1000)        :: pfl     ! Pflanzentrockengewicht in g/m2
    real, dimension(1000)        :: ssdr    ! Schwebstoffaufnahme durch Dreissena
    real, dimension(1000)        :: coroI, coroIs                  ! Corophium an der Böschung und an der Sohle
@@ -208,7 +208,7 @@ module QSimDatenfelder
    real, dimension(1000)        :: gwdmax
    real, dimension(1000)        :: sgwmue
    real, dimension(1000)        :: drHNF
-   real, dimension(1000)        :: rau     !>  \anchor rau Gauckler-Manning-Strickler Reibungsbeiwert in (m**1/3)/s
+   real, dimension(1000)        :: rau     !<  \anchor rau Gauckler-Manning-Strickler Reibungsbeiwert in (m**1/3)/s
    real, dimension(1,1000)      :: orgCsd  ! Gesamtmase Kohlenstoff, die je Zeitschritt sedimentiert
    real, dimension(1000)        :: bsbbet  ! Ausgabekonzentration Sauerstoffverbrauch durch Organismen auf Makrophyten
    real, dimension(50,1000)     :: hJO2    ! Sauerstoffverbrauch des Sediments (in allen Schichten ???)
@@ -230,8 +230,8 @@ module QSimDatenfelder
    real, dimension(100)         :: eNH4L, eNO2L, eNO3L, gesNL
    real, dimension(1000)        :: go2n, agrnh4, akinh4
    real, dimension(1000)        :: sgo2n, abltbr, akitbr, agrtbr
-   real, dimension(1000)        :: vabfl !> \anchor vabfl Durchfluss in QSim3D unbenutzt.  Siehe dazu auch \ref lnk_huellen.
-   real, dimension(1000)        :: elen  !> \anchor elen  elen(1)=1  Elementlänge (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
+   real, dimension(1000)        :: vabfl !< \anchor vabfl Durchfluss in QSim3D unbenutzt.  Siehe dazu auch \ref lnk_huellen.
+   real, dimension(1000)        :: elen  !< \anchor elen  elen(1)=1  Elementlänge (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
    real, dimension(1000)        :: sedx0, bettn, susno, agrno3, akino3
    real, dimension(1000)        :: resdr, ablno3, albewg, alberg, albewk, alberk,abegm2,abekm2
    real, dimension(1000)        :: exdrvk, exdrvg, ablnh4, exdrvb, susO2N
@@ -240,9 +240,9 @@ module QSimDatenfelder
    real, dimension(azStrs,1000) :: hJNH4, hJNO3
    real, dimension(50,1000)     :: dalggz, dalgkz, dalgbz, algagz, algakz, algabz, agnh4z, aknh4z, abnh4z
    real, dimension(50,1000)     :: agno3z, akno3z, abno3z, agrbrz, akibrz, ablbrz
-   integer, dimension(50)       :: ieinLs !>  \anchor ieinls =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
-   integer, dimension(100)      :: iorLa  !>  \anchor iorla =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
-   integer, dimension(100)      :: iorLe  !>  \anchor iorle =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(50)       :: ieinLs !<  \anchor ieinls =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(100)      :: iorLa  !<  \anchor iorla =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
+   integer, dimension(100)      :: iorLe  !<  \anchor iorle =0  keine Linienquellen. Siehe dazu auch \ref lnk_huellen.
    
    ! --------------------------------------------------------------------------
    ! konsum
@@ -254,11 +254,11 @@ module QSimDatenfelder
    ! --------------------------------------------------------------------------
    ! algae
    ! --------------------------------------------------------------------------
-   character(255)                     :: cpfad    !> \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref lnk_extnct_rb
-   integer                            :: ij       !> \anchor ij Nummer des zeitschrittes während eines Tages (unbenutzt in 3D)
-   integer                            :: isim_end !> \anchor isim_end von strahlg ermitteltes Simulationsende=1, von Algenroutinen für Ausgabe verwendet (unbenutzt in 3D)   real                               :: nlq
+   character(255)                     :: cpfad    !< \anchor cpfad in QSim3D unbenutzt; war in QSim1D das modellverzeichnis zum einlesen von e_extnct.dat,  siehe auch \ref lnk_extnct_rb
+   integer                            :: ij       !< \anchor ij Nummer des zeitschrittes während eines Tages (unbenutzt in 3D)
+   integer                            :: isim_end !< \anchor isim_end von strahlg ermitteltes Simulationsende=1, von Algenroutinen für Ausgabe verwendet (unbenutzt in 3D)   real                               :: nlq
    integer                            :: ilamda   ! Anzahl der Wellenlängen
-   integer, dimension(azStrs,ialloc2) :: it_h     !> \ref it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
+   integer, dimension(azStrs,ialloc2) :: it_h     !< \ref it_h Anzahl der Zeitschritte während der Hellphase des jeweiligen Tages (unbenutzt in 3D)
    real                               :: ma
    real                               :: ihemm
    real                               :: Iac, Ic, Iprod
@@ -278,10 +278,10 @@ module QSimDatenfelder
    real,         dimension(50)        :: Pz, F5z
    real,         dimension(50)        :: akgrwz
    real,         dimension(50)        :: hcchlaz
-   real,         dimension(100)       :: echla  !> \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real,         dimension(100)       :: ess    !> \anchor ess = 0.0 Einleitung Schwebstoff  (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
-   real,         dimension(100)       :: eantbl !> \anchor eantbl  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real,         dimension(100)       :: evkigr !> \anchor evkigr = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real,         dimension(100)       :: echla  !< \anchor echla = 0.0  keine Einleitung Chlorophyll-a in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real,         dimension(100)       :: ess    !< \anchor ess = 0.0 Einleitung Schwebstoff  (nicht verwendet) Siehe dazu auch \ref lnk_huellen.
+   real,         dimension(100)       :: eantbl !< \anchor eantbl  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real,         dimension(100)       :: evkigr !< \anchor evkigr = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
    real(kind=8), dimension(100)       :: hemm
    real,         dimension(1000)      :: ir
    real,         dimension(1000)      :: akit_1
@@ -297,7 +297,7 @@ module QSimDatenfelder
    real,         dimension(1000)      :: schwi
    real,         dimension(1000)      :: extk
    real,         dimension(1000)      :: dzz, dPz
-   real,         dimension(1000)      :: dH2De !> \anchor dh2de dH2De = 0.25 ! unklar
+   real,         dimension(1000)      :: dH2De !< \anchor dh2de dH2De = 0.25 ! unklar
    real,         dimension(1000)      :: Dz2D
    real,         dimension(40,1000)   :: extk_lamda
    real,         dimension(50,1000)   :: dkmorz
@@ -308,20 +308,20 @@ module QSimDatenfelder
    ! --------------------------------------------------------------------------
    ! orgc, hnf
    ! --------------------------------------------------------------------------
-   real                  :: frfgrs !> \anchor frfgrs  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real                  :: fbsgrs !> \anchor fbsgrs = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(100)  :: ecsb   !> \anchor ecsb  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(100)  :: ebsb   !> \anchor ebsb = 0.0      ! keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(100)  :: ezind  !> \anchor ezind =0.0  keine Einleitung Rotatorien in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(100)  :: eCHNF  !> \anchor echnf eCHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(100)  :: ebvhnf !> \anchor ebvhnf eBVHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
-   real, dimension(1000) :: HNFmua !> \anchor hnfmua  hnf-Kontrollausgabe
-   real, dimension(1000) :: HNFrea !> \anchor hnfrea  hnf-Kontrollausgabe
-   real, dimension(1000) :: HNFupa !> \anchor hnfupa  hnf-Kontrollausgabe
-   real, dimension(1000) :: HNFmoa !> \anchor hnfmoa  hnf-Kontrollausgabe
-   real, dimension(1000) :: HNFexa !> \anchor hnfexa  hnf-Kontrollausgabe
+   real                  :: frfgrs !< \anchor frfgrs  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real                  :: fbsgrs !< \anchor fbsgrs = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(100)  :: ecsb   !< \anchor ecsb  = 0.0  keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(100)  :: ebsb   !< \anchor ebsb = 0.0      ! keine Einleitung in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(100)  :: ezind  !< \anchor ezind =0.0  keine Einleitung Rotatorien in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(100)  :: eCHNF  !< \anchor echnf eCHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(100)  :: ebvhnf !< \anchor ebvhnf eBVHNF=0.0 keine Einleitung HNF in QSim3D. Siehe dazu auch \ref lnk_huellen.
+   real, dimension(1000) :: HNFmua !< \anchor hnfmua  hnf-Kontrollausgabe
+   real, dimension(1000) :: HNFrea !< \anchor hnfrea  hnf-Kontrollausgabe
+   real, dimension(1000) :: HNFupa !< \anchor hnfupa  hnf-Kontrollausgabe
+   real, dimension(1000) :: HNFmoa !< \anchor hnfmoa  hnf-Kontrollausgabe
+   real, dimension(1000) :: HNFexa !< \anchor hnfexa  hnf-Kontrollausgabe
    real, dimension(1000) :: bsbCNB
-   real, dimension(1000) :: drfaes !> \ref drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
+   real, dimension(1000) :: drfaes !< \ref drfaes Ausscheidungen der Dreissena-Muscheln infolge Konsums von Schwebstoffen | dreissen -> orgc,schweb | mgBiom./l je Zeitschritt
    
    ! --------------------------------------------------------------------------
    ! ph
@@ -370,7 +370,7 @@ module QSimDatenfelder
    real, dimension(100)            :: eo2, etemp
    real, dimension(50)             :: vo2zt, seo2, hcvo2_2d, vo2e, hco2ez, cpart, d
    real                            :: zwgmes
-   real                            :: toc_csb !> \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe *dC_DenW* \n
+   real                            :: toc_csb !< \anchor toc_csb Sauerstoffanteil beim C-Abbau durch Denitrifikation in der Wassersäule, siehe *dC_DenW* \n
                                            !! im qsim hauptprogramm auf den konstanten Wert = 3.1  gesetzt. (in QSim3d ebenfalls)
    
    ! --------------------------------------------------------------------------
@@ -388,15 +388,15 @@ module QSimDatenfelder
    real, dimension(azStrs,1000)    :: hWS    !< \anchor hws Höhenlage des Wasserspiegels in m ü.NHN.
    real, dimension(azStrs,1000)    :: htempw
    real, dimension(azStrs,50,1000) :: htempz
-   real, dimension(1,1000)         :: WUEBKS !> \anchor wuebks wuebks Wärmeübergangskoeffizient Wasser-Sediment in KJ/(K*m2*h)
-   real, dimension(1,1000)         :: spewkss !> \anchor spewkss spewkss spezifische Wärmekapazität des Sediments in KJ/(Kg*K)
+   real, dimension(1,1000)         :: WUEBKS !< \anchor wuebks wuebks Wärmeübergangskoeffizient Wasser-Sediment in KJ/(K*m2*h)
+   real, dimension(1,1000)         :: spewkss !< \anchor spewkss spewkss spezifische Wärmekapazität des Sediments in KJ/(Kg*K)
    real, dimension(azStrs,1000)    :: psrefss
-   real, dimension(azStrs,1000)    :: extks !> \anchor extks extks Extinktionskoeffizient für PARS
+   real, dimension(azStrs,1000)    :: extks !< \anchor extks extks Extinktionskoeffizient für PARS
    real, dimension(azStrs,50,1000) :: hgesPz
-   real, dimension(1,1000)         :: hJSi !> Silizium-Flux aus dem Sediment
+   real, dimension(1,1000)         :: hJSi !< Silizium-Flux aus dem Sediment
    
    ! ### ilang = 0 : Vorlauf (1d) wird nicht abgelegt, danach ilang = 1 ###
-   integer , parameter :: ilang = 1 !> \anchor ilang ilang Schalter, um in qsim1d einen 1d-Vorlauf zu machen | im 3D immer 1
+   integer , parameter :: ilang = 1 !< \anchor ilang ilang Schalter, um in qsim1d einen 1d-Vorlauf zu machen | im 3D immer 1
       
    ! --------------------------------------------------------------------------   
    ! Stickstoffflüsse
@@ -411,27 +411,27 @@ module QSimDatenfelder
    ! --------------------------------------------------------------------------
    ! Sedimentbezogenes
    ! --------------------------------------------------------------------------
-   real, dimension(azStrs,1000)   :: hSedOM    !> \anchor hsedom hSedOM ,SedOM <- POMz, Anteil des organischen Materials im Sediment (0-1)
-   real, dimension(azStrs,1000)   :: hw2       !> \anchor hw2 hw2 aus sysgenou gelesen für sedflux
-   real, dimension(azStrs,1000)   :: hbedgs    !> \anchor hbedgs hBedGS ,BedGSz , Bedeckungsgrad der Sohle mit Sediment (0-1)
-   real, dimension(azStrs,1000)   :: hsedvvert !> \anchor hsedvvert hsedvvert , Sedvvertz , volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
-   real, dimension(azStrs,1000)   :: hdKorn    !> \anchor hdkorn hdKorn 
-   real, dimension(azStrs,1000)   :: hSised    !> \anchor hsised hSised siehe \ref sised
-   real, dimension(azStrs,2,1000) :: hCD       !> \anchor hcd hCD siehe \ref cd1 und \ref cd2
-   real, dimension(1,1000)        :: sedalg_mq !> \ref sedalg_mq
-   real, dimension(1,1000)        :: sedss_mq  !> \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
+   real, dimension(azStrs,1000)   :: hSedOM    !< \anchor hsedom hSedOM ,SedOM <- POMz, Anteil des organischen Materials im Sediment (0-1)
+   real, dimension(azStrs,1000)   :: hw2       !< \anchor hw2 hw2 aus sysgenou gelesen für sedflux
+   real, dimension(azStrs,1000)   :: hbedgs    !< \anchor hbedgs hBedGS ,BedGSz , Bedeckungsgrad der Sohle mit Sediment (0-1)
+   real, dimension(azStrs,1000)   :: hsedvvert !< \anchor hsedvvert hsedvvert , Sedvvertz , volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h
+   real, dimension(azStrs,1000)   :: hdKorn    !< \anchor hdkorn hdKorn 
+   real, dimension(azStrs,1000)   :: hSised    !< \anchor hsised hSised siehe \ref sised
+   real, dimension(azStrs,2,1000) :: hCD       !< \anchor hcd hCD siehe \ref cd1 und \ref cd2
+   real, dimension(1,1000)        :: sedalg_mq !< \ref sedalg_mq
+   real, dimension(1,1000)        :: sedss_mq  !< \anchor sedss_mq sedss_mq  Sedimentation, die auftreten würde ohne Erosion
  
    ! --------------------------------------------------------------------------
    ! macrophytes
    ! --------------------------------------------------------------------------
-   ! real :: sa !> \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
-   ! real :: su !> \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
-   integer :: itstart !> \anchor itstart itstart = *starttag*
-   integer :: mstart  !> \anchor mstart mstart = *startmonat*
-   integer :: itmax   !> \anchor itmax itmax = *maxtag*
-   integer :: mmax    !> \anchor mmax mmax = *maxmonat*
-   integer :: itend   !> \anchor itend itend = *endtag*
-   integer :: mend    !> \anchor mend mend = *endmonat*
+   ! real :: sa !< \anchor sa sa= \ref sonnenaufgang von sasu() in temperl_wetter() in update_weather() berechnet
+   ! real :: su !< \anchor su su= \ref sonnenuntergang von sasu() in temperl_wetter() in update_weather() berechnet
+   integer :: itstart !< \anchor itstart itstart = *starttag*
+   integer :: mstart  !< \anchor mstart mstart = *startmonat*
+   integer :: itmax   !< \anchor itmax itmax = *maxtag*
+   integer :: mmax    !< \anchor mmax mmax = *maxmonat*
+   integer :: itend   !< \anchor itend itend = *endtag*
+   integer :: mend    !< \anchor mend mend = *endmonat*
    
 
 contains

@@ -10,13 +10,10 @@ STAND:15.08.2017   \n
 
 
 ## Schnittstellenbeschreibung ##
-SUBROUTINE COLIFORM (\ref tiefe,\ref rau,\ref vmitt,\ref vabfl,\ref elen,
-\ref flae,\ref flag,\ref tflie
-,\ref schwi,\ref ss,\ref zooind,*grote*,\ref chla,\ref tempw,\ref jiein,*ecoli*  &\n
-,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
-,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
-,*ratecd*, *etacd*, *rateci*, *xnuec*, *ratecg*, *ratecs*, *ifehl* & \n
-,\ref kontroll ,\ref iglob )
+SUBROUTINE COLIFORM (\ref coli, \ref doscf, \ref extks, \ref tempw, &
+                             \ref rau, \ref tiefe, \ref vmitt, \ref schwi,  &
+                             \ref tflie,                             &
+                             \ref control, *jjj*)
 
  
 ## IT-Realisierung ##

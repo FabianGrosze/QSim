@@ -25,8 +25,8 @@ Phytoplankton - Formelzeichen/Variablennamen {#lnk_phyto_vars}
 | \f$\CChl\f$  | \f$\gCmgChl\f$ | -- | C:Chl-a-Verhältnis der Algenklasse *i* | *CChlaz* | interne Variable|
 | \f$\CChld\f$ | \f$\gCmgChl\f$ | -- | C:Chl-a-Verhältnis dunkeladaptierter Algen der Klasse *i* | \ref akchl, \ref abchl, \ref agchl, \`CChl_Stern` | e (für 20 °C), interne Variable|
 | \f$\aCChl{ki}\f$ | °C\f$^{-1}\f$ | -0.059 | Koeffizient der Temperaturabhängigkeit des C:Chl-a-Verhältnisses der Kieselalgen | *a1ki* | hart codierte Variable|
-| \f$\aCChl{bl}\f$ | °C\f$^{-1}\f$ | -0.062 | Koeffizient der Temperaturabhängigkeit des C:Chl-a-Verhältnisses der Blaualgen | \ref a1bl  | hart codierte Variable|
-| \f$\aCChl{gr}\f$ | °C\f$^{-1}\f$ | -0.032 | Koeffizient der Temperaturabhängigkeit des C:Chl-a-Verhältnisses der Grünalgen | \ref a1gr  | hart codierte Variable|
+| \f$\aCChl{bl}\f$ | °C\f$^{-1}\f$ | -0.062 | Koeffizient der Temperaturabhängigkeit des C:Chl-a-Verhältnisses der Blaualgen | *a1bl*  | hart codierte Variable|
+| \f$\aCChl{gr}\f$ | °C\f$^{-1}\f$ | -0.032 | Koeffizient der Temperaturabhängigkeit des C:Chl-a-Verhältnisses der Grünalgen | *a1gr*  | hart codierte Variable|
 | Lichtabhängiges Wachstum ||||||
 | \f$\mu_{A,ki}^{max}\f$ | d\f$^{-1}\f$ | 1.6 | Maximale Brutto-Wachstumsrate der Kieselalgen bei T_{ref} | \ref akgmax | e|
 | \f$\mu_{A,bl}^{max}\f$ | d\f$^{-1}\f$ | 1.2 | Maximale Brutto-Wachstumsrate der Blaualgen bei T_{ref} | \ref abgmax | e|

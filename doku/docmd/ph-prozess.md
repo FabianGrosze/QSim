@@ -319,7 +319,7 @@ Schleifenende äussere Iteration
 					, \ref Caki, \ref Cagr, \ref Cabl                             &\n
 					, \ref alberg, \ref alberk, \ref albewg, \ref albewk          &\n
 					, \ref susn, \ref po2p, \ref po2r, \ref ssalg, \ref stind     &\n
-                    , \ref kontroll, \ref iglob )
+                    , \ref control, *jjj* )
 			
 !!!!! in der Kernroutine ist allen Übergabe-Variablen ein "s" im Namen angehängt, \n
 !!!!! um zu kennzeichen, dass es sich um lokale Variablen in dieser Subroutine handelt \n

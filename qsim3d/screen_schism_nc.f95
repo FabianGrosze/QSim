@@ -24,15 +24,14 @@
 !  1979 bis 2018   Volker Kirchesch                                           !
 !  seit 2011       Jens Wyrwa, Wyrwa@bafg.de                                  !
 ! --------------------------------------------------------------------------- !
-subroutine screen_schism_nc()
+subroutine screen_schism_nc( )
    ! TODO (Schönung, August 2023)
    ! Schism routines must be adapted to unixtime
    ! Will be done when merging schism-branch
    call qerror("schism is not implemented")
+end subroutine screen_schism_nc
 
-end subroutine screen_schism_nc()
-
-!> screen_schism_nc()
+! !> screen_schism_nc()
 !! inspects SCHISM output:\n
 !! checks for time steps\n
 !! checks for necessary variables

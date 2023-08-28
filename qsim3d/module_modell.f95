@@ -59,7 +59,7 @@ module modell
    ! parallel_datenfelder
    ! --------------------------------------------------------------------------
    ! Beschreibung in parallel.f95
-   integer :: meinrang, part, proz_anz, ierr !> nummer und Gesamtzahl prozessoren (MPI)
+   integer :: meinrang, part, proz_anz, ierr !< nummer und Gesamtzahl prozessoren (MPI)
    integer :: mpi_komm_welt
   
    !---------------------------------------------------------------------------
@@ -69,9 +69,9 @@ module modell
    integer, parameter :: longname = 3000
    
    character(longname) :: pfad, modellverzeichnis, codesource, fehler
-   integer             :: kontrollknoten !> \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer)
-   logical             :: control        !> \anchor control Schalter ob Kontro llausgabe aus Stoffumsatzroutinen heraus erfolgen soll
-   integer             :: iglob          !> \anchor iglob globale Knotennummer, Übergabe an Stoffumsatzroutinen aus parallel laufenden Hüllroutinen
+   integer             :: kontrollknoten !< \anchor kontrollknoten Nummer des Kontrollknotens (Untrim-Elementnummer)
+   logical             :: control        !< \anchor control Schalter ob Kontro llausgabe aus Stoffumsatzroutinen heraus erfolgen soll
+   integer             :: iglob          !< \anchor iglob globale Knotennummer, Übergabe an Stoffumsatzroutinen aus parallel laufenden Hüllroutinen
    
    ! --- simulation settings ---
    integer :: imitt       !< \anchor imitt Tagesmittelwertausgabe=1 Zeitwerte=0 | nicht aktiv in 3D
@@ -80,7 +80,7 @@ module modell
    integer :: itemp       !< \anchor itemp nur Temperatursimulation=1 alles=0 in QSim3D bisher unbenutzt
    integer :: itracer     !< \anchor itracer nur Tracersimulation=1 alles=0 in QSim3D bisher unbenutzt
    integer :: ieros       !< \anchor ieros Erosions-flag mit Erosion=1 ohne=0 in QSim3D bisher unbenutzt
-                          !! #FG: temporary dirty hack: iEros<0 for reading 'SS' from UnTRIM2; 'abs(iEros)' sets the number of classes to be read (finest to coarsest)
+                          !! comment by FG: temporary dirty hack: iEros<0 for reading 'SS' from UnTRIM2; 'abs(iEros)' sets the number of classes to be read (finest to coarsest)
    integer :: ischwa      !< \anchor ischwa mit ereigg2=1 ohne=0 ??? in QSim3D bisher unbenutzt
    integer :: iverfahren  !< \anchor iverfahren Transportverfahren in QSim3D bisher unbenutzt
    integer :: ilongDis    !< \anchor ilongdis ??? in QSim3D bisher unbenutzt ilongDis
@@ -96,7 +96,7 @@ module modell
    integer :: iform_verdr !< \anchor iform_verdr:   Schalter für die Auswahl der Verdunstungsformeln in water_temperature.f90
    integer :: iwsim       !< \anchor iwsim Kennung, Simulationstyp ?
    real    :: FlongDis    !< \anchor flongdis Faktor Dispersionskoeffizient, Eingabe über EREIGG.txt ??? in QSim3D bisher unbenutzt FlongDis
-   logical :: nur_temp    !> Steuerung des Stoffumsatzes eingelesen über itemp
+   logical :: nur_temp    !< Steuerung des Stoffumsatzes eingelesen über itemp
     
    
    ! --- mesh variables ---
@@ -114,22 +114,22 @@ module modell
    ! --- time variables ---
    ! TODO (Schönung, August 2023)
    ! This should be user definable.
-   real, parameter :: tz_qsim = 1.0        !> \anchor tz_qsim standard timezone that QSim uses in its input files [UTC + 1]
+   real, parameter :: tz_qsim = 1.0        !< \anchor tz_qsim standard timezone that QSim uses in its input files [UTC + 1]
    
-   integer(int64) :: rechenzeit            !> \anchor rechenzeit current time of running simulation in unixtime
-   integer(int64) :: startzeitpunkt        !> \anchor startzeitpunkt start time of current timestep in unixtime
-   integer(int64) :: endzeitpunkt          !> \anchor endzeitpunkt end time of current timestep in unixtime
-   integer        :: deltat                !> \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
-   integer        :: zeitschrittanzahl     !> \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
-   integer        :: izeit                 !> \anchor izeit izeit Zeitschrittzähler
-   integer        :: anzZeit               !> \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurÃ¼ck: \ref lnk_schwermetalle
+   integer(int64) :: rechenzeit            !< \anchor rechenzeit current time of running simulation in unixtime
+   integer(int64) :: startzeitpunkt        !< \anchor startzeitpunkt start time of current timestep in unixtime
+   integer(int64) :: endzeitpunkt          !< \anchor endzeitpunkt end time of current timestep in unixtime
+   integer        :: deltat                !< \anchor deltat Zeitschrittweite (Stoffumsatz) in ganzen Sekunden
+   integer        :: zeitschrittanzahl     !< \anchor zeitschrittanzahl Zeitschrittanzahl die von der Berechnung (Ereignis) durchlaufen werden.
+   integer        :: izeit                 !< \anchor izeit izeit Zeitschrittzähler
+   integer        :: anzZeit               !< \anchor anzZeit anzZeit Anzahl der erosionslosen Zeitschritte im bisherigen Rechenlauf ; zurück: \ref lnk_schwermetalle
    
    ! --- Vermaschung Elemente ---
    logical                              :: element_vorhanden
    integer                              :: n_elemente, summ_ne
    integer, allocatable, dimension(:)   :: cornernumber
-   integer, allocatable, dimension(:)   :: element_rand ! aus Mesh2_face_bc, netCDF
-   integer, allocatable, dimension(:)   :: element_zone !> \anchor element_zone Element zonen, null gesetzt, wird bei Antrieb mit untrim-Hydraulik aus netCDF-Dateien verwendet
+   integer, allocatable, dimension(:)   :: element_rand !< aus Mesh2_face_bc, netCDF
+   integer, allocatable, dimension(:)   :: element_zone !< \anchor element_zone Element zonen, null gesetzt, wird bei Antrieb mit untrim-Hydraulik aus netCDF-Dateien verwendet
    integer, allocatable, dimension(:,:) :: elementnodes, elementedges
    real,    allocatable, dimension(:)   :: element_x, element_y
    
@@ -141,45 +141,45 @@ module modell
    real,    allocatable, dimension(:)   :: edge_ground, cell_bound_length
    real,    allocatable, dimension(:)   :: edge_mid_x, edge_mid_y ! mid-side location of edges
    
-   real,parameter :: min_tief = 0.01 !> toleranzen und clipping-Werte
+   real,parameter :: min_tief = 0.01 !< toleranzen und clipping-Werte
    
    
    !---------------------------------------------------------------------------
    ! zonen_datenfelder
    !---------------------------------------------------------------------------
    !> Beschreibung in zonen.f95
-   integer :: zonen_anzahl !> \anchor wetterstations_nummer enthält zu jedem Zonenzähler den dazugehörigen
+   integer :: zonen_anzahl !< \anchor wetterstations_nummer enthält zu jedem Zonenzähler den dazugehörigen
                            !!  Wetterstationszähler, der in eingabe() aus Wetterstationskennung_T bestimmt wird
    
    ! Sed-Flux variablen
    type :: sedimentfluss
-      real :: sedom    !> \anchor sedom sedom Anteil des organischen Materials im Sediment von modellg.3D.txt, POMz -> hsedom
-      real :: bedgs    !> \anchor bedgs bedgs Bedeckungsgrad der Sohle mit Sediment (0-1), von modellg.3D.txt, BedGSz -> hbedgs
-      real :: sedvvert !> \anchor sedvvert sedvvert volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h, von modellg.3D.txt, Sedvvertz -> hsedvvert
-      real :: kornd    !> \anchor kornd kornd Vorgabe Korndurchmesser d50 sediment in der Zone ggf.
-      real :: burial   !> \anchor burial burial Burial-Geschwindigkeit (Sedimentation) Vorgabe in der Zone ggf.
+      real :: sedom    !< \anchor sedom sedom Anteil des organischen Materials im Sediment von modellg.3D.txt, POMz -> hsedom
+      real :: bedgs    !< \anchor bedgs bedgs Bedeckungsgrad der Sohle mit Sediment (0-1), von modellg.3D.txt, BedGSz -> hbedgs
+      real :: sedvvert !< \anchor sedvvert sedvvert volumenbezogene Eindringgeschwindigkeit ins Sediment mm/h, von modellg.3D.txt, Sedvvertz -> hsedvvert
+      real :: kornd    !< \anchor kornd kornd Vorgabe Korndurchmesser d50 sediment in der Zone ggf.
+      real :: burial   !< \anchor burial burial Burial-Geschwindigkeit (Sedimentation) Vorgabe in der Zone ggf.
    end type sedimentfluss
    
    ! Sediment-Temperatuf variablen
    type :: sedimenttemperatur
-      real :: spewks !> \anchor spewks spewks Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
-      real :: wuebk  !> \anchor wuebk wuebk Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
-      real :: psrefs !> \anchor psrefs psrefs Reflektionsanteil der Strahlung an der Sedimentoberfläche
-      real :: extiks !> \anchor extiks extiks Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!) zonenweise, siehe \ref extks
+      real :: spewks !< \anchor spewks spewks Spez. WärmeKapazität Sediment" unit="KJ/(kg*K)
+      real :: wuebk  !< \anchor wuebk wuebk Wärmeübergangskoeffizient" unit="KJ/(K*m2*h)
+      real :: psrefs !< \anchor psrefs psrefs Reflektionsanteil der Strahlung an der Sedimentoberfläche
+      real :: extiks !< \anchor extiks extiks Extinktionskoeffizient für PARS (nur bei Temperaturmodellierung erforderlich!) zonenweise, siehe \ref extks
    end type sedimenttemperatur
    
    ! Dreissena Laichperiode variablen
    type :: laichperiode
-      integer :: lait !> \anchor lait lait Dreissena Laichperiode: Tag des Beginns der Laichperiode 
-      integer :: laim !> \anchor laim laim Dreissena Laichperiode: Monat des Beginns der Laichperiode
-      integer :: laid !> \anchor laid laid Dreissena Laichperiode: Dauer der Laichperiode in Tagen
+      integer :: lait !< \anchor lait lait Dreissena Laichperiode: Tag des Beginns der Laichperiode 
+      integer :: laim !< \anchor laim laim Dreissena Laichperiode: Monat des Beginns der Laichperiode
+      integer :: laid !< \anchor laid laid Dreissena Laichperiode: Dauer der Laichperiode in Tagen
    end type laichperiode
    
    
    type :: schiffsverkehr
       real    :: vschiff
       real    :: uprop
-      integer :: schifffahrts_zone !> \anchor schifffahrts_zone schifffahrts_zone Schiffsverkehr, von modellg.3D.txt F-Zeile schifffahrts_zone -> mss
+      integer :: schifffahrts_zone !< \anchor schifffahrts_zone schifffahrts_zone Schiffsverkehr, von modellg.3D.txt F-Zeile schifffahrts_zone -> mss
    end type schiffsverkehr
    
 
@@ -208,15 +208,15 @@ module modell
    end type maphy
    
    type :: madi
-      real :: pflmin !> \anchor pflmin zone()%macrodicht%pflmin Minimale Dichte der Makrophyten im Winter
-      real :: pflmax !> \anchor pflmax zone()%macrodicht%pflmax Maximale Dichte der Makrophyten im Sommer
+      real :: pflmin !< \anchor pflmin zone()%macrodicht%pflmin Minimale Dichte der Makrophyten im Winter
+      real :: pflmax !< \anchor pflmax zone()%macrodicht%pflmax Maximale Dichte der Makrophyten im Sommer
    end type madi
    
    type :: tErosion
-      real :: tau_krit !> \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/m2
-      real :: m_eros   !> \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(m2*s)
-      real :: n_eros   !> \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss
-      real :: sed_roh  !> \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/m3
+      real :: tau_krit !< \anchor tau_krit zone()%erosi%tau_krit kritische Sohlschubspannung ab der Erosion auftritt in N/m2
+      real :: m_eros   !< \anchor M_eros zone()%erosi%M_eros Erodibilitätskonstante in kg/(m2*s)
+      real :: n_eros   !< \anchor n_eross zone()%erosi%n_eross Exponent in der Erosionsformel, potenziert den relativen Sohlspannungsüberschuss
+      real :: sed_roh  !< \anchor sed_roh zone()%erosi%sed_roh Dichte des liegenden Sediments in kg/m3
    end type tErosion
    
    type :: ddr
@@ -281,12 +281,12 @@ module modell
                                                                              !! immer 4 hintereinander (ELM,semi-lagrange casu hydro_trieb=1 )
                                                                              !! (Untrim, FV,Euler hydro_trieb=2) immer
                                                                              
-   real                            :: dttrans                    !> \anchor dttrans timestep for transport simulation in sec.
+   real                            :: dttrans                    !< \anchor dttrans timestep for transport simulation in sec.
    real, allocatable, dimension(:) :: cu                         ! Courant-zahl bei Untrim
-   real, allocatable, dimension(:) :: p, u, dir, w, vel_x, vel_y !> Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w
+   real, allocatable, dimension(:) :: p, u, dir, w, vel_x, vel_y !< Felder für Druck-p d.h. Wasserspiegellage, Gescheindigkeitsbetrag-u horizontal, Richtung-dir horizontal in Kompass-Grad, Vertikalgeschwindigkeit-w
    real, allocatable, dimension(:) :: ur_x, ur_y, ur_z
-   real, allocatable, dimension(:) :: el_vol, el_area            !> Felder für Untrim, elemente/faces=Zellen
-   real, allocatable, dimension(:) :: wicht                      !> und die 4 Wichtungsfaktoren, mit denen die Konzentrations-Werte von den interecken übertragen werden
+   real, allocatable, dimension(:) :: el_vol, el_area            !< Felder für Untrim, elemente/faces=Zellen
+   real, allocatable, dimension(:) :: wicht                      !< und die 4 Wichtungsfaktoren, mit denen die Konzentrations-Werte von den interecken übertragen werden
                                                                  !! immer 4 hintereinander (ELM, semi-lagrange, casu hydro_trieb=1)
                                                                  !! (Untrim, FV,Euler hydro_trieb=2) immer 5 hintereinander, wobei der erste die eigene Konzentration ist und die 4 folgenden die aus den umliegenden Elementen
                                                                  !! werden im  /ref zuflussranddaten ??? übernommen und auf die Prozesse verteilt.
@@ -294,7 +294,7 @@ module modell
    logical,          allocatable, dimension(:) :: inflow                               !< Einströmränder detektieren.
    character(250),   allocatable, dimension(:) :: transinfo_datei                      !< Feld Dateinamen der Transportinfo Dateien
    
-   logical, parameter :: stationaer = .false.  !> Annahme stationäres Strömungsfeld, nur eine transportinfo-datei verwenden.
+   logical, parameter :: stationaer = .false.  !< Annahme stationäres Strömungsfeld, nur eine transportinfo-datei verwenden.
    
    ! --------------------------------------------------------------------------
    ! planktische_variablen_datenfelder
@@ -320,8 +320,8 @@ module modell
    real , allocatable , dimension (:) :: planktonic_variable_p
   
     
-   character(18), dimension(number_plankt_vari_vert) :: plankt_vari_vert_name !>    Names and Descriptions of vertically distributed planktonic_variables
-   logical ::  output_plankt_vert(number_plankt_vari_vert)  !>    output-flag
+   character(18), dimension(number_plankt_vari_vert) :: plankt_vari_vert_name !<    Names and Descriptions of vertically distributed planktonic_variables
+   logical ::  output_plankt_vert(number_plankt_vari_vert)  !<    output-flag
    
    !>    Data array for all vertically distributed planctonic, transported variables.
    !!    Connection with QSim-variable-names through plankt_vari_vert_name
@@ -365,8 +365,8 @@ module modell
    integer, parameter :: number_trans_quant_vert = 28 !< number of vertically distributed transfer quantities
    integer, parameter :: num_lev_trans = 1
    
-   character(18),     dimension(number_trans_quant_vert) :: trans_quant_vert_name   !>    Names and Descriptions of transfer values
-   logical,           dimension(number_trans_quant_vert) :: output_trans_quant_vert !>    output-flag
+   character(18),     dimension(number_trans_quant_vert) :: trans_quant_vert_name   !<    Names and Descriptions of transfer values
+   logical,           dimension(number_trans_quant_vert) :: output_trans_quant_vert !<    output-flag
    real,              dimension(num_lev_trans)           :: z_trans_lev
    real, allocatable, dimension(:)                       :: trans_quant_vert, trans_quant_vert_p
 
@@ -417,15 +417,15 @@ module modell
    
    !> points where benthic distributions are defined (all mesh points in general)
    integer                                      :: number_benthic_points   ! knotenanzahl_benth
-   integer                                      :: rb_extnct_ilamda        !>  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref lnk_extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
+   integer                                      :: rb_extnct_ilamda        !<  \anchor ilamda rb_extnct_ilamda Anzahl der Wellenlängen (siehe \ref lnk_extnct_rb). D. h. spektrale Auflösung des Lichts und dessen Extiktion im Wasser.
    integer                                      :: n_active_concentrations ! used number of Boundary Concentrations
    integer                                      :: ianz_rb, max_rand_nr    !
-   character(18), dimension(number_benth_distr) :: benth_distr_name        !>    Names and Descriptions of benthic_distributions
-   logical,       dimension(number_benth_distr) :: output_benth_distr      !>    output-flag
-   real,     allocatable, dimension(:)          :: benthic_distribution    !>    globales (Prozess 0) Datenfeld für alle \ref lnk_var_benthisch
+   character(18), dimension(number_benth_distr) :: benth_distr_name        !<    Names and Descriptions of benthic_distributions
+   logical,       dimension(number_benth_distr) :: output_benth_distr      !<    output-flag
+   real,     allocatable, dimension(:)          :: benthic_distribution    !<    globales (Prozess 0) Datenfeld für alle \ref lnk_var_benthisch
    real,     allocatable, dimension(:)          :: benthic_distribution_p  ! benthische_verteilung
-   real,     allocatable, dimension(:)          :: rb_hydraul              !> siehe: \ref lnk_hydraul_rb
-   real,     allocatable, dimension(:)          :: rb_hydraul_p            !> siehe: \ref lnk_hydraul_rb
+   real,     allocatable, dimension(:)          :: rb_hydraul              !< siehe: \ref lnk_hydraul_rb
+   real,     allocatable, dimension(:)          :: rb_hydraul_p            !< siehe: \ref lnk_hydraul_rb
    real,     allocatable, dimension(:)          :: rb_extnct_p
    type(rb), allocatable, dimension(:)          :: rabe
    
