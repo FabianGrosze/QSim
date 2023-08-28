@@ -1,46 +1,46 @@
-Einlesen von Verteilungen (Schwebstoff, Salz)  {#lnk_schwebstoff_salz}
-=========================
+Importing distributions of suspended matter and salt  {#lnk_schwebstoff_salz}
+================================================
 
-Einige Eigenschaften des Wassers wie der Salzgehalt, die Konzentration an 
-suspendierten Sedimenten und auch die Temperatur verändern dessen Dichte so 
-nennenswert, dass sie sich auf die Strömung auswirken können und werden dann 
-auch bereits in der hydraulischen Simulation berücksichtigt.
+Some properties of the water, such as the salinity, the concentration of 
+suspended sediments and also the temperature change its density so significantly 
+that they can have an effect on the flow. That is why they are often taken 
+into account within hydraulic simulation.
 
-Es macht bei der Gewässergütesimulation mit QSim3D, die sich ja ohnehin auf die 
-von einem hydraulischen Treiber offline abgelegten Transportinformationen 
-stützt, Sinn, auch dessen Schwebstoff- oder Salz-Gehalt zu übernehmen,
-falls der dort berechnet wurde. Für Temperaturen ist solch eine Übernahme zur 
-Zeit noch nicht geplant.
+QSim3D already takes its transport information offline from an hydraulic driver.
+This makes it easy to also use concentration of suspended matter and salt 
+content from these drivers, if they have been calculated. For water temperature, 
+this is currently not planned.
 
-# Schwebstoffkonzentrationen {#lnk_schwebstoff}
-Bisher realisiert ist die Übernahme von Schwebstoffkonzentrationen:
-Subroutine schwebstoff_salz_sichten() stellt fest ob ein Unterverzeichnis 
-./trueb im aktuellen Modellverzeichnis existiert.
-Ist keines vorhanden, werden auch keine Schwebstoffverteilungen eingelesen.
+# Suspended matter concentration {#lnk_schwebstoff}
+Currently, it is implemented to use the concentration of suspended matter from 
+another driver: \n
+The subroutine schwebstoff_salz_sichten() checks if a subfolder 
+./trueb exists within the current model directory.
+If none does exist, no suspended matter distributions will be read.
 
-Im Unterverzeichnis trueb wird nach mit d beginnenden Dateien gesucht 
-(z.B. ./trueb/d86400 ).
-Die Zahl hinter dem Buchstaben d im Dateinamen wird als Zeit in ganzen Sekunden 
-nach Berechnungsbeginn interpretiert.
-Die Subroutine schwebstoff_salz() interpoliert dann die Schwebstoffverteilung 
-für den aktuellen Rechenzeitpunkt (stoffumsatz-Zeitschritte).
+In the subfolder trueb, the files are searched for those starting with 'd'
+(e.g. ./trueb/d86400 ).
+The number behind the letter d within the filename is the time in seconds 
+after the start of the simulation.
+The subroutine schwebstoff_salz() then interpolates the distribution of 
+suspended matter for the current simulation time step (stoffumsatz-time steps).
 
-Die Schwebstoffdateien müssen im Elcirc .gr3 Format vorliegen.
-Dieses Format dient auch zur Definition der Berechnungsnetze von SCHISM.
-Dort wo in den Netzdateien die Knotenhöhe stehen, muss nun die 
-Schwebstoffkonzentration in ??? mg/l ??? angegeben werden.
-Dadurch ist es möglich, die Zuordnung von Schwebstoffverteilungen mit denselben 
-Werkzeugen (z.B. Netzgenerator Janet) vorzunehmen, mit denen auch die 
-Höhenzuordnungen des Berechnungsnetzes erstellt wurden.
+The suspended matter files have to be in the Elcirc .gr3 format.
+This format also serves for the definition of the SCHISM simulation mesh.
+At the location where the height of the knots is given within the mesh files, 
+now the concentration of suspended matter has to be written in ??? mg/l ???.
+That way it is possible to use the same tools for the anaylsis of the 
+suspended matter and the simulation mesh (e.g. with the mesh generator Janet).
 
-Die vorgegebene Schwebstoffkonzentration wird  in die Variable
-\ref ss eingelesen und repräsentiert nur den ??? zusätzlichen ??? 
-Schwebstoffanteil.
-Das \ref lnk_phy_licht , das den \ref lnk_phytoplankton für die 
-Photosynthese zur Verfügung steht, wird noch durch weitere Wasserinhaltsstoffe 
-abgeschwächt.
+A given suspended matter concentration is read into the variable 
+\ref ss and thereby represents the ??? additional ??? share of suspended 
+matter.
+The \ref lnk_phy_licht , which is available for the \ref lnk_phytoplankton 
+to do photosynthesis, is extenuated further by other substances within the 
+water.
 
-# Salzkonzentrationen {#lnk_salz}
-Zur Zeit noch nicht realisiert.
+# Salt concentration {#lnk_salz}
+*Currently not implemented.*
 
-Quelle schwebstoff_salz.f95 zurück zu \ref lnk_weitere_stoffe
+Text source: schwebstoff_salz.f95 \n
+Go back to: \ref lnk_weitere_stoffe

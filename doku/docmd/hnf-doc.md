@@ -1,32 +1,30 @@
-Heterotrophe Nanoflagellaten (HNF)  {#lnk_hnf}
+Heterotrophic Nanoflagellates (HNF)  {#lnk_hnf}
 ==================================
 
-\warning Momentan ist das Modul ausgeschaltet, das heißt, HNF werden nicht
-simuliert.
+\warning This module is currently switched off, that is, HNF are not simulated.
 
-Heterotrophe Nanoflagellaten (HNF) sind einzellige tierische Organismen mit 
-einer Zellgröße von 2 bis 20 µm, die sich von Bakterien ernähren. HNF können 
-neben Ciliaten und Rotatorien entscheidend die Zooplanktongemeinschaft in 
-großen Flüssen prägen (Bergfeld et al. 2009). In QSim wird das mikrobielle 
-Nahrungsnetz modelliert, indem die Entwicklung von heterotrophen Nanoflagellaten 
-(HNF) und ihr Einfluss auf Bakterien integriert wurden. Die Chrysomonadengattung 
-Spumella wurde als Modellorganismus für HNF ausgewählt, weil sie die dominante 
-Gattung im Rhein ist (WEITERE & ARNDT 2002, PRAST ET AL. 2003). Die Modellierung 
-der HNF-Biomasse ist in Formel [32] dargestellt. Die Grazingrate der HNF durch 
-Metazoen und benthische Filtrierer wird aus dem filtrierten Wasservolumen pro 
-Zeitschritt analog zur Grazingrate der Algen berechnet.  Es wird die Annahme 
-getroffen, dass alle im filtrierten Wasservolumen enthaltenen Beuteorganismen 
-aufgenommen werden ohne eine Präferenz für bestimmte Beuteorganismen.
+Heterotrophic nanoflagellates (HNF) are unicellular animal organisms with a 
+cell size of 2 to 20 µm that feed on bacteria. Besides ciliates and rotifers, 
+HNF can play a decisive role in shaping the zooplankton community in
+large rivers (Bergfeld et al. 2009). In QSim, the microbial food web is modelled 
+by examining the development of heterotrophic nanoflagellates (HNF) and their 
+influence on bacteria. The chrysomonad genus Spumella was chosen as a model 
+organism for HNF in QSim because it is the dominant genus in the River Rhine 
+(WEITERE & ARNDT 2002, PRAST ET AL. 2003). The grazing rate of the HNF by 
+metazoans and benthic filter feeders is calculated from the filtered water 
+volume per time step analogous to the grazing rate of algae. The assumption is 
+made that all prey organisms contained in the filtered water volume are ingested 
+without a preference for certain prey organisms.
 
-
-Weitere Details zum Baustein sind in den folgenden Abschnitten
-beschrieben:
-- \subpage lnk_hnf_prozesse : Erläuterung der im Baustein A implementierten Prozesse
-- \subpage lnk_hnf_vars : Auflistung der verwendeten Formelzeichen und Variablen
-- \subpage lnk_hnf_umsetzung : Details zum Code und der numerischen Umsetzung
+Further details on the module are described on the following sections:
+- \subpage lnk_hnf_prozesse : Explanation of the processes implemented 
+   within the HNF module
+- \subpage lnk_hnf_vars : List of formula symbols and variables
+- \subpage lnk_hnf_umsetzung : Details on the code and its numeric 
+   implementation 
 
 
 \n\n
 
-Textquelle: hnf-doc.md ; Codesource: hnf.f90
+Text source: hnf-doc.md ; Code source: hnf.f90
 

@@ -34,8 +34,10 @@
 \newcommand{\Lg}{\text{L$\,$g$^{-1}$}}
 \newcommand{\kgmqsinv}{\text{kg$\,$m$^{-2}\,$s$^{-1}$}}
 \newcommand{\kgminvsq}{\text{kg$\,$m$^{-1}\,$s$^{-2}$}}
+\newcommand{\gmq}{\text{g$\,$m$^{-3}$}}
+\newcommand{\gmqd}{\text{g$\,$m$^{-3}\,$d$^{-1}$}}
 \newcommand{\gCmq}{\text{gC$\,$m$^{-3}$}}
-\newcommand{\gCmqd}{\text{gC$\,$m$^{-3}\,$d${-1}$}}
+\newcommand{\gCmqd}{\text{gC$\,$m$^{-3}\,$d$^{-1}$}}
 
 \newcommand{\OO}{\text{O$_2$}}
 

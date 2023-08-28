@@ -1,18 +1,19 @@
-Schwebstoff {#lnk_schweb}
+Suspended sediment {#lnk_schweb}
 =================
 
-\warning Der Text stammt aus einer früheren Version der Dokumentation und 
-wurde nicht mit dem Code gegengecheckt
+\warning This text is from an older version of the documentation. The content 
+has not been checked with the current code
 
-Im Modell wird der Schwebstoffanteil, der durch die lebende organische Substanz 
-verursacht wird, in den jeweiligen Bausteinen berücksichtigt. Deshalb muss der 
-Schwebstoffgehalt an den Modellrändern zu Beginn der Simulation um diesen Anteil 
-verringert werden. Der Gesamtschwebstoffgehalt am Ende des Zeitschritts 
-errechnet sich aus den anorganischen Schwebstoffen, dem Detritus und der Algen- 
-und Rotatorienbiomasse.
+In the model, the share of suspended matter caused by the living organic matter  
+is taken into account in the respective modules. Therefore, 
+the suspended matter content at the model boundaries has to be reduced by this 
+fraction at the beginning of the simulation. 
+The concentration of total suspended matter at the end of each time step 
+is calculated from the concentrations of inorganic suspended matter, detritus, 
+algal and rotifer biomass. 
 
-Die Massenbilanzgleichung für die anorganischen Schwebstoffe sowie für den 
-Detritus lautet:
+The mass balance for inorganic suspended matter and for detritus is 
+calculated as:
 
 \f{equation}{
  \begin{split}
@@ -22,21 +23,21 @@ Detritus lautet:
  \end{split}
 \f}
 
-\f$SS\f$:	Gehalt an anorganischen Schwebstoffen und Detritus [g*m-3] \n
-\f$\Delta SS_{Corg}\f$	Änderung des Gehalts an partikulären organischen Kohlenstoffverbindungen
-	bei der Hydrolyse [g*m-3*d-1] \n
-\f$ass_{DR}\f$	Assimilationsanteil der durch Dreissena aufgenommenen Nahrung [-] \n
-\f$DR\f$	Biomasse einer einzelnen Dreissena [g] \n
-\f$SS_{sed}\f$: sedimentierte Menge an anorganischen Schwebstoffen und an Detritus
-	[g*m-3*d-1] \n
+\f$SS\f$: Concentration of inorganic suspended matter and detritus [\f$ \gmq \f$] \n
+\f$\Delta SS_{Corg}\f$	Change in the concentration of particulate organic 
+  matter due to hydrolysis [\f$\gmqd\f$] \n
+\f$ass_{DR}\f$ Assmiliation share of food taken up by Dreissena [-] \n
+\f$DR\f$ Biomass of a single *Dreissena* [\f$g\f$] \n
+\f$SS_{sed}\f$: Deposited amount of inorganic suspended matter and detritus [\f$\gmqd\f$] \n
 
-Der Gesamtschwebstoffgehalt ergibt sich dann aus:
+The total suspended matter concentration then is:
  
 \f{equation}{SS_G = SS + A_j + ROT \f}
 
-## Schwebstoff aus UnTRIM²/SediMorph
-Es ist möglich, in QSim3D den in UnTRIM²/SediMorph berechneten Schwebstoff zu 
-verwenden. Eine Anleitung dazu findet sich unter \subpage lnk_SPM_UnTRIM2 .
+## Suspended matter from UnTRIM²/SediMorph
+Within QSim3D, it is possibel to use the suspended matter concentration 
+calculated by UnTRIM²/SediMorph. An instruction to do this can be found 
+[here](\subpage lnk_SPM_UnTRIM2) .
 
-aus Datei schwebstoff-doc.md ;
-zurück: \ref lnk_ueberblick
+Text source schwebstoff-doc.md ; \n
+Go back to: \ref lnk_ueberblick

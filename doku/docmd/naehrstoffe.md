@@ -1,27 +1,29 @@
-Nährstoffe {#lnk_naehrstoffe}
+Nutrients {#lnk_naehrstoffe}
 ==========
 
-Kohlenstoff ist die primäre Bausubstanz von Organismen und damit "die Währung"
-vieler ökologischer Modelle. Durch Primärproduzenten wird Kohlenstoff aus dem Wasser
-aufgenommen und steht als Biomasse für höhere trophische Ebenen zur Verfügung. 
-Der Abbau von organischer Substanz macht den Kohlenstoff wieder verfügbar, zehrt 
-dabei jedoch Sauerstoff. Die Abschätzung dieser Sauerstoffzehrung ist eine der
-wesentlichen Aufgaben der Gewässergütemodellierung.
+Carbon is the primary building material of organisms and thus "the currency" of 
+many ecological models. Carbon is taken up from the water by primary producers
+and is then available as biomass for higher trophic levels. 
+The decomposition of organic matter makes the carbon available again, but 
+depletes oxygen in the process. 
+The estimation of this oxygen depletion is one of the main essential tasks of 
+water quality modelling.
 
 <!-- In QSim wird der Umsatz verschiedener Kohlenstoff-Fraktionen in einem eigenen 
 Modul (orgC) berechnet:
 - \subpage lnk_orgC 
 -->
 
-Die Primärproduzenten brauchen zum Wachsen nicht nur Kohlenstoff, sondern auch
-verschiedene Nährstoffe. Die Umsätze der mengenmäßig wichtigsten Nährstoffe 
-(Stickstoff, Phosphor und Silikat) werden in einzelnen Modulen quantifiziert:
+The primary producers do not only need carbon for growth, but also various 
+nutrients. The turnover of the nutrients nitrogen, phosphorus and silicate, 
+which are the most important nutrients by mass, are quantified in single 
+modules:
 
 - \subpage lnk_stickstoff
 - \subpage lnk_phosphor
 - \subpage lnk_silikat
 
-Silikat ist dabei nur für die Diatomeen (= Kieselalgen) relevant, da diese 
-Algen die Außenhülle ihrer Zellen aus Silikat aufbauen.
+Silicate is only relevant for diatoms, since these algae build their outer 
+shell from silicate.
  
-Textquelle: naehrstoffe.md; zurück: \ref lnk_ueberblick
+Text source: naehrstoffe.md; Go back to: \ref lnk_ueberblick

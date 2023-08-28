@@ -26,7 +26,7 @@
 ! --------------------------------------------------------------------------- !
 
 !> Hüllfunktion für den organischen Kohlenstoff
-!! Beschreibung in \ref BSB 
+!! Beschreibung in \ref lnk_orgC 
 !! ruft organic_carbon() auf
 !! siehe auch: \ref lnk_huellen
 !! Quelle: organic_carbon_wrapper_3d.f95

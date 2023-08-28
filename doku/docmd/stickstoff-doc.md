@@ -1,61 +1,58 @@
-Stickstoff {#lnk_stickstoff}
+Nitrogen {#lnk_stickstoff}
 =======================
 
-Die Anwendung von Düngemitteln, Einträge über Kläranlagen, Luftverschmutzungen 
-sowie die Degradation entwässerter Feuchtgebiete führen zu überhöhten 
-Stickstoff-Emissionen in die Gewässer. Ein Teil dieses Stickstoffs wird im 
-Gewässer umgesetzt und/oder zurückgehalten (Retention). Unterschiedliche Prozesse 
-können zur Nährstoffretention in Fluss und Aue beitragen. Dabei wird zwischen 
-einem temporären Rückhalt und der dauerhaften Entfernung aus dem Ökosystem 
-unterschieden. 
+The application of fertilisers, inputs via sewage treatment plants, air 
+pollution as well as the degradation of drained wetlands lead to excessive 
+nitrogen emissions into water bodies. Some of this nitrogen is converted 
+and/or retained in the water body (retention). Different processes 
+can contribute to nutrient retention in rivers and floodplains. A distinction 
+is made between temporary retention and permanent removal from the ecosystem. 
 
-In QSim werden die Änderung von Gesamt-Stickstoff, Ammoniumstickstoff, 
-Nitritstickstoff und Nitratstickstoff durch Einleitungen und Umsatzprozesse 
-berechnet. Zu Beginn jeder Simulation wird die Gesamt-Stickstoffkonzentration am 
-oberen Rand des Simulationsgebietes sowie der Einleiter und der Nebengewässer um 
-die in Algen- und Zooplanktonbiomasse gebundenen Anteile sowie um die anorganischen
-Stickstoffkomponenten reduziert. Der restliche Stickstoff ist der organische Anteil 
-des Detritus und der gelösten organischen Verbindungen.
+In QSim, the change in total nitrogen, ammonium nitrogen, nitrite nitrogen and 
+nitrate nitrogen is calculated by changes in discharges and turnover processes. 
+At the beginning of each simulation, the total nitrogen concentration at  
+the upper boundary and the tributaries is reduced by the inorganic nitrogen
+components and by the nitrogen fractions bound in algal and zooplankton biomass. 
+The remaining nitrogen is the organic fraction of detritus and dissolved organic
+compounds.
 
-Für die N-Retention werden in QSim momentan nur die 
-Sedimentation des organischen Materials und die Retention über benthische 
-Filtrierer (Aufnahme in benthische Biomasse) berücksichtigt.
-Eine Freisetzung von gelösten N-Komponenten (NH4-Flux aus dem Sediment, dieser führt 
-zu negativen Retentionswerten) sowie die durch benthische Nitrifikation und/oder 
-Denitrifikation entstehenden NO3-Fluxe in oder aus dem Sediment werden momentan
-nicht berücksichtigt. 
+For N retention, QSim currently only considers the sedimentation of organic 
+material and the retention via benthic filter feeders (uptake into benthic 
+biomass).
+A release of dissolved N components (NH4 flux from the sediment, which leads to
+negative retention values) as well as the NO3 fluxes into or out of the sediment
+that are produced by benthic nitrification and/or denitrification are currently 
+not taken into account. 
 
-Weitere Veränderungen auf der Fließstrecke erfahren der Gesamt-Stickstoffgehalt 
-sowie der anorganische Stickstoff durch punktförmige und diffuse Einleitungen. 
-Suspendierte Nitrifikanten (Nitrosomonas und Nitrobakter) 
-werden zur Beschreibung der Nitrifikation in der fließenden Welle benötigt. 
-Ihr Wachstum wird in Abhängigkeit von den Milieubedingungen berechnet. 
-Dabei ist die lokale Wachstumsrate 
-der Nitrifikanten abhängig von der vorherrschenden Wassertemperatur, dem aktuellen 
-Sauerstoffgehalt und dem Angebot an Ammoniumstickstoff (Nitrosomonas) und 
-Nitritstickstoff (Nitrobakter). Außerdem wird die Hemmung des Wachstums durch die 
-pH-abhängigen Konzentrationen an Ammoniak (wirkt auf die Wachstumsrate der 
-Nitrobakter) und salpetriger Säure (wirkt auf die Wachstumsrate der Nitrosomonas) 
-berücksichtigt. Ferner wird die Konzentrationsänderung der einzelnen 
-Organismengruppen durch Sedimentation und Mortalität berechnet.
-
-Bei der Bilanz des Ammoniumstickstoffs werden neben der bakteriellen Oxidation 
-von Ammonium noch andere Prozesse berücksichtigt. Diese umfassen die 
-Ammoniumaufnahme durch Algen sowie die Ammonium-Nachlieferung 
-beim Abbau organischen Materials. 
-Bei der Veränderung des Nitratstickstoffs dient die Oxidation des Nitrits als 
-Quellterm, die Aufnahme durch Algen als Senkenterm.
+Total nitrogen content and inorganic nitrogen are further changed along the 
+river by point sources and diffuse discharges.
+Suspended nitrifiers (nitrosomonas and nitrobacter) are needed to describe the
+nitrification. Their growth rate depends on water temperature, 
+oxygen concentration and the supply of ammonium nitrogen (Nitrosomonas) and
+nitrite nitrogen (nitrobacter). The nitrifiers' growth is inhibited by the
+pH-dependent concentrations of ammonia (affecting the growth rate of the
+nitrobacter) and nitrous acid (affecting the growth rate of Nitrosomonas). 
+Further factors of a concentration change of both nitrifiers are sedimentation 
+and mortality.
 
 
-Details zum Stickstoff-Modul sind in den folgenden Abschnitten beschrieben:
+Additional processes are taken into account when balancing ammonium nitrogen. 
+These include the ammonium uptake by algae and the supply of ammonium
+from the decomposition of organic matter.
+The oxidation of nitrite serves as a source term for nitrate nitrogen, the 
+uptake by algae as sink term.
 
-- \subpage lnk_stickstoff_prozesse : Erläuterung der im Kohlenstoff-Baustein 
-implementierten Prozesse 
+Details on the nitrogen module can be found in the following sections:
 
-- \subpage lnk_stickstoff_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_stickstoff_prozesse : Explanation of the processes implemented 
+   within the nitrogen module
 
-- \subpage lnk_stickstoff_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_stickstoff_vars : List of formula symbols and variables 
+
+- \subpage lnk_stickstoff_umsetzung : Details on the code and its numeric 
+   implementation 
 
 \n\n
 
-Textquelle: stickstoff-doc.md ; Codesource: ncyc.f90
+Text source: stickstoff-doc.md ; Code sources: module_nitrogen.f90,
+nitrifiers.f90, nitrogen.f90

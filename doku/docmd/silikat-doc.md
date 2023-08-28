@@ -1,27 +1,31 @@
-Silikat {#lnk_silikat}
-=======
+Silicate {#lnk_silikat}
+========
 
 ![Zeichnung Diatomeen, aus Ernst Haeckel's ''Kunstformen der Natur'' (1904)](img/Haeckel_Diatomea_klein_wide.jpg)
 
-<small>Quelle: https://commons.wikimedia.org/wiki/File:Haeckel_Diatomea.jpg Heruntergeladen 12. Nov. 2019</small>
+<small>Quelle: https://commons.wikimedia.org/wiki/File:Haeckel_Diatomea.jpg Downloaded on 12. Nov. 2019</small>
 \n\n
  
-Silizium wird von den Kieselalgen (lat.: Diatomea) für den Aufbau ihres 
-Kieselsäuregerüstes benötigt und kann beim Wachstum die limitierende Größe darstellen. 
-Silizium ist nur als im Wasser gelöstes Silikat bioverfügbar.
-Silikat wird in erster Linie aus Kläranlagen und über diffuse Quellen in die Gewässer 
-eingetragen. Im Modell wird zurzeit nur die Siliziumaufnahme durch planktische 
-Kieselalgen berücksichtigt. Die Rücklösung aus dem Sediment ist ausgeschaltet,
-sie macht nur einen geringen Anteil der Konzentrationsänderungen aus.
+Silicon is needed by diatoms (lat.: Diatomea) to build up their silicic shell 
+and can be the limiting factor for their growth. 
+Silicon is only bioavailable as silicate dissolved in water.
+Silicate is primarily discharged into water bodies from sewage treatment plants 
+and via diffuse sources. 
+Currently, QSim only takes into account silicon uptake by planktonic diatoms. 
+Resuspension from the sediment is switched off, it only accounts for a small
+share of the concentration changes.
 
-Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
-- \subpage lnk_silikat_prozesse : Erläuterung der im Silikat-Baustein 
-implementierten Prozesse 
+Further details on the module are described in the following sections:
 
-- \subpage lnk_silikat_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_silikat_prozesse : Explanation of the processes implemented 
+   within the silicate module
 
-- \subpage lnk_si_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_silikat_vars : List of formula symbols and variables 
+
+- \subpage lnk_si_umsetzung : Details on the code and its numeric 
+   implementation
 
 \n\n
 
-Textquelle: silikat-doc.md ; Codesource: silikat.f90
+Text source: silikat-doc.md ; Code sources: module_silicate.f90, silicate.f90 
+and silicate_wrapper_3d.f95; go back to: lnk_naehrstoffe

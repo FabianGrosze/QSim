@@ -1,69 +1,66 @@
-Überblick  {#lnk_ueberblick}
+Overview  {#lnk_ueberblick}
 =========
  
  
-Was wird simuliert?
+What is simulated?
 -------------------
 
 <!-- In der Liste könnte man auch auf die Subpages verlinken
 und die Subpages entsprechend anordnen...-->
-Für die Simulation der einzelnen Stoffumsetzungs-Prozesse, die im fließenden 
-Wasser ablaufen, verwendet QSim Module. Diese sind:
-- Das Modul für den \ref lnk_waerme,
-- 6 bio-chemische Module zur Beschreibung von \ref lnk_sauerstoff,  
-  \ref lnk_ph und \ref lnk_orgC sowie der \ref lnk_naehrstoffe \ref lnk_stickstoff, 
+QSim uses modules to simulate the individual mass transfer processes that 
+take place in flowing water. These are:
+- The module for the \ref lnk_waerme,
+- 6 bio-chemical modules to describe \ref lnk_sauerstoff,  
+  \ref lnk_ph and \ref lnk_orgC, and the \ref lnk_naehrstoffe \ref lnk_stickstoff, 
   \ref lnk_phosphor und \ref lnk_silikat.
-- 1 biologisches Modul zur Erfassung von \ref lnk_primaer : 
-  [Phytoplankton (Algen)](\ref lnk_phytoplankton); \n
-  [benthische Algen](\ref lnk_albenth) und 
-  [Makrophyten (Wasserpflanzen)](\ref lnk_makrophyt) sind derzeit abgeschaltet
-- 2 biologische Module zur Erfassung der ersten trophischen Ebene 
-  (\ref lnk_konsumenten) : [Zooplankton](\ref lnk_rotatorien) sowie 
-  [benthische Filtrierer (Muscheln)](\ref lnk_dreissena)
-- sowie weitere Module für: \ref lnk_schwermetalle , 
-  \ref lnk_schweb und \ref lnk_aufenthaltszeit
+- 1 biological module for the simulation of \ref lnk_primaer : 
+  [pelagic phytoplankton (algae)](\ref lnk_phytoplankton); \n
+  [benthic algae](\ref lnk_albenth) and 
+  [macrophytes (aquatic plants)](\ref lnk_makrophyt) are currently switched off.
+- 2 biological modules for recording the first trophic level 
+  [consumers](\ref lnk_konsumenten) : [zooplankton](\ref lnk_rotatorien) 
+  as well as [benthic filter feeders (mussels)](\ref lnk_dreissena)
+- as well as further modules for: \ref lnk_schwermetalle , 
+  \ref lnk_schweb und \ref lnk_aufenthaltszeit.
   
-Das [Sedimentmodul](\ref lnk_sediment), welches frühdiagenetischen
-Prozesse berechnet, die Sauerstoff-, Kohlenstoff- und Nährstoff-Flüsse 
-hervorrufen ist derzeit abgeschaltet  
+The [sediment module](\ref lnk_sediment), which calculates early diagenetic 
+processes that cause oxygen, carbon and nutrient fluxes, is currently switched 
+off.  
 
-Weitere Module, die derzeit abgeschaltet sind, sind \ref lnk_coliform,
-\ref lnk_hnf und \ref lnk_corophium .
+Other modules that are currently switched off are \ref lnk_coliform,
+\ref lnk_hnf and \ref lnk_corophium .
 
-
-Eine kurze Beschreibung der Stoffumsetzungs-Module finden Sie in
+A short overview of the biogeochemical modules can be found in
 <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+492" target="_blank">Schöl et al. 2014</a>,
-ausführlichere Informationen sind in den Unterkapitel der einzelnen Module 
-verfügbar.
+more detailed information is available in the sub-chapters of the individual 
+modules.
 
-Die Simulation der advektiven und diffusiven Transportprozesse der o.g. 
-Wasserinhaltstoffe erläutert der 
-Abschnitt [Stofftransport](\ref lnk_stofftransport_3d).
-Auch der Transport eines [Tracers](\ref lnk_tracer), welcher keinem Stoffumsatz 
-unterliegt ist mit QSim möglich.
+The simulation of the advective and diffusive transport of matter is 
+described in the section [matter transport](\ref lnk_stofftransport_3d).
+Also [conservative tracers](\ref lnk_tracer) can be simulated with QSim.
 
-Eine weitere kurze Einführung in die Gewässergütesimulation mit QSim finden Sie 
-auf der
+You can find a brief introduction to the water quality simulation with 
+QSim in German on the
 <a href="http://www.bafg.de/DE/08_Ref/U2/01_mikrobiologie/QSIM/qsim_node.html" target="_blank">
-Website der Bundesanstalt für Gewässerkunde</a>, in der
+website of the Federal Institute of Hydrology</a>, under 
 <a href="http://bibliothek.bafg.de/webopac/index.asp?detsuche_systematik=online+321" target="_blank">
 QSim Übersicht</a>.
 
-QSim ist der Simulationskern für die Gewässergüte.
-Es ist eingebunden in eine Software-Umgebung zu der die hydraulischen Treiber, 
-die graphische Benutzeroberfläche Gerris u.a. gehören: 
+QSim is the core for simulating water quality.
+It is integrated into a software environment which also includes hydraulic 
+drivers, the graphical user interface Gerris and others: 
 \subpage lnk_qsim_aufbau .
 
-Falls Sie selbst mit QSim arbeiten wollen, hilft Ihnen der Abschnitt 
-\ref lnk_download weiter.
+If you want to work with QSim yourself, this section will help you
+\ref lnk_download continue.
 
-Das folgende Kapitel \subpage lnk_doxygen_info gibt ein paar Tipps, wie
-dieses Dokumentationsportal zu lesen und zu verwenden ist.
+The following chapter \subpage lnk_doxygen_info gives a few tips on how
+to read and use this documentation portal.
 
-Im Kapitel \subpage lnk_geschichte_qsim wird die Entwicklungsgeschichte
-von QSim beschrieben.
+The history of QSim development is given in the chapter 
+\subpage lnk_geschichte_qsim
 
 
-Aus Datei: ueberblick.md ; zurück zu <a href="index.html">main</a>
-Textquelle: ueberblick.md ; zurück: \ref index
+Text source: ueberblick.md ; go back to <a href="index.html">main</a>
+Text source: ueberblick.md ; go back to: \ref index
  

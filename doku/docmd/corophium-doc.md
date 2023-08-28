@@ -1,47 +1,45 @@
 Chelicorophium {#lnk_corophium}
 ==============
 
-\warning Momentan ist das Modul ausgeschaltet, das heißt, Corophium wird 
-nicht simuliert. Es handelt sich um eine alte Dokumentation.
+\warning This module is currently switched off. That is, Corophium is not 
+simulated. This is an old documentation.
 
+In QSim, the removal of phytoplankton by benthic filter feeders is done in the 
+Dreissena and chelicorophium modules. Both species, the zebra mussel 
+Dreissena polymorpha and the mud crab chelicorophium curvispinum, are so-called 
+active filter feeders, which actively swirl the fine organic material 
+and filter out fine and very fine particulate organic matter and thus also the 
+planktonic algae (floating in the water) from the water body. 
+Both benthic filter feeders are neozoans that reach very high densities in 
+running waters and can dominate the benthic community. The 
+modelling of benthic filter feeders in QSim is not intended to describe the 
+development of benthic filter feeders in a water body, but to quantify their 
+feeding pressure on the phytoplankton.
 
-In QSim wird der Wegfraß des Phytoplanktons durch benthische Filtrierer in den 
-Bausteinen Dreissena und Chelicorophium umgesetzt. Beide Arten, die Zebramuschel 
-Dreissena polymorpha und der Schlickkrebs Chelicorophium curvispinum, sind 
-sog. aktive Filtrierer, die das feine organische Material aktiv herbeistrudeln 
-und feine und feinste partikuläre organische Substanzen und damit auch die 
-planktischen (im Wasser schwebenden) Algen aus dem Wasserkörper filtrieren. 
-Beide benthischen Filtrierer sind Neozoen, die in Fließgewässern sehr hohe 
-Dichten erreichen und die Benthosgemeinschaft dominieren können. Die 
-Modellierung der benthischen Filtrierer in QSim dient nicht der Beschreibung 
-der Entwicklung von benthischen Filtrierern in einem Gewässer, sondern der 
-Quantifizierung ihres Fraßdrucks auf das Phytoplankton.
+In contrast to the zebra mussel, the population development of the 
+mud crab is modelled using simple assumptions based on Rajagopal et. 
+al. (1999) (\cite Rajagopal_1999). Only their filtration rate is 
+calculated over the year. In other modules such as the oxygen 
+or carbon module, chelicorophium is not included.
 
-Im Gegensatz zur Zebramuschel wurde die Populationsentwicklung beim 
-Schlickkrebs im Modell nur mit einfachen Annahmen basierend auf Rajagopal et. 
-al. (1999) (\cite Rajagopal_1999) umgesetzt. Dabei wird ausschließlich ihre 
-Filtrierrate im Jahresgang berechnet, in weitere Bausteine wie dem Sauerstoff 
-oder organischem Kohlenstoff ist Chelicorophium nicht eingebunden. 
+Three generations are mapped during one annual cycle, the growth of 
+of chelicorophium depends only on its initial individual density at the start 
+of the model. No other influencing factors such as water temperature or food 
+availability were implemented in the module. The loss rates are also 
+unaffected by external factors. For the simulation runs 
+the density of individuals for chelicorophium is entered for the 01.01. of 
+each year. The density is differentiated into embankment and channel bed. 
+When entering the values, the modelled water body can be divided into different 
+sections in order to set the distribution of the chelicorophium abundances for 
+embankment and channel bed along the river.
 
-Es werden drei Generationen während eines Jahresgangs abgebildet, das Wachstum 
-von Chelicorophium ist nur von seiner Ausgangsindividuendichte am Modellstart 
-abhängig. Keine anderen Einflussfaktoren wie die Wassertemperatur oder die 
-Futterverfügbarkeit wurden im Baustein umgesetzt, die Verlustraten sind 
-ebenfalls unbeeinflusst von äußeren Faktoren. Bei den Simulationsläufen wird 
-jeweils für den 01.01. eines jeden Jahres eine Individuendichte für 
-Chelicorophium unterschieden nach den Standorten Böschung und Sohle 
-eingegeben. Dabei kann das modellierte Gewässer in verschiedene Abschnitte 
-unterteilt werden, um die Verteilung der Chelicorophiumabundanzen für Sohle 
-und Böschung entlang des Flusses abzubilden. 
+The start and subsequent generations die off at different times, 
+the last generation forms the basis for the next year's start generation. 
+year. Due to the high dominance of chelicorophium in the Danube river, the 
+module was added within a EU study on the Danube (BfG-1740, 2013) in order to 
+reproduce the algal development with QSim.
 
-Die Start- und Folgegenerationen sterben zu unterschiedlichen Zeitpunkten ab, 
-die letzte Generation bildet die Basis für die Startgeneration im nächsten 
-Jahr. Durch die hohe Dominanz von Chelicorophium in der Donau wurde der 
-Baustein im Rahmen der EU-Studie Donau (BfG-1740, 2013) hinzugefügt, um die 
-Algenentwicklung mit QSim abbilden zu können.
-
-
-Weitere Informationen:
+Further information:
 - \subpage lnk_corophium_prozesse
 - \subpage lnk_corophium_vars
 - \subpage lnk_corophium_umsetzung
@@ -51,7 +49,5 @@ Weitere Informationen:
 \n\n
 
 
-Textquelle: corophium-doc.md ; Codesource: coroph.f90 ; 
-zurück: \ref lnk_konsumenten oder \ref lnk_ueberblick
-
-
+Text source: corophium-doc.md ; Code source: coroph.f90 ; 
+go back to: \ref lnk_konsumenten oder \ref lnk_ueberblick

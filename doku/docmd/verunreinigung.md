@@ -1,8 +1,8 @@
-Schwebstoffe/Schadstoffe/Hygiene {#lnk_weitere_stoffe}
+Suspended matter/Pollutants/Hygiene {#lnk_weitere_stoffe}
 ================================
 
-- \subpage lnk_schwebstoff_salz und \subpage lnk_schweb
+- \subpage lnk_schweb and \subpage lnk_schwebstoff_salz
 - \subpage lnk_coliform
 - \subpage lnk_schwermetalle
 
-aus Datei verunreinigung.md
+Text source: verunreinigung.md

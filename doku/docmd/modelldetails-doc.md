@@ -1,13 +1,13 @@
-Modelltechnische Details {#lnk_modelldetails}
+Modelling details {#lnk_modelldetails}
 =========================
 <!-- #mf: Name vorher war "Modellstruktur & Numerik"; es braucht evtl. noch 
 einen besseren Namen -->
 
-Dieser Teil der Dokumentation wurde für fortgeschrittene Anwender:innen und
-Entwickler:innen von QSim zusammengestellt. Er befasst sich mit dem Aufbau
-und der Numerik von QSim.
+This part of the documentation has been compiled for experience users and 
+developers. It sumarises information on the structure of QSim and the numerics 
+behind it.
 
-Im Einzelnen gehört dazu:
+In detail this includes:
 
 - \subpage lnk_modellstruktur
 - \subpage lnk_simulationsverfahren
@@ -15,4 +15,4 @@ Im Einzelnen gehört dazu:
 - \subpage lnk_parallelisierung 
 - \ref lnk_randbedingungen
 
-aus Datei: modelldetails-doc.md
+Text source: modelldetails-doc.md

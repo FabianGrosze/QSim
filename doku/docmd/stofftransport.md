@@ -1,42 +1,41 @@
-Stofftransport  {#lnk_stofftransport}
+Mass transport  {#lnk_stofftransport}
 =================
 
-In Fließgewässern gelöste Stoffe sowie planktisch lebende Organismen, die 
-vernachlässigbare Bewegungen gegenüber dem umgebenden Wasser ausführen, werden 
-mit der Strömungsgeschwindigkeit transportiert. Dabei kommt es nicht nur zur 
-konvektiven Verlagerung, sondern auch zu dispersiven Vermischungen. Diese 
-beruhen auf einer Reihe physikalischer Effekte und führen dazu, dass die 
-Maximalkonzentration mit zunehmender Fließstrecke verringert wird, aber 
-gleichzeitig, dass das mit Stoffen versetzte Wasservolumen anwächst 
-(Abbildung 1). Je nachdem um welche Art von Stoff es sich handelt kann die 
-Wasserqualität maßgeblich beeinträchtigt, aber auch die natürlichen Funktionen 
-aquatischer Ökosysteme beeinflusst werden. Demnach ist der Stofftransport in 
-Fließgewässern ein relevanter Schlüsselprozess, welcher in QSim im 
-„Transportbaustein“ umgesetzt wird. 
+Substances dissolved in flowing waters as well as planktonic organisms, which 
+move negligibly in relation to the surrounding water, are 
+transported with the flow velocity. This leads not only to convective 
+displacement, but also to dispersive mixing. 
+These are based on a series of physical effects and lead to the fact that the 
+concentration is reduced with increasing flow distance, but at the same time 
+that the volume of water mixed with substances increases (Figure 1). 
+Depending on the type of substance involved, the water quality can be affected
+significantly, but also the natural functions of aquatic ecosystems. 
+Accordingly, the transport of substances in water bodies is a relevant key 
+process, which is implemented in QSim in the "transport module". 
 
-Durch die Lösung der 1D-Advektions-Dispersions-Gleichung werden die im 
-Querschnitt gemittelten Konzentrationsänderungen berechnet. Für die Berechnung 
-des Advektionsanteils kann zwischen drei verschiedenen numerischen Verfahren 
-(Cubic interpolated Pseudo-Particle – CIP, Lax-Wendroff-Verfahren und Quadratic 
-Upstream Interpolation for Convective Kinematics with Estimated Upstream Terms – 
-QUICKEST) gewählt werden, während der Dispersionsanteil entsprechend mit dem 
-Crank-Nicolson oder McCormack-Verfahren gelöst wird. Für die Auswahl des 
-Dispersionskoeffizienten stehen vier Gleichungen zur Verfügung. Zusätzlich 
-besteht die Möglichkeit bei mit Buhnen geprägten Fließgewässern laterale 
-Austauchprozesse zu berücksichtigen, um den Einfluss der Stillwasserzonen auf 
-die Stoffkonzentration widerzuspiegeln. 
+By solving the 1D advection-dispersion equation, the concentration changes 
+averaged over the cross-section are calculated. For the calculation of
+the advection fraction, one of three different numerical methods can be selected
+(Cubic interpolated Pseudo-Particle - CIP, Lax-Wendroff method and Quadratic 
+Upstream Interpolation for Convective Kinematics with Estimated Upstream Terms 
+- QUICKEST), while the dispersion fraction can be determined with the 
+Crank-Nicolson or McCormack method. For the selection of the dispersion 
+coefficient, four equations are available. In addition, in waterways 
+characterised by jetties (*Buhne*), the possibility exists of taking lateral 
+exchange processes into account in order to reflect the influence of the 
+stillwater zones on the concentration of matter. 
 
-![Schematische Darstellung der advektiven und dispersiven Prozesse beim Stofftransport.](img/transport_schema_adv_disp.png)
+![Schematic representation of the advective and dispersive processes that affect matter transport.](img/transport_schema_adv_disp.png)
 
-Die Details zum Stofftransport werden in dieser Dokumentation (zunächst) getrennt 
-beschrieben:
+Details on matter transport are (currently) described in separate pages for 1d
+and 3d:
 
 - \subpage lnk_stofftransport_1d
-mit
+with
   - \subpage lnk_transport_1d_vars
   - \subpage lnk_transport_1d_umsetzung
 - \subpage lnk_stofftransport_3d
 
-Textquelle: stofftransport.md ; Codesources: stofftransport.f95 ;  
-zurück: \ref index
+Text source: stofftransport.md ; Code sources: stofftransport.f95 ;  \n
+Go back to: \ref index
  

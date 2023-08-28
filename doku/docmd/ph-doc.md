@@ -1,30 +1,33 @@
-pH-Wert {#lnk_ph}
+pH {#lnk_ph}
 ==========
 
 
 ![ ](pHscala_mini.png)
 
-<small>Quelle: https://commons.wikimedia.org/wiki/File:PHscala.png Creative 
+<small>Source: https://commons.wikimedia.org/wiki/File:PHscala.png Creative 
 Commons Attribution-Share Alike 4.0 International license </small>
 
-Das pH-Modul bilanziert in erster Linie den inorganischen Kohlenstoff (CO2).
+The pH module essentially balances inorganic carbon (CO2).
 
-Kohlendioxid bildet im Wasser Kohlensäure und ist als schwache Säure für die 
-Pufferkapazität des Wassers verantwortlich.
+Dissolved in water, carbon dioxide forms carbonic acid and as a mild acid drives 
+the buffering capacity of water.
 
-Der pH-Wert wird durch die Alkalinität des Wassers wesentlich beeinflusst. \n
-Deswegen bilanziert das pH-Modul zusätzlich den Calciumgehalt des Wassers.
+The pH is largely determined by the alkalinity of water. That is why the pH 
+module in QSim in addition balances the calcite content in the water.
 
 
-Weitere Details zum pH-Modul sind in den folgenden Abschnitten
-beschrieben:
-- \subpage lnk_ph_prozess : Erläuterung der im pH-Modul implementierten Prozesse
-- \subpage lnk_ph_pars : Auflistung der verwendeten Parameter
-- \subpage lnk_ph_umsetzung : Details zum Code und der numerischen Umsetzung
+
+Further Information:
+- \subpage lnk_ph_prozess : Explanation of the processes implemented 
+   within the module
+- \subpage lnk_ph_pars : List of formula symbols and variables
+- \subpage lnk_ph_umsetzung : Details on the code and its numeric 
+   implementation
 
 \n\n
-Textquelle: ph-doc.md ; Codesources: ph.f90 ph_kern.f90 phstart.f90; 
-zurück: \ref lnk_ueberblick
+Text source: ph-doc.md ; Code sources: module_ph.f90, ph.f90, pwert.f90 
+and  ph_wrapper_3d.f90; \n
+go back to: \ref lnk_ueberblick
 
 
 

@@ -1,44 +1,43 @@
-Coliforme Bakterien/Keime (Hygiene) {#lnk_coliform}
+Coliform bactera/Germs (Hygiene) {#lnk_coliform}
 ===================================
 
-\warning Der Hygiene-Baustein ist zurzeit ausgeschaltet. Coliforme Bakterien 
-können daher nicht gerechnet werden. Der Text stammt aus einer früheren
-Version der Dokumentation und ist nicht mit dem Code gegengecheckt.
+\warning The hygiene module is currently switched off. Thus, coliform bacteria 
+currently can not be calculated. The text is from an earlier version of the 
+documentation and the content is not checked with the code.
 
-Fäkalcoliforme Bakterien (i. d. R. Escherichia coli) vermehren sich nicht im 
-Gewässer, sondern sterben in der Umwelt rasch ab und zeigen somit eine relativ 
-frische Verunreinigung mit Fäkalien an. Gesamtcoliforme Bakterien hingegen 
-überleben länger und können sich in organisch reichhaltigen Materialien 
-vermehren oder sind sogar ausschließlich in der Umwelt beheimatet. Entsprechend 
-zeigt diese Gruppe eine mögliche Einschwemmung älterer Fäkalien (Klärschlamm, 
-Jauche, Gülle) und deutet damit auch auf allgemeine Eutrophierungstendenzen hin. 
-Von QSim wird lediglich die Entwicklung fäkalcoliformer Bakterien im 
-Untersuchungsgebiet betrachtet.
+Faecal coliform bacteria (usually Escherichia coli) do not multiply in the 
+water, but die quickly in the environment. They thus indicate a relatively fresh 
+contamination with faeces. Total coliform bacteria, on the other hand, 
+survive longer and can multiply in organically rich materials or are even 
+exclusively indigenous to the environment. Accordingly, 
+this group shows a possible wash-in of older faeces (sewage sludge, 
+sludge, liquid manure) and thus also indicates general eutrophication tendencies. 
+QSim only looks at the development of faecal coliform bacteria in the study area. 
 
-Als besonders schwierig hat sich die Quantifizierung der Eintragspfade der 
-fäkalcoliformen Bakterien (Coli-Bakterien) in das jeweilige Gewässer erwiesen. 
-Die gewässerinternen Umsatzprozesse der Coli-Bakterien sind im Wesentlichen 
-bestimmt durch die stark dezimierende Wirkung des Sonnenlichts (UV-Strahlung), 
-ein Wachstum findet nicht statt. 
+Quantifying the input pathways of faecal coliform bacteria into waterways has 
+proven particularly difficult. 
+The turnover processes of the coli bacteria within the water body are essentially 
+determined by the strongly decimating effect of sunlight (UV radiation), 
+whereas growth does not take place.
 
-Es wurde in QSim ein erster Ansatz zur Beschreibung der Mortalitätsrate von 
-Coli-Bakterien in Abhängigkeit von der UV-Strahlung implementiert, der aber 
-noch überarbeitet werden muss.
+In QSim, a first approach was developed and implemented to describe the 
+mortality rate of coli bacteria as a function of UV radiation. This approach   
+still needs to be revised.
 
-
-\image html badestelle_rhein.png "Krankheitskeime im Wasser können für badenden Menschen gefährlich sein."
+\image html badestelle_rhein.png "Germs within the water can be dangeours for people swimming in the water."
 
 
- Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
+Further information:
 
-- \subpage lnk_coliform_prozesse : Erläuterung der im Schwermetall-Baustein 
-implementierten Prozesse 
+- \subpage lnk_coliform_prozesse : Explanation of the processes implemented 
+   within the module
 
-- \subpage lnk_coliform_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_coliform_vars : List of formula symbols and variables 
 
-- \subpage lnk_coliform_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_coliform_umsetzung : Details on the code and its numeric 
+   implementation
 
 
-Textquelle: coliform-doc.md ; Codesources: coliform_huelle.f95 und coliform.f90 ;  
-zurück: \ref lnk_weitere_stoffe
+Text source: coliform-doc.md ; Code sources: coliform_huelle.f95 and coliform.f90 ; \n 
+Go back: \ref lnk_weitere_stoffe
  

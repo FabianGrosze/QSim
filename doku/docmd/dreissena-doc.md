@@ -1,55 +1,51 @@
 Dreissena {#lnk_dreissena}
 ==========
 
-In QSim wird der Wegfraß des Phytoplanktons durch benthische Filtrierer im 
-Baustein Dreissena umgesetzt. Die Zebramuschel *Dreissena polymorpha* ist ein 
-sogenannter aktiver Filtrierer, die Art strudelt feines organisches Material 
-aktiv herbei und filtriert feine und feinste partikuläre organische Substanzen 
-und damit auch die planktischen (im Wasser schwebenden) Algen aus dem 
-Wasserkörper. *Dreissena polymorpha* ist ein Neozoe, die in Fließgewässern sehr 
-hohe Dichten erreichen und die Benthosgemeinschaft dominieren kann. 
-Die Modellierung der benthischen Filtrierer in QSim dient nicht der Beschreibung 
-der Entwicklung von benthischen Filtrierern in einem Gewässer, sondern der 
-Quantifizierung ihres Fraßdrucks auf Phytoplankton und Schwebstoff.
+In QSim, the removal of phytoplankton by benthic filter feeders is implemented 
+in the Dreissena module. The zebra mussel *Dreissena polymorpha* is a so-called 
+active filter-feeder, the species actively swirls fine organic material and 
+and filters fine and very fine particulate organic matter, and thus also the 
+planktic algae (floating in the water) from the water body. 
+*Dreissena polymorpha* is a neozoan that ca reach very high densities in running 
+waters and dominate the benthic community. 
+The modelling of benthic filter feeders in QSim does not serve to describe the 
+development of benthic filter feeders in a water body, but to quantify their 
+feeding pressure on phytoplankton and suspended matter.
 
-Die Populationsentwicklung von Dreissena ist in QSim basierend auf der 
-Literaturstudie von Seredszus (1998) relativ detailliert modelliert worden. Es 
-werden mit der 0. und 1. Kohorte zwei Generationen abgebildet und die 
-Populationsentwicklung ist abhängig von Temperatur, Nahrung und 
-Ablaichvorgängen. Zusätzlich gibt es eine gewichtsabhängige Mortalitätsrate von 
-Dreissena. Bei den Simulationsläufen werden am Modellstart am 01.01. jeweils die 
-Biomasse (g/m²) der Muscheln sowie das mittlere Gewicht einer Muschel (mg C) für 
-Sohle und Böschung für die 0. und 1. Kohorte eingetragen. Dabei kann das 
-modellierte Gewässer in verschiedene Abschnitte unterteilt werden, um die 
-Verteilung der Muschelabundanzen für Sohle und Böschung entlang des Flusses 
-abzubilden. 
+The population development of Dreissena has been modelled in QSim based on the 
+literature study by Seredszus (1998). Two generations are modelled with a 
+0. and 1. cohort. The population development depends on temperature, food and  
+spawning processes. In addition, there is a weight-dependent mortality rate of 
+dreissena. In the simulation runs, at the start of the model, the following 
+values are entered for the 01.01.: biomass (g/m²) of the mussels and the mean 
+weight of a mussel (mg C) both for the embarkement and the channel bed. 
+The modelled water body can be subdivided into different sections in order to 
+distribution of mussel abundance for embarkement and channel bed along the 
+river. 
 
-Die 0. Kohorte beinhaltet alle Tiere mit einer mittleren Schalenlänge bis 8 mm 
-und die 1. Kohorte alle mit einer mittleren Länge größer 8 mm. Die adulten Tiere 
-(1. Kohorte) erzeugen Larven, die nach dem Festsetzen die 0. Kohorte bilden. 
-Die 0. Kohorte ist frühestens vier Wochen nach dem ersten Ablaichtermin von 
-Bedeutung, also ab Ende Juni jeden Jahres. Somit steigen die Individuendichte 
-und damit auch der dazugehörige Fraßdruck der Zebramuschel im Verlauf eines 
-Jahres an. Die verschiedenen Kohorten wurden eingeführt, um die größenabhängige 
-Filtrierleistung der Muscheln abbilden zu können. Der Dreissena-Baustein wurde 
-entwickelt, um die Algenentwicklung entlang der Mosel 1994 mit QSim abbilden zu 
-können (Schöl et al. 1999)
+The 0. cohort includes all animals with a mean shell length up to 8 mm 
+and the 1. cohort includes all animals with a mean length greater than 8 mm. 
+The adult animals (1st cohort) produce larvae, which form the 0th cohort after 
+becoming entranched at the river bed. The 0. cohort is of importance at the 
+earliest four weeks after the first spawning date, i.e. from the end of June 
+each year. Thus, the density of individuals and the associated feeding pressure 
+of the zebra mussel increases over the year. 
+The different cohorts were introduced in order to simulate the size-dependent 
+filtration performance of the mussels. The Dreissena module was 
+developed to map algal development along the Moselle in 1994 with QSim 
+(Schöl et al. 1999). 
 
 ![<i>Dreissena polymorpha</i>](img/Dreissena_sp5_RalfRombach_BfGU4.jpg)
 
-<small>Quelle: Foto von Ralf Rombach/U4</small>
+<small>Quelle: Photo by Ralf Rombach/U4</small>
 \n\n
 
-Weitere Informationen:
+Further information:
 - \subpage lnk_dreissena_prozesse
 - \subpage lnk_dreissena_vars
 - \subpage lnk_dreissena_umsetzung
 
 
-
-
 <hr>
-Textquelle: dreissena-doc.md ; Codesource: dreissen.f90 ; 
-zurück: \ref lnk_konsumenten
-
-
+Text source: dreissena-doc.md ; Code source: dreissen.f90 ; 
+go back to: \ref lnk_konsumenten

@@ -1,11 +1,10 @@
 Erosion, Sedimentation {#lnk_erosion_sedimentation}
 =======================
 
-_Einleitenden Text für diese Seite_
+The concentration of suspended sediments can be altered by two processes:
 
-- Erosion/Deposition <!-- #mf: hier dann noch eine Unterseite einfügen -->
-- \subpage lnk_sedimentation
+- Erosion \subpage lnk_erosion
+- Sedimentation \subpage lnk_sedimentation
 
-Textquelle: erosion_sedimentation-doc.md ; Codesources: ...
-zurück: \ref index
- 
+Text source: erosion_sedimentation-doc.md ; 
+go back to: \ref index

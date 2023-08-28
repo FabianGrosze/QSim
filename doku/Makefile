@@ -24,6 +24,7 @@ help:
 	@echo "make put_add ==  collect additional content into qsim_doku_additional.zip and copy to $(ADDITIONAL)"
 	@echo "make offline ==  produce stand-alone Version in ./qsim_doku_offline.zip"
 	@echo "make all     ==  compile, achive and install ; including upload of newly made offline Version and additional Material (slow)"
+	@echo "detailed instructions: https://gitlab.lan.bafg.de/qsim/qsim/-/wikis/Dokuportal"
 
 all: clean check date offline doc save insta
 
@@ -56,7 +57,7 @@ date:
 doc:	
 	@doxygen $(CONFIG)
 	@cp ./dox/html/index.html ./dox/html/main.html
-	@cp ./img/bfg_logo.png ./dox/html/logo.png
+	@cp ./img/BfG_Logo_Standard_EN.png ./dox/html/logo.png
 	@cp ./img/qsim_logo.png ./dox/html/qsim.png
 	@cp ./img/qsim_t.ico ./dox/html/qsim.ico
 	@cp -r ./img ./dox/html

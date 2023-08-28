@@ -1,41 +1,46 @@
-Schwermetalle {#lnk_schwermetalle}
+Heavy metals {#lnk_schwermetalle}
 =================
 
-Die Bedeutung der Schwermetalle für den Gewässerschutz liegt in den vielfältigen 
-Schadwirkungen, die viele von ihnen auf die Gewässerbiologie und über das 
-Trinkwasser auf die übrigen Lebensgemeinschaften bis zum Menschen ausüben 
-können. Einige Metalle sind bereits in geringen Konzentrationen hochgradig 
-toxisch, viele sind in hohem Maße bioakkumulierbar.
+The importance of heavy metals for water pollution control lies in the many 
+harmful effects that many of them have on the aquatic biology and, via the 
+drinking water, on other biotic communities, including humans. 
+Some metals are highly toxic even in low concentrations, and many are highly 
+bioaccumulative.
 
-Andererseits gehören zahlreiche Schwermetalle zu den essenziellen 
-Spurenelementen, d. h. ohne sie ist pflanzliches und tierisches Leben nicht 
-möglich.
+On the other hand, many heavy metals belong to the group of essential trace 
+elements, i.e., plant and animal life is not possible without them.
 
-Schwermetalle sind weder biologisch noch abiotisch abbaubar. Sie kommen im 
-Gewässer sowohl gelöst als auch an Feststoffe adsorbiert vor. In gelöster Form 
-unterliegen sie im Fließgewässer fast ausschließlich dem Transport, die Aufnahme 
-geringer Anteile durch Wasserorganismen wird hier vernachlässigt.
+Heavy metals are neither biologically nor abiotically degradable. 
+They occur in water both dissolved and adsorbed to solids. 
+In dissolved form, they are almost exclusively subject to transport in 
+running water. The uptake of small amounts by aquatic organisms is neglected 
+here.
 
-Das Wasser und die Schwebstoffe sind somit die wesentlichen Medien für den 
-Transport von Schwermetallen in Fließgewässern.
+Water and suspended matter are thus the main media for the transport of heavy 
+metals in rivers. 
 
-Die hier dargestellten Ausführungen beziehen sich auch auf das Metalloid Arsen, 
-das zur Vereinfachung nachfolgend ebenfalls unter dem Oberbegriff 
-„Schwermetalle“ subsumiert wird.
+The explanations presented in this documentation refer to the metalloid arsenic, 
+which, for the sake of simplicity, is also subsumed under the generic term 
+"heavy metals".
 
-Weitere Details zum Baustein sind in den folgenden Abschnitten beschrieben:
+Further information:
 
-- \subpage lnk_schwermet_prozesse : Erläuterung der im Schwermetall-Baustein 
-implementierten Prozesse 
+- \subpage lnk_schwermet_prozesse : Explanation of the processes implemented 
+   within the module
 
-- \subpage lnk_schwermet_vars : Auflistung der verwendeten Formelzeichen und Variablen 
+- \subpage lnk_schwermet_vars : List of formula symbols and variables 
 
-- \subpage lnk_schwermet_umsetzung : Details zum Code und der numerischen Umsetzung 
+- \subpage lnk_schwermet_umsetzung : Details on the code and its numeric 
+   implementation
 
-Diese Dokumentation der Schwermetalle basiert auf einer
-<a href="./pdf/Doku_Schwermetall30Jan2020.pdf" target="_blank">früheren Version</a>, 
-die durch das Ingenieurbüro für Wasser und Umwelt, Dr. Schumacher erstellt wurde.
+This documentation is based on an
+<a href="./pdf/Doku_Schwermetall30Jan2020.pdf" target="_blank">earlier version</a>, 
+which was prepared by the engineering office "Ingenieurbüro für Wasser und 
+Umwelt, Dr. Schumacher" comissioned by the BfG (persons in charge:  
+Volker Kirchesch and Dr. Frank Schumacher).
 
 
-aus Datei schwermetalle-doc.md , 
-Codesource: Schwermetalle.f90 und Schwermetalle_kern.f90 ; 
+Text source: schwermetalle-doc.md , 
+Code sources: Schwermetalle.f90 and Schwermetalle_kern.f90 ; 
+
+Go back to: \ref lnk_weitere_stoffe

@@ -56,7 +56,7 @@ mit
                   an Feststoff adsorbiert) [\f$ \ugL \f$] \n
 \f$ SM_p \f$:     Konzentration des an Feststoff adsorbierten (partikulär 
                   gebundenen) Schwer-metalls [\f$ \ugL \f$] \n
-\f$ K_D \f$:	  Verteilungskoeffizient [\f$ l \cdot g^{-1} \f$] \n
+\f$ K_D \f$:	  Verteilungskoeffizient [\f$ \Lg \f$] \n
 \f$ C_{SS} \f$:	  Schwebstoffkonzentration [\f$ \mgL \f$] \n
 
 \n
@@ -71,9 +71,9 @@ zu Beginn der Simulation aus Gleichung \f$\eqref{eq:schwer_SM_gel}\f$ berechnet:
 \f}
 
 
-Fehlt der Messwert für die Gesamt- oder die gelöste Konzentration, werden die
-Verteilungskoeffizienten wahlweise nach zwei Verfahren 
-(\cite Deltares_2017 oder \cite ATV_2002) ermittelt 
+Fehlt der Messwert für die gelöste Konzentration (Fall 1) oder die Gesamt-Konzentration (Fall 2), 
+wird der Verteilungskoeffizient je nach gewähltem Berechnungsverfahren nach Tabelle 3 eingesetzt 
+(Verfahren mit konstantem KD-Wert) oder nach Formel (9) ermittelt (Verfahren nach \cite ATV_2002) 
 und die fehlende Konzentration berechnet:
 
 Fall 1: \f$ SM_{ges} \f$ angegeben, \f$ SM_{gel} \f$  nicht angegeben
@@ -89,7 +89,7 @@ Fall 2 : \f$ SM_{ges} \f$ nicht angegeben, \f$ SM_{gel} \f$ angegeben
 \f}
 
 Wenn der Wert für die Gesamt-Konzentration kleiner oder gleich dem Wert für die 
-gelöste Konzentration ist, erhält die gelöste Konzentration den Wert der 
+gelöste Konzentration ist (Fall 3), erhält die gelöste Konzentration den Wert der 
 Gesamt-Konzentration.
  
 Fall 3 : \f$SM_{ges}\f$  und \f$SM_{gel}\f$ angegeben, aber \f$SM_{ges}\f$ < \f$SM_{gel}\f$
@@ -132,7 +132,7 @@ dimensionsbehafteten Formel bestimmt:
 
 mit:
 
-\f$ K_D \f$:    K_D-Wert nach dem ATV-Modell [\f$ l \cdot g^{-1} \f$] \n
+\f$ K_D \f$:    K_D-Wert nach dem ATV-Modell [\f$ \Lg \f$] \n
 \f$ pH \f$:     pH-Wert [-] \n
 \f$ C_{SS} \f$: Schwebstoffkonzentration [\f$ \mgL \f$] \n
 
@@ -177,9 +177,8 @@ Konstanten und Exponenten entwickelt wurden (Tabelle 2), war bereits vor
 Ermittlung der Verteilungsverhältnisse in der Elbe eine Zuordnung der weiteren 
 Schwermetalle zu diesen vier Elementen nach vermuteter Ähnlichkeit des 
 Verteilungskoeffizienten erfolgt, so dass folgende Gruppen entstanden: 
-Cd, Pb, Cr, Hg / Cu, As / Ni, U / Zn, Mn, Fe, die hier vorläufig auch noch 
-beibehalten werden (Tabelle 2). Der KD-Wert von Pb, Cr und Hg wird damit 
-zunächst ebenso berechnet wie bei Cd, derjenige von Fe wie der von Mn.
+Cd, Pb, Cr, Hg / Cu, As / Ni, U / Zn, Mn, Fe. Cadmium wurde später jedoch in die 
+Gruppe von Zn, Mn und Fe gestellt (Tabelle 2).
 
 Zur Berechnung des KD-Werts nach Formel \f$\eqref{eq:schwer_K_D_atv}\f$ wurden 
 die Konstanten und Exponenten nach ATV-Modell \cite ATV_2002 gerundet. Die 
@@ -341,15 +340,15 @@ Die Schwermetallfreisetzung ist proportional zur Erosionsrate E und zur
 Schadstoffbelastung im Sediment:
 
 \f{equation}{
-  SM_E = \frac{E \cdot Sed_{SM_p}}{H}	(12)
+  SM_E = \frac{E \cdot Sed_{SM_p}}{H}
 \f}
 
 mit
 
 \f$ SM_E \f$:  Konzentrationsänderung des Schwermetalls (Gesamt-Konzentration) 
-               im Wasserkörper durch Erosion pro Sekunde [\f$ \ugL \cdot s^{-1} \f$] \n
-\f$ Sed_{SM_p} \f$: Schwermetallbelastung des Sediments [\f$ mg \cdot kg^{-1} \f$] \n
-\f$ H \f$:     Gewässertiefe [m] \n
+               im Wasserkörper durch Erosion pro Sekunde [\f$ \ugL \, s^{-1} \f$] \n
+\f$ Sed_{SM_p} \f$: Schwermetallbelastung des Sediments [\f$ \mgkg \f$] \n
+\f$ H \f$:     Gewässertiefe [\f$m\f$] \n
 
 \n
 
@@ -419,22 +418,26 @@ von QSim in einem nachfolgenden, gesonderten Stofftransport-Modul.
 
 Der Verteilungskoeffizient für die voranstehende Gleichung berechnet sich nach 
 folgender Vorschrift. Diese ermöglicht es, Zuflüsse ins Modell, bei denen 
-sowohl gelöste und Gesamt-Konzentration gemessen wurden, mit dem sich aus 
+die gelöste und die Gesamt-Konzentration gemessen wurden, mit dem sich aus 
 diesen Messungen ergebenden Verteilungskoeffizienten sowohl „durchfließen“ zu 
-lassen, als auch die Entwicklung des „zugeflossenen“ Verteilungskoeffizienten 
-analog zu der Entwicklung des Koeffizienten aus der ATV-Formel zu ändern. 
+lassen (Variante 2), als auch die Entwicklung des „zugeflossenen“ Verteilungskoeffizienten 
+analog zu der Entwicklung des Koeffizienten aus der ATV-Formel (9) zu ändern (Variante 1). 
 Außerdem ist die Mischung von Wasser aus verschiedenen Zuflüssen dadurch 
 möglich.
+
+Variante 1: 
 
 \f{equation}{
   K_D(t + \Delta t) = \left( \frac{\frac{SM_{ges}(t)}{SM_{gel}(t)} - 1}
     {\frac{C_{SS}(t)}{1000}} \right) \cdot \frac{(K^*_D(t + \Delta t)}{K^*_D(t)}
 \f}
 
-\f$ K_D \f$: Verteilungskoeffizient für Gl. \f$ \eqref{eq:schwer_smgel} \f$ [\f$ L \cdot g^{-1} \f$] \n
-\f$ K*D \f$: Verteilungskoeffizienten aus Gl. \f$ \eqref{eq:schwer_K_D_atv} \f$ [\f$ L \cdot g^{-1} \f$] \n
+\f$ K_D \f$: Verteilungskoeffizient für Gl. \f$ \eqref{eq:schwer_smgel} \f$ [\f$ \Lg \f$] \n
+\f$ K*D \f$: Verteilungskoeffizienten aus Gl. \f$ \eqref{eq:schwer_K_D_atv} \f$ [\f$ \Lg \f$] \n
 
-Bei der Berechnung nach DELTARES ist der Quotient 
+Variante 2: 
+
+Bei der Berechnung mit konstantem Verteilungskoeffizient (Tabelle 3) ist der Quotient 
 \f$ \frac{K^*_D(t + \Delta t)}{K^*_D(t)} \f$ immer 1.
 
 

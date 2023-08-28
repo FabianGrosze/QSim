@@ -17,8 +17,9 @@ Herkunft:
 + v - Vorgabe im Quellcode gesetzt
 
 ****
-aus Datei: sauerstoff-vars.md; Codesource: oxygen.f90; 
-zurück: \ref lnk_sauerstoff
+Text source: sauerstoff-vars.md; Code sources: module_oxygen.f90, oxygen.f90, 
+oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95;
+go back to: \ref lnk_sauerstoff
 
 <!-- alte Var-Tabelle -->
 <table>

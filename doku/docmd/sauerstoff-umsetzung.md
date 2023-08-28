@@ -13,7 +13,10 @@ Numerisch wird die Temperatur behandelt wie eine Konzentrationen.
 Die im folgenden genannten lokalen Wärmeeinträge und -austräge (Wärmeflüsse) 
 sind quasi der *Stoffumsatz* der "Temperatur-Konzentration":\n
 
-## Schnittstellenbeschreibung ##
+## Interface ##
+see oxygen.f90
+
+<!--
 SUBROUTINE oxygen()\n
 ( \ref vo2, \ref tempw, \ref rau, \ref vmitt, \ref tiefe, \ref rhyd, \ref flae, \ref tflie, \ref go2n
  , \ref dalgki, \ref dalggr, \ref dalgak, \ref dalgag, \ref akinh4   &\n
@@ -31,10 +34,11 @@ SUBROUTINE oxygen()\n
  , \ref dalggz, \ref agno3z, \ref akno3z          &\n
  , \ref abno3z, \ref algakz, \ref algagz, \ref algabz, \ref vz1, \ref tempwz, \ref saett, \ref mstr
  , \ref cpfad, \ref ij, \ref itags, \ref monats             &\n
- , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, \ref ifehl, \ref ifhstr
+ , \ref dc_denw, \ref toc_csb, \ref wlage, \ref hws, *etemp*, \ref dh2de, *ifehl*,  *ifhstr*
  , \ref azstrs                          &\n 
  , \ref zooind, *grote*, \ref iphy, \ref kontroll, *jjj*)\n
-
+-->
+ 
 <!-- #mf: sind nicht in Aufruf in oxygen.f90 (aber waren hier):
  \ref vnh4, \ref vno3, \ref bsbbet, \ref iglob -->
  
@@ -80,5 +84,6 @@ hier auch nochmal erklären: siehe \ref lueftO2\n -->
 
 
 &nbsp 
-Textquelle: wtemp-umsetzung.md ; Codesources: TEMPERW.f90, temperw_huelle() in temperw_huelle.f95 ;  
-zurück: \ref lnk_wtemp
+Text source: sauerstoff-umsetzung.md ; Code sources: module_oxygen.f90, oxygen.f90, 
+oxygen_saturation_concentration.f90 and oxygen_wrapper_3d.f95;   
+Go back to: \ref lnk_sauerstoff

@@ -15,7 +15,7 @@ SUBROUTINE COLIFORM (\ref tiefe,\ref rau,\ref vmitt,\ref vabfl,\ref elen,
 ,\ref schwi,\ref ss,\ref zooind,*grote*,\ref chla,\ref tempw,\ref jiein,*ecoli*  &\n
 ,\ref qeinl, *colil*, *qeinll*,\ref anze,\ref iorla,\ref iorle,\ref ieinls,\ref ilbuhn
 ,\ref coli,\ref doscf,\ref extks,\ref mstr,\ref azstrs &\n
-,*ratecd*, *etacd*, *rateci*, *xnuec*, *ratecg*, *ratecs*,\ref ifehl & \n
+,*ratecd*, *etacd*, *rateci*, *xnuec*, *ratecg*, *ratecs*, *ifehl* & \n
 ,\ref kontroll ,\ref iglob )
 
  

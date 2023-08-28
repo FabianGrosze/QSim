@@ -1,48 +1,44 @@
-Wärmehaushalt {#lnk_waerme}
+Heat budget {#lnk_waerme}
 =============
 
 ![](Waermehaushalts.png "")
 
-Die Wärmebilanz eines Gewässers bestimmt die Temperaturverteilung im 
-Wasserkörper.
+The heat balance of a body of water determines the temperature distribution 
+within the water body.
 
-Zur Berechnung der Wärmebilanz, sind im Modell die folgenden lokalen 
-Wärmeeinträge und -austräge (Wärmeflüsse) implementiert:
+To calculate the heat balance, the following local heat inputs and outputs 
+(heat flows) are implemented in the model:
 
-- Globalstrahlung <br> 
-(*Sonneneinstrahlung, Licht*)
-- Ausstrahlung <br> 
-(*langwellige Wärmestrahlung des Wasserkörpers nach oben*)
-- Gegenstrahlung <br> 
-(*langwellige Wärmestrahlung der Atmosphäre ins Gewässer*)
-- Verdunstung/Kondensation <br> 
-(*abhängig von der Dampfdruckdifferenz zwischen 
-Wasseroberfläche und darüberliegender Luft verdunstet Wasser aus dem 
-Wasserkörper in die Luft oder kondensiert aus der Luft in den Wasserkörper.
-Dabei wird dem Wasser entweder Verdunstungswärme entzogen oder 
-Kondensationswärme zugeführt.*)
-- Konvektion <br>
-(*Wärmeleitung zwischen Wasseroberfläche und Luft*)
-- Wärmeleitung Sediment <br>
-(*Aufwärmung des Sediments durch einfallende Strahlung, bzw. 
-Wärmeabgabe vom Sediment in den Wasserkörper*)
-- Zuflüsse/Einleitungen <br>
-(*Natürliche Zuflüsse und anthropogene Wärmeeinleitungen als linienförmige
-oder punktuelle Einleitungen*)
+- Shortwave radiation <br> 
+(*incident solar radiation, light*)
+- Longwave radiation <br> 
+(*outgoing longwave radiation and ingoing longwave radiation*)
+- Evaporation/condensation <br> 
+(* depending on the vapor pressure difference between the water surface and 
+the overlying air, water evaporates from the water body into the air or 
+condenses from the air into the water body. In the process, either heat of 
+evaporation is removed from the water or heat of condensation is added.*)
+- Convection <br>
+(*Heat conductivity between the water surface and the air*)
+- Thermal conduction sediment <br>
+(*Heating of the sediment by incident radiation or loss of heat from the 
+sediment to the water body*)
+- Inflows/discharge <br>
+(*Natural inflows and anthropogenic heat discharges as linear or point sources*)
 
-Wärmeentstehung im Wasserkörper etwa durch biologische Prozesse 
-(Respiration) oder Reibungswärme ist sehr gering und wird vernachlässigt.
-D.h. die Wärmebilanz ist von anderen als oben aufgelisteten 
-Stoffumsetzungsprozessen in guter Näherung unabhängig. 
+Heat transfer into the body of water, for example through biological processes
+(respiration) or frictional heat is very small and is neglected.
+That is, other than the above listed processes are assumed as irrelevant for 
+the heat balance.
 
-Ein- und Austrag von Wärme ins Wasser erfolgt demnach nur infolge der 
-\ref lnk_wetter_rb und der [Zuflussranddaten](\ref lnk_randbedingungen).
-<!-- #mf: prüfen, ob Link zu zuflussranddaten (Zufluss-RBs) korrekt ist -->
+Input and export of heat into the water is a result of the 
+\ref lnk_wetter_rb and the [inflow boundary data](\ref lnk_randbedingungen).
+<!-- #mf: check if link to inflow boundary data (inflow RBs) is correct -->
 
-Die folgenden beiden Unterkapitel beschreiben die Berechnung
-- der \subpage lnk_strahlung und
-- der \subpage lnk_wtemp
+The following subchapters describe the calculation of 
+- \subpage lnk_strahlung and
+- \subpage lnk_wtemp
 
 
-Textquelle: waerme-doc.md ; codesources: temperw.f90, temperw_huelle.f95  ; 
-zurück: \ref lnk_ueberblick
+Text source: waerme-doc.md ; code sources: temperw.f90, temperw_huelle.f95  ; 
+go back: \ref lnk_ueberblick
