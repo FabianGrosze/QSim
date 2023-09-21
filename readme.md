@@ -231,3 +231,5 @@ Neu in 14.02 (20aug20):
 * Initialisierung nicht belegter Sedimentflüsse bei abgeschaltetem Sedflux-Modul.
 * Initialisierung Schwermetallkonzentrationen bei Rechnungen ohne Schwermetalle.
 * Fehler durch nicht initialisierten Strang wird abgefangen.
+
+* ...
