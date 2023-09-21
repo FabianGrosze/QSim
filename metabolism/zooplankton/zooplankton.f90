@@ -67,7 +67,7 @@ subroutine zooplankton(zooind_s,                                 &
    real :: abl_filterable, agr_filterable, aki_filterable, algae_filterable_total
    real :: alpha_abl, alpha_agr, alpha_aki
    real :: f_food, f_temp, f_oxy
-   real::  ingestion_rate, mortality_rate, respiration_rate_basal
+   real ::  ingestion_rate, mortality_rate, respiration_rate_basal
    real :: ingested_algae, assimilated_biomass, excreted_biomass, respirated_biomass_basal
    real :: dead_rotifers, loss_rotifers, respirated_biomass
    real :: alpha_assimilation, rotifers, rotifers_new
