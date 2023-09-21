@@ -232,4 +232,3 @@ Neu in 14.02 (20aug20):
 * Initialisierung Schwermetallkonzentrationen bei Rechnungen ohne Schwermetalle.
 * Fehler durch nicht initialisierten Strang wird abgefangen.
 
-* ...
